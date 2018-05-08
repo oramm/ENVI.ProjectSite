@@ -26,7 +26,7 @@ class ContractsRepository extends Repository{
     */
    initialise() {
        return new Promise((resolve, reject) => {
-           this.initialiseItemsList('getContractsList')
+           this.initialiseItemsList('getContractsList',this.projectId)
                .then((result) => {  this.items = result;
                                     resolve("Contracts initialised");
                                  });
