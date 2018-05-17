@@ -20,11 +20,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/PersonRoles/PersonRoleAssociationView.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Projects/ProjectDetailsView.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsListView.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/index.html</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/NavigationBar.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/test.css</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collapsible.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/FormTools.js</file>
         </group>
     </open-files>
 </project-private>

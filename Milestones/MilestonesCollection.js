@@ -27,7 +27,7 @@ class MilestonesCollection extends Collection {
                         title:  milestonesRepository.items[i].name,
                         description:    milestonesRepository.items[i].description + '<BR>' +
                                         
-                                        milestonesRepository.items[i].startDate + ' - ' + milestonesRepository.items[i].startDate + '<BR>' +
+                                        milestonesRepository.items[i].startDate + ' - ' + milestonesRepository.items[i].endDate + '<BR>' +
                                         milestonesRepository.items[i].status,
                         editUrl: milestonesRepository.items[i].editUrl,
                         contractId_Hidden:  milestonesRepository.items[i].contractId

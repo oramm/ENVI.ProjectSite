@@ -85,6 +85,30 @@ class FormTools{
         return button;
     }
 
+    static createInputField(id, label){
+        var textField = $('<div class="input-field">');
+        textField
+            .append('<input type="text" class="validate">')
+            .attr('id',id)
+            .attr('name',id)
+            .append('<label for="'+ id +'">'+ label +'</label>');
+        
+        return textField;
+    }
+    
+    static createFilterInputField(id, label){
+        var $textField = this.createInputField(id, label);
+        
+        $textField.children().on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#contractsCollapsible > li").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        
+        return $textField;
+    }
+    
     static createAutoCompleteTextField(name, repository){
         
         var textField = $('<div class="input-field"></div>');

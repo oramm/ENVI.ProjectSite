@@ -17,6 +17,7 @@ class Collapsible {
     
     buildDom(){
         var $collapsible = $('<ul class="collapsible" data-collapsible="accordion">');
+        $collapsible.attr("id",this.id);
         for (var i=0; i<this.items.length; i++){
             var $row = this.buildRow(this.items[i]);
             $collapsible
