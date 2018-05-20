@@ -96,12 +96,12 @@ class FormTools{
         return textField;
     }
     
-    static createFilterInputField(id, label){
+    static createFilterInputField(id, $filteredObject, label){
         var $textField = this.createInputField(id, label);
         
         $textField.children().on("keyup", function() {
             var value = $(this).val().toLowerCase();
-            $("#contractsCollapsible > li").filter(function() {
+            $filteredObject.filter(function() {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });

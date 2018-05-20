@@ -33,6 +33,14 @@ class Tools{
                                                 });
         return vars;
     }
+    
+    static hasFunction(functionRef) {
+        if (typeof functionRef === 'undefined') {
+            throw new SyntaxError('Derived object must implement function');
+        } else if (typeof functionRef !== 'function') {
+            throw new SyntaxError("It's neither undefined nor a function. It's a " + typeof functionRef);
+        }
+    }
 }
 
 //finds an alament in Array by its value

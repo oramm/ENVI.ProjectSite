@@ -1,15 +1,12 @@
 class ContractsCollapsible extends Collapsible {
     constructor(id){
-        super();
+        super('Kontrakt');
         this.id = id;
         this.milestonesPanels=[];
         this.makeMilestonesPanels();
         return this.initialise(id, 
-                               this.makeCollapsibleItemsList(), 
-                               this, 
-                               this.removeHandler,
+                               this.makeCollapsibleItemsList(),
                                this.selectHandler);
-        
     }
 
     makeMilestonesPanels(){
@@ -46,12 +43,12 @@ class ContractsCollapsible extends Collapsible {
     }
     
     actionsMenuInitialise(){
-        //var projectId = getUrlVars()["projectId"];
-        var newContractButton = FormTools.createFlatButton('Dodaj kontrakt', ()=> window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ contractsRepository.projectId +'&entry.798100984&entry.2087120541&entry.325833130"'));
-        $('#actionsMenu').append(newContractButton);
-
+        super.actionsMenuInitialise();
     }
 
+    addNewHandler(){
+        window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ contractsRepository.projectId +'&entry.798100984&entry.2087120541&entry.325833130"');
+    }
     
     removeHandler(itemId){
         contractsRepository.deleteContract(itemId, this.contractsListCollection.removeHandler, this.contractsListCollection)

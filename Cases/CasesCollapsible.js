@@ -1,13 +1,11 @@
 class CasesCollapsible extends Collapsible {
     constructor(id){
-        super();
+        super('Sprawę');
         this.id = id;
         this.tasksPanels=[];
         this.makeTasksPanels();
         return this.initialise(id, 
                                this.makeCollapsibleItemsList(), 
-                               this, 
-                               this.removeHandler,
                                this.selectHandler);
         
     }
@@ -45,13 +43,9 @@ class CasesCollapsible extends Collapsible {
         return itemsList;
     }
     
-    actionsMenuInitialise(){
-        var projectId = getUrlVars()["projectId"];
-        var newCaseButton = FormTools.createFlatButton('Dodaj kontrakt', ()=> window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ projectId +'&entry.798100984&entry.2087120541&entry.325833130"'));
-        $('#actionsMenu').append(newCaseButton);
-
+    addNewHandler(){
+        window.open('https://docs.google.com/forms/d/e/1FAIpQLSf6sZpZeZMwwqvAZ1oAQSWIwOPpG_ZXV8E3XigQcTes4VAi3g/viewform?usp=pp_url&entry.804066860='+ casesRepository.milestoneId);
     }
-
     
     removeHandler(itemId){
         casesRepository.deleteCase(itemId, this.casesListCollection.removeHandler, this.casesListCollection)

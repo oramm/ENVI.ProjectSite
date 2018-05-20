@@ -2,37 +2,46 @@
  * http://materializecss.com/collapsible.html
  */
 class Collapsible {
-    constructor(){
+    constructor(itemsName){
+        this.itemsName = itemsName;
+        this.$dom;
+        this.$collapsible;
+        this.$actionsMenu;
     }
     
-    initialise(id, items, parentViewObject, parentViewObjectRemoveHandler, parentViewObjectSelectHandler){
+    initialise(id, items, parentViewObject, parentViewObjectSelectHandler){
         this.id = id;
         this.items = items;
         this.parentViewObject = parentViewObject;
-        this.parentViewObjectRemoveHandler = parentViewObjectRemoveHandler;
         this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
-        this.parentHTMLElement = this.buildDom()
-        return this.parentHTMLElement;
+        this.buildDom();
+        this.actionsMenuInitialise();
+        Tools.hasFunction(this.addNewHandler);
     }
     
     buildDom(){
-        var $collapsible = $('<ul class="collapsible" data-collapsible="accordion">');
-        $collapsible.attr("id",this.id);
+        this.$collapsible = $('<ul class="collapsible" data-collapsible="accordion">')
+        this.$collapsible.attr("id",this.id);
+        this.$actionsMenu = $('<div >')
+               .attr('id', 'actionsMenu' + '_' + this.id);
+        
+        this.$dom = $('<div>')
+                .attr('id', 'container' + '_' + this.id)
+                .append(this.$actionsMenu)
+                .append(this.$collapsible);
+        
         for (var i=0; i<this.items.length; i++){
             var $row = this.buildRow(this.items[i]);
-            $collapsible
+            this.$collapsible
                 .append($row);
         }
-        $collapsible.collapsible();//inicjacja wg instrukcji materialisecss
-        
-        this.parentHTMLElement = $collapsible;
+        this.$collapsible.collapsible();//inicjacja wg instrukcji materialisecss
         
         if (this.parentViewObjectRemoveHandler !== undefined)
             this.setRemoveAction();
         if (this.parentViewObjectSelectHandler !== undefined)
             this.setClickAction();
 
-        return $collapsible;
     }
     
     buildRow(item){
@@ -45,11 +54,27 @@ class Collapsible {
         return $row;
         
     }
+    
+    filterInitialise(){
+        this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
+                                                                  this.$collapsible.children('li'),
+                                                                  "Znajdź " + this.itemsName)
+                                );
+    }
+    /*
+     * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()
+     */
+    actionsMenuInitialise(){
+        var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler);
+        this.$actionsMenu.append(newItemButton);
+        this.filterInitialise();
 
+    }
+    
     setClickAction(){
         var _this = this;
-        this.parentHTMLElement.find(".collapsible > li").click(function() {   
-                                            _this.$parentHTMLElement.find(".collapsible > li").attr("class", "collection-item avatar");
+        this.$dom.find(".collapsible > li").click(function() {   
+                                            _this.$dom.find(".collapsible > li").attr("class", "collection-item avatar");
                                             $(this).attr("class", "collection-item avatar active");
                                             _this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
                                         });
@@ -57,7 +82,7 @@ class Collapsible {
     
     setRemoveAction(){
         var _this = this;
-        this.parentHTMLElement.find(".itemDelete").click(function() {   
+        this.$dom.find(".itemDelete").click(function() {   
                                             _this.parentViewObjectRemoveHandler.apply(_this.parentViewObject,[$(this).parent().parent().parent().parent().attr("id")]);
                                         });
     }
