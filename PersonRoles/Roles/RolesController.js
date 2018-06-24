@@ -25,6 +25,14 @@ class RolesController {
                         })
             .then((res)=>   {   console.log(res); 
                                 rolesView.initialise();
+                                tinymce.init({  selector: 'textArea',
+                                                toolbar: 'undo redo | bold italic underline | outdent indent | link',
+                                                menubar: false,
+                                                forced_root_block : false,
+                                                statusbar: false,
+                                                plugins: "autoresize link",
+                                                autoresize_bottom_margin: 20
+                                             });
                             })
             .catch(err => {
                   console.error(err);

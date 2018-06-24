@@ -41,6 +41,15 @@ class Tools{
             throw new SyntaxError("It's neither undefined nor a function. It's a " + typeof functionRef);
         }
     }
+    
+    static stringToSql(string){
+        var sqlString = string.replace(/\'/gi, "\\'");
+        sqlString = sqlString.replace(/\"/gi, '\\"');
+        sqlString = sqlString.replace(/\%/gi, '\\%');
+        sqlString = sqlString.replace(/\_/gi, '\\_');
+        return sqlString;
+    }
+    
     static areEqualObjects(obj1, obj2) {
 	//Loop through properties in object 1
 	for (var p in obj1) {
@@ -67,7 +76,7 @@ class Tools{
 		if (typeof (obj1[p]) == 'undefined') return false;
 	}
 	return true;
-};
+    };
 }
 
 //finds an alament in Array by its value

@@ -82,7 +82,7 @@ class AutoCompleteTextField {
 
 class SelectField{
     /*
-     * Sposób użycia: tworzymy nowy obiekt >> initialise >> w kontrolerze po zbudowaniu DOM >> ()=>{$('select').material_select();
+     * 
      * @param {type} id
      * @param {type} label
      * @param {type} icon
@@ -111,7 +111,7 @@ class SelectField{
         for (var i in optionsData){
             var $option = $('<option>')
                                 .attr('value',''+ i)
-                                .text(optionsData[i].name);
+                                .text(optionsData[i]);
             this.$select.append($option);
         }
         
@@ -129,22 +129,12 @@ class SelectField{
         //    $select.attr('required','true')
         return this.$dom;
     }
-    //uruchamiana na click
     setChosenItem(inputValue){
-        this.chosenItem = search(inputValue, 'name', this.optionsData);
-    }
-    
-    setClickAction(){
-        this.$dom.find('li').click(this.setChosenItem($this.html()));
-    }
-    simulateChosenItem(inputValue){
-        this.setChosenItem(inputValue);
-        var itemSelectedId = this.optionsData.findIndex(x => x.hello === inputValue);
-        //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+        var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
         this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-        
+        this.chosenItem = inputValue;
     }
-}
+} 
 
 class SelectFieldBrowserDefault{
     /*
@@ -336,6 +326,30 @@ class FormTools{
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
+        
+        return $textField;
+    }
+    
+    static createTextArea(id, label, isRequired, maxCharacters, dataError){
+        var $textField = $('<div class="input-field">');
+        var $input = $('<textarea class="materialize-textarea validate" id="' + id + '" name="' + id + '">');
+        var $label = $('<label for="'+ id +'">'+ label +'</label>');
+        $textField
+            .append($input)
+            .append($label);
+        if (isRequired)
+            $input.attr('required','true')
+      
+        if (maxCharacters >0){
+            $input
+                .attr('data-length', maxCharacters);
+            $input.characterCounter();
+        }
+
+        if (dataError !== undefined) 
+            $label.attr('data-error',dataError)
+        else
+            $label.attr('data-error','Wpisany tekst jest za długi')
         
         return $textField;
     }

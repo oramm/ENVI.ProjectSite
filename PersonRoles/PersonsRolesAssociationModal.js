@@ -16,25 +16,26 @@ class PersonsRolesAssociationModal extends Modal {
         
         this.$formElements = [
             this.personAutoCompleteTextField.$dom,
-            this.roleSelectField.$dom,
-            FormTools.createInputField(this.id + 'descriptionTextField','Opis', false, 700),
+            this.roleSelectField.$dom,    
             FormTools.createSubmitButton("Przypisz")
         ];
         
         this.initialise();
-
     }
-    
+    /*
+     * Potrzebne do zainicjowania Selecta
+     */
     setRoleNames(){
         for (var i=0; i<rolesRepository.items.length; i++){
             this.roleNames[i] = rolesRepository.items[i].name;
         }
     }
-    
+    /*
+     * Wypełnia formularz - używane przy edycji
+     */
     fillWithData(){
         this.personAutoCompleteTextField.setChosenItem(personRoleAssociationsRepository.currentItem.personNameSurnameEmail);
         this.roleSelectField.simulateChosenItem(personRoleAssociationsRepository.currentItem.roleName);
-        this.$formElements[2].children('input').val(personRoleAssociationsRepository.currentItem.description);
     }
         
     /*
@@ -46,11 +47,8 @@ class PersonsRolesAssociationModal extends Modal {
     submitTrigger(){
         this.dataObject = { id: personRoleAssociationsRepository.currentItem.id, //używane tylko przy edycji
                             personId: this.personAutoCompleteTextField.chosenItem.id,
-                            //personName: this.personAutoCompleteTextField.chosenItem.personName,
                             roleId:  this.roleSelectField.chosenItem.id,
-                            roleName:  this.roleSelectField.chosenItem.name,
-                            //roleName: this.$formElements[1].find('input').val(),
-                            description: $('#'+this.id + 'descriptionTextField').val()
+                            roleName:  this.roleSelectField.chosenItem.name
                           };
         personRoleAssociationsRepository.setCurrentItem(this.dataObject);
     }

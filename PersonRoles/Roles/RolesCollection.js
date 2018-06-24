@@ -12,7 +12,7 @@ class RolesCollection extends SimpleCollection {
         return {    id: dataItem.id,
                     icon:   'person',
                     title:  dataItem.name,
-                    description:    dataItem.description
+                    description:    dataItem.description.replace(/\n/g, "<br />")
                 };
     }
 }
