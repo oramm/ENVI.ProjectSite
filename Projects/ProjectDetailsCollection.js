@@ -1,8 +1,8 @@
 class ProjectDetailsCollection extends Collection {
     constructor(id){
-        super();      
+        super(id);      
         this.isDeletable=false;
-        this.initialise(id,this.makeList());
+        this.initialise(this.makeList());
     }
     
     /*
@@ -13,20 +13,24 @@ class ProjectDetailsCollection extends Collection {
         
         itemsList[0] = new CollectionItem('projectId',
                                            'info', //icon
-                                           projectsRepository.selectedItem.id,
-                                           projectsRepository.selectedItem.name
+                                           window.parent.projectsRepository.currentItem.id,
+                                           window.parent.projectsRepository.currentItem.name
                                           );
         itemsList[1] = new CollectionItem('projectId',
                                            'date_range', //icon
-                                           projectsRepository.selectedItem.status,
-                                           projectsRepository.selectedItem.startDate + '<BR>' +
-                                           projectsRepository.selectedItem.endDate
+                                           window.parent.projectsRepository.currentItem.status,
+                                           window.parent.projectsRepository.currentItem.startDate + '<BR>' +
+                                           window.parent.projectsRepository.currentItem.endDate
                                           );
         itemsList[2] = new CollectionItem('projectId',
                                            'info', //icon
-                                           projectsRepository.selectedItem.comment,
+                                           window.parent.projectsRepository.currentItem.comment,
                                            ''
                                           );
         return itemsList;
+    }
+    
+    makeItem(dataItem){
+        //funkcja zbędna, ale musi być zaimplementowana bo wymaga tego Collection
     }
 }

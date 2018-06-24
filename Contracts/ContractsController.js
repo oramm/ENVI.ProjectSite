@@ -6,12 +6,22 @@ class ContractsController {
         contractsListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
         
-        milestonesRepository = new MilestonesRepository();
-        contractsRepository = new ContractsRepository();
+       
+        milestonesRepository = new SimpleRepository('Milestones repository',
+                                                    'getMilestonesListPerProject',
+                                                    'addNewMilestoneInDb',
+                                                    'editMilestoneInDb',
+                                                    'deleteMilestone');
+        
+        contractsRepository = new SimpleRepository('Contracts repository',
+                                                    'getContractsListPerProject',
+                                                    'addContractInDb',
+                                                    'editContractInDb',
+                                                    'deleteContract');
         
         var promises = [];
-        promises[0] = milestonesRepository.initialise();
-        promises[1] = contractsRepository.initialise();
+        promises[0] = milestonesRepository.initialise(milestonesRepository.currentProjectId);
+        promises[1] = contractsRepository.initialise(contractsRepository.currentProjectId);
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

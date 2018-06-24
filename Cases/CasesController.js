@@ -6,12 +6,25 @@ class CasesController {
         casesListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
         
-        tasksRepository = new TasksRepository();
-        casesRepository = new CasesRepository();
+        //tasksRepository = new TasksRepository();
+        //casesRepository = new CasesRepository();
+        
+        casesRepository = new SimpleRepository('Tasks repository',
+                                                    'getCasesListPerProject',
+                                                    'addNewCaseInDb',
+                                                    'editCaseInDb',
+                                                    'deleteCase');
+        
+        tasksRepository = new SimpleRepository('Cases repository',
+                                                    'getTasksListPerProject',
+                                                    'addTaskInDb',
+                                                    'editTaskInDb',
+                                                    'deleteTask');
         
         var promises = [];
-        promises[0] = tasksRepository.initialise();
-        promises[1] = casesRepository.initialise();
+        
+        promises[0] = tasksRepository.initialise(tasksRepository.currentProjectId);
+        promises[1] = casesRepository.initialise(casesRepository.currentProjectId);
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

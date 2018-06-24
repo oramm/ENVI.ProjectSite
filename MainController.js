@@ -7,7 +7,13 @@ class MainController {
         
 
         //signoutButton.style.display = 'block';
-        projectsRepository = new ProjectsRepository();
+        //projectsRepository = new ProjectsRepository();
+        projectsRepository = new SimpleRepository('Projects repository',
+                                                 'getProjectsList',
+                                                 //'addNewProjectInDb',
+                                                 //'editProjectInDb',
+                                                 //'deleteProject'
+                                                         );
         projectsRepository.initialise()
             .then(()=>  {   console.log("Projects initialised");
                             mainWindowView.initialise();

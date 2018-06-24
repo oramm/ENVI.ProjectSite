@@ -3,7 +3,9 @@ class Repository {
         if (name === undefined) throw new SyntaxError("Repository must have a name!");
 
         this.name = name;
-        this.items;
+        this.items = [1,2];
+        this.selectedItemId = 0;
+        this.selectedItem = {};
         this.result;
     }
 
@@ -97,7 +99,7 @@ class Repository {
     //wywoływana przy SUBMIT
     addNewItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            newItem.tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+            viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -116,14 +118,13 @@ class Repository {
             op
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
-                      .then((result) => { 
-                        newItem.id = result;
+                      .then(() => { 
                         viewObject.addNewHandler.apply(viewObject, ["DONE", newItem])
                         resolve(newItem);
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          viewObject.addNewHandler.apply(viewObject,["ERROR",newItem, err]);
+                          viewHandler.apply(viewObject,["ERROR",newItem, err]);
                           //reject(err);
                       });
                   })
@@ -170,56 +171,12 @@ class Repository {
                     throw "Nic nie dodano";
                 } else {
                     this.result = 'Dodano rolę';
-                    resolve(resp.response.result);
+                    resolve(this.result);
                 }
             }
         });
     }
-    /*
-     * wywoływana przy SUBMIT
-     * @param {DataItem} newItem
-     * @param {String} serverFunctionName
-     * @param {Collection | Collapsible} viewObject
-     * @returns {Promise}
-     */
-    editItem(newItem, serverFunctionName, viewObject) {
-        return new Promise((resolve, reject) => {
-            viewObject.editHandler.apply(viewObject,["PENDING",newItem]);
-            // Create an execution request object.
-            // Create execution request.
-            var request = {
-                'function': serverFunctionName,
-                'parameters': JSON.stringify(newItem),
-                'devMode': true // Optional.
-            };
-            // Make the API request.
-            var op = gapi.client.request({
-                'root': 'https://script.googleapis.com',
-                'path': 'v1/scripts/' + SCRIPT_ID + ':run',
-                'method': 'POST',
-                'body': request
-            });
-
-            op
-              .then(resp => {  
-                  this.handleAddNewItem(resp.result)
-                      .then(() => { 
-                        viewObject.editHandler.apply(viewObject, ["DONE", newItem])
-                        resolve(newItem);
-                      })
-                      .catch(err => {
-                          //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          viewObject.editHandler.apply(viewObject,["ERROR",newItem, err]);
-                          //reject(err);
-                      });
-                  })
-              .catch(err => {
-                    console.error ("test 2 ", err);
-                    viewObject.editHandler.apply(viewObject,["ERROR",newItem, err]);
-                    throw err;
-              });
-        });
-    }
+    
     /*
      * Do serwera idzie cały Item, do Kroku 3 idzie tylko item.id
      */
@@ -251,7 +208,7 @@ class Repository {
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          viewObject.removeHandler.apply(viewObject,["ERROR",item.id, err]);
+                          viewHandler.apply(viewObject,["ERROR",item.id, err]);
                       });
                   })
               .catch(err => {

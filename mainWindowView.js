@@ -7,8 +7,9 @@ class MainWindowView extends Popup{
     }
     
     initialise(){
-        this.navigationBar = new NavigationBar(this)
-        this.autocomplete = new AutoComplete(projectsRepository,"id", this.onProjectChosen, this);
+        this.navigationBar = new PsNavigationBar(this)
+        this.autocomplete = new AutoCompleteTextField('projectsPickerAutoComplete','Wybierz projekt');
+        this.autocomplete.initialise(projectsRepository,"id", this.onProjectChosen, this)
         console.log("ProjectDetailsView initialised");
 
     }
@@ -16,7 +17,7 @@ class MainWindowView extends Popup{
 
     onProjectChosen(inputValue){
         this.autocomplete.chosenItem = search(inputValue, "id", projectsRepository.items);
-        projectsRepository.selectedItem = this.autocomplete.chosenItem;
+        projectsRepository.currentItem = this.autocomplete.chosenItem;
         this.navigationBar.initialiseMenuItems();
         //this.loadIframe("iframeProjectDetails", 'Projects/projectDetails.html?projectId=' + projectsRepository.selectedItem.id);
         //this.loadIframe("iframeContracts", 'Contracts/ContractsList.html?projectId=' + projectsRepository.selectedItem.id);

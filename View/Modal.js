@@ -3,42 +3,59 @@
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
  */
 class Modal {
-    initialise(id, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
+    constructor(id, tittle, connectedResultsetComponent){
         this.id = id;
+        this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
-        this.connectedResultsetComponentAddNewHandler = connectedResultsetComponentAddNewHandler;
-        this.tittle;
+        
+        this.dataObject;
+        this.$formElements;
+        this.$form;
+        this.$dom;
+    }
+    initialise(){
         this.buildDom();
+        this.addFormElements();
+        Tools.hasFunction(this.submitTrigger);
     }
     
-    
     buildDom(){
-        $('body').append(' <div id="' + this.id + '" class="modal modal-fixed-footer"></div>');
+        this.$form = FormTools.createForm("foo_"+ this.id, "GET");
+        $('body')
+            .append('<div id="' + this.id + '" class="modal modal-fixed-footer">');
         $('#' + this.id).append('<div class="modal-content">');
-        $('#' + this.id + ' .modal-content').append(FormTools.createForm("foo", "GET"))
+        $('#' + this.id + ' .modal-content').append(this.$form)
         $('#' + this.id).append('<div class="modal-footer">');
         $('#' + this.id + ' .modal-footer').append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">OK</a>');
+        this.setTittle(this.tittle);
         this.setSubmitAction();
 
         $('#' + this.id).modal();
     }
     
+    addFormElements(){
+        for (var i = 0; i<this.$formElements.length; i++){
+            this.appendUiElement(this.$formElements[i])
+        }
+    }
+    
     setTittle(tittle){
-        this.tittle = tittle;
         $('#' + this.id + ' .modal-content' ).prepend('<h4>'+ tittle +'</h4>');
     }
     /*
      * @param {String} uiElement html Code for JQUERY Append.
      */
-    appendUiElement(uiElelment){
+    appendUiElement($uiElelment){
         return new Promise((resolve, reject) => {
-            $('#' + this.id + ' .modal-content form' ).append('<div class="row">' + uiElelment + '</div>');
-            resolve(uiElelment + "appended prpoperly");
+            this.$form
+                    .append('<div class="row">').children(':last-child')
+                        .append($uiElelment);
+            resolve($uiElelment + "appended prpoperly");
         })
      }
     
-    preppendTriggerButtonTo(HTMLId,caption){
-        $('#' + HTMLId).prepend('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
+    preppendTriggerButtonTo($uiElelment,caption){
+        $uiElelment.prepend('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
     }
     
     /*
@@ -46,7 +63,7 @@ class Modal {
      * Klasa pochodna musi mieć metodę submitTrigger()
      */
     setSubmitAction() {
-        $('#' + this.id + ' .modal-content form').submit((event) => {
+        this.$form.submit((event) => {
             this.submitTrigger();
             // prevent default posting of form
             event.preventDefault();

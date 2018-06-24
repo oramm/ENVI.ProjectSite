@@ -58,7 +58,8 @@ class AutoCompleteTextField {
                     autocompleteList[this.objectList[id][key]] = null;
                 });
         // Plugin initialization
-        this.$dom.children('input.autocomplete').autocomplete({
+        $('input.autocomplete').autocomplete({
+        //this.$dom.children('input.autocomplete').autocomplete({
            data: autocompleteList,
            limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
            onAutocomplete: (inputValue) => {
@@ -82,7 +83,7 @@ class AutoCompleteTextField {
 
 class SelectField{
     /*
-     * Sposób użycia: tworzymy nowy obiekt >> initialise >> w kontrolerze po zbudowaniu DOM >> ()=>{$('select').material_select();
+     * 
      * @param {type} id
      * @param {type} label
      * @param {type} icon
@@ -111,7 +112,7 @@ class SelectField{
         for (var i in optionsData){
             var $option = $('<option>')
                                 .attr('value',''+ i)
-                                .text(optionsData[i].name);
+                                .text(optionsData[i]);
             this.$select.append($option);
         }
         
@@ -129,91 +130,10 @@ class SelectField{
         //    $select.attr('required','true')
         return this.$dom;
     }
-    //uruchamiana na click
     setChosenItem(inputValue){
-        this.chosenItem = search(inputValue, 'name', this.optionsData);
-    }
-    
-    setClickAction(){
-        this.$dom.find('li').click(this.setChosenItem($this.html()));
-    }
-    simulateChosenItem(inputValue){
-        this.setChosenItem(inputValue);
-        var itemSelectedId = this.optionsData.findIndex(x => x.hello === inputValue);
-        //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+        var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
         this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-        
-    }
-}
-
-class SelectFieldBrowserDefault{
-    /*
-     * Sposób użycia: tworzymy nowy obiekt >> initialise >> w kontrolerze po zbudowaniu DOM >> ()=>{$('select').material_select();
-     * @param {type} id
-     * @param {type} label
-     * @param {type} icon
-     * @param {type} isRequired
-     * @returns {SelectField}
-     */
-    constructor(id, label, icon, isRequired){
-        this.id = id;
-        this.label = label;
-        this.icon = icon;
-        this.isRequired = isRequired;
-        this.chosenItem;
-        this.$dom;
-        this.$select;
-        this.createSelectField(id, label, icon, isRequired);
-    }
-    
-    initialise(optionsData){
-        this.$select.empty();
-        if (optionsData===undefined) 
-            optionsData = this.optionsData;
-        else
-            this.optionsData = optionsData;
-        
-        this.$select.append('<option value="" disabled selected>Wybierz opcję</option>')
-        for (var i in optionsData){
-            var $option = $('<option>')
-                                .val(optionsData[i].name)
-                                .text(optionsData[i].name);
-            this.$select.append($option);
-        }
-        this.setChangeAction();
-        
-    }
-    
-    createSelectField(id, label, icon, isRequired, options){
-        
-        this.$select = $('<select class="browser-default">');
-        this.$dom = $('<div>');
-        var $label = $('<label>'+ label +'</label>');
-        
-        this.$dom
-            .append($label)
-            .append(this.$select)
-          
-        //if (isRequired)
-        //    $select.attr('required','true')
-        return this.$dom;
-    }
-    //uruchamiana na click
-    setChosenItem(inputValue){
-        this.chosenItem = search(inputValue, 'name', this.optionsData);
-    }
-    
-    setChangeAction(){
-        var _this=this;
-        this.$select.change(function(){ _this.setChosenItem($(this).val());
-                                      });
-    }
-    simulateChosenItem(inputValue){
-        this.setChosenItem(inputValue);
-        var itemSelectedId = this.optionsData.findIndex(x => x.hello === inputValue);
-        //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
-        this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-        
+        this.chosenItem = inputValue;
     }
 }
 
