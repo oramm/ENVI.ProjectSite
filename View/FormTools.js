@@ -136,6 +136,90 @@ class SelectField{
     }
 } 
 
+class ReachTextArea {
+    constructor(id, label, isRequired, maxCharacters){
+        this.id = id;
+        this.label = label;
+        this.isRequired = isRequired;
+        this.maxCharacters = maxCharacters;
+        this.$dom = this.createReachTextArea();
+    }
+    /*
+     * Używać w klasie XxxxController po XxxxView.initilise()
+     */
+    static reachTextAreaInit(){
+        tinymce.init({  selector: '.reachTextArea',
+                        toolbar: 'undo redo | bold italic underline | outdent indent | link',
+                        menubar: false,
+                        forced_root_block : false,
+                        statusbar: true,
+                        plugins: "autoresize link",
+                        autoresize_bottom_margin: 20,
+                        autoresize_min_height: 30,
+                        max_chars: 30,
+                        branding: false,
+                        setup: function (ed) {
+                            var allowedKeys = [8, 37, 38, 39, 40, 46]; // backspace, delete and cursor keys
+                            ed.on('keydown', function (e) {
+                                if (allowedKeys.indexOf(e.keyCode) != -1) return true;
+                                var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
+                                if ( $(ed.getBody()).text().length+1 > maxCharacters){
+                                //if (ReachTextArea.tinymce_getContentLength() + 1 > this.settings.max_chars) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    return false;
+                                }
+                                return true;
+                            });
+                            ed.on('keyup', function (e) {
+                                var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
+                                ReachTextArea.tinymce_updateCharCounter(this, ReachTextArea.tinymce_getContentLength(),maxCharacters);
+                            });
+                        },
+                        init_instance_callback: function () { // initialize counter div
+                            var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
+                            $('#' + this.id).prev().append('<div class="char_count" style="text-align:right"></div>');
+                            ReachTextArea.tinymce_updateCharCounter(this, ReachTextArea.tinymce_getContentLength(), maxCharacters);
+                        },
+                        paste_preprocess: function (plugin, args) {
+                            var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
+                            var editor = tinymce.get(tinymce.activeEditor.id);
+                            var len = editor.contentDocument.body.innerHTML.length;
+                            var text = $(args.content).text();
+                            if (len + text.length > editor.settings.max_chars) {
+                                alert('Pasting this exceeds the maximum allowed number of ' + editor.settings.max_chars + ' characters.');
+                                args.content = '';
+                            } else {
+                                ReachTextArea.tinymce_updateCharCounter(editor, len + text.length, maxCharacters);
+                            }
+                        }
+                    });
+    }
+    
+    static tinymce_updateCharCounter(el, len, maxCharacters) {
+        $('#' + el.id).prev().find('.char_count').text(len + '/' + maxCharacters);
+    }
+
+    static tinymce_getContentLength() {
+        return tinymce.get(tinymce.activeEditor.id).contentDocument.body.innerHTML.length;
+    }
+    
+    /*
+     * Używać w klasie z formularzem (XxxxModal)
+     * w funkcji fillWithData() użyć:
+     *      tinyMCE.get(this.id + 'descriptionTextField').setContent(rolesRepository.currentItem.description);
+     *      tinyMCE.triggerSave();
+     */
+    createReachTextArea(){
+        var $textArea;
+        $textArea = FormTools.createTextArea(this.id, this.label, this.isRequired);
+        $textArea.children('textarea')
+                .addClass('reachTextArea')
+                .attr('max_chars',this.maxCharacters);
+        return $textArea;
+    }
+}
+
 class SelectFieldBrowserDefault{
     /*
      * Sposób użycia: tworzymy nowy obiekt >> initialise >> w kontrolerze po zbudowaniu DOM >> ()=>{$('select').material_select();
@@ -331,10 +415,10 @@ class FormTools{
     }
     
     static createTextArea(id, label, isRequired, maxCharacters, dataError){
-        var $textField = $('<div class="input-field">');
+        var $textArea = $('<div class="input-field">');
         var $input = $('<textarea class="materialize-textarea validate" id="' + id + '" name="' + id + '">');
         var $label = $('<label for="'+ id +'">'+ label +'</label>');
-        $textField
+        $textArea
             .append($input)
             .append($label);
         if (isRequired)
@@ -351,7 +435,7 @@ class FormTools{
         else
             $label.attr('data-error','Wpisany tekst jest za długi')
         
-        return $textField;
+        return $textArea;
     }
 
     static createFlatButton(caption, onClickFunction){

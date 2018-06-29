@@ -1,24 +1,22 @@
 class RoleModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
         super(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler);
-             
+        
+        this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', true, 500);
+        
         this.$formElements = [
             FormTools.createInputField(this.id + 'nameTextField','Nazwa roli', true, 150),
-            //FormTools.createInputField(this.id + 'descriptionTextField','Opis', true, 500),
-            //(id, label, isRequired, maxCharacters, dataError)
-            FormTools.createTextArea(this.id + 'descriptionTextField','Opis', false, 700), 
-            
+            this.descriptionReachTextArea,       
             FormTools.createSubmitButton("Przypisz")
         ];
         this.initialise();
         
 
-    }
-    fillWithData(){
+    }fillWithData(){
         this.$formElements[0].children('input').val(rolesRepository.currentItem.name);
-        this.$formElements[1].children('textarea').val(rolesRepository.currentItem.description);
-        //this.$formElements[1].children('input').trigger('autoresize');//do przetestowania
-        tinyMCE.get(this.id + 'descriptionTextField').setContent(rolesRepository.currentItem.description);
+
+        tinyMCE.get(this.id + 'descriptionReachTextArea').setContent(rolesRepository.currentItem.description);
+        tinyMCE.triggerSave();
     }
         
     /*
@@ -31,7 +29,7 @@ class RoleModal extends Modal {
         tinyMCE.triggerSave();
         this.dataObject = { id: rolesRepository.currentItem.id, //używane tylko przy edycji
                             name: $('#'+this.id + 'nameTextField').val(),
-                            description: $('#'+this.id + 'descriptionTextField').val(),
+                            description: $('#'+this.id + 'descriptionReachTextArea').val(),
                             projectId: rolesRepository.currentProjectId
                           };
         rolesRepository.setCurrentItem(this.dataObject);
