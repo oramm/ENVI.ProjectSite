@@ -6,7 +6,7 @@ class RoleModal extends Modal {
         
         this.$formElements = [
             FormTools.createInputField(this.id + 'nameTextField','Nazwa roli', true, 150),
-            this.descriptionReachTextArea,       
+            this.descriptionReachTextArea.$dom,       
             FormTools.createSubmitButton("Przypisz")
         ];
         this.initialise();

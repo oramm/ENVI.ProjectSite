@@ -25,8 +25,8 @@ class RolesController {
                         })
             .then((res)=>   {   console.log(res); 
                                 rolesView.initialise();
-                                FormTools.reachTextAreaInit();
                             })
+            .then(()=>ReachTextArea.reachTextAreaInit())
             .catch(err => {
                   console.error(err);
                 });
