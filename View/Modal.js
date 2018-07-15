@@ -21,16 +21,16 @@ class Modal {
     
     buildDom(){
         this.$form = FormTools.createForm("foo_"+ this.id, "GET");
-        $('body')
-            .append('<div id="' + this.id + '" class="modal modal-fixed-footer">');
-        $('#' + this.id).append('<div class="modal-content">');
-        $('#' + this.id + ' .modal-content').append(this.$form)
-        $('#' + this.id).append('<div class="modal-footer">');
-        $('#' + this.id + ' .modal-footer').append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">OK</a>');
+        //$('body')
+        this.connectedResultsetComponent.$dom
+            .append('<div id="' + this.id + '" class="modal modal-fixed-footer">').children(':last-child')
+                .append('<div class="modal-content">').children()
+                    .append(this.$form);
+        this.connectedResultsetComponent.$dom.children(':last-child')
+                .append('<div class="modal-footer">').children(':last-child')
+                    .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">OK</a>');
         this.setTittle(this.tittle);
         this.setSubmitAction();
-
-        $('#' + this.id).modal();
     }
     
     addFormElements(){

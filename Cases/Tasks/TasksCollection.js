@@ -1,17 +1,18 @@
 class TasksCollection extends SimpleCollection {
-    constructor(id,contractId){
+    constructor(id,parentId){
         super(id, tasksRepository);
-        this.contractId = contractId;
+        this.parentId = parentId;
         
-        //this.$addNewModal = new NewExternalAchievementModal('newExternalAchievement', 'Dodaj osiągnięcie', this);
-        //this.$editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);
+        this.$addNewModal = new NewTaskModal(this.id + '_newTask', 'Dodaj zadanie', this);
+        this.$editModal = new EditTaskModal(this.id + '_editTask', 'Edytuj zadanie', this);
         
         this.initialise(this.makeList());        
     }    
     /*
-     * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
+     * Dodano atrybut z caseId_Hidden, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
     */
     makeItem(dataItem){
+        (dataItem.description)? true : dataItem.description="";
         return {    id: dataItem.id,
                     icon:   'info',
                     title:  dataItem.name,
@@ -24,7 +25,7 @@ class TasksCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.caseId_Hidden==this.caseId);
+        return super.makeList().filter((item)=>item.caseId_Hidden==this.parentId);
     }
     
     selectTrigger(itemId){

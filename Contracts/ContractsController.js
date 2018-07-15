@@ -20,13 +20,26 @@ class ContractsController {
                                                     'deleteContract');
         
         var promises = [];
-        promises[0] = milestonesRepository.initialise(milestonesRepository.currentProjectId);
-        promises[1] = contractsRepository.initialise(contractsRepository.currentProjectId);
+        promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
+        promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
                             contractsListView.initialise();
-                        })            
+                        })
+            .then(  ()=>{$('select').material_select();
+                    $('.datepicker').pickadate({
+                        selectMonths: true, // Creates a dropdown to control month
+                        selectYears: 15, // Creates a dropdown of 15 years to control year,
+                        today: 'Dzisiaj',
+                        clear: 'Wyszyść',
+                        close: 'Ok',
+                        closeOnSelect: false, // Close upon selecting a date,
+                        container: undefined, // ex. 'body' will append picker to body
+                        format: 'dd-mm-yyyy'
+                    });
+                    ReachTextArea.reachTextAreaInit();
+                })
             .catch(err => {
                   console.error(err);
                 });

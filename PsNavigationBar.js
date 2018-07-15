@@ -16,16 +16,16 @@ class PsNavigationBar extends NavigationBar {
     
     initialiseMenuItems(){
         this.menuItems = [{ caption: "Dane projektu", 
-                            link: 'Projects/projectDetails.html?itemId=' + projectsRepository.currentItem.id
+                            link: 'Projects/projectDetails.html?parentItemId=' + projectsRepository.currentItem.id
                           },
                           { caption: "Lista kontaktowa", 
-                            link: 'PersonRoles/personRoles.html?itemId=' + projectsRepository.currentItem.id
+                            link: 'PersonRoles/personRoles.html?parentItemId=' + projectsRepository.currentItem.id
                           },
                           { caption: "Zarządzaj rolami", 
-                            link: 'PersonRoles/Roles/roles.html?itemId=' + projectsRepository.currentItem.id
+                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.id
                           },
                           { caption: "Kontrakty", 
-                            link: 'Contracts/ContractsList.html?itemId=' + projectsRepository.currentItem.id
+                            link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.id
                           }
                          ];
         this.addMenuItems($('#main-nav ul'));

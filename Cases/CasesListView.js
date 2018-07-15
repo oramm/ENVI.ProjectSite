@@ -7,7 +7,7 @@ class CasesListView extends Popup {
         this.setTittle("Lista spraw");
         this.actionsMenuInitialise();
         
-        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);  
+        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible', casesRepository).$dom);  
         this.dataLoaded(true);
     }
 

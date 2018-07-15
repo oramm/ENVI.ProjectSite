@@ -320,6 +320,13 @@ class DatePicker {
         var picker = $generatedInput.pickadate('picker')
         picker.set('select', date, { format: 'yyyy-mm-dd' })
     }
+    checkDate() {
+        if ($('#' + this.id).val() == '') {
+            this.$input.addClass('invalid')
+        } else {
+            this.$input.removeClass('invalid')
+        }
+    }
 }
 
 class FormTools{

@@ -2,16 +2,18 @@ class MilestonesCollection extends SimpleCollection {
     constructor(id,contractId){
         super(id, milestonesRepository);
         this.contractId = contractId;
-        
-        //this.$addNewModal = new NewExternalAchievementModal('newExternalAchievement', 'Dodaj osiągnięcie', this);
-        //this.$editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);
+
+        this.$addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
+        this.$editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);
         
         this.initialise(this.makeList());        
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
-    */
+     * @dataItem connectedRepository.items[i]
+     */
     makeItem(dataItem){
+        (dataItem.description)? true : dataItem.description="";
         return {    id: dataItem.id,
                     icon:   'info',
                     title:  dataItem.name,
@@ -29,7 +31,9 @@ class MilestonesCollection extends SimpleCollection {
     }
     
     selectTrigger(itemId){
-        super.selectTrigger(itemId);
-        $('#iframeCases').attr('src','../Cases/CasesList.html?milestoneId=' + this.connectedRepository.currentProjectId  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        if (itemId !== undefined)
+            {super.selectTrigger(itemId);
+            $('#iframeCases').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        }
     }
 }

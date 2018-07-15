@@ -10,8 +10,8 @@ class SimpleRepository extends Repository {
         this.editServerFunctionName = editServerFunctionName;
         this.deleteServerFunctionName = deleteServerFunctionName;
         this.currentItem={};
-        this.currentProjectId; 
-        this.setCurrentProjectIdFromURL();
+        this.parentItemId; 
+        this.parentItemIdFromURL();
     }
     
     initialise(serverFunctionParameters) {
@@ -23,10 +23,10 @@ class SimpleRepository extends Repository {
                                 });
         });
     }
-    
-    setCurrentProjectIdFromURL() {
+    //najczęściej jest to projectId
+    parentItemIdFromURL() {
         return new Promise((resolve, reject) => {
-            this.currentProjectId = getUrlVars()["itemId"];
+            this.parentItemId = getUrlVars()['parentItemId'];
             
         });
     }

@@ -10,29 +10,44 @@ class CasesController {
         //casesRepository = new CasesRepository();
         
         casesRepository = new SimpleRepository('Tasks repository',
-                                                    'getCasesListPerProject',
+                                                    'getCasesListPerMilestone',
                                                     'addNewCaseInDb',
                                                     'editCaseInDb',
                                                     'deleteCase');
         
         tasksRepository = new SimpleRepository('Cases repository',
-                                                    'getTasksListPerProject',
-                                                    'addTaskInDb',
+                                                    'getTasksListPerMilestone',
+                                                    'addNewTaskInDb',
                                                     'editTaskInDb',
                                                     'deleteTask');
         
         var promises = [];
         
-        promises[0] = tasksRepository.initialise(tasksRepository.currentProjectId);
-        promises[1] = casesRepository.initialise(casesRepository.currentProjectId);
+        promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
+        promises[1] = casesRepository.initialise(casesRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
                             casesListView.initialise();
                         })            
+            .then(  ()=>{   $('select').material_select();
+                            $('.modal').modal();
+                            $('.datepicker').pickadate({
+                                selectMonths: true, // Creates a dropdown to control month
+                                selectYears: 15, // Creates a dropdown of 15 years to control year,
+                                today: 'Dzisiaj',
+                                clear: 'Wyszyść',
+                                close: 'Ok',
+                                closeOnSelect: false, // Close upon selecting a date,
+                                container: undefined, // ex. 'body' will append picker to body
+                                format: 'dd-mm-yyyy'
+                            });
+                            ReachTextArea.reachTextAreaInit();
+                        }
+            )
             .catch(err => {
-                  console.error(err);
-                });
+                console.error(err);
+            });
    
     }
 }

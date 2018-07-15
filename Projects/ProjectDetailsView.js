@@ -9,7 +9,7 @@ class ProjectDetailsView extends Popup {
         this.dataLoaded(true);
     }
     actionsMenuInitialise(){
-        var newProjectButton = FormTools.createFlatButton('Edytuj dane ', ()=> window.open(projectsRepository.selectedItem.editUrl,'_blank'));
+        var newProjectButton = FormTools.createFlatButton('Edytuj dane ', ()=> window.open(window.parent.projectsRepository.currentItem.editUrl,'_blank'));
         $('#actionsMenu').append(newProjectButton);
     }
 }

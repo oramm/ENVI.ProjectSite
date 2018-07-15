@@ -13,7 +13,6 @@ class SimpleCollection extends Collection {
         return itemsList;
     }
     
-    
     /*
      * Krok 3 -  callback z repository - obsługuje wyświetlanie podczas łączenia z serwerem 
      * przekaż proces do obiektu 'Collection' i obsłuż w zależności od statusu odpowiedzi z serwera
@@ -25,7 +24,7 @@ class SimpleCollection extends Collection {
         return super.addNewHandler(status, collectionItem, errorMessage);
     } 
     
-        /*
+    /*
      * Krok 3 -  callback z repository - obsługuje wyświetlanie podczas łączenia z serwerem 
      * przekaż proces do obiektu 'Collection' i obsłuż w zależności od statusu odpowiedzi z serwera
      * Krok 3 jest w obiekcie Collection.addNewHandler
@@ -37,7 +36,7 @@ class SimpleCollection extends Collection {
     
     /*
      * Krok 1 - po kliknięciu w przycisk 'usuń' 
-     * Proces: this.removeTrigger >> rolesRepository.unasoosciatePersonRole 
+     * Proces: this.removeTrigger >> xxxxRepository.deleteItem()
      *                                      >> repository.deleteItem >> collection.removeHandler[PENDING]
      *                                      >> repository.deleteItem >> collection.removeHandler[DONE]
 
@@ -50,6 +49,7 @@ class SimpleCollection extends Collection {
                       console.error(err);
                     });
     }
+    
     
     selectTrigger(itemId){
         var item = Tools.search(parseInt(itemId), 'id', this.connectedRepository.items);   

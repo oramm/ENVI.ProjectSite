@@ -5,13 +5,22 @@ class Collection {
     constructor(id){
         this.id = id;
         
-        this.isDeletable = true;
-        //this.isEditable = true;
-        this.isSelectable = true;
+        
         this.$dom;
         this.$actionsMenu;
         this.$emptyList = $('<H4 class="emptyList">Lista jest pusta</H4>');
         this.$collection = $('<ul class="collection">');
+        
+        //buduję szkielet, żeby podpiąć modale do $dom, 
+        //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
+        this.$dom = $('<div>')
+                .attr('id', 'container' + '_' + this.id);
+
+        this.$actionsMenu = $('<div >')
+               .attr('id', 'actionsMenu' + '_' + this.id);
+                        
+        this.$dom.append(this.$actionsMenu)
+                .append(this.$collection);
     }
     
     initialise(items, parentViewObject, parentViewObjectSelectHandler){
@@ -19,6 +28,10 @@ class Collection {
         //this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
         //this.parentViewObject = parentViewObject;
         
+        this.isDeletable = true;
+        this.isEditable = (this.$editModal !== undefined)? true : false;
+        this.isSelectable = true;
+
         this.buildDom();
         if (this.items.length === 0) {           
             this.$dom 
@@ -28,27 +41,20 @@ class Collection {
         
         this.actionsMenuInitialise();
         
-        Tools.hasFunction(this.addNewHandler);
+        //Tools.hasFunction(this.addNewHandler);
         Tools.hasFunction(this.makeItem);
     }
     
     buildDom(){
-        this.$dom = $('<div>')
-                .attr('id', 'container' + '_' + this.id);
-
-        this.$actionsMenu = $('<div >')
-               .attr('id', 'actionsMenu' + '_' + this.id);
-                        
-        this.$dom.append(this.$actionsMenu)
-                .append(this.$collection);
+        
         
         for (var i=0; i<this.items.length; i++){
             var $row = this.buildRow(this.items[i]);
             this.$collection.append($row);
         }
         
-        if (this.$editModal !== undefined) this.setEditAction();
-        if (this.isDeletable) this.setRemoveAction();
+        if (this.isEditable) this.setEditAction();
+        if (this.isDeletable) this.setDeleteAction();
         if (this.isSelectable) this.setSelectAction();
     }
     
@@ -67,7 +73,7 @@ class Collection {
                     this.$collection.children('#' + item.tmpId).attr('id',item.id);
                     //.$('#preloader'+item.id).remove();
                     if (this.$editModal !== undefined) this.setEditAction();
-                    if (this.isDeletable) this.setRemoveAction();
+                    if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
                     this.items.push(item);
                     return status;
@@ -112,7 +118,7 @@ class Collection {
                     this.setEditAction();
                     var $oldRow = this.$collection.find('#' + item.id + '_toDelete');
                     $oldRow.remove();
-                    if (this.isDeletable) this.setRemoveAction();
+                    if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
                     break;
                 case "PENDING":  
@@ -176,7 +182,7 @@ class Collection {
     /*
      * Klasa pochodna musi mieć zadeklarowaną metodę removeTrigger()
      */
-    setRemoveAction(){
+    setDeleteAction(){
         this.$dom.find(".itemDelete").off('click');
         var _this = this;
         this.$dom.find(".itemDelete").click(function() {   
@@ -185,12 +191,14 @@ class Collection {
     }
     
     setEditAction(){
-        this.$dom.find(".itemEdit").off('click');
+        this.$dom.find(".collectionItemEdit").off('click');
         var _this = this;
-        this.$dom.find(".itemEdit").click(function() { 
+        this.$dom.find(".collectionItemEdit").click(function(e) { 
                                         $(this).parent().parent().parent().parent().trigger('click');
                                         _this.$editModal.fillWithData();
                                         Materialize.updateTextFields();
+                                        //e.stopPropagation();
+                                        //e.preventDefault();
                                         });
     }
     //-------------------------------------- funkcje prywatne -----------------------------------------------------
@@ -207,23 +215,6 @@ class Collection {
         return $row;        
     }
     
-    filterInitialise(){
-        this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-                                                                  this.$collection.children('li'))
-                                );
-    }
-    /*
-     * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()
-     */
-    actionsMenuInitialise(){
-        //var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler);
-        //this.$actionsMenu.append(newItemButton);
-        if (this.$addNewModal !== undefined)
-            this.$addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis");
-        this.filterInitialise();
-
-    }
-    
     /*
      * Ustawia pryciski edycji wierszy
      */
@@ -236,12 +227,27 @@ class Collection {
             if (this.$editModal !== undefined) 
                 button.children('ul')
                     //data-target="' + this.id + '" class="btn modal-trigger"
-                    .append('<li><a data-target="' + this.$editModal.id + '" class="btn-floating blue itemEdit modal-trigger"><i class="material-icons">edit</i></a></li>');
-                    //.append('<li><a href ="'+ item.editUrl + '" target="_blank" class="btn-floating blue itemEdit"><i class="material-icons">edit</i></a></li>');
+                    .append('<li><a data-target="' + this.$editModal.id + '" class="btn-floating blue collectionItemEdit modal-trigger"><i class="material-icons">edit</i></a></li>');
+                    //.append('<li><a href ="'+ item.editUrl + '" target="_blank" class="btn-floating blue collectionItemEdit"><i class="material-icons">edit</i></a></li>');
             if (this.isDeletable) 
                 button.children('ul')
                     .append('<li><a class="btn-floating red itemDelete"><i class="material-icons">delete</i></a></li>');
         }
+    }
+    
+    filterInitialise(){
+        this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
+                                                                  this.$collection.children('li'))
+                                );
+    }
+
+    actionsMenuInitialise(){
+        //var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler);
+        //this.$actionsMenu.append(newItemButton);
+        if (this.$addNewModal !== undefined)
+            this.$addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis");
+        this.filterInitialise();
+
     }
     
     makePreloader(id){
