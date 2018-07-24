@@ -2,6 +2,7 @@ class MainController {
     main(){
         // Hide auth UI, then load client library.
         mainWindowView = new MainWindowView();
+        mainWindowView.loadIframe("iframeMain", 'Dashboard/dashboard.html');
         $("#authorize-div").hide();
         mainWindowView.dataLoaded(false);
         
@@ -14,7 +15,7 @@ class MainController {
                                                  //'editProjectInDb',
                                                  //'deleteProject'
                                                          );
-        projectsRepository.initialise()
+        projectsRepository.initialise(gAuth.userEmail)
             .then(()=>  {   console.log("Projects initialised");
                             mainWindowView.initialise();
                             mainWindowView.dataLoaded(true);

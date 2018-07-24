@@ -1,4 +1,5 @@
 var casesRepository;
-var contracts = {};
-var chosenContract;
-var contractsAutocompleteList={};
+var personsRepository;
+//var contracts = {};
+//var chosenContract;
+//var contractsAutocompleteList={};

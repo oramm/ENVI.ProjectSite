@@ -1,5 +1,6 @@
 class GAuth2 {
     constructor(){
+        this.userEmail;
         this.initParams = {
                             discoveryDocs: DISCOVERY_DOCS,
                             clientId: CLIENT_ID,
@@ -56,19 +57,33 @@ class GAuth2 {
         if (isSignedIn) {
             var mainController = new MainController();
             mainController.main();
-
+            this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
             //personRolesController = new PersonRolesController();
             //personRolesController.main();
           } else {
                 $("#content").hide();
                 $("#authorize-div").show();
                 //Button for the user to click to initiate auth sequence
-                var newMilestoneButton = FormTools.createRaisedButton('Zaloguj się', ()=> this.handleAuthClick(event) );
-                $("#authorize-div .row").append(newMilestoneButton);
+                var loginButton = FormTools.createRaisedButton('Zaloguj się', ()=> this.handleAuthClick(event) );
+                $("#authorize-div .row").append(loginButton);
                 
             
                 //signoutButton.style.display = 'none';
           }
+    }
+    /*
+     * https://developers.google.com/identity/sign-in/web/sign-in
+     * @param {type} googleUser - gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile()
+     */
+    onSignIn(googleUser) {
+        var profile = googleUser;
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+       
+
+        this.userEmail = profile.getEmail();
     }
 
     /**

@@ -1,19 +1,10 @@
-class CasesController {
+class MyTasksController {
     main(){
         // Hide auth UI, then load client library.
-        var casesListView = new CasesListView();
+        var myTasksView = new MyTasksView();
         $("#authorize-div").hide();
-        casesListView.dataLoaded(false);
+        myTasksView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
-        //tasksRepository = new TasksRepository();
-        //casesRepository = new CasesRepository();
-        
-        casesRepository = new SimpleRepository('Tasks repository',
-                                                    'getCasesListPerMilestone',
-                                                    'addNewCaseInDb',
-                                                    'editCaseInDb',
-                                                    'deleteCase');
         
         tasksRepository = new SimpleRepository('Cases repository',
                                                     'getTasksListPerMilestone',
@@ -28,12 +19,11 @@ class CasesController {
         var promises = [];
         
         promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
-        promises[1] = casesRepository.initialise(casesRepository.parentItemId);
-        promises[2] = personsRepository.initialise();
+        promises[1] = personsRepository.initialise();
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
-                            casesListView.initialise();
+                            myTasksView.initialise();
                         })            
             .then(  ()=>{   $('select').material_select();
                             $('.modal').modal();

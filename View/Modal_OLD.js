@@ -9,20 +9,23 @@ class Modal {
         this.connectedResultsetComponent = connectedResultsetComponent;
         
         this.dataObject;
-        this.form;
+        this.$formElements;
+        this.$form;
         this.$dom;
     }
     initialise(){
         this.buildDom();
+        this.addFormElements();
         Tools.hasFunction(this.submitTrigger);
     }
     
     buildDom(){
-        this.form = new Form("foo_"+ this.id, "GET", this.formElements);
+        this.$form = FormTools.createForm("foo_"+ this.id, "GET");
+        //$('body')
         this.connectedResultsetComponent.$dom
             .append('<div id="' + this.id + '" class="modal modal-fixed-footer">').children(':last-child')
                 .append('<div class="modal-content">').children()
-                    .append(this.form.$dom);
+                    .append(this.$form);
         this.connectedResultsetComponent.$dom.children(':last-child')
                 .append('<div class="modal-footer">').children(':last-child')
                     .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">ZAMKNIJ</a>');
@@ -30,10 +33,26 @@ class Modal {
         this.setSubmitAction();
     }
     
+    addFormElements(){
+        for (var i = 0; i<this.$formElements.length; i++){
+            this.appendUiElement(this.$formElements[i])
+        }
+    }
+    
     setTittle(tittle){
         $('#' + this.id + ' .modal-content' ).prepend('<h4>'+ tittle +'</h4>');
     }
-    
+    /*
+     * @param {String} uiElement html Code for JQUERY Append.
+     */
+    appendUiElement($uiElelment){
+        return new Promise((resolve, reject) => {
+            this.$form
+                    .append('<div class="row">').children(':last-child')
+                        .append($uiElelment);
+            resolve($uiElelment + "appended prpoperly");
+        })
+     }
     
     preppendTriggerButtonTo($uiElelment,caption){
         $uiElelment.prepend('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
@@ -44,7 +63,7 @@ class Modal {
      * Klasa pochodna musi mieć metodę submitTrigger()
      */
     setSubmitAction() {
-        this.form.$dom.submit((event) => {
+        this.$form.submit((event) => {
             this.submitTrigger();
             // prevent default posting of form
             event.preventDefault();

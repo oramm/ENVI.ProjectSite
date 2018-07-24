@@ -1,7 +1,7 @@
 class MilestonesCollection extends SimpleCollection {
-    constructor(id,contractId){
+    constructor(id,parentId){
         super(id, milestonesRepository);
-        this.contractId = contractId;
+        this.parentId = parentId;
 
         this.$addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
         this.$editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);
@@ -27,7 +27,7 @@ class MilestonesCollection extends SimpleCollection {
     
     
     makeList(){
-        return super.makeList().filter((item)=>item.contractId_Hidden==this.contractId);
+        return super.makeList().filter((item)=>item.contractId_Hidden==this.parentId);
     }
     
     selectTrigger(itemId){

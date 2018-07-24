@@ -1,20 +1,18 @@
 class CaseModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
-        super(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler);
-        this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300);
-        this.$formElements = [
-            FormTools.createInputField(this.id + 'nameTextField','Nazwa sprawy', true, 150),
-            this.descriptionReachTextArea.$dom,
-            FormTools.createSubmitButton("Przypisz")
+    constructor(id, tittle, connectedResultsetComponent){
+        super(id, tittle, connectedResultsetComponent);
+        this.formElements = [
+            new InputTextField (this.id + 'nameTextField','Nazwa sprawy', undefined, true, 150),
+            new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300)
         ];
         this.initialise();
     }
 
     fillWithData(){
-        this.$formElements[0].children('input').val(casesRepository.currentItem.name);
-        tinyMCE.get(this.id + 'descriptionReachTextArea').setContent(casesRepository.currentItem.description);
-        tinyMCE.triggerSave();
-        Materialize.updateTextFields();
+        this.form.fillWithData([
+            casesRepository.currentItem.name,
+            casesRepository.currentItem.description
+        ]);
     }
         
     /*
@@ -25,12 +23,15 @@ class CaseModal extends Modal {
     */
     submitTrigger(){
         tinyMCE.triggerSave();
-        this.dataObject = { id: casesRepository.currentItem.id, //używane tylko przy edycji
-                            name: $('#'+this.id + 'nameTextField').val(),
-                            description: $('#'+this.id + 'descriptionReachTextArea').val(),
-                            milestoneId: casesRepository.parentItemId
+        this.dataObject = { name: '',
+                            description: ''
                           };
-        casesRepository.setCurrentItem(this.dataObject);
+        this.form.submitHandler(this.dataObject);
+        if (this.form.validate(this.dataObject)){
+            this.dataObject.id = casesRepository.currentItem.id, //używane tylko przy edycji
+            this.dataObject.milestoneId = casesRepository.parentItemId;
+            casesRepository.setCurrentItem(this.dataObject);
+        }
     }
     
 };

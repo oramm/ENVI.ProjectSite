@@ -73,7 +73,7 @@ class AutoCompleteTextField {
 
     setChosenItem(inputValue){
             this.chosenItem = search(inputValue, this.key, this.repository.items);
-            this.repository.selectedItem = this.chosenItem;
+            this.repository.currentItem = this.chosenItem;
             if (this.chosenItem !== undefined) this.$dom.children('input').attr('pattern','^' + inputValue + '$')
             this.$dom.children('input').val(inputValue);
             
@@ -114,7 +114,7 @@ class SelectField{
                                 .text(optionsData[i]);
             this.$select.append($option);
         }
-        
+    
     }
     
     createSelectField(id, label, icon, isRequired, options){
@@ -134,6 +134,11 @@ class SelectField{
         this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         this.chosenItem = inputValue;
     }
+    
+    validate(){
+        if (this.isRequired)
+            return this.chosenItem !== "Wybierz opcję";
+    }
 } 
 
 class ReachTextArea {
@@ -142,7 +147,7 @@ class ReachTextArea {
         this.label = label;
         this.isRequired = isRequired;
         this.maxCharacters = maxCharacters;
-        this.$dom = this.createReachTextArea();
+        this.createReachTextArea();
     }
     /*
      * Używać w klasie XxxxController po XxxxView.initilise()
@@ -211,12 +216,19 @@ class ReachTextArea {
      *      tinyMCE.triggerSave();
      */
     createReachTextArea(){
-        var $textArea;
-        $textArea = FormTools.createTextArea(this.id, this.label, this.isRequired);
-        $textArea.children('textarea')
-                .addClass('reachTextArea')
-                .attr('max_chars',this.maxCharacters);
-        return $textArea;
+        this.$dom = $('<div>');
+        var $input = $('<textarea class="materialize-textarea validate" id="' + this.id + '" name="' + this.id + '" >');
+        var $label = $('<label>'+ this.label +'</label>');
+        $label.addClass('active')
+        
+        this.$dom
+            .append($label)
+            .append($input);
+    
+        $input
+            .attr('max_chars',this.maxCharacters)
+            .addClass('reachTextArea')
+            //.append($input);
     }
 }
 
@@ -320,16 +332,140 @@ class DatePicker {
         var picker = $generatedInput.pickadate('picker')
         picker.set('select', date, { format: 'yyyy-mm-dd' })
     }
-    checkDate() {
-        if ($('#' + this.id).val() == '') {
-            this.$input.addClass('invalid')
+    
+    validate() {
+        var test = $('#' + this.id).val() != '';
+        if (test === false) {
+            this.$input.addClass('invalid');
         } else {
-            this.$input.removeClass('invalid')
+            this.$input.removeClass('invalid');
+        }
+        return test;
+    }
+}
+class InputTextField {
+    constructor(id, label, icon, isRequired, maxCharacters, validateRegex, dataError){
+        this.id = id;
+        this.label = label;
+        this.icon = icon;
+        this.isRequired = isRequired;
+        this.$dom;
+        this.createInputField(id, label, icon, isRequired, maxCharacters, validateRegex, dataError);
+    }
+    //ikony do dodania
+    createInputField(id, label, icon, isRequired, maxCharacters, validateRegex, dataError){
+        this.$dom = $('<div class="input-field">');
+        var $input = $('<input type="text" class="validate" id="' + id + '" name="' + id + '">');
+        var $label = $('<label for="'+ id +'">'+ label +'</label>');
+        this.$dom
+            .append($input)
+            .append($label);
+        if (isRequired)
+            $input.attr('required','true');
+      
+        if (maxCharacters >0){
+            $input
+                .attr('data-length', maxCharacters);
+            $input.characterCounter();
+        }
+        if (validateRegex !== undefined){
+            $input
+                .attr('pattern',validateRegex)   ;         
+        }
+
+        if (dataError !== undefined) 
+            $label.attr('data-error',dataError);
+        else
+            $label.attr('data-error','Niewłaściwy format danych');
+    }
+}
+class Form {
+    constructor(id, method,elements){
+        this.id = id;
+        this.method = method;
+        this.elements = elements;
+        this.$dom;
+        this.buidDom();
+    }
+    
+    buidDom(){
+        this.$dom = $('<form id="'+ this.id +'" method="'+ this.method +'">');
+        for (var i = 0; i<this.elements.length; i++){
+            this.$dom
+                    .append('<div class="row">').children(':last-child')
+                        .append(this.elements[i].$dom);
+        }
+        this.$dom.append(FormTools.createSubmitButton("Zapisz"));
+    }
+    //używane przy edycji modala
+    fillWithData(currentItem){
+        for (var i =0; i < this.elements.length; i++){
+            switch (this.elements[i].constructor.name) {
+                case 'InputTextField' :
+                    this.elements[i].$dom.children('input').val(currentItem[i]);
+                    break;
+                case 'ReachTextArea' :
+                    tinyMCE.get(this.elements[i].id).setContent(currentItem[i]);
+                    tinyMCE.triggerSave();
+                    break;
+                case 'DatePicker' :
+                    this.elements[i].setChosenDate(currentItem[i])
+                    break;
+                case 'SelectField' :
+                    this.elements[i].setChosenItem(currentItem[i]);
+                    break;
+                case 'AutoCompleteTextField' :
+                    this.elements[i].setChosenItem(currentItem[i]);
+                    break;
+                case 'SelectField' :
+                    this.elements[i].simulateChosenItem(currentItem[i]);
+                    break
+            }
+        }
+        Materialize.updateTextFields();
+    }
+    //używane przy SubmitTrigger w Modalu
+    validate(dataObject){
+        for (var i =0; i < this.elements.length; i++){
+            switch (this.elements[i].constructor.name) {
+                case 'DatePicker' :
+                case 'SelectField' :
+                    return this.elements[i].validate(dataObject[i]);
+            }
+        }
+    }
+    
+    submitHandler(dataObject){
+        var i = 0;
+        for (var property in dataObject){
+            
+            switch (this.elements[i].constructor.name) {
+                case 'InputTextField' : 
+                case 'ReachTextArea' :
+                case 'DatePicker' :
+                    dataObject[property] = $('#'+ this.elements[i].id).val();
+                    break;
+                case 'SelectField' :
+                    dataObject[property] =  this.elements[i].$dom.find('input').val();
+                    break;
+                case 'AutoCompleteTextField' :
+                    if (this.elements[i].chosenItem) 
+                        dataObject[property] =  this.elements[i].chosenItem.id;
+                    break;
+            }
+            i++;
         }
     }
 }
-
 class FormTools{
+    /*
+     * @deprecated zastąpić klasą odrębną
+     */
+    static createForm(id, method){
+        var form = $('<form id="'+ id +'" method="'+ method +'">');
+        return form;
+    }
+    
     /* 
      * initiates a radio input
      * it must be wrapped in a HTML element named as #name argument
@@ -363,11 +499,6 @@ class FormTools{
         return radioButtons;
     }
 
-    static createForm(id, method){
-        var form = $('<form id="'+ id +'" method="'+ method +'">');
-        return form;
-    }
-
     static createSubmitButton(caption){
         var button = $('<Button class="btn waves-effect waves-light" name="action"></button>');
         button.append(caption);
@@ -397,13 +528,13 @@ class FormTools{
         }
         if (validateRegex !== undefined){
             $input
-                .attr('pattern',validateRegex)            
+                .attr('pattern',validateRegex)   ;         
         }
 
         if (dataError !== undefined) 
-            $label.attr('data-error',dataError)
+            $label.attr('data-error',dataError);
         else
-            $label.attr('data-error','Niewłaściwy format danych')
+            $label.attr('data-error','Niewłaściwy format danych');
         
         return $textField;
     }
@@ -414,7 +545,7 @@ class FormTools{
         $textField.children().on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $filteredObject.filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
         });
         
@@ -473,4 +604,3 @@ class FormTools{
         $input.appendTo(parentNode);
     }
 }
-

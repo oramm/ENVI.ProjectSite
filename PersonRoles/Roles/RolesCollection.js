@@ -2,8 +2,8 @@ class RolesCollection extends SimpleCollection {
     constructor(id){
         super(id, rolesRepository);
         
-        this.$addNewModal = new NewRoleModal('newRoleModal', 'Dodaj rolę', this);
-        this.$editModal = new EditRoleModal('editRoleModal', 'Edytuj role', this);
+        this.$addNewModal = new NewRoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this);
+        this.$editModal = new EditRoleModal(this.id + '_editRoleModal', 'Edytuj role', this);
         
         this.initialise(this.makeList());        
     }

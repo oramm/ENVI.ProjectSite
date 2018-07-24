@@ -39,7 +39,9 @@ class PersonsRolesController {
             .then((res)=>   {    console.log(res); 
                                 personsRolesAssociationView.initialise();
                             })
-            .then(() => $('select').material_select())
+            .then(() =>     {   $('select').material_select();
+                                $('.modal').modal();
+                            })
             .catch(err => {
                   console.error(err);
                 });

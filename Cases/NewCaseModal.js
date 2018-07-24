@@ -28,7 +28,7 @@ class NewCaseModal extends CaseModal {
     }
     
     fillWithTestData(){
-        this.$formElements[0].children('input').val('nazwa testoWA');
+        //this.formElements[0].children('input').val('nazwa testoWA');
         //tinyMCE.get(this.id + 'descriptionReachTextArea').setContent('OPIS TESOTWY');
         //tinyMCE.triggerSave();       
         

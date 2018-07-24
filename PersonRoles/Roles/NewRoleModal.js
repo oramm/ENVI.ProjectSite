@@ -28,9 +28,9 @@ class NewRoleModal extends RoleModal {
     }
     
     fillWithTestData(){
-        this.$formElements[0].children('input').val('');
-        this.$formElements[1].children('input').val('Nazwisko');
-        this.$formElements[2].children('input').val('opis doświadczxenie');
+        //this.$formElements[0].children('input').val('');
+        //this.$formElements[1].children('input').val('Nazwisko');
+        //this.$formElements[2].children('input').val('opis doświadczxenie');
         
     }
 };

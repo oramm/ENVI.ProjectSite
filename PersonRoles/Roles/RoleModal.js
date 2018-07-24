@@ -1,22 +1,21 @@
 class RoleModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
-        super(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler);
+    constructor(id, tittle, connectedResultsetComponent){
+        super(id, tittle, connectedResultsetComponent);
         
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', true, 500);
         
-        this.$formElements = [
-            FormTools.createInputField(this.id + 'nameTextField','Nazwa roli', true, 150),
-            this.descriptionReachTextArea.$dom,       
-            FormTools.createSubmitButton("Przypisz")
+        this.formElements = [
+            new InputTextField (this.id + 'nameTextField','Nazwa roli', undefined, true, 150),
+            this.descriptionReachTextArea
         ];
         this.initialise();
-        
-
-    }fillWithData(){
-        this.$formElements[0].children('input').val(rolesRepository.currentItem.name);
-
-        tinyMCE.get(this.id + 'descriptionReachTextArea').setContent(rolesRepository.currentItem.description);
-        tinyMCE.triggerSave();
+    }
+    
+    fillWithData(){
+        this.form.fillWithData([
+            rolesRepository.currentItem.name,
+            rolesRepository.currentItem.description
+        ]);
     }
         
     /*
@@ -27,12 +26,15 @@ class RoleModal extends Modal {
     */
     submitTrigger(){
         tinyMCE.triggerSave();
-        this.dataObject = { id: rolesRepository.currentItem.id, //używane tylko przy edycji
-                            name: $('#'+this.id + 'nameTextField').val(),
-                            description: $('#'+this.id + 'descriptionReachTextArea').val(),
-                            projectId: rolesRepository.currentProjectId
+        this.dataObject = { name: '',
+                            description: ''
                           };
-        rolesRepository.setCurrentItem(this.dataObject);
+        this.form.submitHandler(this.dataObject);
+        if (this.form.validate(this.dataObject)){
+            this.dataObject.id = rolesRepository.currentItem.id, //używane tylko przy edycji
+            this.dataObject.projectId = rolesRepository.currentProjectId;
+            rolesRepository.setCurrentItem(this.dataObject);
+        }
     }
     
 };

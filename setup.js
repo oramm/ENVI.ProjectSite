@@ -20,11 +20,11 @@ var SCOPES = ['https://www.google.com/calendar/feeds',
 //var SCOPES = 'https://www.googleapis.com/auth/drive';  //test
 
  SCOPES =  'https://www.google.com/calendar/feeds ' + 
-              'https://www.googleapis.com/auth/forms ' +
-              'https://www.googleapis.com/auth/script.external_request ' +  
-              'https://www.googleapis.com/auth/spreadsheets ' +
-              'https://www.googleapis.com/auth/userinfo.email ' +
-              'https://www.googleapis.com/auth/drive';
+            'https://www.googleapis.com/auth/forms ' +
+            'https://www.googleapis.com/auth/script.external_request ' +  
+            'https://www.googleapis.com/auth/spreadsheets ' +
+            'https://www.googleapis.com/auth/userinfo.email ' + 
+            'https://www.googleapis.com/auth/userinfo.profile ';
 
 var gAuth;
 var mainWindowView;

@@ -11,11 +11,13 @@ class EditTaskModal extends TaskModal {
     */
     submitTrigger(){
         super.submitTrigger();
-        
-        if(this.wasChanged(this.dataObject)){
-            tasksRepository.editItem(tasksRepository.currentItem, this.connectedResultsetComponent);
-        } else {
-            alert("Taki wpis już jest w bazie!");
+        if (this.form.validate(this.dataObject)){
+            
+            if(this.wasChanged(this.dataObject)){
+                tasksRepository.editItem(tasksRepository.currentItem, this.connectedResultsetComponent);
+            } else {
+                alert("Taki wpis już jest w bazie!");
+            }
         }
     }
     

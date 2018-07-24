@@ -1,7 +1,7 @@
 class NewTaskModal extends TaskModal {
     constructor(id, tittle, connectedResultsetComponent){
         super(id, tittle, connectedResultsetComponent);
-        this.fillWithTestData();
+        //this.fillWithTestData();
         
 
     }
@@ -28,7 +28,7 @@ class NewTaskModal extends TaskModal {
     }
     
     fillWithTestData(){
-        this.$formElements[0].children('input').val('nazwa testoWA');
+        this.formElements[0].$dom.children('input').val('nazwa testoWA');
         //tinyMCE.get(this.id + 'descriptionReachTextArea').setContent('OPIS TESOTWY');
         //tinyMCE.triggerSave();
         //this.startDatePicker.setChosenDate("2018-02-06");

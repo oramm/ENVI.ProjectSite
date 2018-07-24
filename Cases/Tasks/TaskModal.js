@@ -1,9 +1,6 @@
-/*
- * TODO w przyszłości
- */
 class TaskModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
-        super(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler);
+    constructor(id, tittle, connectedResultsetComponent){
+        super(id, tittle, connectedResultsetComponent);
         this.statusNames = [    'Nie rozpoczęty',
                                 'W trakcie',
                                 'Zrobione',
@@ -14,27 +11,33 @@ class TaskModal extends Modal {
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
         this.statusSelectField.initialise(this.statusNames);
-        this.$formElements = [
-            FormTools.createInputField(this.id + 'nameTextField','Nazwa zadania', true, 150),
-            this.descriptionReachTextArea.$dom,
-            this.deadLinePicker.$dom,
-            this.statusSelectField.$dom,
-            FormTools.createSubmitButton("Przypisz")
+        
+        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
+                                                                     'Imię i nazwisko', 
+                                                                     'person', 
+                                                                     false, 
+                                                                     'Wybierz imię i nazwisko')
+        this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        
+        this.formElements = [
+            new InputTextField (this.id + 'nameTextField','Nazwa zadania', undefined, true, 150),
+            this.descriptionReachTextArea,
+            this.deadLinePicker,
+            this.statusSelectField,
+            this.personAutoCompleteTextField
         ];
         this.initialise();
-        
-
     }
 
     fillWithData(){
-        this.$formElements[0].children('input').val(tasksRepository.currentItem.name);
-        tinyMCE.get(this.id + 'descriptionReachTextArea').setContent(tasksRepository.currentItem.description);
-        tinyMCE.triggerSave();
-        this.deadLinePicker.setChosenDate(tasksRepository.currentItem.deadline);
-        this.statusSelectField.setChosenItem(tasksRepository.currentItem.status);
-        Materialize.updateTextFields();
+        this.form.fillWithData([
+            tasksRepository.currentItem.name,
+            tasksRepository.currentItem.description,
+            tasksRepository.currentItem.deadline,
+            tasksRepository.currentItem.status,
+            tasksRepository.currentItem.nameSurnameEmail,
+        ]);
     }
-        
     /*
      * Krok 1 - po kliknięciu 'Submit' formularza dodawania
      * Proces: this.submitTrigger >> tasksRepository.addNewPerson
@@ -43,15 +46,17 @@ class TaskModal extends Modal {
     */
     submitTrigger(){
         tinyMCE.triggerSave();
-        this.dataObject = { id: tasksRepository.currentItem.id, //używane tylko przy edycji
-                            name: $('#'+this.id + 'nameTextField').val(),
-                            description: $('#'+this.id + 'descriptionReachTextArea').val(),
-                            deadline: $('#' + this.id + 'deadLinePickerField').val(),
-                            status: this.$formElements[3].find('input').val(),
-                            caseId: casesRepository.currentItem.id
+        this.dataObject = { name: '',
+                            description: '',
+                            deadline: '',
+                            status: '',
+                            ownerId: '',
                           };
-        this.deadLinePicker.checkDate();
-        tasksRepository.setCurrentItem(this.dataObject);
-    }
-    
+        this.form.submitHandler(this.dataObject);
+        if (this.form.validate(this.dataObject)){
+            this.dataObject.id = tasksRepository.currentItem.id, //używane tylko przy edycji
+            this.dataObject.caseId = casesRepository.currentItem.id;
+            tasksRepository.setCurrentItem(this.dataObject);
+        }
+    }    
 };

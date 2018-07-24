@@ -28,12 +28,12 @@ class NewMilestoneModal extends MilestoneModal {
     }
     
     fillWithTestData(){
-        this.$formElements[0].children('input').val('nazwa testoWA');
+        //this.formElements[0].children('input').val('nazwa testoWA');
         //tinyMCE.get(this.id + 'descriptionReachTextArea').setContent('OPIS TESOTWY');
         //tinyMCE.triggerSave();
         //this.startDatePicker.setChosenDate("2018-02-06");
         //this.endDatePicker.setChosenDate("2018-02-06");
-        this.statusSelectField.setChosenItem('Zrobione');
+        //this.statusSelectField.setChosenItem('Zrobione');
         
         
     }

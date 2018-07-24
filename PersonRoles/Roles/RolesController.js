@@ -26,7 +26,9 @@ class RolesController {
             .then((res)=>   {   console.log(res); 
                                 rolesView.initialise();
                             })
-            .then(()=>ReachTextArea.reachTextAreaInit())
+            .then(()=>  {   ReachTextArea.reachTextAreaInit();
+                            $('.modal').modal();
+                        })
             .catch(err => {
                   console.error(err);
                 });

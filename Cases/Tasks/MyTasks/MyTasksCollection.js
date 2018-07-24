@@ -1,5 +1,5 @@
-class TasksCollection extends SimpleCollection {
-    constructor(id,parentId){
+class MyTasksCollection extends SimpleCollection {
+    constructor(id, parentId){
         super(id, tasksRepository);
         this.parentId = parentId;
         
