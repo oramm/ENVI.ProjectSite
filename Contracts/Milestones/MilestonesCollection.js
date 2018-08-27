@@ -1,7 +1,15 @@
 class MilestonesCollection extends SimpleCollection {
-    constructor(id,parentId){
-        super(id, milestonesRepository);
-        this.parentId = parentId;
+    constructor(initParamObject){
+        super({id: initParamObject.id, 
+               title: initParamObject.title,
+               isPlain: false, 
+               hasFilter: false,
+               isEditable: true, 
+               isAddable: true, 
+               isDeletable: true,
+               connectedRepository: milestonesRepository
+              });
+        this.parentId = initParamObject.parentId;
 
         this.$addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
         this.$editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);

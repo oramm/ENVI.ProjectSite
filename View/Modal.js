@@ -15,6 +15,7 @@ class Modal {
     initialise(){
         this.buildDom();
         Tools.hasFunction(this.submitTrigger);
+        
     }
     
     buildDom(){
@@ -36,7 +37,19 @@ class Modal {
     
     
     preppendTriggerButtonTo($uiElelment,caption){
-        $uiElelment.prepend('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
+        var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
+        var _this = this;
+        $button.click(    function(){if(_this.fillWithInitData) _this.fillWithInitData() //funkcja dokładana w SpecificNewModal
+                                  });
+        $uiElelment.prepend($button);
+    }
+    
+    preppendTriggerIconTo($uiElelment,caption){
+        var $icon = $('<a data-target="' + this.id + '" class="collectionItemAddNew modal-trigger"><i class="material-icons">add</i></a>')
+        var _this = this;
+        $icon.click(    function(){if(_this.fillWithInitData) _this.fillWithInitData() //funkcja dokładana w SpecificNewModal
+                                  });
+        $uiElelment.prepend($icon);                         
     }
     
     /*

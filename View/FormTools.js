@@ -386,6 +386,7 @@ class Form {
         this.elements = elements;
         this.$dom;
         this.buidDom();
+        this.dataObject //do refactoringu w przyszłości przenieść tu obsługę SubmitRrigger() z modali
     }
     
     buidDom(){
@@ -431,10 +432,17 @@ class Form {
                 case 'DatePicker' :
                 case 'SelectField' :
                     return this.elements[i].validate(dataObject[i]);
+                  
+                default :
+                    //w pozostałych przypadkach walidację zostawiamy dla natywnego HTML5
+                    return true;
             }
         }
     }
-    
+    /*
+     * Aktualizuje atrybuty edytowanego obiektu na podstawie pól formularza
+     * @param {repositoryData} dataObject
+     */
     submitHandler(dataObject){
         var i = 0;
         for (var property in dataObject){
@@ -450,13 +458,148 @@ class Form {
                     break;
                 case 'AutoCompleteTextField' :
                     if (this.elements[i].chosenItem) 
-                        dataObject[property] =  this.elements[i].chosenItem.id;
+                        dataObject[property] =  this.elements[i].chosenItem;
                     break;
             }
             i++;
         }
     }
 }
+
+class AtomicEditForm extends Form {
+    constructor(id, method, elements, atomicEditLabel){
+        super(id, method, elements);
+        if(this.elements[0].constructor.name !== 'ReachTextArea')
+            this.$dom.children(':last-child').remove();
+        this.dataObject = {editedParameter: ''};
+        this.atomicEditLabel = atomicEditLabel;
+        this.setSubmitAction();
+        this.setCancelAction();
+    }
+    
+    /*
+     * Funkcja musi być przekazana joko argument, albo obsłużona w klasie pochodnej.
+     * Klasa pochodna musi mieć metodę submitTrigger()
+     * @param {function} submitTrigger
+     */
+    setSubmitAction(submitTrigger) {
+        this.$dom.submit((event) => {
+            this.submitTrigger();
+            //(typeof submitTrigger  === 'function')? submitTrigger() : this.submitTrigger();
+            // prevent default posting of form
+            event.preventDefault();
+        });
+    }
+    
+    setCancelAction() {
+        this.$dom.keyup((event) => {
+            if (event.keyCode === 13) {
+                this.$dom.submit();
+            }
+            if (event.keyCode === 27) {
+                this.atomicEditLabel.switchOffEditMode();
+            }
+        });
+        
+        this.$dom.find('input').focusout((event) => {
+            if(this.elements[0].constructor.name !== 'DatePicker')
+                this.atomicEditLabel.switchOffEditMode();
+        });
+        
+    }
+    /*
+     * Uruchamiana po kliknięciu przesłaniu formularza
+     */
+    submitTrigger(){
+        this.submitHandler(this.dataObject);
+        if (this.validate(this.dataObject)){    
+            this.atomicEditLabel.caption = this.dataObject.editedParameter;
+            this.atomicEditLabel.connectedResultsetComponent.connectedRepository.currentItem[this.atomicEditLabel.editedPropertyName] = this.dataObject.editedParameter;
+            
+            this.atomicEditLabel.connectedResultsetComponent.connectedRepository.editItem(this.atomicEditLabel.connectedResultsetComponent.connectedRepository.currentItem,
+                                                                                          this.atomicEditLabel.connectedResultsetComponent);
+        }
+    }
+}
+
+class AtomicEditLabel {
+    /*
+     * @param {String} caption
+     * @param {this.connectedRepository.currentItem} dataObject
+     * @param {type} input
+     * @param {String} editedPropertyName
+     * @param {Collection} connectedResultsetComponent
+     * @returns {AtomicEditLabel}
+     */
+    constructor(caption, dataObject, input, editedPropertyName, connectedResultsetComponent){
+        this.caption = caption;
+        this.dataObject = dataObject;
+        this.editedPropertyName = editedPropertyName;
+        this.connectedResultsetComponent = connectedResultsetComponent;
+        this.input = input;
+        this.buildStaticDom();
+        this.$parent;
+    }
+    
+    buildStaticDom(){
+        this.$dom = $('<span>');
+        this.$dom
+            .html(this.caption+'<br>');
+        this.setEditLabelAction();
+    }
+    
+    buildEditModeDom(){
+        this.$parent = this.$dom.parent(); 
+        this.$parent.children('form').remove();
+        this.$dom.remove();
+        this.form = new AtomicEditForm("tmpEditForm_"+ this.dataObject.id, "GET", 
+                        [this.input], this);
+        this.$dom = this.form.$dom;
+
+        this.$dom.addClass('atomicEditForm');          
+    }
+    /*
+     * inicjuje i wyświetla formularz edycji pola
+     */
+    setEditLabelAction(){
+        this.$dom.off('dblclick');
+        var _this = this;
+        this.$dom.dblclick(function(e) { 
+                                            //$(this).parent().parent().parent().parent().trigger('click');                                 
+                                            _this.switchOnEditMode();
+                                            _this.$dom.find('.datepicker').pickadate({
+                                                                            selectMonths: true, // Creates a dropdown to control month
+                                                                            selectYears: 15, // Creates a dropdown of 15 years to control year,
+                                                                            today: 'Dzisiaj',
+                                                                            clear: 'Wyszyść',
+                                                                            close: 'Ok11',
+                                                                            closeOnSelect: false, // Close upon selecting a date,
+                                                                            container: undefined, // ex. 'body' will append picker to body
+                                                                            format: 'dd-mm-yyyy'
+                                                                        });
+                                            ReachTextArea.reachTextAreaInit();
+                                            _this.form.fillWithData([_this.dataObject[_this.editedPropertyName]]);
+                                            _this.$dom.find('input').focus();
+                                        });
+                                        
+    }
+    switchOnEditMode(){
+        this.buildEditModeDom();
+        this.$parent.append(this.$dom);
+        $('select').material_select();
+        Materialize.updateTextFields();
+                                            
+        
+    }
+    
+    switchOffEditMode(){
+        this.$dom.remove();
+        this.buildStaticDom();
+        this.$parent
+            .append(this.$dom)
+    }
+}
+
 class FormTools{
     /*
      * @deprecated zastąpić klasą odrębną

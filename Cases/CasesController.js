@@ -49,6 +49,7 @@ class CasesController {
                             });
                             ReachTextArea.reachTextAreaInit();
                             Materialize.updateTextFields();
+                            
                         }
             )
             .catch(err => {

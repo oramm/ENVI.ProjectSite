@@ -20,7 +20,11 @@ class ContractsCollapsible extends SimpleCollapsible {
     var $panel = $('<div>')
             .attr('id', 'collapsibleBodyForContract' + dataItem.id)
             .attr('contractid',dataItem.id)
-            .append(new MilestonesCollection('milestonesListCollection' + dataItem.id, dataItem.id).$dom);
+            .append(new MilestonesCollection({  id: 'milestonesListCollection' + dataItem.id, 
+                                                title: "",
+                                                parentId: dataItem.id
+                                            }, 
+                    ).$dom);
     return $panel;
     }
 

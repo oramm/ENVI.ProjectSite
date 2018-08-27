@@ -1,6 +1,6 @@
 class PersonsRolesAssociationModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler){
-        super(id, tittle, connectedResultsetComponent, connectedResultsetComponentAddNewHandler);
+    constructor(id, tittle, connectedResultsetComponent){
+        super(id, tittle, connectedResultsetComponent);
         this.roleNames=[]
         this.setRoleNames();
         
@@ -14,10 +14,9 @@ class PersonsRolesAssociationModal extends Modal {
         this.roleSelectField.initialise(rolesRepository.items);
         
         
-        this.$formElements = [
-            this.personAutoCompleteTextField.$dom,
-            this.roleSelectField.$dom,    
-            FormTools.createSubmitButton("Przypisz")
+        this.formElements = [
+            this.personAutoCompleteTextField,
+            this.roleSelectField
         ];
         
         this.initialise();

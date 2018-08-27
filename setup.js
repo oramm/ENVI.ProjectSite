@@ -28,3 +28,4 @@ var SCOPES = ['https://www.google.com/calendar/feeds',
 
 var gAuth;
 var mainWindowView;
+var user;

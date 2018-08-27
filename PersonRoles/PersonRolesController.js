@@ -28,10 +28,9 @@ class PersonsRolesController {
                                                  'deletePerson'
                                                 );
         var promises = [];
-        var currentProjectId = getUrlVars()["itemId"];
-        promises[0] = rolesRepository.initialise(currentProjectId);
+        promises[0] = rolesRepository.initialise(rolesRepository.parentItemId);
         promises[1] = personsRepository.initialise();
-        promises[2] = personRoleAssociationsRepository.initialise(currentProjectId);
+        promises[2] = personRoleAssociationsRepository.initialise(personRoleAssociationsRepository.parentItemId);
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
                             //return rolesRepository.makePersonRoleAssociations();

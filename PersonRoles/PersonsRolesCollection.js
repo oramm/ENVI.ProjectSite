@@ -1,6 +1,14 @@
 class PersonsRolesCollection extends SimpleCollection {
     constructor(id){
-        super(id, personRoleAssociationsRepository);
+        super({id: id, 
+               title: 'Role w Projekcie',
+               isPlain: false, 
+               hasFilter: false,
+               isEditable: true, 
+               isAddable: true, 
+               isDeletable: true,
+               connectedRepository: personRoleAssociationsRepository
+              });
         
         this.$addNewModal = new NewPersonsRolesAssociationModal('newPersonsRolesAssociation', 'Przypisz rolę', this);
         //this.$editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);

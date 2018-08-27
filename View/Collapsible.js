@@ -59,14 +59,18 @@ class Collapsible {
      */
     buildRow(item){
         var $row = $('<li>');
+        var $crudButtons = $('<span class="crudButtons right">');
+        $crudButtons
+            .css('visibility', 'hidden')
         
         $row
             .append('<div class="collapsible-header"><i class="material-icons">filter_list</i>'+ item.name)
             .append('<div class="collapsible-body">')
-            .attr('itemId', item.id);
+            .attr('itemId', item.id)
+            .addClass('collapsible-item');
         $row.children('.collapsible-header')
             .css('display', 'block')
-            .append('<span class="crudButtons right">')
+            .append($crudButtons);
 
         $row.children(':last').append((item.$body!==undefined)? item.$body : this.makeBodyDom(item));
         this.addRowCrudButtons($row);
@@ -79,13 +83,13 @@ class Collapsible {
      */
     addRowCrudButtons($row){
         if (this.isDeletable || this.isEditable){
-            var $crudMenu = $row.find('.crudButtons');
+            var $crudMenu = $row.find('.collapsible-header > .crudButtons');
             if (this.$editModal !== undefined) 
                 $crudMenu
-                    .append('<a data-target="' + this.$editModal.id + '" class="btn-floating blue itemEdit modal-trigger"><i class="material-icons">edit</i></a>');
+                    .append('<span data-target="' + this.$editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
             if (this.isDeletable) 
                 $crudMenu
-                    .append('<a class="btn-floating red itemDelete"><i class="material-icons">delete</i></a>');
+                    .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
         }
     }
     
@@ -225,6 +229,10 @@ class Collapsible {
         var _this = this;
         this.$dom.find(".collapsible-header").click(function() {   
                                             _this.selectTrigger($(this).parent().attr("itemId"));
+                                            $('.collapsible').find('.collapsible-header > .crudButtons')
+                                                .css('visibility', 'hidden')
+                                            $(this).children('.crudButtons')
+                                                .css('visibility', 'visible');
                                             //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
                                         });
     }
@@ -233,18 +241,18 @@ class Collapsible {
      * Klasa pochodna musi mieć zadeklarowaną metodę removeTrigger()
      */
     setDeleteAction(){
-        this.$dom.find(".itemDelete").off('click');
+        this.$dom.find(".collapsibleItemDelete").off('click');
         var _this = this;
-        this.$dom.find(".itemDelete").click(function() {   
+        this.$dom.find(".collapsibleItemDelete").click(function() {   
                                         _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));   
                                         });
     }
     
     setEditAction(){
-        this.$dom.find(".itemEdit").off('click');
+        this.$dom.find(".collapsibleItemEdit").off('click');
         var _this = this;
-        this.$dom.find(".itemEdit").click(function() { 
-                                        $(this).parent().parent().parent().parent().trigger('click');
+        this.$dom.find(".collapsibleItemEdit").click(function() { 
+                                        $(this).parent().parent().parent().trigger('click');
                                         _this.$editModal.fillWithData();
                                         Materialize.updateTextFields();
                                         });

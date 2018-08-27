@@ -1,6 +1,11 @@
 class ProjectDetailsCollection extends Collection {
     constructor(id){
-        super(id);      
+        super({id: id, 
+               isPlain: false, 
+               isEditable: false, 
+               isAddable: false, 
+               isDeletable: false
+              });      
         this.isDeletable=false;
         this.initialise(this.makeList());
     }

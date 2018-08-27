@@ -16,8 +16,7 @@ class RolesController {
                                                 );
 
         var promises = [];
-        var currentProjectId = getUrlVars()["itemId"];
-        promises[0] = rolesRepository.initialise(currentProjectId);
+        promises[0] = rolesRepository.initialise(rolesRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

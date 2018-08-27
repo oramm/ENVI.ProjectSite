@@ -1,8 +1,39 @@
-
 iframe {
     border:0;
 }
 
+
+
+.collectionItemEdit, .itemDelete{
+    cursor: pointer;
+}
+
+
+.atomicEditForm{
+    background: rgba(255, 255, 255, 0.87);
+    color: rgba(0, 0, 0, 0.87);
+
+}
+
+.attractToDrop {
+    min-height: 40px !important;
+    border: 2px dotted lightgrey !important;
+    background: whitesmoke !important;
+}
+
+.collection {
+    min-height: 60px !important;
+    overflow: visible !important;
+
+    
+}
+
+.emptyList{
+    border:1;
+    background: gainsboro;
+    height: 80px;
+    text-align: center;
+}
 
 body {
     display: flex;
@@ -14,4 +45,4 @@ main {
   flex: 1 0 auto;
 }
       
-      
+     

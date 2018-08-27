@@ -12,6 +12,9 @@ class EditTaskModal extends TaskModal {
     submitTrigger(){
         super.submitTrigger();
         if (this.form.validate(this.dataObject)){
+            this.dataObject.id = tasksRepository.currentItem.id, //używane tylko przy edycji
+            this.dataObject.status = tasksRepository.currentItem.status;
+            tasksRepository.setCurrentItem(this.dataObject);
             
             if(this.wasChanged(this.dataObject)){
                 tasksRepository.editItem(tasksRepository.currentItem, this.connectedResultsetComponent);
