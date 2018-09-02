@@ -215,7 +215,7 @@ class Collapsible {
     actionsMenuInitialise(){
         //do usunięcia ten if
         if (this.$addNewModal === undefined){
-            var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler);
+            var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler,this);
             this.$actionsMenu.append(newItemButton);
         }
         

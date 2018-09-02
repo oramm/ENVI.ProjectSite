@@ -32,7 +32,7 @@ class ContractsCollapsible extends SimpleCollapsible {
      * @deprecated do usuięcia po dodaniu w pzeryszłości modala dla kontraktów
      */
     addNewHandler(){
-        window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ this.connectedRepository.projectId +'&entry.798100984&entry.2087120541&entry.325833130"');
+        window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ this.connectedRepository.parentItemId +'&entry.798100984&entry.2087120541&entry.325833130"');
     }
     
 }

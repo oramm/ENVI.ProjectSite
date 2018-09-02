@@ -253,7 +253,7 @@ class Collection {
             $titleContainer.
                 append(item.$title);
         else if (typeof item.title === 'string')
-            $descriptionContainer
+            $titleContainer
                     .html(item.title);
         
         if (item.$description instanceof jQuery)
