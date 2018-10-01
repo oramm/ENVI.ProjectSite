@@ -15,13 +15,17 @@ class ContractsController {
         
         contractsRepository = new SimpleRepository('Contracts repository',
                                                     'getContractsListPerProject',
-                                                    'addContractInDb',
+                                                    'addNewContract',
                                                     'editContractInDb',
                                                     'deleteContract');
+        personsRepository = new SimpleRepository('Persons repository',
+                                                    'getPersonsNameSurnameEmailList',
+                                                );
         
         var promises = [];
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
+        promises[2] = personsRepository.initialise();
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

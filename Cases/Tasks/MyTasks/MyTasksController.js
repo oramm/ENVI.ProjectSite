@@ -8,8 +8,8 @@ class MyTasksController {
         
         tasksRepository = new SimpleRepository('Cases repository',
                                                     'getTasksListPerMilestone',
-                                                    'addNewTaskInDb',
-                                                    'editTaskInDb',
+                                                    'addNewTask',
+                                                    'editTask',
                                                     'deleteTask');
         
         personsRepository = new SimpleRepository('Persons repository',

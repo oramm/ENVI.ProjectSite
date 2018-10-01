@@ -212,13 +212,7 @@ class Collapsible {
      * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()
      * do usunięcia
      */
-    actionsMenuInitialise(){
-        //do usunięcia ten if
-        if (this.$addNewModal === undefined){
-            var newItemButton = FormTools.createFlatButton('Dodaj '+ this.itemsName, this.addNewHandler,this);
-            this.$actionsMenu.append(newItemButton);
-        }
-        
+    actionsMenuInitialise(){        
         if (this.$addNewModal !== undefined)
             this.$addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis");
         this.filterInitialise();

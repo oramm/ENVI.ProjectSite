@@ -20,8 +20,9 @@ class Modal {
     
     buildDom(){
         this.form = new Form("foo_"+ this.id, "GET", this.formElements);
+        this.$dom = $('<div id="' + this.id + '" class="modal modal-fixed-footer">');
         this.connectedResultsetComponent.$dom
-            .append('<div id="' + this.id + '" class="modal modal-fixed-footer">').children(':last-child')
+            .append(this.$dom).children(':last-child')
                 .append('<div class="modal-content">').children()
                     .append(this.form.$dom);
         this.connectedResultsetComponent.$dom.children(':last-child')
@@ -32,7 +33,7 @@ class Modal {
     }
     
     setTittle(tittle){
-        $('#' + this.id + ' .modal-content' ).prepend('<h4>'+ tittle +'</h4>');
+        this.$dom.children('.modal-content').prepend('<h4>'+ tittle +'</h4>');
     }
     
     

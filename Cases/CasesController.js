@@ -11,14 +11,14 @@ class CasesController {
         
         casesRepository = new SimpleRepository('Tasks repository',
                                                     'getCasesListPerMilestone',
-                                                    'addNewCaseInDb',
-                                                    'editCaseInDb',
+                                                    'addNewCase',
+                                                    'editCase',
                                                     'deleteCase');
         
         tasksRepository = new SimpleRepository('Cases repository',
                                                     'getTasksListPerMilestone',
-                                                    'addNewTaskInDb',
-                                                    'editTaskInDb',
+                                                    'addNewTask',
+                                                    'editTask',
                                                     'deleteTask');
         
         personsRepository = new SimpleRepository('Persons repository',
@@ -49,7 +49,6 @@ class CasesController {
                             });
                             ReachTextArea.reachTextAreaInit();
                             Materialize.updateTextFields();
-                            
                         }
             )
             .catch(err => {

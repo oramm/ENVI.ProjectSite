@@ -1,7 +1,14 @@
 class ContractsCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
-        super(id, 'Kontrakty', connectedRepository) ;
+        super(id, 'Kontrakty', connectedRepository);
+        
+        this.$addNewModal = new NewContractModal(id + '_newContract', 'Dodaj kontrakt', this);
+        this.$editModal = new EditContractModal(id + '_editContract', 'Edytuj kontrakt', this);
+        this.$addNewOurModal = new NewOurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this);
+        this.$editOurModal = new EditOurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this);
+        
         this.initialise(this.makeCollapsibleItemsList());
+        this.$addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI");
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -26,13 +33,6 @@ class ContractsCollapsible extends SimpleCollapsible {
                                             }, 
                     ).$dom);
     return $panel;
-    }
-
-    /* 
-     * @deprecated do usuięcia po dodaniu w pzeryszłości modala dla kontraktów
-     */
-    addNewHandler(){
-        window.open('https://docs.google.com/forms/d/e/1FAIpQLScWFEQ1FevfUD2_KeQ5ew-hyb5ZwaMv5hHai9kTy_WUk2cM2A/viewform?usp=pp_url&entry.1995376000='+ this.connectedRepository.parentItemId +'&entry.798100984&entry.2087120541&entry.325833130"');
     }
     
 }
