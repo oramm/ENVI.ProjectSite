@@ -32,7 +32,7 @@ class AutoCompleteTextField {
         this.$dom = $('<div class="input-field">');
         var $icon = $('<i class="material-icons prefix">' + icon + '</i>');
         var $input = $('<input name="' + id + '" type="text" class="autocomplete" autocomplete="off">')
-                .attr('id',id)
+                .attr('id',id);
         
         var $label = $('<label for="'+ id +'">'+ label +'</label>');
 

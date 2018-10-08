@@ -41,7 +41,8 @@ class ContractsCollapsible extends SimpleCollapsible {
     addRowCrudButtons($row){
         var contractId = $row.attr("itemId");
         var contract = ContractsSetup.contractsRepository.items.filter(function(item){return item.id==contractId})[0];
-        
+        //przy dodawaniu i edycji dane nie są jeszcze zapisane w connectedRepository.items, ale w SimmpleRepository ustawiona jest currentItem
+        if (!contract) contract = ContractsSetup.contractsRepository.currentItem;
         if (this.isDeletable || this.isEditable){
             var $crudMenu = $row.find('.collapsible-header > .crudButtons');
             if (contract.ourId){ 
