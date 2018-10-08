@@ -9,14 +9,14 @@ class ContractsController {
        
         milestonesRepository = new SimpleRepository('Milestones repository',
                                                     'getMilestonesListPerProject',
-                                                    'addNewMilestoneInDb',
-                                                    'editMilestoneInDb',
+                                                    'addNewMilestone',
+                                                    'editMilestone',
                                                     'deleteMilestone');
         
         contractsRepository = new SimpleRepository('Contracts repository',
                                                     'getContractsListPerProject',
                                                     'addNewContract',
-                                                    'editContractInDb',
+                                                    'editContract',
                                                     'deleteContract');
         personsRepository = new SimpleRepository('Persons repository',
                                                     'getPersonsNameSurnameEmailList',

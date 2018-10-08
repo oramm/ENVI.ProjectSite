@@ -19,7 +19,7 @@ class OurContractModal extends Modal {
         this.adminAutoCompleteTextField.initialise(ContractsSetup.personsRepository,"nameSurnameEmail", this.onAdminChosen, this);
         this.formElements = [
             new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
-            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
+            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
             new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
             new DatePicker(this.id + 'endDatePickerField','Termin wykonania', true),
             new InputTextField (this.id + 'valueTextField','Wartość umowy', undefined, true, 20),

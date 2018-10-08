@@ -13,7 +13,7 @@ class MilestoneModal extends Modal {
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
         this.statusSelectField.initialise(this.statusNames);
         this.formElements = [
-            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
+            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
             this.descriptionReachTextArea,
             this.startDatePicker,
             this.endDatePicker,

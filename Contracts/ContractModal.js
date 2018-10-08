@@ -8,7 +8,7 @@ class ContractModal extends Modal {
         this.statusSelectField.initialise(ContractsSetup.statusNames);
         this.formElements = [
             new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
-            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
+            new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
             new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
             new DatePicker(this.id + 'endDatePickerField','Termin wykonania', true),
             this.statusSelectField,
@@ -37,7 +37,6 @@ class ContractModal extends Modal {
         tinyMCE.triggerSave();
         this.dataObject = { number: '',
                             name: '',
-                            comment: '',
                             startDate: '',
                             endDate: '',
                             status: '',

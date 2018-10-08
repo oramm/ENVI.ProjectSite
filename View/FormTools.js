@@ -685,9 +685,14 @@ class FormTools{
     static createFilterInputField(id, $filteredObject){
         var $textField = this.createInputField(id, 'Filtruj listę');
         
-        $textField.children().on("keyup", function() {
+        $textField.children('input').on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $filteredObject.filter(function() {
+                //https://stackoverflow.com/questions/3041320/regex-and-operator?noredirect=1&lq=1
+                //var regex = /^(?=.*my)(?=.*word).*$/igm;
+                //var words = value.split(' ');
+                console.log(words);
+                //return regex.test($(this).toggle($(this).text().toLowerCase()));
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
         });
