@@ -22,10 +22,9 @@
         <group>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Cases/Tasks/MyTasks/MyTasksCollection.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/MilestonesCollection.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsController.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsCollapsible.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/SimpleRepository.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collapsible.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/FormTools.js</file>
         </group>
     </open-files>
 </project-private>
