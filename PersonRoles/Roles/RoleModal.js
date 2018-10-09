@@ -32,7 +32,7 @@ class RoleModal extends Modal {
         this.form.submitHandler(this.dataObject);
         if (this.form.validate(this.dataObject)){
             this.dataObject.id = rolesRepository.currentItem.id, //używane tylko przy edycji
-            this.dataObject.projectId = rolesRepository.currentProjectId;
+            this.dataObject.projectId = rolesRepository.parentItemId;
             rolesRepository.setCurrentItem(this.dataObject);
         }
     }

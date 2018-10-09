@@ -26,6 +26,9 @@ class PsNavigationBar extends NavigationBar {
                           },
                           { caption: "Kontrakty", 
                             link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.id
+                          },
+                          { caption: "Gant", 
+                            link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.id
                           }
                          ];
         this.addMenuItems($('#main-nav ul'));
