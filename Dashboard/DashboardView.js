@@ -5,8 +5,8 @@ class DashboardView extends Popup{
     }
     
     initialise(){
-        this.loadIframe("myTasks", '../Cases/Tasks/MyTasks/myTasks.html');
-        this.loadIframe("currentDeadlines", '../Contracts/Milestones/CurrentMilestones/currentMilestones.html');
+        this.loadIframe("myTasks", '../Cases/Tasks/MyTasks/MyTasks.html');
+        this.loadIframe("currentDeadlines", '../Contracts/Milestones/CurrentMilestones/CurrentMilestones.html');
         console.log("DashboardView initialised");
         
     }
