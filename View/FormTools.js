@@ -450,8 +450,10 @@ class Form {
             switch (this.elements[i].constructor.name) {
                 case 'InputTextField' : 
                 case 'ReachTextArea' :
-                case 'DatePicker' :
                     dataObject[property] = $('#'+ this.elements[i].id).val();
+                    break;
+                case 'DatePicker' :
+                    dataObject[property] = Tools.dateDMYtoYMD($('#'+ this.elements[i].id).val());
                     break;
                 case 'SelectField' :
                     dataObject[property] =  this.elements[i].$dom.find('input').val();

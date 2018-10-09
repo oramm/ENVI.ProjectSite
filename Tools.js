@@ -7,6 +7,15 @@ class Tools{
             }
         }
     }
+    static dateDMYtoYMD(inputDate) {   
+        if(inputDate){
+            var parts = inputDate.split("-");
+            if (parts[2].length===4)
+                return parts[2] + '-' + parts[1] + '-' + parts[0];
+            else
+                return inputDate;
+        }
+    }
     
     static loadjscssfile(filename, filetype){
         if (filetype=="js"){ //if filename is a external JavaScript file

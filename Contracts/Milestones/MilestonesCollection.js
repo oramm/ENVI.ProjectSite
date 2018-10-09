@@ -25,9 +25,7 @@ class MilestonesCollection extends SimpleCollection {
         return {    id: dataItem.id,
                     //icon:   'info',
                     $title:  this.makeTitle(dataItem),
-                    $description:    $(dataItem.description + '<BR>' +
-                                    dataItem.startDate + ' - ' + dataItem.endDate + '<BR>' +
-                                    dataItem.status),
+                    $description:    this.makeDescription(dataItem),
                     editUrl: dataItem.editUrl,
                     contractId_Hidden:  dataItem.contractId
                 };
@@ -51,40 +49,19 @@ class MilestonesCollection extends SimpleCollection {
         (dataItem.description)? true : dataItem.description="";
         
         var $collectionElementDescription = $('<span>');
-        var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem.description, 
-                                                        dataItem, 
-                                                        new InputTextField (this.id +  '_' + dataItem.id + '_tmpEditDescription_TextField','Edytuj', undefined, true, 150),
-                                                        'description',
-                                                        this);
-        
-        
+        //TODO: kiedyś dodać edyzcję dat
         var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
                                                         dataItem, 
                                                         new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
                                                         'deadline',
                                                         this);
         
-        
         (dataItem.status)? true : dataItem.status="";
-        
-        var personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
-        
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail, 
-                                                        dataItem, 
-                                                        personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
-                                                        this);
-        
-       
+  
         $collectionElementDescription
-            .append(descriptionAtomicEditLabel.$dom)
-            .append(deadlineAtomicEditLabel.$dom)
-            .append(personAtomicEditLabel.$dom)
+            .append('<span>' + dataItem.description + '<br></span>')
+            .append('<span>' + dataItem.startDate + ' - ' + dataItem.endDate + '<BR></span>')
+            //.append(deadlineAtomicEditLabel.$dom)
             .append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;
