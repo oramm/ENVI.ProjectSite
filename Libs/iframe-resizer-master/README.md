@@ -50,7 +50,7 @@ The normal configuration is to have the iFrame resize when the browser window ch
 ```html
 <style>iframe{width: 1px;min-width: 100%;}</style>
 <iframe id="myIframe" src="http://anotherdomain.com/iframe.html" scrolling="no"></iframe>
-<script>iFrameResize({log:false}, '#myIframe')</script>
+<script>iFrameResize({log:true}, '#myIframe')</script>
 ```
 
 **Notes:** Using <i>min-width</i> to set the width of the iFrame, works around an issue in iOS that can prevent the iFrame from sizing correctly.  Also the scrolling attribute is set to 'no' in the iFrame tag, as older versions of IE don't allow this to be turned off in code and can just slightly add a bit of extra space to the bottom of the content that it doesn't report when it returns the height.

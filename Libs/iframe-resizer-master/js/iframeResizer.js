@@ -968,13 +968,12 @@
 
   function sendTriggerMsg(eventName,event) {
     function isIFrameResizeEnabled(iframeId) {
-      var t =settings[iframeId] && 'parent' === settings[iframeId].resizeFrom && settings[iframeId].autoResize && settings[iframeId].firstRun;
       return	settings[iframeId] &&
           'parent' === settings[iframeId].resizeFrom &&
           settings[iframeId].autoResize &&
           !settings[iframeId].firstRun;
     }
-    
+
     for (var iframeId in settings) {
       if(isIFrameResizeEnabled(iframeId)) {
         trigger(eventName, event, document.getElementById(iframeId), iframeId);
