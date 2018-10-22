@@ -406,6 +406,7 @@ class Form {
                     this.elements[i].$dom.children('input').val(currentItem[i]);
                     break;
                 case 'ReachTextArea' :
+                    if (!currentItem[i]) currentItem[i]='';
                     tinyMCE.get(this.elements[i].id).setContent(currentItem[i]);
                     tinyMCE.triggerSave();
                     break;
@@ -693,7 +694,7 @@ class FormTools{
                 //https://stackoverflow.com/questions/3041320/regex-and-operator?noredirect=1&lq=1
                 //var regex = /^(?=.*my)(?=.*word).*$/igm;
                 //var words = value.split(' ');
-                console.log(words);
+                //console.log(words);
                 //return regex.test($(this).toggle($(this).text().toLowerCase()));
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
@@ -744,7 +745,18 @@ class FormTools{
         $button.click(onClickFunction.apply(viewObject,[]));
         return $button;
     }
-
+    static createModalTriggerIcon(id, icon){
+        var $triggerIcon = $('<span>');
+        $triggerIcon
+            .attr('data-target',id)
+            .addClass('collectionItemEdit modal-trigger')
+        $triggerIcon
+            .append('<span>').children()
+            .addClass('material-icons')
+            .html(icon);
+        //'<span data-target="' + this.projectDetailsCollection.editModal.id + '" class="collectionItemEdit modal-trigger"><i class="material-icons">edit</i></span>'
+        return $triggerIcon;
+    }
     static appendButtonTo(parentNode, onClickFunction, value, className){
         var $input = $('<input type="button" ' +
                                'value="' + value  +'" ' + 

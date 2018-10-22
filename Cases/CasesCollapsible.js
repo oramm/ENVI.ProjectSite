@@ -3,7 +3,7 @@ class CasesCollapsible extends SimpleCollapsible {
         super(id, 'Sprawę', connectedRepository) ;
         
         this.$addNewModal = new NewCaseModal(id + '_newCase', 'Dodaj sprawę', this);
-        this.$editModal = new EditCaseModal(id + '_editCase', 'Edytuj sprawę', this);
+        this.editModal = new EditCaseModal(id + '_editCase', 'Edytuj sprawę', this);
         
         this.initialise(this.makeCollapsibleItemsList());
     }

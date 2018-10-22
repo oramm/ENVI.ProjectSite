@@ -50,8 +50,9 @@ class MilestoneModal extends Modal {
         this.form.submitHandler(this.dataObject);
         if (this.form.validate(this.dataObject)){
             this.dataObject.id = milestonesRepository.currentItem.id, //używane tylko przy edycji
-            this.dataObject.contractId = contractsRepository.currentItem.id;
-            this.dataObject.projectId = contractsRepository.currentItem.projectId;
+            this.dataObject.contractId = milestonesRepository.currentItem.contractId;
+            this.dataObject.projectId = milestonesRepository.currentItem.projectId;
+            this.dataObject.projectName = milestonesRepository.currentItem.projectName;
             milestonesRepository.setCurrentItem(this.dataObject);
         }
         

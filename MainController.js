@@ -11,14 +11,15 @@ class MainController {
         //projectsRepository = new ProjectsRepository();
         projectsRepository = new SimpleRepository('Projects repository',
                                                  'getProjectsList',
-                                                 //'addNewProjectInDb',
-                                                 //'editProjectInDb',
+                                                 'addNewProject',
+                                                 'editProject',
                                                  //'deleteProject'
                                                          );
         projectsRepository.initialise(gAuth.userEmail)
             .then(()=>  {   console.log("Projects initialised");
                             mainWindowView.initialise();
                             mainWindowView.dataLoaded(true);
+                            iFrameResize({log:false, heightCalculationMethod:'max', checkOrigin:false});
                         })
             .catch(err => {
                   console.error(err);

@@ -12,7 +12,7 @@ class CurrentMilestonesCollection extends SimpleCollection {
         this.parentId = initParamObject.parentId;
 
         //this.$addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
-        this.$editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);
+        this.editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);
         
         this.initialise(this.makeList());        
     }

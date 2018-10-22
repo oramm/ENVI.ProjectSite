@@ -11,7 +11,7 @@ class PersonsRolesCollection extends SimpleCollection {
               });
         
         this.$addNewModal = new NewPersonsRolesAssociationModal('newPersonsRolesAssociation', 'Przypisz rolę', this);
-        //this.$editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);
+        //this.editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);
         
         this.initialise(this.makeList());        
     }

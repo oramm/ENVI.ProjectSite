@@ -28,7 +28,7 @@ class Collapsible {
         this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
         
         this.isDeletable = true;
-        this.isEditable = (this.$editModal !== undefined)? true : false;
+        this.isEditable = (this.editModal !== undefined)? true : false;
         this.isSelectable = true;
         
         this.buildDom();
@@ -84,9 +84,9 @@ class Collapsible {
     addRowCrudButtons($row){
         if (this.isDeletable || this.isEditable){
             var $crudMenu = $row.find('.collapsible-header > .crudButtons');
-            if (this.$editModal !== undefined) 
+            if (this.editModal !== undefined) 
                 $crudMenu
-                    .append('<span data-target="' + this.$editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
+                    .append('<span data-target="' + this.editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
             if (this.isDeletable) 
                 $crudMenu
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
@@ -106,7 +106,7 @@ class Collapsible {
                 this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
                 this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
                 //.$('#preloader'+item.id).remove();
-                if (this.$editModal !== undefined) this.setEditAction();
+                if (this.editModal !== undefined) this.setEditAction();
                 if (this.isDeletable) this.setDeleteAction();
                 if (this.isSelectable) this.setSelectAction();
                 this.items.push(item);
@@ -247,7 +247,7 @@ class Collapsible {
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
                                         $(this).parent().parent().parent().trigger('click');
-                                        _this.$editModal.fillWithData();
+                                        _this.editModal.fillWithData();
                                         Materialize.updateTextFields();
                                         });
     }

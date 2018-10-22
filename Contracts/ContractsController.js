@@ -45,6 +45,7 @@ class ContractsController {
                             });
                             ReachTextArea.reachTextAreaInit();
                             Materialize.updateTextFields();
+                            iFrameResize({log:false, heightCalculationMethod:'max', minHeight:500, checkOrigin:false});
                         }
             )
             .catch(err => {

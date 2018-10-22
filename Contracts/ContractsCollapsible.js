@@ -3,7 +3,7 @@ class ContractsCollapsible extends SimpleCollapsible {
         super(id, 'Kontrakty', connectedRepository);
         
         this.$addNewModal = new NewContractModal(id + '_newContract', 'Dodaj kontrakt', this);
-        this.$editModal = new EditContractModal(id + '_editContract', 'Edytuj kontrakt', this);
+        this.editModal = new EditContractModal(id + '_editContract', 'Edytuj kontrakt', this);
         this.$addNewOurModal = new NewOurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this);
         this.$editOurModal = new EditOurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this);
         
@@ -17,8 +17,9 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     makeItem(dataItem, $bodyDom){
         var value = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(dataItem.value);
+        var ourId = (dataItem.ourId)? '<strong>' + dataItem.ourId + '</strong>; ' : '';
         return {    id: dataItem.id,
-                    name: dataItem.number + '; ' + dataItem.name + '; ' + value,
+                    name: dataItem.number + '; ' + ourId + dataItem.name + '; ' + value,
                     $body: $bodyDom  
                     };
     }
@@ -52,7 +53,7 @@ class ContractsCollapsible extends SimpleCollapsible {
             }
             else
                 $crudMenu
-                    .append('<span data-target="' + this.$editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
+                    .append('<span data-target="' + this.editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
             if (this.isDeletable) 
                 $crudMenu
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
@@ -69,8 +70,18 @@ class ContractsCollapsible extends SimpleCollapsible {
                                         var isOur = $(this).closest('.collapsible-item')
                                             .attr('isOur')
                                         $(this).closest('.collapsible-item').trigger('click');
-                                        (isOur)? _this.$editOurModal.fillWithData() : _this.$editModal.fillWithData();
+                                        (isOur)? _this.$editOurModal.fillWithData() : _this.editModal.fillWithData();
                                         Materialize.updateTextFields();
                                         });
+    }
+    /*
+     * Przeciążenie konieczne bo przy dodawaniu nowych milestonów muszą być ustawione
+     * dane bieżącego kontraktu i projektu
+     */
+    selectTrigger(itemId){
+        super.selectTrigger(itemId);
+        milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
+        milestonesRepository.currentItem.projectId = this.connectedRepository.currentItem.projectId;
+        milestonesRepository.currentItem.projectName = this.connectedRepository.currentItem.projectName;
     }
 }

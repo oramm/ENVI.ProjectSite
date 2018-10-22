@@ -20,14 +20,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Tools.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Gant/GantController.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/MilestonesCollection.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/index.html</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Gant/GantListView.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/PsNavigationBar.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Gant/Gant.html</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/NewMilestoneModal.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsCollapsible.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collapsible.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/SimpleCollapsible.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/MilestoneModal.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/EditMilestoneModal.js</file>
         </group>
     </open-files>
 </project-private>

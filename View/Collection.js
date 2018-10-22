@@ -15,24 +15,19 @@ class Collection {
      */
     constructor(initParamObject){
         this.id = initParamObject.id;
-        this.isPlain = (!initParamObject.isPlain)? false : initParamObject.isPlain;
-        if (typeof this.isPlain !== 'boolean') throw new SyntaxError('isPlain must be typeof Boolean');
-        
+        this.isPlain = initParamObject.isPlain;        
         this.title = (initParamObject.title === undefined)? "" : initParamObject.title;
-        
+        this.isEditable = initParamObject.isEditable;
+        this.isSelectable = (initParamObject.isSelectable  === undefined)? true : initParamObject.isSelectable;
         this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
-        if (typeof this.hasFilter !== 'boolean') throw new SyntaxError('hasFilter must be typeof Boolean');
-        
+        this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
-        if (typeof this.isAddable !== 'boolean') throw new SyntaxError('isAddable must be typeof Boolean');
-        
         this.isDeletable = (initParamObject.isDeletable === initParamObject.undefined)? true : initParamObject.isDeletable;
-        if (typeof this.isDeletable !== 'boolean') throw new SyntaxError('isDeletable must be typeof Boolean');
         
         this.$dom;
         this.$actionsMenu;
         this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
-        this.$collection = $('<ul class="collection">');
+        
         
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
@@ -41,9 +36,7 @@ class Collection {
 
         this.$actionsMenu = $('<div >')
                .attr('id', 'actionsMenu' + '_' + this.id);
-                        
-        this.$dom.append(this.$actionsMenu)
-                .append(this.$collection);
+        
     }
     /*
      * 
@@ -55,8 +48,8 @@ class Collection {
         this.items = items;
         //this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
         //this.parentViewObject = parentViewObject;
-        this.isEditable = (this.$editModal !== undefined)? true : false;
-        this.isSelectable = true;
+        if (this.isEditable===undefined)
+            this.isEditable = (this.editModal !== undefined)? true : false;
 
         this.buildDom();
         if (this.items.length === 0) {           
@@ -72,6 +65,13 @@ class Collection {
     }
     
     buildDom(){    
+        this.$collection = $('<ul class="collection">');                
+        this.$dom.append(this.$actionsMenu)
+                .append(this.$collection);
+        this.buildCollectionDom();
+    }
+    
+    buildCollectionDom(){
         for (var i=0; i<this.items.length; i++){
             var $row = (this.isPlain)? this.buildPlainRow(this.items[i]) : this.buildRow(this.items[i]);
             this.$collection.append($row);
@@ -96,7 +96,7 @@ class Collection {
                     this.$collection.children('#' + item.tmpId).children('.progress').remove();
                     this.$collection.children('#' + item.tmpId).attr('id',item.id);
                     //.$('#preloader'+item.id).remove();
-                    if (this.$editModal !== undefined) this.setEditAction();
+                    if (this.editModal !== undefined) this.setEditAction();
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
                     this.items.push(item);
@@ -237,7 +237,7 @@ class Collection {
         var _this = this;
         this.$dom.find(".collectionItemEdit").click(function(e) { 
                                         $(this).parent().parent().parent().parent().trigger('click');
-                                        _this.$editModal.fillWithData();
+                                        _this.editModal.fillWithData();
                                         //e.stopPropagation();
                                         //e.preventDefault();
                                         });
@@ -306,7 +306,7 @@ class Collection {
         
         if (this.isEditable) 
             $crudButtons
-                .append('<span data-target="' + this.$editModal.id + '" class="collectionItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
+                .append('<span data-target="' + this.editModal.id + '" class="collectionItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
         
         if (this.isDeletable) 
             $crudButtons
@@ -319,10 +319,10 @@ class Collection {
             button
                 .append('<a class="btn-floating"><i class="material-icons">menu</i></a>')
                 .append('<ul>');
-            if (this.$editModal !== undefined) 
+            if (this.editModal !== undefined) 
                 button.children('ul')
                     //data-target="' + this.id + '" class="btn modal-trigger"
-                    .append('<li><a data-target="' + this.$editModal.id + '" class="btn-floating blue collectionItemEdit modal-trigger"><i class="material-icons">edit</i></a></li>');
+                    .append('<li><a data-target="' + this.editModal.id + '" class="btn-floating blue collectionItemEdit modal-trigger"><i class="material-icons">edit</i></a></li>');
                     //.append('<li><a href ="'+ item.editUrl + '" target="_blank" class="btn-floating blue collectionItemEdit"><i class="material-icons">edit</i></a></li>');
             if (this.isDeletable) 
                 button.children('ul')

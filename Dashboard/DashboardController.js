@@ -7,6 +7,7 @@ class DashboardController {
         
         dashboardView.initialise();
         dashboardView.dataLoaded(true);
+        iFrameResize({log:false, heightCalculationMethod:'max', checkOrigin:false});
     }
 }
 

@@ -21,7 +21,7 @@ class TasksCollection extends SimpleCollection {
         if (this.isAddable) 
             this.$addNewModal = new NewTaskModal(this.id + '_newTask', 'Dodaj zadanie', this);
         
-        this.$editModal = new EditTaskModal(this.id + '_editTask', 'Edytuj zadanie', this);
+        this.editModal = new EditTaskModal(this.id + '_editTask', 'Edytuj zadanie', this);
         
         this.initialise(this.makeList());        
     }    
