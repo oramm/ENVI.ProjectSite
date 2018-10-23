@@ -11,7 +11,7 @@ class PsNavigationBar extends NavigationBar {
         var $projectPicker = new SearchNavigationBar('projPicker-nav1');
         $('nav').after($projectPicker);
         $projectPicker.children()
-            .append(this.halfwayButton());
+            //.append(this.halfwayButton());
     }
     
     initialiseMenuItems(){
@@ -26,6 +26,9 @@ class PsNavigationBar extends NavigationBar {
                           },
                           { caption: "Kontrakty", 
                             link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.id
+                          },
+                          { caption: "Dysk Google", 
+                            link: 'Contracts/GoogleDrive/GoogleDrive.html?parentItemId=' + projectsRepository.currentItem.id
                           },
                           { caption: "Gant", 
                             link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.id

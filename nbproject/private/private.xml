@@ -21,11 +21,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/NewMilestoneModal.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsCollapsible.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collapsible.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/SimpleCollapsible.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/MilestoneModal.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/Milestones/EditMilestoneModal.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/index.html</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/PsNavigationBar.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/GoogleDrive/GoogleDriveController.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/GoogleDrive/GoogleDrive.html</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/GoogleDrive/GoogleDriveView.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsList.html</file>
         </group>
     </open-files>
 </project-private>
