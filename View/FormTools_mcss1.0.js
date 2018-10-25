@@ -80,3 +80,24 @@ class AutoCompleteTextField {
             
     }
 }
+
+class FormTools{
+    static createFlatButton(caption, onClickFunction,viewObject){
+        var $button = $('<input type="button" ' +
+                               'value="' + caption  +'" ' + 
+                               'class="waves-effect waves-teal btn-flat"' +
+                        '/>');
+        $button.click(function() {onClickFunction.apply(viewObject,[])});
+        return $button;
+    }
+
+    static createRaisedButton(caption, onClickFunction,viewObject){
+        var $button = $('<input type="button" ' +
+                               'value="' + caption  +'" ' + 
+                               'class="waves-effect waves-teal btn"' +
+                        '/>');
+        
+        $button.click(onClickFunction.apply(viewObject,[]));
+        return $button;
+    }
+}

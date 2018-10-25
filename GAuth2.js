@@ -4,7 +4,8 @@ class GAuth2 {
         this.initParams = {
                             discoveryDocs: DISCOVERY_DOCS,
                             clientId: CLIENT_ID,
-                            scope: SCOPES
+                            scope: SCOPES,
+                            immediate: false
                           };
     }
 
@@ -91,7 +92,14 @@ class GAuth2 {
      *  Sign in the user upon button click.
      */
     handleAuthClick(event) {
-      gapi.auth2.getAuthInstance().signIn();
+      gapi.auth2.getAuthInstance().signIn()
+        //dodano na podsktawie:https://stackoverflow.com/questions/45624572/detect-error-popup-blocked-by-browser-for-google-auth2-in-javascript
+        .then(()=>{}, error=>{if (error) 
+                                alert('Odblokuj wyskakujące okienko, żeby się zalogować (w pasku adresu na górze)\n\n' +
+                                      'Ten komunikat wyświetla z jednej z poniższych przyczyn:\n' +
+                                      ' 1. Wylogowałeś(łaś) się konta Google\n' +
+                                      ' 2. System został gruntownie zaktualizowany i wymaga Twoich zgód aby Ci nadal służyć')
+                            });
     }
 
     /**
