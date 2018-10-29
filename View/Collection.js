@@ -301,9 +301,6 @@ class Collection {
      */
 
     addPlainRowCrudButtons($crudButtons){
-        //var $button = $row.find('.secondary-content:last-child');
-
-        
         if (this.isEditable) 
             $crudButtons
                 .append('<span data-target="' + this.editModal.id + '" class="collectionItemEdit modal-trigger"><i class="material-icons">edit</i></span>')

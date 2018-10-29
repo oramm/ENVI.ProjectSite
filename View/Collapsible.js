@@ -39,8 +39,6 @@ class Collapsible {
     }
     
     buildDom(){
-        
-        
         for (var i=0; i<this.items.length; i++){
             var $row = this.buildRow(this.items[i]);
             this.$collapsible

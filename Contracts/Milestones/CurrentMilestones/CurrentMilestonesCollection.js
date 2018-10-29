@@ -60,7 +60,7 @@ class CurrentMilestonesCollection extends SimpleCollection {
   
         $collectionElementDescription
             .append('<span>Projekt: ' + dataItem.projectId + ' => </span>')
-            .append('<span>Kontrakt: ' + dataItem.contractOurId + '<br></span>')
+            .append('<span>Kontrakt: <strong>' + dataItem.contractOurId + '</strong><br></span>')
             .append('<span>' + dataItem.description + '<br></span>')
             .append('<span>Termin zakończenia: <b>' + dataItem.endDate + '</b><BR></span>')
             //.append(deadlineAtomicEditLabel.$dom)
