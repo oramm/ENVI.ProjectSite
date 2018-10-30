@@ -45,7 +45,12 @@ body {
 main {
   flex: 1 0 auto;
 }
-      
+
+.externalLinks{
+    float: right;
+    padding: 0px;
+    margin: 0px;
+}
 .stretchedToMargin {
   display: block;
   position:absolute;

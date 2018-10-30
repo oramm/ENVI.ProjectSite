@@ -27,9 +27,6 @@ class PsNavigationBar extends NavigationBar {
                           { caption: "Kontrakty", 
                             link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.id
                           },
-                          { caption: "Dysk Google", 
-                            link: 'Contracts/GoogleDrive/GoogleDrive.html?parentItemId=' + projectsRepository.currentItem.id
-                          },
                           { caption: "Gant", 
                             link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.id
                           }

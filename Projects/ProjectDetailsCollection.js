@@ -16,6 +16,10 @@ class ProjectDetailsCollection extends Collection {
     
     actionsMenuInitialise(){
         this.$actionsMenu.append(FormTools.createModalTriggerIcon(this.editModal.id,'edit'));
+        var $externalLinks = $('<span class="externalLinks">');
+        $externalLinks.append('<a  target="_blank "href="'+ this.connectedRepository.currentItem.gdFolderUrl + '">' +
+                               '<img height=25px src="../Resources/View/Google-Drive-icon.png"></a>');
+        this.$actionsMenu.append($externalLinks);
         this.setEditAction();
     }
     
