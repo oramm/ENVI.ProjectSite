@@ -23,7 +23,6 @@ class AutoCompleteTextField {
         this.onCompleteCallBack = onCompleteCallBack;
         this.viewObject = viewObject;
         this.chosenItem;
-        this.isRequired = false;
         
         this.pushData(this.key); 
     }
@@ -40,7 +39,7 @@ class AutoCompleteTextField {
             $input
                 .attr('required','true')
                 .attr('pattern','[]');
-            this.isRequired = true;
+            this.isRequired = isRequired;
         }
         
         this.$dom
@@ -368,7 +367,7 @@ class InputTextField {
                 .attr('data-length', maxCharacters);
             $input.characterCounter();
         }
-        if (validateRegex !== undefined){
+        if (validateRegex){
             $input
                 .attr('pattern',validateRegex)   ;         
         }
@@ -379,6 +378,39 @@ class InputTextField {
             $label.attr('data-error','Niewłaściwy format danych');
     }
 }
+class Tabs {
+    constructor(initParameters){
+        this.id = initParameters.id;
+        this.swipeable = initParameters.swipeable;
+        this.onShow = initParameters.onShow;
+        this.responsiveThreshold = initParameters.responsiveThreshold;
+        this.tabsData = initParameters.tabsData;
+        this.$dom = $('<div class="row">');
+        this.$tabs = $('<ul class="tabs">');
+        this.$panels = $('<div class="tabsPanels">');
+        this.buildDom();
+    }
+    //ikony do dodania
+    buildDom(){
+        this.$dom
+            .append('<div class="col s12"').children()
+                .append(this.$tabs);
+        this.$dom.append(this.$panels);
+        for (var i=0; i<this.tabs.length; i++){
+            var $link = $('<a>');
+            $link
+                .attr('href','tab_'+this.tabsData[i].name)
+                .html(this.tabsData[i].name);
+            this.$tabs
+                .append('<li class="tab col s3">').children()
+                    .append($link);
+            this.$panels.append('<div id="'+ this.tabsData[i].name + '" class="col s12">');
+        }
+        this.$tabs[0].children('a').addClass('active');
+        //if(this.swipeable) this.$tabs.attr('id', "tabs-swipe-demo");
+    }
+}
+
 class Form {
     constructor(id, method,elements){
         this.id = id;
@@ -451,6 +483,9 @@ class Form {
             switch (this.elements[i].constructor.name) {
                 case 'InputTextField' : 
                 case 'ReachTextArea' :
+                case 'TextArea':
+                    //TODO: trzeba przenieść TextArea do odrębnej klasy, żeby to zadziałało
+                    //$('#' + this.id + 'employerTextArea').val()
                     dataObject[property] = $('#'+ this.elements[i].id).val();
                     break;
                 case 'DatePicker' :

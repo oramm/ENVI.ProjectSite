@@ -1,7 +1,7 @@
 class NewTaskModal extends TaskModal {
     constructor(id, tittle, connectedResultsetComponent){
         super(id, tittle, connectedResultsetComponent);
-        this.fillWithInitData();        
+        this.fillWithInitData();      
     }
         
     /*

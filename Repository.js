@@ -22,7 +22,7 @@ class Repository {
         
     }
 
-    initialiseItemsList(serverFunctionName,serverFunctionParameters) {
+    doServerFunction(serverFunctionName,serverFunctionParameters) {
         return new Promise((resolve, reject) => {
             // Create an execution request object.
             // Create execution request.
@@ -40,17 +40,17 @@ class Repository {
             });
 
             op
-              .then((resp) => this.handleInitialiseItemsList(resp.result))
+              .then((resp) => this.handleDoServerFunction(resp.result))
               .then((result) => {   console.log(result);
                                     resolve(result);
                                 })
-              .catch(err => console.error ("test 2 ", err)
+              .catch(err => console.error (serverFunctionName, err)
                     );
         });
     }
     
-    //TODO: scalić funkcje handleInitialiseItemsList() z handleAddNewItem
-    handleInitialiseItemsList(resp) {
+    //TODO: scalić funkcje handleDoServerFunction() z handleAddNewItem
+    handleDoServerFunction(resp) {
         return new Promise((resolve, reject) => {
             if (resp.error && resp.error.status) {
                 // The API encountered a problem before the script
@@ -82,7 +82,7 @@ class Repository {
                 // The structure of the result will depend upon what the Apps
                 // Script function returns. 
                 var serverResponse = resp.response.result;
-                if (Object.keys(serverResponse).length == 0) {
+                if (!serverResponse || Object.keys(serverResponse).length == 0) {
                     this.result = [];
                     resolve(this.result);
                 } else {

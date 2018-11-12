@@ -18,7 +18,7 @@ class PersonsRolesRepository extends SimpleRepository {
      */
     getNewItemData(item){
         return new Promise((resolve, reject) => {
-            this.initialiseItemsList(this.getNewItemDataServerFunctionName,item)
+            this.doServerFunction(this.getNewItemDataServerFunctionName,item)
                 .then(result => resolve(result)
                      );
         });

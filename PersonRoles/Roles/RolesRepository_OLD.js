@@ -28,11 +28,11 @@ class RolesRepository extends Repository{
      */
     initialise() {
         return new Promise((resolve, reject) => {
-            this.initialiseItemsList('getRolesPerProjectList', this.selectedProjectId)
+            this.doServerFunction('getRolesPerProjectList', this.selectedProjectId)
                 .then((result) =>   { this.items = result
                                       resolve;
                                     })
-                .then(() => this.initialiseItemsList('getPersonRoleAssociationsPerProject', this.selectedProjectId))
+                .then(() => this.doServerFunction('getPersonRoleAssociationsPerProject', this.selectedProjectId))
                 .then((result) => { this.personRolesAssociationsRaw = result;
                                     resolve("Roles initialised");
                                  });

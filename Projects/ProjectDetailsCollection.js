@@ -10,19 +10,41 @@ class ProjectDetailsCollection extends Collection {
               });  
         this.connectedRepository = window.parent.projectsRepository;
         this.editModal = new EditProjectsDetailsModal(this.id + '_editProject', 'Edytuj dane projektu', this);
-        this.initialise(this.makeList());
         
+        this.$externalLinks = $('<span class="externalLinks">');
+        this.initialise(this.makeList());
+        this.$addCalendarButton;
     }
     
     actionsMenuInitialise(){
         this.$actionsMenu.append(FormTools.createModalTriggerIcon(this.editModal.id,'edit'));
-        var $externalLinks = $('<span class="externalLinks">');
-        $externalLinks.append('<a  target="_blank "href="'+ this.connectedRepository.currentItem.gdFolderUrl + '">' +
-                               '<img height=25px src="../Resources/View/Google-Drive-icon.png"></a>');
-        this.$actionsMenu.append($externalLinks);
+        if (!this.connectedRepository.currentItem.googleCalendarId){
+            this.$addCalendarButton = FormTools.createFlatButton('Utwórz kalendarz', this.createCalendar,this)
+            this.$actionsMenu.append(this.$addCalendarButton);
+        }
+        this.appendIconToExternalLinks('../Resources/View/Google-Drive-icon.png', this.connectedRepository.currentItem.gdFolderUrl);
+        this.appendIconToExternalLinks('../Resources/View/Google-Groups-icon.png', this.connectedRepository.currentItem.googleGroupUrl);
+        this.appendIconToExternalLinks('../Resources/View/Google-Calendar-icon.png', this.connectedRepository.currentItem.googleCalendarUrl);
+
+        this.$actionsMenu.append(this.$externalLinks);
         this.setEditAction();
     }
-    
+    appendIconToExternalLinks(icon, url){
+        if (url)
+            this.$externalLinks
+                .append('<a  target="_blank "href="'+ url + '">' +
+                        '<img height=25px src="'+  icon +'"></a>');
+    }
+    //uruchamiana po kliknięciu w menu
+    createCalendar(){
+        this.connectedRepository.doServerFunction('addProjectCalendar',this.connectedRepository.currentItem.id)
+            .then((result)=>{//window.alert(result.googleCalendarUrl);
+                             this.connectedRepository.currentItem.googleCalendarId = result.googleCalendarId;
+                             this.connectedRepository.currentItem.googleCalendarUrl = result.googleCalendarUrl; 
+                             this.$addCalendarButton.remove();
+                             this.appendIconToExternalLinks('../Resources/View/Google-Calendar-icon.png', this.connectedRepository.currentItem.googleCalendarUrl);
+                            });
+          }
     
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienra zamiast przez SELECT z db

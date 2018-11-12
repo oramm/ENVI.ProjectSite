@@ -107,7 +107,7 @@ class Collapsible {
                 if (this.editModal !== undefined) this.setEditAction();
                 if (this.isDeletable) this.setDeleteAction();
                 if (this.isSelectable) this.setSelectAction();
-                this.items.push(item);
+                this.items.push(this.makeItem(item));
                 return status;
                 break;
             case "PENDING":  
@@ -115,7 +115,7 @@ class Collapsible {
                     this.$dom.find('.emptyList').remove();
                 }
                 item.id = this.items.length+1 + '_pending';
-                this.$collapsible.prepend(this.buildRow(item));
+                this.$collapsible.prepend(this.buildRow(this.makeItem(item)));
                 this.$collapsible.find('[itemid=' + item.id +']').append(this.makePreloader('preloader'+item.id))
                 return item.id;
                 break;
@@ -134,7 +134,7 @@ class Collapsible {
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
-     * @param {CollectionItem} item
+     * @param {dataItem} item surowe dane, które trzeba przetworzyć przez this.makeItem()
      * @param {String} errorMessage
      * @returns {Promise}
      */
@@ -144,7 +144,7 @@ class Collapsible {
                 case "DONE":
                     $('#preloader'+item.id).remove();
                     this.items = this.items.filter(function(searchItem){return searchItem.id!==item.id});
-                    this.items.push(item);
+                    this.items.push(this.makeItem(item));
                     this.setEditAction();
                     var $oldRow = this.$collapsible.find('[itemid=' + item.id + '_toDelete]');
                     $oldRow.remove();
@@ -154,7 +154,7 @@ class Collapsible {
                 case "PENDING":  
                     var $oldRow = this.$collapsible.find('[itemid=' + item.id +']');
                     $oldRow.attr('itemid',item.id + '_toDelete');
-                    var $newRow = this.buildRow(item);
+                    var $newRow = this.buildRow(this.makeItem(item));
                     $newRow.append(this.makePreloader('preloader'+item.id))
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);

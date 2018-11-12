@@ -66,6 +66,8 @@ class Collection {
     
     buildDom(){    
         this.$collection = $('<ul class="collection">');                
+        if (this.title) 
+            this.$dom.append(this.title);
         this.$dom.append(this.$actionsMenu)
                 .append(this.$collection);
         this.buildCollectionDom();

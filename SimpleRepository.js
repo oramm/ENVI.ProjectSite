@@ -16,7 +16,7 @@ class SimpleRepository extends Repository {
     
     initialise(serverFunctionParameters) {
         return new Promise((resolve, reject) => {
-            this.initialiseItemsList(this.getItemsListServerFunctionName,serverFunctionParameters)
+            this.doServerFunction(this.getItemsListServerFunctionName,serverFunctionParameters)
                 .then(result => {   this.items = result;
                                     
                                     resolve(this.name + " initialised");  
@@ -65,12 +65,11 @@ class SimpleRepository extends Repository {
     deleteItem(item, viewObject) {
         return new Promise((resolve, reject) => {
             super.deleteItem(item,this.deleteServerFunctionName, viewObject)
-                    .then ((res)=> {   var index = this.items.findIndex( item => item.id == res.id
-                                                      ); 
+                    .then ((res)=> {var index = this.items.findIndex( item => item.id == res.id); 
                                     this.items.splice(index,1);
                                     console.log('usunięto: ', res)
                                     resolve(this.name + ': item deleted');
-                                });
+                           });
         });
     }
 };
