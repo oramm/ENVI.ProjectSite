@@ -44,11 +44,13 @@ class Repository {
               .then((result) => {   console.log(result);
                                     resolve(result);
                                 })
-              .catch(err => console.error (serverFunctionName, err)
-                    );
+              .catch(err => {   console.error (serverFunctionName, err);
+                                window.alert('Wystąił Błąd! \n serverFunctionName: ' + err);
+                                throw err;
+                            });
         });
     }
-    
+   
     //TODO: scalić funkcje handleDoServerFunction() z handleAddNewItem
     handleDoServerFunction(resp) {
         return new Promise((resolve, reject) => {
@@ -169,7 +171,7 @@ class Repository {
                 if (!resp.done) {
                     throw "Nic nie dodano";
                 } else {
-                    this.result = 'Dodano rolę';
+                    this.result = 'Dodano element';
                     resolve(resp.response.result);
                 }
             }

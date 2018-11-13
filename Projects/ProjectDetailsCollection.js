@@ -37,12 +37,15 @@ class ProjectDetailsCollection extends Collection {
     }
     //uruchamiana po kliknięciu w menu
     createCalendar(){
-        this.connectedRepository.doServerFunction('addProjectCalendar',this.connectedRepository.currentItem.id)
+        var $preloader  = this.makePreloader('add_calendar_preloader');
+        this.$dom.append($preloader);
+        this.connectedRepository.doServerFunction('addProjectCalendar', JSON.stringify({id: this.connectedRepository.currentItem.id}))
             .then((result)=>{//window.alert(result.googleCalendarUrl);
                              this.connectedRepository.currentItem.googleCalendarId = result.googleCalendarId;
                              this.connectedRepository.currentItem.googleCalendarUrl = result.googleCalendarUrl; 
                              this.$addCalendarButton.remove();
                              this.appendIconToExternalLinks('../Resources/View/Google-Calendar-icon.png', this.connectedRepository.currentItem.googleCalendarUrl);
+                             $preloader.remove();
                             });
           }
     
