@@ -28,46 +28,49 @@
     <title>Witryna Projektu</title>
 </head>
 <body>
-
-    
-    <div id="authorize-div" style="display: none"> 
-        <div id="page11" class="container">
-            <div class="row">
-                <H4>Zaloguj się do swojego konta Google</H4>
-                <p>Aby korzystać z witryny Projektu ENVI musisz mieć konto w serwisie Google.</p> 
+    <header>
+    </header>
+    <main>
+        <div id="authorize-div" style="display: none"> 
+            <div id="page11" class="container">
+                <div class="row">
+                    <H4>Zaloguj się do swojego konta Google</H4>
+                    <p>Aby korzystać z witryny Projektu ENVI musisz mieć konto w serwisie Google.</p> 
+                </div>
             </div>
-        </div>
-        
-    </div>
 
-    <div id="loading" style="display:none"></div>
-    
-    <div id="content" style="display: none">
-        <div id = "tittle"></div>
-        
-        <div id = "form" class="section" style="display: none;">
-            <button id="signout-button">Wyloguj</button>
         </div>
-        
-        <div class="row">
-            <div class="col s12"><iframe height="500px" width="100%" id="iframeMain"></iframe></div>
-        </div>
-    </div>
+
+        <div id="loading" style="display:none"></div>
+
+        <div id="content" style="display: none">
+            <div id = "tittle"></div>
+
+            <div id = "form" class="section" style="display: none;">
+                <button id="signout-button">Wyloguj</button>
+            </div>
+
+            <div class="row">
+                <div class="col s12"><iframe height="500px" width="100%" id="iframeMain"></iframe></div>
+            </div>
+        </div>  
+    </main>
     <footer class="page-footer green darken-2">
 
         <div class="footer-copyright green darken-2">
             <div class="container">
-            © ENVI KONSULTING 2018, Witryna Projektu v. 1.0.5
-            <a class="grey-text text-lighten-4 right" href="http://www.envi.com.pl">www.envi.com.pl</a>
+                © ENVI KONSULTING 2018, Witryna Projektu v. 1.0.5
+                <a class="grey-text text-lighten-4 right" href="http://www.envi.com.pl">www.envi.com.pl</a>
             </div>
         </div>
-        </footer>
-
-<script async defer src="https://apis.google.com/js/api.js"
-    onload="this.onload=function(){}; 
-            gAuth = new GAuth2();   
-            gAuth.handleClientLoadMainWindow()"
-    onreadystatechange="if (this.readyState === 'complete') this.onload()">
-</script>   
+    </footer>
+    
+    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){}; 
+                gAuth = new GAuth2();   
+                gAuth.handleClientLoadMainWindow()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script> 
 </body>
+
 </html>

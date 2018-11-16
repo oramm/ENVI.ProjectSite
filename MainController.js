@@ -19,7 +19,7 @@ class MainController {
             .then(()=>  {   console.log("Projects initialised");
                             mainWindowView.initialise();
                             mainWindowView.dataLoaded(true);
-                            iFrameResize({log:false, heightCalculationMethod:'max', checkOrigin:false});
+                            iFrameResize({log:false, heightCalculationMethod: 'taggedElement',  checkOrigin:false});
                         })
             .catch(err => {
                   console.error(err);

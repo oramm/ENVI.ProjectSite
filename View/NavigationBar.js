@@ -10,8 +10,9 @@ class NavigationBar {
     initialise(){
         this.$mainNavDom = $('<nav class="green darken-1">');
         this.$sideNavDom = $('<ul class="sidenav" id="mobile-demo">');
-        $('#content').prepend(this.$sideNavDom);
-        $('#content').prepend(this.$mainNavDom);
+        $('header')
+            .prepend(this.$sideNavDom)
+            .prepend(this.$mainNavDom);
         $('nav').append('<div class="nav-wrapper" id="main-nav">');
         $('.nav-wrapper')
             .append('<a href="#!" class="brand-logo">'+ this.tittle +'</a>')
