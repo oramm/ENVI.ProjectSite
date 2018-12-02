@@ -11,7 +11,7 @@ class ContractsCollapsible extends SimpleCollapsible {
         this.$addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI");
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
-        this.connectedRepository.currentItem.projectId = this.connectedRepository.projectId;
+        this.connectedRepository.currentItem.projectId = this.connectedRepository.parentItemId;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
