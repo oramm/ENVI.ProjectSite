@@ -1,5 +1,17 @@
 var casesRepository;
 var personsRepository;
-//var contracts = {};
-//var chosenContract;
-//var contractsAutocompleteList={};
+
+class CasesSetup {
+    static get casesRepository() {
+        return casesRepository;
+    }
+    static set casesRepository(data) {
+        casesRepository = data;
+    }
+    static get personsRepository() {
+        return personsRepository;
+    }
+    static set personsRepository(data) {
+        personsRepository = data;
+    }
+}

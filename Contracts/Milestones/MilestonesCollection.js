@@ -8,12 +8,12 @@ class MilestonesCollection extends SimpleCollection {
                isAddable: true, 
                isDeletable: true,
                isSelectable: true,
-               connectedRepository: milestonesRepository
+               connectedRepository: MilestonesSetup.milestonesRepository
               });
         this.parentId = initParamObject.parentId;
 
-        this.$addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
-        this.editModal = new EditMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this);
+        this.$addNewModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
+        this.editModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
         
         this.initialise(this.makeList());        
     }

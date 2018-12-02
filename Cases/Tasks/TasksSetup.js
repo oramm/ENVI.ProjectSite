@@ -1,7 +1,4 @@
 var tasksRepository;
-const statusNames1 = [   
-                        'Nie rozpoczęty'
-                    ];
 
 const statusNames = [   'Backlog',
                         'Nie rozpoczęty',

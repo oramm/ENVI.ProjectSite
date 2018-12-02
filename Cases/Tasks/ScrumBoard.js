@@ -32,7 +32,7 @@ class ScrumBoard {
                 .addClass('l2');
             this.$dom
                 .append($col).children(':last-child')
-                .append('<B>' + this.statusesCollections[i].status + '<B>')
+                //.append('<B>' + this.statusesCollections[i].status + '<B>')
                 .append(this.statusesCollections[i].$dom);
         
             //this.initDraggable(this.statusesCollections[i].$dom.children('.collection'));

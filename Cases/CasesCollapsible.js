@@ -2,10 +2,15 @@ class CasesCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
         super(id, 'Sprawę', connectedRepository) ;
         
-        this.$addNewModal = new NewCaseModal(id + '_newCase', 'Dodaj sprawę', this);
-        this.editModal = new EditCaseModal(id + '_editCase', 'Edytuj sprawę', this);
+        this.$addNewModal = new CaseModal(id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
+        this.editModal = new CaseModal(id + '_editCase', 'Edytuj sprawę', this, 'EDIT');
         
         this.initialise(this.makeCollapsibleItemsList());
+        
+        //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
+        //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
+        this.connectedRepository.currentItem.milestoneId = this.connectedRepository.parentItemId;
+        this.connectedRepository.currentItem.projectId = this.connectedRepository.projectId;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -46,5 +51,5 @@ class CasesCollapsible extends SimpleCollapsible {
             .attr('caseid',dataItem.id)
             .append(new ScrumBoard(statusesCollections).$dom)
     return $bodyDom;
-    }   
+    }
 }

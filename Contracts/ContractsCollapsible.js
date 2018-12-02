@@ -2,13 +2,16 @@ class ContractsCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
         super(id, 'Kontrakty', connectedRepository);
         
-        this.$addNewModal = new NewContractModal(id + '_newContract', 'Dodaj kontrakt', this);
-        this.editModal = new EditContractModal(id + '_editContract', 'Edytuj kontrakt', this);
-        this.$addNewOurModal = new NewOurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this);
-        this.$editOurModal = new EditOurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this);
+        this.$addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', this, 'ADD_NEW');
+        this.editModal = new ContractModal(id + '_editContract', 'Edytuj kontrakt', this, 'EDIT');
+        this.$addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
+        this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this, 'EDIT');
         
         this.initialise(this.makeCollapsibleItemsList());
         this.$addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI");
+        //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
+        //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
+        this.connectedRepository.currentItem.projectId = this.connectedRepository.projectId;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -48,7 +51,7 @@ class ContractsCollapsible extends SimpleCollapsible {
             var $crudMenu = $row.find('.collapsible-header > .crudButtons');
             if (contract.ourId){ 
                 $crudMenu
-                    .append('<span data-target="' + this.$editOurModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
+                    .append('<span data-target="' + this.editOurModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
             $row.attr('isOur','true'); 
             }
             else
@@ -70,7 +73,7 @@ class ContractsCollapsible extends SimpleCollapsible {
                                         var isOur = $(this).closest('.collapsible-item')
                                             .attr('isOur')
                                         $(this).closest('.collapsible-item').trigger('click');
-                                        (isOur)? _this.$editOurModal.fillWithData() : _this.editModal.fillWithData();
+                                        (isOur)? _this.editOurModal.fillWithData() : _this.editModal.fillWithData();
                                         Materialize.updateTextFields();
                                         });
     }
@@ -80,8 +83,7 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
-        milestonesRepository.currentItem.projectId = this.connectedRepository.currentItem.projectId;
-        milestonesRepository.currentItem.projectName = this.connectedRepository.currentItem.projectName;
+        //milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
+        //milestonesRepository.currentItem.projectName = this.connectedRepository.currentItem.projectName;
     }
 }

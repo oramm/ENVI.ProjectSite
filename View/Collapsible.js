@@ -70,10 +70,9 @@ class Collapsible {
             .css('display', 'block')
             .append($crudButtons);
 
-        $row.children(':last').append((item.$body!==undefined)? item.$body : this.makeBodyDom(item));
+        $row.children(':last').append((item.$bodyDom)? item.$bodyDom : this.makeBodyDom(item));
         this.addRowCrudButtons($row);
         return $row;
-        
     }
     
      /*
@@ -154,7 +153,7 @@ class Collapsible {
                 case "PENDING":  
                     var $oldRow = this.$collapsible.find('[itemid=' + item.id +']');
                     $oldRow.attr('itemid',item.id + '_toDelete');
-                    var $newRow = this.buildRow(this.makeItem(item));
+                    var $newRow = this.buildRow(this.makeItem(item, this.makeBodyDom(item)));
                     $newRow.append(this.makePreloader('preloader'+item.id))
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);

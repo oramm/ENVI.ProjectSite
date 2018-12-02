@@ -3,11 +3,12 @@
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
  */
 class Modal {
-    constructor(id, tittle, connectedResultsetComponent){
+    constructor(id, tittle, connectedResultsetComponent, mode){
         this.id = id;
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
-        
+        this.mode=mode;
+        if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT') throw new SyntaxError('Zła wartość mode');
         this.dataObject;
         this.form;
         this.$dom;
@@ -19,7 +20,7 @@ class Modal {
     }
     
     buildDom(){
-        this.form = new Form("foo_"+ this.id, "GET", this.formElements);
+        this.form = new Form("form_"+ this.id, "GET", this.formElements);
         this.$dom = $('<div id="' + this.id + '" class="modal modal-fixed-footer">');
         this.connectedResultsetComponent.$dom
             .append(this.$dom).children(':last-child')
@@ -35,8 +36,7 @@ class Modal {
     setTittle(tittle){
         this.$dom.children('.modal-content').prepend('<h4>'+ tittle +'</h4>');
     }
-    
-    
+       
     preppendTriggerButtonTo($uiElelment,caption){
         var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
         var _this = this;
@@ -46,9 +46,12 @@ class Modal {
     }
     
     preppendTriggerIconTo($uiElelment,caption){
-        var $icon = $('<a data-target="' + this.id + '" class="collectionItemAddNew modal-trigger"><i class="material-icons">add</i></a>')
+        var $icon = $('<a data-target="' + this.id + '" class="collectionItemAddNew modal-trigger"><i class="material-icons">add</i></a>');
         var _this = this;
-        $icon.click(    function(){if(_this.fillWithInitData) _this.fillWithInitData() //funkcja dokładana w SpecificNewModal
+        $icon.click(    function(){if(_this.mode=='EDIT') 
+                                        _this.fillWithData();
+                                   else 
+                                        _this.initAddNewData(); //implementowana w specificModal
                                   });
         $uiElelment.prepend($icon);                         
     }
@@ -63,5 +66,51 @@ class Modal {
             // prevent default posting of form
             event.preventDefault();
         });
+    }
+    /*
+     * Używana przy włączaniu MOdala do edycji
+     * @returns {undefined}
+     */
+    fillWithData(){
+        this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
+    }
+    
+    /*
+     * Używana przy Submit
+     * @param {repositoryItem} currentEditedItem
+     * @returns {undefined}
+     */
+    isDuplicate(currentEditedItem){
+        var duplicate = this.connectedResultsetComponent.connectedRepository.items.find(item => _.isEqual(item, currentEditedItem));
+        return (duplicate)? true : false;
+    }
+    
+    /*
+     * Krok 1 - po kliknięciu 'Submit' formularza dodawania
+     * Proces: this.submitTrigger >> this.connectedResultsetComponent.connectedRepository.addNewPerson
+     *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[PENDING]
+     *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
+    */
+    submitTrigger(){
+        if (tinyMCE) tinyMCE.triggerSave();
+        var repository = this.connectedResultsetComponent.connectedRepository;
+        //obiekt do zapisania danych z formularza
+        var tmpDataObject = Tools.cloneOfObject(repository.currentItem);
+        
+        this.form.submitHandler(tmpDataObject);
+        if (this.form.validate(tmpDataObject)){
+            // usatawić tutaj dodatkowe pola jrśli potrzebne
+            
+                
+            //if(!this.isDuplicate(tmpDataObject)){
+                repository.setCurrentItem(tmpDataObject);
+                if(this.mode==='EDIT')
+                    repository.editItem(repository.currentItem, this.connectedResultsetComponent);
+                else
+                   repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
+            //} else {
+            //    alert("Taki wpis już jest w bazie!");
+            //}
+        }
     }
 } 

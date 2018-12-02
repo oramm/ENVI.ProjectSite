@@ -6,7 +6,7 @@ class SimpleCollapsible extends Collapsible {
         this.$bodyDoms=[];
         this.makeBodyDoms();
     }
-
+    //TODO powiązać CollapsibleItem z $bodyDom
     makeCollapsibleItemsList(){
         var itemsList = [];
         for (var i=0; i<this.connectedRepository.items.length; i++){

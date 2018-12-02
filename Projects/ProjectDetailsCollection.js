@@ -9,7 +9,7 @@ class ProjectDetailsCollection extends Collection {
                isSelectable: false
               });  
         this.connectedRepository = window.parent.projectsRepository;
-        this.editModal = new EditProjectsDetailsModal(this.id + '_editProject', 'Edytuj dane projektu', this);
+        this.editModal = new ProjectsDetailsModal(this.id + '_editProject', 'Edytuj dane projektu', this,'EDIT');
         
         this.$externalLinks = $('<span class="externalLinks">');
         this.initialise(this.makeList());
