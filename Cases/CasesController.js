@@ -9,13 +9,13 @@ class CasesController {
         //tasksRepository = new TasksRepository();
         //casesRepository = new CasesRepository();
         
-        casesRepository = new SimpleRepository('Tasks repository',
+        casesRepository = new SimpleRepository('Cases repository',
                                                     'getCasesListPerMilestone',
                                                     'addNewCase',
                                                     'editCase',
                                                     'deleteCase');
         
-        tasksRepository = new SimpleRepository('Cases repository',
+        tasksRepository = new SimpleRepository('Tasks repository',
                                                     'getTasksListPerMilestone',
                                                     'addNewTask',
                                                     'editTask',
@@ -29,7 +29,7 @@ class CasesController {
         
         promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
         promises[1] = casesRepository.initialise(casesRepository.parentItemId);
-        promises[2] = personsRepository.initialise();
+        promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
@@ -57,4 +57,3 @@ class CasesController {
    
     }
 }
-

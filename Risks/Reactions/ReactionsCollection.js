@@ -19,7 +19,7 @@ class ReactionsCollection extends SimpleCollection {
         this.status = initParamObject.status;
         
         if (this.isAddable) 
-            this.$addNewModal = new ReactionModal(this.id + '_newReaction', 'Dodaj zadanie', this, 'ADD_NEW');
+            this.addNewModal = new ReactionModal(this.id + '_newReaction', 'Dodaj zadanie', this, 'ADD_NEW');
         
         //this.editModal = new ReactionModal(this.id + '_editReaction', 'Edytuj zadanie', this, 'EDIT');
         

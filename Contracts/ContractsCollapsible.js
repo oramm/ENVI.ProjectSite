@@ -2,13 +2,13 @@ class ContractsCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
         super(id, 'Kontrakty', connectedRepository);
         
-        this.$addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', this, 'ADD_NEW');
+        this.addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', this, 'ADD_NEW');
         this.editModal = new ContractModal(id + '_editContract', 'Edytuj kontrakt', this, 'EDIT');
-        this.$addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
+        this.addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
         this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this, 'EDIT');
         
         this.initialise(this.makeCollapsibleItemsList());
-        this.$addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI");
+        this.addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI",this);
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
         this.connectedRepository.currentItem.projectId = this.connectedRepository.parentItemId;
@@ -73,8 +73,7 @@ class ContractsCollapsible extends SimpleCollapsible {
                                         var isOur = $(this).closest('.collapsible-item')
                                             .attr('isOur')
                                         $(this).closest('.collapsible-item').trigger('click');
-                                        (isOur)? _this.editOurModal.fillWithData() : _this.editModal.fillWithData();
-                                        Materialize.updateTextFields();
+                                        (isOur)? _this.editOurModal.triggerAction(_this) : _this.editModal.triggerAction(_this);
                                         });
     }
     /*

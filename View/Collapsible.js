@@ -210,8 +210,8 @@ class Collapsible {
      * do usunięcia
      */
     actionsMenuInitialise(){        
-        if (this.$addNewModal !== undefined)
-            this.$addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis");
+        if (this.addNewModal !== undefined)
+            this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis", this);
         this.filterInitialise();
 
     }
@@ -221,7 +221,7 @@ class Collapsible {
         this.$dom.find(".collapsible-header").click(function() {   
                                             _this.selectTrigger($(this).parent().attr("itemId"));
                                             $('.collapsible').find('.collapsible-header > .crudButtons')
-                                                .css('visibility', 'hidden')
+                                                .css('visibility', 'hidden');
                                             $(this).children('.crudButtons')
                                                 .css('visibility', 'visible');
                                             //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);

@@ -25,7 +25,7 @@ class TaskModal extends Modal {
                 dataItemKeyName: 'deadline'
             },
             {   input: this.personAutoCompleteTextField,
-                dataItemKeyName: 'owner'
+                dataItemKeyName: '_owner'
             }
         ];
         this.initialise();

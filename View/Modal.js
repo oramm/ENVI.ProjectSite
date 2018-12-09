@@ -15,8 +15,7 @@ class Modal {
     }
     initialise(){
         this.buildDom();
-        Tools.hasFunction(this.submitTrigger);
-        
+        Tools.hasFunction(this.submitTrigger);       
     }
     
     buildDom(){
@@ -36,26 +35,53 @@ class Modal {
     setTittle(tittle){
         this.$dom.children('.modal-content').prepend('<h4>'+ tittle +'</h4>');
     }
-       
-    preppendTriggerButtonTo($uiElelment,caption){
+    /*
+     * Tworzy ikonę edycji lub dodania rekordu do listy
+     * @param {Collection | Collapsible} resultsetComponent
+     * @returns {Modal.createTriggerIcon.$icon}
+     */
+    createTriggerIcon(){
+        var iconType = (this.mode==='ADD_NEW')? 'add' : 'edit';
+        var $triggerIcon = $('<SPAN data-target="' + this.id + '" ><i class="material-icons">' + iconType + '</i></SPAN>');
+        //var _this = this;
+        $triggerIcon
+            .addClass((this.mode==='ADD_NEW')? 'collectionItemAddNew' : 'collectionItemEdit')
+            .addClass('modal-trigger')
+        return $triggerIcon;                     
+    }
+    /*
+     * Akcja po włączeniu modala. Funkcja używana w connectedResultsetComponent.setEditAction()
+     */
+    triggerAction(connectedResultsetComponent){
+        this.connectWithResultsetComponent(connectedResultsetComponent);
+        if(this.mode=='EDIT') 
+            this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
+        else if(!this.connectedResultsetComponent.constructor.name.includes('Collapsible'))
+            this.initAddNewData(); //implementowana w specificModal
+        Materialize.updateTextFields();
+    }
+    /*
+     * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
+     */
+    preppendTriggerButtonTo($uiElelment,caption, resultsetComponent){
         var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
         var _this = this;
-        $button.click(    function(){if(_this.fillWithInitData) _this.fillWithInitData() //funkcja dokładana w SpecificNewModal
-                                  });
+        $button.click(    function(){   if(!_this.connectedResultsetComponent.constructor.name.includes('Collapsible')) {
+                                            _this.connectWithResultsetComponent(resultsetComponent);
+                                            _this.initAddNewData();
+                                        }
+                                    });
         $uiElelment.prepend($button);
     }
     
-    preppendTriggerIconTo($uiElelment,caption){
-        var $icon = $('<a data-target="' + this.id + '" class="collectionItemAddNew modal-trigger"><i class="material-icons">add</i></a>');
-        var _this = this;
-        $icon.click(    function(){if(_this.mode=='EDIT') 
-                                        _this.fillWithData();
-                                   else 
-                                        _this.initAddNewData(); //implementowana w specificModal
-                                  });
-        $uiElelment.prepend($icon);                         
+    /*
+     * wywoływana przed pokazaniem modala
+     * @param {Collection | Collapsible} component
+     * @returns {undefined}
+     */
+    connectWithResultsetComponent(component){
+        this.connectedResultsetComponent = component;
     }
-    
     /*
      * Funkcja musi być obsłużona w klasie pochodnej.
      * Klasa pochodna musi mieć metodę submitTrigger()
@@ -66,15 +92,7 @@ class Modal {
             // prevent default posting of form
             event.preventDefault();
         });
-    }
-    /*
-     * Używana przy włączaniu MOdala do edycji
-     * @returns {undefined}
-     */
-    fillWithData(){
-        this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
-    }
-    
+    }    
     /*
      * Używana przy Submit
      * @param {repositoryItem} currentEditedItem
@@ -92,6 +110,7 @@ class Modal {
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
     submitTrigger(){
+        var tinyMCE = tinyMCE || undefined;
         if (tinyMCE) tinyMCE.triggerSave();
         var repository = this.connectedResultsetComponent.connectedRepository;
         //obiekt do zapisania danych z formularza

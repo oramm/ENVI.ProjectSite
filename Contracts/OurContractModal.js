@@ -51,5 +51,5 @@ class OurContractModal extends Modal {
             }
         ];
         this.initialise();
-    }  
+    }
 };

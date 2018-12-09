@@ -8,6 +8,8 @@ class TasksCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id, 
                title: initParamObject.title,
+               addNewModal: initParamObject.addNewModal,
+               editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: false,
                isEditable: true, 
@@ -17,12 +19,7 @@ class TasksCollection extends SimpleCollection {
               })
         this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
-        
-        if (this.isAddable) 
-            this.$addNewModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
-        
-        this.editModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this, 'EDIT');
-        
+               
         this.initialise(this.makeList());
     }    
     /*

@@ -2,7 +2,7 @@ class RisksCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
         super(id, 'Ryzyko', connectedRepository) ;
         
-        this.$addNewModal = new RiskModal(id + '_newRisk', 'Zgłoś ryzyko', this, 'ADD_NEW');
+        this.addNewModal = new RiskModal(id + '_newRisk', 'Zgłoś ryzyko', this, 'ADD_NEW');
         this.editModal = new RiskModal(id + '_editRisk', 'Edytuj rysyko', this, 'EDIT');
         
         this.initialise(this.makeCollapsibleItemsList());

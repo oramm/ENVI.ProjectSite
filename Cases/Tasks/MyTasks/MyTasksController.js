@@ -18,8 +18,8 @@ class MyTasksController {
         
         var promises = [];
         
-        promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
-        promises[1] = personsRepository.initialise();
+        promises[0] = tasksRepository.initialise();
+        promises[1] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

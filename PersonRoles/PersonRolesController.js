@@ -40,6 +40,7 @@ class PersonsRolesController {
                             })
             .then(() =>     {   $('select').material_select();
                                 $('.modal').modal();
+                                Materialize.updateTextFields();
                             })
             .catch(err => {
                   console.error(err);

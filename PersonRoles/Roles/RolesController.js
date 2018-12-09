@@ -30,8 +30,6 @@ class RolesController {
                         })
             .catch(err => {
                   console.error(err);
-                });
-   
+                });  
     }
 }
-

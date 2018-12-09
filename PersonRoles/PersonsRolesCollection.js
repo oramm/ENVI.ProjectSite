@@ -10,8 +10,7 @@ class PersonsRolesCollection extends SimpleCollection {
                connectedRepository: personRoleAssociationsRepository
               });
         
-        this.$addNewModal = new NewPersonsRolesAssociationModal('newPersonsRolesAssociation', 'Przypisz rolę', this);
-        //this.editModal = new EditExternalAchievementModal('editExternalAchievement', 'Edytuj osiągnięcie', this);
+        this.addNewModal = new PersonsRolesAssociationModal('newPersonsRolesAssociation', 'Przypisz rolę', this, 'ADD_NEW');
         
         this.initialise(this.makeList());        
     }

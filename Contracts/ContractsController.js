@@ -25,7 +25,7 @@ class ContractsController {
         var promises = [];
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
-        promises[2] = personsRepository.initialise('ENVI_EMPLOYEE');
+        promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

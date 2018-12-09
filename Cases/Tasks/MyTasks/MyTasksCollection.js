@@ -8,7 +8,7 @@ class MyTasksCollection extends SimpleCollection {
                connectedRepository: tasksRepository
               });
 
-        this.$addNewModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
+        this.addNewModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
         this.editModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this,'EDIT');
         
         this.initialise(this.makeList());        
@@ -17,8 +17,8 @@ class MyTasksCollection extends SimpleCollection {
      * Dodano atrybut z caseId_Hidden, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
     */
     makeItem(dataItem){
-        (dataItem.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
-        var nameSurnameEmailLabel = (dataItem.nameSurnameEmail)? (dataItem.nameSurnameEmail)  + '<BR>': "";
+        (dataItem._owner.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
+        var nameSurnameEmailLabel = (dataItem._owner.nameSurnameEmail)? (dataItem._owner.nameSurnameEmail)  + '<BR>': "";
         
         (dataItem.description)? true : dataItem.description="";
         var descriptionLabel = (dataItem.description)? (dataItem.description)  + '<BR>': "";
@@ -30,7 +30,7 @@ class MyTasksCollection extends SimpleCollection {
         return {    id: dataItem.id,
                     $title:  this.makeTitle(dataItem),
                     $description:    this.makeDescription(dataItem),
-                    userEmail_Hidden:  dataItem.nameSurnameEmail
+                    userEmail_Hidden:  dataItem._owner.nameSurnameEmail
                 };
     }
     /*
@@ -84,7 +84,7 @@ class MyTasksCollection extends SimpleCollection {
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
-            .append(personAtomicEditLabel.$dom)
+            //.append(personAtomicEditLabel.$dom)
             .append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;

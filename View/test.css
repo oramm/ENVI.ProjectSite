@@ -36,7 +36,7 @@ iframe {
 
 body {
      display: flex;
-     min-height: 98vh;
+     min-height: 100vh;
      flex-direction: column;
  }
  main {
@@ -62,4 +62,8 @@ body {
   /* margin-left:80px; */
   background-color: green;
   box-sizing: border-box;
+}
+.nav-wrapper .input-field input[type=search] {
+    padding-left: 4rem;
+    width: calc(100% - 7rem);
 }

@@ -12,7 +12,7 @@ class MilestonesCollection extends SimpleCollection {
               });
         this.parentId = initParamObject.parentId;
 
-        this.$addNewModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
+        this.addNewModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
         this.editModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
         
         this.initialise(this.makeList());        

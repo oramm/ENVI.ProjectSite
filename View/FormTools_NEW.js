@@ -177,18 +177,15 @@ class SelectField{
     simulateChosenItem(inputValue){
         if(typeof this.optionsData[0] !== 'object'){
             this.chosenItem = inputValue;
-            //---
             var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
-            this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-            this.chosenItem = inputValue;
-            //---
+            //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         }
         else {
+            this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue[this.key]);
             var optionsString = this.optionsData.map(item=>item[this.key]); 
             var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
-            this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-            this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue[this.key]);
         }
+        this.$dom.find('li:nth-child('+itemSelectedId+')').click();
     }
     
     validate(){

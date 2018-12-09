@@ -17,14 +17,15 @@ class ProjectDetailsCollection extends Collection {
     }
     
     actionsMenuInitialise(){
-        this.$actionsMenu.append(FormTools.createModalTriggerIcon(this.editModal.id,'edit'));
+        this.$actionsMenu.append(this.editModal.createTriggerIcon(this));
+        //this.$actionsMenu.append(FormTools.createModalTriggerIcon(this.editModal.id,'edit',this));
         if (!this.connectedRepository.currentItem.googleCalendarId){
             this.$addCalendarButton = FormTools.createFlatButton('Utwórz kalendarz', this.createCalendar,this)
             this.$actionsMenu.append(this.$addCalendarButton);
         }
-        this.appendIconToExternalLinks('../Resources/View/Google-Drive-icon.png', this.connectedRepository.currentItem.gdFolderUrl);
-        this.appendIconToExternalLinks('../Resources/View/Google-Groups-icon.png', this.connectedRepository.currentItem.googleGroupUrl);
-        this.appendIconToExternalLinks('../Resources/View/Google-Calendar-icon.png', this.connectedRepository.currentItem.googleCalendarUrl);
+        this.appendIconToExternalLinks('../Resources/View/Google-Drive-icon.png', this.connectedRepository.currentItem._gdFolderUrl);
+        this.appendIconToExternalLinks('../Resources/View/Google-Groups-icon.png', this.connectedRepository.currentItem._googleGroupUrl);
+        this.appendIconToExternalLinks('../Resources/View/Google-Calendar-icon.png', this.connectedRepository.currentItem._googleCalendarUrl);
 
         this.$actionsMenu.append(this.$externalLinks);
         this.setEditAction();
@@ -114,7 +115,7 @@ class ProjectDetailsCollection extends Collection {
                     this.$dom.append(this.$collection);
                     this.buildCollectionDom();
                     
-                    this.$dom.append(this.makePreloader('preloader'+item.id))
+                    this.$dom.append(this.makePreloader('preloader'+item.id));
                     
                     break;
                 case "ERROR":
@@ -129,7 +130,7 @@ class ProjectDetailsCollection extends Collection {
 
                     break;
                 }
-            resolve(status)
+            resolve(status);
         });
     }
 }

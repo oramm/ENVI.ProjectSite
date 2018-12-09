@@ -7,11 +7,11 @@ class RolesCollection extends SimpleCollection {
                isEditable: true, 
                isAddable: true, 
                isDeletable: true,
-               connectedRepository: rolesRepository
+               connectedRepository: RolesSetup.rolesRepository
               });
         
-        this.$addNewModal = new NewRoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this);
-        this.editModal = new EditRoleModal(this.id + '_editRoleModal', 'Edytuj role', this);
+        this.addNewModal = new RoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this, 'ADD_NEW');
+        this.editModal = new RoleModal(this.id + '_editRoleModal', 'Edytuj role', this, 'EDIT');
         
         this.initialise(this.makeList());        
     }

@@ -1,6 +1,6 @@
 class PersonsRolesAssociationModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent){
-        super(id, tittle, connectedResultsetComponent);
+    constructor(id, tittle, connectedResultsetComponent, mode){
+        super(id, tittle, connectedResultsetComponent, mode);
         this.roleNames=[]
         this.setRoleNames();
         
@@ -15,8 +15,12 @@ class PersonsRolesAssociationModal extends Modal {
         
         
         this.formElements = [
-            this.personAutoCompleteTextField,
-            this.roleSelectField
+            {   input: this.personAutoCompleteTextField,
+                dataItemKeyName: 'person'
+            },
+            {   input: this.roleSelectField,
+                dataItemKeyName: 'role'
+            }
         ];
         
         this.initialise();
@@ -32,7 +36,7 @@ class PersonsRolesAssociationModal extends Modal {
     /*
      * Wypełnia formularz - używane przy edycji
      */
-    fillWithData(){
+    fillWithData1(){
         this.personAutoCompleteTextField.setChosenItem(personRoleAssociationsRepository.currentItem.personNameSurnameEmail);
         this.roleSelectField.simulateChosenItem(personRoleAssociationsRepository.currentItem.roleName);
     }
@@ -43,7 +47,7 @@ class PersonsRolesAssociationModal extends Modal {
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[PENDING]
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
-    submitTrigger(){
+    submitTrigger1(){
         this.dataObject = { id: personRoleAssociationsRepository.currentItem.id, //używane tylko przy edycji
                             personId: this.personAutoCompleteTextField.chosenItem.id,
                             roleId:  this.roleSelectField.chosenItem.id,
@@ -51,5 +55,10 @@ class PersonsRolesAssociationModal extends Modal {
                           };
         personRoleAssociationsRepository.setCurrentItem(this.dataObject);
     }
-    
+    /*
+     * Używana przy włączaniu Modala do edycji
+     * @returns {undefined}
+     */
+    initAddNewData(){
+    }    
 };

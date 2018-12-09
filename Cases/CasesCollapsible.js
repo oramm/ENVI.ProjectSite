@@ -2,8 +2,11 @@ class CasesCollapsible extends SimpleCollapsible {
     constructor(id, connectedRepository){
         super(id, 'Sprawę', connectedRepository) ;
         
-        this.$addNewModal = new CaseModal(id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
+        this.addNewModal = new CaseModal(id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
         this.editModal = new CaseModal(id + '_editCase', 'Edytuj sprawę', this, 'EDIT');
+        //modale dla TasksCollection:
+        this.addNewTaskModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
+        this.editTaskModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this, 'EDIT');
         
         this.initialise(this.makeCollapsibleItemsList());
         
@@ -28,6 +31,8 @@ class CasesCollapsible extends SimpleCollapsible {
     var statusesCollections = [];
     var backlogCollection = new TasksCollection({   id: 'backlogCollection_' + dataItem.id + '_status' + 0, 
                                                     parentId: dataItem.id,
+                                                    addNewModal: this.addNewTaskModal,
+                                                    editModal: this.editTaskModal,
                                                     title: TasksSetup.statusNames[0],
                                                     status: TasksSetup.statusNames[0],
                                                     isAddable: true
@@ -37,7 +42,8 @@ class CasesCollapsible extends SimpleCollapsible {
     
     for (var i=1; i<TasksSetup.statusNames.length; i++){
             var tasksCollection = new TasksCollection({     id: 'tasksListCollection_' + dataItem.id + '_status' + i, 
-                                                            parentId: dataItem.id, 
+                                                            parentId: dataItem.id,
+                                                            editModal: this.editTaskModal,
                                                             title: TasksSetup.statusNames[i],
                                                             status: TasksSetup.statusNames[i],
                                                             isAddable: false
