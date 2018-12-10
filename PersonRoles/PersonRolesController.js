@@ -14,12 +14,11 @@ class PersonsRolesController {
                                                  'editRoleInDb',
                                                  'deleteRole'
                                                 );
-        personRoleAssociationsRepository = new PersonsRolesRepository('PersonsRolesAssociations repository',
+        personRoleAssociationsRepository = new SimpleRepository('PersonsRolesAssociations repository',
                                                                 'getPersonRoleAssociationsPerProject',
                                                                 'addNewPersonRoleAssociationInDb',
                                                                 'editPersonRoleAssociationInDb',
-                                                                'deletePersonRoleAssociation',
-                                                                'fillNewPersonRoleAssociationData'
+                                                                'deletePersonRoleAssociation'
                                                                );
         personsRepository = new SimpleRepository('Persons repository',
                                                  'getPersonsNameSurnameEmailList',

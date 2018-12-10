@@ -16,14 +16,15 @@ class PersonsRolesCollection extends SimpleCollection {
     }
     
     makeItem(dataItem){
-        return {    id: '' + dataItem.personId + dataItem.roleId,
+        
+        return {    id: '' + dataItem._person.id + dataItem._role.id,
                     icon:   'person',
-                    title:  dataItem.personName + ' ' + 
-                            dataItem.personSurname + ': ' +
-                            dataItem.entityName,
-                    description:    dataItem.roleName + '<BR>' +
-                                    '<a href="callto:'+ dataItem.personPhone +'">' +dataItem.personPhone + '</a> ' +
-                                    '<a href="mailto:'+ dataItem.personEmail +'">' + dataItem.personEmail + '</a>'
+                    title:  dataItem._person.name + ' ' + 
+                            dataItem._person.surname + ': ' +
+                            dataItem._person.entityName,
+                    description:    dataItem._role.name + '<BR>' +
+                                    '<a href="callto:'+ dataItem._person.phone +'">' +dataItem._person.phone + '</a> ' +
+                                    '<a href="mailto:'+ dataItem._person.email +'">' + dataItem._person.email + '</a>'
                 };
     }
 }

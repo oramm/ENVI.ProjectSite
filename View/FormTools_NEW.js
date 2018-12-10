@@ -554,6 +554,7 @@ class Form {
                     dataObject[this.elements[i].dataItemKeyName] = Tools.dateDMYtoYMD($('#'+ this.elements[i].input.id).val());
                     break;
                 case 'SelectField' :
+                case 'SelectFieldBrowserDefault' :
                     if (typeof this.elements[i].input.chosenItem === 'object') 
                         dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem;
                     else
