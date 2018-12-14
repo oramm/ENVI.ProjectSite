@@ -56,8 +56,6 @@ class Modal {
         this.connectWithResultsetComponent(connectedResultsetComponent);
         if(this.mode=='EDIT') 
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
-        else if(!this.connectedResultsetComponent.constructor.name.includes('Collapsible'))
-            this.initAddNewData(); //implementowana w specificModal
         Materialize.updateTextFields();
     }
     /*
@@ -111,7 +109,8 @@ class Modal {
     */
     submitTrigger(){
         var tinyMCE = tinyMCE || undefined;
-        if (tinyMCE) tinyMCE.triggerSave();
+        //if (tinyMCE) 
+            tinyMCE.triggerSave();
         var repository = this.connectedResultsetComponent.connectedRepository;
         //obiekt do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(repository.currentItem);

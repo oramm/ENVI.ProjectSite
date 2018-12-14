@@ -30,11 +30,4 @@ class TaskModal extends Modal {
         ];
         this.initialise();
     }
-    /*
-     * Używana przy włączaniu Modala do edycji
-     * @returns {undefined}
-     */
-    initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem.caseId = CasesSetup.casesRepository.currentItem.id; 
-    }
 };

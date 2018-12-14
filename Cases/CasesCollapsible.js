@@ -13,7 +13,6 @@ class CasesCollapsible extends SimpleCollapsible {
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
         this.connectedRepository.currentItem.milestoneId = this.connectedRepository.parentItemId;
-        //this.connectedRepository.currentItem.projectId = this.connectedRepository.parentItemId;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -57,5 +56,14 @@ class CasesCollapsible extends SimpleCollapsible {
             .attr('caseid',dataItem.id)
             .append(new ScrumBoard(statusesCollections).$dom)
     return $bodyDom;
+    }
+    
+    /*
+     * Przeciążenie konieczne bo przy dodawaniu nowych elementów Collection muszą być ustawione
+     * dane bieżącego kontraktu i projektu
+     */
+    selectTrigger(itemId){
+        super.selectTrigger(itemId);
+        TasksSetup.tasksRepository.currentItem.caseId = this.connectedRepository.currentItem.id;
     }
 }

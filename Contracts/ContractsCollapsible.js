@@ -7,6 +7,10 @@ class ContractsCollapsible extends SimpleCollapsible {
         this.addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
         this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this, 'EDIT');
         
+        
+        this.addNewMilestoneModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
+        this.editMilestoneModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
+        
         this.initialise(this.makeCollapsibleItemsList());
         this.addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj umowę ENVI",this);
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
@@ -33,6 +37,8 @@ class ContractsCollapsible extends SimpleCollapsible {
             .attr('contractid',dataItem.id)
             .append(new MilestonesCollection({  id: 'milestonesListCollection' + dataItem.id, 
                                                 title: "",
+                                                addNewModal: this.addNewMilestoneModal,
+                                                editModal: this. editMilestoneModal,
                                                 parentId: dataItem.id
                                             }, 
                     ).$dom);
@@ -82,7 +88,6 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        //milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
-        //milestonesRepository.currentItem.projectName = this.connectedRepository.currentItem.projectName;
+        MilestonesSetup.milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
     }
 }

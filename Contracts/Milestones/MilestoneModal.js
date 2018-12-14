@@ -33,13 +33,4 @@ class MilestoneModal extends Modal {
         this.initialise();
     }
 
-    /*
-     * Używana przy włączaniu Modala do edycji
-     * @returns {undefined}
-     */
-    initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem.contractId = MilestonesSetup.milestonesRepository.currentItem.id;
-        this.connectedResultsetComponent.connectedRepository.currentItem.projectId = MilestonesSetup.milestonesRepository.currentItem.projectId;
-        this.connectedResultsetComponent.connectedRepository.currentItem.projectName = MilestonesSetup.milestonesRepository.currentItem.projectName;
-    }
 };
