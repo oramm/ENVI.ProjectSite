@@ -39,7 +39,9 @@ class MyTasksCollection extends SimpleCollection {
     makeTitle(dataItem){
         var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
                                                         dataItem, 
-                                                        new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
+                                                        {   input: new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
+                                                            dataItemKeyName: 'name'
+                                                        },
                                                         'name',
                                                         this);
         return titleAtomicEditLabel.$dom
@@ -53,38 +55,27 @@ class MyTasksCollection extends SimpleCollection {
         var $collectionElementDescription = $('<span>');
         var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem.description, 
                                                         dataItem, 
-                                                        new InputTextField (this.id +  '_' + dataItem.id + '_tmpEditDescription_TextField','Edytuj', undefined, true, 150),
+                                                        {   input: new InputTextField (this.id +  '_' + dataItem.id + '_tmpEditDescription_TextField','Edytuj', undefined, true, 150),
+                                                            dataItemKeyName: 'description'
+                                                        },
                                                         'description',
                                                         this);
         
         
         var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
                                                         dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
+                                                        {   input: new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
+                                                            dataItemKeyName: 'deadline'
+                                                        },
                                                         'deadline',
                                                         this);
         
         
         (dataItem.status)? true : dataItem.status="";
         
-        var personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
-        
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail, 
-                                                        dataItem, 
-                                                        personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
-                                                        this);
-        
-       
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
-            //.append(personAtomicEditLabel.$dom)
             .append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;

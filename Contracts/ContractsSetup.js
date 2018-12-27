@@ -3,7 +3,8 @@ var personsRepository;
 
 const statusNames = [   'Nie rozpoczęty',
                         'W trakcie',
-                        'Zakończony'
+                        'Zakończony',
+                        'Archiwalny'
                     ];
 
 const fidicTypes = [   'Nie dotyczy',

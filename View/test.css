@@ -2,7 +2,7 @@ iframe {
     border:0;
 }
 
-.collectionItemEdit, .itemDelete{
+.collectionItemEdit, .itemDelete, .brand-logo{
     cursor: pointer;
 }
 
@@ -26,6 +26,8 @@ iframe {
     min-height: 100px !important;
     overflow: visible !important;
 }
+
+.collection-item span{/* display: block; */}
 
 .emptyList{
     border:1;

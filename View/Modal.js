@@ -108,7 +108,7 @@ class Modal {
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
     submitTrigger(){
-        var tinyMCE = tinyMCE || undefined;
+        //var tinyMCE = tinyMCE || undefined;
         //if (tinyMCE) 
             tinyMCE.triggerSave();
         var repository = this.connectedResultsetComponent.connectedRepository;

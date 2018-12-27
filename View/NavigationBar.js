@@ -15,13 +15,18 @@ class NavigationBar {
             .prepend(this.$mainNavDom);
         $('nav').append('<div class="nav-wrapper" id="main-nav">');
         $('.nav-wrapper')
-            .append('<a href="#!" class="brand-logo">'+ this.tittle +'</a>')
+            .append('<a  class="brand-logo">'+ this.tittle +'</a>')
             .append('<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>')
             .append('<ul class="right hide-on-med-and-down">');
-                
+        this.setShowMainPageAction();      
         $(".sidenav").sidenav(); //funkcja z css Materialise
     }
     
+    setShowMainPageAction(){
+        this.$mainNavDom.find('.brand-logo').click(()=>this.menuItemClickHandler('Dashboard/dashboard.html'));
+        
+        
+    }
     addMenuItems($element){
         $element.empty();
         for (var i =0; i<this.menuItems.length;i++) {

@@ -37,7 +37,9 @@ class CurrentMilestonesCollection extends SimpleCollection {
     makeTitle(dataItem){
         var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
                                                         dataItem, 
-                                                        new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
+                                                        {   input: new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
+                                                            dataItemKeyName: 'name'
+                                                        },
                                                         'name',
                                                         this);
         return titleAtomicEditLabel.$dom
@@ -62,6 +64,7 @@ class CurrentMilestonesCollection extends SimpleCollection {
             .append('<span>Projekt: ' + dataItem.projectId + ' => </span>')
             .append('<span>Kontrakt: <strong>' + dataItem.contractOurId + '</strong><br></span>')
             .append('<span>' + dataItem.description + '<br></span>')
+            .append('<span>' + dataItem._manager.nameSurnameEmail + '<br></span>')
             .append('<span>Termin zakończenia: <b>' + dataItem.endDate + '</b><BR></span>')
             //.append(deadlineAtomicEditLabel.$dom)
             .append('<span>' + dataItem.status + '<br></span>');
