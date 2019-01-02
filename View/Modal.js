@@ -56,6 +56,8 @@ class Modal {
         this.connectWithResultsetComponent(connectedResultsetComponent);
         if(this.mode=='EDIT') 
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
+        else
+            this.initAddNewData();
         Materialize.updateTextFields();
     }
     /*

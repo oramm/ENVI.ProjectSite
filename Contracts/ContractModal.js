@@ -57,12 +57,9 @@ class ContractModal extends Modal {
     /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
-    triggerAction(){
-        super.triggerAction(this.connectedResultsetComponent);
-        if(this.mode=='ADD_NEW'){ 
-            var projectId = this.connectedResultsetComponent.connectedRepository.currentItem.projectId;
-            this.connectedResultsetComponent.connectedRepository.currentItem = undefined;
-            this.connectedResultsetComponent.connectedRepository.currentItem.projectId = projectId;
-    }
+    initAddNewData(){
+        var projectId = this.connectedResultsetComponent.connectedRepository.currentItem.projectId;
+        this.connectedResultsetComponent.connectedRepository.currentItem = undefined;
+        this.connectedResultsetComponent.connectedRepository.currentItem.projectId = projectId;
     }
 };
