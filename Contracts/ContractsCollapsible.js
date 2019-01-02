@@ -88,6 +88,7 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     selectTrigger(itemId){
         super.selectTrigger(itemId);
+        console.log(this.editModal.connectedResultsetComponent);
         MilestonesSetup.milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
     }
 }

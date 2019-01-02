@@ -5,7 +5,7 @@ class ContractModal extends Modal {
         this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 300);
 
         this.ourIdConnectedSelectField = new SelectField(this.id + '_ourIdConnected_SelectField', 'Powiązana usługa IK lub PT', true);
-        this.ourIdConnectedSelectField.initialise(this.makeOurPtIds());
+        this.ourIdConnectedSelectField.initialise(this.makeOurPtIds(), '_ourIdName');
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
         this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', true);
@@ -15,11 +15,11 @@ class ContractModal extends Modal {
             {   input: new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
                 dataItemKeyName: 'number'
             },
-            {   input: new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
+            {   input: new InputTextField (this.id + 'nameTextField','Nazwa kontraktu', undefined, true, 150),
                 dataItemKeyName: 'name'
             },
             {   input: this.ourIdConnectedSelectField,
-                dataItemKeyName: 'ourId'
+                dataItemKeyName: '_ourContract'
             },
             {   input: new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
                 dataItemKeyName: 'startDate'
@@ -39,12 +39,30 @@ class ContractModal extends Modal {
         ];
         this.initialise();
     }
+    /*
+     * Tworzy listę kontraktów typu IK PT dla danego projektu
+     */
     makeOurPtIds(){
-        var ourPtIkContracts = ContractsSetup.contractsRepository.items.filter(item=>item.ourType=='PT' || item.ourType=='IK')
+        var ourPtIkContracts = ContractsSetup.contractsRepository.items.filter(item=>item.ourType=='PT' || item.ourType=='IK');
+        //ourPtIkContracts.map(item=> item.ourIdName = item.ourId + ' ' + item.name.substr(0,50) + '...');
+        
+        return ourPtIkContracts;
+        
         var ourPtIkIds = [];
         for (var i=0; i<ourPtIkContracts.length; i++){
-            ourPtIkIds.push(ourPtIkContracts[i].ourId + ' ' + ourPtIkContracts[i].name.substr(0,50) + '...')
+            ourPtIkIds.push(ourPtIkContracts[i].ourId + ' ' + ourPtIkContracts[i].name.substr(0,50) + '...');
         }
         return ourPtIkIds;
-    } 
+    }
+    /*
+     * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
+     */
+    triggerAction(){
+        super.triggerAction(this.connectedResultsetComponent);
+        if(this.mode=='ADD_NEW'){ 
+            var projectId = this.connectedResultsetComponent.connectedRepository.currentItem.projectId;
+            this.connectedResultsetComponent.connectedRepository.currentItem = undefined;
+            this.connectedResultsetComponent.connectedRepository.currentItem.projectId = projectId;
+    }
+    }
 };

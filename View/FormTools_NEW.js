@@ -120,13 +120,13 @@ class SelectField{
             this.pushDataFromStringList();
         else 
             this.pushDataFromObjectsList();
-        $('select').material_select();
+        this.$dom.find('select').material_select();
         if (this.isRequired){
             var regex = new RegExp('^((?!' + this.defaultDisabledOption + ').)*$');
             this.$dom.find('input').attr('pattern', regex);
         }
-        var _this = this;
-        this.$dom.find('li').on('click', function(){_this.onItemChosen(this)});
+        //var _this = this;
+        //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
     }
     //this.optionsData jest typu Object
     pushDataFromObjectsList(){
@@ -157,20 +157,20 @@ class SelectField{
         return this.$dom;
     }
 
-    onItemChosen(inputValue){
+    getItemChosen(){
+        var inputValue = this.$dom.find('input').val();
         if(typeof this.optionsData[0] !== 'object'){
-            //this.chosenItem = $(inputValue).text();
-            //---
-            var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+            
+            //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
             //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
             this.chosenItem = inputValue;
             //---
         }
         else {
-            var optionsString = this.optionsData.map(item=>item[this.key]); 
-            var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
+            //var optionsString = this.optionsData.map(item=>item[this.key]); 
+            //var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
             //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-            this.chosenItem = this.optionsData.find(item=> item[this.key]==$(inputValue).text());
+            this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue);
         }
     }
     
@@ -555,8 +555,11 @@ class Form {
                     break;
                 case 'SelectField' :
                 case 'SelectFieldBrowserDefault' :
-                    if (typeof this.elements[i].input.chosenItem === 'object') 
-                        dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem;
+                    this.elements[i].input.getItemChosen();
+                    if (typeof this.elements[i].input.chosenItem === 'object'){ 
+                        
+                        dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem; 
+                    }
                     else
                         dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.$dom.find('input').val();
                     break;
