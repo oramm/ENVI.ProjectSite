@@ -66,10 +66,10 @@ class Modal {
     preppendTriggerButtonTo($uiElelment,caption, resultsetComponent){
         var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
         var _this = this;
-        $button.click(    function(){   if(!_this.connectedResultsetComponent.constructor.name.includes('Collapsible')) {
+        $button.click(    function(){   //if(!_this.connectedResultsetComponent.constructor.name.includes('Collapsible')) {
                                             _this.connectWithResultsetComponent(resultsetComponent);
                                             _this.initAddNewData();
-                                        }
+                                        //}
                                     });
         $uiElelment.prepend($button);
     }
