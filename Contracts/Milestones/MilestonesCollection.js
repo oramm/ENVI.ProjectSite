@@ -74,7 +74,7 @@ class MilestonesCollection extends SimpleCollection {
     selectTrigger(itemId){
         if (itemId !== undefined)
             {super.selectTrigger(itemId);
-            $('#iframeCases').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+            $('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
         }
     }
 }

@@ -334,7 +334,7 @@ class SelectFieldBrowserDefault{
         
         this.$dom
             .append($label)
-            .append(this.$select)
+            .append(this.$select);
           
         //if (isRequired)
         //    $select.attr('required','true')
@@ -443,7 +443,7 @@ class Tabs {
     constructor(initParameters){
         this.id = initParameters.id;
         this.swipeable = initParameters.swipeable;
-        this.onShow = initParameters.onShow;
+        this.parentId = initParameters.parentId;
         this.responsiveThreshold = initParameters.responsiveThreshold;
         this.tabsData = initParameters.tabsData;
         this.$dom = $('<div class="row">');
@@ -454,21 +454,26 @@ class Tabs {
     //ikony do dodania
     buildDom(){
         this.$dom
-            .append('<div class="col s12"').children()
+            .append('<div class="col s12"')//.children()
                 .append(this.$tabs);
         this.$dom.append(this.$panels);
-        for (var i=0; i<this.tabs.length; i++){
+        for (var i=0; i<this.tabsData.length; i++){
             var $link = $('<a>');
             $link
-                .attr('href','tab_'+this.tabsData[i].name)
+                .attr('href','tab_'+this.tabsData[i].url)
                 .html(this.tabsData[i].name);
             this.$tabs
                 .append('<li class="tab col s3">').children()
                     .append($link);
-            this.$panels.append('<div id="'+ this.tabsData[i].name + '" class="col s12">');
+            //this.$panels.append('<div id="'+ this.tabsData[i].name + '" class="col s12">');
         }
-        this.$tabs[0].children('a').addClass('active');
-        //if(this.swipeable) this.$tabs.attr('id', "tabs-swipe-demo");
+        //this.$tabs.find('a')[0].addClass('active');
+        var _this = this;
+        this.$tabs.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
+    }
+    tabChosen($tab){
+        $('#contractTabs')
+            .attr('src',this.tabsData[$tab.index()].url);
     }
 }
 
@@ -727,6 +732,24 @@ class switchInput{
             .append('<input type="checkbox">')
             .append('<span class="lever">')
             .append('this.offLabel');
+    }
+}
+class Badge{
+    constructor(id, caption, bgColor){
+        this.id = id;
+        this.caption = caption;
+        this.bgColor = bgColor;
+        this.$dom = $('<span>');
+        this.buidDom();
+    }
+    
+    buidDom(){
+        this.$dom
+            .attr('id','badge_' + this.id)
+            .attr('data-badge-caption', '')
+            .addClass('new badge')
+            .addClass(this.bgColor)
+            .html(this.caption);
     }
 }
 

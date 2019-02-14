@@ -1,6 +1,13 @@
 class RisksCollapsible extends SimpleCollapsible {
-    constructor(id, connectedRepository){
-        super(id, 'Ryzyko', connectedRepository) ;
+    constructor(id){
+        super({ id: id,
+                hasFilter: true,
+                isEditable: true, 
+                isAddable: true, 
+                isDeletable: true,
+                connectedRepository: RisksSetup.risksRepository
+                //subitemsCount: 12
+              }) ;
         
         this.addNewModal = new RiskModal(id + '_newRisk', 'Zgłoś ryzyko', this, 'ADD_NEW');
         this.editModal = new RiskModal(id + '_editRisk', 'Edytuj rysyko', this, 'EDIT');
@@ -17,7 +24,7 @@ class RisksCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem._contract.ourIdNumberName + '<BR>' +
                           dataItem.name + ', Stopień: <strong>' + dataItem._rate + '<strong>',
-                    $bodyDom: $bodyDom
+                    $body: $bodyDom
                     };
     }
     

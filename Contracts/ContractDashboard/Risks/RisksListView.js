@@ -7,7 +7,7 @@ class RisksListView extends Popup {
         this.setTittle("Rejestr Ryzyk");
         this.actionsMenuInitialise();
         
-        $('#actionsMenu').after(new RisksCollapsible('risksCollapsible', RisksSetup.risksRepository).$dom);  
+        $('#actionsMenu').after(new RisksCollapsible('risksCollapsible').$dom);  
         this.dataLoaded(true);
     }
 

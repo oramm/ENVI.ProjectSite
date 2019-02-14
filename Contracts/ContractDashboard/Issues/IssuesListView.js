@@ -1,13 +1,13 @@
-class CasesListView extends Popup {
+class IssuesListView extends Popup {
     constructor(){
         super();       
     }
     
     initialise(){
-        this.setTittle("Lista spraw");
+        this.setTittle("Zgłoszone problemy");
         this.actionsMenuInitialise();
         
-        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);  
+        $('#actionsMenu').after(new IssuesCollapsible('issuesCollapsible').$dom);  
         this.dataLoaded(true);
     }
 

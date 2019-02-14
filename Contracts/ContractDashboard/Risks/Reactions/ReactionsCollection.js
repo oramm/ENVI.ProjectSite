@@ -1,4 +1,4 @@
-class TasksCollection extends SimpleCollection {
+class ReactionsCollection extends SimpleCollection {
     /*
      * @param {type} id
      * @param {boolean} isPlane - czy lista ma być prosta czy z Avatarem
@@ -8,22 +8,25 @@ class TasksCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id, 
                title: initParamObject.title,
-               addNewModal: initParamObject.addNewModal,
-               editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: false,
-               isEditable: true, 
+               isEditable: false, 
                isAddable: initParamObject.isAddable, 
                isDeletable: true,
-               connectedRepository: TasksSetup.tasksRepository
+               connectedRepository: ReactionsSetup.reactionsRepository
               })
         this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
-               
-        this.initialise(this.makeList());
+        
+        if (this.isAddable) 
+            this.addNewModal = new ReactionModal(this.id + '_newReaction', 'Dodaj zadanie', this, 'ADD_NEW');
+        
+        //this.editModal = new ReactionModal(this.id + '_editReaction', 'Edytuj zadanie', this, 'EDIT');
+        
+        this.initialise(this.makeList());        
     }    
     /*
-     * Dodano atrybut z caseId_Hidden, żeby szybciej filtorwać widok po stronie klienta zamiast przez SELECT z db
+     * Dodano atrybut z riskId_Hidden, żeby szybciej filtorwać widok po stronie klienta zamiast przez SELECT z db
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeItem(dataItem){
@@ -36,7 +39,7 @@ class TasksCollection extends SimpleCollection {
                     $title:  this.makeTitle(dataItem),
                     $description: this.makeDescription(dataItem),
 
-                    caseId_Hidden:  dataItem.caseId,
+                    riskId_Hidden:  dataItem.riskId,
                     status_Hidden:  dataItem.status                    
                 };
     }
@@ -49,7 +52,7 @@ class TasksCollection extends SimpleCollection {
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
                                                         this);
-        return titleAtomicEditLabel.$dom
+        return titleAtomicEditLabel.$dom;
     }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
@@ -88,7 +91,7 @@ class TasksCollection extends SimpleCollection {
                                                         this);
         
         //var statusSelectField = new SelectField(this.id + '_' + dataItem.id + '_statusSelectField', 'Status', true);
-        //statusSelectField.initialise(TasksSetup.statusNames);        
+        //statusSelectField.initialise(ReactionsSetup.statusNames);        
         //var statusAtomicEditLabel = new AtomicEditLabel(dataItem.status, 
         //                                                dataItem, 
         //                                               statusSelectField,
@@ -105,11 +108,11 @@ class TasksCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.caseId_Hidden==this.parentId && item.status_Hidden == this.status );
+        return super.makeList().filter((item)=>item.riskId_Hidden==this.parentId && item.status_Hidden == this.status );
     }
     
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        //$('#contractDashboard').attr('src','../Cases/CasesList.html?milestoneId=' + this.connectedRepository.currentItem.projectId  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        //$('#iframeRisks').attr('src','../Risks/RisksList.html?milestoneId=' + this.connectedRepository.currentItem.projectId  + '&contractId=' + this.connectedRepository.currentItem.contractId);
     }
 }

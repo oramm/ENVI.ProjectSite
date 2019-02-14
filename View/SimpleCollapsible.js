@@ -1,8 +1,8 @@
 class SimpleCollapsible extends Collapsible {
-    constructor(id, itemsName, connectedRepository){
-        if (typeof itemsName  !== 'string') throw SyntaxError('itemsName must be specified as a second argument!');
-        super(id, itemsName);
-        this.connectedRepository = connectedRepository;
+    constructor(initParamObject){
+        if (initParamObject.subitemsCount && typeof initParamObject.subitemsCount  !== 'number') throw SyntaxError('subitemsCount must be a number!');
+        super(initParamObject);
+        this.connectedRepository = initParamObject.connectedRepository;
         this.$bodyDoms=[];  
     }
     initialize(){

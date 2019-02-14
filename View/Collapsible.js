@@ -2,9 +2,13 @@
  * http://materializecss.com/collapsible.html
  */
 class Collapsible {
-    constructor(id, itemsName){
-        this.id = id;
-        this.itemsName = itemsName;
+    constructor(initParamObject){
+        this.id = initParamObject.id;
+        this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
+        this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
+        this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
+        this.isEditable = initParamObject.isEditable;
+        this.subitemsCount = initParamObject.subitemsCount;
         this.$dom;
         this.$collapsible;
         this.$actionsMenu;
@@ -20,6 +24,8 @@ class Collapsible {
                 .attr('id', 'container' + '_' + this.id)
                 .append(this.$actionsMenu)
                 .append(this.$collapsible);
+        this.$rowEditIcon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
+        this.$rowDeleteIcon = $('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
     }
     
     initialise(items, parentViewObject, parentViewObjectSelectHandler){
@@ -40,9 +46,9 @@ class Collapsible {
     
     buildDom(){
         for (var i=0; i<this.items.length; i++){
-            var $row = this.buildRow(this.items[i]);
+            var row = this.buildRow(this.items[i]);
             this.$collapsible
-                .append($row);
+                .append(row.$dom);
         }
         this.$collapsible.collapsible();//inicjacja wg instrukcji materialisecss
         
@@ -53,37 +59,42 @@ class Collapsible {
     /*
      * Tworzy element listy
      * @param {type} item - to gotowy item dla Collapsible (na podstawie surowych danych w repozytorium)
-     * @returns {Collapsible.buildRow.$row|$}
+     * @returns {Collapsible.buildRow.row}
      */
     buildRow(item){
-        var $row = $('<li>');
+        var row = { dataItem: item.dataItem, 
+                    _gdFolderUrl: item._gdFolderUrl
+                  };
+        row.$dom = $('<li>');
         var $crudButtons = $('<span class="crudButtons right">');
         $crudButtons
-            .css('visibility', 'hidden')
+            .css('visibility', 'hidden');
         
-        $row
+        row.$dom
             .append('<div class="collapsible-header"><i class="material-icons">filter_list</i>'+ item.name)
             .append('<div class="collapsible-body">')
             .attr('itemId', item.id)
             .addClass('collapsible-item');
-        $row.children('.collapsible-header')
+        if (this.subitemsCount)
+            row.$dom.children('.collapsible-header').append(new Badge(item.id, this.subitemsCount, 'light-blue').$dom);
+        row.$dom.children('.collapsible-header')
             .css('display', 'block')
             .append($crudButtons);
 
-        $row.children(':last').append((item.$bodyDom)? item.$bodyDom : this.makeBodyDom(item));
-        this.addRowCrudButtons($row);
-        return $row;
+        row.$dom.children(':last').append((item.$body)? item.$body : this.makeBodyDom(item));
+        this.addRowCrudButtons(row);
+        return row;
     }
     
      /*
      * Ustawia pryciski edycji wierszy
      */
-    addRowCrudButtons($row){
+    addRowCrudButtons(row){
+        var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
+        if (row.dataItem._gdFolderUrl) $crudMenu.append(this.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         if (this.isDeletable || this.isEditable){
-            var $crudMenu = $row.find('.collapsible-header > .crudButtons');
-            if (this.editModal !== undefined) 
                 $crudMenu
-                    .append('<span data-target="' + this.editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
+                    .append('<span data-target="' + this.editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
             if (this.isDeletable) 
                 $crudMenu
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
@@ -103,7 +114,7 @@ class Collapsible {
                 this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
                 this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
                 //.$('#preloader'+item.id).remove();
-                if (this.editModal !== undefined) this.setEditAction();
+                if (this.editModal) this.setEditAction();
                 if (this.isDeletable) this.setDeleteAction();
                 if (this.isSelectable) this.setSelectAction();
                 this.items.push(this.makeItem(item));
@@ -114,7 +125,7 @@ class Collapsible {
                     this.$dom.find('.emptyList').remove();
                 }
                 item.id = this.items.length+1 + '_pending';
-                this.$collapsible.prepend(this.buildRow(this.makeItem(item)));
+                this.$collapsible.prepend(this.buildRow(this.makeItem(item)).$dom);
                 this.$collapsible.find('[itemid=' + item.id +']').append(this.makePreloader('preloader'+item.id))
                 return item.id;
                 break;
@@ -153,7 +164,7 @@ class Collapsible {
                 case "PENDING":  
                     var $oldRow = this.$collapsible.find('[itemid=' + item.id +']');
                     $oldRow.attr('itemid',item.id + '_toDelete');
-                    var $newRow = this.buildRow(this.makeItem(item, this.makeBodyDom(item)));
+                    var $newRow = this.buildRow(this.makeItem(item, this.makeBodyDom(item))).$dom;
                     $newRow.append(this.makePreloader('preloader'+item.id))
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);
@@ -201,8 +212,7 @@ class Collapsible {
     
     filterInitialise(){
         this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-                                                                  this.$collapsible.children('li'),
-                                                                  "Znajdź " + this.itemsName)
+                                                                  this.$collapsible.children('li'))
                                 );
     }
     /*
@@ -243,9 +253,11 @@ class Collapsible {
         this.$dom.find(".collapsibleItemEdit").off('click');
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
-                                        $(this).parent().parent().parent().trigger('click');
-                                        _this.editModal.triggerAction(_this);
-                                        Materialize.updateTextFields();
+                                        if(confirm("Press a button!")){
+                                                $(this).parent().parent().parent().trigger('click');
+                                                _this.editModal.triggerAction(_this);
+                                                Materialize.updateTextFields();
+                                            }
                                         });
     }
     
@@ -255,6 +267,31 @@ class Collapsible {
                 .attr('id',id)
                 .append('<div class="indeterminate">');
         return $preloader;
+    }
+    /*
+     * Tworzy ilonę będącą linkiem do zasobów zewnętrznych. zywana najczęściej w wierszach.
+     */
+    $externalResourcesIconLink(icon, url){
+        if (!icon) throw new SyntaxError('Icon must be defined!');
+        switch (icon) {
+            case 'GD_ICON':
+                icon = 'https://ps.envi.com.pl/Resources/View/Google-Drive-icon.png';
+                break;
+            case 'GGROUP_ICON':
+                icon = 'https://ps.envi.com.pl/Resources/View/Google-Groups-icon.png';
+                break;
+            case 'GCALENDAR_ICON':
+                icon = 'https://ps.envi.com.pl/Resources/View/Google-Calendar-icon.png';
+                break;
+        }
+        var $link = $('<a  target="_blank">');
+        $link.attr('href',url);
+        var $img = $('<img height=21px>');
+        $img.attr('src',icon);
+        
+        $link.append($img);
+        
+        return $link;
     }
 }
 

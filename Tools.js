@@ -105,7 +105,7 @@ function search(nameKey, property, myArray){
     }
 }
 //retrieves GET variables from URL
-function getUrlVars() {
+function getUrlVars_OLD() {
 var vars = {};
 var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
 vars[key] = value;

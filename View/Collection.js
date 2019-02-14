@@ -21,7 +21,6 @@ class Collection {
         this.title = (initParamObject.title === undefined)? "" : initParamObject.title;
         this.isSelectable = (initParamObject.isSelectable  === undefined)? true : initParamObject.isSelectable;
         this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
-        this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;

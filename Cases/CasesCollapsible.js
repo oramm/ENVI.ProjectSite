@@ -1,6 +1,13 @@
 class CasesCollapsible extends SimpleCollapsible {
-    constructor(id, connectedRepository){
-        super(id, 'Sprawę', connectedRepository) ;
+    constructor(id){
+        super({ id: id,
+                hasFilter: true,
+                isEditable: true, 
+                isAddable: true, 
+                isDeletable: true,
+                connectedRepository: CasesSetup.casesRepository
+                //subitemsCount: 12
+              }) ;
         
         this.addNewModal = new CaseModal(id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
         this.editModal = new CaseModal(id + '_editCase', 'Edytuj sprawę', this, 'EDIT');
@@ -22,7 +29,8 @@ class CasesCollapsible extends SimpleCollapsible {
     makeItem(dataItem, $bodyDom){
         return {    id: dataItem.id,
                     name: dataItem.name,
-                    $body: $bodyDom  
+                    $body: $bodyDom,
+                    dataItem: dataItem
                     };
     }
     
