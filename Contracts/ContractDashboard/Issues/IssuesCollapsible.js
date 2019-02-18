@@ -21,7 +21,7 @@ class IssuesCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
-        var collapsibleItemName = dataItem.name + ' ' + dataItem.deadline;
+        var collapsibleItemName = dataItem.name + '<br>Załatwić do: ' + dataItem.deadline;
         return {    id: dataItem.id,
                     name: collapsibleItemName,
                     $body: $bodyDom,
@@ -34,7 +34,9 @@ class IssuesCollapsible extends SimpleCollapsible {
                 .attr('id', 'collapsibleBodyForIssue' + dataItem.id)
                 .attr('issueid',dataItem.id)
                 .attr('status',dataItem.status)
-                .append(dataItem.description);
+                .append('<b>Treść zgłoszenia:</b><br>' + dataItem.description + '<br>')
+                .append('<b>Odpowiedź wykonawcy:</b><br>' + dataItem.contractorsDescription)
+                .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         return $panel;
     }
     
@@ -46,21 +48,17 @@ class IssuesCollapsible extends SimpleCollapsible {
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
         if (row.dataItem._gdFolderUrl) $crudMenu.append(this.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         if (this.isDeletable || this.isEditable){
-            var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-            var $currentRowEditIcon = this.$rowEditIcon;
+            var $currentRowEditIcon = this.$rowEditIcon();
             $crudMenu
                 .append($currentRowEditIcon);
-            if (row.dataItem.status.match(/Nowe|Do akceptacji|Zakończone/i)){
-                //przypnij do właściwego modala
-                $currentRowEditIcon.attr('data-target',this.editModal.id);
-            }
-            else if(row.dataItem.status.match(/W trakcie/i)){
+            //przepnij do właściwego modala
+            if(row.dataItem.status.match(/W trakcie/i)){
                 row.$dom.attr('editModal','editModalContractor'); 
-                //przypnij do właściwego modala
+                
                 $currentRowEditIcon.attr('data-target',this.editModalContractor.id);
             }
             if (this.isDeletable) 
-                $crudMenu.append(this.$rowDeleteIcon);
+                $crudMenu.append(this.$rowDeleteIcon());
         }
     }
     
@@ -71,7 +69,7 @@ class IssuesCollapsible extends SimpleCollapsible {
         this.$dom.find(".collapsibleItemEdit").off('click');
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
-                                        var condition = $(this).closest('.collapsible-item').attr('editModal')
+                                        var condition = $(this).closest('.collapsible-item').attr('editModal');
                                         $(this).closest('.collapsible-item').trigger('click');
                                         _this.getProperModal(condition).triggerAction(_this);
                                         });

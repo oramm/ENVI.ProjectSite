@@ -24,8 +24,15 @@ class Collapsible {
                 .attr('id', 'container' + '_' + this.id)
                 .append(this.$actionsMenu)
                 .append(this.$collapsible);
-        this.$rowEditIcon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
-        this.$rowDeleteIcon = $('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
+    }
+    
+    $rowEditIcon(){
+        var $icon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');;
+        $icon.attr('data-target',this.editModal.id);
+        return $icon;
+    }
+    $rowDeleteIcon(){
+        return $('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
     }
     
     initialise(items, parentViewObject, parentViewObjectSelectHandler){
@@ -62,10 +69,10 @@ class Collapsible {
      * @returns {Collapsible.buildRow.row}
      */
     buildRow(item){
-        var row = { dataItem: item.dataItem, 
-                    _gdFolderUrl: item._gdFolderUrl
+        var row = { $dom: $('<li>'),
+                    dataItem: item.dataItem
+                    //_gdFolderUrl: item._gdFolderUrl
                   };
-        row.$dom = $('<li>');
         var $crudButtons = $('<span class="crudButtons right">');
         $crudButtons
             .css('visibility', 'hidden');
@@ -81,7 +88,7 @@ class Collapsible {
             .css('display', 'block')
             .append($crudButtons);
 
-        row.$dom.children(':last').append((item.$body)? item.$body : this.makeBodyDom(item));
+        row.$dom.children(':last').append((item.$body)? item.$body : this.makeBodyDom(item.dataItem));
         this.addRowCrudButtons(row);
         return row;
     }
