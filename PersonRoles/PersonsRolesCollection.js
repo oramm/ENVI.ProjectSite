@@ -16,6 +16,9 @@ class PersonsRolesCollection extends SimpleCollection {
     }
     
     makeItem(dataItem){
+        var phoneLabel = (dataItem._person.phone)?'tel.: <a href="tel:'+ dataItem._person.phone +'">' +dataItem._person.phone + '</a> ' : '';
+        var cellphoneLabel = (dataItem._person.cellphone)? 'kom.: <a href="tel:'+ dataItem._person.cellphone +'">' +dataItem._person.cellphone + '</a> ': '';
+        var mailLabel = (dataItem._person.email)? 'mail: <a href="mailto:'+ dataItem._person.email +'">' + dataItem._person.email + '</a>' : '';
         
         return {    id: '' + dataItem._person.id + dataItem._role.id,
                     icon:   'person',
@@ -23,8 +26,9 @@ class PersonsRolesCollection extends SimpleCollection {
                             dataItem._person.surname + ': ' +
                             dataItem._person.entityName,
                     description:    dataItem._role.name + '<BR>' +
-                                    '<a href="callto:'+ dataItem._person.phone +'">' +dataItem._person.phone + '</a> ' +
-                                    '<a href="mailto:'+ dataItem._person.email +'">' + dataItem._person.email + '</a>'
+                                    cellphoneLabel +
+                                    phoneLabel +
+                                    mailLabel
                 };
     }
 }
