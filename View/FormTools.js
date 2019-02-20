@@ -715,20 +715,17 @@ class AtomicEditLabel {
     }
 }
 
-class switchInput{
+class SwitchInput{
     constructor(onLabel, offLabel){
-        this.onLabe = onLabel;
+        this.onLabel = onLabel;
         this.offLabel = offLabel;
-        this.$dom;
-        this.$label;
+        this.$dom = $('<div class="switch">');
+        this.buildDom();
     }
     
     buildDom(){
-        this.$dom = $('<div class="switch">');
         this.$dom
-            .append(this.$label);
-        this.$label
-            .append('this.onLabel')
+            .append(this.onLabel)
             .append('<input type="checkbox">')
             .append('<span class="lever">')
             .append('this.offLabel');

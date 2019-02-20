@@ -218,9 +218,11 @@ class Collapsible {
     }
     
     filterInitialise(){
-        this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-                                                                  this.$collapsible.children('li'))
-                                );
+        this.$actionsMenu
+            .append(FormTools.createFilterInputField("contract-filter",
+                                                     this.$collapsible.children('li'))
+                                                    )
+            .append(new SwitchInput('Aktualne', 'Zamknięte'));
     }
     /*
      * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()

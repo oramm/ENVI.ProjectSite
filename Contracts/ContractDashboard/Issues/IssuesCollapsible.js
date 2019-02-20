@@ -84,4 +84,9 @@ class IssuesCollapsible extends SimpleCollapsible {
         }
         
     }
+    
+    filterInitialise(){
+        super.filterInitialise();
+        this.$actionsMenu.prepend(new SwitchInput('Aktualne', 'Zamknięte').$dom);
+    }
 }
