@@ -716,19 +716,53 @@ class AtomicEditLabel {
 }
 
 class SwitchInput{
-    constructor(onLabel, offLabel){
+    constructor(onLabel, offLabel,changeAction){
         this.onLabel = onLabel;
         this.offLabel = offLabel;
+        this.changeAction = changeAction;
         this.$dom = $('<div class="switch">');
         this.buildDom();
+        this.setChangeAction();
+        this.value;
     }
     
     buildDom(){
         this.$dom
+            .append('<label>').children()
             .append(this.onLabel)
             .append('<input type="checkbox">')
             .append('<span class="lever">')
-            .append('this.offLabel');
+            .append(this.offLabel);
+    }
+    
+    setChangeAction(){
+        if(this.changeAction){
+            var _this=this;
+            this.$dom.find("input[type=checkbox]").on("change",function() {
+                    _this.value = $(this).attr('checked');
+                    _this.changeAction(_this.value, _this.connectedResultsetComponent);
+                });
+        }
+    }
+}
+/*
+ * Używana w klasie FIlter jako domyślny komponent
+ * @type type
+ */
+class ArchiveSwitchInput extends SwitchInput{
+    constructor(connectedFilterObject){
+        super('Archiwum', 'Aktualne');
+        this.connectedFilterObject = connectedFilterObject;
+        this.$dom.find('input').attr('checked',(this.connectedFilterObject.showActiveRows)? 'true':'false');
+        this.value = (this.connectedFilterObject.showActiveRows)? true:false;
+    }
+        
+    setChangeAction(){
+        var _this=this;
+        this.$dom.find("input[type=checkbox]").on("change",function() {
+                _this.value = $(this).prop('checked');
+                _this.connectedFilterObject.archiveSwitchHandler(_this.value);
+            });
     }
 }
 class Badge{
@@ -820,24 +854,6 @@ class FormTools{
             $label.attr('data-error',dataError);
         else
             $label.attr('data-error','Niewłaściwy format danych');
-        
-        return $textField;
-    }
-    
-    static createFilterInputField(id, $filteredObject){
-        var $textField = this.createInputField(id, 'Filtruj listę');
-        
-        $textField.children('input').on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $filteredObject.filter(function() {
-                //https://stackoverflow.com/questions/3041320/regex-and-operator?noredirect=1&lq=1
-                //var regex = /^(?=.*my)(?=.*word).*$/igm;
-                //var words = value.split(' ');
-                //console.log(words);
-                //return regex.test($(this).toggle($(this).text().toLowerCase()));
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });
-        });
         
         return $textField;
     }

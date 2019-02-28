@@ -8,6 +8,7 @@ class Collapsible {
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
+        this.hasArchiveSwitch = initParamObject.hasArchiveSwitch;
         this.subitemsCount = initParamObject.subitemsCount;
         this.$dom;
         this.$collapsible;
@@ -17,13 +18,16 @@ class Collapsible {
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
         this.$collapsible = $('<ul class="collapsible" data-collapsible="accordion">')
         this.$collapsible.attr("id",this.id);
-        this.$actionsMenu = $('<div >')
-               .attr('id', 'actionsMenu' + '_' + this.id);
+        this.$actionsMenu = $('<div>')
+               .attr('id', 'actionsMenu' + '_' + this.id)
+               .addClass('cyan lighten-5')
+               .addClass('actionsMenu');
         
         this.$dom = $('<div>')
                 .attr('id', 'container' + '_' + this.id)
                 .append(this.$actionsMenu)
                 .append(this.$collapsible);
+        this.filter = new Filter(this);
     }
     
     $rowEditIcon(){
@@ -82,6 +86,11 @@ class Collapsible {
             .append('<div class="collapsible-body">')
             .attr('itemId', item.id)
             .addClass('collapsible-item');
+        //obsłuż status - potrzebne np. przy filtrowaniu
+        if(item.dataItem.status)
+            row.$dom.attr('status',item.dataItem.status);
+        if(!this.filter.checkIfRowMatchesFilters(row.$dom))
+            row.$dom.hide();
         if (this.subitemsCount)
             row.$dom.children('.collapsible-header').append(new Badge(item.id, this.subitemsCount, 'light-blue').$dom);
         row.$dom.children('.collapsible-header')
@@ -218,21 +227,22 @@ class Collapsible {
     }
     
     filterInitialise(){
-        this.$actionsMenu
-            .append(FormTools.createFilterInputField("contract-filter",
-                                                     this.$collapsible.children('li'))
-                                                    )
-            .append(new SwitchInput('Aktualne', 'Zamknięte'));
+        this.filter.initialise();
+        this.$actionsMenu.append(this.filter.$dom);
+                                                
+        
     }
     /*
      * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()
-     * do usunięcia
+     * TODO: do usunięcia
      */
     actionsMenuInitialise(){        
+        var $buttonsPanel = $('<div class="row">');
+        this.$actionsMenu.append($buttonsPanel);
         if (this.addNewModal !== undefined)
-            this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj wpis", this);
+            this.addNewModal.preppendTriggerButtonTo($buttonsPanel,"Dodaj wpis", this);
+        
         this.filterInitialise();
-
     }
     
     setSelectAction(){
@@ -253,21 +263,20 @@ class Collapsible {
     setDeleteAction(){
         this.$dom.find(".collapsibleItemDelete").off('click');
         var _this = this;
-        this.$dom.find(".collapsibleItemDelete").click(function() {   
-                                        _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));   
-                                        });
+        this.$dom.find(".collapsibleItemDelete").click(function() { 
+                if(confirm("Press a button!"))
+                    _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));   
+            });
     }
     
     setEditAction(){
         this.$dom.find(".collapsibleItemEdit").off('click');
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
-                                        if(confirm("Press a button!")){
-                                                $(this).parent().parent().parent().trigger('click');
-                                                _this.editModal.triggerAction(_this);
-                                                Materialize.updateTextFields();
-                                            }
-                                        });
+                $(this).parent().parent().parent().trigger('click');
+                _this.editModal.triggerAction(_this);
+                Materialize.updateTextFields();
+            });
     }
     
     makePreloader(id){

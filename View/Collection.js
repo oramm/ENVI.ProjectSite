@@ -24,6 +24,7 @@ class Collection {
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
+        this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
         this.editModal = initParamObject.editModal;
         this.addNewModal = initParamObject.addNewModal;
         this.$dom;
@@ -37,8 +38,10 @@ class Collection {
                 .attr('id', 'container' + '_' + this.id);
 
         this.$actionsMenu = $('<div >')
-               .attr('id', 'actionsMenu' + '_' + this.id);
-        
+               .attr('id', 'actionsMenu' + '_' + this.id)
+               .addClass('cyan lighten-5')
+               .addClass('actionsMenu');
+       this.filter = new Filter(this);
     }
     /*
      * 
@@ -338,9 +341,11 @@ class Collection {
     
     
     filterInitialise(){
-        this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-                                                                  this.$collection.children('li'))
-                                );
+        this.filter.initialise();
+        this.$actionsMenu.append(this.filter.$dom);
+        //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
+        //                                                          this.$collection.children('li'))
+        //                        );
     }
 
     actionsMenuInitialise(){

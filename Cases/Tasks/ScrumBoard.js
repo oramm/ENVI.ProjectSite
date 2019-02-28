@@ -18,9 +18,7 @@ class ScrumBoard {
      * Ustawia pole filtra dla wszystkich statusów danego scrumborda
      */
     filterInitialise(){
-        this.$actionsMenu.append(FormTools.createFilterInputField('filter_scrumBoard_' + this.caseId,
-                                                                  this.$dom.find('li'))
-                                );
+        this.filter = new Filter([],this);
     }
     
     buildStatuses(){

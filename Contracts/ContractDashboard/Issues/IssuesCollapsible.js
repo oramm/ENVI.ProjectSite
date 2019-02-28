@@ -5,6 +5,7 @@ class IssuesCollapsible extends SimpleCollapsible {
                 isEditable: true, 
                 isAddable: true, 
                 isDeletable: true,
+                hasArchiveSwitch: true,
                 connectedRepository: IssuesSetup.issuesRepository,
                 //subitemsCount: 12
               });
@@ -83,10 +84,5 @@ class IssuesCollapsible extends SimpleCollapsible {
                 return this.editModal;
         }
         
-    }
-    
-    filterInitialise(){
-        super.filterInitialise();
-        this.$actionsMenu.prepend(new SwitchInput('Aktualne', 'Zamknięte').$dom);
-    }
+    }    
 }
