@@ -3,6 +3,8 @@ class Filter {
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.showActiveRows = (showActiveRows === undefined)? true : showActiveRows;
         this.filterElements = [];
+        if (this.connectedResultsetComponent.hasArchiveSwitch===undefined) 
+            this.connectedResultsetComponent.hasArchiveSwitch = false; 
         this.$dom = $('<div class="row">');
         
     }
@@ -48,8 +50,8 @@ class Filter {
     checkIfRowMatchesFilters($row){
         //na początku pokaż tylko aktywne wiersze (ukryj arhiwum)
         var test = true;
-        if(this.connectedResultsetComponent.hasArchiveSwitch && this.filterElements.length==0)
-          return this.isRowActive($row);  
+        if(this.filterElements.length==0)
+          return (this.connectedResultsetComponent.hasArchiveSwitch)? this.isRowActive($row) : true;  
         //pole tekstowe
         if (!$row.text().toLowerCase().includes(this.filterElements[0].input.value))
             return false;
