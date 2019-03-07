@@ -54,6 +54,7 @@ class Modal {
      */
     triggerAction(connectedResultsetComponent){
         this.connectWithResultsetComponent(connectedResultsetComponent);
+        this.refreshDataSets();
         if(this.mode=='EDIT') 
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
         else
@@ -124,6 +125,16 @@ class Modal {
                     repository.editItem(repository.currentItem, this.connectedResultsetComponent);
                 else
                    repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
+        }
+    }
+    
+     /*
+     * Aktualizuje dane np. w selectach. Może być uruchamiana po kliknięciu w wiersz Collapsible: selectTrigger(itemId);
+     */
+    refreshDataSets(){
+        for (var i =0; i<this.formElements.length; i++){
+            if (typeof this.formElements[i].refreshDataSet==='function')
+                this.formElements[i].refreshDataSet();
         }
     }
 } 

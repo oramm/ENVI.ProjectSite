@@ -32,7 +32,7 @@ class Filter {
      * @param {boolean} showArchive
      * @returns {undefined}
      */
-    archiveSwitchHandler(showArchived){
+    archiveSwitchHandler(){
             var _this = this;
             this.connectedResultsetComponent.$dom.find("li").map(function() {
                     //if (showArchived) $(this).toggle();
@@ -49,7 +49,7 @@ class Filter {
      */
     checkIfRowMatchesFilters($row){
         //na początku pokaż tylko aktywne wiersze (ukryj arhiwum)
-        var test = true;
+        //var test = true;
         if(this.filterElements.length==0)
           return (this.connectedResultsetComponent.hasArchiveSwitch)? this.isRowActive($row) : true;  
         //pole tekstowe
@@ -66,7 +66,6 @@ class Filter {
         var test;
         if($row.attr('status')===undefined){
             test = true;
-            console.log($row);
         } else
          test = $row.attr('status').match(/Zakończ|Zamknięt|Archiw/i);
         return (test)? false : true; 

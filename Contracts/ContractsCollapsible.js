@@ -5,6 +5,7 @@ class ContractsCollapsible extends SimpleCollapsible {
                 isEditable: true, 
                 isAddable: true, 
                 isDeletable: true,
+                hasArchiveSwitch: true,
                 connectedRepository: ContractsSetup.contractsRepository
                 //subitemsCount: 12
               });
@@ -96,7 +97,7 @@ class ContractsCollapsible extends SimpleCollapsible {
     selectTrigger(itemId){
         super.selectTrigger(itemId);
         console.log(this.editModal.connectedResultsetComponent);
-        MilestonesSetup.milestonesRepository.currentItem.contractId = this.connectedRepository.currentItem.id;
+        
         $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
     }
 }

@@ -21,11 +21,16 @@ class ContractsController {
         personsRepository = new SimpleRepository('Persons repository',
                                                  'getPersonsNameSurnameEmailList',
                                                 );
-        
+        milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
+                                                        'getMilestoneTypesList',
+                                                        'addNewMilestoneType',
+                                                        'editMilestoneType',
+                                                        'deleteMilestoneType');
         var promises = [];
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
         promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
+        promises[3] = milestoneTypesRepository.initialise();
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
