@@ -6,16 +6,20 @@ class CurrentMilestonesController {
         currentMilestonesView.dataLoaded(false);
         //signoutButton.style.display = 'block';
         
-        milestonesRepository = new SimpleRepository('Milestones repository',
-                                                    'getCurrentMilestonesList',
-                                                    'addNewMilestone',
-                                                    'editMilestone',
-                                                    'deleteMilestone');
-        
+        MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
+                                                                    'getCurrentMilestonesList',
+                                                                    'addNewMilestone',
+                                                                    'editMilestone',
+                                                                    'deleteMilestone');
+        MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
+                                                        'getMilestoneTypesList',
+                                                        'addNewMilestoneType',
+                                                        'editMilestoneType',
+                                                        'deleteMilestoneType');
 
         var promises = [];
-        promises[0] = milestonesRepository.initialise();
-        //promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
+        promises[0] = MilestonesSetup.milestonesRepository.initialise();
+        promises[1] = MilestonesSetup.milestoneTypesRepository.initialise();
         //promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         
         Promise.all(promises)

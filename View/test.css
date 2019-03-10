@@ -29,7 +29,14 @@ iframe {
 .actionsMenu .row {
     margin-bottom: 0;
 }
-.collection-item span{/* display: block; */}
+.collection-item .title{
+    font-weight: bold;
+}
+
+.collection-item p{
+    margin-bottom: 3px;
+    margin-top: 5px;
+}
 
 .emptyList{
     border:1;

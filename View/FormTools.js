@@ -18,13 +18,12 @@ class AutoCompleteTextField {
     
     initialise(repository, key, onCompleteCallBack,viewObject){
         this.repository = repository;
-        this.objectList = repository.items;
+        this.objectList = [];
         this.key=key;
         this.onCompleteCallBack = onCompleteCallBack;
         this.viewObject = viewObject;
-        this.chosenItem;
-        
-        this.pushData(this.key); 
+        this.chosenItem;    
+        this. pushData(this.key);
     }
     
     createAutoCompleteTextField(id, label, icon, isRequired){
@@ -51,9 +50,12 @@ class AutoCompleteTextField {
     
     pushData(key){
         var autocompleteList = {};
-        Object.keys(this.objectList).forEach((id) => {
-                    autocompleteList[this.objectList[id][key]] = null;
-                });
+        Object.keys(this.repository.items).forEach((id) => {
+                if(this.repository.items[id][key]!==undefined){
+                    this.objectList.push(this.repository.items[id]);
+                    autocompleteList[this.repository.items[id][key]] = null;
+                }
+            });
         // Plugin initialization
         this.$dom.children('input.autocomplete').autocomplete({
            data: autocompleteList,
@@ -64,7 +66,10 @@ class AutoCompleteTextField {
            minLength: 1 // The minimum length of the input for the autocomplete to start. Default: 1.
              });
         }
-    
+    setDefaultItem(){
+        if(this.objectList.length===1)
+            this.setChosenItem(this.objectList[0])
+    }
     setChosenItem(inputValue){
         //inputValue pochodzi z formularza
         if (typeof inputValue !== 'object'){
@@ -175,25 +180,28 @@ class SelectField{
     }
     
     simulateChosenItem(inputValue){
-        if(typeof this.optionsData[0] !== 'object'){
-            this.chosenItem = inputValue;
-            var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
-            //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
+        if(inputValue!== undefined){
+            if(typeof this.optionsData[0] !== 'object'){
+                this.chosenItem = inputValue;
+                var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+                //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
+            }
+            else {
+                this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue[this.key]);
+                var optionsString = this.optionsData.map(item=>item[this.key]); 
+                var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
+            }
+            this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         }
-        else {
-            this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue[this.key]);
-            var optionsString = this.optionsData.map(item=>item[this.key]); 
-            var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
-        }
-        this.$dom.find('li:nth-child('+itemSelectedId+')').click();
     }
     
     validate(){
-        if (this.isRequired)
-            if(typeof this.optionsData[0] !== 'object')
-                return this.chosenItem !== this.defaultDisabledOption;
-            else 
-                return this.chosenItem;
+        if (this.isRequired){
+            //if(typeof this.optionsData[0] !== 'object')
+                return this.chosenItem !== this.defaultDisabledOption && this.chosenItem!==undefined;
+        } else
+            return true;
+        
     }
 } 
 

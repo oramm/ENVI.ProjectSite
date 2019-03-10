@@ -12,6 +12,7 @@ class MilestonesCollection extends SimpleCollection {
                isSelectable: true,
                connectedRepository: MilestonesSetup.milestonesRepository
               });
+        //TODO: dodać_parentDataItem = {} zamiast poniższego i przenieść do klasy Collection
         this.parentId = initParamObject.parentId;
         
         this.initialise(this.makeList());        
@@ -35,7 +36,8 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
+        var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
+        var titleAtomicEditLabel = new AtomicEditLabel( typeString + ' | ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -57,12 +59,12 @@ class MilestonesCollection extends SimpleCollection {
                                                         this);
         
         (dataItem.status)? true : dataItem.status="";
-  
+        if(dataItem.description)
+            $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
         $collectionElementDescription
-            .append('<span>' + dataItem.description + '<br></span>')
             .append('<span>' + dataItem.startDate + ' - ' + dataItem.endDate + '<BR></span>')
             //.append(deadlineAtomicEditLabel.$dom)
-            .append('<span>' + dataItem.status + '<br></span>');
+            .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         
         return $collectionElementDescription;
     }

@@ -1,13 +1,7 @@
-class MilestoneModal extends Modal {
+class CurrentMilestoneModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
    
-        this.contractsAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Dotyczy kontraktu', 
-                                                                     'info', 
-                                                                     false, 
-                                                                     'Wybierz kontrakt')
-        this.contractsAutoCompleteTextField.initialise(ContractsSetup.contractsRepository,"_numberName", this.onContractChosen, this);
         
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, true);
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
@@ -18,13 +12,10 @@ class MilestoneModal extends Modal {
         this.statusSelectField.initialise(MilestonesSetup.statusNames);
         
         this.formElements = [
-            {   input: this.contractsAutoCompleteTextField,
-                dataItemKeyName: '_relatedContract'
-            },
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function (){    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                                                    item=> Array.isArray(item.ourContractType.match(new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$')))
+                                                    item=> Array.isArray(item.ourContractType.match(new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent.ourType+'|^$')))
                                                 );
                                                 this.input.initialise(currentMilestoneTypes, 'name');
                                             }
@@ -52,13 +43,6 @@ class MilestoneModal extends Modal {
     /*
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
-    initAddNewData(){
-        this.contractsAutoCompleteTextField.setDefaultItem();
-        
-        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: ContractsSetup.contractsRepository.currentItem,
-                                                                             //_relatedContract: relatedContract,
-                                                                             //_numberName: relatedContract._numberName
-                                                                           };
-    }
+    initAddNewData(){}
    
 };

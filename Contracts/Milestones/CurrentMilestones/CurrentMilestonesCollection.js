@@ -12,7 +12,7 @@ class CurrentMilestonesCollection extends SimpleCollection {
         this.parentId = initParamObject.parentId;
 
         //this.addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
-        this.editModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
+        this.editModal = new CurrentMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
         
         this.initialise(this.makeList());        
     }
@@ -35,7 +35,8 @@ class CurrentMilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
+        var typeName = (dataItem._type.name)? dataItem._type.name + ' ' : '';
+        var titleAtomicEditLabel = new AtomicEditLabel( typeName + dataItem.name, 
                                                         dataItem, 
                                                         {   input: new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                             dataItemKeyName: 'name'
@@ -62,7 +63,7 @@ class CurrentMilestonesCollection extends SimpleCollection {
   
         $collectionElementDescription
             .append('<span>Projekt: ' + dataItem.projectId + ' => </span>')
-            .append('<span>Kontrakt: <strong>' + dataItem.contractOurId + '</strong><br></span>')
+            .append('<span>Kontrakt: <strong>' + dataItem._parent.ourId + '</strong><br></span>')
             .append('<span>' + dataItem.description + '<br></span>')
             .append('<span>' + dataItem._parent._manager.nameSurnameEmail + '<br></span>')
             .append('<span>Termin zakończenia: <b>' + dataItem.endDate + '</b><BR></span>')

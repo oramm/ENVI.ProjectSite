@@ -96,8 +96,6 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        console.log(this.editModal.connectedResultsetComponent);
-        
         $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
     }
 }

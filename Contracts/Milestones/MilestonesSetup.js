@@ -15,7 +15,15 @@ class MilestonesSetup {
         return milestonesRepository;
     }
     
+    static set milestonesRepository(data) {
+        milestonesRepository = data;
+    }
+    
     static get milestoneTypesRepository() {
         return milestoneTypesRepository;
+    }
+    
+    static set milestoneTypesRepository(data) {
+        milestoneTypesRepository = data;
     }
 }
