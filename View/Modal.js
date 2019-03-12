@@ -126,6 +126,7 @@ class Modal {
                 else
                    repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
         }
+        this.$dom.modal('close');
     }
     
      /*
