@@ -7,7 +7,7 @@ class MilestoneModal extends Modal {
                                                                      'info', 
                                                                      false, 
                                                                      'Wybierz kontrakt')
-        this.contractsAutoCompleteTextField.initialise(ContractsSetup.contractsRepository,"_numberName", this.onContractChosen, this);
+        this.contractsAutoCompleteTextField.initialise(MilestonesSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);
         
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, true);
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
@@ -27,6 +27,7 @@ class MilestoneModal extends Modal {
                                                     item=> Array.isArray(item.ourContractType.match(new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$')))
                                                 );
                                                 this.input.initialise(currentMilestoneTypes, 'name');
+                                                console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem.ourType);
                                             }
                                             
             },
@@ -53,7 +54,7 @@ class MilestoneModal extends Modal {
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
     initAddNewData(){
-        this.contractsAutoCompleteTextField.setDefaultItem();
+        //this.contractsAutoCompleteTextField.setDefaultItem();
         
         this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: ContractsSetup.contractsRepository.currentItem,
                                                                              //_relatedContract: relatedContract,

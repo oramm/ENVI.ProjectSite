@@ -26,6 +26,7 @@ class ContractsController {
                                                         'addNewMilestoneType',
                                                         'editMilestoneType',
                                                         'deleteMilestoneType');
+        
         var promises = [];
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
@@ -33,6 +34,7 @@ class ContractsController {
         promises[3] = milestoneTypesRepository.initialise();
         
         Promise.all(promises)
+            .then(()=>MilestonesSetup.otherContractsRepository = Tools.cloneOfObject(contractsRepository))
             .then(()=>  {   console.log("Repositories initialised");
                             contractsListView.initialise();
                         })
