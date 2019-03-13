@@ -1,5 +1,6 @@
 var casesRepository;
 var personsRepository;
+var caseTypesRepository;
 
 class CasesSetup {
     static get casesRepository() {
@@ -13,5 +14,12 @@ class CasesSetup {
     }
     static set personsRepository(data) {
         personsRepository = data;
+    }
+    static get caseTypesRepository() {
+        return caseTypesRepository;
+    }
+    
+    static set caseTypesRepository(data) {
+        caseTypesRepository = data;
     }
 }

@@ -120,7 +120,7 @@ class SelectField{
         this.optionsData = optionsData;
         this.key=key;
         
-        this.$select.append('<option value="" disabled selected>Wybierz opcję</option>');
+        this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
         else 
@@ -164,23 +164,26 @@ class SelectField{
 
     getChosenItem(){
         var inputValue = this.$dom.find('input').val();
-        if(typeof this.optionsData[0] !== 'object'){
-            
-            //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
-            //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-            this.chosenItem = inputValue;
-            //---
-        }
-        else {
-            //var optionsString = this.optionsData.map(item=>item[this.key]); 
-            //var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
-            //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
-            this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue);
-        }
+        if(inputValue!== this.defaultDisabledOption){
+            if(typeof this.optionsData[0] !== 'object'){
+
+                //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+                //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
+                this.chosenItem = inputValue;
+                //---
+            }
+            else {
+                //var optionsString = this.optionsData.map(item=>item[this.key]); 
+                //var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
+                //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
+                this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue);
+            }
+        } else 
+            this.chosenItem = undefined;
     }
     
     simulateChosenItem(inputValue){
-        if(inputValue!== undefined){
+        if(inputValue!== undefined && inputValue!==this.defaultDisabledOption){
             if(typeof this.optionsData[0] !== 'object'){
                 this.chosenItem = inputValue;
                 var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
@@ -573,12 +576,14 @@ class Form {
                 case 'SelectField' :
                 case 'SelectFieldBrowserDefault' :
                     this.elements[i].input.getChosenItem();
-                    if (typeof this.elements[i].input.chosenItem === 'object'){ 
-                        
-                        dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem; 
+                    if(this.elements[i].input.chosenItem){
+                        if (typeof this.elements[i].input.chosenItem === 'object'){ 
+
+                            dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem; 
+                        }
+                        else
+                            dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.$dom.find('input').val();
                     }
-                    else
-                        dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.$dom.find('input').val();
                     break;
                 case 'AutoCompleteTextField' :
                     if (this.elements[i].input.chosenItem) 
