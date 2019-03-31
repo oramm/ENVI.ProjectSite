@@ -24,7 +24,7 @@ class MilestoneModal extends Modal {
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function (){    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                                                    item=> Array.isArray(item.ourContractType.match(new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$')))
+                                                    item=> Array.isArray(item.contractType.match(new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$')))
                                                 );
                                                 this.input.initialise(currentMilestoneTypes, 'name');
                                                 console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem.ourType);

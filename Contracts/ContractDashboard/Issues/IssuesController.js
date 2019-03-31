@@ -25,8 +25,8 @@ class IssuesController {
         var promises = [];
         
         //promises[0] = IssuesSetup.reactionsRepository.initialise(IssuesSetup.reactionsRepository.parentItemId);
-        promises[1] = IssuesSetup.issuesRepository.initialise(IssuesSetup.issuesRepository.parentItemId);
-        promises[3] = personsRepository.initialise();
+        promises[0] = IssuesSetup.issuesRepository.initialise(IssuesSetup.issuesRepository.parentItemId);
+        promises[1] = personsRepository.initialise();
 
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
