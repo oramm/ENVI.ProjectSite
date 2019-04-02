@@ -89,8 +89,8 @@ class AutoCompleteTextField {
         this.$dom.children('input').val(inputValue);
         //this.onCompleteCallBack powinien być zadeklarowany w modalu
         if (typeof this.onCompleteCallBack === "function") { 
-                                    this.onCompleteCallBack.apply(this.viewObject,[this.chosenItem]);
-                                }
+            this.onCompleteCallBack.apply(this.viewObject,[this.chosenItem]);
+        }
     }
 }
 
