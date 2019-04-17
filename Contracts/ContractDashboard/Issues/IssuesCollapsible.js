@@ -47,7 +47,7 @@ class IssuesCollapsible extends SimpleCollapsible {
      */
     addRowCrudButtons(row){
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-        if (row.dataItem._gdFolderUrl) $crudMenu.append(this.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+        if (row.dataItem._gdFolderUrl) $crudMenu.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         if (this.isDeletable || this.isEditable){
             var $currentRowEditIcon = this.$rowEditIcon();
             $crudMenu

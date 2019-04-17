@@ -37,7 +37,8 @@ class TasksCollection extends SimpleCollection {
                     $description: this.makeDescription(dataItem),
 
                     caseId_Hidden:  dataItem.caseId,
-                    status_Hidden:  dataItem.status                    
+                    status_Hidden:  dataItem.status,
+                    dataItem: dataItem
                 };
     }
     /*

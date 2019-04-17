@@ -28,7 +28,8 @@ class PersonsRolesCollection extends SimpleCollection {
                     description:    dataItem._role.name + '<BR>' +
                                     cellphoneLabel +
                                     phoneLabel +
-                                    mailLabel
+                                    mailLabel,
+                    dataItem: dataItem
                 };
     }
 }

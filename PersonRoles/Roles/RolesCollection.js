@@ -20,8 +20,8 @@ class RolesCollection extends SimpleCollection {
         return {    id: dataItem.id,
                     icon:   'person',
                     $title:  this.makeTitle(dataItem),
-                    $description:    $('<span>').html(dataItem.description)
-                    
+                    $description:    $('<span>').html(dataItem.description),
+                    dataItem: dataItem
                 };
     }
     

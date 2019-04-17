@@ -40,9 +40,9 @@ class SimpleRepository extends Repository {
         return new Promise((resolve, reject) => {
             this.currentItem = item;
             super.addNewItem(item,this.addNewServerFunctionName,viewObject)
-                  .then((res) => {  this.items.push(item)
-                                    this.currentItem = item;
-                                    console.log('dodano element: ', item);
+                  .then((res) => {  this.items.push(res)
+                                    this.currentItem = res;
+                                    console.log('dodano element: ', res);
                                  });
         });
     }

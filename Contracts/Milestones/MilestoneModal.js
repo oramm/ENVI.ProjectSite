@@ -30,17 +30,17 @@ class MilestoneModal extends Modal {
                                             item=> this.checkContractType(item.contractType)
                                         );
                                         this.input.initialise(currentMilestoneTypes, 'name');
-                                        console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem.ourType);
+                                        console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
                                     //}
                                 },
                 checkContractType: function(type){
                     var regExpr;
                     if (!_this.contractsAutoCompleteTextField.chosenItem)
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$');
+                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$');
                     else if(_this.contractsAutoCompleteTextField.chosenItem.fidicType!=='Żółty')
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$' + '|' + _this.contractsAutoCompleteTextField.chosenItem.fidicType);
+                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$' + '|' + _this.contractsAutoCompleteTextField.chosenItem.fidicType);
                     else
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem.ourType+'|^$' + '|Żółty|Czerwony');
+                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$' + '|Żółty|Czerwony');
                     
                     return Array.isArray(type.match(regExpr));
                 }

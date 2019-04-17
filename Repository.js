@@ -99,7 +99,7 @@ class Repository {
     //wywoływana przy SUBMIT
     addNewItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            newItem.tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+            newItem._tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -119,8 +119,8 @@ class Repository {
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
                       .then((result) => { 
-                        newItem.id = result;
-                        viewObject.addNewHandler.apply(viewObject, ["DONE", newItem])
+                        (typeof result==='object')? newItem = result : newItem.id = result;
+                        viewObject.addNewHandler.apply(viewObject, ["DONE", newItem]);
                         resolve(newItem);
                       })
                       .catch(err => {
@@ -205,7 +205,8 @@ class Repository {
             op
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
-                      .then(() => { 
+                      .then((result) => { 
+                        if (typeof result==='object') newItem = result;
                         viewObject.editHandler.apply(viewObject, ["DONE", newItem])
                         resolve(newItem);
                       })

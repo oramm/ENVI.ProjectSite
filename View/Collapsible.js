@@ -74,11 +74,10 @@ class Collapsible {
      */
     buildRow(item){
         var row = { $dom: $('<li>'),
+                    $crudButtons: $('<span class="crudButtons right">'),
                     dataItem: item.dataItem
-                    //_gdFolderUrl: item._gdFolderUrl
                   };
-        var $crudButtons = $('<span class="crudButtons right">');
-        $crudButtons
+        row.$crudButtons
             .css('visibility', 'hidden');
         
         row.$dom
@@ -95,7 +94,7 @@ class Collapsible {
             row.$dom.children('.collapsible-header').append(new Badge(item.id, this.subitemsCount, 'light-blue').$dom);
         row.$dom.children('.collapsible-header')
             .css('display', 'block')
-            .append($crudButtons);
+            .append(row.$crudButtons);
 
         row.$dom.children(':last').append((item.$body)? item.$body : this.makeBodyDom(item.dataItem));
         this.addRowCrudButtons(row);
@@ -106,13 +105,12 @@ class Collapsible {
      * Ustawia pryciski edycji wierszy
      */
     addRowCrudButtons(row){
-        var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-        if (row.dataItem._gdFolderUrl) $crudMenu.append(this.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+        if (row.dataItem._gdFolderUrl) row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         if (this.isDeletable || this.isEditable){
-                $crudMenu
+                row.$crudButtons
                     .append('<span data-target="' + this.editModal.id + '" class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
             if (this.isDeletable) 
-                $crudMenu
+                row.$crudButtons
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
         }
     }
@@ -127,9 +125,10 @@ class Collapsible {
     addNewHandler(status, item, errorMessage){
         switch (status) {
             case "DONE":
-                this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
-                this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
-                //.$('#preloader'+item.id).remove();
+                this.$collapsible.children('[itemid=' + item.tmpId +']').remove();
+                this.$collapsible.prepend(this.buildRow(this.makeItem(item)).$dom);
+                //this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
+                //this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
                 if (this.editModal) this.setEditAction();
                 if (this.isDeletable) this.setDeleteAction();
                 if (this.isSelectable) this.setSelectAction();
@@ -286,30 +285,4 @@ class Collapsible {
                 .append('<div class="indeterminate">');
         return $preloader;
     }
-    /*
-     * Tworzy ilonę będącą linkiem do zasobów zewnętrznych. zywana najczęściej w wierszach.
-     */
-    $externalResourcesIconLink(icon, url){
-        if (!icon) throw new SyntaxError('Icon must be defined!');
-        switch (icon) {
-            case 'GD_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Drive-icon.png';
-                break;
-            case 'GGROUP_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Groups-icon.png';
-                break;
-            case 'GCALENDAR_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Calendar-icon.png';
-                break;
-        }
-        var $link = $('<a  target="_blank">');
-        $link.attr('href',url);
-        var $img = $('<img height=21px>');
-        $img.attr('src',icon);
-        
-        $link.append($img);
-        
-        return $link;
-    }
 }
-

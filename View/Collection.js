@@ -98,8 +98,11 @@ class Collection {
         //return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
-                    this.$collection.children('#' + item.tmpId).children('.progress').remove();
-                    this.$collection.children('#' + item.tmpId).attr('id',item.id);
+                    //this.$collection.children('#' + item._tmpId).children('.progress').remove();
+                    this.$dom.find('#' + item._tmpId).remove();
+                    var $newRow = (this.isPlain)?  this. buildPlainRow(item) : this.buildRow(item);
+                    this.$collection.prepend($newRow);
+                    //this.$collection.children('#' + item._tmpId).attr('id',item.id);
                     //.$('#preloader'+item.id).remove();
                     if (this.editModal) this.setEditAction();
                     if (this.isDeletable) this.setDeleteAction();
@@ -119,7 +122,7 @@ class Collection {
                     break;
                 case "ERROR":
                     alert(errorMessage);
-                    this.$dom.find('#' + item.tmpId).remove();
+                    this.$dom.find('#' + item._tmpId).remove();
                     //$('#preloader'+item.id).remove();
                     if (this.items.length == 0) {
                         this.$dom.prepend(this.$emptyList);
@@ -142,11 +145,15 @@ class Collection {
         return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
-                    $('#preloader'+item.id).remove();
                     this.items = this.items.filter(function(searchItem){return searchItem.id!==item.id});
                     this.items.push(item);
                     this.setEditAction();
-                    var $oldRow = this.$collection.find('#' + item.id + '_toDelete');
+
+                    var $oldRow = this.$collection.find('#' + item.id);
+                    
+                    
+                    var $newRow = (this.isPlain)?  this.buildPlainRow(item) : this.buildRow(item);
+                    $oldRow.after($newRow);
                     $oldRow.remove();
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
@@ -154,7 +161,7 @@ class Collection {
                 case "PENDING":  
                     var $oldRow = this.$collection.find('#' + item.id);
                     $oldRow.attr('id',item.id + '_toDelete');
-                    var $newRow = (this.isPlain)?  this. buildPlainRow(item) : this.buildRow(item);
+                    var $newRow = (this.isPlain)?  this.buildPlainRow(item) : this.buildRow(item);
                     $newRow.append(this.makePreloader('preloader'+item.id))
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);
@@ -254,7 +261,11 @@ class Collection {
                                         });
     }
     //-------------------------------------- funkcje prywatne -----------------------------------------------------
-    
+    /*
+     * Tworzy element listy
+     * @param {type} item - to gotowy item dla Collapsible (na podstawie surowych danych w repozytorium)
+     * @returns {Collection.buildRow.$row}
+     */
     buildRow(item){
         var $row = $('<li class="collection-item avatar" id="'+ item.id + '">');
         var $titleContainer = $('<span class="title">'),
@@ -285,9 +296,13 @@ class Collection {
     }
     
     buildPlainRow(item){
-        var $row = $('<li class="collection-item" id="'+ item.id + '">');
-        var $crudButtons = $('<span class="crudButtons">');
-        $crudButtons
+        var row = { $dom: $('<li class="collection-item" id="'+ item.id + '">'),
+                    $crudButtons: $('<span class="crudButtons">'),
+                    dataItem: item.dataItem
+                  };
+        //var $row = $('<li class="collection-item" id="'+ item.id + '">');
+        //var $crudButtons = $('<span class="crudButtons">');
+        row.$crudButtons
             .css('display', 'none');
         var $titleContainer = $('<span class="title">'),
             $descriptionContainer = $('<p>');
@@ -297,29 +312,29 @@ class Collection {
             $descriptionContainer.
                 append(item.$description);
         
-        $row
+        row.$dom
             .append($titleContainer)
             .append($descriptionContainer)
-            .append($crudButtons);
+            .append(row.$crudButtons);
         
-        this.addPlainRowCrudButtons($crudButtons);
-
-        return $row;        
+        this.addPlainRowCrudButtons(row);
+        //do uspójnienia z Collapsible - tam zwracany jest obiekt typu row
+        return row.$dom;        
     }
     
     /*
      * Ustawia pryciski edycji wierszy
      */
 
-    addPlainRowCrudButtons($crudButtons){
+    addPlainRowCrudButtons(row){
         if (this.isEditable) 
-            $crudButtons
-                .append(this.editModal.createTriggerIcon());
-                //.append('<span data-target="' + this.editModal.id + '" class="collectionItemEdit modal-trigger"><i class="material-icons">edit</i></span>')
+            row.$crudButtons.append(this.editModal.createTriggerIcon());
+        
+        if (row.dataItem._gdFolderUrl) 
+            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         
         if (this.isDeletable) 
-            $crudButtons
-                .append('<span class="itemDelete"><i class="material-icons">delete</i></span>');
+            row.$crudButtons.append('<span class="itemDelete"><i class="material-icons">delete</i></span>');
     }
     
     addRowCrudButtons($row,item){

@@ -40,7 +40,8 @@ class ReactionsCollection extends SimpleCollection {
                     $description: this.makeDescription(dataItem),
 
                     riskId_Hidden:  dataItem.riskId,
-                    status_Hidden:  dataItem.status                    
+                    status_Hidden:  dataItem.status,
+                    dataItem: dataItem
                 };
     }
     /*

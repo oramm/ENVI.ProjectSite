@@ -28,7 +28,8 @@ class MilestonesCollection extends SimpleCollection {
                     $title:  this.makeTitle(dataItem),
                     $description:    this.makeDescription(dataItem),
                     editUrl: dataItem.editUrl,
-                    contractId_Hidden:  dataItem._parent.id
+                    contractId_Hidden:  dataItem._parent.id,
+                    dataItem: dataItem
                 };
     }
     
