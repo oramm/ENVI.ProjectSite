@@ -27,8 +27,12 @@ class CasesCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
+        var folderNumber =  (dataItem._type.folderNumber)? dataItem._type.folderNumber : ' ';
+        var typeName = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]';
+        var name = (dataItem.name)? dataItem.name : ' ';
+        
         return {    id: dataItem.id,
-                    name: dataItem.name,
+                    name: folderNumber + ' ' + typeName + ' | ' + name,
                     $body: $bodyDom,
                     dataItem: dataItem
                     };
