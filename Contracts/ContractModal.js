@@ -43,16 +43,10 @@ class ContractModal extends Modal {
      * Tworzy listę kontraktów typu IK PT dla danego projektu
      */
     makeOurPtIds(){
-        var ourPtIkContracts = ContractsSetup.contractsRepository.items.filter(item=>item._ourType=='PT' || item._ourType=='IK');
+        var ourPtIkContracts = ContractsSetup.otherContractsRepository.items.filter(item=>item._ourType=='PT' || item._ourType=='IK');
         //ourPtIkContracts.map(item=> item.ourIdName = item.ourId + ' ' + item.name.substr(0,50) + '...');
         
         return ourPtIkContracts;
-        
-        var ourPtIkIds = [];
-        for (var i=0; i<ourPtIkContracts.length; i++){
-            ourPtIkIds.push(ourPtIkContracts[i].ourId + ' ' + ourPtIkContracts[i].name.substr(0,50) + '...');
-        }
-        return ourPtIkIds;
     }
     /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId

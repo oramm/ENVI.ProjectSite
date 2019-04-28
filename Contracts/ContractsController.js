@@ -27,6 +27,8 @@ class ContractsController {
                                                         'editMilestoneType',
                                                         'deleteMilestoneType');
         
+        ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
+
         var promises = [];
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
@@ -34,7 +36,7 @@ class ContractsController {
         promises[3] = milestoneTypesRepository.initialise();
         
         Promise.all(promises)
-            .then(()=>MilestonesSetup.otherContractsRepository = Tools.cloneOfObject(contractsRepository))
+            .then(()=>ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items))
             .then(()=>  {   console.log("Repositories initialised");
                             contractsListView.initialise();
                         })

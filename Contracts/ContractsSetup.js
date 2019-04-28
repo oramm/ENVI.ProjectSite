@@ -1,4 +1,5 @@
 var contractsRepository;
+var otherContractsRepository;
 var personsRepository;
 
 const statusNames = [   'Nie rozpoczęty',
@@ -20,6 +21,13 @@ class ContractsSetup {
     }
     static get contractsRepository() {
         return contractsRepository;
+    }
+    
+    static get otherContractsRepository() {
+        return otherContractsRepository;
+    }
+    static set otherContractsRepository(data) {
+        otherContractsRepository = data;
     }
     static get personsRepository() {
         return personsRepository;

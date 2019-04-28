@@ -7,7 +7,7 @@ class MilestoneModal extends Modal {
                                                                         'info', 
                                                                         false, 
                                                                         'Wybierz kontrakt')
-        this.contractsAutoCompleteTextField.initialise(MilestonesSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);
+        this.contractsAutoCompleteTextField.initialise(ContractsSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);
         
         
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, true);

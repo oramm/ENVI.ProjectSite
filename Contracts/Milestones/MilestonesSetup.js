@@ -1,6 +1,5 @@
 var milestonesRepository;
 var milestoneTypesRepository;
-var otherContractsRepository;
       
 class MilestonesSetup {
     static get statusNames() {
@@ -26,13 +25,5 @@ class MilestonesSetup {
     
     static set milestoneTypesRepository(data) {
         milestoneTypesRepository = data;
-    }
-    
-    static get otherContractsRepository() {
-        return otherContractsRepository;
-    }
-    
-    static set otherContractsRepository(data) {
-        otherContractsRepository = data;
     }
 }

@@ -120,7 +120,7 @@ class Modal {
         
         this.form.submitHandler(tmpDataObject);
         if (this.form.validate(tmpDataObject)){
-                repository.setCurrentItem(tmpDataObject);
+                repository.currentItem = tmpDataObject;
                 if(this.mode==='EDIT')
                     repository.editItem(repository.currentItem, this.connectedResultsetComponent);
                 else

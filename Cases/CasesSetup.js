@@ -3,6 +3,8 @@ var personsRepository;
 var caseTypesRepository;
 
 class CasesSetup {
+    static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
+    
     static get casesRepository() {
         return casesRepository;
     }

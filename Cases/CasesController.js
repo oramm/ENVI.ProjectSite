@@ -6,7 +6,7 @@ class CasesController {
         casesListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
         
-        casesRepository = new SimpleRepository('Cases repository',
+        CasesSetup.casesRepository = new SimpleRepository('Cases repository',
                                                     'getCasesListPerMilestone',
                                                     'addNewCase',
                                                     'editCase',
@@ -26,7 +26,7 @@ class CasesController {
         var promises = [];
         
         promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
-        promises[1] = casesRepository.initialise(casesRepository.parentItemId);
+        promises[1] = CasesSetup.casesRepository.initialise(casesRepository.parentItemId);
         promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         promises[3] = CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId);
         

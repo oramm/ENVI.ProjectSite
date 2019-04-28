@@ -3,23 +3,34 @@ class Repository {
         if (name === undefined) throw new SyntaxError("Repository must have a name!");
 
         this.name = name;
-        this.items;
+        this.itemsLocalData;
+        this.currentItemLocalData={};
         this.result;
-    }
-
-      
-    //@deprecated
-    setItemSelectedItemIdFromURL(itemName) {
-        var item = Tools.getUrlVars()[itemName];
-        if (item!= undefined)
-            this.selectedItem = Tools.search(item,"id", this.items);
+        sessionStorage.setItem(this.name, JSON.stringify(this));
     }
     
-    itemSelected(id) {
+    get items () {
+        return (this.itemsLocalData)? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).items;
+    }
+    set items(data) {
+        this.itemsLocalData = data;
+        sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    
+    get currentItem () {
+        return (this.currentItemLocalData)? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
+    }
+    set currentItem(item) {
+        if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
+        this.currentItemLocalData = item;
+        this.currentItemId = item.id;
+        sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    
+    setCurrentItemById(id) {
         if (id === undefined) throw new SyntaxError("Selected item id must be specified!");
-        this.selectedItemId = id;
+        this.currentItemId = id;
         this.currentItem = Tools.search(parseInt(id),"id", this.items);
-        
     }
 
     doServerFunction(serverFunctionName,serverFunctionParameters) {

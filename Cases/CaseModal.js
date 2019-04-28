@@ -22,12 +22,8 @@ class CaseModal extends Modal {
     /*
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
-    initAddNewData(){
-        //this.contractsAutoCompleteTextField.setDefaultItem();
-        
-        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: {id: this.connectedResultsetComponent.connectedRepository.parentItemId},
-                                                                             //_relatedContract: relatedContract,
-                                                                             //_numberName: relatedContract._numberName
+    initAddNewData(){        
+        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: CasesSetup.currentMilestone
                                                                            };
     }
 };
