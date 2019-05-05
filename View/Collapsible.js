@@ -246,7 +246,7 @@ class Collapsible {
     
     setSelectAction(){
         var _this = this;
-        this.$dom.find(".collapsible-header").click(function() {   
+        this.$dom.find(".collapsible-header").click(function() {
                                             _this.selectTrigger($(this).parent().attr("itemId"));
                                             $('.collapsible').find('.collapsible-header > .crudButtons')
                                                 .css('visibility', 'hidden');
@@ -263,7 +263,7 @@ class Collapsible {
         this.$dom.find(".collapsibleItemDelete").off('click');
         var _this = this;
         this.$dom.find(".collapsibleItemDelete").click(function() { 
-                if(confirm("Press a button!"))
+                if(confirm("Czy na pewno chcesz usunąć ten element?"))
                     _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));   
             });
     }

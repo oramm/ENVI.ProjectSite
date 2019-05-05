@@ -239,9 +239,10 @@ class Collection {
     setDeleteAction(){
         this.$dom.find(".itemDelete").off('click');
         var _this = this;
-        this.$dom.find(".itemDelete").click(function() {   
-                                        _this.removeTrigger($(this).closest('.collection-item').attr("id"));   
-                                        });
+        this.$dom.find(".itemDelete").click(function() {
+                if(confirm("Czy na pewno chcesz usunąć ten element?"))
+                    _this.removeTrigger($(this).closest('.collection-item').attr("id"));   
+            });
     }
     
     setAddNewAction(){

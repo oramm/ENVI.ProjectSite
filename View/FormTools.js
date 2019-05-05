@@ -63,7 +63,8 @@ class AutoCompleteTextField {
            onAutocomplete: (inputValue) => {
                                 this.setChosenItem(inputValue);
                             },
-           minLength: 1 // The minimum length of the input for the autocomplete to start. Default: 1.
+           minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+           onChange: ()=> alert(inputValue)
              });
         }
     setDefaultItem(){
@@ -587,7 +588,8 @@ class Form {
                     break;
                 case 'AutoCompleteTextField' :
                     if (this.elements[i].input.chosenItem) 
-                        dataObject[this.elements[i].dataItemKeyName] =  this.elements[i].input.chosenItem;
+                        //jeżęli nic nie wybrano (pole puste przypisz pusty obiekt)
+                        dataObject[this.elements[i].dataItemKeyName] = (this.elements[i].input.$dom.children('input').val())? this.elements[i].input.chosenItem : {};
                     break;
             }
         }

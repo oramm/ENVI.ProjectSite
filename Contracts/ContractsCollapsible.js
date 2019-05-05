@@ -90,12 +90,13 @@ class ContractsCollapsible extends SimpleCollapsible {
                                         });
     }
     /*
-     * Przeciążenie konieczne bo przy dodawaniu nowych milestonów muszą być ustawione
-     * dane bieżącego kontraktu i projektu
-     * TODO: to trzeba przerobić analogicznie jak w Collection tzn w modalu ma być funkcja initAddNewData() zamiast tej
+     * 
      */
     selectTrigger(itemId){
-        super.selectTrigger(itemId);
-        $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
+        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId){
+            super.selectTrigger(itemId);
+            $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
+    
+        }
     }
 }
