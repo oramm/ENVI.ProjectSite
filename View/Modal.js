@@ -45,14 +45,16 @@ class Modal {
         var $triggerIcon = $('<SPAN data-target="' + this.id + '" ><i class="material-icons">' + iconType + '</i></SPAN>');
         //var _this = this;
         $triggerIcon
-            .addClass((this.mode==='ADD_NEW')? 'collectionItemAddNew' : 'collectionItemEdit')
+            .addClass((this.mode==='ADD_NEW')? 'addNewItemIcon' : 'collectionItemEdit')
             .addClass('modal-trigger')
         return $triggerIcon;                     
     }
     /*
-     * Akcja po włączeniu modala. Funkcja używana w connectedResultsetComponent.setEditAction()
+     * Akcja po włączeniu modala. 
+     * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction() 
      */
     triggerAction(connectedResultsetComponent){
+        $(connectedResultsetComponent.$dom.css('min-height','300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
         if(this.mode=='EDIT') 

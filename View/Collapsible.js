@@ -125,7 +125,7 @@ class Collapsible {
     addNewHandler(status, item, errorMessage){
         switch (status) {
             case "DONE":
-                this.$collapsible.children('[itemid=' + item.tmpId +']').remove();
+                this.$collapsible.children('[itemid=' + item._tmpId +']').remove();
                 this.$collapsible.prepend(this.buildRow(this.makeItem(item)).$dom);
                 //this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
                 //this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
@@ -146,7 +146,7 @@ class Collapsible {
                 break;
             case "ERROR":
                 alert(errorMessage);
-                this.$collapsible.find('[itemid=' + item.tmpId +']').remove();
+                this.$collapsible.find('[itemid=' + item._tmpId +']').remove();
                 //$('#preloader'+item.id).remove();
                 if (this.items.length == 0) {
                     this.$dom.prepend(this.$emptyList);
@@ -238,10 +238,16 @@ class Collapsible {
     actionsMenuInitialise(){        
         var $buttonsPanel = $('<div class="row">');
         this.$actionsMenu.append($buttonsPanel);
-        if (this.addNewModal !== undefined)
-            this.addNewModal.preppendTriggerButtonTo($buttonsPanel,"Dodaj wpis", this);
+        //if (this.addNewModal !== undefined)
+        //    this.addNewModal.preppendTriggerButtonTo($buttonsPanel,"Dodaj wpis", this);
         
-        this.filterInitialise();
+        if (this.isAddable){
+            this.$actionsMenu.prepend(this.addNewModal.createTriggerIcon());
+            this.setAddNewAction();
+        }
+        
+        if (this.hasFilter)
+            this.filterInitialise();
     }
     
     setSelectAction(){
@@ -266,6 +272,12 @@ class Collapsible {
                 if(confirm("Czy na pewno chcesz usunąć ten element?"))
                     _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));   
             });
+    }
+    
+    setAddNewAction(){
+        this.$actionsMenu.find(".addNewItemIcon").click(
+                                        ()=>this.addNewModal.triggerAction(this)
+                                        );
     }
     
     setEditAction(){

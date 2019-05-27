@@ -10,7 +10,7 @@ class CaseModal extends Modal {
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type'                                     
             },
-            {   input: new InputTextField (this.id + 'nameTextField','Nazwa sprawy', undefined, true, 150),
+            {   input: new InputTextField (this.id + 'nameTextField','Nazwa sprawy', undefined, false, 150),
                 dataItemKeyName: 'name'
             },
             {   input: new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300),

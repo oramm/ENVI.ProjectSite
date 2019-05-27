@@ -23,7 +23,6 @@ class TasksCollection extends SimpleCollection {
         this.initialise(this.makeList());
     }    
     /*
-     * Dodano atrybut z caseId_Hidden, żeby szybciej filtorwać widok po stronie klienta zamiast przez SELECT z db
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeItem(dataItem){
@@ -35,9 +34,6 @@ class TasksCollection extends SimpleCollection {
                     icon:   undefined,
                     $title:  this.makeTitle(dataItem),
                     $description: this.makeDescription(dataItem),
-
-                    caseId_Hidden:  dataItem.caseId,
-                    status_Hidden:  dataItem.status,
                     dataItem: dataItem
                 };
     }
@@ -106,7 +102,7 @@ class TasksCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.caseId_Hidden==this.parentId && item.status_Hidden == this.status );
+        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentId && item.dataItem.status == this.status );
     }
     
     selectTrigger(itemId){

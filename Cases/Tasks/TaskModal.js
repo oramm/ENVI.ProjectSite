@@ -30,4 +30,13 @@ class TaskModal extends Modal {
         ];
         this.initialise();
     }
+    
+    /*
+     * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
+     */
+    initAddNewData(){        
+        this.connectedResultsetComponent.connectedRepository.currentItem = {    status: 'Backlog',
+                                                                                _parent: CasesSetup.casesRepository.currentItem
+                                                                           };
+    }
 };

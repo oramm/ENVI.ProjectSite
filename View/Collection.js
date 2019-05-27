@@ -246,7 +246,7 @@ class Collection {
     }
     
     setAddNewAction(){
-        this.$dom.find(".collectionItemAddNew").click(
+        this.$dom.find(".addNewItemIcon").click(
                                         ()=>this.addNewModal.triggerAction(this)
                                         );
     }
@@ -295,7 +295,12 @@ class Collection {
 
         return $row;        
     }
-    
+    /*
+     * TODO: bezpieczniej jest używać parametru 'itemId zamiast ID w css bo nr id mogąsię powtarzać przy kilku kolecjach na jednej stronie
+     *       to jest już zaimplenentowane w Collapsible
+     * @param {type} item
+     * @returns {Collection.buildPlainRow.row.$dom|row.$dom}
+     */
     buildPlainRow(item){
         var row = { $dom: $('<li class="collection-item" id="'+ item.id + '">'),
                     $crudButtons: $('<span class="crudButtons">'),

@@ -110,7 +110,9 @@ class Repository {
     //wywoływana przy SUBMIT
     addNewItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            newItem._tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+            var newItemTmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+            //newItem._tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -131,11 +133,13 @@ class Repository {
                   this.handleAddNewItem(resp.result)
                       .then((result) => { 
                         (typeof result==='object')? newItem = result : newItem.id = result;
+                        newItem._tmpId = newItemTmpId;
                         viewObject.addNewHandler.apply(viewObject, ["DONE", newItem]);
                         resolve(newItem);
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
+                          newItem._tmpId = newItemTmpId;
                           viewObject.addNewHandler.apply(viewObject,["ERROR",newItem, err]);
                           //reject(err);
                       });

@@ -37,13 +37,14 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
+        var relatedCOntractNumerString = (dataItem._relatedContract.number)? dataItem._relatedContract.number + ':' : '';
         var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._type.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( relatedCOntractNumerString + ' ' + dataItem._type.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
                                                         this);
-        return titleAtomicEditLabel.$dom
+        return titleAtomicEditLabel.$dom;
     }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
