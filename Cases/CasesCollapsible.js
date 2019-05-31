@@ -66,6 +66,7 @@ class CasesCollapsible extends SimpleCollapsible {
     var $bodyDom = $('<div>')
             .attr('id', 'tasksActionsMenuForCase' + dataItem.id)
             .attr('caseid',dataItem.id)
+            .append('<div class="row">Zarządzaj zadaniami</div>')
             .append(new ScrumBoard(statusesCollections).$dom)
     return $bodyDom;
     }
