@@ -84,19 +84,11 @@ class TasksCollection extends SimpleCollection {
                                                         'nameSurnameEmail',
                                                         this);
         
-        //var statusSelectField = new SelectField(this.id + '_' + dataItem.id + '_statusSelectField', 'Status', true);
-        //statusSelectField.initialise(TasksSetup.statusNames);        
-        //var statusAtomicEditLabel = new AtomicEditLabel(dataItem.status, 
-        //                                                dataItem, 
-        //                                               statusSelectField,
-        //                                                'status',
-        //                                                this);
-        
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
             .append(personAtomicEditLabel.$dom)
-            .append('<span>' + dataItem.status + '<br></span>');
+            //.append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;
     }

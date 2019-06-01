@@ -672,10 +672,13 @@ class AtomicEditLabel {
     }
     
     buildStaticDom(){
-        this.$dom = $('<span>');
-        this.$dom
-            .html(this.caption+'<br>');
-        this.setEditLabelAction();
+        if (this.caption){
+            this.$dom = $('<span>');
+            this.$dom
+                .html(this.caption+'<br>');
+            this.setEditLabelAction();
+        } else
+            this.$dom = '';
     }
     
     buildEditModeDom(){
