@@ -2,10 +2,11 @@ class RisksController {
     main(){
         // Hide auth UI, then load client library.
         var risksListView = new RisksListView();
+        var promises = [];
         $("#authorize-div").hide();
         risksListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
+
         RisksSetup.risksRepository = new SimpleRepository(  'Risks repository',
                                                             'getRisksListPerProject',
                                                             'addNewRisk',
@@ -13,28 +14,28 @@ class RisksController {
                                                             'deleteRisk');
         
         RisksSetup.reactionsRepository = new SimpleRepository(  'Reactions repository',
-                                                                'getRisksReactionsListPerProject',
-                                                                'addNewRiskReaction',
-                                                                'ediRisktReaction',
-                                                                'deleteRiskReaction');
-        RisksSetup.personsRepository = new SimpleRepository('Persons repository',
-                                                    'getPersonsNameSurnameEmailList',
-                                                );
+                                                                'getRisksReactionsListPerContract',
+                                                                'addNewTask',
+                                                                'editTask',
+                                                                'deleteTask');
         
-        RisksSetup.contractsRepository = new SimpleRepository('Contracts repository',
-                                                            'getContractsKeyDataListPerProject',
-                                                            );
-        RisksSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-                                                            'getMilestonesListPerProject',
-                                                            );
+        RisksSetup.casesRepository = new SimpleRepository(  'Cases repository',
+                                                            'getCasesListPerContract',
+                                                            'addNewCase',
+                                                            'editCase',
+                                                            'deleteCase'); 
+                
+        RisksSetup.personsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+        RisksSetup.contractsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Contracts repository')));
+        RisksSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
+
         
-        var promises = [];
         
         promises[0] = RisksSetup.reactionsRepository.initialise(RisksSetup.reactionsRepository.parentItemId);
         promises[1] = RisksSetup.risksRepository.initialise(RisksSetup.risksRepository.parentItemId);
-        promises[2] = RisksSetup.contractsRepository.initialise(RisksSetup.risksRepository.parentItemId);
-        promises[3] = personsRepository.initialise();
-        promises[4] = RisksSetup.milestonesRepository.initialise(RisksSetup.milestonesRepository.parentItemId);
+        promises[2] = RisksSetup.casesRepository.initialise(RisksSetup.casesRepository.parentItemId);
+        
+        
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
                             risksListView.initialise();

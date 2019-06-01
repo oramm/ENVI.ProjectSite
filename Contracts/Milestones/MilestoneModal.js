@@ -72,7 +72,8 @@ class MilestoneModal extends Modal {
         //this.contractsAutoCompleteTextField.setDefaultItem();
         
         this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: ContractsSetup.contractsRepository.currentItem,
-                                                                             _type: {name: ''}
+                                                                             _type: {name: ''},
+                                                                             _relatedContract: {}
                                                                            };
     }
    

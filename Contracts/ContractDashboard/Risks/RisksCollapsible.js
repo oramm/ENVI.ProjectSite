@@ -11,9 +11,14 @@ class RisksCollapsible extends SimpleCollapsible {
         
         this.addNewModal = new RiskModal(id + '_newRisk', 'Zgłoś ryzyko', this, 'ADD_NEW');
         this.editModal = new RiskModal(id + '_editRisk', 'Edytuj rysyko', this, 'EDIT');
-        
+        //modale dla ReactionsCollection:
+        this.addNewReactionModal = new ReactionModal(this.id + '_newReaction', 'Dodaj zadanie', this, 'ADD_NEW');
+        this.editReactionModal = new ReactionModal(this.id + '_editReaction', 'Edytuj zadanie', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
-        this.connectedRepository.currentItem.projectId = this.connectedRepository.parentItemId;
+        //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
+        //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
+        //this.connectedRepository.currentItem._parent =  RisksSetup.milestonesRepository.currentItem;
+        //this.connectedRepository.currentItem._parent._parent = RisksSetup.contractsRepository.currentItem;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -21,40 +26,28 @@ class RisksCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
+        var folderNumber =  (dataItem._case._type.folderNumber)? dataItem._case._type.folderNumber : '';
+        var typeName = dataItem._case._type.name;
+        var name = (dataItem._case.name)? dataItem._case.name : '';
+        dataItem._rate = dataItem.probability * dataItem.overallImpact;
         return {    id: dataItem.id,
-                    name: dataItem._contract.ourIdNumberName + '<BR>' +
-                          dataItem.name + ', Stopień: <strong>' + dataItem._rate + '<strong>',
-                    $body: $bodyDom
-                    };
+                    name: folderNumber + ' ' + typeName + ' | ' + name + '<BR>' +
+                          'Stopień: <strong>' + dataItem._rate + '<strong>',
+                    $body: $bodyDom,
+                    dataItem: dataItem
+                };
     }
     
     makeBodyDom(dataItem){
-    var statusesCollections = [];
-    var backlogCollection = new ReactionsCollection({   id: 'backlogCollection_' + dataItem.id + '_status' + 0, 
-                                                        parentId: dataItem.id,
-                                                        title: TasksSetup.statusNames[0],
-                                                        status: TasksSetup.statusNames[0],
-                                                        isAddable: false
-                                                    });
-    backlogCollection.$dom.children('.collection').attr("status", TasksSetup.statusNames[0]);
-    statusesCollections.push(backlogCollection);
-    
-    for (var i=1; i<TasksSetup.statusNames.length; i++){
-            var reactionsCollection = new ReactionsCollection({     id: 'reactionsListCollection_' + dataItem.id + '_status' + i, 
-                                                            parentId: dataItem.id, 
-                                                            title: TasksSetup.statusNames[i],
-                                                            status: TasksSetup.statusNames[i],
-                                                            isAddable: false
-                                                      });
-            reactionsCollection.$dom.children('.collection').attr("status", TasksSetup.statusNames[i]);
-            statusesCollections.push(reactionsCollection);
-    }
-        
-    var $bodyDom = $('<div>')
-            .attr('id', 'reactionsActionsMenuForRisk' + dataItem.id)
-            .attr('riskid',dataItem.id)
-            .append('Przyczyna: ' + dataItem.cause)
-            .append(new ScrumBoard(statusesCollections).$dom)
-    return $bodyDom;
+        var $panel = $('<div>')
+                .attr('id', 'reactionsActionsMenuForRisk' + dataItem.id)
+                .attr('riskid',dataItem.id)
+                    .append(new ReactionsCollection({  id: 'reactionsListCollection_' + dataItem.id, 
+                                                        parentId: dataItem._case.id, 
+                                                        title: 'Reakcje na ryzyko',
+                                                        isAddable: true
+                                                    }
+                        ).$dom);
+        return $panel; 
     }   
 }

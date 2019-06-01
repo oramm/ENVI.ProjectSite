@@ -3,6 +3,7 @@ var reactionsRepository;
 var contractsRepository;
 var personsRepository;
 var milestonesRepository;
+var casesRepository;
 const probabilityRates = [1,2,3,4];
 const overallImpactRates = probabilityRates;
 
@@ -42,5 +43,17 @@ class RisksSetup {
     }
     static get overallImpactRates() {
         return overallImpactRates;
+    }
+    static set milestonesRepository(data) {
+        milestonesRepository = data;
+    }
+    static get milestonesRepository() {
+        return milestonesRepository;
+    }
+    static set casesRepository(data) {
+        casesRepository = data;
+    }
+    static get casesRepository() {
+        return casesRepository;
     }
 }

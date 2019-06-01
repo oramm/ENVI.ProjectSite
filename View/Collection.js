@@ -217,7 +217,7 @@ class Collection {
         this.$dom.find("li").off('click');
         var _this = this;
         //wyłącz klasę active
-        this.$dom.find("li").click(function() {   
+        this.$dom.find("li").mousedown(function() {   
                 if ($(this).closest('.collapsible-item').length>0){
                     $(this).closest('.collapsible').find('.collection-item.active').removeClass('active');
                     $(this).closest('.collapsible').find('.collection-item > .crudButtons').css('display', 'none')

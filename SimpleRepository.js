@@ -1,23 +1,36 @@
 class SimpleRepository extends Repository {
-    constructor(name, 
+    /*
+     * 
+     * @param {String || Object} initParemeter może to być nazwa repozytorim, albo obiekt z session Strorage
+     * @param {type} getItemsListServerFunctionName
+     * @param {type} addNewServerFunctionName
+     * @param {type} editServerFunctionName
+     * @param {type} deleteServerFunctionName
+     * @returns {SimpleRepository}
+     */
+    constructor(initParemeter, 
                 getItemsListServerFunctionName, 
                 addNewServerFunctionName, 
                 editServerFunctionName, 
                 deleteServerFunctionName){
-        super(name);
-        this.getItemsListServerFunctionName = getItemsListServerFunctionName
-        this.addNewServerFunctionName = addNewServerFunctionName;
-        this.editServerFunctionName = editServerFunctionName;
-        this.deleteServerFunctionName = deleteServerFunctionName;
-        this.parentItemId; 
-        this.parentItemIdFromURL();
+        super(initParemeter);
+        this.parentItemId = initParemeter.parentItemId;
+        if (typeof initParemeter === 'string'){
+            this.getItemsListServerFunctionName = getItemsListServerFunctionName
+            this.addNewServerFunctionName = addNewServerFunctionName;
+            this.editServerFunctionName = editServerFunctionName;
+            this.deleteServerFunctionName = deleteServerFunctionName;
+             
+            this.parentItemIdFromURL();
+            sessionStorage.setItem(this.name, JSON.stringify(this));
+        }
     }
     
     initialise(serverFunctionParameters) {
         return new Promise((resolve, reject) => {
             this.doServerFunction(this.getItemsListServerFunctionName,serverFunctionParameters)
                 .then(result => {   this.items = result;
-                                    
+                                    sessionStorage.setItem(this.name, JSON.stringify(this));
                                     resolve(this.name + " initialised");  
                                 });
         });

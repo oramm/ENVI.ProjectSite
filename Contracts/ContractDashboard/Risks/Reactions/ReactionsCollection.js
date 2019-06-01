@@ -9,8 +9,8 @@ class ReactionsCollection extends SimpleCollection {
         super({id: initParamObject.id, 
                title: initParamObject.title,
                isPlain: true, 
-               hasFilter: false,
-               isEditable: false, 
+               hasFilter: true,
+               isEditable: true, 
                isAddable: initParamObject.isAddable, 
                isDeletable: true,
                connectedRepository: ReactionsSetup.reactionsRepository
@@ -21,12 +21,11 @@ class ReactionsCollection extends SimpleCollection {
         if (this.isAddable) 
             this.addNewModal = new ReactionModal(this.id + '_newReaction', 'Dodaj zadanie', this, 'ADD_NEW');
         
-        //this.editModal = new ReactionModal(this.id + '_editReaction', 'Edytuj zadanie', this, 'EDIT');
+        this.editModal = new ReactionModal(this.id + '_editReaction', 'Edytuj zadanie', this, 'EDIT');
         
         this.initialise(this.makeList());        
     }    
     /*
-     * Dodano atrybut z riskId_Hidden, żeby szybciej filtorwać widok po stronie klienta zamiast przez SELECT z db
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeItem(dataItem){
@@ -38,9 +37,6 @@ class ReactionsCollection extends SimpleCollection {
                     icon:   undefined,
                     $title:  this.makeTitle(dataItem),
                     $description: this.makeDescription(dataItem),
-
-                    riskId_Hidden:  dataItem.riskId,
-                    status_Hidden:  dataItem.status,
                     dataItem: dataItem
                 };
     }
@@ -109,7 +105,7 @@ class ReactionsCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.riskId_Hidden==this.parentId && item.status_Hidden == this.status );
+        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentId);
     }
     
     selectTrigger(itemId){

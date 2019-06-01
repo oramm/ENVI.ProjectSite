@@ -120,7 +120,6 @@ class SelectField{
         this.$select.empty();
         this.optionsData = optionsData;
         this.key=key;
-        
         this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
@@ -181,6 +180,7 @@ class SelectField{
             }
         } else 
             this.chosenItem = undefined;
+        return this.chosenItem;
     }
     
     simulateChosenItem(inputValue){

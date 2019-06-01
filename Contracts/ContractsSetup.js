@@ -19,8 +19,13 @@ class ContractsSetup {
     static get fidicTypes() {
         return fidicTypes;
     }
+    
     static get contractsRepository() {
         return contractsRepository;
+    }
+    
+    static set contractsRepository(data) {
+        contractsRepository = data;
     }
     
     static get otherContractsRepository() {
@@ -31,6 +36,10 @@ class ContractsSetup {
     }
     static get personsRepository() {
         return personsRepository;
+    }
+    
+    static set personsRepository(data) {
+        personsRepository = data;
     }
     
 }

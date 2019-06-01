@@ -52,7 +52,7 @@ class OurContractModal extends Modal {
         ];
         this.initialise();
     }
-        /*
+    /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
     initAddNewData(){

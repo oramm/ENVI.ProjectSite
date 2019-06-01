@@ -1,31 +1,30 @@
 class RiskModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent,mode);
-        
-        this.contractsAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Numer  i nazwa kontraktu', 
-                                                                     'info', 
-                                                                     true, 
-                                                                     'Wybierz kontrakt')
-        this.contractsAutoCompleteTextField.initialise(RisksSetup.contractsRepository,"ourIdNumberName", this.onContractChosen, this);
+        super(id, tittle, connectedResultsetComponent,mode);      
         
         this.milestonesSelectField = new SelectField(this.id + '_milestonesSelectField', 'Kamień milowy', undefined, true);
+        this.milestonesSelectField.initialise(RisksSetup.milestonesRepository.items.filter(
+                                                    item=>item.contractId == RisksSetup.contractsRepository.currentItem.id
+                                               ),'_nameTypeFolderNumberName');
+        this.milestonesSelectField.$select.on('change',()=> this.onMilestoneChosen(this.milestonesSelectField.getChosenItem()));
         
+        this.caseSelectField = new SelectField(this.id + 'caseSelectField', 'Sprawa', undefined, true);
+        
+        //var casesTypes = (CasesSetup.caseTypesRepository.items.length>0)? CasesSetup.caseTypesRepository.items : []
+        this.caseSelectField.initialise(RisksSetup.casesRepository.items, 'name');
+        
+
         this.probabilitySelectField = new SelectField(this.id + '_probabilitySelectField', 'Prawdopodobieństwo', true);
         this.probabilitySelectField.initialise(RisksSetup.probabilityRates);
         
         this.overallImpactSelectField = new SelectField(this.id + '_overallImpactSelectField', 'Wpływ na projekt', true);
         this.overallImpactSelectField.initialise(RisksSetup.overallImpactRates);
-        
         this.formElements = [
-            {   input: this.contractsAutoCompleteTextField,
-                dataItemKeyName: '_contract'
-            },
             {   input: this.milestonesSelectField,
-                dataItemKeyName: '_milestone'
+                dataItemKeyName: '_parent',
             },
-            {   input: new InputTextField (this.id + '_nameTextField','Nazwa', undefined, true, 250),
-                dataItemKeyName: 'name'
+            {   input: this.caseSelectField,
+                dataItemKeyName: '_case'                                     
             },
             {   input: new ReachTextArea (this.id + '_causeReachTextArea','Przyczyna', false, 500),
                 dataItemKeyName: 'cause'
@@ -50,14 +49,22 @@ class RiskModal extends Modal {
         this.initialise();
     }
     
-    onContractChosen(inputValue){
-        RisksSetup.contractsRepository.currentItem = inputValue;
+    onMilestoneChosen(inputValue){
+        RisksSetup.milestonesRepository.currentItem = inputValue;
             
-        var currentMilestones = RisksSetup.milestonesRepository.items.filter(
-                item=>item.contractId == inputValue.id
+        var currentCases = RisksSetup.casesRepository.items.filter(
+                item=>item._parent.id == inputValue.id
             );
             
         //var currentMilestonesNames = currentMilestones.map(item=>item.name);
-        this.milestonesSelectField.initialise(currentMilestones, 'name');
+        this.caseSelectField.initialise(currentCases, '_nameTypeFolderNumberName');
+    }
+    /*
+     * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
+     */
+    initAddNewData(){
+        this.connectedResultsetComponent.connectedRepository.currentItem = {
+                projectId: RisksSetup.contractsRepository.parentItemId
+            }
     }
 }

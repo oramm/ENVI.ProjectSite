@@ -1,12 +1,28 @@
 class Repository {
-    constructor(name){
-        if (name === undefined) throw new SyntaxError("Repository must have a name!");
-
-        this.name = name;
+    /*
+     * Może być inicjowane z danych z serwera, wtedy argumentem jest name jako string
+     * Może być też inicjowane z obiektu SessionStorage, wtedy paremetrem jest ten obiekt
+     * @param {type} name
+     * @returns {Repository}
+     */
+    constructor(initParameter){
+        if (initParameter === undefined) throw new SyntaxError("Repository must have a name!");
+        
         this.itemsLocalData;
-        this.currentItemLocalData={};
         this.result;
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+        
+        if (typeof initParameter === 'string'){
+            this.name = initParameter;
+            this.currentItemLocalData={};
+            
+            //sessionStorage.setItem(this.name, JSON.stringify(this));
+        } 
+        else if (typeof initParameter === 'object'){
+            this.name = initParameter.name;
+            this.currentItemLocalData=initParameter.currentItemLocalData;
+            this.itemsLocalData = initParameter.itemsLocalData;
+            console.log(this.name + ' items from SessionStorage: %o', this.itemsLocalData )
+        }
     }
     
     get items () {
@@ -52,7 +68,7 @@ class Repository {
 
             op
               .then((resp) => this.handleDoServerFunction(resp.result))
-              .then((result) => {   console.log(result);
+              .then((result) => {   console.log(this.name + 'items from db: %o ', result);
                                     resolve(result);
                                 })
               .catch(err => {   console.error (serverFunctionName, err);
