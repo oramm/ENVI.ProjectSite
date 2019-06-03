@@ -5,7 +5,7 @@ class RiskModal extends Modal {
         this.milestonesSelectField = new SelectField(this.id + '_milestonesSelectField', 'Kamień milowy', undefined, true);
         this.milestonesSelectField.initialise(RisksSetup.milestonesRepository.items.filter(
                                                     item=>item.contractId == RisksSetup.contractsRepository.currentItem.id
-                                               ),'_nameTypeFolderNumberName');
+                                               ),'_FolderNumber_TypeName_Name');
         this.milestonesSelectField.$select.on('change',()=> this.onMilestoneChosen(this.milestonesSelectField.getChosenItem()));
         
         this.caseSelectField = new SelectField(this.id + 'caseSelectField', 'Sprawa', undefined, true);
@@ -57,7 +57,7 @@ class RiskModal extends Modal {
             );
             
         //var currentMilestonesNames = currentMilestones.map(item=>item.name);
-        this.caseSelectField.initialise(currentCases, '_nameTypeFolderNumberName');
+        this.caseSelectField.initialise(currentCases, '_typeFolderNumber_TypeName_Number_Name');
     }
     /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId

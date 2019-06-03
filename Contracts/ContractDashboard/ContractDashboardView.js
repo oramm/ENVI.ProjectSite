@@ -9,6 +9,9 @@ class ContractDashboardView extends Popup{
         var tabsData = [    { name: 'Szczegóły',
                               url: 'Details/ContractDetails.html?parentItemId=' + parentItemId
                             },
+                            { name: 'Materiały',
+                              url: 'MaterialCards/MaterialCardsList.html?parentItemId=' + parentItemId
+                            },
                             { name: 'Ryzyka',
                               url: 'Risks/RisksList.html?parentItemId=' + parentItemId
                             },
