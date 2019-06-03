@@ -21,6 +21,7 @@ class Collection {
         this.title = (initParamObject.title === undefined)? "" : initParamObject.title;
         this.isSelectable = (initParamObject.isSelectable  === undefined)? true : initParamObject.isSelectable;
         this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
+        this.minimumItemsToFIlter = (initParamObject.minimumItemsToFIlter)? initParamObject.minimumItemsToFIlter : 6; 
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
@@ -362,11 +363,13 @@ class Collection {
     
     
     filterInitialise(){
-        this.filter.initialise();
-        this.$actionsMenu.append(this.filter.$dom);
-        //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-        //                                                          this.$collection.children('li'))
-        //                        );
+        if(this.items.length>=this.minimumItemsToFIlter){
+            this.filter.initialise();
+            this.$actionsMenu.append(this.filter.$dom);
+            //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
+            //                                                          this.$collection.children('li'))
+            //                        );
+        }
     }
 
     actionsMenuInitialise(){
