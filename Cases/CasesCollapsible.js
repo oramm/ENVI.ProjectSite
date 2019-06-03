@@ -30,9 +30,10 @@ class CasesCollapsible extends SimpleCollapsible {
         var folderNumber =  (dataItem._type.folderNumber)? dataItem._type.folderNumber : ' ';
         var typeName = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]';
         var name = (dataItem.name)? dataItem.name : ' ';
+        var caseNumber = (dataItem._displayNumber)? ' ' + dataItem._displayNumber + ' ' : '';
         
         return {    id: dataItem.id,
-                    name: folderNumber + ' ' + typeName + ' | ' + name,
+                    name: folderNumber + ' ' + typeName + ' | ' + caseNumber + name,
                     $body: $bodyDom,
                     dataItem: dataItem
                     };

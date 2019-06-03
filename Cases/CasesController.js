@@ -21,7 +21,7 @@ class CasesController {
         personsRepository = new SimpleRepository('Persons repository',
                                                     'getPersonsNameSurnameEmailList',
                                                 );
-        caseTypesRepository = new SimpleRepository('CaseeTypes repository',
+        caseTypesRepository = new SimpleRepository('CaseTypes repository',
                                                         'getCaseTypesList');
         var promises = [];
         

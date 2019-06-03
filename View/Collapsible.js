@@ -5,6 +5,7 @@ class Collapsible {
     constructor(initParamObject){
         this.id = initParamObject.id;
         this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
+        this.minimumItemsToFIlter = (initParamObject.minimumItemsToFIlter)? initParamObject.minimumItemsToFIlter : 6; 
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
@@ -226,10 +227,10 @@ class Collapsible {
     }
     
     filterInitialise(){
-        this.filter.initialise();
-        this.$actionsMenu.append(this.filter.$dom);
-                                                
-        
+        if(this.items.length>=this.minimumItemsToFIlter){
+            this.filter.initialise();
+            this.$actionsMenu.append(this.filter.$dom);
+        }
     }
     /*
      * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()

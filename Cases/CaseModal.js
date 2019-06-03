@@ -2,7 +2,7 @@ class CaseModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent,mode);
         
-        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Rodzaj sprawy', undefined, false);
+        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ sprawy', undefined, false);
         //var casesTypes = (CasesSetup.caseTypesRepository.items.length>0)? CasesSetup.caseTypesRepository.items : []
         this.typeSelectField.initialise(CasesSetup.caseTypesRepository.items, 'name');
         
