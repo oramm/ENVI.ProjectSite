@@ -31,7 +31,8 @@ class RisksCollapsible extends SimpleCollapsible {
         var name = (dataItem._case.name)? dataItem._case.name : '';
         dataItem._rate = dataItem.probability * dataItem.overallImpact;
         return {    id: dataItem.id,
-                    name: folderNumber + ' ' + typeName + ' | ' + name + '<BR>' +
+                    name: dataItem._parent._type.folderNumber + ' ' + dataItem._parent._type.name +  ' | ' + 
+                          folderNumber + ' ' + typeName + ' | ' + name + '<BR>' +
                           'Stopień: <strong>' + dataItem._rate + '<strong>',
                     $body: $bodyDom,
                     dataItem: dataItem

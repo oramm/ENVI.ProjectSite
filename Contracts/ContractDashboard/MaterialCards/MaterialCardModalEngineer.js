@@ -9,9 +9,9 @@ class MaterialCardModalEngineer extends Modal {
         this.statusSelectField.initialise(MaterialCardsSetup.statusNames);
         
         this.personAutoCompleteTextField = new AutoCompleteTextField(this.id+'_personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
+                                                                     'Osoba odpowiedzialna', 
                                                                      'person', 
-                                                                     false, 
+                                                                     true, 
                                                                      'Wybierz imię i nazwisko');
         this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
         
@@ -20,10 +20,10 @@ class MaterialCardModalEngineer extends Modal {
                 dataItemKeyName: 'date'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
-                dataItemKeyName: 'name'
+                dataItemKeyName: '_name'
             },
             {   input: this.descriptionReachTextArea,
-                dataItemKeyName: 'description'
+                dataItemKeyName: '_description'
             },
             {   input: this.deadLinePicker,
                 dataItemKeyName: 'deadline'
@@ -43,8 +43,13 @@ class MaterialCardModalEngineer extends Modal {
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
     initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem = { contractId: this.connectedResultsetComponent.connectedRepository.parentItemId
-                                                                             
-                                                                            };
+        this.connectedResultsetComponent.connectedRepository.currentItem = {    
+            
+            _parent:  MaterialCardsSetup.milestonesRepository.items.filter((   item => item._type.id==7 && 
+                                                                               item.contractId==MaterialCardsSetup.contractsRepository.currentItem.id
+                                                                        ))[0],  
+            contractId: this.connectedResultsetComponent.connectedRepository.parentItemId
+
+            };
     }
 }
