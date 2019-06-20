@@ -17,7 +17,7 @@ class MaterialCardModalEngineer extends Modal {
         
         this.formElements = [
             {   input: this.datePicker,
-                dataItemKeyName: 'date'
+                dataItemKeyName: 'creationDate'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
                 dataItemKeyName: '_name'
@@ -44,12 +44,13 @@ class MaterialCardModalEngineer extends Modal {
      */
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {    
-            
             _parent:  MaterialCardsSetup.milestonesRepository.items.filter((   item => item._type.id==7 && 
                                                                                item.contractId==MaterialCardsSetup.contractsRepository.currentItem.id
                                                                         ))[0],  
             contractId: this.connectedResultsetComponent.connectedRepository.parentItemId
 
             };
+        this.form.fillWithData({ creationDate: Tools.dateJStoDMY(new Date())
+                               });
     }
 }

@@ -36,7 +36,7 @@ class CasesCollapsible extends SimpleCollapsible {
                     name: folderNumber + ' ' + typeName + ' | ' + caseNumber + name,
                     $body: $bodyDom,
                     dataItem: dataItem
-                    };
+                };
     }
     
     makeBodyDom(dataItem){

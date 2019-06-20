@@ -113,7 +113,7 @@ class SelectField{
         this.$dom;
         this.$select;
         this.defaultDisabledOption = "Wybierz opcję";
-        this.createSelectField(id, label, icon, isRequired);
+        this.buildDom(id, label, icon, isRequired);
     }
     
     initialise(optionsData, key){
@@ -151,9 +151,10 @@ class SelectField{
             this.$select.append($option);
         }
     }
-    createSelectField(id, label, icon, isRequired, options){
+    buildDom(id, label, icon, isRequired, options){
         this.$dom = $('<div class="input-field">');
         this.$select = $('<select>');
+        this.$select.attr('id', id)
         var $label = $('<label>'+ label +'</label>');
         this.$dom
             .append(this.$select)
@@ -317,7 +318,7 @@ class SelectFieldBrowserDefault{
         this.chosenItem;
         this.$dom;
         this.$select;
-        this.createSelectField(id, label, icon, isRequired);
+        this.buildDom(id, label, icon, isRequired);
     }
     
     initialise(optionsData){
@@ -338,7 +339,7 @@ class SelectFieldBrowserDefault{
         
     }
     
-    createSelectField(id, label, icon, isRequired, options){
+    buildDom(id, label, icon, isRequired, options){
         
         this.$select = $('<select class="browser-default">');
         this.$dom = $('<div>');
@@ -514,7 +515,10 @@ class Form {
      * @returns {undefined}
      */
     fillWithData(currentItem){
-        for (var i =0; i < this.elements.length; i++){
+        //określ ile maksymalnie może być elementów do wypełnienia
+        var inputElements = Math.min(this.elements.length, Object.keys(currentItem).length);
+        
+        for (var i =0; i < inputElements; i++){
             var inputvalue = currentItem[this.elements[i].dataItemKeyName];
             switch (this.elements[i].input.constructor.name) {
                 case 'InputTextField' :

@@ -17,6 +17,22 @@ class Tools{
         }
     }
     
+    static dateJStoDMY(inputDate) {   
+        if(inputDate){
+			var dd = inputDate.getDate();
+			var mm = inputDate.getMonth() + 1; //January is 0!
+
+			var yyyy = inputDate.getFullYear();
+			if (dd < 10) {
+			  dd = '0' + dd;
+			} 
+			if (mm < 10) {
+			  mm = '0' + mm;
+			} 
+			return dd + '-' + mm + '-' + yyyy;
+        }
+    }
+    
     static daysToMilliseconds(days) {
         return days * 24 * 60 * 60 * 1000;
     }

@@ -5,7 +5,7 @@ class RoleModal extends Modal {
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', true, 500);
         
         this.formElements = [
-            {   input: new InputTextField (this.id + 'nameTextField','Nazwa roli', undefined, true, 150),
+            {   input: new InputTextField (this.id + 'nameTextField','Nazwa roli', undefined, true, 100),
                 dataItemKeyName: 'name'
             },
             {   input: this.descriptionReachTextArea,
