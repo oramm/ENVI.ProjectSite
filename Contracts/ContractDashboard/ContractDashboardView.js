@@ -22,7 +22,8 @@ class ContractDashboardView extends Popup{
         $('#content').prepend(new Tabs({    id: 'contratTabs',
                                             parentId: parentItemId,
                                             tabsData: tabsData,
-                                            swipeable: true
+                                            swipeable: true,
+                                            contentIFrameId: 'contractTabs'
                                         }).$dom);  
         this.dataLoaded(true);
         console.log("DashboardView initialised");

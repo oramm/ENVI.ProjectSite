@@ -29,8 +29,11 @@ class MilestoneModal extends Modal {
                                         var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
                                             item=> this.checkContractType(item.contractType)
                                         );
+                                        //aby nie utracić wyboru, zapamiętaj i odtwpórz wartość wybraną
+                                        var chosenItem = this.input.chosenItem;
                                         this.input.initialise(currentMilestoneTypes, 'name');
-                                        console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
+                                        this.input.simulateChosenItem(chosenItem);
+                    console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
                                     //}
                                 },
                 checkContractType: function(type){

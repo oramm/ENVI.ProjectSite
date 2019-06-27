@@ -56,11 +56,12 @@ class Modal {
     triggerAction(connectedResultsetComponent){
         $(connectedResultsetComponent.$dom.css('min-height','300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
-        this.refreshDataSets();
+        
         if(this.mode=='EDIT') 
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
         else
             this.initAddNewData();
+        this.refreshDataSets();
         Materialize.updateTextFields();
     }
     /*

@@ -455,13 +455,15 @@ class InputTextField {
 class Tabs {
     constructor(initParameters){
         this.id = initParameters.id;
+        this.itemSelectedNumber = (initParameters.itemSelectedNumber)? initParameters.itemSelectedNumber : 0;
         this.swipeable = initParameters.swipeable;
         this.parentId = initParameters.parentId;
         this.responsiveThreshold = initParameters.responsiveThreshold;
         this.tabsData = initParameters.tabsData;
+        this.contentIFrameId = initParameters.contentIFrameId;
         this.$dom = $('<div class="row">');
         this.$tabs = $('<ul class="tabs">');
-        this.$panels = $('<div class="tabsPanels">');
+        //this.$panels = $('<div class="tabsPanels">');
         this.buildDom();
     }
     //ikony do dodania
@@ -472,21 +474,35 @@ class Tabs {
         this.$dom.append(this.$panels);
         for (var i=0; i<this.tabsData.length; i++){
             var $link = $('<a>');
-            $link
-                .attr('href','tab_'+this.tabsData[i].url)
-                .html(this.tabsData[i].name);
+            $link.html(this.tabsData[i].name);
+            (this.contentIFrameId)? this.makeTabIframe($link, i) : this.makeTabDiv($link, i);
+                
             this.$tabs
                 .append('<li class="tab col s3">').children()
                     .append($link);
-            //this.$panels.append('<div id="'+ this.tabsData[i].name + '" class="col s12">');
         }
         //this.$tabs.find('a')[0].addClass('active');
         var _this = this;
         this.$tabs.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
     }
+    
+    makeTabIframe($link, i){
+        $link.attr('href','tab_' + this.tabsData[i].url);
+    }
+    
+    makeTabDiv($link, i){
+        var divId = 'tab_' + this.tabsData[i].name.replace(/ /g, "-");
+        var $tabPanel = $('<div id="'+ divId + '" class="col s12">')
+        $tabPanel.append(this.tabsData[i].panel);
+        $link.attr('href','#' + divId);
+        
+        this.$dom.append($tabPanel);
+    }
+    
     tabChosen($tab){
-        $('#contractTabs')
-            .attr('src',this.tabsData[$tab.index()].url);
+        if(this.contentIFrameId)
+            $('#'+ this.contentIFrameId)
+                .attr('src',this.tabsData[$tab.index()].url);
     }
 }
 
