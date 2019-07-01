@@ -1,6 +1,7 @@
 class CasesCollapsible extends SimpleCollapsible {
     constructor(id){
         super({ id: id,
+                parentId: CasesSetup.currentMilestone.id,
                 hasFilter: true,
                 isEditable: true, 
                 isAddable: true, 

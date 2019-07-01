@@ -4,6 +4,7 @@ class DashboardController {
         var dashboardView = new ContractDashboardView();
         $("#authorize-div").hide();
         dashboardView.dataLoaded(false);
+        ContractsSetup.contractsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Contracts repository')));
         
         new Promise(()=>dashboardView.initialise())
             .then(()=>{ dashboardView.dataLoaded(true);

@@ -4,6 +4,7 @@
 class Collapsible {
     constructor(initParamObject){
         this.id = initParamObject.id;
+        this.parentId = initParamObject.parentId;
         this.hasFilter = (initParamObject.hasFilter  === undefined)? true : initParamObject.hasFilter;
         this.minimumItemsToFIlter = (initParamObject.minimumItemsToFIlter)? initParamObject.minimumItemsToFIlter : 6; 
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
@@ -303,7 +304,7 @@ class Collapsible {
         this.$dom.find(".collapsibleItemEdit").off('click');
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
-                $(this).closest('.collapsible-item').trigger('click');
+                $(this).closest('.collapsible-header').trigger('click');
                 _this.currentItem.editModal.triggerAction(_this);
                 Materialize.updateTextFields();
             });

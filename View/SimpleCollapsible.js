@@ -3,6 +3,7 @@ class SimpleCollapsible extends Collapsible {
         if (initParamObject.subitemsCount && typeof initParamObject.subitemsCount  !== 'number') throw SyntaxError('subitemsCount must be a number!');
         super(initParamObject);
         this.connectedRepository = initParamObject.connectedRepository;
+        
         this.$bodyDoms=[];  
     }
     initialize(){

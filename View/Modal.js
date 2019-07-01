@@ -56,13 +56,22 @@ class Modal {
     triggerAction(connectedResultsetComponent){
         $(connectedResultsetComponent.$dom.css('min-height','300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
-        
+        this.refreshDataSets();
         if(this.mode=='EDIT') 
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
         else
             this.initAddNewData();
-        this.refreshDataSets();
+        
         Materialize.updateTextFields();
+    }
+    /*
+     * Aktualizuje dane np. w selectach. Jest uruchamiana w this.triggerAction();
+     */
+    refreshDataSets(){
+        for (var i =0; i<this.formElements.length; i++){
+            if (typeof this.formElements[i].refreshDataSet==='function')
+                this.formElements[i].refreshDataSet();
+        }
     }
     /*
      * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
@@ -130,15 +139,5 @@ class Modal {
                    repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
         }
         this.$dom.modal('close');
-    }
-    
-     /*
-     * Aktualizuje dane np. w selectach. Może być uruchamiana po kliknięciu w wiersz Collapsible: selectTrigger(itemId);
-     */
-    refreshDataSets(){
-        for (var i =0; i<this.formElements.length; i++){
-            if (typeof this.formElements[i].refreshDataSet==='function')
-                this.formElements[i].refreshDataSet();
-        }
     }
 } 

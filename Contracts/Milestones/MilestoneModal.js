@@ -1,15 +1,14 @@
 class MilestoneModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
-   
+        /*
         this.contractsAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
                                                                         'Dotyczy kontraktu', 
                                                                         'info', 
                                                                         false, 
                                                                         'Wybierz kontrakt')
-        this.contractsAutoCompleteTextField.initialise(ContractsSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);
-        
-        
+        this.contractsAutoCompleteTextField.initialise(ContractsSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);       
+        */
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, true);
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
         this.startDatePicker = new DatePicker(this.id + 'startDatePickerField','Początek', true);
@@ -17,33 +16,29 @@ class MilestoneModal extends Modal {
         
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(MilestonesSetup.statusNames);
-        var _this=this;
+        //var _this=this;
         this.formElements = [
-            {   input: this.contractsAutoCompleteTextField,
-                dataItemKeyName: '_relatedContract'
-            },
+            //{   input: this.contractsAutoCompleteTextField,
+            //    dataItemKeyName: '_relatedContract'
+            //},
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function (){    
-                                    //if(_this.contractsAutoCompleteTextField.chosenItem){
-                                        var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                                            item=> this.checkContractType(item.contractType)
-                                        );
-                                        //aby nie utracić wyboru, zapamiętaj i odtwpórz wartość wybraną
-                                        var chosenItem = this.input.chosenItem;
-                                        this.input.initialise(currentMilestoneTypes, 'name');
-                                        this.input.simulateChosenItem(chosenItem);
-                    console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
-                                    //}
-                                },
+                    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
+                        item=> this.checkContractType(item.contractType)
+                    );
+                    
+                    this.input.initialise(currentMilestoneTypes, 'name');
+                    //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
+                },
                 checkContractType: function(type){
                     var regExpr;
-                    if (!_this.contractsAutoCompleteTextField.chosenItem)
+                    if (ContractsSetup.contractsRepository.currentItem.ourId)
                         regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$');
-                    else if(_this.contractsAutoCompleteTextField.chosenItem.fidicType!=='Żółty')
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$' + '|' + _this.contractsAutoCompleteTextField.chosenItem.fidicType);
+                    else if(ContractsSetup.contractsRepository.currentItem.fidicType!=='Żółty')
+                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem.fidicType);
                     else
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$' + '|Żółty|Czerwony');
+                        regExpr = new RegExp('Żółty|Czerwony');
                     
                     return Array.isArray(type.match(regExpr));
                 }
@@ -79,8 +74,9 @@ class MilestoneModal extends Modal {
                                                                              _relatedContract: {}
                                                                            };
     }
-   
+   /*
     onContractChosen(chosenItem){
         this.formElements[1].refreshDataSet();
     }
+    */
 };

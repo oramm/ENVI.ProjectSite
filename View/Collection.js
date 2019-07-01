@@ -17,6 +17,7 @@ class Collection {
      */
     constructor(initParamObject){
         this.id = initParamObject.id;
+        this.parentId = initParamObject.parentId;
         this.isPlain = initParamObject.isPlain;        
         this.title = (initParamObject.title === undefined)? "" : initParamObject.title;
         this.isSelectable = (initParamObject.isSelectable  === undefined)? true : initParamObject.isSelectable;

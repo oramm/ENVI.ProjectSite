@@ -1,6 +1,7 @@
 class MilestonesCollection extends SimpleCollection {
     constructor(initParamObject){
-        super({id: initParamObject.id, 
+        super({id: initParamObject.id,
+               parentId: initParamObject.parentId,
                title: initParamObject.title,
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
@@ -12,9 +13,6 @@ class MilestonesCollection extends SimpleCollection {
                isSelectable: true,
                connectedRepository: MilestonesSetup.milestonesRepository
               });
-        //TODO: dodać_parentDataItem = {} zamiast poniższego i przenieść do klasy Collection
-        this.parentId = initParamObject.parentId;
-        
         this.initialise(this.makeList());        
     }
     /*
@@ -28,7 +26,6 @@ class MilestonesCollection extends SimpleCollection {
                     $title:  this.makeTitle(dataItem),
                     $description:    this.makeDescription(dataItem),
                     editUrl: dataItem.editUrl,
-                    contractId_Hidden:  dataItem._parent.id,
                     dataItem: dataItem
                 };
     }
@@ -37,9 +34,8 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var relatedCOntractNumerString = (dataItem._relatedContract.number)? dataItem._relatedContract.number + ':' : '';
         var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
-        var titleAtomicEditLabel = new AtomicEditLabel( relatedCOntractNumerString + ' ' + dataItem._type.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._type.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -72,11 +68,16 @@ class MilestonesCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.contractId_Hidden==this.parentId);
+        return super.makeList().filter((item)=>{
+            //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
+            return item.dataItem._parent.id==this.parentId
+        });
     }
     
     selectTrigger(itemId){
-        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId){
+        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
+            isDashboardLoaded){
             super.selectTrigger(itemId);
             $('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
         }
