@@ -491,7 +491,7 @@ class Tabs {
     }
     
     makeTabDiv($link, i){
-        var divId = 'tab_' + this.tabsData[i].name.replace(/ /g, "-");
+        var divId = 'tab_' + this.tabsData[i].name.replace(/ /g, "-")+ '-' + this.id;
         var $tabPanel = $('<div id="'+ divId + '" class="col s12">')
         $tabPanel.append(this.tabsData[i].panel);
         $link.attr('href','#' + divId);

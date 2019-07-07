@@ -41,33 +41,33 @@ class CasesCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
-    var parentItemId = Tools.getUrlVars()['parentItemId'];
-    var tabsData = [    { name: 'Zadania - Scrumboard',
-                          panel: this.createScrumBoardTab(dataItem).$dom
-                        },
-                        { name: 'Proces',
-                          panel: { id: 'asdasd',
-                                   $dom: 'sfdfs'
-                                 }
-                        }
-                    ];
-    
-    
-        
-    var $bodyDom = $('<div>')
+        var $body = (dataItem._processesInstances.length>0)? this.makeTabs(dataItem).$dom : this.makeScrumBoardTab(dataItem).$dom;
+        var $bodyDom = $('<div>')
             .attr('id', 'tasksActionsMenuForCase' + dataItem.id)
             .attr('caseid',dataItem.id)
             //.append('<div class="row">Zarządzaj zadaniami</div>')
-            .append(new Tabs({  id: 'caseTabs',
-                                parentId: parentItemId,
-                                tabsData: tabsData,
-                                swipeable: true
-                            }).$dom)
-            //.append(this.createScrumBoardTab())
+            .append($body)
+            //.append(this.makeScrumBoardTab())
     return $bodyDom;
     }
     
-    createScrumBoardTab(dataItem){
+    makeTabs(dataItem){
+        var parentItemId = Tools.getUrlVars()['parentItemId'];    
+        var tabsData = [    { name: 'Zadania - Scrumboard',
+                          panel: this.makeScrumBoardTab(dataItem).$dom
+                        },
+                        { name: 'Proces',
+                          panel:  this.makeProcessTab(dataItem)
+                        }
+                    ]; 
+        return new Tabs({  id: 'caseTabs-' + dataItem.id,
+                            parentId: parentItemId,
+                            tabsData: tabsData,
+                            swipeable: true
+                        })
+    }
+    
+    makeScrumBoardTab(dataItem){
         var statusesCollections = [];
         var backlogCollection = new TasksCollection({   id: 'backlogCollection_' + dataItem.id + '_status' + 0, 
                                                         parentId: dataItem.id,
@@ -92,6 +92,15 @@ class CasesCollapsible extends SimpleCollapsible {
                 statusesCollections.push(tasksCollection);
         }
         return new ScrumBoard(statusesCollections);
+    }
+    
+    makeProcessTab(dataItem){
+        if(dataItem._processesInstances.length>1) throw new Error('Ten widok nie  obsługuje jeszcze wielu procesów dla jednej sprawy!');
+        var $processDataPanel = $('<div>');
+        $processDataPanel
+            .append(dataItem._processesInstances[0]._process.name + '<BR>')
+            .append(dataItem._processesInstances[0]._process.descripton);
+        return $processDataPanel;
     }
     
     /*

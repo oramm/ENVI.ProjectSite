@@ -23,6 +23,8 @@ class CasesController {
                                                 );
         caseTypesRepository = new SimpleRepository('CaseTypes repository',
                                                         'getCaseTypesList');
+        
+        
         var promises = [];
         
         promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
@@ -52,6 +54,9 @@ class CasesController {
             )
             .catch(err => {
                 console.error(err);
+                alert('Wystąpił bład. Zgłoś go administratorowi systemu: \n' + 
+                      err
+                      );
             });
    
     }

@@ -57,7 +57,8 @@ class CaseModal extends Modal {
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
     initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: CasesSetup.currentMilestone
+        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: CasesSetup.currentMilestone,
+                                                                             _processesInstances: []
                                                                            };
     }
 };
