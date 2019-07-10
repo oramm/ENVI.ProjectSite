@@ -8,7 +8,6 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id, 
                title: initParamObject.title,
-               addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: false,

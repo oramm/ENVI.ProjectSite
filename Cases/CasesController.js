@@ -26,7 +26,7 @@ class CasesController {
         CasesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
                                                                             'getProcessesStepsInstancesListPerMilestone',
                                                                             '',
-                                                                            'editProcessInstance');
+                                                                            'editProcessStepInstance');
         
         var promises = [];
         

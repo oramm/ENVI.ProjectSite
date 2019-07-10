@@ -341,7 +341,7 @@ class Collection {
         if (row.dataItem._gdFolderUrl) 
             row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         
-        if (row.dataItem._documentOpenUrl) 
+        if (row.dataItem._documentOpenUrl || row.dataItem._documentEditUrl) 
             row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentOpenUrl));
         
         if (this.isDeletable) 

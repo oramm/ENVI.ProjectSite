@@ -37,4 +37,10 @@ class CasesSetup {
     static set processesStepsInstancesRepository(data) {
         processesStepsInstancesRepository = data;
     }
+    static get processesStepsInstancesStatusNames() {
+        return  ['Nie rozpoczęte',
+                    'W trakcie',
+                    'Zrobione'
+                ];;
+    }
 }
