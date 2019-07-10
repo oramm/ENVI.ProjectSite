@@ -23,7 +23,10 @@ class CasesController {
                                                 );
         caseTypesRepository = new SimpleRepository('CaseTypes repository',
                                                         'getCaseTypesList');
-        
+        CasesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
+                                                                            'getProcessesStepsInstancesListPerMilestone',
+                                                                            '',
+                                                                            'editProcessInstance');
         
         var promises = [];
         
@@ -31,7 +34,7 @@ class CasesController {
         promises[1] = CasesSetup.casesRepository.initialise(casesRepository.parentItemId);
         promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         promises[3] = CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId);
-        
+        promises[4] = CasesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId);
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");
                             casesListView.initialise();

@@ -12,10 +12,10 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
                editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: false,
-               isEditable: true, 
+               isEditable: false, 
                isAddable: false, 
                isDeletable: false,
-               connectedRepository: CasesSetup.processStepsInstancesRepository
+               connectedRepository: CasesSetup.processesStepsInstancesRepository
               })
         this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
@@ -37,7 +37,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        return dataItem._processStep.name;//titleAtomicEditLabel.$dom
+        return dataItem._processStep.name;
     }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
@@ -46,7 +46,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
         (dataItem.description)? true : dataItem.description="";
         
         var $collectionElementDescription = $('<span>');
-        var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem.description, 
+        var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem._processStep.description, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpEditDescription_TextField','Edytuj', undefined, true, 150),
                                                         'description',
@@ -76,6 +76,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
                                                         this);
         
         $collectionElementDescription
+            .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
             .append(personAtomicEditLabel.$dom)
@@ -85,11 +86,10 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentId && item.dataItem.status == this.status );
+        return super.makeList().filter((item)=>item.dataItem._case.id==this.parentId);
     }
     
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        //$('#contractDashboard').attr('src','../Cases/CasesList.html?milestoneId=' + this.connectedRepository.currentItem.projectId  + '&contractId=' + this.connectedRepository.currentItem.contractId);
     }
 }

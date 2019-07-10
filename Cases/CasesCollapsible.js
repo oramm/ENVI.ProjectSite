@@ -15,7 +15,7 @@ class CasesCollapsible extends SimpleCollapsible {
         //modale dla TasksCollection:
         this.addNewTaskModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
         this.editTaskModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this, 'EDIT');
-        
+        this.editProcessStepInstanceModal = new ProcessStepsInstancesModal(this.id + '_editTask', 'Edytuj krokw procesie', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
         
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
@@ -97,9 +97,16 @@ class CasesCollapsible extends SimpleCollapsible {
     makeProcessTab(dataItem){
         if(dataItem._processesInstances.length>1) throw new Error('Ten widok nie  obsługuje jeszcze wielu procesów dla jednej sprawy!');
         var $processDataPanel = $('<div>');
+        var stepsCollection = new ProcessStepsInstancesCollection({ id: 'processStepsCollection_' + dataItem.id, 
+                                                                     title: "",
+                                                                     editModal: this.editProcessStepInstanceModal,
+                                                                     editModal: this. editMilestoneModal,
+                                                                     parentId: dataItem.id
+                                                                    });
         $processDataPanel
             .append(dataItem._processesInstances[0]._process.name + '<BR>')
-            .append(dataItem._processesInstances[0]._process.descripton);
+            .append(dataItem._processesInstances[0]._process.descripton)
+            .append(stepsCollection.$dom);
         return $processDataPanel;
     }
     

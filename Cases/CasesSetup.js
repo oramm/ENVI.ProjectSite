@@ -1,9 +1,8 @@
 var casesRepository;
 var personsRepository;
 var caseTypesRepository;
-var processesInstancesRepository;
 var processesInstancesStepsRepository;
-
+var processesStepsInstancesRepository;
 
 class CasesSetup {
     static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
@@ -29,13 +28,13 @@ class CasesSetup {
     static get processesInstancesRepository() {
         return processesInstancesRepository;
     }
-    static set processStepsInstancesRepository(data) {
-        processStepsInstancesRepository = data;
+    static set processesInstancesRepository(data) {
+        processesInstancesRepository = data;
     }
-    static get processStepsInstancesRepository() {
-        return processStepsInstancesRepository;
+    static get processesStepsInstancesRepository() {
+        return processesStepsInstancesRepository;
     }
-    static set processStepsInstancesRepository(data) {
-        processStepsInstancesRepository = data;
+    static set processesStepsInstancesRepository(data) {
+        processesStepsInstancesRepository = data;
     }
 }
