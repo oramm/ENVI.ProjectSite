@@ -12,7 +12,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
                editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: false,
-               isEditable: false, 
+               isEditable: true, 
                isAddable: false, 
                isDeletable: false,
                connectedRepository: CasesSetup.processesStepsInstancesRepository

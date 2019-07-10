@@ -15,7 +15,7 @@ class CasesCollapsible extends SimpleCollapsible {
         //modale dla TasksCollection:
         this.addNewTaskModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
         this.editTaskModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this, 'EDIT');
-        this.editProcessStepInstanceModal = new ProcessStepsInstancesModal(this.id + '_editTask', 'Edytuj krokw procesie', this, 'EDIT');
+        this.editProcessStepInstanceModal = new ProcessStepsInstancesModal(this.id + '_editTask', 'Edytuj krok w procesie', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
         
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
@@ -100,7 +100,6 @@ class CasesCollapsible extends SimpleCollapsible {
         var stepsCollection = new ProcessStepsInstancesCollection({ id: 'processStepsCollection_' + dataItem.id, 
                                                                      title: "",
                                                                      editModal: this.editProcessStepInstanceModal,
-                                                                     editModal: this. editMilestoneModal,
                                                                      parentId: dataItem.id
                                                                     });
         $processDataPanel

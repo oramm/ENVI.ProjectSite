@@ -31,6 +31,12 @@ class Setup {
             case 'GD_ICON':
                 icon = 'https://ps.envi.com.pl/Resources/View/Google-Drive-icon.png';
                 break;
+            case 'GD_DOCUMENT_ICON':
+                icon = 'https://ps.envi.com.pl/Resources/View/Google-Docs-icon.png';
+                break;
+            case 'GD_DOCUMENT_ICON':
+                icon = 'https://ps.envi.com.pl/Resources/View/Google-Sheets-icon.png';
+                break;
             case 'GGROUP_ICON':
                 icon = 'https://ps.envi.com.pl/Resources/View/Google-Groups-icon.png';
                 break;
