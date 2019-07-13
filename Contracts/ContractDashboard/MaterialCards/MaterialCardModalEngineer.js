@@ -47,7 +47,6 @@ class MaterialCardModalEngineer extends Modal {
             _parent:  MaterialCardsSetup.milestonesRepository.items.filter((   item => item._type.id==7 && 
                                                                                item.contractId==MaterialCardsSetup.contractsRepository.currentItem.id
                                                                         ))[0],  
-            _case: {},
             contractId: this.connectedResultsetComponent.connectedRepository.parentItemId
 
             };

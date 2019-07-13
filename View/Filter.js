@@ -34,7 +34,12 @@ class Filter {
      */
     archiveSwitchHandler(){
             var _this = this;
-            this.connectedResultsetComponent.$dom.find("li").map(function() {
+        var $filteredListObject;  
+        if(this.connectedResultsetComponent.$collapsible)
+            $filteredListObject = this.connectedResultsetComponent.$collapsible;
+        else if(this.connectedResultsetComponent.$collection)
+            $filteredListObject = this.connectedResultsetComponent.$collection;
+            $filteredListObject.children("li").map(function() {
                     //if (showArchived) $(this).toggle();
                     if (!_this.checkIfRowMatchesFilters($(this)))
                         $(this).hide()

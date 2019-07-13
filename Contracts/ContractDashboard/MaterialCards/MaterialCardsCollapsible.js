@@ -1,7 +1,7 @@
 class MaterialCardsCollapsible extends SimpleCollapsible {
     constructor(id){
         super({ id: id,  
-                hasFilter: false,
+                hasFilter: true,
                 isEditable: true, 
                 isAddable: true, 
                 isDeletable: true,
@@ -10,7 +10,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
                 //subitemsCount: 12
               });
         
-        this.addNewModal = new MaterialCardModalEngineer(id + '_newMaterialCard', 'Złoż wniosek', this, 'ADD_NEW');
+        this.addNewModal = new MaterialCardModalContractor(id + '_newMaterialCard', 'Złoż wniosek', this, 'ADD_NEW');
         this.editModal = new MaterialCardModalEngineer(id + '_editMaterialCard', 'Edytuj wniosek', this, 'EDIT');
         this.editModalContractor = new MaterialCardModalContractor(id + '_editMaterialCardMaterialCardContractor', 'Edytuj wniosek (Wykonawca)', this, 'EDIT');
         
@@ -22,7 +22,8 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
-        var collapsibleItemName = dataItem._case._displayNumber + ' ' + dataItem._name
+        var caseNumber = (dataItem._case)? dataItem._case._displayNumber : 'S??';
+        var collapsibleItemName = caseNumber + ' ' + dataItem._name
         if(dataItem.deadline) collapsibleItemName =+ '<br>Załatwić do: ' + dataItem.deadline;
         
         var editModal;

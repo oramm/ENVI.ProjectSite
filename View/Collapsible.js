@@ -186,7 +186,7 @@ class Collapsible {
                 case "DONE":
                     $('#preloader'+item.id).remove();
                     this.items = this.items.filter(function(searchItem){return searchItem.id!==item.id});
-                    this.items.push(this.makeItem(item));
+                    this.items.push(this.makeItem(item,this.makeBodyDom(item).$dom));
                     this.setEditAction();
                     var $oldRow = this.$collapsible.find('[itemid=' + item.id + '_toDelete]');
                     $oldRow.remove();

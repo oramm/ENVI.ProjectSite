@@ -11,7 +11,7 @@ class TasksCollection extends SimpleCollection {
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
                isPlain: true, 
-               hasFilter: false,
+               hasFilter: true,
                isEditable: true, 
                isAddable: initParamObject.isAddable, 
                isDeletable: true,
