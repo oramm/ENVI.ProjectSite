@@ -10,7 +10,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
                title: initParamObject.title,
                editModal: initParamObject.editModal,
                isPlain: true, 
-               hasFilter: false,
+               hasFilter: true,
                isEditable: true, 
                isAddable: false, 
                isDeletable: false,

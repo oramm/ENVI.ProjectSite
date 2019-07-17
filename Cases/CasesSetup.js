@@ -5,7 +5,11 @@ var processesInstancesStepsRepository;
 var processesStepsInstancesRepository;
 
 class CasesSetup {
-    static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
+    //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
+    
+    static get currentMilestone() {
+        return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;;
+    }
     
     static get casesRepository() {
         return casesRepository;
