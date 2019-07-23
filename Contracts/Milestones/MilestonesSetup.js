@@ -1,5 +1,5 @@
 var milestonesRepository;
-var milestoneTypesRepository;
+var milestoneTypeContractTypeAssociationsRepository;
       
 class MilestonesSetup {
     static get statusNames() {
@@ -18,12 +18,11 @@ class MilestonesSetup {
     static set milestonesRepository(data) {
         milestonesRepository = data;
     }
-    
-    static get milestoneTypesRepository() {
-        return milestoneTypesRepository;
+    static get milestoneTypeContractTypeAssociationsRepository() {
+        return milestoneTypeContractTypeAssociationsRepository;
     }
     
-    static set milestoneTypesRepository(data) {
-        milestoneTypesRepository = data;
+    static set milestoneTypeContractTypeAssociationsRepository(data) {
+        milestoneTypeContractTypeAssociationsRepository = data;
     }
 }

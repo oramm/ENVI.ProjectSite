@@ -1,4 +1,4 @@
-class MilestonesCollection extends SimpleCollection {
+class MilestoneTypesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
                parentId: initParamObject.parentId,
@@ -11,9 +11,12 @@ class MilestonesCollection extends SimpleCollection {
                isAddable: true, 
                isDeletable: true,
                isSelectable: true,
-               connectedRepository: MilestonesSetup.milestonesRepository
+               connectedRepository: ContractTypesSetup.MilestoneTypesRepository
               });
-        this.initialise(this.makeList());        
+        this.initialise(this.makeList());
+        
+        this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
+        
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -34,8 +37,7 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._parent.folderNumber + ' ' + dataItem._parent.name + ' | ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -70,16 +72,18 @@ class MilestonesCollection extends SimpleCollection {
     makeList(){
         return super.makeList().filter((item)=>{
             //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
-            return item.dataItem._parent.id==this.parentId
+            return item.dataItem._parent._parent.id==this.parentId;
         });
     }
     
     selectTrigger(itemId){
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
-        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
-            isDashboardLoaded){
-            super.selectTrigger(itemId);
-            $('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
-        }
+        //var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        //if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
+        //    isDashboardLoaded){
+        
+        super.selectTrigger(itemId);
+        $('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        
+        //}
     }
 }

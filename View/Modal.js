@@ -12,6 +12,7 @@ class Modal {
         this.dataObject;
         this.form;
         this.$dom;
+        this.$title = $('<h4 class="modalTitle">')
     }
     initialise(){
         this.buildDom();
@@ -28,12 +29,13 @@ class Modal {
         this.connectedResultsetComponent.$dom.children(':last-child')
                 .append('<div class="modal-footer">').children(':last-child')
                     .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">ZAMKNIJ</a>');
+        this.$dom.children('.modal-content').prepend(this.$title);
         this.setTittle(this.tittle);
         this.setSubmitAction();
     }
     
     setTittle(tittle){
-        this.$dom.children('.modal-content').prepend('<h4>'+ tittle +'</h4>');
+        this.$title.text(tittle);
     }
     /*
      * Tworzy ikonę edycji lub dodania rekordu do listy
@@ -76,13 +78,12 @@ class Modal {
     /*
      * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
      */
-    preppendTriggerButtonTo($uiElelment,caption, resultsetComponent){
+    preppendTriggerButtonTo($uiElelment,caption, connectedResultsetComponent){
         var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
         var _this = this;
-        $button.click(    function(){   //if(!_this.connectedResultsetComponent.constructor.name.includes('Collapsible')) {
-                                            _this.connectWithResultsetComponent(resultsetComponent);
-                                            _this.initAddNewData();
-                                        //}
+        $button.click(    function(){   //_this.connectWithResultsetComponent(connectedResultsetComponent);
+                                        //_this.initAddNewData();
+                                        _this. triggerAction(connectedResultsetComponent)
                                     });
         $uiElelment.prepend($button);
     }

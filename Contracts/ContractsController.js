@@ -22,11 +22,10 @@ class ContractsController {
         ContractsSetup.personsRepository = new SimpleRepository('Persons repository',
                                                                 'getPersonsNameSurnameEmailList',
                                                                 );
-        milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
-                                                        'getMilestoneTypesList',
-                                                        'addNewMilestoneType',
-                                                        'editMilestoneType',
-                                                        'deleteMilestoneType');
+        
+        MilestonesSetup.milestoneTypeContractTypeAssociationsRepository = new SimpleRepository('MilestoneTypeContractTypeAssociations repository',
+                                                                                                  'getMilestoneTypeContractTypeAssociationsPerProjectList'
+                                                                                                 );
         
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
 
@@ -34,7 +33,7 @@ class ContractsController {
         promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
         promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
         promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
-        promises[3] = milestoneTypesRepository.initialise();
+        promises[3] = MilestonesSetup.milestoneTypeContractTypeAssociationsRepository.initialise(contractsRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items))

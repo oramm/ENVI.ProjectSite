@@ -23,24 +23,14 @@ class MilestoneModal extends Modal {
             //},
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
-                refreshDataSet: function (){    
-                    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                        item=> this.checkContractType(item.contractType)
+                refreshDataSet: function (){
+                    //TODO diribuć repozytorium dla asocjacji typów kontraktów i kamieni
+                    var currentMilestoneTypes = MilestonesSetup.milestoneTypeContractTypeAssociationsRepository.items.filter(
+                        item=> item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId//this.checkContractType(item.contractType)
                     );
                     
                     this.input.initialise(currentMilestoneTypes, 'name');
                     //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
-                },
-                checkContractType: function(type){
-                    var regExpr;
-                    if (ContractsSetup.contractsRepository.currentItem.ourId)
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem._ourType+'|^$');
-                    else if(ContractsSetup.contractsRepository.currentItem.fidicType!=='Żółty')
-                        regExpr = new RegExp(ContractsSetup.contractsRepository.currentItem.fidicType);
-                    else
-                        regExpr = new RegExp('Żółty|Czerwony');
-                    
-                    return Array.isArray(type.match(regExpr));
                 }
                                             
             },

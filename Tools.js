@@ -2,7 +2,7 @@ class Tools{
    //finds an alament in Array by its value
     static search(nameKey, property, myArray){
         for (var i=0; i < myArray.length; i++) {
-            if (myArray[i][property] === nameKey) {
+            if (myArray[i][property] == nameKey) {
                 return myArray[i];
             }
         }
@@ -115,7 +115,7 @@ class Tools{
 //finds an alament in Array by its value
 function search(nameKey, property, myArray){
     for (var i=0; i < myArray.length; i++) {
-        if (myArray[i][property] === nameKey) {
+        if (myArray[i][property] == nameKey) {
             return myArray[i];
         }
     }

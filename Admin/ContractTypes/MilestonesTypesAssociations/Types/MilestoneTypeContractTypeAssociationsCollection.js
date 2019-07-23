@@ -1,4 +1,4 @@
-class MilestonesCollection extends SimpleCollection {
+class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
                parentId: initParamObject.parentId,
@@ -11,9 +11,13 @@ class MilestonesCollection extends SimpleCollection {
                isAddable: true, 
                isDeletable: true,
                isSelectable: true,
-               connectedRepository: MilestonesSetup.milestonesRepository
+               connectedRepository: ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository,
               });
-        this.initialise(this.makeList());        
+        this.initialise(this.makeList());
+        //podłącz do nadrzędnego collapsibla, żeby dostać się do dodatkowych modali
+        this.connectedResultsetComponent = initParamObject.connectedResultsetComponent;
+        this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj kamień",this);
+        
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -34,8 +38,7 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.folderNumber + ' ' + dataItem._milestoneType.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -49,37 +52,27 @@ class MilestonesCollection extends SimpleCollection {
         (dataItem.description)? true : dataItem.description="";
         
         var $collectionElementDescription = $('<span>');
-        //TODO: kiedyś dodać edyzcję dat
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
-                                                        dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
-                                                        'deadline',
-                                                        this);
         
-        (dataItem.status)? true : dataItem.status="";
         if(dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
-        $collectionElementDescription
-            .append('<span>' + dataItem.startDate + ' - ' + dataItem.endDate + '<BR></span>')
-            //.append(deadlineAtomicEditLabel.$dom)
-            .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
-        
         return $collectionElementDescription;
     }
     
     makeList(){
         return super.makeList().filter((item)=>{
             //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
-            return item.dataItem._parent.id==this.parentId
+            return item.dataItem._contractType.id==this.parentId;
         });
     }
     
     selectTrigger(itemId){
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
-        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
-            isDashboardLoaded){
-            super.selectTrigger(itemId);
-            $('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
-        }
+        //var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        //if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
+        //    isDashboardLoaded){
+        
+        super.selectTrigger(itemId);
+        //$('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        
+        //}
     }
 }

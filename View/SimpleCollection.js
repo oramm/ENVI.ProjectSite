@@ -49,11 +49,13 @@ class SimpleCollection extends Collection {
 
      */
     removeTrigger(itemId){
-        var item = search(parseInt(itemId),"id", this.connectedRepository.items);
+        var item = Tools.search(parseInt(itemId),"id", this.connectedRepository.items);
 
         this.connectedRepository.deleteItem(item, this)
             .catch(err => {
                       console.error(err);
+                      throw err;
+
                     });
     }
     

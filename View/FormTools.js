@@ -475,15 +475,19 @@ class Tabs {
         for (var i=0; i<this.tabsData.length; i++){
             var $link = $('<a>');
             $link.html(this.tabsData[i].name);
-            (this.contentIFrameId)? this.makeTabIframe($link, i) : this.makeTabDiv($link, i);
-                
             this.$tabs
                 .append('<li class="tab col s3">').children()
                     .append($link);
+            
+            (this.contentIFrameId)? this.makeTabIframe($link, i) : this.makeTabDiv($link, i);
+                
+            
         }
-        //this.$tabs.find('a')[0].addClass('active');
         var _this = this;
-        this.$tabs.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
+        //this.$dom.find('.tabs').tabs();
+        this.$dom.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
+        //this.$dom.find('.tabs').tabs('select_tab', 'tab_Szablony-kamieni-milowych-caseTabs-1');
+        
     }
     
     makeTabIframe($link, i){
@@ -495,14 +499,19 @@ class Tabs {
         var $tabPanel = $('<div id="'+ divId + '" class="col s12">')
         $tabPanel.append(this.tabsData[i].panel);
         $link.attr('href','#' + divId);
-        
         this.$dom.append($tabPanel);
+        //if(i==1){
+        //    this.$dom.find('.tabs').tabs('select_tab', divId);
+        //}
     }
     
     tabChosen($tab){
         if(this.contentIFrameId)
             $('#'+ this.contentIFrameId)
                 .attr('src',this.tabsData[$tab.index()].url);
+        else{
+            
+        }
     }
 }
 
@@ -556,7 +565,9 @@ class Form {
                     break;
                 case 'SelectFieldBrowserDefault' :
                     this.elements[i].input.simulateChosenItem(inputvalue);
-                    break
+                    break;
+                case 'SwitchInput':
+                    this.elements[i].input.setValue(inputvalue);
             }
         }
         Materialize.updateTextFields();
@@ -611,6 +622,10 @@ class Form {
                         //jeżęli nic nie wybrano (pole puste przypisz pusty obiekt)
                         dataObject[this.elements[i].dataItemKeyName] = (this.elements[i].input.$dom.children('input').val())? this.elements[i].input.chosenItem : {};
                     break;
+                case 'SwitchInput':
+                    dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.value;
+                    break;
+                    
             }
         }
     }
@@ -781,6 +796,10 @@ class SwitchInput{
                     _this.changeAction(_this.value, _this.connectedResultsetComponent);
                 });
         }
+    }
+    setValue(value){
+        this.value = value;
+        this.$dom.find("input[type=checkbox]").attr('checked',value);
     }
 }
 /*
