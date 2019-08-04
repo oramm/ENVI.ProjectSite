@@ -156,7 +156,7 @@ class Collapsible {
                 if (this.items.length == 0) {
                     this.$dom.find('.emptyList').remove();
                 }
-                item.id = this.items.length+1 + '_pending';
+                item.id = item._tmpId;
                 this.$collapsible.prepend(this.buildRow(this.makeItem(item)).$dom);
                 this.$collapsible.find('[itemid=' + item.id +']').append(this.makePreloader('preloader'+item.id))
                 return item.id;

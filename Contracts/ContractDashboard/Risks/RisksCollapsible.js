@@ -31,7 +31,7 @@ class RisksCollapsible extends SimpleCollapsible {
         var name = (dataItem._case.name)? dataItem._case.name : '';
         dataItem._rate = dataItem.probability * dataItem.overallImpact;
         return {    id: dataItem.id,
-                    name: dataItem._parent._type.folderNumber + ' ' + dataItem._parent._type.name +  ' | ' + 
+                    name: dataItem._parent._folderNumber + ' ' + dataItem._parent._type.name +  ' | ' + 
                           folderNumber + ' ' + typeName + ' | ' + name + '<BR>' +
                           'Stopień: <strong>' + dataItem._rate + '<strong>',
                     $body: $bodyDom,
@@ -44,7 +44,7 @@ class RisksCollapsible extends SimpleCollapsible {
                 .attr('id', 'reactionsActionsMenuForRisk' + dataItem.id)
                 .attr('riskid',dataItem.id)
                     .append(new ReactionsCollection({  id: 'reactionsListCollection_' + dataItem.id, 
-                                                        parentId: dataItem._case.id, 
+                                                        parentDataItem: dataItem._case, 
                                                         title: 'Reakcje na ryzyko',
                                                         isAddable: true
                                                     }

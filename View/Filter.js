@@ -68,12 +68,12 @@ class Filter {
     }
     
     isRowActive($row){
-        var test;
-        if($row.attr('status')===undefined){
+        var test = false;
+        if($row.attr('status')===undefined)
             test = true;
-        } else
-         test = $row.attr('status').match(/Zakończ|Zamknięt|Archiw/i);
-        return (test)? false : true; 
+        else if(!$row.attr('status').match(/Zakończ|Zamknięt|Archiw/i))
+            test = true;
+        return test; 
     }
     
     /*

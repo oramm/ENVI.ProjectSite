@@ -126,9 +126,14 @@ class Repository {
     //wywoływana przy SUBMIT
     addNewItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            var newItemTmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
-            //newItem._tmpId = viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
-
+            var newItemTmpId = this.items.length+1 + '_pending';
+            newItem._tmpId = newItemTmpId;
+            //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
+            this.items.push(newItem);
+            this.currentItem = newItem;
+            viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
+            
+            
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -148,14 +153,26 @@ class Repository {
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
                       .then((result) => { 
-                        (typeof result==='object')? newItem = result : newItem.id = result;
-                        newItem._tmpId = newItemTmpId;
-                        viewObject.addNewHandler.apply(viewObject, ["DONE", newItem]);
-                        resolve(newItem);
+                        var newItemFromServer = result;
+                        //(typeof result==='object')? newItem = result : newItem.id = result;
+                        
+                        //usuń z repozytorium tymczasowy obiekt
+                        var index = this.items.findIndex( item => item._tmpid == newItemTmpId); 
+                        this.items.splice(index,1);
+                        //wstaw do repozytorium nowy obiekt z serwera
+                        this.items.push(newItemFromServer);
+                        //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
+                        newItemFromServer._tmpId = newItemTmpId;
+                        viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
+                        resolve(newItemFromServer);
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          newItem._tmpId = newItemTmpId;
+                          //newItem._tmpId = newItemTmpId;
+                          //usuń z repozytorium pechowy obiekt
+                          var index = this.items.findIndex(item => item._tmpid == newItemTmpId); 
+                          this.items.splice(index,1);
+                          this.currentItem = {};
                           viewObject.addNewHandler.apply(viewObject,["ERROR",newItem, err]);
                           //reject(err);
                       });
@@ -257,14 +274,17 @@ class Repository {
     /*
      * Do serwera idzie cały Item, do Kroku 3 idzie tylko item.id
      */
-    deleteItem(item,serverFunctionName, viewObject) {
+    deleteItem(oldItem,serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            viewObject.removeHandler.apply(viewObject,["PENDING",item.id]);
+            var index = this.items.findIndex( item => item.id == oldItem.id); 
+            this.items.splice(index,1);
+            this.currentItem = {};
+            viewObject.removeHandler.apply(viewObject,["PENDING", oldItem.id]);
             // Create an execution request object.
             // Create execution request.
             var request = {
                 'function': serverFunctionName,
-                'parameters': JSON.stringify(item),
+                'parameters': JSON.stringify(oldItem),
                 'devMode': true // Optional.
             };
             // Make the API request.
@@ -280,12 +300,14 @@ class Repository {
                   this.handleDeleteItem(resp.result)
                       .then(() => { 
                         //viewHandler.apply(viewObject, ["DONE", item.id]);
-                        viewObject.removeHandler.apply(viewObject, ["DONE", item.id]);
-                        resolve(item);
+                        viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id]);
+                        resolve(oldItem);
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          viewObject.removeHandler.apply(viewObject,["ERROR",item.id, err]);
+                          this.items.push(oldItem);
+                          this.currentItem = oldItem;
+                          viewObject.removeHandler.apply(viewObject,["ERROR",oldItem.id, err]);
                       });
                   })
               .catch(err => {

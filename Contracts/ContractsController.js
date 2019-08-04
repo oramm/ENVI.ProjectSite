@@ -7,12 +7,15 @@ class ContractsController {
         //signoutButton.style.display = 'block';
         
        
-        milestonesRepository = new SimpleRepository('Milestones repository',
+        MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
                                                     'getMilestonesListPerProject',
                                                     'addNewMilestone',
                                                     'editMilestone',
                                                     'deleteMilestone');
         
+        ContractsSetup.contractTypesRepository = new SimpleRepository('ContractTypes repository',
+                                                                            'getContractTypesList');
+                                                                            
         ContractsSetup.contractsRepository = new SimpleRepository(  'Contracts repository',
                                                                     'getContractsListPerProject',
                                                                     'addNewContract',
@@ -23,17 +26,19 @@ class ContractsController {
                                                                 'getPersonsNameSurnameEmailList',
                                                                 );
         
-        MilestonesSetup.milestoneTypeContractTypeAssociationsRepository = new SimpleRepository('MilestoneTypeContractTypeAssociations repository',
-                                                                                                  'getMilestoneTypeContractTypeAssociationsPerProjectList'
-                                                                                                 );
         
+        MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
+                                                                        'getMilestoneTypesList'
+                                                                       );
+                                                                                         
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
 
         var promises = [];
-        promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
-        promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
-        promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
-        promises[3] = MilestonesSetup.milestoneTypeContractTypeAssociationsRepository.initialise(contractsRepository.parentItemId);
+        promises[0] = ContractsSetup.contractTypesRepository.initialise('ACTIVE');
+        promises[1] = milestonesRepository.initialise(milestonesRepository.parentItemId);
+        promises[2] = contractsRepository.initialise(contractsRepository.parentItemId);
+        promises[3] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
+        promises[4] = MilestonesSetup.milestoneTypesRepository.initialise(contractsRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items))

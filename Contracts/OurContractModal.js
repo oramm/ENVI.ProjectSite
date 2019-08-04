@@ -1,6 +1,10 @@
 class OurContractModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
+        var ourTypes = ContractsSetup.contractTypesRepository.items.filter(item=>item.isOur)
+        this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', true);
+        this.typeSelectField.initialise(ourTypes, 'name');
+        
         this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 300);
         
         this.statusSelectField = new SelectField(this.id + '_statusSelectField', 'Status', true);
@@ -19,6 +23,9 @@ class OurContractModal extends Modal {
         this.adminAutoCompleteTextField.initialise(ContractsSetup.personsRepository,"nameSurnameEmail", this.onAdminChosen, this);
         
         this.formElements = [
+            {   input: this.typeSelectField,
+                dataItemKeyName: '_type'
+            },
             {   input: new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
                 dataItemKeyName: 'number'
             },

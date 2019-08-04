@@ -1,7 +1,7 @@
 class MilestoneTypesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
-               parentId: initParamObject.parentId,
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
@@ -71,8 +71,7 @@ class MilestoneTypesCollection extends SimpleCollection {
     
     makeList(){
         return super.makeList().filter((item)=>{
-            //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
-            return item.dataItem._parent._parent.id==this.parentId;
+            return item.dataItem._parent._parent.id==this.parentDataItem.id;
         });
     }
     

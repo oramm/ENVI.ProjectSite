@@ -7,6 +7,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
      */
     constructor(initParamObject){
         super({id: initParamObject.id, 
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                editModal: initParamObject.editModal,
                isPlain: true, 
@@ -16,7 +17,6 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
                isDeletable: false,
                connectedRepository: CasesSetup.processesStepsInstancesRepository
               })
-        this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
                
         this.initialise(this.makeList());
@@ -85,7 +85,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.dataItem._case.id==this.parentId);
+        return super.makeList().filter((item)=>item.dataItem._case.id==this.parentDataItem.id);
     }
     
     selectTrigger(itemId){

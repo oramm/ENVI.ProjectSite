@@ -6,23 +6,23 @@ class CasesController {
         casesListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
         
-        CasesSetup.casesRepository = new SimpleRepository('Cases repository',
-                                                    'getCasesListPerMilestone',
-                                                    'addNewCase',
-                                                    'editCase',
-                                                    'deleteCase');
+        CasesSetup.casesRepository = new SimpleRepository(  'Cases repository',
+                                                            'getCasesListPerMilestone',
+                                                            'addNewCase',
+                                                            'editCase',
+                                                            'deleteCase');
         
-        tasksRepository = new SimpleRepository('Tasks repository',
-                                                    'getTasksListPerMilestone',
-                                                    'addNewTask',
-                                                    'editTask',
-                                                    'deleteTask');
+        tasksRepository = new SimpleRepository( 'Tasks repository',
+                                                'getTasksListPerMilestone',
+                                                'addNewTask',
+                                                'editTask',
+                                                'deleteTask');
         
         personsRepository = new SimpleRepository('Persons repository',
-                                                    'getPersonsNameSurnameEmailList',
+                                                 'getPersonsNameSurnameEmailList',
                                                 );
-        caseTypesRepository = new SimpleRepository('CaseTypes repository',
-                                                        'getCaseTypesList');
+        caseTypesRepository = new SimpleRepository( 'CaseTypes repository',
+                                                    'getCaseTypesListPerMilestone');
         CasesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
                                                                             'getProcessesStepsInstancesListPerMilestone',
                                                                             '',

@@ -1,6 +1,7 @@
 class CurrentMilestonesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id, 
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                isPlain: true, 
                hasFilter: true,
@@ -9,7 +10,6 @@ class CurrentMilestonesCollection extends SimpleCollection {
                isDeletable: true,
                connectedRepository: milestonesRepository
               });
-        this.parentId = initParamObject.parentId;
 
         //this.addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
         this.editModal = new CurrentMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');

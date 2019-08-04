@@ -12,7 +12,7 @@ class Modal {
         this.dataObject;
         this.form;
         this.$dom;
-        this.$title = $('<h4 class="modalTitle">')
+        this.$title = $('<h4 class="modalTitle">');
     }
     initialise(){
         this.buildDom();

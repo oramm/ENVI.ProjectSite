@@ -6,7 +6,14 @@ class MilestoneTemplateModal extends Modal {
         
         this.formElements = [
             {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
-                dataItemKeyName: 'name'
+                dataItemKeyName: 'name',
+                refreshDataSet: function (){    
+                        //użytkownik edytuje 
+                        if(ContractTypesSetup.milestoneTypesRepository.currentItem.isUniquePerContract){
+                            this.input.$dom.hide();
+                        } else
+                            this.input.$dom.show();
+                    }
             },
             {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
@@ -21,7 +28,7 @@ class MilestoneTemplateModal extends Modal {
     initAddNewData(){
         //this.contractsAutoCompleteTextField.setDefaultItem();
         
-        this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: ContractTypesSetup.milestoneTypesRepository.currentItem
+        this.connectedResultsetComponent.connectedRepository.currentItem = { _milestoneType: ContractTypesSetup.milestoneTypesRepository.currentItem
                                                                            };
     }
    /*

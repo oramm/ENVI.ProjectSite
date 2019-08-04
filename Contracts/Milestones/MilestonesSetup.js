@@ -1,3 +1,4 @@
+var milestoneTypesRepository;
 var milestonesRepository;
 var milestoneTypeContractTypeAssociationsRepository;
       
@@ -9,6 +10,14 @@ class MilestonesSetup {
                     'Opóźnione!',
                     'Termin aneksowany'
                 ];
+    }
+    
+    static get milestoneTypesRepository() {
+        return milestoneTypesRepository;
+    }
+    
+    static set milestoneTypesRepository(data) {
+        milestoneTypesRepository = data;
     }
     
     static get milestonesRepository() {

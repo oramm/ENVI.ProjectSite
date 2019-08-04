@@ -47,9 +47,10 @@ class SimpleRepository extends Repository {
     addNewItem(item, viewObject) {
         return new Promise((resolve, reject) => {
             this.currentItem = item;
+            
             super.addNewItem(item,this.addNewServerFunctionName,viewObject)
-                  .then((res) => {  this.items.push(res)
-                                    this.currentItem = res;
+                  .then((res) => {  //this.items.push(res)
+                                    //this.currentItem = res;
                                     console.log('dodano element: ', res);
                                  });
         });
@@ -73,8 +74,8 @@ class SimpleRepository extends Repository {
     deleteItem(item, viewObject) {
         return new Promise((resolve, reject) => {
             super.deleteItem(item,this.deleteServerFunctionName, viewObject)
-                    .then ((res)=> {var index = this.items.findIndex( item => item.id == res.id); 
-                                    this.items.splice(index,1);
+                    .then ((res)=> {//var index = this.items.findIndex( item => item.id == res.id); 
+                                    //this.items.splice(index,1);
                                     console.log('usunięto: ', res)
                                     resolve(this.name + ': item deleted');
                            });

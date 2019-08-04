@@ -1,18 +1,10 @@
-class TaskModal extends Modal {
+class TaskTemplateModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent,mode);
         
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300);
-        this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
-        this.statusSelectField.initialise(TasksSetup.statusNames);
-        
-        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko');
-        this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        this.statusSelectField.initialise(TaskTemplatesSetup.statusNames);
         
         this.formElements = [
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa zadania', undefined, true, 150),
@@ -21,11 +13,11 @@ class TaskModal extends Modal {
             {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             },
-            {   input: this.deadLinePicker,
-                dataItemKeyName: 'deadline'
+            {   input: new InputTextField (this.id + 'deadlineRuleTextField','Reguła', undefined, false, 150),
+                dataItemKeyName: 'deadlineRule'
             },
-            {   input: this.personAutoCompleteTextField,
-                dataItemKeyName: '_owner'
+            {   input: this.statusSelectField,
+                dataItemKeyName: 'status'
             }
         ];
         this.initialise();
@@ -36,7 +28,7 @@ class TaskModal extends Modal {
      */
     initAddNewData(){        
         this.connectedResultsetComponent.connectedRepository.currentItem = {    status: 'Backlog',
-                                                                                _parent: CasesSetup.casesRepository.currentItem
+                                                                                _caseTemplate: TaskTemplatesSetup.currentCaseTemplate
                                                                            };
     }
 };

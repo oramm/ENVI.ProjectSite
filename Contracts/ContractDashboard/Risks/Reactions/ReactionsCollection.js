@@ -7,6 +7,7 @@ class ReactionsCollection extends SimpleCollection {
      */
     constructor(initParamObject){
         super({id: initParamObject.id, 
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                isPlain: true, 
                hasFilter: true,
@@ -15,7 +16,6 @@ class ReactionsCollection extends SimpleCollection {
                isDeletable: true,
                connectedRepository: ReactionsSetup.reactionsRepository
               })
-        this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
         
         if (this.isAddable) 
@@ -105,7 +105,7 @@ class ReactionsCollection extends SimpleCollection {
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentId);
+        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentDataItem.id);
     }
     
     selectTrigger(itemId){

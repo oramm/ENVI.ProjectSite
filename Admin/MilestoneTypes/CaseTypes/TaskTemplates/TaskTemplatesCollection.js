@@ -1,4 +1,4 @@
-class TasksCollection extends SimpleCollection {
+class TaskTemplatesCollection extends SimpleCollection {
     /*
      * @param {type} id
      * @param {boolean} isPlane - czy lista ma być prosta czy z Avatarem
@@ -6,7 +6,8 @@ class TasksCollection extends SimpleCollection {
      * @param {boolean} isAddable - czy można dodować nowe elementy
      */
     constructor(initParamObject){
-        super({id: initParamObject.id, 
+        super({id: initParamObject.id,
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
@@ -15,11 +16,14 @@ class TasksCollection extends SimpleCollection {
                isEditable: true, 
                isAddable: initParamObject.isAddable, 
                isDeletable: true,
-               connectedRepository: TasksSetup.tasksRepository
+               connectedRepository: TaskTemplatesSetup.taskTemplatesRepository
               })
-        this.parentId = initParamObject.parentId;
         this.status = initParamObject.status;
-               
+        
+        //nie ma nadrzędnego Collapsible więc definiuję modale tutaj
+        this.addNewModal = new TaskTemplateModal(this.id + '_newTaskTemplate', 'Dodaj szablon zadania', this, 'ADD_NEW');
+        this.editModal = new TaskTemplateModal(this.id + '_editTaskTemplate', 'Edytuj szablon zadania', this, 'EDIT');      
+        
         this.initialise(this.makeList());
     }    
     /*
@@ -62,40 +66,20 @@ class TasksCollection extends SimpleCollection {
                                                         this);
         
         
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
-                                                        dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
-                                                        'deadline',
-                                                        this);
-        
         
         (dataItem.status)? true : dataItem.status="";
         
-        var personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
-        
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail, 
-                                                        dataItem, 
-                                                        personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
-                                                        this);
-        
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom)
-            .append(deadlineAtomicEditLabel.$dom)
-            .append(personAtomicEditLabel.$dom)
-            //.append('<span>' + dataItem.status + '<br></span>');
+            .append('<span>' + dataItem.deadlineRule + '<br></span>')
+            .append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;
     }
     
-    makeList(){
-        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentId && item.dataItem.status == this.status );
-    }
+    //makeList(){
+    //    return super.makeList().filter((item)=>item.dataItem.caseId==this.parentDataItem.id;
+    //}
     
     selectTrigger(itemId){
         super.selectTrigger(itemId);

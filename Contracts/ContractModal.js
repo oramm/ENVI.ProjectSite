@@ -2,8 +2,12 @@ class ContractModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
         
+        var notOurTypes = ContractsSetup.contractTypesRepository.items.filter(item=>!item.isOur)
+        this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', true);
+        this.typeSelectField.initialise(notOurTypes, 'name');
+        
         this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 300);
-
+        
         this.ourIdRelatedSelectField = new SelectField(this.id + '_ourIdRelated_SelectField', 'Powiązana usługa IK lub PT', true);
         this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdName');
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', true);
@@ -12,6 +16,9 @@ class ContractModal extends Modal {
         this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
         
         this.formElements = [
+            {   input: this.typeSelectField,
+                dataItemKeyName: '_type'
+            },
             {   input: new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
                 dataItemKeyName: 'number'
             },
@@ -44,8 +51,6 @@ class ContractModal extends Modal {
      */
     makeOurPtIds(){
         var ourPtIkContracts = ContractsSetup.otherContractsRepository.items.filter(item=>item._ourType=='PT' || item._ourType=='IK');
-        //ourPtIkContracts.map(item=> item.ourIdName = item.ourId + ' ' + item.name.substr(0,50) + '...');
-        
         return ourPtIkContracts;
     }
     /*

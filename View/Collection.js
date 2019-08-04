@@ -17,7 +17,7 @@ class Collection {
      */
     constructor(initParamObject){
         this.id = initParamObject.id;
-        this.parentId = initParamObject.parentId;
+        this.parentDataItem = initParamObject.parentDataItem;
         this.isPlain = initParamObject.isPlain;        
         this.title = (initParamObject.title === undefined)? "" : initParamObject.title;
         this.isSelectable = (initParamObject.isSelectable  === undefined)? true : initParamObject.isSelectable;
@@ -29,6 +29,7 @@ class Collection {
         this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
         this.editModal = initParamObject.editModal;
         this.addNewModal = initParamObject.addNewModal;
+        this.$addNewTriggerIcon;
         this.$dom;
         this.$actionsMenu;
         this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
@@ -110,17 +111,20 @@ class Collection {
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
                     this.items.push(item);
+                    //czasami ilość pozycji na liście jest limotowana i trzeba wyłaczyć dodawanie kolejnych
+                    if (typeof this.setAddableMode==='function') this.setAddableMode();
                     return status;
                     break;
                 case "PENDING":  
                     if (this.items.length == 0) {
                         this.$dom.find('.emptyList').remove();
                     }
-                    item.id = this.items.length+1 + '_pending';
+                    item.id = item._tmpId;
                     var $newRow = (this.isPlain)?  this. buildPlainRow(item) : this.buildRow(item);
                     this.$collection.prepend($newRow);
                     this.$dom.find('#' + item.id).append(this.makePreloader('preloader'+item.id))
-                    return item.id;
+                    if (typeof this.setAddableMode==='function') this.setAddableMode();
+                    //return item.id;
                     break;
                 case "ERROR":
                     alert(errorMessage);
@@ -194,8 +198,9 @@ class Collection {
                     this.$dom.find('#' + itemId).remove();
                     this.items = this.items.filter(function(item){return item.id!==itemId});
                     if (this.items.length == 0) {
-                        this.$dom.prepend(this.$emptyList);
+                        this.$actionsMenu.after(this.$emptyList);
                     }
+                    if (typeof this.setAddableMode==='function') this.setAddableMode();
                     break;
                 case "PENDING":
                     var $deleteBadge = $('<span>')
@@ -205,6 +210,7 @@ class Collection {
                         .addClass('new badge red')
                         .html('kasuję...')
                     this.$dom.find('#' + itemId).append($deleteBadge);
+                    if (typeof this.setAddableMode==='function') this.setAddableMode();
                     break;
                 case "ERROR":
                     alert(errorMessage);
@@ -378,13 +384,21 @@ class Collection {
 
     actionsMenuInitialise(){
         if (this.isAddable){
-            this.$actionsMenu.prepend(this.addNewModal.createTriggerIcon());
+            this.$addNewTriggerIcon = this.addNewModal.createTriggerIcon();
+            this.$actionsMenu.prepend(this.$addNewTriggerIcon);
             this.setAddNewAction();
         }
             //this.addNewModal.preppendTriggerIconTo(this.$actionsMenu,this);
         if (this.hasFilter)
             this.filterInitialise();
 
+    }
+    
+    refreshAddableMode(){
+        if (this.isAddable)
+            this.$addNewTriggerIcon.show();
+        else
+            this.$addNewTriggerIcon.hide();
     }
     
     makePreloader(id){

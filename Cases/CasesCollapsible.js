@@ -70,7 +70,7 @@ class CasesCollapsible extends SimpleCollapsible {
     makeScrumBoardTab(dataItem){
         var statusesCollections = [];
         var backlogCollection = new TasksCollection({   id: 'backlogCollection_' + dataItem.id + '_status' + 0, 
-                                                        parentId: dataItem.id,
+                                                        parentDataItem: dataItem,
                                                         addNewModal: this.addNewTaskModal,
                                                         editModal: this.editTaskModal,
                                                         title: TasksSetup.statusNames[0],
@@ -82,7 +82,7 @@ class CasesCollapsible extends SimpleCollapsible {
 
         for (var i=1; i<TasksSetup.statusNames.length; i++){
                 var tasksCollection = new TasksCollection({     id: 'tasksListCollection_' + dataItem.id + '_status' + i, 
-                                                                parentId: dataItem.id,
+                                                                parentDataItem: dataItem,
                                                                 editModal: this.editTaskModal,
                                                                 title: TasksSetup.statusNames[i],
                                                                 status: TasksSetup.statusNames[i],
@@ -100,7 +100,7 @@ class CasesCollapsible extends SimpleCollapsible {
         var stepsCollection = new ProcessStepsInstancesCollection({ id: 'processStepsCollection_' + dataItem.id, 
                                                                      title: "",
                                                                      editModal: this.editProcessStepInstanceModal,
-                                                                     parentId: dataItem.id
+                                                                     parentDataItem: dataItem
                                                                     });
         $processDataPanel
             .append(dataItem._processesInstances[0]._process.name + '<BR>')

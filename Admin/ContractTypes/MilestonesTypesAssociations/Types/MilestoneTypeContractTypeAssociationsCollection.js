@@ -1,7 +1,7 @@
 class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
-               parentId: initParamObject.parentId,
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
@@ -60,8 +60,7 @@ class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
     
     makeList(){
         return super.makeList().filter((item)=>{
-            //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
-            return item.dataItem._contractType.id==this.parentId;
+            return item.dataItem._contractType.id==this.parentDataItem.id;
         });
     }
     

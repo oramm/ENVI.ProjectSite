@@ -10,6 +10,9 @@ class ContractTypeModal extends Modal {
             },
             {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
+            },
+            {   input: new SwitchInput('','Umowa ENVI'),
+                dataItemKeyName: 'isOur'
             }
         ];
         this.initialise();

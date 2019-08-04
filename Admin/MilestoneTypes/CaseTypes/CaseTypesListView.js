@@ -1,17 +1,15 @@
-class CasesListView extends Popup {
+class CaseTypesListView extends Popup {
     constructor(){
         super();       
     }
     
     initialise(){
-        this.setTittle("Lista spraw");
+        this.setTittle("Lista typów spraw");
         this.actionsMenuInitialise();
         
-        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);  
+        $('#actionsMenu').after(new CaseTypesCollapsible('caseTypesCollapsible').$dom);  
         this.dataLoaded(true);
     }
-
-
     actionsMenuInitialise(){
     }
 }

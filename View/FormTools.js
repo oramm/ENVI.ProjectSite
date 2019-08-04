@@ -789,13 +789,14 @@ class SwitchInput{
     }
     
     setChangeAction(){
-        if(this.changeAction){
-            var _this=this;
-            this.$dom.find("input[type=checkbox]").on("change",function() {
-                    _this.value = $(this).attr('checked');
+        
+        var _this=this;
+        this.$dom.find("input[type=checkbox]").on("change",function() {
+                _this.value = $(this).prop('checked');
+                if(_this.changeAction)
                     _this.changeAction(_this.value, _this.connectedResultsetComponent);
-                });
-        }
+            });
+        
     }
     setValue(value){
         this.value = value;

@@ -24,7 +24,8 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
                 excludeAssociatedType(milestoneTypeItem){
                     var test = true;
                     ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.items.map(associatedTypeItem=>{
-                            if (associatedTypeItem._milestoneType.id == milestoneTypeItem.id){
+                            if (associatedTypeItem._milestoneType.id == milestoneTypeItem.id &&
+                                associatedTypeItem._contractType.id == ContractTypesSetup.contractTypesRepository.currentItem.id){
                                 //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
                                 if( _this.mode=='EDIT' && 
                                     ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.currentItem._milestoneType.id != associatedTypeItem._milestoneType.id ||

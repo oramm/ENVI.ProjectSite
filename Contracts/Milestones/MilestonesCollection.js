@@ -1,7 +1,7 @@
 class MilestonesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
-               parentId: initParamObject.parentId,
+               parentDataItem: initParamObject.parentDataItem,
                title: initParamObject.title,
                addNewModal: initParamObject.addNewModal,
                editModal: initParamObject.editModal,
@@ -34,8 +34,7 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var typeString = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]'
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.folderNumber + ' ' + typeString + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -69,8 +68,8 @@ class MilestonesCollection extends SimpleCollection {
     
     makeList(){
         return super.makeList().filter((item)=>{
-            //console.log('this.parentId: %s ==? %s', this.parentId, item.dataItem._parent.id)
-            return item.dataItem._parent.id==this.parentId
+            //console.log('this.parentDataItem.id: %s ==? %s', this.parentDataItem.id, item.dataItem._parent.id)
+            return item.dataItem._parent.id==this.parentDataItem.id
         });
     }
     

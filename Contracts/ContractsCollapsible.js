@@ -48,7 +48,7 @@ class ContractsCollapsible extends SimpleCollapsible {
                                                     title: "",
                                                     addNewModal: this.addNewMilestoneModal,
                                                     editModal: this. editMilestoneModal,
-                                                    parentId: dataItem.id
+                                                    parentDataItem: dataItem
                                                 }, 
                         ).$dom);
         return $panel;

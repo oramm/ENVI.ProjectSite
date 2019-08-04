@@ -1,4 +1,4 @@
-class TasksCollection extends SimpleCollection {
+class CaseTemplatesCollection extends SimpleCollection {
     /*
      * @param {type} id
      * @param {boolean} isPlane - czy lista ma być prosta czy z Avatarem
@@ -16,20 +16,28 @@ class TasksCollection extends SimpleCollection {
                isEditable: true, 
                isAddable: initParamObject.isAddable, 
                isDeletable: true,
-               connectedRepository: TasksSetup.tasksRepository
+               connectedRepository: CaseTypesSetup.caseTemplatesRepository
               })
         this.status = initParamObject.status;
                
         this.initialise(this.makeList());
-    }    
+        this.setAddableMode();
+    }
+    
+    setAddableMode(){
+        var isLimitReached = this.parentDataItem.isUniquePerMilestone && 
+                            CaseTypesSetup.caseTemplatesRepository.items.filter(
+                                     item => item._caseType.id==this.parentDataItem.id
+                                 ).length>0
+        
+        this.isAddable = !isLimitReached;
+        this.refreshAddableMode();    
+    }
+    
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeItem(dataItem){
-        //potrzebne sprawdzenie i ew. podmiana na '', żeby nie wyświetlać takstu 'undefined'
-        (dataItem.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
-        var nameSurnameEmailLabel = (dataItem.nameSurnameEmail)? (dataItem.nameSurnameEmail)  + '<BR>': "";
-        
         return {    id: dataItem.id,
                     icon:   undefined,
                     $title:  this.makeTitle(dataItem),
@@ -41,7 +49,8 @@ class TasksCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
+        var isUnique = (dataItem._caseType.isUniquePerMilestone)? 'Unikalna w kamieniu' : '';
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._caseType.name + ' | ' + dataItem.name + ' ' + isUnique, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -61,44 +70,18 @@ class TasksCollection extends SimpleCollection {
                                                         'description',
                                                         this);
         
-        
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
-                                                        dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
-                                                        'deadline',
-                                                        this);
-        
-        
-        (dataItem.status)? true : dataItem.status="";
-        
-        var personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
-        
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail, 
-                                                        dataItem, 
-                                                        personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
-                                                        this);
-        
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom)
-            .append(deadlineAtomicEditLabel.$dom)
-            .append(personAtomicEditLabel.$dom)
-            //.append('<span>' + dataItem.status + '<br></span>');
         
         return $collectionElementDescription;
     }
     
     makeList(){
-        return super.makeList().filter((item)=>item.dataItem.caseId==this.parentDataItem.id && item.dataItem.status == this.status );
+        return super.makeList().filter((item)=>item.dataItem.caseTypeId==this.parentDataItem.id);
     }
     
     selectTrigger(itemId){
         super.selectTrigger(itemId);
-        //$('#contractDashboard').attr('src','../Cases/CasesList.html?milestoneId=' + this.connectedRepository.currentItem.projectId  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        $('#taskTemplatesDashboard', window.parent.document).attr('src','CaseTypes/TaskTemplates/TaskTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id);
     }
 }

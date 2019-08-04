@@ -29,7 +29,7 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
      */
     makeItem(dataItem, $bodyDom){
         return {    id: dataItem.id,
-                    name: dataItem._contractTypeNameTmp + ' | ' + dataItem.name,
+                    name: dataItem.name,
                     $body: $bodyDom,
                     dataItem: dataItem
                     };
@@ -44,8 +44,8 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
                 .append(new MilestoneTemplatesCollection({id: 'milestoneTemplatesCollection_' + dataItem.id, 
                                                                     title: "",
                                                         addNewModal: this.addNewMilestoneTemplateModal,
-                                                        editModal: this. editMilestoneTemplateModal,
-                                                        parentId: dataItem.id
+                                                        editModal: this.editMilestoneTemplateModal,
+                                                        parentDataItem: dataItem
                                                        }).$dom);
         return $panel;
     }
@@ -60,8 +60,8 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
             !isDashboardLoaded){
             
             super.selectTrigger(itemId);
-            $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-    
+            $('#milestoneTypeDashboard').attr('src','CaseTypes/CaseTypesList.html?parentItemId=' + this.connectedRepository.currentItem.id);
+            $('#taskTemplatesDashboard').attr('src','about:blank');
         }
     }
 }

@@ -1,3 +1,4 @@
+var contractTypesRepository;
 var contractsRepository;
 var otherContractsRepository;
 var personsRepository;
@@ -13,6 +14,14 @@ const fidicTypes = [   'Nie dotyczy',
                         'Żółty'
                     ];
 class ContractsSetup {
+    static get contractTypesRepository() {
+        return contractTypesRepository;
+    }
+    
+    static set contractTypesRepository(data) {
+        contractTypesRepository = data;
+    }
+    
     static get statusNames() {
         return statusNames;
     }
