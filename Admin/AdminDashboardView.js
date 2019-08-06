@@ -13,6 +13,9 @@ class AdminDashboardView extends Popup{
         tabsData.push({ name: 'Typy Kamieni milowych',
                         url: 'MilestoneTypes/MilestoneTypesList.html'
                       });
+        tabsData.push({ name: 'Procesy',
+                        url: 'Processes/ProcessesList.html'
+                      });
         
                         
         $('#content').prepend(new Tabs({    id: 'contratTabs',

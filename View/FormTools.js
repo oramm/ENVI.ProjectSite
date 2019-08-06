@@ -192,9 +192,11 @@ class SelectField{
                 //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
             }
             else {
-                this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue[this.key]);
+                this.chosenItem = this.optionsData.find(item=> item.id==inputValue.id ||
+                                                               item[this.key]==inputValue[this.key]
+                                                        );
                 var optionsString = this.optionsData.map(item=>item[this.key]); 
-                var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
+                var itemSelectedId = 2 + optionsString.indexOf(this.chosenItem[this.key]);
             }
             this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         }

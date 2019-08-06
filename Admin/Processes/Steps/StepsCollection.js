@@ -1,4 +1,4 @@
-class MilestoneTypesCollection extends SimpleCollection {
+class StepsCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
                parentDataItem: initParamObject.parentDataItem,
@@ -11,11 +11,11 @@ class MilestoneTypesCollection extends SimpleCollection {
                isAddable: true, 
                isDeletable: true,
                isSelectable: true,
-               connectedRepository: ContractTypesSetup.MilestoneTypesRepository
+               connectedRepository: ProcessesSetup.processStepsRepository
               });
         this.initialise(this.makeList());
         
-        this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
+        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
         
     }
     /*
@@ -37,7 +37,7 @@ class MilestoneTypesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._parent.folderNumber + ' ' + dataItem._parent.name + ' | ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -51,27 +51,15 @@ class MilestoneTypesCollection extends SimpleCollection {
         (dataItem.description)? true : dataItem.description="";
         
         var $collectionElementDescription = $('<span>');
-        //TODO: kiedyś dodać edyzcję dat
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
-                                                        dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
-                                                        'deadline',
-                                                        this);
-        
-        (dataItem.status)? true : dataItem.status="";
         if(dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
-        $collectionElementDescription
-            .append('<span>' + dataItem.startDate + ' - ' + dataItem.endDate + '<BR></span>')
-            //.append(deadlineAtomicEditLabel.$dom)
-            .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         
         return $collectionElementDescription;
     }
     
     makeList(){
         return super.makeList().filter((item)=>{
-            return item.dataItem._parent._parent.id==this.parentDataItem.id;
+            return item.dataItem._parent.id==this.parentDataItem.id;
         });
     }
     
@@ -81,7 +69,7 @@ class MilestoneTypesCollection extends SimpleCollection {
         //    isDashboardLoaded){
         
         super.selectTrigger(itemId);
-        $('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+        //$('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
         
         //}
     }
