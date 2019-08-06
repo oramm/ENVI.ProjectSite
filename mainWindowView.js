@@ -9,7 +9,7 @@ class MainWindowView extends Popup{
     initialise(){
         this.navigationBar = new PsNavigationBar(this)
         this.autocomplete = new AutoCompleteTextField('projectsPickerAutoComplete','Wybierz projekt');
-        this.autocomplete.initialise(projectsRepository,"id", this.onProjectChosen, this)
+        this.autocomplete.initialise(projectsRepository,"ourId", this.onProjectChosen, this)
         
     }
     
@@ -19,7 +19,7 @@ class MainWindowView extends Popup{
     
 
     onProjectChosen(inputValue){
-        this.autocomplete.chosenItem = search(inputValue, "id", projectsRepository.items);
+        this.autocomplete.chosenItem = search(inputValue, "ourId", projectsRepository.items);
         projectsRepository.currentItem = this.autocomplete.chosenItem;
         this.navigationBar.initialiseMenuItems();
     }

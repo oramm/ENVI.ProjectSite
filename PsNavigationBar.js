@@ -16,19 +16,22 @@ class PsNavigationBar extends NavigationBar {
     
     initialiseMenuItems(){
         this.menuItems = [{ caption: "Dane projektu", 
-                            link: 'Projects/projectDetails.html?parentItemId=' + projectsRepository.currentItem.id
-                          },
-                          { caption: "Lista kontaktowa", 
-                            link: 'PersonRoles/personRoles.html?parentItemId=' + projectsRepository.currentItem.id
-                          },
-                          { caption: "Zarządzaj rolami", 
-                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.id
+                            link: 'Projects/projectDetails.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
                           { caption: "Kontrakty", 
-                            link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.id
+                            link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          },
+                          { caption: "Spotkania", 
+                            link: 'Meetings/MeetingsList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          },
+                          { caption: "Lista kontaktowa", 
+                            link: 'PersonRoles/personRoles.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          },
+                          { caption: "Zarządzaj rolami", 
+                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
                           { caption: "Gant", 
-                            link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.id
+                            link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.ourId
                           }
                          ];
         this.addMenuItems($('#main-nav ul'));

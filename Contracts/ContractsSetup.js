@@ -43,10 +43,10 @@ class ContractsSetup {
     static set otherContractsRepository(data) {
         otherContractsRepository = data;
     }
+    
     static get personsRepository() {
         return personsRepository;
     }
-    
     static set personsRepository(data) {
         personsRepository = data;
     }
