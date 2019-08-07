@@ -35,6 +35,10 @@ class Popup{
        $("#tittle").html("<H4>" + tittle + "</h4>");  
     }
     
+    makeSubTittle(tittle) {
+       return $("<H5>" + tittle + "</h5>");  
+    }
+    
     setStatus(message) {
        $("#status").append("<p>" + message + "</p>");  
     }

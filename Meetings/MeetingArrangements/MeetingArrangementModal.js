@@ -1,10 +1,7 @@
 class MeetingArrangementModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
-        
-        this.caseSelectField = new SelectField(this.id + 'caseSelectField', 'Sprawa', undefined, false);
-        this.caseSelectField.initialise(MeetingsSetup.casesRepository.items, 'name');
-        
+          
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
         
         this.ownerAutoCompleteTextField = new AutoCompleteTextField(this.id+'_ownerAutoCompleteTextField',
@@ -15,9 +12,6 @@ class MeetingArrangementModal extends Modal {
         this.ownerAutoCompleteTextField.initialise(MeetingsSetup.personsRepository,"nameSurnameEmail", undefined, this);
         
         this.formElements = [
-            {   input: this.caseSelectField,
-                dataItemKeyName: '_case'
-            },
             {   input: new InputTextField(this.id + 'nameTextField','Nazwa', undefined, false, 150),
                 dataItemKeyName: 'name'
             },
@@ -41,7 +35,8 @@ class MeetingArrangementModal extends Modal {
     initAddNewData(){
         //zainicjuj dane kontekstowe
         this.connectedResultsetComponent.connectedRepository.currentItem = {
-            _parent: MeetingsSetup.meetingsRepository.currentItem
+            _parent: MeetingsSetup.meetingsRepository.currentItem,
+            _case: MeetingsSetup.casesRepository.currentItem
         };
         
     }

@@ -17,7 +17,6 @@ class ContractsSetup {
     static get contractTypesRepository() {
         return contractTypesRepository;
     }
-    
     static set contractTypesRepository(data) {
         contractTypesRepository = data;
     }

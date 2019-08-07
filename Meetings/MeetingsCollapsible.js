@@ -43,7 +43,7 @@ class MeetingsCollapsible extends SimpleCollapsible {
                 .attr('meetingId',dataItem.id)
                 .append($descriptionLabel)
                 .append(new MeetingArrangementsCollection({id: 'meetingArrangementsCollection_' + dataItem.id, 
-                            title: "",
+                            title: "Agenda/Ustalenia",
                             addNewModal: this.addNewMeetingArrangementModal,
                             editModal: this.editMeetingArrangementModal,
                             parentDataItem: dataItem,

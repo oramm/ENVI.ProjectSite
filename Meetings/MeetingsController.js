@@ -21,6 +21,14 @@ class MeetingsController {
         
         
         
+        MeetingsSetup.contractsRepository = new SimpleRepository(   'Contracts repository',
+                                                                    'getContractsListPerProject'
+                                                                   );
+                                                       
+        MeetingsSetup.milestonesRepository = new SimpleRepository(   'Milestones repository',
+                                                                    'getMilestonesListPerProject'
+                                                                   );
+                                                       
         MeetingsSetup.casesRepository = new SimpleRepository(   'Cases repository',
                                                                 'getCasesListPerProject'
                                                                );
@@ -31,8 +39,10 @@ class MeetingsController {
         var promises = [];
         promises[0] = MeetingsSetup.meetingsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
         promises[1] = MeetingsSetup.meetingArrangementsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[2] = MeetingsSetup.casesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[3] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[2] = MeetingsSetup.contractsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[3] = MeetingsSetup.milestonesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[4] = MeetingsSetup.casesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[5] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

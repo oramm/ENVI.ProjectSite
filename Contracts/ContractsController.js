@@ -35,8 +35,8 @@ class ContractsController {
 
         var promises = [];
         promises[0] = ContractsSetup.contractTypesRepository.initialise('ACTIVE');
-        promises[1] = milestonesRepository.initialise(milestonesRepository.parentItemId);
-        promises[2] = contractsRepository.initialise(contractsRepository.parentItemId);
+        promises[1] = milestonesRepository.initialise({projectId: milestonesRepository.parentItemId});
+        promises[2] = contractsRepository.initialise({projectId: contractsRepository.parentItemId});
         promises[3] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         promises[4] = MilestonesSetup.milestoneTypesRepository.initialise(contractsRepository.parentItemId);
         

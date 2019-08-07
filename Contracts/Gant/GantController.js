@@ -20,8 +20,8 @@ class GantController {
                                                     'deleteContract');
       
         var promises = [];
-        promises[0] = milestonesRepository.initialise(milestonesRepository.parentItemId);
-        promises[1] = contractsRepository.initialise(contractsRepository.parentItemId);
+        promises[0] = milestonesRepository.initialise({projectId: milestonesRepository.parentItemId});
+        promises[1] = contractsRepository.initialise({projectId: contractsRepository.parentItemId});
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

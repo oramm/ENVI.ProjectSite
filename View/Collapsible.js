@@ -53,7 +53,6 @@ class Collapsible {
         this.parentViewObject = parentViewObject;
         this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
         
-        this.isDeletable = true;
         this.isEditable = (this.editModal !== undefined)? true : false;
         this.isSelectable = true;
         
@@ -84,7 +83,7 @@ class Collapsible {
     buildRow(item){
         //każdy wiersz może mieć inny modal, domyślnie jest standardowy this.editModal
         var editModalId;
-        if(this.isSelectable){
+        if(this.editable){
             if (!item.editModal)
                 item.editModal = this.editModal;
             editModalId = item.editModal.id
