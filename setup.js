@@ -12,7 +12,7 @@ var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
  SCOPES =  'https://www.google.com/calendar/feeds ' + 
-            //'https://www.googleapis.com/auth/forms ' +
+            'https://www.googleapis.com/auth/documents ' +
             'https://www.googleapis.com/auth/drive ' +
             'https://www.googleapis.com/auth/script.external_request ' +  
             'https://www.googleapis.com/auth/spreadsheets ' +

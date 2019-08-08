@@ -121,7 +121,13 @@ class Collapsible {
      * Ustawia pryciski edycji wierszy
      */       
     addRowCrudButtons(row){
-        if (row.dataItem._gdFolderUrl) row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+        if (row.dataItem._gdFolderUrl) 
+            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+        if (row.dataItem._documentOpenUrl) 
+            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentOpenUrl));
+        if (row.dataItem._documentEditUrl) 
+            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentEditUrl));
+        
         if (this.isDeletable || this.isEditable){
                 row.$crudButtons
                     .append(this.$rowEditIcon(row.editModalId));

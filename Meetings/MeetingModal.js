@@ -23,8 +23,7 @@ class MeetingModal extends Modal {
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {
             //Ustaw tu parametry kontekstowe jeśli konieczne
-                _project: { id: this.connectedResultsetComponent.connectedRepository.parentItemId
-                          }
+                _project: MeetingsSetup.currentProject
             };
     }
 };

@@ -347,8 +347,11 @@ class Collection {
         if (row.dataItem._gdFolderUrl) 
             row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
         
-        if (row.dataItem._documentOpenUrl || row.dataItem._documentEditUrl) 
+        if (row.dataItem._documentOpenUrl) 
             row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentOpenUrl));
+        
+        if (row.dataItem._documentEditUrl) 
+            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentEditUrl));
         
         if (this.isDeletable) 
             row.$crudButtons.append('<span class="itemDelete"><i class="material-icons">delete</i></span>');

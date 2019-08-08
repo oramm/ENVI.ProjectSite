@@ -8,7 +8,7 @@ class CasesSetup {
     //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
     
     static get currentMilestone() {
-        return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;;
+        return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
     }
     
     static get casesRepository() {

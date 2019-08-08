@@ -6,6 +6,10 @@ var casesRepository;
 var personsRepository;
 
 class MeetingsSetup {
+    static get currentProject() {
+        return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+    }
+    
     static get meetingsRepository() {
         return meetingsRepository;
     }
