@@ -35,7 +35,8 @@ class RisksCollapsible extends SimpleCollapsible {
                           folderNumber + ' ' + typeName + ' | ' + name + '<BR>' +
                           'Stopień: <strong>' + dataItem._rate + '<strong>',
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                 };
     }
     

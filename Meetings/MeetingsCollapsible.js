@@ -31,7 +31,8 @@ class MeetingsCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.name + ' ' + dataItem.date,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                     };
     }
     
