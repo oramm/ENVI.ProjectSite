@@ -14,7 +14,7 @@ class MilestoneTypesController {
                                                                             'deleteContractType');
         
         ContractTypesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
-                                                                            'getMilestoneTypesList',
+                                                                            'getAllMilestoneTypesList',
                                                                             'addNewMilestoneType',
                                                                             'editMilestoneType',
                                                                             'deleteMilestoneType');

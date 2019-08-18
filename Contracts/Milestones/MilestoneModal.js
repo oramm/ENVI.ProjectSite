@@ -24,18 +24,22 @@ class MilestoneModal extends Modal {
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function (){
-                    //TODO diribuć repozytorium dla asocjacji typów kontraktów i kamieni
                     var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                        item=> item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId//this.checkContractType(item.contractType)
+                        item=> item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId
                     );
                     
                     this.input.initialise(currentMilestoneTypes, '_folderNumber_MilestoneTypeName');
-                    //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
-                }
-                                            
+                }                                      
             },
             {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
-                dataItemKeyName: 'name'
+                dataItemKeyName: 'name',
+                refreshDataSet: function (){ 
+                    if(MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract ||
+                       MilestonesSetup.milestoneTypesRepository.currentItem.isUniquePerContract){
+                        this.input.$dom.hide();
+                    } else
+                        this.input.$dom.show();
+                }
             },
             {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'

@@ -36,7 +36,8 @@ class ContractsCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.number + '; ' + ourId + dataItem.name + '; ' + value,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                     };
     }
     

@@ -31,7 +31,8 @@ class ProcessesCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.name + ' >> typ sprawy: ' + dataItem._caseType.name,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                     };
     }
     

@@ -16,7 +16,7 @@ class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
         this.initialise(this.makeList());
         //podłącz do nadrzędnego collapsibla, żeby dostać się do dodatkowych modali
         this.connectedResultsetComponent = initParamObject.connectedResultsetComponent;
-        this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj kamień",this);
+        this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(this.$actionsMenu,"Dodaj typ kamienia",this);
         
     }
     /*

@@ -31,7 +31,8 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.name,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                     };
     }
     
@@ -41,6 +42,7 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
                 .attr('id', 'collapsibleBodyForContract' + dataItem.id)
                 .attr('contractid',dataItem.id)
                 .append($descriptionLabel)
+                .append('Szablony kamieni domyślnych')
                 .append(new MilestoneTemplatesCollection({id: 'milestoneTemplatesCollection_' + dataItem.id, 
                                                                     title: "",
                                                         addNewModal: this.addNewMilestoneTemplateModal,

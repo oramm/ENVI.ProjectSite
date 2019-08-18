@@ -33,7 +33,8 @@ class ContractTypesCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.name,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                     };
     }
     
@@ -44,6 +45,7 @@ class ContractTypesCollapsible extends SimpleCollapsible {
                 .attr('id', 'collapsibleBodyForContract' + dataItem.id)
                 .attr('contractid',dataItem.id)
                 .append($descriptionLabel)
+                .append('Przypisane typy kamieni')
                 .append(new MilestoneTypeContractTypeAssociationsCollection({id: 'milestoneTypeContractTypeAssociationsCollection_' + dataItem.id, 
                             title: "",
                             addNewModal: this.addNewMilestoneTypeContractTypeAssociationModal,

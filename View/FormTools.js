@@ -625,7 +625,7 @@ class Form {
                         dataObject[this.elements[i].dataItemKeyName] = (this.elements[i].input.$dom.children('input').val())? this.elements[i].input.chosenItem : {};
                     break;
                 case 'SwitchInput':
-                    dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.value;
+                    dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.getValue();
                     break;
                     
             }
@@ -803,6 +803,10 @@ class SwitchInput{
     setValue(value){
         this.value = value;
         this.$dom.find("input[type=checkbox]").attr('checked',value);
+    }
+
+    getValue(){
+        return (this.value)? true : false;
     }
 }
 /*
