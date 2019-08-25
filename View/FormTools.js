@@ -116,10 +116,11 @@ class SelectField{
         this.buildDom(id, label, icon, isRequired);
     }
     
-    initialise(optionsData, key){
+    initialise(optionsData, key, onItemSelectedHnadler){
         this.$select.empty();
         this.optionsData = optionsData;
         this.key=key;
+        this.onItemSelectedHnadler = onItemSelectedHnadler;
         this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
@@ -130,8 +131,7 @@ class SelectField{
             var regex = new RegExp('^((?!' + this.defaultDisabledOption + ').)*$');
             this.$dom.find('input').attr('pattern', regex);
         }
-        //var _this = this;
-        //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
+        this.setOnchangeAction();
     }
     //this.optionsData jest typu Object
     pushDataFromObjectsList(){
@@ -151,6 +151,7 @@ class SelectField{
             this.$select.append($option);
         }
     }
+    
     buildDom(id, label, icon, isRequired, options){
         this.$dom = $('<div class="input-field">');
         this.$select = $('<select>');
@@ -161,6 +162,16 @@ class SelectField{
             .append($label);
         
         return this.$dom;
+    }
+    
+    setOnchangeAction(){
+        var _this = this;
+        //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
+        if(this.onItemSelectedHnadler){
+            this.$select.on('change', function() {
+                _this.onItemSelectedHnadler(this);
+            });
+        }
     }
 
     getChosenItem(){

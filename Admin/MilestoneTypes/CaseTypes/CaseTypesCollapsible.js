@@ -32,7 +32,8 @@ class CaseTypesCollapsible extends SimpleCollapsible {
         return {    id: dataItem.id,
                     name: dataItem.folderNumber + ' ' + dataItem.name + ' ' + isUnique,
                     $body: $bodyDom,
-                    dataItem: dataItem
+                    dataItem: dataItem,
+                    editModal: this.editModal
                 };
     }
     

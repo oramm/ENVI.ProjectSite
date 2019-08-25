@@ -9,7 +9,7 @@ class MilestoneModal extends Modal {
                                                                         'Wybierz kontrakt')
         this.contractsAutoCompleteTextField.initialise(ContractsSetup.otherContractsRepository,"_numberName", this.onContractChosen, this);       
         */
-        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, true);
+        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', this.onTypeChosen, true);
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
         this.startDatePicker = new DatePicker(this.id + 'startDatePickerField','Początek', true);
         this.endDatePicker = new DatePicker(this.id + 'endDatePickerField','Koniec', true);     
@@ -34,7 +34,8 @@ class MilestoneModal extends Modal {
             {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
                 dataItemKeyName: 'name',
                 refreshDataSet: function (){ 
-                    if(MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract ||
+                    if(MilestonesSetup.milestonesRepository.currentItem._type && 
+                       MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract ||
                        MilestonesSetup.milestoneTypesRepository.currentItem.isUniquePerContract){
                         this.input.$dom.hide();
                     } else
@@ -67,9 +68,8 @@ class MilestoneModal extends Modal {
                                                                              _type: {name: ''}
                                                                            };
     }
-   /*
-    onContractChosen(chosenItem){
+   
+    onTypeChosen(chosenItem){
         this.formElements[1].refreshDataSet();
     }
-    */
 };
