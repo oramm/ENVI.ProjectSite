@@ -37,6 +37,9 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
                     return test;
                 }
             },
+            {   input: new SwitchInput('','Ustaw jako domyślny'),
+                dataItemKeyName: 'isDefault'
+            },
             
         ];
         

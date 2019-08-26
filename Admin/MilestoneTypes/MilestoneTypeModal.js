@@ -11,9 +11,6 @@ class MilestoneTypeModal extends Modal {
             {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             },
-            {   input: new SwitchInput('','Ustaw jako domyślny'),
-                dataItemKeyName: 'isDefault'
-            },
             {   input: new SwitchInput('','Ustaw jako domyślny w scrumboardzie'),
                 dataItemKeyName: 'isInScrumByDefault'
             },

@@ -116,11 +116,11 @@ class SelectField{
         this.buildDom(id, label, icon, isRequired);
     }
     
-    initialise(optionsData, key, onItemSelectedHnadler){
+    initialise(optionsData, key, onItemSelectedHandler){
         this.$select.empty();
         this.optionsData = optionsData;
         this.key=key;
-        this.onItemSelectedHnadler = onItemSelectedHnadler;
+        this.onItemSelectedHandler = onItemSelectedHandler;
         this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
@@ -167,9 +167,9 @@ class SelectField{
     setOnchangeAction(){
         var _this = this;
         //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
-        if(this.onItemSelectedHnadler){
+        if(this.onItemSelectedHandler){
             this.$select.on('change', function() {
-                _this.onItemSelectedHnadler(this);
+                _this.onItemSelectedHandler(this);
             });
         }
     }
@@ -813,7 +813,7 @@ class SwitchInput{
     }
     setValue(value){
         this.value = value;
-        this.$dom.find("input[type=checkbox]").attr('checked',value);
+        this.$dom.find("input[type=checkbox]").prop('checked',value);
     }
 
     getValue(){
