@@ -26,7 +26,7 @@ class MilestoneModal extends Modal {
                                 this.checkMilestoneType(item)
                     );
                     
-                    this.input.initialise(currentMilestoneTypes, '_folderNumber_MilestoneTypeName',_this.onTypeChosen);
+                    this.input.initialise(currentMilestoneTypes, '_folderNumber_MilestoneTypeName',_this.onTypeChosen, _this);
                 },
                 checkMilestoneType(milestoneTypeItem){
                     //wyklucz typy unikalne, dla których sprawy dodano już wcześniej
@@ -49,9 +49,7 @@ class MilestoneModal extends Modal {
             {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
                 dataItemKeyName: 'name',
                 refreshDataSet: function (){ 
-                    if(_this.mode!='EDIT')
-                        this.input.$dom.show();
-                    else
+                    this.input.$dom.hide();
                     if(MilestonesSetup.milestonesRepository.currentItem._type && 
                        MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract ||
                        MilestonesSetup.milestoneTypesRepository.currentItem.isUniquePerContract){
@@ -89,6 +87,7 @@ class MilestoneModal extends Modal {
     }
    
     onTypeChosen(chosenItem){
+        MilestonesSetup.milestoneTypesRepository.currentItem = chosenItem;
         this.formElements[1].refreshDataSet();
     }
 };

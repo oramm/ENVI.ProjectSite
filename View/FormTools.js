@@ -116,11 +116,12 @@ class SelectField{
         this.buildDom(id, label, icon, isRequired);
     }
     
-    initialise(optionsData, key, onItemSelectedHandler){
+    initialise(optionsData, key, onItemSelectedHandler,viewObject){
         this.$select.empty();
         this.optionsData = optionsData;
         this.key=key;
         this.onItemSelectedHandler = onItemSelectedHandler;
+        this.viewObject = viewObject;
         this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
@@ -169,8 +170,8 @@ class SelectField{
         //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
         if(this.onItemSelectedHandler){
             this.$select.on('change', function() {
-                //_this.onItemSelectedHandler(this);
-                _this.onCompleteCallBack.apply(_this.viewObject,[_this.chosenItem]);
+                _this.getChosenItem();
+                _this.onItemSelectedHandler.apply(_this.viewObject,[_this.chosenItem]);
             });
         }
     }
