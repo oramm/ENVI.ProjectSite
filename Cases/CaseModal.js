@@ -2,7 +2,7 @@ class CaseModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent,mode);
         var _this = this;
-        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ sprawy', undefined, false);
+        this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ sprawy', undefined, true);
         this.typeSelectField.$select.on('change', function() {
                _this.formElements[1].refreshDataSet();
             });
@@ -23,18 +23,15 @@ class CaseModal extends Modal {
                     if (caseTypeItem.isUniquePerMilestone)
                         CasesSetup.casesRepository.items.map(existingCaseItem=>{
                                 
-                                
-                                if (existingCaseItem._type.id==caseTypeItem.id)
-                                    //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
-                                    if( _this.mode=='EDIT' && 
-                                        CasesSetup.casesRepository.currentItem._type.id != existingCaseItem._type.id ||
-                                        _this.mode!='EDIT'){
-                                        allowType = false;
-                                    }
-                            });
-                        
+                            if (existingCaseItem._type.id==caseTypeItem.id)
+                                //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
+                                if( _this.mode=='EDIT' && 
+                                    CasesSetup.casesRepository.currentItem._type.id != existingCaseItem._type.id ||
+                                    _this.mode!='EDIT'){
+                                    allowType = false;
+                                }
+                        });
                     return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
-                    
                 }
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa sprawy', undefined, false, 150),
@@ -60,5 +57,9 @@ class CaseModal extends Modal {
         this.connectedResultsetComponent.connectedRepository.currentItem = { _parent: CasesSetup.currentMilestone,
                                                                              _processesInstances: []
                                                                            };
+    }
+    
+    onTypeChosen(chosenItem){
+        this.formElements[1].refreshDataSet();
     }
 };

@@ -169,7 +169,8 @@ class SelectField{
         //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
         if(this.onItemSelectedHandler){
             this.$select.on('change', function() {
-                _this.onItemSelectedHandler(this);
+                //_this.onItemSelectedHandler(this);
+                _this.onCompleteCallBack.apply(_this.viewObject,[_this.chosenItem]);
             });
         }
     }
