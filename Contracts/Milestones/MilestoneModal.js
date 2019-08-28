@@ -48,15 +48,25 @@ class MilestoneModal extends Modal {
             },
             {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
                 dataItemKeyName: 'name',
-                refreshDataSet: function (){ 
-                    this.input.$dom.hide();
-                    if(MilestonesSetup.milestonesRepository.currentItem._type && 
-                       MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract ||
-                       MilestonesSetup.milestoneTypesRepository.currentItem.isUniquePerContract){
+                refreshDataSet: function (chosenItem){ 
+                    //Otwarto okno - użytkownik dodaje nowy kamień
+                    if(_this.mode!='EDIT' && !chosenItem)
                         this.input.$dom.hide();
-                    } 
-                    else
-                        this.input.$dom.show();
+                    //Otwarto okno - Użytkownik edytuje nowy kamień
+                    else if(_this.mode=='EDIT' && !chosenItem){
+                        if(MilestonesSetup.milestonesRepository.currentItem._type && 
+                           MilestonesSetup.milestonesRepository.currentItem._type.isUniquePerContract)
+                            this.input.$dom.hide(); 
+                        else
+                            this.input.$dom.show();
+                    }
+                    //Użytkownik wybrał typ kamienia - zmienił pole Typ
+                    else if(chosenItem){
+                        if(chosenItem.isUniquePerContract)
+                            this.input.$dom.hide(); 
+                        else
+                            this.input.$dom.show();
+                    }
                 }
             },
             {   input: this.descriptionReachTextArea,
@@ -88,6 +98,6 @@ class MilestoneModal extends Modal {
    
     onTypeChosen(chosenItem){
         MilestonesSetup.milestoneTypesRepository.currentItem = chosenItem;
-        this.formElements[1].refreshDataSet();
+        this.formElements[1].refreshDataSet(chosenItem);
     }
 };
