@@ -7,9 +7,9 @@ class ContractDashboardView extends Popup{
     initialise(){
         var parentItemId = Tools.getUrlVars()['parentItemId'];
         var tabsData = [];
-        tabsData.push({ name: 'Szczegóły',
-                        url: 'Details/ContractDetails.html?parentItemId=' + parentItemId
-                      });
+        //tabsData.push({ name: 'Szczegóły',
+        //                url: 'Details/ContractDetails.html?parentItemId=' + parentItemId
+        //              });
         
         if(ContractsSetup.contractsRepository.currentItem.fidicType)
             tabsData.push({ name: 'Materiały',

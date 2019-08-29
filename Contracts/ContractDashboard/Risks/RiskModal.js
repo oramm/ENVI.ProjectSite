@@ -10,8 +10,7 @@ class RiskModal extends Modal {
         
         this.caseSelectField = new SelectField(this.id + 'caseSelectField', 'Sprawa', undefined, true);
         
-        //var casesTypes = (CasesSetup.caseTypesRepository.items.length>0)? CasesSetup.caseTypesRepository.items : []
-        this.caseSelectField.initialise(RisksSetup.casesRepository.items, 'name');
+        //this.caseSelectField.initialise(RisksSetup.casesRepository.items, 'name');
         
 
         this.probabilitySelectField = new SelectField(this.id + '_probabilitySelectField', 'Prawdopodobieństwo', true);

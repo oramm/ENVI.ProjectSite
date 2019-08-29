@@ -35,7 +35,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
                     name: collapsibleItemName,
                     $body: $bodyDom,
                     dataItem: dataItem,
-                    editModal: editModal
+                    editModal: this.editModalContractor
                 };
     }
     
