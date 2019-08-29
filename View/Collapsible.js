@@ -83,7 +83,7 @@ class Collapsible {
     buildRow(item){
         //każdy wiersz może mieć inny modal, domyślnie jest standardowy this.editModal
         var editModalId;
-        if(this.editable){
+        if(this.isEditable){
             if (!item.editModal)
                 item.editModal = this.editModal;
             editModalId = item.editModal.id
