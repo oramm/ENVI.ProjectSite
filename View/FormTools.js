@@ -499,9 +499,13 @@ class Tabs {
             
         }
         var _this = this;
-        //this.$dom.find('.tabs').tabs();
-        this.$dom.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
-        //this.$dom.find('.tabs').tabs('select_tab', 'tab_Szablony-kamieni-milowych-caseTabs-1');
+        this.$tabs.tabs();
+        this.$tabs.on('click', 'a', function(e) {
+            alert('ddsa');
+            _this.tabChosen($(this).closest('li'));
+        });
+        
+        //this.$dom.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
         
     }
     
@@ -514,7 +518,7 @@ class Tabs {
         var $tabPanel = $('<div id="'+ divId + '" class="col s12">')
         $tabPanel.append(this.tabsData[i].panel);
         $link.attr('href','#' + divId);
-        this.$dom.append($tabPanel);
+        this.$tabs.append($tabPanel);
         //if(i==1){
         //    this.$dom.find('.tabs').tabs('select_tab', divId);
         //}
