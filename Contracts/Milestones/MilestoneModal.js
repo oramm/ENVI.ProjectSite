@@ -17,36 +17,44 @@ class MilestoneModal extends Modal {
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(MilestonesSetup.statusNames);
         var _this=this;
-        this.formElements = [
-            {   input: this.typeSelectField,
-                dataItemKeyName: '_type',
-                refreshDataSet: function (){
-                    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
-                        item=>  item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId &&
-                                this.checkMilestoneType(item)
-                    );
-                    
-                    this.input.initialise(currentMilestoneTypes, '_folderNumber_MilestoneTypeName',_this.onTypeChosen, _this);
-                },
-                checkMilestoneType(milestoneTypeItem){
-                    //wyklucz typy unikalne, dla których sprawy dodano już wcześniej
-                    var allowType = true;
-                    if (milestoneTypeItem.isUniquePerContract)
-                        MilestonesSetup.milestonesRepository.items.map(existingMilestoneItem=>{
-                            if (existingMilestoneItem._type.id==milestoneTypeItem.id)
-                                //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
-                                if( _this.mode=='EDIT' && 
-                                    MilestonesSetup.milestonesRepository.currentItem._type.id != existingMilestoneItem._type.id ||
-                                    _this.mode!='EDIT'){
-                                    allowType = false;
-                                }
-                            });
-                        
-                    return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
-                    
-                }
-            },
-            {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
+        this.formElements = [];
+        if(this.mode=='ADD_NEW')
+            this.formElements
+                .push({input: this.typeSelectField,
+                        dataItemKeyName: '_type',
+                        refreshDataSet: function (){
+                            var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
+                                item=>  item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId &&
+                                        this.checkMilestoneType(item)
+                            );
+                            //zostaw tylko elementy unique
+                            currentMilestoneTypes = Tools.ArrNoDuplicates(currentMilestoneTypes);
+                            
+                            this.input.initialise(currentMilestoneTypes, '_folderNumber_MilestoneTypeName',_this.onTypeChosen, _this);
+                        },
+                        checkMilestoneType(milestoneTypeItem){
+                            //wyklucz typy unikalne, dla których sprawy dodano już wcześniej
+                            var allowType = true;
+                            if (milestoneTypeItem.isUniquePerContract)
+                                MilestonesSetup.milestonesRepository.items.map(existingMilestoneItem=>{
+                                    if (existingMilestoneItem._type.id==milestoneTypeItem.id &&
+                                        existingMilestoneItem._parent.id == ContractsSetup.contractsRepository.currentItem.id
+                                       )
+                                        //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
+                                        if( _this.mode=='EDIT' && 
+                                            MilestonesSetup.milestonesRepository.currentItem._type.id != existingMilestoneItem._type.id ||
+                                            _this.mode!='EDIT'){
+                                            allowType = false;
+                                        }
+                                    });
+
+                            return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
+
+                        }
+                    });
+            
+        this.formElements
+                .push({   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
                 dataItemKeyName: 'name',
                 refreshDataSet: function (chosenItem){ 
                     //Otwarto okno - użytkownik dodaje nowy kamień
@@ -68,20 +76,25 @@ class MilestoneModal extends Modal {
                             this.input.$dom.show();
                     }
                 }
-            },
-            {   input: this.descriptionReachTextArea,
-                dataItemKeyName: 'description'
-            },
-            {   input: this.startDatePicker,
-                dataItemKeyName: 'startDate'
-            },
-            {   input: this.endDatePicker,
-                dataItemKeyName: 'endDate'
-            },
-            {   input: this.statusSelectField,
-                dataItemKeyName: 'status'
-            }
-        ];
+            });
+            
+            this.formElements
+                .push({ input: this.descriptionReachTextArea,
+                        dataItemKeyName: 'description'
+                     });
+            this.formElements
+                .push({ input: this.startDatePicker,
+                        dataItemKeyName: 'startDate'
+                      })
+            this.formElements
+                .push({ input: this.endDatePicker,
+                        dataItemKeyName: 'endDate'
+                    });
+            this.formElements
+                .push({ input: this.statusSelectField,
+                        dataItemKeyName: 'status'
+                      });
+
         this.initialise();
     }
     

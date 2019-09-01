@@ -3,6 +3,7 @@ var meetingArrangementsRepository;
 var contractsRepository;
 var milestonesRepository;
 var casesRepository;
+var caseTypesRepository;
 var personsRepository;
 
 class MeetingsSetup {
@@ -43,6 +44,13 @@ class MeetingsSetup {
     }
     static set casesRepository(data) {
         casesRepository = data;
+    }
+    
+    static get caseTypesRepository() {
+        return caseTypesRepository;
+    }
+    static set caseTypesRepository(data) {
+        caseTypesRepository = data;
     }
     
     static get personsRepository() {

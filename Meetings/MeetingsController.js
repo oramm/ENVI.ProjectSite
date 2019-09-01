@@ -32,7 +32,9 @@ class MeetingsController {
         MeetingsSetup.casesRepository = new SimpleRepository(   'Cases repository',
                                                                 'getCasesListPerProject'
                                                                );
-        
+        MeetingsSetup.caseTypesRepository = new SimpleRepository('CaseTypes repository',
+                                                                'getCaseTypesList');
+                                                    
         MeetingsSetup.personsRepository = new SimpleRepository('Persons repository',
                                                                 'getPersonsNameSurnameEmailList',
                                                                 );
@@ -42,7 +44,8 @@ class MeetingsController {
         promises[2] = MeetingsSetup.contractsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
         promises[3] = MeetingsSetup.milestonesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
         promises[4] = MeetingsSetup.casesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[5] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[5] = MeetingsSetup.caseTypesRepository.initialise();
+        promises[6] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

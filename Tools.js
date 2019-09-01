@@ -109,7 +109,21 @@ class Tools{
 		if (typeof (obj1[p]) == 'undefined') return false;
 	}
 	return true;
-    };
+    }
+    
+    //https://codeburst.io/javascript-array-distinct-5edc93501dc4
+    static ArrNoDuplicates(array) {
+        const result = [];
+        const map = new Map();
+        for (const item of array) {
+            if(!map.has(item.id)){
+                map.set(item.id, true);    // set any value to Map
+                result.push(item);
+            }
+        }
+        console.log(result);
+        return result;
+    }
 }
 
 //finds an alament in Array by its value

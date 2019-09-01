@@ -31,10 +31,13 @@ class ContractsCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
-        var value = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(dataItem.value);
+        var valueLabel='';
+        if(dataItem.value)
+            valueLabel = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(dataItem.value);
+
         var ourId = (dataItem.ourId)? '<strong>' + dataItem.ourId + '</strong>; ' : '';
         return {    id: dataItem.id,
-                    name: dataItem.number + '; ' + ourId + dataItem.name + '; ' + value,
+                    name: dataItem.number + '; ' + ourId + dataItem.name + '; ' + valueLabel,
                     $body: $bodyDom,
                     dataItem: dataItem,
                     editModal: this.editModal
