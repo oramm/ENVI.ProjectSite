@@ -54,14 +54,14 @@ class CasesCollapsible extends SimpleCollapsible {
     
     makeTabs(dataItem){
         var parentItemId = Tools.getUrlVars()['parentItemId'];    
-        var tabsData = [    { name: 'Zadania - Scrumboard',
+        var tabsData = [{ name: 'Zadania - Scrumboard',
                           panel: this.makeScrumBoardTab(dataItem).$dom
                         },
                         { name: 'Proces',
                           panel:  this.makeProcessTab(dataItem)
                         }
-                    ]; 
-        return new Tabs({  id: 'caseTabs-' + dataItem.id,
+                       ]; 
+        return new Tabs({   id: 'caseTabs-' + dataItem.id,
                             parentId: parentItemId,
                             tabsData: tabsData,
                             swipeable: true

@@ -501,7 +501,6 @@ class Tabs {
         var _this = this;
         this.$tabs.tabs();
         this.$tabs.on('click', 'a', function(e) {
-            alert('ddsa');
             _this.tabChosen($(this).closest('li'));
         });
         
@@ -518,7 +517,7 @@ class Tabs {
         var $tabPanel = $('<div id="'+ divId + '" class="col s12">')
         $tabPanel.append(this.tabsData[i].panel);
         $link.attr('href','#' + divId);
-        this.$tabs.append($tabPanel);
+        this.$dom.append($tabPanel);
         //if(i==1){
         //    this.$dom.find('.tabs').tabs('select_tab', divId);
         //}
