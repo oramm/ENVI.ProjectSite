@@ -12,11 +12,16 @@ class Repository {
         this.result;
         
         if (typeof initParameter === 'string'){
+            //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
             this.name = initParameter;
             this.currentItemLocalData={};
             
+            //Repository może mieć wiele bieżących elementów (multiselect)
+            this.currentItemsLocalData=[];
+            
             //sessionStorage.setItem(this.name, JSON.stringify(this));
-        } 
+        }
+        //mamy obiekt z SessionStorage
         else if (typeof initParameter === 'object'){
             this.name = initParameter.name;
             this.currentItemLocalData=initParameter.currentItemLocalData;
@@ -36,10 +41,42 @@ class Repository {
     get currentItem () {
         return (this.currentItemLocalData)? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
     }
+    //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
+    get currentItems () {
+        return (this.currentItemsLocalData)? this.currentItemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItems;
+    }
+    
+    set currentItems(data) {
+        this.currentItemsLocalData = data;
+        sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    
     set currentItem(item) {
-        if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
+        if (!item || typeof item !== 'object') throw new Error("Selected repository item must be an object!");
         this.currentItemLocalData = item;
         this.currentItemId = item.id;
+        sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    
+    //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
+    addToCurrentItems(newDataItem) {
+        if (!newDataItem || typeof newDataItem !== 'object') throw new Error("Selected repository item must be an object!");
+        if (!newDataItem.id) throw new Error("repository item must have an id parameter!");
+        
+        var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem=>existingDataItem.id==newDataItem.id)[0];
+        if(!wasItemAlreadySelected)
+            this.currentItemsLocalData.push(newDataItem);
+        
+        sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    
+    //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
+    deleteFromCurrentItems(item) {
+        if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
+        
+        var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item); 
+        this.currentItemsLocalData.splice(index, 1)
+        
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
     

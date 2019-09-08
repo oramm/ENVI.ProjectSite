@@ -20,13 +20,13 @@ class MilestoneModal extends Modal {
         this.formElements = [];
         if(this.mode=='ADD_NEW')
             this.formElements
-                .push({input: this.typeSelectField,
+                .push({ input: this.typeSelectField,
                         dataItemKeyName: '_type',
                         refreshDataSet: function (){
                             var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
                                 item=>  item._contractType.id == ContractsSetup.contractsRepository.currentItem.typeId &&
                                         this.checkMilestoneType(item)
-                            );
+                                );
                             //zostaw tylko elementy unique
                             currentMilestoneTypes = Tools.ArrNoDuplicates(currentMilestoneTypes);
                             
@@ -110,7 +110,7 @@ class MilestoneModal extends Modal {
     }
    
     onTypeChosen(chosenItem){
-        MilestonesSetup.milestoneTypesRepository.currentItem = chosenItem;
+        MilestonesSetup.milestoneTypesRepository.currentItems.push(chosenItem);
         this.formElements[1].refreshDataSet(chosenItem);
     }
 };

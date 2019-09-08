@@ -124,6 +124,15 @@ class Tools{
         console.log(result);
         return result;
     }
+    /*
+     * item {Object}
+     */
+    static arrGetIndexOf(array, property, searchValue){
+        for(var i=0; i<array.length; i++) {
+            if (array[i][property] === searchValue)
+                return i;
+        }
+    }
 }
 
 //finds an alament in Array by its value

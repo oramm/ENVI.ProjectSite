@@ -10,17 +10,20 @@ class Collapsible {
         this.isAddable = (initParamObject.isAddable === undefined)? true : initParamObject.isAddable;
         this.isDeletable = (initParamObject.isDeletable === undefined)? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
+        this.isExpandable = (initParamObject.isExpandable === undefined)? false : initParamObject.isExpandable;
+        this.isMultiSelectable = initParamObject.isMultiSelectable;
         this.hasArchiveSwitch = initParamObject.hasArchiveSwitch;
         this.subitemsCount = initParamObject.subitemsCount;
-        this.currentItem; //wybrany wiersz
+        this.currentItems = []; //wybrany wiersz
         this.$dom;
         this.$collapsible;
         this.$actionsMenu;
         
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
-        this.$collapsible = $('<ul class="collapsible" data-collapsible="accordion">');
-        this.$collapsible.attr("id",this.id);
+        this.$collapsible = $('<ul class="collapsible">');
+        this.$collapsible.attr('id',this.id);
+        this.$collapsible.attr('data-collapsible', (this.isExpandable)? 'expandable' : 'accordion');
         this.$actionsMenu = $('<div>')
                .attr('id', 'actionsMenu' + '_' + this.id)
                .addClass('cyan lighten-5')
@@ -277,14 +280,35 @@ class Collapsible {
         var _this = this;
         this.$dom.find(".collapsible-header").click(function() {
                 var selectedItemId = $(this).parent().attr("itemId");
-                _this.currentItem = _this.items.filter(item=>item.id==selectedItemId)[0];
+                
+                if(_this.isMultiSelectable)
+                    _this.multiSelectAction(selectedItemId);
+                else
+                    _this.defaultSelectAction(selectedItemId);
+                
                 _this.selectTrigger(selectedItemId);
                 $('.collapsible').find('.collapsible-header > .crudButtons')
-                    .css('visibility', 'hidden');
+                    .css('visibility', 'hidden');   
                 $(this).children('.crudButtons')
                     .css('visibility', 'visible');
-                //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
             });
+    }
+    
+    defaultSelectAction(selectedItemId){
+        this.currentItems[0] = this.items.filter(item=>item.id==selectedItemId)[0];
+        //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
+    }
+    
+    multiSelectAction(selectedItemId){
+        var wasItemAlreadySelected = this.currentItems.filter(item=>item.id==selectedItemId)[0];
+        var selectedItem = this.items.filter(item=>item.id==selectedItemId)[0]
+        if(wasItemAlreadySelected){
+            var index = Tools.arrGetIndexOf(this.currentItems, 'id', selectedItem); 
+           this.currentItems.splice(index, 1)
+        }
+        else
+            this.currentItems.push();
+        //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
     }
     
     /*
@@ -310,7 +334,7 @@ class Collapsible {
         var _this = this;
         this.$dom.find(".collapsibleItemEdit").click(function() { 
                 $(this).closest('.collapsible-header').trigger('click');
-                _this.currentItem.editModal.triggerAction(_this);
+                _this.currentItems[0].editModal.triggerAction(_this);
                 Materialize.updateTextFields();
             });
     }

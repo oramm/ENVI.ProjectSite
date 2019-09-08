@@ -30,9 +30,12 @@ class PsNavigationBar extends NavigationBar {
                           { caption: "Zarządzaj rolami", 
                             link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
-                          { caption: "Gant", 
-                            link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.ourId
-                          }
+                          { caption: "Pisma", 
+                            link: 'Letters/LettersList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          },
+                          //{ caption: "Gant", 
+                          //  link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          //}
                          ];
         this.addMenuItems($('#main-nav ul'));
         this.addMenuItems($('#mobile-demo'));

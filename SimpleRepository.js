@@ -2,10 +2,10 @@ class SimpleRepository extends Repository {
     /*
      * 
      * @param {String || Object} initParemeter może to być nazwa repozytorim, albo obiekt z session Strorage
-     * @param {type} getItemsListServerFunctionName
-     * @param {type} addNewServerFunctionName
-     * @param {type} editServerFunctionName
-     * @param {type} deleteServerFunctionName
+     * @param {String} getItemsListServerFunctionName
+     * @param {String} addNewServerFunctionName
+     * @param {String} editServerFunctionName
+     * @param {String} deleteServerFunctionName
      * @returns {SimpleRepository}
      */
     constructor(initParemeter, 

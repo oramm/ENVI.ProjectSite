@@ -8,7 +8,7 @@ class MainWindowView extends Popup{
     
     initialise(){
         this.navigationBar = new PsNavigationBar(this)
-        this.autocomplete = new AutoCompleteTextField('projectsPickerAutoComplete','Wybierz projekt');
+        this.autocomplete = new AutoCompleteTextField_1('projectsPickerAutoComplete','Wybierz projekt');
         this.autocomplete.initialise(projectsRepository,"ourId", this.onProjectChosen, this)
         
     }

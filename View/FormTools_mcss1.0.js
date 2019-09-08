@@ -5,7 +5,7 @@
  * 2. dodajemy $dom do formularza
  * 3. wywołujemy initialise();
  */
-class AutoCompleteTextField {
+class AutoCompleteTextField_1 {
     constructor(id, label, icon, isRequired){
         this.id = id;
         this.label = label;
@@ -78,26 +78,5 @@ class AutoCompleteTextField {
             if (this.chosenItem !== undefined) this.$dom.children('input').attr('pattern','^' + inputValue + '$')
             this.$dom.children('input').val(inputValue);
             
-    }
-}
-
-class FormTools{
-    static createFlatButton(caption, onClickFunction,viewObject){
-        var $button = $('<input type="button" ' +
-                               'value="' + caption  +'" ' + 
-                               'class="waves-effect waves-teal btn-flat"' +
-                        '/>');
-        $button.click(function() {onClickFunction.apply(viewObject,[])});
-        return $button;
-    }
-
-    static createRaisedButton(caption, onClickFunction,viewObject){
-        var $button = $('<input type="button" ' +
-                               'value="' + caption  +'" ' + 
-                               'class="waves-effect waves-teal btn"' +
-                        '/>');
-        
-        $button.click(onClickFunction.apply(viewObject,[]));
-        return $button;
     }
 }

@@ -169,6 +169,7 @@ class SelectField{
         var _this = this;
         //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
         if(this.onItemSelectedHandler){
+            this.$select.off('change');
             this.$select.on('change', function() {
                 _this.getChosenItem();
                 _this.onItemSelectedHandler.apply(_this.viewObject,[_this.chosenItem]);
@@ -178,6 +179,8 @@ class SelectField{
 
     getChosenItem(){
         var inputValue = this.$dom.find('input').val();
+        if(!this.optionsData && !this.isRequired)
+           return;
         if(inputValue!== this.defaultDisabledOption){
             if(typeof this.optionsData[0] !== 'object'){
 
@@ -224,6 +227,76 @@ class SelectField{
         
     }
 } 
+
+class Chip {
+    constructor(id, caption, dataItem, onDeleteCallBack, viewObject){
+        this.id = id;
+        this.caption = caption;
+        this.dataItem = dataItem;
+        this.onDeleteCallBack = onDeleteCallBack;
+        this.viewObject = viewObject; 
+        this.$dom;
+        this.buidDom();
+        this.setOnDeleteAction();
+    }
+    
+    buidDom(){
+        this.$dom = $('<div>');
+        this.$dom
+            .attr('id','chip_' + this.id)
+            .addClass('chip')
+            .html(this.caption)
+            .append('<i class="close material-icons">close</i>');
+    }
+    
+    setOnDeleteAction(){
+        this.$dom.children('i').off('change');
+        var _this = this;
+        this.$dom.children('i').on('click', function(e){
+                _this.onDeleteCallBack.apply(_this.viewObject,[_this.dataItem]);
+                
+            });
+    }
+}
+/*
+ * value to obiekt, który chcemy wysyłać do serwera np. tablica
+ * @type type
+ */
+class HiddenInput {
+    constructor(id, name, value){
+        this.id = id;
+        this.name = (name)? name : id;
+        this.value = value;
+        this.$dom;
+        this.buildDom();
+    }
+    
+    buildDom(){
+        this.$dom = $('<input>');
+        this.$dom
+                .attr('type', 'hidden')
+                .attr('id', this.id)
+                .attr('name', this.name);
+    }
+    
+    setValue(value){
+        this.value = value
+    }
+    
+    getValue(){
+        return this.value;
+    }
+    
+    validate() {
+        var test = this.value !== undefined && this.value.length > 0 && this.value !== {};
+        if (test == false) {
+            this.$dom.addClass('invalid');
+        } else {
+            this.$dom.removeClass('invalid');
+        }
+        return test;
+    }
+}
 
 class ReachTextArea {
     constructor(id, label, isRequired, maxCharacters){
@@ -585,6 +658,8 @@ class Form {
                     this.elements[i].input.simulateChosenItem(inputvalue);
                     break;
                 case 'SwitchInput':
+                case 'Chips':
+                case 'HiddenInput':
                     this.elements[i].input.setValue(inputvalue);
             }
         }
@@ -593,11 +668,17 @@ class Form {
     //używane przy SubmitTrigger w Modalu
     validate(dataObject){
         for (var i =0; i < this.elements.length; i++){
+            var test;
             switch (this.elements[i].input.constructor.name) {
                 case 'DatePicker' :
                 case 'SelectField' :
-                    return this.elements[i].input.validate(dataObject[this.elements[i].input.dataItemKeyName]);
-                  
+                case 'HiddenInput' :
+                    test = this.elements[i].input.validate(dataObject[this.elements[i].input.dataItemKeyName]);
+                    if(!test){
+                        alert('Formularz źle wypełniony');
+                        return false;
+                    }
+                    break;
                 default :
                     //w pozostałych przypadkach walidację zostawiamy dla natywnego HTML5
                     return true;
@@ -641,6 +722,8 @@ class Form {
                         dataObject[this.elements[i].dataItemKeyName] = (this.elements[i].input.$dom.children('input').val())? this.elements[i].input.chosenItem : {};
                     break;
                 case 'SwitchInput':
+                case 'Chips':
+                case 'HiddenInput':
                     dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.getValue();
                     break;
                     
@@ -897,7 +980,7 @@ class FormTools{
                 });
         return radioButtons;
     }
-
+    
     static createSubmitButton(caption){
         var button = $('<Button class="btn waves-effect waves-light" name="action"></button>');
         button.append(caption);
@@ -961,7 +1044,7 @@ class FormTools{
         
         return $textArea;
     }
-
+    //kopatybilny z FormTools_mcss1.0 
     static createFlatButton(caption, onClickFunction,viewObject){
         var $button = $('<input type="button" ' +
                                'value="' + caption  +'" ' + 
@@ -970,7 +1053,7 @@ class FormTools{
         $button.click(function() {onClickFunction.apply(viewObject,[])});
         return $button;
     }
-
+    //kopatybilny z FormTools_mcss1.0 
     static createRaisedButton(caption, onClickFunction,viewObject){
         var $button = $('<input type="button" ' +
                                'value="' + caption  +'" ' + 
