@@ -122,7 +122,7 @@ class Repository {
                 // The API encountered a problem before the script
                 // started executing.
                 this.result = 'Error calling API:';
-                this.result += JSON.stringify(resp, null, 2);
+                this.result += JSON.stringify(resp);
                 console.error(resp.error);
                 throw this.result;
                 //throw resp.error;

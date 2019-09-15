@@ -14,10 +14,7 @@ class LettersCollapsible extends SimpleCollapsible {
         this.editModal = new ReceivedLetterModal(id + '_editLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
         
         
-        this.initialise(this.makeCollapsibleItemsList());
-        //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
-        //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
-        
+        this.initialise(this.makeCollapsibleItemsList());        
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -25,8 +22,17 @@ class LettersCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
+        var name='';
+        name += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
+        name += 'Utworzono:&nbsp;<strong>' + dataItem.creationDate +'</strong>, ';
+        name += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
+        name += '<strong>' + dataItem.registrationDate + '</strong>, ';
+        
+        name += '<br>Opis:&nbsp;' + dataItem.description + '<br>';
+        name += (dataItem.isOur)? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;'; 
+        name += dataItem.entityName
         return {    id: dataItem.id,
-                    name: dataItem.number + ' ' + dataItem.description + '<br>' + dataItem.entityName,
+                    name: name,
                     $body: $bodyDom,
                     dataItem: dataItem,
                     editModal: this.editModal
@@ -34,12 +40,29 @@ class LettersCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
-        var $descriptionLabel = $((dataItem.description)?'<BR>' + dataItem.description  : '');
+        var $casesUl = $('<ul class="collection">')
+        for(var i=0; i<dataItem._cases.length; i++){
+            var $caseLi = $('<li class="collection-item">')
+            var caseLabel;
+            if(dataItem._cases[i]._parent._parent.ourId)
+                caseLabel = dataItem._cases[i]._parent._parent.ourId;
+            else 
+                caseLabel = dataItem._cases[i]._parent._parent.number;
+            caseLabel += ', ' + dataItem._cases[i]._parent._type._folderNumber + ' ' + 
+                         dataItem._cases[i]._parent._type.name + 
+                          ' | ';
+            caseLabel += dataItem._cases[i]._typeFolderNumber_TypeName_Number_Name;
+            
+            $caseLi.html(caseLabel);
+            $casesUl.append($caseLi);
+        }
         
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBody' + dataItem.id)
                 .attr('letterId',dataItem.id)
-                .append($descriptionLabel)
+                .append($casesUl)
+                .prepend($('<strong>Dotyczy spraw:</stron>'))
+                
 
         return $panel;
     }

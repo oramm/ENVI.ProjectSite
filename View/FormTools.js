@@ -258,6 +258,8 @@ class Chip {
             });
     }
 }
+
+
 /*
  * value to obiekt, który chcemy wysyłać do serwera np. tablica
  * @type type
@@ -294,6 +296,85 @@ class HiddenInput {
         } else {
             this.$dom.removeClass('invalid');
         }
+        return test;
+    }
+}
+
+/*
+ * value to obiekt, który chcemy wysyłać do serwera np. tablica
+ * @type type
+ */
+class FileInput {
+    constructor(id, name, viewObject, isRequired){
+        this.id = id;
+        this.name = (name)? name : id;
+        this.viewObject = viewObject;
+        this.isRequired = isRequired;
+        this.$dom;
+        this.buildDom();
+    }
+    
+    buildDom(){
+        this.$dom = $('<form action="#">');
+        this.$fileField = $('<div>');
+        this.$input = $('<input>');
+        this.$input
+                .attr('type', 'file')
+                .attr('id', this.id)
+                .attr('name', this.name);
+        
+        this.$button = $('<div>');
+        this.$button
+                .addClass('btn')
+                .append($('<span>Plik</span>'))
+                .append(this.$input)
+        
+        this.$fileField
+                .addClass('file-field')
+                .addClass('input-field')
+                .append(this.$button)
+                .append('<div class="file-path-wrapper">').children('.file-path-wrapper')
+                    .append('<input class="file-path validate" type="text" placeholder="Wybierz jeden lub kilka plików">')
+        
+        this.$dom.append(this.$fileField);
+    }
+    
+    getFiles(){
+        return this.$input[0].files;
+    }
+    
+    readFile(){
+        return new Promise((resolve, reject) => {
+            //pobierz plik z pickera
+            var blob = this.getFiles()[0] //new Blob(['dupa jasiu'], {type: 'text/plain'});
+            if(!blob) 
+                resolve();
+            else {
+                var reader = new FileReader();
+                var base64data;
+
+                reader.onloadend = function() {
+                        base64data = reader.result.replace(/^data:.+;base64,/, '');
+                        resolve({ blobBase64String: base64data,
+                                  name: blob.name,
+                                  mimeType: blob.type
+                                })
+                    }
+                reader.readAsDataURL(blob);
+            }
+        });
+    }
+    
+    getValue(){
+        return new Promise((resolve, reject) => {
+            this.readFile()
+             .then((result)=>resolve(result))
+        });
+    }
+    validate(){
+        var test = true;
+        if(this.viewObject.mode=='ADD_NEW' && !this.getFiles()[0])
+            test = false;
         return test;
     }
 }
@@ -619,8 +700,12 @@ class Form {
     buidDom(){
         this.$dom = $('<form id="'+ this.id +'" method="'+ this.method +'">');
         for (var i = 0; i<this.elements.length; i++){
+            var $inputDescription = '';
+            if(this.elements[i].description)
+                $inputDescription = $('<span class="envi-input-description">' + this.elements[i].description + '</span>')
             this.$dom
                     .append('<div class="row">').children(':last-child')
+                        .append($inputDescription)   
                         .append(this.elements[i].input.$dom);
         }
         this.$dom.append(FormTools.createSubmitButton("Zapisz"));
@@ -673,6 +758,7 @@ class Form {
                 case 'DatePicker' :
                 case 'SelectField' :
                 case 'HiddenInput' :
+                case 'FileInput' :
                     test = this.elements[i].input.validate(dataObject[this.elements[i].input.dataItemKeyName]);
                     if(!test){
                         alert('Formularz źle wypełniony');
@@ -681,15 +767,16 @@ class Form {
                     break;
                 default :
                     //w pozostałych przypadkach walidację zostawiamy dla natywnego HTML5
-                    return true;
+                    test = true;
             }
         }
+        return test;
     }
     /*
      * Aktualizuje atrybuty edytowanego obiektu na podstawie pól formularza
      * @param {repositoryData} dataObject
      */
-    submitHandler(dataObject){
+    async submitHandler(dataObject){
         var i = 0;
         for (var i =0; i < this.elements.length; i++){
 
@@ -724,7 +811,8 @@ class Form {
                 case 'SwitchInput':
                 case 'Chips':
                 case 'HiddenInput':
-                    dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.getValue();
+                case 'FileInput':
+                    dataObject[this.elements[i].dataItemKeyName] = await this.elements[i].input.getValue();
                     break;
                     
             }

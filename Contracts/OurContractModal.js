@@ -32,6 +32,10 @@ class OurContractModal extends Modal {
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
                 dataItemKeyName: 'name'
             },
+            {   input: new InputTextField (this.id + '_aliasTextField','Alias kontraktu', undefined, false, 30),
+                description: 'Podaj krótką etykietę pomocną w wyszukiwaniu w systemie i w scrumboardzie',
+                dataItemKeyName: 'alias'
+            },
             {   input: new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
                 dataItemKeyName: 'startDate'
             },

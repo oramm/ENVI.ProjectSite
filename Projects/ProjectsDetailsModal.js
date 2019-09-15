@@ -8,11 +8,15 @@ class ProjectsDetailsModal extends Modal {
         this.statusSelectField.initialise(['Nie rozpoczęty', 'W trakcie', 'Zakończony']);
         
         this.formElements = [
-            {   input: new InputTextField (this.id + 'idTextField','Oznaczenie projektu', undefined, true, 150),
-                dataItemKeyName: 'id'
+            {   input: new InputTextField (this.id + '_idTextField','Oznaczenie projektu', undefined, true, 150),
+                dataItemKeyName: 'ourId'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
                 dataItemKeyName: 'name'
+            },
+            {   input: new InputTextField (this.id + '_aliasTextField','Alias projektu', undefined, true, 30),
+                description: 'Podaj krótką etykietę pomocną w wyszukiwaniu w systemie',
+                dataItemKeyName: 'alias'
             },
             {   input: new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
                 dataItemKeyName: 'startDate'
@@ -27,6 +31,7 @@ class ProjectsDetailsModal extends Modal {
                 dataItemKeyName: 'comment'
             },
             {   input: this.financialCommentReachTextArea,
+                desciption: 'Te dane wprowadza koordynator finansowy projektu',
                 dataItemKeyName: 'financialComment'
             },
             {   input: new InputTextField (this.id + 'totalValueTextField','Wartość całkowota', undefined, true, 20),

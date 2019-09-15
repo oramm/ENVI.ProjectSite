@@ -11,10 +11,15 @@ class ReceivedLetterModal extends Modal {
         var _this=this;
         
         this.formElements = [
+            {   input: new SwitchInput('Przychodzące', 'Wysłane'),
+                dataItemKeyName: 'isOur'
+            },
             {   input: this.contractSelectField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
                 dataItemKeyName: '_contract',
             },
             {   input: this.milestoneSelectField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
                 dataItemKeyName: '_milestone',
                 initialize(){
                     var currentMilestones = LettersSetup.milestonesRepository.items.filter(
@@ -24,6 +29,7 @@ class ReceivedLetterModal extends Modal {
                 }
             },
             {   input: this.caseSelectField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
                 dataItemKeyName: '_case',
                 initialize(){
                     var currentCases = LettersSetup.casesRepository.items.filter(
@@ -100,8 +106,9 @@ class ReceivedLetterModal extends Modal {
             {   input: new ReachTextArea (this.id + '_descriptonReachTextArea','Opis', false, 300),
                 dataItemKeyName: 'description'
             },
-            {   input: new InputTextField (this.id + '_letterGdId_TextField','Id pliku pisma', undefined, false, 25),
-                dataItemKeyName: 'letterGdId',
+            {   input: new FileInput (this.id + '_letter_FileInput','Wybierz plik', this, true),
+                description: (this.mode=='EDIT')?'Jeżeli edytujesz pismo i nie chcesz zmieniać załącznika, zignoruj to pole' : '',
+                dataItemKeyName: '_blobEnviObject',
             }
         ];
         this.initialise();
@@ -113,30 +120,31 @@ class ReceivedLetterModal extends Modal {
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {
             //Ustaw tu parametry kontekstowe jeśli konieczne
-            _cases: [] 
+            _cases: [],
+            _project: LettersSetup.currentProject
             };
         LettersSetup.casesRepository.currentItems=[];
     }
     
     onContractChosen(chosenItem){
         LettersSetup.contractsRepository.currentItem = chosenItem;
-        this.formElements[1].initialize(chosenItem);
+        this.formElements[2].initialize(chosenItem);
     }
     
     onMilestoneChosen(chosenItem){
         LettersSetup.milestonesRepository.currentItem = chosenItem;
-        this.formElements[2].initialize(chosenItem);
+        this.formElements[3].initialize(chosenItem);
     }
     
     onCaseChosen(chosenItem){
         //LettersSetup.casesRepository.addToCurrentItems(chosenItem);
-        this.formElements[3].addCaseItem(chosenItem);
-        this.formElements[2].initialize(chosenItem);
+        this.formElements[4].addCaseItem(chosenItem);
+        this.formElements[3].initialize(chosenItem);
         
     }
     
     onCaseUnchosen(unchosenItem){
         //LettersSetup.casesRepository.deleteFromCurrentItems(unchosenItem);
-        this.formElements[3].removeCaseItem(unchosenItem);
+        this.formElements[4].removeCaseItem(unchosenItem);
     }
 };

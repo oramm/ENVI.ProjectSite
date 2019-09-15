@@ -95,3 +95,14 @@ body {
 .tabs .indicator{
     background: #4db6ac;
 }
+
+.collapsible strong{
+    color: #26a69a;
+    font-size: 1.2em;
+}
+
+form .envi-input-description{
+    /* background-color: aliceblue; */
+    color: #c99a44;
+    /* padding-top: 20px; */
+}

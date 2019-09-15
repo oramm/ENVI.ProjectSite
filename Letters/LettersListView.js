@@ -3,7 +3,7 @@ class LettersListView extends Popup {
         super();
         this.$contractsPanel;
         this.$casesPanel;
-        this.$lettersPanel;
+        this.$lettersPanel;        
     }
     
     initialise(){

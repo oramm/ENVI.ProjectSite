@@ -131,14 +131,16 @@ class Modal {
         //obiekt do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(repository.currentItem);
         
-        this.form.submitHandler(tmpDataObject);
-        if (this.form.validate(tmpDataObject)){
-                repository.currentItem = tmpDataObject;
-                if(this.mode==='EDIT')
-                    repository.editItem(repository.currentItem, this.connectedResultsetComponent);
-                else
-                   repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
-        }
-        this.$dom.modal('close');
+        this.form.submitHandler(tmpDataObject)
+            .then(()=>{
+                if (this.form.validate(tmpDataObject)){
+                        repository.currentItem = tmpDataObject;
+                        if(this.mode==='EDIT')
+                            repository.editItem(repository.currentItem, this.connectedResultsetComponent);
+                        else
+                           repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
+                }
+                this.$dom.modal('close');
+            })
     }
 } 
