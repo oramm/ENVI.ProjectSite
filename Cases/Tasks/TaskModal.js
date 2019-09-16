@@ -3,8 +3,8 @@ class TaskModal extends Modal {
         super(id, tittle, connectedResultsetComponent,mode);
         
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300);
-        this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
-        this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
+        this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', false);
+        this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', false);
         this.statusSelectField.initialise(TasksSetup.statusNames);
         
         this.personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',

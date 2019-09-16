@@ -576,6 +576,8 @@ class DatePicker {
     }
     
     validate() {
+        if(!this.isRequired)
+            return true;
         var test = $('#' + this.id).val() != '';
         if (test === false) {
             this.$input.addClass('invalid');
