@@ -108,7 +108,7 @@ class ReceivedLetterModal extends Modal {
             },
             {   input: new FileInput (this.id + '_letter_FileInput','Wybierz plik', this, true),
                 description: (this.mode=='EDIT')?'Jeżeli edytujesz pismo i nie chcesz zmieniać załącznika, zignoruj to pole' : '',
-                dataItemKeyName: '_blobEnviObject',
+                dataItemKeyName: '_blobEnviObjects',
             }
         ];
         this.initialise();

@@ -211,8 +211,13 @@ class SelectField{
                 this.chosenItem = this.optionsData.find(item=> item.id==inputValue.id ||
                                                                item[this.key]==inputValue[this.key]
                                                         );
-                var optionsString = this.optionsData.map(item=>item[this.key]); 
-                var itemSelectedId = 2 + optionsString.indexOf(this.chosenItem[this.key]);
+                var itemSelectedId;
+                if(this.chosenItem){
+                    var optionsString = this.optionsData.map(item=>item[this.key]); 
+                    itemSelectedId = 2 + optionsString.indexOf(this.chosenItem[this.key]);
+                } else
+                    itemSelectedId = 0;
+                    
             }
             this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         }
@@ -321,6 +326,7 @@ class FileInput {
         this.$input
                 .attr('type', 'file')
                 .attr('id', this.id)
+                .attr('multiple','')
                 .attr('name', this.name);
         
         this.$button = $('<div>');
@@ -343,10 +349,9 @@ class FileInput {
         return this.$input[0].files;
     }
     
-    readFile(){
+    readFile(blob){
         return new Promise((resolve, reject) => {
             //pobierz plik z pickera
-            var blob = this.getFiles()[0] //new Blob(['dupa jasiu'], {type: 'text/plain'});
             if(!blob) 
                 resolve();
             else {
@@ -367,8 +372,18 @@ class FileInput {
     
     getValue(){
         return new Promise((resolve, reject) => {
-            this.readFile()
-             .then((result)=>resolve(result))
+            if (this.getFiles().length==0){
+                resolve();
+                return;
+            }
+            var promises = [];
+            var blobs = [];
+            for(var i=0; i<this.getFiles().length; i++){
+                promises[i] = this.readFile(this.getFiles()[0])
+                    .then((result)=>blobs.push(result));
+            }
+            Promise.all(promises)
+                .then(()=>resolve(blobs));
         });
     }
     validate(){
