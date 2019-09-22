@@ -22,9 +22,8 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
-        var caseNumber = (dataItem._case)? dataItem._case._displayNumber : 'S??';
-        var collapsibleItemName = caseNumber + ' ' + dataItem._name
-        if(dataItem.deadline) collapsibleItemName += '<br>Załatwić do: ' + dataItem.deadline;
+        var collapsibleItemName = '<strong>' + dataItem.id + '</strong> ' + dataItem.name
+        if(dataItem.deadline) collapsibleItemName += '<br>Załatwić do: <strong>' + dataItem.deadline + '</strong>';
         
         var editModal;
         if(dataItem.status.match(/Nowe|W trakcie/i))     //'Nowe','W trakcie','Do akceptacji','Zakończone'
@@ -44,7 +43,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
                 .attr('id', 'collapsibleBodyForMaterialCard' + dataItem.id)
                 .attr('materialCardid',dataItem.id)
                 .attr('status',dataItem.status)
-                .append('<b>Opis:</b><br>' + dataItem._description + '<br>')
+                .append('<b>Opis:</b><br>' + dataItem.description + '<br>')
                 .append('<b>Uwagi:</b><br>' + dataItem.contractorsDescription)
                 .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         return $panel;

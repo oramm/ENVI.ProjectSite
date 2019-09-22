@@ -20,10 +20,10 @@ class MaterialCardModalContractor extends Modal {
                 dataItemKeyName: 'creationDate'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
-                dataItemKeyName: '_name'
+                dataItemKeyName: 'name'
             },
             {   input: this.descriptionReachTextArea,
-                dataItemKeyName: '_description'
+                dataItemKeyName: 'description'
             },
             {   input: this.deadLinePicker,
                 dataItemKeyName: 'deadline'
@@ -44,6 +44,7 @@ class MaterialCardModalContractor extends Modal {
      */
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {    
+            _contractId: MaterialCardsSetup.contractsRepository.currentItem.id,
             _parent:  MaterialCardsSetup.milestonesRepository.items.filter((   item => item._type.id==7 && 
                                                                                item.contractId==MaterialCardsSetup.contractsRepository.currentItem.id
                                                                         ))[0],  

@@ -20,10 +20,10 @@ class MaterialCardModalEngineer extends Modal {
                 dataItemKeyName: 'creationDate'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
-                dataItemKeyName: '_name'
+                dataItemKeyName: 'name'
             },
             {   input: this.descriptionReachTextArea,
-                dataItemKeyName: '_description'
+                dataItemKeyName: 'description'
             },
             {   input: this.deadLinePicker,
                 dataItemKeyName: 'deadline'
