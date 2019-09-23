@@ -194,9 +194,12 @@ class Collapsible {
                 case "DONE":
                     $('#preloader'+item.id).remove();
                     this.items = this.items.filter(function(searchItem){return searchItem.id!==item.id});
-                    this.items.push(this.makeItem(item,this.makeBodyDom(item).$dom));
+                    var newItem = this.makeItem(item,this.makeBodyDom(item).$dom);
+                    var $newRow = this.buildRow(newItem).$dom;
+                    this.items.push(newItem);
                     this.setEditAction();
-                    var $oldRow = this.$collapsible.find('[itemid=' + item.id + '_toDelete]');
+                    var $oldRow = this.$collapsible.find('[itemid^=' + item.id + ']');
+                    $oldRow.last().after($newRow);
                     $oldRow.remove();
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();

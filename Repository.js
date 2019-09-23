@@ -53,6 +53,8 @@ class Repository {
     
     set currentItem(item) {
         if (!item || typeof item !== 'object') throw new Error("Selected repository item must be an object!");
+        //nie przesyłamy do repozytorium blobów z FileInput
+        delete item._blobEnviObjects;
         this.currentItemLocalData = item;
         this.currentItemId = item.id;
         sessionStorage.setItem(this.name, JSON.stringify(this));
@@ -109,7 +111,7 @@ class Repository {
                                     resolve(result);
                                 })
               .catch(err => {   console.error (serverFunctionName, err);
-                                window.alert('Wystąił Błąd! \n serverFunctionName: ' + err);
+                                window.alert('Wystąił Błąd! \n ' + err);
                                 throw err;
                             });
         });
@@ -167,7 +169,7 @@ class Repository {
             newItem._tmpId = newItemTmpId;
             //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
             this.items.push(newItem);
-            this.currentItem = newItem;
+            this.currentItem = Tools.cloneOfObject(newItem);
             viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
             
             
@@ -198,6 +200,7 @@ class Repository {
                         this.items.splice(index,1);
                         //wstaw do repozytorium nowy obiekt z serwera
                         this.items.push(newItemFromServer);
+                        this.currentItem = newItemFromServer;
                         //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
                         newItemFromServer._tmpId = newItemTmpId;
                         viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
@@ -291,9 +294,15 @@ class Repository {
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
                       .then((result) => { 
-                        if (typeof result==='object') newItem = result;
-                        viewObject.editHandler.apply(viewObject, ["DONE", newItem])
-                        resolve(newItem);
+                        var newItemFromServer = result;
+                        //usuń z repozytorium tymczasowy obiekt
+                        var index = this.items.findIndex(item => item.id == newItem.id); 
+                        this.items.splice(index,1);
+                        //wstaw do repozytorium nowy obiekt z serwera
+                        this.items.push(newItemFromServer);
+                        this.currentItem = newItemFromServer;
+                        viewObject.editHandler.apply(viewObject, ["DONE", newItemFromServer])
+                        resolve(newItemFromServer);
                       })
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/

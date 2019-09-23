@@ -134,12 +134,13 @@ class Modal {
         this.form.submitHandler(tmpDataObject)
             .then(()=>{
                 if (this.form.validate(tmpDataObject)){
-                        repository.currentItem = tmpDataObject;
+                        
                         if(this.mode==='EDIT')
-                            repository.editItem(repository.currentItem, this.connectedResultsetComponent);
+                            repository.editItem(tmpDataObject, this.connectedResultsetComponent);
                         else
-                           repository.addNewItem(repository.currentItem, this.connectedResultsetComponent); 
-                }
+                           repository.addNewItem(tmpDataObject, this.connectedResultsetComponent); 
+                repository.currentItem = tmpDataObject;    
+            }
                 this.$dom.modal('close');
             })
     }

@@ -46,8 +46,6 @@ class SimpleRepository extends Repository {
     //Krok 2 - wywoływana przy SUBMIT
     addNewItem(item, viewObject) {
         return new Promise((resolve, reject) => {
-            this.currentItem = item;
-            
             super.addNewItem(item,this.addNewServerFunctionName,viewObject)
                   .then((res) => {  //this.items.push(res)
                                     //this.currentItem = res;
