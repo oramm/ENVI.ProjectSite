@@ -21,7 +21,7 @@ class ProjectsDetailsModal extends Modal {
             {   input: new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
                 dataItemKeyName: 'startDate'
             },
-            {   input: new DatePicker(this.id + 'endDatePickerField','Termin wykonania', true),
+            {   input: new DatePicker(this.id + 'endDatePickerField','Zakończenie realizacji', true),
                 dataItemKeyName: 'endDate'
             },
             {   input: this.statusSelectField,
@@ -34,7 +34,7 @@ class ProjectsDetailsModal extends Modal {
                 desciption: 'Te dane wprowadza koordynator finansowy projektu',
                 dataItemKeyName: 'financialComment'
             },
-            {   input: new InputTextField (this.id + 'totalValueTextField','Wartość całkowota', undefined, true, 20),
+            {   input: new InputTextField (this.id + 'totalValueTextField','Wartość całkowota netto', undefined, true, 20),
                 dataItemKeyName: 'totalValue'
             },
             {   input: new InputTextField (this.id + 'qualifiedValueTextField','Koszty kwalifikowane', undefined, true, 20),

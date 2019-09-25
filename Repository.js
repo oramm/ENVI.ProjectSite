@@ -294,6 +294,7 @@ class Repository {
               .then(resp => {  
                   this.handleAddNewItem(resp.result)
                       .then((result) => { 
+                        if(!result) throw new Error('Serwer powinien zwrócić obiekt')
                         var newItemFromServer = result;
                         //usuń z repozytorium tymczasowy obiekt
                         var index = this.items.findIndex(item => item.id == newItem.id); 
@@ -307,7 +308,7 @@ class Repository {
                       .catch(err => {
                           //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
                           viewObject.editHandler.apply(viewObject,["ERROR",newItem, err]);
-                          //reject(err);
+                          throw err;
                       });
                   })
               .catch(err => {

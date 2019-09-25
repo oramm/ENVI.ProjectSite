@@ -77,7 +77,7 @@ class ProjectDetailsCollection extends Collection {
         var dotationValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.dotationValue);
         itemsList[3] = new CollectionItem('projectId',
                                            'euro_symbol', //icon
-                                           'Wartość całkowita: ' + totalValue  + '<BR>' +
+                                           'Wartość całkowita netto: ' + totalValue  + '<BR>' +
                                            'Wydatki kwalifikowalne: ' + qualifiedValue  + '<BR>' +
                                            'Wartość dotacji: ' + dotationValue,
                                            window.parent.projectsRepository.currentItem.financialComment

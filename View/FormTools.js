@@ -72,25 +72,27 @@ class AutoCompleteTextField {
             this.setChosenItem(this.objectList[0])
     }
     setChosenItem(inputValue){
+        if(inputValue!== undefined){
         //inputValue pochodzi z formularza
-        if (typeof inputValue !== 'object'){
-            this.chosenItem = search(inputValue, this.key, this.repository.items);
-            this.repository.currentItem = this.chosenItem;
-            if (this.chosenItem) this.$dom.children('input').attr('pattern','^' + inputValue + '$');
+            if (typeof inputValue !== 'object'){
+                this.chosenItem = search(inputValue, this.key, this.repository.items);
+                this.repository.currentItem = this.chosenItem;
+                if (this.chosenItem) this.$dom.children('input').attr('pattern','^' + inputValue + '$');
+                this.$dom.children('input').val(inputValue);
+            }
+            //inputValue pochodzi z repository i jest obiektem
+            else {
+                this.chosenItem = inputValue;
+                //zakłądam, że oiekt posiada atrybut this.key
+                inputValue = inputValue[this.key];
+            }
+            if (this.chosenItem) 
+                this.$dom.children('input').attr('pattern','^' + inputValue + '$');
             this.$dom.children('input').val(inputValue);
-        }
-        //inputValue pochodzi z repository i jest obiektem
-        else {
-            this.chosenItem = inputValue;
-            //zakłądam, że oiekt posiada atrybut this.key
-            inputValue = inputValue[this.key];
-        }
-        if (this.chosenItem) 
-            this.$dom.children('input').attr('pattern','^' + inputValue + '$');
-        this.$dom.children('input').val(inputValue);
-        //this.onCompleteCallBack powinien być zadeklarowany w modalu
-        if (typeof this.onCompleteCallBack === "function") { 
-            this.onCompleteCallBack.apply(this.viewObject,[this.chosenItem]);
+            //this.onCompleteCallBack powinien być zadeklarowany w modalu
+            if (typeof this.onCompleteCallBack === "function") { 
+                this.onCompleteCallBack.apply(this.viewObject,[this.chosenItem]);
+            }
         }
     }
 }
