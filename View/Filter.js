@@ -71,7 +71,7 @@ class Filter {
         var test = false;
         if($row.attr('status')===undefined)
             test = true;
-        else if(!$row.attr('status').match(/Zakończ|Zamknięt|Archiw/i))
+        else if(!$row.attr('status').match(/Zamknięt|Archiw/i))
             test = true;
         return test; 
     }
