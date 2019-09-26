@@ -13,7 +13,7 @@ class MyTasksController {
                                                     'deleteTask');
         
         personsRepository = new SimpleRepository('Persons repository',
-                                                    'getPersonsNameSurnameEmailList',
+                                                    'getPersonsNameSurnameEmailListPerSystemRole',
                                                 );
         
         var promises = [];

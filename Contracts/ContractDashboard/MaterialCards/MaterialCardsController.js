@@ -12,13 +12,10 @@ class MaterialCardsController {
                                                                             'editMaterialCard',
                                                                             'deleteMaterialCard');
         
-        //MaterialCardsSetup.reactionsRepository = new SimpleRepository(  'Reactions repository',
-                //                                                        'getMaterialCardsReactionsListPerProject',
-                //                                                        'addNewMaterialCardReaction',
-                //                                                        'ediMaterialCardtReaction',
-                //                                                        'deleteMaterialCardReaction');
-        
-        MaterialCardsSetup.personsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+        MaterialCardsSetup.personsRepository = new SimpleRepository('Persons repository',
+                                                                    'getPersonsNameSurnameEmailListPerContract',
+                                                                    );
+        //MaterialCardsSetup.personsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
         MaterialCardsSetup.contractsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Contracts repository')));
         MaterialCardsSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
         
@@ -26,7 +23,7 @@ class MaterialCardsController {
         
         //promises[0] = MaterialCardsSetup.reactionsRepository.initialise(MaterialCardsSetup.reactionsRepository.parentItemId);
         promises[0] = MaterialCardsSetup.materialCardsRepository.initialise(MaterialCardsSetup.materialCardsRepository.parentItemId);
-        //promises[1] = MaterialCardsSetup.personsRepository.initialise();
+        promises[1] = MaterialCardsSetup.personsRepository.initialise(MaterialCardsSetup.contractsRepository.currentItem.id);
 
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

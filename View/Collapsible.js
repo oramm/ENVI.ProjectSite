@@ -197,10 +197,11 @@ class Collapsible {
                     var newItem = this.makeItem(item,this.makeBodyDom(item).$dom);
                     var $newRow = this.buildRow(newItem).$dom;
                     this.items.push(newItem);
-                    this.setEditAction();
+                    
                     var $oldRow = this.$collapsible.find('[itemid^=' + item.id + ']');
                     $oldRow.last().after($newRow);
                     $oldRow.remove();
+                    this.setEditAction();
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
                     break;
