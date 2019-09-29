@@ -42,7 +42,7 @@ class CasesCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
-        var $body = (dataItem._processesInstances.length>0)? this.makeTabs(dataItem).$dom : this.makeScrumBoardTab(dataItem).$dom;
+        var $body = this.makeTabs(dataItem).$dom;
         var $bodyDom = $('<div>')
             .attr('id', 'tasksActionsMenuForCase' + dataItem.id)
             .attr('caseid',dataItem.id)
@@ -57,10 +57,14 @@ class CasesCollapsible extends SimpleCollapsible {
         var tabsData = [{ name: 'Zadania - Scrumboard',
                           panel: this.makeScrumBoardTab(dataItem).$dom
                         },
-                        { name: 'Proces',
-                          panel:  this.makeProcessTab(dataItem)
+                        { name: 'Wydarzenia',
+                          panel:  this.makeEventsTab(dataItem)
                         }
-                       ]; 
+                       ];
+        if(dataItem._processesInstances.length>0)
+            tabsData.push({ name: 'Proces',
+                            panel:  this.makeProcessTab(dataItem)
+                          })
         return new Tabs({   id: 'caseTabs-' + dataItem.id,
                             parentId: parentItemId,
                             tabsData: tabsData,
@@ -107,6 +111,17 @@ class CasesCollapsible extends SimpleCollapsible {
             .append(dataItem._processesInstances[0]._process.name + '<BR>')
             .append(dataItem._processesInstances[0]._process.descripton)
             .append(stepsCollection.$dom);
+        return $processDataPanel;
+    }
+    
+    makeEventsTab(dataItem){
+        var $processDataPanel = $('<div>');
+        var eventsCollection = new EventsCollection({id: 'eventsCollection_' + dataItem.id, 
+                                                     title: "",
+                                                     parentDataItem: dataItem
+                                                    });
+        $processDataPanel
+            .append(eventsCollection.$dom);
         return $processDataPanel;
     }
     

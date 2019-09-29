@@ -78,8 +78,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
             .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
-            .append(personAtomicEditLabel.$dom)
-            //.append('<span>' + dataItem.status + '<br></span>');
+            .append(personAtomicEditLabel.$dom);
         
         return $collectionElementDescription;
     }

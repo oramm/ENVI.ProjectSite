@@ -128,7 +128,22 @@ class Tools{
 	}
 	return true;
     }
-    
+    /* https://www.sitepoint.com/sort-an-array-of-objects-in-javascript/
+     * sprawdza który oiekt jest większy - do użycia w Array.sort()
+     * @param {type} key - nazwa atrybutu obiektu
+     * @param {type} order
+     * @returns {Function}
+     */
+    static compareValues(key, order='asc') {
+        return function(a, b) {
+            if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
+            let comparison = a[key].localeCompare(b[key]);
+            return (
+                (order == 'desc') ? (comparison * -1) : comparison
+            );
+        };
+    }
+
     //https://codeburst.io/javascript-array-distinct-5edc93501dc4
     static ArrNoDuplicates(array) {
         const result = [];

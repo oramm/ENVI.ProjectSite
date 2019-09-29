@@ -3,6 +3,7 @@ var personsRepository;
 var caseTypesRepository;
 var processesInstancesStepsRepository;
 var processesStepsInstancesRepository;
+var eventsRepository;
 
 class CasesSetup {
     //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
@@ -46,5 +47,11 @@ class CasesSetup {
                     'W trakcie',
                     'Zrobione'
                 ];;
+    }
+    static set eventsRepository(data) {
+        eventsRepository = data;
+    }
+    static get eventsRepository() {
+        return eventsRepository;
     }
 }

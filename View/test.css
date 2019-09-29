@@ -101,6 +101,11 @@ body {
     font-size: 1.2em;
 }
 
+.collection .active strong {
+    color: #eafaf9;
+    font-size: 1.2em;
+}
+
 .collapsible .comment{
     
     font-size: 0.8em;
