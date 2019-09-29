@@ -345,9 +345,9 @@ class Repository {
             op
               .then(resp => {  
                   this.handleDeleteItem(resp.result)
-                      .then(() => { 
+                      .then((result) => { 
                         //viewHandler.apply(viewObject, ["DONE", item.id]);
-                        viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id]);
+                        viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id, undefined, result]);
                         resolve(oldItem);
                       })
                       .catch(err => {
@@ -399,8 +399,8 @@ class Repository {
                 if (!resp.done) {
                     throw this.name + ": nic nie usunięto";
                 } else {
-                    this.result = this.name + "item deleted!";
-                    resolve(this.result);
+                    //this.result = resp.response.result;
+                    resolve(resp.response.result);
                 }
             }
         });

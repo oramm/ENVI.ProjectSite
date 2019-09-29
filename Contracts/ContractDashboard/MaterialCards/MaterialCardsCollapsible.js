@@ -24,7 +24,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
     makeItem(dataItem, $bodyDom){
         var collapsibleItemName = '<strong>' + dataItem.id + '</strong> ' + dataItem.name
         if(dataItem.deadline) collapsibleItemName += '<br>Załatwić do: <strong>' + dataItem.deadline + '</strong>';
-        if(dataItem._owner)  collapsibleItemName += ', odpowiedzialny: <strong>' +  dataItem._owner.name + dataItem._owner.surname + '</strong>'
+        if(dataItem._owner)  collapsibleItemName += ', odpowiedzialny: <strong>' +  dataItem._owner.name + ' ' + dataItem._owner.surname + '</strong>'
         
         var editModal;
         if(dataItem.status.match(/Nowe|W trakcie/i))     //'Nowe','W trakcie','Do akceptacji','Zakończone'

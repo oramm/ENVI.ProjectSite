@@ -101,8 +101,14 @@ body {
     font-size: 1.2em;
 }
 
+.collapsible .comment{
+    
+    font-size: 0.8em;
+}
+
 form .envi-input-description{
     /* background-color: aliceblue; */
     color: #c99a44;
+    font-size: 0.8em;
     /* padding-top: 20px; */
 }

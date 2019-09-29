@@ -84,8 +84,9 @@ class GAuth2 {
         console.log('Image URL: ' + profile.getImageUrl());
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
        
-
+        this.userName = profile.getName();
         this.userEmail = profile.getEmail();
+        this.userGoogleImage = profile.getImageUrl();
     }
 
     /**

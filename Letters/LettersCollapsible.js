@@ -10,8 +10,8 @@ class LettersCollapsible extends SimpleCollapsible {
                 //subitemsCount: 12
               });
         
-        this.addNewModal = new ReceivedLetterModal(id + '_receivedLetterModal', 'Rejestruj pismo przychodzące', this, 'ADD_NEW');
-        this.editModal = new ReceivedLetterModal(id + '_editLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
+        this.addNewModal = new LetterModal(id + '_newLetterModal', 'Rejestruj pismo', this, 'ADD_NEW');
+        this.editModal = new LetterModal(id + '_editLetterModal', 'Edytuj dane pisma', this, 'EDIT');
         
         
         this.initialise(this.makeCollapsibleItemsList());        
@@ -27,7 +27,6 @@ class LettersCollapsible extends SimpleCollapsible {
         name += 'Utworzono:&nbsp;<strong>' + dataItem.creationDate +'</strong>, ';
         name += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
-        
         name += '<br>Opis:&nbsp;' + dataItem.description + '<br>';
         name += (dataItem.isOur)? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;'; 
         name += dataItem.entityName
@@ -56,14 +55,14 @@ class LettersCollapsible extends SimpleCollapsible {
             $caseLi.html(caseLabel);
             $casesUl.append($caseLi);
         }
-        
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBody' + dataItem.id)
                 .attr('letterId',dataItem.id)
+                .append($('<strong>Dotyczy spraw:</stron>'))
                 .append($casesUl)
-                .prepend($('<strong>Dotyczy spraw:</stron>'))
+                .append($('<span class="comment">Ostania zmiana danych pisma: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
+                           'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
                 
-
         return $panel;
     }
     

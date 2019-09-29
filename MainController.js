@@ -12,11 +12,18 @@ class MainController {
         projectsRepository = new SimpleRepository('Projects repository',
                                                  'getProjectsList',
                                                  'addNewProject',
-                                                 'editProject',
-                                                 //'deleteProject'
-                                                         );
+                                                 'editProject'
+                                                 );
+        
         projectsRepository.initialise(gAuth.userEmail)
-            .then(()=>  {   console.log("Projects initialised");
+            .then(()=>  {   sessionStorage.setItem('Current User', JSON.stringify({name: gAuth.userName,
+                                                                                   surname: '',
+                                                                                   systemEmail: gAuth.userEmail,
+                                                                                   googleImage: gAuth.userGoogleImage
+                                                                                   })
+                                                   );
+
+                            console.log("Projects initialised");
                             mainWindowView.initialise();
                             mainWindowView.dataLoaded(true);
                             iFrameResize({log:false, heightCalculationMethod: 'taggedElement',  checkOrigin:false});

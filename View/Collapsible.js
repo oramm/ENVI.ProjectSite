@@ -233,7 +233,7 @@ class Collapsible {
     /*
      * Krok 3 - funkcja wywoływana w rolesRepository.unasoosciatePersonRole potrzebny trik z appply dla callbacka
      */
-    removeHandler(status,itemId, errorMessage){
+    removeHandler(status,itemId, errorMessage, serveResponse){
         return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
@@ -241,6 +241,13 @@ class Collapsible {
                     this.items = this.items.filter(function(item){return item.id!==itemId});
                     if (this.items.length == 0) {
                         this.$dom.prepend(this.$emptyList);
+                    }
+                    if(serveResponse){
+                        if(serveResponse.message)
+                            alert(serveResponse.message);
+                        if(serveResponse.externalUrl)
+                            window.open(serveResponse.externalUrl,'_blank');
+                    
                     }
                     break;
                 case "PENDING":

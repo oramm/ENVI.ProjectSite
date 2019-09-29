@@ -10,6 +10,10 @@ class LettersSetup {
         return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
     }
     
+    static get currentUser() {
+        return JSON.parse(sessionStorage.getItem('Current User'));
+    }
+    
     static get lettersRepository() {
         return lettersRepository;
     }

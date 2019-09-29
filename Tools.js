@@ -16,7 +16,25 @@ class Tools{
                 return inputDate;
         }
     }
+    static timestampToString(timestamp){
+        if(typeof timestamp === 'string')
+            timestamp = new Date(timestamp);
+        var day = this.addZero(timestamp.getDate());
+        var month = this.addZero(timestamp.getMonth());
+        var year = timestamp.getFullYear();
+        var h = this.addZero(timestamp.getHours());
+        var m = this.addZero(timestamp.getMinutes());
+        return day + '&#8209;' + month + '&#8209;' + year + ' ' + 
+               h + ':' + m  
+               
+    }
     
+    static addZero(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
     static dateJStoDMY(inputDate) {   
         if(inputDate){
 			var dd = inputDate.getDate();

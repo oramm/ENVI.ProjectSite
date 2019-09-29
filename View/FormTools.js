@@ -465,7 +465,6 @@ class ReachTextArea {
     }
     
     /*
-     * Używać w klasie z formularzem (XxxxModal)
      * w funkcji fillWithData() użyć:
      *      tinyMCE.get(this.id + 'descriptionTextField').setContent(rolesRepository.currentItem.description);
      *      tinyMCE.triggerSave();
@@ -484,6 +483,10 @@ class ReachTextArea {
             .attr('max_chars',this.maxCharacters)
             .addClass('reachTextArea')
             //.append($input);
+    }
+    setLabel(label){
+        this.label = label;
+        this.$dom.find('label').text(label);
     }
 }
 
@@ -602,6 +605,11 @@ class DatePicker {
             this.$input.removeClass('invalid');
         }
         return test;
+    }
+    
+    setLabel(label){
+        this.label = label;
+        this.$dom.find('label').text(label);
     }
 }
 class InputTextField {
@@ -977,10 +985,11 @@ class AtomicEditLabel {
 }
 
 class SwitchInput{
-    constructor(onLabel, offLabel,changeAction){
+    constructor(onLabel, offLabel,changeAction, viewObject){
         this.onLabel = onLabel;
         this.offLabel = offLabel;
         this.changeAction = changeAction;
+        this.viewObject = viewObject;
         this.$dom = $('<div class="switch">');
         this.buildDom();
         this.setChangeAction();
@@ -1002,7 +1011,7 @@ class SwitchInput{
         this.$dom.find("input[type=checkbox]").on("change",function() {
                 _this.value = $(this).prop('checked');
                 if(_this.changeAction)
-                    _this.changeAction(_this.value, _this.connectedResultsetComponent);
+                    _this.changeAction(_this.value, _this.viewObject);
             });
         
     }
