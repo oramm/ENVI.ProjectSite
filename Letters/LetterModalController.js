@@ -14,7 +14,9 @@ class LetterModalController {
             _project: LettersSetup.currentProject,
             _editor:{name: LettersSetup.currentUser.name,
                      surname: LettersSetup.currentUser.surname,
-                     systemEmail: LettersSetup.currentUser.systemEmail}
+                     systemEmail: LettersSetup.currentUser.systemEmail
+                    },
+            _lastUpdated: ''
             };
         LettersSetup.casesRepository.currentItems=[];
     }

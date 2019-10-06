@@ -15,6 +15,9 @@ class MilestonesCollection extends SimpleCollection {
               });
         this.$casesPanel = initParamObject.$casesPanel;
         this.initialise(this.makeList());        
+        
+        this.addNewCaseModal = new CaseModal(this.id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
+        this.editCaseModal = new CaseModal(this.id + '_editCase', 'Edytuj sprawę', this, 'EDIT');
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -69,7 +72,6 @@ class MilestonesCollection extends SimpleCollection {
     
     makeList(){
         return super.makeList().filter((item)=>{
-            //console.log('this.parentDataItem.id: %s ==? %s', this.parentDataItem.id, item.dataItem._parent.id)
             return item.dataItem._parent.id==this.parentDataItem.id
         });
     }
@@ -77,8 +79,15 @@ class MilestonesCollection extends SimpleCollection {
     selectTrigger(itemId){
         if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId){
             super.selectTrigger(itemId);
+            $('[id*=meetingArrangementsCollection] .actionsMenu').hide();
             this.$casesPanel.find('[id*=container]')
-                .replaceWith(new CasesCollapsible('casesCollapsible').$dom)
+                .replaceWith(new CasesCollection({ id: 'casesListCollection' + itemId, 
+                                                        title: '',
+                                                        parentDataItem: this.connectedRepository.currentItem,
+                                                        addNewModal: this.addNewCaseModal,
+                                                        editModal: this.editCaseModal,
+                                                      }, 
+                                                     ).$dom)
         }
     }
 }

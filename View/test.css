@@ -30,7 +30,20 @@ iframe {
     margin-bottom: 0;
 }
 .collection-item .title{
-    font-weight: bold;
+    font-weight: 300;
+    font-size: 1.2em;
+}
+
+.collection-title{
+    font-weight: 300;
+    font-size: 1.1em;
+    color: #26a69a;
+}
+
+.scrumBoard .collection-title{
+    font-weight: 300;
+    font-size: 1.1em;
+    color: #595959;
 }
 
 .collection-item p{

@@ -49,7 +49,7 @@ class ContractsCollapsible extends SimpleCollapsible {
                 .attr('id', 'collapsibleBodyForContract' + dataItem.id)
                 .attr('contractid',dataItem.id)
                 .append(new MilestonesCollection({  id: 'milestonesListCollection' + dataItem.id, 
-                                                    title: "",
+                                                    title: "Kamienie milowe",
                                                     addNewModal: this.addNewMilestoneModal,
                                                     editModal: this. editMilestoneModal,
                                                     parentDataItem: dataItem

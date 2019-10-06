@@ -49,14 +49,10 @@ class ContractsCollapsible extends SimpleCollapsible {
      * 
      */
     selectTrigger(itemId){
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard'); 
-        if (itemId !== undefined && 
-            this.connectedRepository.currentItem.id != itemId ||
-            !isDashboardLoaded){
-            
+        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId){
             super.selectTrigger(itemId);
-            $('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-    
+            this.$casesPanel.find('[id*=container]').children().remove();
+            $('[id*=meetingArrangementsCollection] .actionsMenu').hide();
         }
     }
 }

@@ -38,9 +38,9 @@ class Collection {
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
         this.$dom = $('<div>')
-                .attr('id', 'container' + '_' + this.id);
-
-        this.$actionsMenu = $('<div >')
+                .attr('id', 'container' + '_' + this.id)
+                .addClass('collection-container');
+        this.$actionsMenu = $('<div>')
                .attr('id', 'actionsMenu' + '_' + this.id)
                .addClass('cyan lighten-5')
                .addClass('actionsMenu');
@@ -73,8 +73,9 @@ class Collection {
     buildDom(){    
         this.$collection = $('<ul class="collection">');                
         if (this.title) 
-            this.$dom.append(this.title);
-        this.$dom.append(this.$actionsMenu)
+            this.$dom.append('<div class="collection-title">' + this.title + '</div>');
+        this.$dom
+                .append(this.$actionsMenu)
                 .append(this.$collection);
         this.buildCollectionDom();
     }
@@ -226,12 +227,15 @@ class Collection {
         var _this = this;
         //wyłącz klasę active
         this.$dom.find("li").mousedown(function() {   
+                //jeżeli collection nalezy do collapsible trzeba wyczyścić pozostałe kolekcie w innych pozycjach collapsible
                 if ($(this).closest('.collapsible-item').length>0){
                     $(this).closest('.collapsible').find('.collection-item.active').removeClass('active');
-                    $(this).closest('.collapsible').find('.collection-item > .crudButtons').css('display', 'none')
+                    $(this).closest('.collapsible').find('.collection-item > .crudButtons').css('display', 'none');
                 }
+                //jeżeli collection jest bez collapsible zajmuje się tylko sama sobą
                 else {
                     $(this).closest('.collection').children('.active').removeClass('active');
+                    $(this).closest('.collection').find('.collection-item > .crudButtons').css('display', 'none');
                 }
                 $(this)
                     .addClass('active')

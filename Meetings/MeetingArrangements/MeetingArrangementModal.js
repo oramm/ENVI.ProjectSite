@@ -9,7 +9,7 @@ class MeetingArrangementModal extends Modal {
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko')
-        this.ownerAutoCompleteTextField.initialise(MeetingsSetup.personsRepository,"nameSurnameEmail", undefined, this);
+        this.ownerAutoCompleteTextField.initialise(MeetingsSetup.personsRepository,'nameSurnameEmail', undefined, this);
         
         this.formElements = [
             {   input: new InputTextField(this.id + 'nameTextField','Nazwa', undefined, false, 150),

@@ -56,19 +56,19 @@ class GAuth2 {
      *  appropriately. After a sign-in, the API is called.
      */
     updateSigninStatus(isSignedIn) {
+        var _this = this;
         if (isSignedIn) {
             var mainController = new MainController();
             mainController.main();
-            this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
+            _this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
             //personRolesController = new PersonRolesController();
             //personRolesController.main();
           } else {
-                $("#content").hide();
-                $("#authorize-div").show();
-                //Button for the user to click to initiate auth sequence
-                var loginButton = FormTools.createRaisedButton('Zaloguj się', ()=> this.handleAuthClick(event) );
-                $("#authorize-div .row").append(loginButton);
-                
+            $("#content").hide();
+            $("#authorize-div").show();
+            //Button for the user to click to initiate auth sequence
+            var loginButton = new RaisedButton('Zaloguj się', ()=> _this.handleAuthClick(event)).$dom;
+            $("#authorize-div .row").append(loginButton);
             
                 //signoutButton.style.display = 'none';
           }

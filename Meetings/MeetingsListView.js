@@ -34,7 +34,6 @@ class MeetingsListView extends Popup {
     this.$meetingsPanel
         .append(this.makeSubTittle('Spotkania'))
         .append(new MeetingsCollapsible('meetingsCollapsible').$dom);
-        
     }
     
 }

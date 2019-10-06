@@ -1006,7 +1006,6 @@ class SwitchInput{
     }
     
     setChangeAction(){
-        
         var _this=this;
         this.$dom.find("input[type=checkbox]").on("change",function() {
                 _this.value = $(this).prop('checked');
@@ -1060,6 +1059,25 @@ class Badge{
             .addClass('new badge')
             .addClass(this.bgColor)
             .html(this.caption);
+    }
+}
+//kopatybilny z FormTools_mcss1.0
+class RaisedButton{
+    constructor(caption, onClickFunction, viewObject){
+        this.caption = caption;
+        this.onClickFunction = onClickFunction;
+        this.viewObject = viewObject;
+        this.$dom;
+        this.buidDom();
+    }
+    buidDom(){
+        this.$dom = $('<input>');
+        this.$dom
+                .attr('type','button')
+                .attr('value', this.caption)
+                .addClass('waves-effect waves-teal btn')
+       
+        this.$dom.click(()=>this.onClickFunction.apply(this.viewObject,[]));
     }
 }
 
@@ -1167,16 +1185,6 @@ class FormTools{
                                'class="waves-effect waves-teal btn-flat"' +
                         '/>');
         $button.click(function() {onClickFunction.apply(viewObject,[])});
-        return $button;
-    }
-    //kopatybilny z FormTools_mcss1.0 
-    static createRaisedButton(caption, onClickFunction,viewObject){
-        var $button = $('<input type="button" ' +
-                               'value="' + caption  +'" ' + 
-                               'class="waves-effect waves-teal btn"' +
-                        '/>');
-        
-        $button.click(onClickFunction.apply(viewObject,[]));
         return $button;
     }
     static createModalTriggerIcon(id, icon){

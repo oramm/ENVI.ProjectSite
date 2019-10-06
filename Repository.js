@@ -107,7 +107,7 @@ class Repository {
 
             op
               .then((resp) => this.handleDoServerFunction(resp.result))
-              .then((result) => {   console.log(this.name + 'items from db: %o ', result);
+              .then((result) => {   console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
                                     resolve(result);
                                 })
               .catch(err => {   console.error (serverFunctionName, err);

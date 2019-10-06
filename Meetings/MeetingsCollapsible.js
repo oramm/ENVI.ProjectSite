@@ -37,14 +37,26 @@ class MeetingsCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
-        var $descriptionLabel = $((dataItem.description)?'<BR>' + dataItem.description  : '');
+        var descriptionLabel = (dataItem.description)? '<div class="row">' + dataItem.description + '</div>'  : '';
+        var title;
+        var $meetingProtocolButton = $('<div class="row">')
+        if(!dataItem._documentEditUrl){
+            title = 'Agenda';
+            $meetingProtocolButton
+                .append(new RaisedButton('Generuj notatkę',this.createProtocolAction,this).$dom);
+        } else {
+            title = 'Ustalenia';
+            $meetingProtocolButton
+                .append(new RaisedButton('Popraw notatkę',this.createProtocolAction,this).$dom)
+        }
         
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBody' + dataItem.id)
                 .attr('meetingId',dataItem.id)
-                .append($descriptionLabel)
+                .append($meetingProtocolButton)
+                .append(descriptionLabel)
                 .append(new MeetingArrangementsCollection({id: 'meetingArrangementsCollection_' + dataItem.id, 
-                            title: "Agenda/Ustalenia",
+                            title: title,
                             addNewModal: this.addNewMeetingArrangementModal,
                             editModal: this.editMeetingArrangementModal,
                             parentDataItem: dataItem,
@@ -59,5 +71,10 @@ class MeetingsCollapsible extends SimpleCollapsible {
     selectTrigger(itemId){
         super.selectTrigger(itemId);
         //$('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-        }
+    }
+    
+    createProtocolAction(){
+        MeetingsSetup.meetingsRepository.currentItem._project = MeetingsSetup.currentProject;
+        MeetingsSetup.meetingsRepository.doFunctionOnItem(MeetingsSetup.meetingsRepository.currentItem, 'createMeetingProtocol',this);
+    }
 }

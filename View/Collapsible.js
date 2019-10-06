@@ -120,7 +120,7 @@ class Collapsible {
         return row;
     }
     
-     /*
+    /*
      * Ustawia pryciski edycji wierszy
      */       
     addRowCrudButtons(row){

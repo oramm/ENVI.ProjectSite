@@ -1,4 +1,4 @@
-class MilestonesCollection extends SimpleCollection {
+class CasesCollection extends SimpleCollection {
     constructor(initParamObject){
         super({id: initParamObject.id,
                parentDataItem: initParamObject.parentDataItem,
@@ -7,13 +7,14 @@ class MilestonesCollection extends SimpleCollection {
                editModal: initParamObject.editModal,
                isPlain: true, 
                hasFilter: true,
-               isEditable: true, 
+               isEditable: false, 
                isAddable: true, 
-               isDeletable: true,
+               isDeletable: false,
                isSelectable: true,
-               connectedRepository: MilestonesSetup.milestonesRepository
+               connectedRepository: MeetingsSetup.casesRepository
               });
-        this.initialise(this.makeList());        
+        
+        this.initialise(this.makeList());
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -34,7 +35,11 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name, 
+        var folderNumber =  (dataItem._type.folderNumber)? dataItem._type.folderNumber : ' ';
+        var typeName = (dataItem._type.name)? dataItem._type.name : '[Nie przypisano typu]';
+        var name = (dataItem.name)? dataItem.name : ' ';
+        var caseNumber = (dataItem._displayNumber)? ' ' + dataItem._displayNumber + ' ' : '';
+        var titleAtomicEditLabel = new AtomicEditLabel(folderNumber + ' ' + typeName + ' | ' + caseNumber + name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
@@ -45,23 +50,10 @@ class MilestonesCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.currentItem
      */
     makeDescription(dataItem){
-        (dataItem.description)? true : dataItem.description="";
-        
         var $collectionElementDescription = $('<span>');
-        //TODO: kiedyś dodać edyzcję dat
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, 
-                                                        dataItem, 
-                                                        new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField','Termin wykonania', true),
-                                                        'deadline',
-                                                        this);
-        
-        (dataItem.status)? true : dataItem.status="";
+
         if(dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
-        $collectionElementDescription
-            .append('<span>' + dataItem.startDate + ' - ' + dataItem.endDate + '<BR></span>')
-            //.append(deadlineAtomicEditLabel.$dom)
-            .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         
         return $collectionElementDescription;
     }
@@ -74,11 +66,9 @@ class MilestonesCollection extends SimpleCollection {
     }
     
     selectTrigger(itemId){
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
-        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
-            isDashboardLoaded){
+        if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId){
             super.selectTrigger(itemId);
-            //$('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+            $('[id*=meetingArrangementsCollection] .actionsMenu').show();
         }
     }
 }

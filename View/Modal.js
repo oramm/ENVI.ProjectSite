@@ -83,7 +83,7 @@ class Modal {
         var _this = this;
         $button.click(    function(){   //_this.connectWithResultsetComponent(connectedResultsetComponent);
                                         //_this.initAddNewData();
-                                        _this. triggerAction(connectedResultsetComponent)
+                                        _this.triggerAction(connectedResultsetComponent)
                                     });
         $uiElelment.prepend($button);
     }

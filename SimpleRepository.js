@@ -55,10 +55,11 @@ class SimpleRepository extends Repository {
     }
     
     //Krok 2 - wywoływana przy SUBMIT
-    editItem(person, viewObject) {
+    editItem(dataItem, viewObject) {
+        return this.doFunctionOnItem(dataItem, this.editServerFunctionName, viewObject);
         return new Promise((resolve, reject) => {
-            super.editItem(person,this.editServerFunctionName, viewObject)
-                  .then((res) => {  var newIndex = this.items.findIndex( item => item.id == res.id
+            super.editItem(dataItem,this.editServerFunctionName, viewObject)
+                  .then((res) => {  var newIndex = this.items.findIndex(item => item.id == res.id
                                                       ); 
                                     this.items[newIndex] = res;
                                     console.log('zmieniono dane : ', res);
@@ -77,6 +78,20 @@ class SimpleRepository extends Repository {
                                     console.log('usunięto: ', res)
                                     resolve(this.name + ': item deleted');
                            });
+        });
+    }
+    
+    /*
+     * wykonuje dowolną funkcję z serwera dotyczącą danej pozycji na liście viewObject
+     */
+    doFunctionOnItem(dataItem, serverFunctionName, viewObject) {
+        return new Promise((resolve, reject) => {
+            super.editItem(dataItem,serverFunctionName, viewObject)
+                  .then((res) => {  var newIndex = this.items.findIndex(item => item.id == res.id
+                                                      ); 
+                                    this.items[newIndex] = res;
+                                    console.log('wykonano funkcję: %s', serverFunctionName, res);
+                                 })
         });
     }
 };

@@ -14,7 +14,7 @@ class MeetingArrangementsCollection extends SimpleCollection {
                connectedRepository: MeetingsSetup.meetingArrangementsRepository
               });
         this.initialise(this.makeList());
-        
+        this.$actionsMenu.hide();
         //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
         
     }
@@ -48,12 +48,28 @@ class MeetingArrangementsCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.currentItem
      */
     makeDescription(dataItem){
-        (dataItem.description)? true : dataItem.description="";
+        if(!dataItem.description)
+            dataItem.description='';
         
         var $collectionElementDescription = $('<span>');
+        var $footer = $('<span class="comment">');
         if(dataItem.description)
-            $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
+            $collectionElementDescription.append('<span>' + dataItem.description + '<br><span>');
         
+        var deadlineLabel = '';
+        if(dataItem.deadline){
+            deadlineLabel = 'Wykonać do: ' + dataItem.deadline + '&#9889;';
+            $footer.append(deadlineLabel);
+        }
+        
+        var ownerLabel = '';
+        if(dataItem._owner){
+            ownerLabel = 'Przypisane do:&nbsp;' + dataItem._owner.name + '&nbsp;' + dataItem._owner.surname;
+            $footer.append(' ' + ownerLabel);
+        }
+
+        $collectionElementDescription
+            .append($footer);
         return $collectionElementDescription;
     }
     
@@ -64,13 +80,6 @@ class MeetingArrangementsCollection extends SimpleCollection {
     }
     
     selectTrigger(itemId){
-        //var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
-        //if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
-        //    isDashboardLoaded){
-        
         super.selectTrigger(itemId);
-        //$('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
-        
-        //}
     }
 }

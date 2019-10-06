@@ -55,12 +55,13 @@ class LettersCollapsible extends SimpleCollapsible {
             $caseLi.html(caseLabel);
             $casesUl.append($caseLi);
         }
+        var timestamp  = (dataItem._lastUpdated)? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBody' + dataItem.id)
                 .attr('letterId',dataItem.id)
                 .append($('<strong>Dotyczy spraw:</stron>'))
                 .append($casesUl)
-                .append($('<span class="comment">Ostania zmiana danych pisma: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
+                .append($('<span class="comment">Ostania zmiana danych pisma: ' + timestamp + ' ' +
                            'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
                 
         return $panel;

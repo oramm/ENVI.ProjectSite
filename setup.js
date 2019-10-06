@@ -45,7 +45,7 @@ class Setup {
                 break;
         }
         var $link = $('<a  target="_blank">');
-        $link.attr('href',url);
+        if (url) $link.attr('href',url);
         var $img = $('<img height=21px>');
         $img.attr('src',icon);
         
