@@ -42,7 +42,7 @@ class OurContractModal extends Modal {
             {   input: new DatePicker(this.id + 'endDatePickerField','Termin wykonania', true),
                 dataItemKeyName: 'endDate'
             },
-            {   input: new InputTextField (this.id + 'valueTextField','Wartość umowy', undefined, true, 20),
+            {   input: new InputTextField (this.id + 'valueTextField','Wartość umowy netto', undefined, true, 20),
                 dataItemKeyName: 'value'
             },
             {   input: this.statusSelectField,

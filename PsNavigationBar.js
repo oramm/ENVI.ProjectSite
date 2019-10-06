@@ -21,6 +21,9 @@ class PsNavigationBar extends NavigationBar {
                           { caption: "Kontrakty", 
                             link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
+                          { caption: "Pisma", 
+                            link: 'Letters/LettersList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          },
                           { caption: "Spotkania", 
                             link: 'Meetings/MeetingsList.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
@@ -29,10 +32,7 @@ class PsNavigationBar extends NavigationBar {
                           },
                           { caption: "Zarządzaj rolami", 
                             link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.ourId
-                          },
-                          { caption: "Pisma", 
-                            link: 'Letters/LettersList.html?parentItemId=' + projectsRepository.currentItem.ourId
-                          },
+                          }
                           //{ caption: "Gant", 
                           //  link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.ourId
                           //}
