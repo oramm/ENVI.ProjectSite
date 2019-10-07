@@ -37,7 +37,7 @@ class MeetingArrangementsCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem){
-        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._case._type.folderNumber + ' ' + dataItem._case._type.name + ' ' + dataItem.name, 
+        var titleAtomicEditLabel = new AtomicEditLabel( dataItem._case._parent._parent.number + ' ' + dataItem._case._type.folderNumber + ' ' + dataItem._case._type.name + ' ' + dataItem.name, 
                                                         dataItem, 
                                                         new InputTextField (this.id +  '_' + dataItem.id + '_tmpNameEdit_TextField','Edytuj', undefined, true, 150),
                                                         'name',
