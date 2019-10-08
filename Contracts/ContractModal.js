@@ -3,16 +3,16 @@ class ContractModal extends Modal {
         super(id, tittle, connectedResultsetComponent, mode);
         
         var notOurTypes = ContractsSetup.contractTypesRepository.items.filter(item=>!item.isOur)
-        this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', true);
+        this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(notOurTypes, 'name');
         
         this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 300);
         
-        this.ourIdRelatedSelectField = new SelectField(this.id + '_ourIdRelated_SelectField', 'Powiązana usługa IK lub PT', true);
+        this.ourIdRelatedSelectField = new SelectField(this.id + '_ourIdRelated_SelectField', 'Powiązana usługa IK lub PT', undefined, true);
         this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdName');
-        this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', true);
+        this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
-        this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', true);
+        this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', undefined, true);
         this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
         
         this.formElements = [

@@ -20,7 +20,7 @@ class Tools{
         if(typeof timestamp === 'string')
             timestamp = new Date(timestamp);
         var day = this.addZero(timestamp.getDate());
-        var month = this.addZero(timestamp.getMonth());
+        var month = this.addZero(timestamp.getMonth()+1);
         var year = timestamp.getFullYear();
         var h = this.addZero(timestamp.getHours());
         var m = this.addZero(timestamp.getMinutes());

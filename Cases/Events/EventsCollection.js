@@ -52,7 +52,7 @@ class EventsCollection extends SimpleCollection {
             dataItem.description="";
         
         var name='';
-        name += 'Pismo: ' + dataItem.description + ' ';
+        name += '<strong>' + dataItem.creationDate +'</strong> Pismo: ' + dataItem.description + ' ';
         return name;
     }
     /*
@@ -63,7 +63,7 @@ class EventsCollection extends SimpleCollection {
             dataItem.description="";
         
         var name='';
-        name += 'Ustalenie ze spotkania: ' + dataItem.name + ' ';
+        name += '<strong>' + dataItem._parent.date +'</strong> Ustalenie ze spotkania: ' + dataItem.name + ' ';
         return name;
     }
     /*
@@ -73,8 +73,7 @@ class EventsCollection extends SimpleCollection {
         var description ='';
         description += (dataItem.isOur)? 'Do:&nbsp;' : 'Od:&nbsp;'; 
         description += dataItem.entityName + '<br>';
-        description += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
-        description += 'Utworzono:&nbsp;<strong>' + dataItem.creationDate +'</strong>, ';
+        description += 'Numer&nbsp;' + dataItem.number + ', ';
         description += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         description += '<strong>' + dataItem.registrationDate + '</strong>, ';
         var $collectionElementDescription = $('<span>');
@@ -92,8 +91,7 @@ class EventsCollection extends SimpleCollection {
     makeMeetingArrangementDescription(dataItem){
         var description ='';
         description += dataItem.description + '<br>';
-        description += 'Notatka z dnia:&nbsp;<strong>' + dataItem._parent.date +'</strong>, ';
-        description += 'Termin wykonania<strong>' + dataItem._parent.date + '</strong>, ';
+        description += 'Termin wykonania <strong>' + dataItem._parent.date + '</strong>, ';
         
         var $collectionElementDescription = $('<span>');
         $collectionElementDescription
