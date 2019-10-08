@@ -25,17 +25,29 @@ class EventsCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeItem(dataItem){
+        var title, $description;
+        switch (dataItem._eventType) {
+            case 'LETTER' :
+                title = this.makeLetterTitle(dataItem);
+                $description = this.makeLetterDescription(dataItem);
+                break;
+            case 'MEETING_ARRENGEMENT' :
+                title = this.makeMeetingArrangementTitle(dataItem);
+                $description = this.makeMeetingArrangementDescription(dataItem);
+                break;
+        }
+                    
         return {    id: dataItem.id,
                     icon:   undefined,
-                    $title:  this.makeTitle(dataItem),
-                    $description: this.makeDescription(dataItem),
+                    $title:  title,
+                    $description: $description,
                     dataItem: dataItem
                 };
     }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    makeTitle(dataItem){
+    makeLetterTitle(dataItem){
         if (!dataItem.description) 
             dataItem.description="";
         
@@ -44,9 +56,20 @@ class EventsCollection extends SimpleCollection {
         return name;
     }
     /*
+     * @param {dataItem} this.connectedRepository.items[i])
+     */
+    makeMeetingArrangementTitle(dataItem){
+        if (!dataItem.description) 
+            dataItem.description="";
+        
+        var name='';
+        name += 'Ustalenie ze spotkania: ' + dataItem.name + ' ';
+        return name;
+    }
+    /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    makeDescription(dataItem){
+    makeLetterDescription(dataItem){
         var description ='';
         description += (dataItem.isOur)? 'Do:&nbsp;' : 'Od:&nbsp;'; 
         description += dataItem.entityName + '<br>';
@@ -60,6 +83,23 @@ class EventsCollection extends SimpleCollection {
             .append($('<span>' + description + '</span><br>'))
             .append($('<span class="comment">Ostania zmiana danych pisma: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
                            'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
+        
+        return $collectionElementDescription;
+    }
+    /*
+     * @param {dataItem} this.connectedRepository.currentItem
+     */
+    makeMeetingArrangementDescription(dataItem){
+        var description ='';
+        description += dataItem.description + '<br>';
+        description += 'Notatka z dnia:&nbsp;<strong>' + dataItem._parent.date +'</strong>, ';
+        description += 'Termin wykonania<strong>' + dataItem._parent.date + '</strong>, ';
+        
+        var $collectionElementDescription = $('<span>');
+        $collectionElementDescription
+            .append($('<span>' + description + '</span><br>'))
+            .append($('<span class="comment">Ostania zmiana danych: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
+                           'przez&nbsp;' + dataItem._owner.name + '&nbsp;' + dataItem._owner.surname + '</span>'));
         
         return $collectionElementDescription;
     }
