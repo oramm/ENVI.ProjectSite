@@ -1,6 +1,7 @@
 class ContractModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
+        this.controller = new ContractModalController(this);
         
         var notOurTypes = ContractsSetup.contractTypesRepository.items.filter(item=>!item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
@@ -12,8 +13,18 @@ class ContractModal extends Modal {
         this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdName');
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
+        
+        this.contractorAutoCompleteTextField = new AutoCompleteTextField(this.id+'_contractorAutoCompleteTextField',
+                                                                     'Dodaj wykonawcę', 
+                                                                     'business', 
+                                                                     false, 
+                                                                     'Wybierz nazwę')
+        this.contractorAutoCompleteTextField.initialise(ContractsSetup.entitiesRepository,'name',this.controller.onContractorChosen,this.controller);
+        this.selectedContractorsHiddenInput = new HiddenInput (this.id + '_currentContractorsHiddenInput', undefined, false);
+        
         this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', undefined, true);
         this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
+        var _this=this;
         
         this.formElements = [
             {   input: this.typeSelectField,
@@ -44,6 +55,17 @@ class ContractModal extends Modal {
             {   input: this.commentReachTextArea,
                 dataItemKeyName: 'comment'
             },
+            {   input: this.contractorAutoCompleteTextField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnego wykonawcy, możesz to pole zignorować' : '',
+                dataItemKeyName: '_contractor'
+            },
+            {   input: this.selectedContractorsHiddenInput,
+                dataItemKeyName: '_contractors',
+                //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+                refreshDataSet(){
+                    _this.controller.contractorsChipsRefreshDataSet();
+                }
+            },
             {   input: this.fidicTypeSelectField,
                 dataItemKeyName: 'fidicType'
             }
@@ -61,8 +83,6 @@ class ContractModal extends Modal {
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
     initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem = {
-            projectId: this.connectedResultsetComponent.connectedRepository.parentItemId
-        };
+        this.controller.initAddNewDataHandler();
     }
 };

@@ -56,6 +56,13 @@ class LetterModalController {
         var registrationDateLabel = (isOur)? 'Data nadania' : 'Data wpływu';
         resultsetComponent.registrationDatePicker.setLabel(registrationDateLabel);
         resultsetComponent.controller.numberRefreshDataSet(isOur);
+        
+        if(isOur){
+            resultsetComponent.controller.modal.templateSelectField.$dom.show();
+        } else {
+            resultsetComponent.controller.modal.templateSelectField.$dom.hide();
+            LettersSetup.documentTemplatesRepository.currentItem = undefined;
+        }
     }
     
     onContractChosen(chosenItem){
@@ -126,7 +133,7 @@ class LetterModalController {
                 
     //usuwa caseItem z listy HiddenInput.value[]
     removeCaseItem(caseDataItem){
-        var index = Tools.arrGetIndexOf(this.input.value, 'id', caseDataItem); 
+        var index = Tools.arrGetIndexOf(this.input.value, 'id', caseDataItem.id); 
         this.modal.selectedCasesHiddenInput.value.splice(index, 1);
     }
     

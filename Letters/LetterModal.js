@@ -6,9 +6,12 @@ class LetterModal extends Modal {
         this.contractSelectField = new SelectField(this.id + '_contractSelectField', 'Kontrakt', undefined, false);
         this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name',this.controller.onContractChosen, this.controller);
         
+        this.templateSelectField = new SelectField(this.id + '_templateSelectField', 'Szablon', undefined, false);
+        this.templateSelectField.initialise(LettersSetup.documentTemplatesRepository.items, 'name',this.controller.onTemplateChosen, this.controller);
+        
         this.milestoneSelectField = new SelectField(this.id + '_milestoneSelectField', 'Kamień Milowy', undefined, false);
         this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);
-        this.selectedCasesHiddenInput = new HiddenInput (this.id + '_currentCasesHiddenInput');
+        this.selectedCasesHiddenInput = new HiddenInput (this.id + '_currentCasesHiddenInput', undefined, false);
         this.numberInputTextField = new InputTextField (this.id + 'numberTextField','Numer pisma', undefined, false, 25);
         this.entityNameReachTextArea = new ReachTextArea (this.id + '_entityNameReachTextArea','Nadawca', true, 300);
         this.registrationDatePicker = new DatePicker(this.id + '_registrationDatePickerField','Data wpływu', undefined, true);
@@ -21,6 +24,9 @@ class LetterModal extends Modal {
                 refreshDataSet(){
                     _this.controller.onLetterTypeChosen(LettersSetup.lettersRepository.currentItem.isOur, _this);
                 }
+            },
+            {   input: this.templateSelectField,
+                dataItemKeyName: '_tempate',
             },
             {   input: this.contractSelectField,
                 description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',

@@ -22,15 +22,18 @@ class ContractsController {
                                                                     'editContract',
                                                                     'deleteContract');
         
-        ContractsSetup.personsRepository = new SimpleRepository('Persons repository',
-                                                                'getPersonsNameSurnameEmailList',
-                                                                );
-        
-        
         MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
                                                                         'getMilestoneTypesList'
                                                                        );
                                                                                          
+        ContractsSetup.personsRepository = new SimpleRepository('Persons repository',
+                                                                'getPersonsNameSurnameEmailList',
+                                                                );
+                                                                
+        ContractsSetup.entitiesRepository = new SimpleRepository('Entities repository',
+                                                                'getEntitiesList',
+                                                                );
+                                                                
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
 
         var promises = [];
@@ -38,7 +41,8 @@ class ContractsController {
         promises[1] = milestonesRepository.initialise({projectId: milestonesRepository.parentItemId});
         promises[2] = contractsRepository.initialise({projectId: contractsRepository.parentItemId});
         promises[3] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
-        promises[4] = MilestonesSetup.milestoneTypesRepository.initialise(contractsRepository.parentItemId);
+        promises[4] = ContractsSetup.entitiesRepository.initialise();
+        promises[5] = MilestonesSetup.milestoneTypesRepository.initialise(contractsRepository.parentItemId);
         
         Promise.all(promises)
             .then(()=>ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items))

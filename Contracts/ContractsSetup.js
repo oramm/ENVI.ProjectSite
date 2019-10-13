@@ -2,6 +2,7 @@ var contractTypesRepository;
 var contractsRepository;
 var otherContractsRepository;
 var personsRepository;
+var entitiesRepository;
 
 const statusNames = [   'Nie rozpoczęty',
                         'W trakcie',
@@ -50,4 +51,10 @@ class ContractsSetup {
         personsRepository = data;
     }
     
+    static get entitiesRepository() {
+        return entitiesRepository;
+    }
+    static set entitiesRepository(data) {
+        entitiesRepository = data;
+    }
 }

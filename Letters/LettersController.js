@@ -30,6 +30,9 @@ class LettersController {
         LettersSetup.personsRepository = new SimpleRepository('Persons repository',
                                                               'getPersonsNameSurnameEmailList',
                                                              );
+        LettersSetup.documentTemplatesRepository = new SimpleRepository('DocumentTemplates repository',
+                                                                      'getDocumentTemplatesList',
+                                                                     );
         var promises = [];
         promises[0] = LettersSetup.lettersRepository.initialise({projectId: LettersSetup.lettersRepository.parentItemId});
         promises[1] = LettersSetup.contractsRepository.initialise({projectId: LettersSetup.lettersRepository.parentItemId});
@@ -37,6 +40,7 @@ class LettersController {
         promises[3] = LettersSetup.casesRepository.initialise({projectId: LettersSetup.lettersRepository.parentItemId});
         promises[4] = LettersSetup.caseTypesRepository.initialise();
         promises[5] = LettersSetup.personsRepository.initialise({projectId: LettersSetup.lettersRepository.parentItemId});
+        promises[6] = LettersSetup.documentTemplatesRepository.initialise();
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

@@ -95,6 +95,10 @@ class AutoCompleteTextField {
             }
         }
     }
+    clearChosenItem(){
+        this.chosenItem = undefined;
+        this.$dom.children('input').val('');
+    }
 }
 
 class SelectField{
@@ -272,10 +276,11 @@ class Chip {
  * @type type
  */
 class HiddenInput {
-    constructor(id, name, value){
+    constructor(id, name, value, isRequired){
         this.id = id;
         this.name = (name)? name : id;
         this.value = value;
+        this.isRequired = isRequired;
         this.$dom;
         this.buildDom();
     }
@@ -289,7 +294,7 @@ class HiddenInput {
     }
     
     setValue(value){
-        this.value = value
+        this.value = value;
     }
     
     getValue(){
@@ -297,8 +302,8 @@ class HiddenInput {
     }
     
     validate() {
-        var test = this.value !== undefined && this.value.length > 0 && this.value !== {};
-        if (test == false) {
+        var test = !this.isRequired || this.value !== undefined && this.value.length > 0 && this.value !== {};
+        if (!test) {
             this.$dom.addClass('invalid');
         } else {
             this.$dom.removeClass('invalid');

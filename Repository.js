@@ -52,7 +52,7 @@ class Repository {
     }
     
     set currentItem(item) {
-        if (!item || typeof item !== 'object') throw new Error("Selected repository item must be an object!");
+        if (typeof item !== 'object') throw new Error("Selected repository item must be an object!");
         //nie przesyłamy do repozytorium blobów z FileInput
         delete item._blobEnviObjects;
         this.currentItemLocalData = item;
