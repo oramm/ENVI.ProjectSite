@@ -14,6 +14,9 @@ class ContractModal extends Modal {
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
         
+        this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', undefined, true);
+        this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
+        
         this.contractorAutoCompleteTextField = new AutoCompleteTextField(this.id+'_contractorAutoCompleteTextField',
                                                                      'Dodaj wykonawcę', 
                                                                      'business', 
@@ -22,8 +25,14 @@ class ContractModal extends Modal {
         this.contractorAutoCompleteTextField.initialise(ContractsSetup.entitiesRepository,'name',this.controller.onContractorChosen,this.controller);
         this.selectedContractorsHiddenInput = new HiddenInput (this.id + '_currentContractorsHiddenInput', undefined, false);
         
-        this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', undefined, true);
-        this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
+        this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id+'_employerAutoCompleteTextField',
+                                                                     'Dodaj zamawiającego', 
+                                                                     'business', 
+                                                                     false, 
+                                                                     'Wybierz nazwę')
+        this.employerAutoCompleteTextField.initialise(ContractsSetup.entitiesRepository,'name',this.controller.onEmployerChosen,this.controller);
+        this.selectedEmployersHiddenInput = new HiddenInput (this.id + '_currentEmployersHiddenInput', undefined, false);
+        
         var _this=this;
         
         this.formElements = [
@@ -64,6 +73,17 @@ class ContractModal extends Modal {
                 //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
                 refreshDataSet(){
                     _this.controller.contractorsChipsRefreshDataSet();
+                }
+            },
+            {   input: this.employerAutoCompleteTextField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnego zamawiającego, możesz to pole zignorować' : '',
+                dataItemKeyName: '_employer'
+            },
+            {   input: this.selectedEmployersHiddenInput,
+                dataItemKeyName: '_employers',
+                //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+                refreshDataSet(){
+                    _this.controller.employersChipsRefreshDataSet();
                 }
             },
             {   input: this.fidicTypeSelectField,

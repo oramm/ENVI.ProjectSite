@@ -15,6 +15,10 @@ const fidicTypes = [   'Nie dotyczy',
                         'Żółty'
                     ];
 class ContractsSetup {
+    static get currentProject() {
+        return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+    }
+    
     static get contractTypesRepository() {
         return contractTypesRepository;
     }
