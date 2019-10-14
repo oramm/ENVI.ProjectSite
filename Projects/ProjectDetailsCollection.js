@@ -58,31 +58,63 @@ class ProjectDetailsCollection extends Collection {
         
         itemsList[0] = new CollectionItem('projectId',
                                            'info', //icon
-                                           window.parent.projectsRepository.currentItem.id,
+                                           window.parent.projectsRepository.currentItem.ourId,
                                            window.parent.projectsRepository.currentItem.name
                                           );
-        itemsList[1] = new CollectionItem('projectId',
-                                           'date_range', //icon
-                                           window.parent.projectsRepository.currentItem.status,
-                                           window.parent.projectsRepository.currentItem.startDate + '<BR>' +
-                                           window.parent.projectsRepository.currentItem.endDate
+        itemsList[1] = new CollectionItem(  'employers',
+                                            'business', //icon
+                                            'Podmioty zarządzające',
+                                            this.makeEmployersDescription() + '<br>' + this.makeEngineersDescription()
                                           );
         itemsList[2] = new CollectionItem('projectId',
+                                           'date_range', //icon
+                                           window.parent.projectsRepository.currentItem.status,
+                                           'Rozpoczęcie: ' + window.parent.projectsRepository.currentItem.startDate + '<BR>' +
+                                           'Zakończenie: ' + window.parent.projectsRepository.currentItem.endDate
+                                          );
+        itemsList[3] = new CollectionItem('technicalDescription',
                                            'info', //icon
-                                           window.parent.projectsRepository.currentItem.comment,
-                                           ''
+                                           'Zakres rzeczowy',
+                                           window.parent.projectsRepository.currentItem.comment
                                           );
         var totalValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.totalValue);
         var qualifiedValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.qualifiedValue);
         var dotationValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.dotationValue);
-        itemsList[3] = new CollectionItem('projectId',
+        itemsList[4] = new CollectionItem('financialDescription',
                                            'euro_symbol', //icon
+                                           'Dane finansowe',
                                            'Wartość całkowita netto: ' + totalValue  + '<BR>' +
                                            'Wydatki kwalifikowalne: ' + qualifiedValue  + '<BR>' +
                                            'Wartość dotacji: ' + dotationValue,
                                            window.parent.projectsRepository.currentItem.financialComment
                                           );
         return itemsList;
+    }
+    
+    makeEmployersDescription(){
+        var description ='';
+        if(this.connectedRepository.currentItem._employers.length>0){
+            description = 'Zamawiający/Beneficjent: '
+            for (var i=0; i<this.connectedRepository.currentItem._employers.length; i++){
+                description += this.connectedRepository.currentItem._employers[i].name;
+                if( this.connectedRepository.currentItem._employers[i].address)
+                    description += ', ' + this.connectedRepository.currentItem._employers[i].address;
+            }
+        }
+        return description;
+    }
+    
+    makeEngineersDescription(){
+        var description ='';
+        if(this.connectedRepository.currentItem._engineers.length>0){
+            description = 'Inżynier: ';
+            for (var i=0; i<this.connectedRepository.currentItem._engineers.length; i++){
+                description += this.connectedRepository.currentItem._engineers[i].name;
+                if( this.connectedRepository.currentItem._engineers[i].address)
+                    description += ', ' + this.connectedRepository.currentItem._engineers[i].address;
+            }
+        }
+        return description;
     }
     
     makeItem(dataItem){

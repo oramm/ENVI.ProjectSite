@@ -52,15 +52,21 @@ class ContractsController {
             .then(  ()=>{   $('select').material_select();
                             $('.modal').modal();
                             $('.datepicker').pickadate({
-                                selectMonths: true, // Creates a dropdown to control month
-                                selectYears: 15, // Creates a dropdown of 15 years to control year,
-                                today: 'Dzisiaj',
-                                clear: 'Wyszyść',
-                                close: 'Ok',
-                                closeOnSelect: false, // Close upon selecting a date,
-                                container: undefined, // ex. 'body' will append picker to body
-                                format: 'dd-mm-yyyy'
-                            });
+                                    selectMonths: true, // Creates a dropdown to control month
+                                    selectYears: 15, // Creates a dropdown of 15 years to control year,
+                                    monthsFull: [ 'styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień' ],
+                                    monthsShort: [ 'sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru' ],
+                                    weekdaysFull: [ 'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota' ],
+                                    weekdaysShort: [ 'niedz.', 'pn.', 'wt.', 'śr.', 'cz.', 'pt.', 'sob.' ],
+                                    firstDay: 1,
+                                    today: 'Dzisiaj',
+                                    clear: 'Wyszyść',
+                                    close: 'Ok',
+                                    closeOnSelect: false, // Close upon selecting a date,
+                                    container: undefined, // ex. 'body' will append picker to body
+                                    format: 'dd-mm-yyyy',
+                                    formatSubmit: 'yyyy-mm-dd'
+                                });
                             ReachTextArea.reachTextAreaInit();
                             Materialize.updateTextFields();
                             iFrameResize({log:false, heightCalculationMethod:'taggedElement', checkOrigin:false});
