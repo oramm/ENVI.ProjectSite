@@ -1,6 +1,5 @@
 var meetingsRepository;
 var meetingArrangementsRepository;
-var contractsRepository;
 var milestonesRepository;
 var casesRepository;
 var caseTypesRepository;
@@ -9,6 +8,10 @@ var personsRepository;
 class MeetingsSetup {
     static get currentProject() {
         return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+    }
+    
+    static get currentContract() {
+        return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
     
     static get meetingsRepository() {
@@ -25,16 +28,9 @@ class MeetingsSetup {
         meetingArrangementsRepository = data;
     }
     
-    static get contractsRepository() {
-        return contractsRepository;
-    }    
-    static set contractsRepository(data) {
-        contractsRepository = data;
-    }
-    
     static get milestonesRepository() {
         return milestonesRepository;
-    }    
+    }
     static set milestonesRepository(data) {
         milestonesRepository = data;
     }

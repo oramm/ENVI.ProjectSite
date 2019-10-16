@@ -8,26 +8,16 @@ class MeetingsController {
         
        
         MeetingsSetup.meetingsRepository = new SimpleRepository('Meetings repository',
-                                                                   'getMeetingsListPerProject',
-                                                                   'addNewMeeting',
-                                                                    'editMeeting',
-                                                                    'deleteMeeting');
+                                                                'getMeetingsListPerContract',
+                                                                'addNewMeeting',
+                                                                'editMeeting',
+                                                                'deleteMeeting');
         
         MeetingsSetup.meetingArrangementsRepository = new SimpleRepository( 'MeetingArrangements repository',
-                                                                            'getMeetingArrangementsListPerProject',
+                                                                            'getMeetingArrangementsListPerContract',
                                                                             'addNewMeetingArrangement',
                                                                             'editMeetingArrangement',
                                                                             'deleteMeetingArrangement');
-        
-        
-        
-        MeetingsSetup.contractsRepository = new SimpleRepository(   'Contracts repository',
-                                                                    'getContractsListPerProject'
-                                                                   );
-                                                       
-        MeetingsSetup.milestonesRepository = new SimpleRepository(   'Milestones repository',
-                                                                    'getMilestonesListPerProject'
-                                                                   );
                                                        
         MeetingsSetup.casesRepository = new SimpleRepository(   'Cases repository',
                                                                 'getCasesListPerProject'
@@ -38,14 +28,15 @@ class MeetingsController {
         MeetingsSetup.personsRepository = new SimpleRepository('Persons repository',
                                                                 'getPersonsNameSurnameEmailList',
                                                                 );
+        MeetingsSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
+        
         var promises = [];
-        promises[0] = MeetingsSetup.meetingsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[0] = MeetingsSetup.meetingsRepository.initialise(MeetingsSetup.currentContract.id);
         promises[1] = MeetingsSetup.meetingArrangementsRepository.initialise(MeetingsSetup.meetingsRepository.parentItemId);
-        promises[2] = MeetingsSetup.contractsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[3] = MeetingsSetup.milestonesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[4] = MeetingsSetup.casesRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
-        promises[5] = MeetingsSetup.caseTypesRepository.initialise();
-        promises[6] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        promises[2] = MeetingsSetup.casesRepository.initialise({projectId: MeetingsSetup.currentProject.ourId});
+        promises[3] = MeetingsSetup.caseTypesRepository.initialise();
+        promises[4] = MeetingsSetup.personsRepository.initialise({projectId: MeetingsSetup.meetingsRepository.parentItemId});
+        
         
         Promise.all(promises)
             .then(()=>  {   console.log("Repositories initialised");

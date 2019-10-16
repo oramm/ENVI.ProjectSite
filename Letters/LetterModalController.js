@@ -61,7 +61,7 @@ class LetterModalController {
             resultsetComponent.controller.modal.templateSelectField.$dom.show();
         } else {
             resultsetComponent.controller.modal.templateSelectField.$dom.hide();
-            LettersSetup.documentTemplatesRepository.currentItem = undefined;
+            LettersSetup.documentTemplatesRepository.currentItem = {};
         }
     }
     

@@ -24,9 +24,6 @@ class PsNavigationBar extends NavigationBar {
                           { caption: "Pisma", 
                             link: 'Letters/LettersList.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },
-                          { caption: "Spotkania", 
-                            link: 'Meetings/MeetingsList.html?parentItemId=' + projectsRepository.currentItem.ourId
-                          },
                           { caption: "Lista kontaktowa", 
                             link: 'PersonRoles/personRoles.html?parentItemId=' + projectsRepository.currentItem.ourId
                           },

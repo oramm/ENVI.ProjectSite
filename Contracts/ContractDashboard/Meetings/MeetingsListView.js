@@ -25,7 +25,14 @@ class MeetingsListView extends Popup {
     
     this.$contractsPanel
         .append(this.makeSubTittle('Wybierz kamień milowy'))
-        .append(new ContractsCollapsible('contractsCollapsible', this.$casesPanel).$dom)
+        //.append(new ContractsCollapsible('contractsCollapsible', this.$casesPanel).$dom)
+        .append(new MilestonesCollection({  id: 'milestonesListCollection' + MeetingsSetup.currentContract.id, 
+                                            title: '',
+                                            parentDataItem: MeetingsSetup.currentContract,
+                                            $casesPanel: this.$casesPanel
+                                         }).$dom);
+    
+    
     
     this.$casesPanel
         .append(this.makeSubTittle('Wybierz sprawę'))
