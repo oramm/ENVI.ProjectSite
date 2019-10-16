@@ -7,7 +7,7 @@ class MeetingModal extends Modal {
             {   input: new DatePicker(this.id + 'datePickerField','Data spotkania', true),
                 dataItemKeyName: 'date'
             },
-            {   input: new InputTextField (this.id + 'locationTextField','Tytuł', undefined, true, 50),
+            {   input: new InputTextField (this.id + 'locationTextField','Miejsce spotkania', undefined, true, 50),
                 dataItemKeyName: 'location'
             },
             {   input: new InputTextField (this.id + 'nameTextField','Tytuł', undefined, true, 150),
