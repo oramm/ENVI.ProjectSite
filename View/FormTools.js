@@ -386,7 +386,7 @@ class FileInput {
             var promises = [];
             var blobs = [];
             for(var i=0; i<this.getFiles().length; i++){
-                promises[i] = this.readFile(this.getFiles()[0])
+                promises[i] = this.readFile(this.getFiles()[i])
                     .then((result)=>blobs.push(result));
             }
             Promise.all(promises)
