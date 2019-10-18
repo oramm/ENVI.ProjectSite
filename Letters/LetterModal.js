@@ -26,7 +26,7 @@ class LetterModal extends Modal {
                 }
             },
             {   input: this.templateSelectField,
-                dataItemKeyName: '_tempate',
+                dataItemKeyName: '_template',
             },
             {   input: this.contractSelectField,
                 description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
