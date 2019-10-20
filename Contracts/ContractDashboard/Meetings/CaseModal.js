@@ -41,7 +41,7 @@ class CaseModal extends Modal {
                 dataItemKeyName: 'name',
                 refreshDataSet: function (){    
                         //użytkownik edytuje 
-                        if(_this.typeSelectField.getChosenItem() && _this.typeSelectField.getChosenItem().isUniquePerMilestone){
+                        if(_this.typeSelectField.getValue() && _this.typeSelectField.getValue().isUniquePerMilestone){
                             this.input.$dom.hide();
                         } else
                             this.input.$dom.show();

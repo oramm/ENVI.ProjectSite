@@ -6,7 +6,7 @@ class RiskModal extends Modal {
         this.milestonesSelectField.initialise(RisksSetup.milestonesRepository.items.filter(
                                                     item=>item.contractId == RisksSetup.contractsRepository.currentItem.id
                                                ),'_FolderNumber_TypeName_Name');
-        this.milestonesSelectField.$select.on('change',()=> this.onMilestoneChosen(this.milestonesSelectField.getChosenItem()));
+        this.milestonesSelectField.$select.on('change',()=> this.onMilestoneChosen(this.milestonesSelectField.getValue()));
         
         this.caseSelectField = new SelectField(this.id + 'caseSelectField', 'Sprawa', undefined, true);
         

@@ -52,11 +52,14 @@ class Repository {
     }
     
     set currentItem(item) {
-        if (typeof item !== 'object') throw new Error("Selected repository item must be an object!");
+        if (typeof item !== 'object' && item!==undefined) throw new Error("Selected repository item must be an object!");
         //nie przesyłamy do repozytorium blobów z FileInput
-        delete item._blobEnviObjects;
+        if(item!==undefined){
+            delete item._blobEnviObjects;
+            this.currentItemId = item.id;
+        } else
+            this.currentItemId = undefined;
         this.currentItemLocalData = item;
-        this.currentItemId = item.id;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
     

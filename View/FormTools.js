@@ -128,7 +128,15 @@ class SelectField{
         this.key=key;
         this.onItemSelectedHandler = onItemSelectedHandler;
         this.viewObject = viewObject;
-        this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
+        
+        //this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
+        var $emptyOption = $('<option>')
+                                .attr('value','')
+                                .attr('selected','')
+                                .text(this.defaultDisabledOption);
+        if(this.isRequired)
+            $emptyOption.attr('disabled','')
+        this.$select.append($emptyOption);
         if(typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
         else 
@@ -159,7 +167,7 @@ class SelectField{
         }
     }
     
-    buildDom(id, label, icon, isRequired, options){
+    buildDom(id, label){
         this.$dom = $('<div class="input-field">');
         this.$select = $('<select>');
         this.$select.attr('id', id)
@@ -177,28 +185,21 @@ class SelectField{
         if(this.onItemSelectedHandler){
             this.$select.off('change');
             this.$select.on('change', function() {
-                _this.getChosenItem();
+                _this.getValue();
                 _this.onItemSelectedHandler.apply(_this.viewObject,[_this.chosenItem]);
             });
         }
     }
 
-    getChosenItem(){
+    getValue(){
         var inputValue = this.$dom.find('input').val();
         if(!this.optionsData && !this.isRequired)
            return;
         if(inputValue!== this.defaultDisabledOption){
             if(typeof this.optionsData[0] !== 'object'){
-
-                //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
-                //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
                 this.chosenItem = inputValue;
-                //---
             }
             else {
-                //var optionsString = this.optionsData.map(item=>item[this.key]); 
-                //var itemSelectedId = 2 + optionsString.indexOf(inputValue[this.key]);
-                //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
                 this.chosenItem = this.optionsData.find(item=> item[this.key]==inputValue);
             }
         } else 
@@ -207,23 +208,26 @@ class SelectField{
     }
     
     simulateChosenItem(inputValue){
-        if(inputValue!== undefined && inputValue!==this.defaultDisabledOption){
-            if(typeof this.optionsData[0] !== 'object'){
+        if(inputValue!== undefined){
+            var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+            if(inputValue===this.defaultDisabledOption){
+                this.chosenItem = undefined;
+                
+                this.$select.val(inputValue).trigger('change');
+            } else if(typeof this.optionsData[0] !== 'object'){
                 this.chosenItem = inputValue;
-                var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
+                //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
                 //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
             }
             else {
                 this.chosenItem = this.optionsData.find(item=> item.id==inputValue.id ||
                                                                item[this.key]==inputValue[this.key]
                                                         );
-                var itemSelectedId;
                 if(this.chosenItem){
                     var optionsString = this.optionsData.map(item=>item[this.key]); 
                     itemSelectedId = 2 + optionsString.indexOf(this.chosenItem[this.key]);
                 } else
                     itemSelectedId = 0;
-                    
             }
             this.$dom.find('li:nth-child('+itemSelectedId+')').click();
         }
@@ -380,8 +384,8 @@ class FileInput {
     getValue(){
         return new Promise((resolve, reject) => {
             if (this.getFiles().length==0){
-                resolve();
-                return;
+                resolve([]);
+                return [];
             }
             var promises = [];
             var blobs = [];
@@ -395,7 +399,7 @@ class FileInput {
     }
     validate(){
         var test = true;
-        if(this.viewObject.mode=='ADD_NEW' && !this.getFiles()[0])
+        if(this.isRequired && !this.getFiles()[0])
             test = false;
         return test;
     }
@@ -548,7 +552,7 @@ class SelectFieldBrowserDefault{
         return this.$dom;
     }
     
-    getChosenItem(){
+    getValue(){
         return this.chosenItem;
     }
     //uruchamiana na click
@@ -743,6 +747,20 @@ class Form {
         this.$dom.append(FormTools.createSubmitButton("Zapisz"));
     }
     /*
+     * Ustawia opis elementu formularza
+     * @param {String} description
+     * @param {FormElement} element
+     * @returns {undefined}
+     */
+    setElementDescription(description, element){
+        var $descriptionLabel = element.input.$dom.parent().find('.envi-input-description')
+        if($descriptionLabel.length==0){
+            $descriptionLabel = $('<div class="envi-input-description">');
+            element.input.$dom.parent().prepend($descriptionLabel);
+        }
+        $descriptionLabel.html(description);
+    }
+    /*
      * używane przy edycji modala
      * @param {Array [connectedRepositryCurrentItemValues]} currentItem
      * @returns {undefined}
@@ -825,7 +843,7 @@ class Form {
                     break;
                 case 'SelectField' :
                 case 'SelectFieldBrowserDefault' :
-                    this.elements[i].input.getChosenItem();
+                    this.elements[i].input.getValue();
                     if(this.elements[i].input.chosenItem){
                         if (typeof this.elements[i].input.chosenItem === 'object'){ 
 
@@ -1015,7 +1033,7 @@ class SwitchInput{
         this.$dom.find("input[type=checkbox]").on("change",function() {
                 _this.value = $(this).prop('checked');
                 if(_this.changeAction)
-                    _this.changeAction(_this.value, _this.viewObject);
+                    _this.changeAction.apply(_this.viewObject,[_this.value]);
             });
         
     }
