@@ -1,7 +1,7 @@
 class LetterModalController {
     constructor(modal){
         this.modal = modal;
-        this._this = this;
+        //this._this = this;
     }
 
     /*
@@ -94,7 +94,7 @@ class LetterModalController {
             LettersSetup.documentTemplatesRepository.currentItem = {};
             this.modal.letterFileInput.isRequired = true;
         }
-                
+        this.initFileInput();
     }
     
     onContractChosen(chosenItem){
