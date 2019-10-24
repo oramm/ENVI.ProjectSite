@@ -14,7 +14,7 @@ class ContractDashboardView extends Popup{
                         url: 'Meetings/MeetingsList.html?parentItemId=' + parentItemId
                       });
                           
-        if(ContractsSetup.contractsRepository.currentItem.fidicType)
+        if(!ContractsSetup.contractsRepository.currentItem._type.isOur)
             tabsData.push({ name: 'Materiały',
                             url: 'MaterialCards/MaterialCardsList.html?parentItemId=' + parentItemId
                           });
@@ -22,7 +22,7 @@ class ContractDashboardView extends Popup{
                         url: 'Risks/RisksList.html?parentItemId=' + parentItemId
                       });
         
-        if(ContractsSetup.contractsRepository.currentItem.fidicType)
+        if(!ContractsSetup.contractsRepository.currentItem._type.isOur)
             tabsData.push({ name: 'Zgłoszenia',
                             url: 'Issues/IssuesList.html?parentItemId=' + parentItemId
                             })

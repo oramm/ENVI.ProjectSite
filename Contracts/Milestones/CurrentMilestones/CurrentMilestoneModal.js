@@ -11,7 +11,6 @@ class CurrentMilestoneModal extends Modal {
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(MilestonesSetup.statusNames);
         
-        var _this=this;
         this.formElements = [
             {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
@@ -22,8 +21,8 @@ class CurrentMilestoneModal extends Modal {
                                             },
                 checkContractType: function(type){
                     var regExpr;
-                    if(MilestonesSetup.milestonesRepository.currentItem._relatedContract.fidicType!=='Żółty')
-                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType+'|^$' + '|' + MilestonesSetup.milestonesRepository.currentItem._relatedContract.fidicType);
+                    if(MilestonesSetup.milestonesRepository.currentItem._contractType.name!=='Żółty')
+                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType+'|^$' + '|' + MilestonesSetup.milestonesRepository.currentItem._contractType.name);
                     else
                         regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType+'|^$' + '|Żółty|Czerwony');
                     

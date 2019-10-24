@@ -10,10 +10,6 @@ const statusNames = [   'Nie rozpoczęty',
                         'Archiwalny'
                     ];
 
-const fidicTypes = [   'Nie dotyczy',
-                        'Czerwony',
-                        'Żółty'
-                    ];
 class ContractsSetup {
     static get currentProject() {
         return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
@@ -28,9 +24,6 @@ class ContractsSetup {
     
     static get statusNames() {
         return statusNames;
-    }
-    static get fidicTypes() {
-        return fidicTypes;
     }
     
     static get contractsRepository() {

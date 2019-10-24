@@ -14,9 +14,6 @@ class ContractModal extends Modal {
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
         
-        this.fidicTypeSelectField = new SelectField(this.id + '_fidicType_SelectField', 'FIDIC', undefined, true);
-        this.fidicTypeSelectField.initialise(ContractsSetup.fidicTypes);
-        
         this.contractorAutoCompleteTextField = new AutoCompleteTextField(this.id+'_contractorAutoCompleteTextField',
                                                                      'Dodaj wykonawcę', 
                                                                      'business', 
@@ -85,9 +82,6 @@ class ContractModal extends Modal {
                 refreshDataSet(){
                     _this.controller.employersChipsRefreshDataSet();
                 }
-            },
-            {   input: this.fidicTypeSelectField,
-                dataItemKeyName: 'fidicType'
             }
         ];
         this.initialise();
