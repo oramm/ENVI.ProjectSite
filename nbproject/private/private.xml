@@ -30,15 +30,15 @@
         <group>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Modal.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractModalController.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractsSetup.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractModal.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Letters/LetterModalController.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/SimpleRepository.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collapsible.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Contracts/ContractDashboard/ContractDashboardView.js</file>
-            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Letters/LetterModal.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/FormTools.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Repository.js</file>
             <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/View/Collection.js</file>
+            <file>file:/C:/Bitnami/wampstack-7.0.18-0/apache2/htdocs/ENVI.ProjectSite/Letters/LetterModal.js</file>
         </group>
     </open-files>
 </project-private>

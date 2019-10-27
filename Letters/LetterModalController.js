@@ -49,20 +49,24 @@ class LetterModalController {
            this.modal.isOurSwitchInput.getValue() && !LettersSetup.documentTemplatesRepository.currentItem.id
           ){
             this.modal.numberInputTextField.$dom.parent().show();
+            this.modal.numberInputTextField.setIsRequired(true);
         } else {
             this.modal.numberInputTextField.$dom.parent().hide();
+            this.modal.numberInputTextField.setValue('');
+            this.modal.numberInputTextField.setIsRequired(false);
         }
       
     }
     
     initFileInput(){
-        if(!this.modal.isOurSwitchInput.getValue() || !LettersSetup.documentTemplatesRepository.currentItem.id){
+        if(this.modal.mode==='ADD_NEW' && 
+           (!this.modal.isOurSwitchInput.getValue() || !LettersSetup.documentTemplatesRepository.currentItem.id)){
             //this.modal.letterFileInput.value=[];
             this.modal.letterFileInput.isRequired = true;
         } else
             this.modal.letterFileInput.isRequired = false;
         
-        this.modal.form.setElementDescription(this.setFileInputDescription(), this.modal.fileInput);
+        this.modal.form.setElementDescription(this.setFileInputDescription(), this.modal.fileFormElement);
     }
     
     onLetterTypeChosen(isOur){
@@ -85,15 +89,14 @@ class LetterModalController {
     
     onTemplateChosen(chosenItem){
         if(chosenItem && chosenItem !== this.modal.templateSelectField.defaultDisabledOption){
-            this.modal.numberInputTextField.$dom.parent().hide();
             LettersSetup.documentTemplatesRepository.currentItem = chosenItem;
             this.modal.letterFileInput.isRequired = false;
         }
         else {
-            this.modal.numberInputTextField.$dom.parent().show();
             LettersSetup.documentTemplatesRepository.currentItem = {};
             this.modal.letterFileInput.isRequired = true;
         }
+        this.initNumberInput();
         this.initFileInput();
     }
     
@@ -170,6 +173,65 @@ class LetterModalController {
         var index = Tools.arrGetIndexOf(this.modal.selectedCasesHiddenInput.value, 'id', caseDataItem.id); 
         this.modal.selectedCasesHiddenInput.value.splice(index, 1);
     }
+    
+    
+    //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+    entitiesChipsRefreshDataSet(){
+        this.modal.selectedEntitiesHiddenInput.$dom.parent().children('.chip').remove();
+        if (this.modal.mode=='ADD_NEW')
+            this.modal.selectedEntitiesHiddenInput.value = [];
+        if (this.modal.mode=='EDIT') {
+            this.modal.selectedEntitiesHiddenInput.value = ProjectsSetup.projectsRepository.currentItem._entities;
+            for (var i=0; i<this.modal.selectedEntitiesHiddenInput.value.length; i++){
+                this.appendEntityChip(this.modal.selectedEntitiesHiddenInput.value[i]);
+            }
+        }
+    }
+    
+    entitySelectFieldInitialize(){
+        this.modal.entityAutoCompleteTextField.clearChosenItem();
+    }
+    
+    checkEntity(entityItem){
+        //wyklucz sprawy wybrane już wcześniej
+        var allowType = true;
+        this.modal.selectedEntitiesHiddenInput.value.map(existingEntityItem=>{
+                if (existingEntityItem.id==entityItem.id)
+                        allowType = false;
+            });
+        return allowType;//entityTypeItem.milestoneTypeId==EntitiesSetup.currentMilestone._type.id;
+    }
+    onEntityChosen(chosenItem){
+        this.addEntityItem(chosenItem);
+        this.entitySelectFieldInitialize(chosenItem);
+    }
+    
+    addEntityItem(entityDataItem){
+        this.modal.selectedEntitiesHiddenInput.value.push(entityDataItem);
+        this.appendEntityChip(entityDataItem);
+    }
+
+    appendEntityChip(entityDataItem){
+        var chipLabel = entityDataItem.name;
+        this.modal.selectedEntitiesHiddenInput.$dom.parent()
+                .prepend(new Chip(  'entity_', 
+                                    chipLabel,
+                                    entityDataItem,
+                                    this.onEntityUnchosen,
+                                    this).$dom);
+
+    }
+    onEntityUnchosen(unchosenItem){
+        //LettersSetup.entitiesRepository.deleteFromCurrentItems(unchosenItem);
+        this.removeEntityItem(unchosenItem);
+    }
+                
+    //usuwa entityItem z listy HiddenInput.value[]
+    removeEntityItem(entityDataItem){
+        var index = Tools.arrGetIndexOf(this.modal.selectedEntitiesHiddenInput.value, 'id', entityDataItem.id); 
+        this.modal.selectedEntitiesHiddenInput.value.splice(index, 1);
+    }
+    
     
     setFileInputDescription(){
         var description ='';

@@ -5,6 +5,7 @@ var casesRepository;
 var caseTypesRepository;
 var personsRepository;
 var documentTemplatesRepository;
+var entitiesRepository;
 
 class LettersSetup {
     static get currentProject() {
@@ -62,5 +63,12 @@ class LettersSetup {
     }
     static set documentTemplatesRepository(data) {
         documentTemplatesRepository = data;
+    }
+    
+    static get entitiesRepository() {
+        return entitiesRepository;
+    }
+    static set entitiesRepository(data) {
+        entitiesRepository = data;
     }
 }

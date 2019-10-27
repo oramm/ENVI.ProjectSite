@@ -627,34 +627,51 @@ class InputTextField {
         this.label = label;
         this.icon = icon;
         this.isRequired = isRequired;
+        this.maxCharacters = maxCharacters;
+        this.validateRegex = validateRegex;
+        this.dataError = dataError;
         this.$dom;
-        this.createInputField(id, label, icon, isRequired, maxCharacters, validateRegex, dataError);
+        this.$input;
+        this.$label;
+        this.buildDom();
     }
     //ikony do dodania
-    createInputField(id, label, icon, isRequired, maxCharacters, validateRegex, dataError){
+    buildDom(){
         this.$dom = $('<div class="input-field">');
-        var $input = $('<input type="text" class="validate" id="' + id + '" name="' + id + '">');
-        var $label = $('<label for="'+ id +'">'+ label +'</label>');
+        this.$input = $('<input type="text" class="validate" id="' + this.id + '" name="' + this.id + '">');
+        this.$label = $('<label for="'+ this.id +'">'+ this.label +'</label>');
         this.$dom
-            .append($input)
-            .append($label);
-        if (isRequired)
-            $input.attr('required','true');
+            .append(this.$input)
+            .append(this.$label);
+        
+        this.setIsRequired(this.isRequired);
       
-        if (maxCharacters >0){
-            $input
-                .attr('data-length', maxCharacters);
-            $input.characterCounter();
+        if (this.maxCharacters >0){
+            this.$input
+                .attr('data-length', this.maxCharacters);
+            this.$input.characterCounter();
         }
-        if (validateRegex){
-            $input
-                .attr('pattern',validateRegex);         
+        if (this.validateRegex){
+            this.$input
+                .attr('pattern',this.validateRegex);         
         }
 
-        if (dataError !== undefined) 
-            $label.attr('data-error',dataError);
+        if (this.dataError !== undefined) 
+            this.$label.attr('data-error',this.dataError);
         else
-            $label.attr('data-error','Niewłaściwy format danych');
+            this.$label.attr('data-error','Niewłaściwy format danych');
+    }
+    
+    setIsRequired(isRequired){
+        this.isRequired = isRequired;
+        if (this.isRequired)
+            this.$input.attr('required',this.isRequired);
+        else
+            this.$input.removeAttr('required');
+    }
+    
+    setValue(inputvalue){
+        this.$input.val(inputvalue);
     }
 }
 class Tabs {
@@ -773,7 +790,8 @@ class Form {
             var inputvalue = currentItem[this.elements[i].dataItemKeyName];
             switch (this.elements[i].input.constructor.name) {
                 case 'InputTextField' :
-                    this.elements[i].input.$dom.children('input').val(inputvalue);
+                    //this.elements[i].input.$dom.children('input').val(inputvalue);
+                    this.elements[i].input.setValue(inputvalue);
                     break;
                 case 'ReachTextArea' :
                     if (!inputvalue) inputvalue='';
