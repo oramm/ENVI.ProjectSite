@@ -29,13 +29,23 @@ class LettersCollapsible extends SimpleCollapsible {
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
         name += '<br>Opis:&nbsp;' + dataItem.description + '<br>';
         name += (dataItem.isOur)? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;'; 
-        name += dataItem.entityName
+        name += this.makeEntitiesLabel(dataItem._entitiesMain)
         return {    id: dataItem.id,
                     name: name,
                     $body: $bodyDom,
                     dataItem: dataItem,
                     editModal: this.editModal
                     };
+    }
+    
+    makeEntitiesLabel(entities){
+        var label = '';
+        for(var i=0; i<entities.length-1; i++){
+            label += entities[i].name + ', '
+        }
+        if(entities[i]) 
+            label += entities[i].name;
+        return label;
     }
     
     makeBodyDom(dataItem){

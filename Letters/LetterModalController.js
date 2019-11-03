@@ -11,6 +11,8 @@ class LetterModalController {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
             //Ustaw tu parametry kontekstowe jeśli konieczne
             _cases: [],
+            _entitiesMain: [],
+            _entitiesCc: [],
             _project: LettersSetup.currentProject,
             _editor:{name: LettersSetup.currentUser.name,
                      surname: LettersSetup.currentUser.surname,
@@ -27,9 +29,13 @@ class LetterModalController {
     initIsOurSwitchInput(){
         var isOur = (this.modal.mode==='EDIT')? LettersSetup.lettersRepository.currentItem.isOur : false;
         this.onLetterTypeChosen(isOur, this.modal);
+        if(this.modal.mode==='EDIT')
+            this.modal.isOurSwitchInput.$dom.parent().hide();
     }
                 
-    //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+    /*
+     * ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+     */
     initCasesChips(){
         this.modal.selectedCasesHiddenInput.$dom.parent().children('.chip').remove();
         if (this.modal.mode=='ADD_NEW')
@@ -38,6 +44,20 @@ class LetterModalController {
             this.modal.selectedCasesHiddenInput.value = LettersSetup.lettersRepository.currentItem._cases;
             for (var i=0; i<this.modal.selectedCasesHiddenInput.value.length; i++){
                 this.appendCaseChip(this.modal.selectedCasesHiddenInput.value[i]);
+            }
+        }
+    }
+    /*
+     * ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+     */
+    initEntitiesMainChips(){
+        this.modal.selectedEntitiesMainHiddenInput.$dom.parent().children('.chip').remove();
+        if (this.modal.mode=='ADD_NEW')
+            this.modal.selectedEntitiesMainHiddenInput.value = [];
+        if (this.modal.mode=='EDIT') {
+            this.modal.selectedEntitiesMainHiddenInput.value = LettersSetup.lettersRepository.currentItem._entitiesMain;
+            for (var i=0; i<this.modal.selectedEntitiesMainHiddenInput.value.length; i++){
+                this.appendEntityMainChip(this.modal.selectedEntitiesMainHiddenInput.value[i]);
             }
         }
     }
@@ -70,8 +90,8 @@ class LetterModalController {
     }
     
     onLetterTypeChosen(isOur){
-        var entityNameLabel = (isOur)? 'Odbiorca' : 'Nadawca';
-        this.modal.entityNameReachTextArea.setLabel(entityNameLabel);
+        var entityNameLabel = (isOur)? 'Dodaj odbiorcę' : 'Dodaj nadawcę';
+        this.modal.entityMainAutoCompleteTextField.setLabel(entityNameLabel);
         var registrationDateLabel = (isOur)? 'Data nadania' : 'Data wpływu';
         this.modal.registrationDatePicker.setLabel(registrationDateLabel);
         
@@ -176,44 +196,44 @@ class LetterModalController {
     
     
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-    entitiesChipsRefreshDataSet(){
-        this.modal.selectedEntitiesHiddenInput.$dom.parent().children('.chip').remove();
+    entitiesChipsMainRefreshDataSet(){
+        this.modal.selectedEntitiesMainHiddenInput.$dom.parent().children('.chip').remove();
         if (this.modal.mode=='ADD_NEW')
-            this.modal.selectedEntitiesHiddenInput.value = [];
+            this.modal.selectedEntitiesMainHiddenInput.value = [];
         if (this.modal.mode=='EDIT') {
-            this.modal.selectedEntitiesHiddenInput.value = ProjectsSetup.projectsRepository.currentItem._entities;
-            for (var i=0; i<this.modal.selectedEntitiesHiddenInput.value.length; i++){
-                this.appendEntityChip(this.modal.selectedEntitiesHiddenInput.value[i]);
+            this.modal.selectedEntitiesMainHiddenInput.value = LettersSetup.lettersRepository.currentItem._entitiesMain;
+            for (var i=0; i<this.modal.selectedEntitiesMainHiddenInput.value.length; i++){
+                this.appendEntityMainChip(this.modal.selectedEntitiesMainHiddenInput.value[i]);
             }
         }
     }
     
     entitySelectFieldInitialize(){
-        this.modal.entityAutoCompleteTextField.clearChosenItem();
+        this.modal.entityMainAutoCompleteTextField.clearChosenItem();
     }
     
     checkEntity(entityItem){
         //wyklucz sprawy wybrane już wcześniej
         var allowType = true;
-        this.modal.selectedEntitiesHiddenInput.value.map(existingEntityItem=>{
+        this.modal.selectedEntitiesMainHiddenInput.value.map(existingEntityItem=>{
                 if (existingEntityItem.id==entityItem.id)
                         allowType = false;
             });
         return allowType;//entityTypeItem.milestoneTypeId==EntitiesSetup.currentMilestone._type.id;
     }
-    onEntityChosen(chosenItem){
-        this.addEntityItem(chosenItem);
+    onEntityMainChosen(chosenItem){
+        this.addEntityMainItem(chosenItem);
         this.entitySelectFieldInitialize(chosenItem);
     }
     
-    addEntityItem(entityDataItem){
-        this.modal.selectedEntitiesHiddenInput.value.push(entityDataItem);
-        this.appendEntityChip(entityDataItem);
+    addEntityMainItem(entityDataItem){
+        this.modal.selectedEntitiesMainHiddenInput.value.push(entityDataItem);
+        this.appendEntityMainChip(entityDataItem);
     }
 
-    appendEntityChip(entityDataItem){
+    appendEntityMainChip(entityDataItem){
         var chipLabel = entityDataItem.name;
-        this.modal.selectedEntitiesHiddenInput.$dom.parent()
+        this.modal.selectedEntitiesMainHiddenInput.$dom.parent()
                 .prepend(new Chip(  'entity_', 
                                     chipLabel,
                                     entityDataItem,
@@ -228,8 +248,8 @@ class LetterModalController {
                 
     //usuwa entityItem z listy HiddenInput.value[]
     removeEntityItem(entityDataItem){
-        var index = Tools.arrGetIndexOf(this.modal.selectedEntitiesHiddenInput.value, 'id', entityDataItem.id); 
-        this.modal.selectedEntitiesHiddenInput.value.splice(index, 1);
+        var index = Tools.arrGetIndexOf(this.modal.selectedEntitiesMainHiddenInput.value, 'id', entityDataItem.id); 
+        this.modal.selectedEntitiesMainHiddenInput.value.splice(index, 1);
     }
     
     

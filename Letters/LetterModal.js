@@ -15,15 +15,13 @@ class LetterModal extends Modal {
         this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);
         this.selectedCasesHiddenInput = new HiddenInput (this.id + '_currentCasesHiddenInput', undefined, false);
         
-        this.entityNameReachTextArea = new ReachTextArea (this.id + '_entityNameReachTextArea','Nadawca', true, 300);
-        
-        this.entityAutoCompleteTextField = new AutoCompleteTextField(this.id+'_entityAutoCompleteTextField',
+        this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id+'_entityMainAutoCompleteTextField',
                                                                      'Dodaj Nadawcę', 
                                                                      'business', 
                                                                      false, 
                                                                      'Wybierz nazwę')
-        this.entityAutoCompleteTextField.initialise(LettersSetup.entitiesRepository,'name',this.controller.onEntityChosen,this.controller);
-        this.selectedEntitiesHiddenInput = new HiddenInput (this.id + '_currentEmployersHiddenInput', undefined, false);
+        this.entityMainAutoCompleteTextField.initialise(LettersSetup.entitiesRepository,'name',this.controller.onEntityMainChosen,this.controller);
+        this.selectedEntitiesMainHiddenInput = new HiddenInput (this.id + '_currentEntitiesMainHiddenInput', undefined, true);
         
         this.registrationDatePicker = new DatePicker(this.id + '_registrationDatePickerField','Data wpływu', undefined, true);
         this.letterFileInput = new FileInput (this.id + '_letter_FileInput','Wybierz plik', this, this.mode==='ADD_NEW');
@@ -82,8 +80,16 @@ class LetterModal extends Modal {
             {   input: this.registrationDatePicker,
                 dataItemKeyName: 'registrationDate'
             },
-            {   input: this.entityNameReachTextArea,
-                dataItemKeyName: 'entityName'
+            {   input: this.entityMainAutoCompleteTextField,
+                description: (this.mode=='EDIT')? 'Jeżeli nie chcesz przypisywać kolejnego podmiotu, możesz to pole zignorować' : '',
+                dataItemKeyName: '_entityMain'
+            },
+            {   input: this.selectedEntitiesMainHiddenInput,
+                dataItemKeyName: '_entitiesMain',
+                //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
+                refreshDataSet(){
+                    _this.controller.initEntitiesMainChips();
+                }
             },
             {   input: new ReachTextArea (this.id + '_descriptonReachTextArea','Opis', false, 300),
                 dataItemKeyName: 'description'

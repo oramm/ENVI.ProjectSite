@@ -12,8 +12,9 @@ class AutoCompleteTextField {
         this.icon = icon;
         this.isRequired = isRequired;
         this.$dom;
+        this.$label;
       
-        this.createAutoCompleteTextField(id, label, icon, isRequired);
+        this.buildDom(id, icon, isRequired);
     }
     
     initialise(repository, key, onCompleteCallBack,viewObject){
@@ -26,13 +27,14 @@ class AutoCompleteTextField {
         this. pushData(this.key);
     }
     
-    createAutoCompleteTextField(id, label, icon, isRequired){
+    buildDom(id, icon, isRequired){
         this.$dom = $('<div class="input-field">');
         var $icon = $('<i class="material-icons prefix">' + icon + '</i>');
         var $input = $('<input name="' + id + '" type="text" class="autocomplete" autocomplete="off">')
                 .attr('id',id);
         
-        var $label = $('<label for="'+ id +'">'+ label +'</label>');
+        this.$label = $('<label>');
+        this.setLabel(this.label);
 
         if (isRequired) {
             $input
@@ -44,8 +46,17 @@ class AutoCompleteTextField {
         this.$dom
             .append($icon)
             .append($input)
-            .append($label);
+            .append(this.$label);
         return this.$dom;
+    }
+    
+    setLabel(label){
+        this.label = label;
+        //this.$label = $('<label for="'+ id +'">'+ this.label +'</label>');
+        
+        this.$label
+            .attr('for',this.id)
+            .text(this.label);
     }
     
     pushData(key){
