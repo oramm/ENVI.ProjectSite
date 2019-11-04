@@ -43,6 +43,9 @@ class Setup {
             case 'GCALENDAR_ICON':
                 icon = 'https://ps.envi.com.pl/Resources/View/Google-Calendar-icon.png';
                 break;
+            case 'ATTACH_FILE':
+                icon = 'https://ps.envi.com.pl/Resources/View/attach-file-icon.png';
+                break;
         }
         var $link = $('<a  target="_blank">');
         if (url) $link.attr('href',url);
