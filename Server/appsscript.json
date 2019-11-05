@@ -1,0 +1,9 @@
+{
+  "timeZone": "Europe/Warsaw",
+  "dependencies": {
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "executionApi": {
+    "access": "ANYONE"
+  }
+}

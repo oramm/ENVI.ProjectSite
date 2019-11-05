@@ -273,8 +273,8 @@ class Collapsible {
      * TODO: do usunięcia
      */
     actionsMenuInitialise(){        
-        var $buttonsPanel = $('<div class="row">');
-        this.$actionsMenu.append($buttonsPanel);
+        //var $buttonsPanel = $('<div class="row">');
+        //this.$actionsMenu.append($buttonsPanel);
         //if (this.addNewModal !== undefined)
         //    this.addNewModal.preppendTriggerButtonTo($buttonsPanel,"Dodaj wpis", this);
         
