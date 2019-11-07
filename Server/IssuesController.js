@@ -27,7 +27,7 @@ function getIssuesListPerContract(contractId) {
                'JOIN Projects ON Contracts.ProjectOurId=Projects.OurId \n';
     Logger.log(sql);
     var dbResults = stmt.executeQuery(sql);
-    var gd = new Gd();
+    var gd = new Gd(undefined);
     while (dbResults.next()) {
       var item = { id: dbResults.getLong(1),
                    name: dbResults.getString(2),

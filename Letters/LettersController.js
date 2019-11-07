@@ -9,7 +9,7 @@ class LettersController {
        
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
                                                                 'getLettersListPerProject',
-                                                                'addNewLetter',
+                                                                'addNewIncomingLetter',
                                                                 'editLetter',
                                                                 'deleteLetter');
         

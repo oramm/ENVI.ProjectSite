@@ -1,4 +1,4 @@
-class LetterModal extends Modal {
+class LetterModalNew extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
         this.controller = new LetterModalController(this);
@@ -13,7 +13,7 @@ class LetterModal extends Modal {
         
         this.milestoneSelectField = new SelectField(this.id + '_milestoneSelectField', 'Kamień Milowy', undefined, false);
         this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);
-        this.selectedCasesHiddenInput = new HiddenInput (this.id + '_currentCasesHiddenInput', undefined, false);
+        this.selectedCasesHiddenInput = new HiddenInput (this.id + '_currentCasesHiddenInput', undefined, true);
         
         this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id+'_entityMainAutoCompleteTextField',
                                                                      'Dodaj Nadawcę', 

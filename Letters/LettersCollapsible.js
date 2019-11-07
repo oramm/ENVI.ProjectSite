@@ -14,7 +14,9 @@ class LettersCollapsible extends SimpleCollapsible {
         this.editModal = new LetterModal(id + '_editLetterModal', 'Edytuj dane pisma', this, 'EDIT');
         
         
-        this.initialise(this.makeCollapsibleItemsList());        
+        this.initialise(this.makeCollapsibleItemsList());  
+        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj przychodzące",this);
+        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -78,10 +80,12 @@ class LettersCollapsible extends SimpleCollapsible {
     }
     
     /*
-     * 
+     * Ustawia pryciski edycji wierszy, 
+     * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
      */
-    selectTrigger(itemId){
-        super.selectTrigger(itemId);
-        //$('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-        }
+    addRowCrudButtons(row){
+        super.addRowCrudButtons(row)
+        //row.$crudButtons.prepend(Setup.$externalResourcesIconLink('ATTACH_FILE',row.dataItem._documentOpenUrl));
+        
+    }
 }
