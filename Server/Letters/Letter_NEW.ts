@@ -1,32 +1,32 @@
 class LetterNew {
-  id: any;
-  isOur: any;
-  number: any;
-  description: any;
-  creationDate: string;
-  registrationDate: string;
-  _documentOpenUrl: any;
-  letterGdId: any;
-  _fileOrFolderOwnerEmail: string;
-  _gdFolderUrl: any;
-  folderGdId: any;
-  _lastUpdated: any;
-  _contract: any;
-  _project: any;
-  projectId: any;
-  _cases: any;
-  _entitiesMain: any;
-  _entitiesCc: any;
-  letterFilesCount: any;
-  _editor: any;
-  _fileOrFolderChanged: any;
-  _template: any;
-  editorId: any;
-  _canUserChangeFileOrFolder: any;
-  _folderName: string;
-  _documentEditUrl: string;
+  id?: any;
+  isOur?: any;
+  number?: any;
+  description?: any;
+  creationDate?: string;
+  registrationDate?: string;
+  _documentOpenUrl?: any;
+  letterGdId?: any;
+  _fileOrFolderOwnerEmail?: string;
+  _gdFolderUrl?: any;
+  folderGdId?: any;
+  _lastUpdated?: any;
+  _contract?: any;
+  _project?: any;
+  projectId?: any;
+  _cases?: any;
+  _entitiesMain?: any;
+  _entitiesCc?: any;
+  letterFilesCount?: any;
+  _editor?: any;
+  _fileOrFolderChanged?: any;
+  _template?: any;
+  editorId?: any;
+  _canUserChangeFileOrFolder?: any;
+  _folderName?: string;
+  _documentEditUrl?: string;
 
-  constructor(initParamObject){
+  constructor(initParamObject:any){
     if(initParamObject){
       this.id = initParamObject.id;
       this.isOur = initParamObject.isOur;
@@ -311,58 +311,23 @@ class LetterNew {
   }
 }
 
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- * * * * * * * * * * *  Letters_Cases * * * * * * * * * * * * * * * * * * * * 
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- */
-function LetterCase(initParamObject) {
-  if(initParamObject){
-    this.letterId = initParamObject._letter.id;
-    this.caseId = initParamObject._case.id;
-    //id jest usuwane w addInDb(), więc przy asocjacjach musi byś ręcznie odtworeone w controllerze
-    this.id = '' + this.letterId + this.caseId;
-    Logger.log('this is: ' + this.id)
-    this._letter = initParamObject._letter;
-    this._case = initParamObject._case;
-  }
+function test_exdenedCalsses() {
+  //var x = new ChildTest({})
+  var y = new IncomingLetter({})
 }
 
 
-LetterCase.prototype = {
-  constructor: LetterCase,
-  
-  addInDb: function(externalConn, isPartOfTransaction) {
-    var conn = (externalConn)? externalConn : connectToSql();
-    addInDb('Letters_Cases', this, externalConn, isPartOfTransaction);
+class IncomingLetter extends LetterNew {
+  constructor(initParamObject: any) {
+      super(initParamObject);
+      /*
+      this.editorId = this.setEditorId();
+      if (this.letterFilesCount) 
+          this._folderName = this.makeFolderName();
+      
+          this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
+      
+      */
   }
-}
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- * * * * * * * * * * *  Letters_Entities * * * * * * * * * * * * * * * * * * * * 
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- */
-function LetterEntity(initParamObject) {
-  if(initParamObject){
-    this.letterId = initParamObject._letter.id;
-    this._letter = initParamObject._letter;
-
-    this.entityId = initParamObject._entity.id;
-    this._entity = initParamObject._entity;
-
-    this.letterRole = initParamObject.letterRole;
-    //id jest usuwane w addInDb(), więc przy asocjacjach musi byś ręcznie odtworeone w controllerze
-    this.id = '' + this.letterId + this.entityId;
-    Logger.log('this is: ' + this.id);
-  }
-}
-
-
-LetterEntity.prototype = {
-  constructor: LetterEntity,
-  
-  addInDb: function(externalConn, isPartOfTransaction) {
-    var conn = (externalConn)? externalConn : connectToSql();
-    addInDb('Letters_Entities', this, externalConn, isPartOfTransaction);
-  }
 }

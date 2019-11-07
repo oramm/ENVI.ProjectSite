@@ -9,6 +9,7 @@ function getCaseEventsList(initParamObject, externalConn) {
                     'Letters.RegistrationDate, \n \t' +
                     'Letters.LetterGdId AS EventGdId, \n \t' +
                     'Letters.LastUpdated, \n \t' +
+                    'Letters.ProjectId, \n \t' +
                     'Cases.Id AS CaseId, \n \t' +
                     'Contracts.Id AS ContractId, \n \t' +
                     'Persons.Id AS EventOwnerId, \n \t' +
@@ -37,6 +38,7 @@ function getCaseEventsList(initParamObject, externalConn) {
                     'NULL, \n \t' +
                     'Meetings.ProtocolGdId AS EventGdId, \n \t' +
                     'MeetingArrangements.LastUpdated, \n \t' +
+                    'NULL, \n \t' +
                     'Cases.Id AS CaseId, \n \t' +
                     'Contracts.Id AS ContractId, \n \t' +
                     'Persons.Id AS EventOwnerId, \n \t' +
@@ -62,7 +64,7 @@ function getCaseEventsListPerMilestone(milestoneId, externalConn){
   return getCaseEventsList({milestoneId: milestoneId})
 }
 function test_getCaseEventsListPerMilestone(){
-  getCaseEventsList({milestoneId:'509'});
+  getCaseEventsList({milestoneId:'782'});
 }
 
 function getCaseEvents(sql, initParamObject, externalConn){
@@ -88,7 +90,9 @@ function getCaseEvents(sql, initParamObject, externalConn){
                            _editor: {id: dbResults.getInt('EventOwnerId'),
                                      name: dbResults.getString('EventOwnerName'),
                                      surname: dbResults.getString('EventOwnerSurname'),
-                                    }
+                                    },
+                           _project: {id: dbResults.getString('ProjectId'),
+                                     }
                           });
         item._eventType = 'LETTER'
       } else { 
