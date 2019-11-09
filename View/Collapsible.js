@@ -37,7 +37,7 @@ class Collapsible {
     }
     
     $rowEditIcon(modalId){
-        if (!modalId) modalId = this.editModal.id;
+        //if (!modalId) modalId = this.editModal.id;
         var $icon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');;
         $icon.attr('data-target', modalId);
         return $icon;
@@ -85,16 +85,14 @@ class Collapsible {
      */
     buildRow(item){
         //każdy wiersz może mieć inny modal, domyślnie jest standardowy this.editModal
-        var editModalId;
         if(this.isEditable){
-            if (!item.editModal)
+            if (!item.editModal && this.editModal)
                 item.editModal = this.editModal;
-            editModalId = item.editModal.id
         }
         var row = { $dom: $('<li>'),
                     $crudButtons: $('<span class="crudButtons right">'),
                     dataItem: item.dataItem,
-                    editModalId: editModalId
+                    editModal: item.editModal
                   };
         row.$crudButtons
             .css('visibility', 'hidden');
@@ -132,8 +130,8 @@ class Collapsible {
             row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentEditUrl));
         
         if (this.isDeletable || this.isEditable){
-                row.$crudButtons
-                    .append(this.$rowEditIcon(row.editModalId));
+            row.$crudButtons
+                    .append(this.$rowEditIcon(row.editModal.id));
             if (this.isDeletable) 
                 row.$crudButtons
                     .append(this.$rowDeleteIcon());

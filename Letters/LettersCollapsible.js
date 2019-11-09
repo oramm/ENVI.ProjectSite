@@ -3,20 +3,26 @@ class LettersCollapsible extends SimpleCollapsible {
         super({ id: id,
                 hasFilter: true,
                 isEditable: true, 
-                isAddable: true, 
+                isAddable: false, 
                 isDeletable: true,
                 hasArchiveSwitch: true,
                 connectedRepository: LettersSetup.lettersRepository
                 //subitemsCount: 12
               });
         
-        this.addNewModal = new LetterModal(id + '_newLetterModal', 'Rejestruj pismo', this, 'ADD_NEW');
-        this.editModal = new LetterModal(id + '_editLetterModal', 'Edytuj dane pisma', this, 'EDIT');
+        this.addNewIncomingLetterModal = new IncomingLetterModal(id + '_newIncomingLetterModal', 'Rejestruj pismo przychodzące', this, 'ADD_NEW');
+        this.editIncomingLetterModal = new IncomingLetterModal(id + '_editIncomingLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
         
+        this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
+        this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
         
+        this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj pismo wychodzące po staremu', this, 'ADD_NEW');
+        this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
+
         this.initialise(this.makeCollapsibleItemsList());  
-        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj przychodzące",this);
-        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
+        this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj przychodzące",this);
+        this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
+        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące - stare",this);
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -24,6 +30,13 @@ class LettersCollapsible extends SimpleCollapsible {
      * @returns {Collapsible.Item}
      */
     makeItem(dataItem, $bodyDom){
+        var editModal;
+        if(dataItem.isOur)
+            editModal = this.editIncomingLetterModal;
+        else if(dataItem.id == dataItem.number)
+            editModal = this.editOurLetterModal;
+        else
+            editModal = this.editOurLetterModal;
         var name='';
         name += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
         name += 'Utworzono:&nbsp;<strong>' + dataItem.creationDate +'</strong>, ';
@@ -36,7 +49,7 @@ class LettersCollapsible extends SimpleCollapsible {
                     name: name,
                     $body: $bodyDom,
                     dataItem: dataItem,
-                    editModal: this.editModal
+                    editModal: editModal
                     };
     }
     
@@ -77,15 +90,5 @@ class LettersCollapsible extends SimpleCollapsible {
                            'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
                 
         return $panel;
-    }
-    
-    /*
-     * Ustawia pryciski edycji wierszy, 
-     * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
-     */
-    addRowCrudButtons(row){
-        super.addRowCrudButtons(row)
-        //row.$crudButtons.prepend(Setup.$externalResourcesIconLink('ATTACH_FILE',row.dataItem._documentOpenUrl));
-        
     }
 }

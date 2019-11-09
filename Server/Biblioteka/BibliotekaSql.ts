@@ -50,7 +50,7 @@ function editInDb(tableName, object, externalConn, isPartOfTransaction) {
   }
 }
 
-function deleteFromDb(tableName, object, externalConn, isPartOfTransaction){
+function deleteFromDb(tableName, object, externalConn?, isPartOfTransaction?){
   var conn = (externalConn)? externalConn : connectToSql();
   conn.setAutoCommit(false);
   

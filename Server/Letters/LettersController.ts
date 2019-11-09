@@ -1,4 +1,4 @@
-function getLettersListPerProject(initParamObject, externalConn) {
+function getLettersListPerProject(initParamObject, externalConn?) {
   var projectConditon = (initParamObject && initParamObject.projectId)? 'Projects.OurId="' + initParamObject.projectId + '"' : '1';
   
   var sql = 'SELECT  Letters.Id, \n \t' +
@@ -32,7 +32,7 @@ function test_getLettersListPerProject(){
   getLettersListPerProject({projectId:'KOB.GWS.01.WLASNE'});
 }
 
-function getLetters(sql, initParamObject, externalConn){
+function getLetters(sql, initParamObject, externalConn?){
   try {
     Logger.log(sql);
     var result = [];
@@ -192,7 +192,7 @@ function deleteLetter(itemFormClient){
 function test_getLetterCaseAssociationsPerProjectList(){
   getLetterCaseAssociationsPerProjectList({projectId: 'kob.gws.01.wlasne'});
 }
-function getLetterCaseAssociationsPerProjectList(initParamObject,externalConn){
+function getLetterCaseAssociationsPerProjectList(initParamObject,externalConn?){
   var projectConditon = (initParamObject && initParamObject.projectId)? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   
   var sql = 'SELECT  Letters_Cases.LetterId, \n \t' +
@@ -288,8 +288,6 @@ function getLetterCaseAssociations(sql,externalConn){
   }
 }
 
-
-
 function addNewLetterCaseAssociation(itemFormClient){
   itemFormClient = JSON.parse(itemFormClient);
   var item = new LetterCase(itemFormClient);
@@ -362,7 +360,7 @@ function getLetterEntityAssociationsList(initParamObject,externalConn){
 
   return getLetterEntityAssociations(sql,externalConn); 
 }
-function getLetterEntityAssociationsPerProjectList(projectId,externalConn){
+function getLetterEntityAssociationsPerProjectList(projectId,externalConn?){
   return getLetterEntityAssociationsList({projectId: projectId},externalConn)
 }
 
@@ -400,8 +398,6 @@ function getLetterEntityAssociations(sql,externalConn){
   }
 }
 
-
-
 function addNewLetterEntityAssociation(itemFormClient){
   itemFormClient = JSON.parse(itemFormClient);
   var item = new LetterEntity(itemFormClient);
@@ -422,7 +418,6 @@ function addNewLetterEntityAssociation(itemFormClient){
       if(conn.isValid(0)) conn.close();
     } 
 }
-
 
 function deleteLetterEntityAssociation(item){
   var item = JSON.parse(item);

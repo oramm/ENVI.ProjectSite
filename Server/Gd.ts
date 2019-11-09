@@ -266,7 +266,12 @@ Gd.prototype = {
   makeContractFoldersDataList: function(milestone){
     var foldersData = [];
     var caseTypes = (!milestone)? this.contract.getCaseTypes() : milestone.getCaseTypes();
-    if (caseTypes.length === 0) throw new Error("Nie przypisano typu spraw dla tego kamienia. Zgłoś się do administratora \n" + milestone.id)
+    if (caseTypes.length === 0){
+      if(!milestone) 
+        throw new Error('Nie przypisano typu spraw dla tego kontraktu. Zgłoś się do administratora');
+      else
+        throw new Error('Nie przypisano typu spraw dla tego kamienia: '+ milestone.name + '. Zgłoś się do administratora');
+    }
     var currentMilestoneFolderData : any = {}, 
         parentFolderData:any = {};
     var currentCaseFolderData = {};

@@ -1,67 +1,92 @@
-function Letter(initParamObject) {
-  if(initParamObject){
-    this.id = initParamObject.id;
-    this.isOur = initParamObject.isOur;
-    if(initParamObject.number)
-      this.number = initParamObject.number;
-    this.description = initParamObject.description;
-    
-    initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
-    this.creationDate = (initParamObject.creationDate)? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
-    
-    initParamObject.registrationDate = dateDMYtoYMD(initParamObject.registrationDate);
-    this.registrationDate = (initParamObject.registrationDate)? Utilities.formatDate(new Date(initParamObject.registrationDate), "CET", "yyyy-MM-dd") : undefined;
-    
-    if(initParamObject.letterGdId){	
-      this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.letterGdId);
-      this.letterGdId = initParamObject.letterGdId;
-      this._fileOrFolderOwnerEmail = DriveApp.getFileById(this.letterGdId).getOwner().getEmail();
-    }
-    if(initParamObject.folderGdId){	
-      this._gdFolderUrl = Gd.createGdFolderUrl(initParamObject.folderGdId);
-      this.folderGdId = initParamObject.folderGdId;
-      this._fileOrFolderOwnerEmail = DriveApp.getFolderById(this.folderGdId).getOwner().getEmail();
-    }
-    this._lastUpdated = initParamObject._lastUpdated;
-    this._contract = initParamObject._contract;
-    this._project = initParamObject._project;
-    this.projectId = initParamObject._project.id;
-    this._cases = initParamObject._cases;
-    this._entitiesMain = (initParamObject._entitiesMain)? initParamObject._entitiesMain : [];
-    this._entitiesCc = (initParamObject._entitiesCc)? initParamObject._entitiesCc : [];
-    this.letterFilesCount = (initParamObject._blobEnviObjects)? initParamObject._blobEnviObjects.length : initParamObject.letterFilesCount;
-    
-    this._editor = initParamObject._editor;
-    
-    this._fileOrFolderChanged;
-    this._template = initParamObject._template;
-  }
-}
+class LetterNew {
+  id?: any;
+  isOur?: any;
+  number?: any;
+  description?: any;
+  creationDate?: string;
+  registrationDate?: string;
+  _documentOpenUrl?: any;
+  letterGdId?: any;
+  _fileOrFolderOwnerEmail?: string;
+  _gdFolderUrl?: any;
+  folderGdId?: any;
+  _lastUpdated?: any;
+  _contract?: any;
+  _project?: any;
+  projectId?: any;
+  _cases?: any;
+  _entitiesMain?: any;
+  _entitiesCc?: any;
+  letterFilesCount?: any;
+  _editor?: any;
+  _fileOrFolderChanged?: any;
+  _template?: any;
+  editorId?: any;
+  _canUserChangeFileOrFolder?: any;
+  _folderName?: string;
+  _documentEditUrl?: string;
 
-Letter.prototype = {
-  constructor: Letter,
-  
-  setEditorId: function(){
+  constructor(initParamObject){
+    if(initParamObject){
+      this.id = initParamObject.id;
+      this.isOur = initParamObject.isOur;
+      if(initParamObject.number)
+        this.number = initParamObject.number;
+      this.description = initParamObject.description;
+      
+      initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
+      this.creationDate = (initParamObject.creationDate)? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
+      
+      initParamObject.registrationDate = dateDMYtoYMD(initParamObject.registrationDate);
+      this.registrationDate = (initParamObject.registrationDate)? Utilities.formatDate(new Date(initParamObject.registrationDate), "CET", "yyyy-MM-dd") : undefined;
+      
+      if(initParamObject.letterGdId){	
+        this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.letterGdId);
+        this.letterGdId = initParamObject.letterGdId;
+        this._fileOrFolderOwnerEmail = DriveApp.getFileById(this.letterGdId).getOwner().getEmail();
+      }
+      if(initParamObject.folderGdId){	
+        this._gdFolderUrl = Gd.createGdFolderUrl(initParamObject.folderGdId);
+        this.folderGdId = initParamObject.folderGdId;
+        this._fileOrFolderOwnerEmail = DriveApp.getFolderById(this.folderGdId).getOwner().getEmail();
+      }
+      this._lastUpdated = initParamObject._lastUpdated;
+      this._contract = initParamObject._contract;
+      this._project = initParamObject._project;
+      this.projectId = initParamObject._project.id;
+      this._cases = initParamObject._cases;
+      this._entitiesMain = (initParamObject._entitiesMain)? initParamObject._entitiesMain : [];
+      this._entitiesCc = (initParamObject._entitiesCc)? initParamObject._entitiesCc : [];
+      this.letterFilesCount = (initParamObject._blobEnviObjects)? initParamObject._blobEnviObjects.length : initParamObject.letterFilesCount;
+      
+      this._editor = initParamObject._editor;
+      
+      this._fileOrFolderChanged;
+      this._template = initParamObject._template;
+    }
+  }
+
+  setEditorId(){
     if(this._editor.id)
       return this._editor.id;
     else
-      return Person.getPersonDbId(Session.getActiveUser().getEmail());
-  },
+      return Person.getPersonDbId(Session.getActiveUser().getEmail(), undefined);
+  }
     
   /*
    * Używana przy selekcie
    */
-  canUserChangeFileOrFolder: function(){
+  canUserChangeFileOrFolder(){
     if(this.folderGdId)
       return Gd.canUserDeleteFolder(this.folderGdId);
     else if(this.letterGdId)
       return Gd.canUserDeleteFile(this.letterGdId);
-  },
+  }
   
   /*
    * Używać tylko gdy mamy pojedynczego bloba - pismo przychodzące
    */
-  createLetterFile: function(blobEnviObjects){
+  createLetterFile(blobEnviObjects){
     if(this.letterFilesCount>1) throw new Error('Cannot create a singleFile for letter with multiple files!');
     var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
     var blob = Tools._blobEnviObjectToBlob(blobEnviObjects[0]);
@@ -73,40 +98,40 @@ Letter.prototype = {
     
     this.folderGdId = undefined;
     this._gdFolderUrl = undefined;
-  },
+  }
   
 
   /*
    * Tworzy folder i plik pisma ENVI z wybranego szablonu
    * blobEnviObjects - załączniki
    */
-  createOurLetter: function(blobEnviObjects){
+  createOurLetter(blobEnviObjects){
     var letterFolder = this.createLetterFolder(blobEnviObjects);
     var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
     ourLetterFile.setShareableByEditors(true);
     this.letterGdId = ourLetterFile.getId();
     this._documentEditUrl = ourLetterFile.getUrl();
     return letterFolder;
-  },
+  }
   /*
    * Używać tylko gdy mamy pojedynczego bloba
    * dodaje plik pisma do folderów spraw powiązanych z pismem
    * file  -plik zrobiony z bloba
    */
-  addFileToCasesFolders: function(file){
+  addFileToCasesFolders(file){
     if(this.letterFilesCount>1) throw new Error('Cannot add file to cases folders for letter with multiple files!');
     for(var i=0; i<this._cases.length; i++){
       var caseFolder = DriveApp.getFolderById(this._cases[i].gdFolderId);
       caseFolder.addFile(file); //uwaga to nie jest kopia pliku. skasowanie go powoduje usunięcie z każdego folderu
     }
-  },
+  }
   
   /*
    * Używać tylko gdy mamy wiele blobów
    */
-  createLetterFolder: function(blobEnviObjects){
+  createLetterFolder(blobEnviObjects){
     if(!this.isOur && this.letterFilesCount<2) throw new Error('Cannot create a folder for Letter with single file!');
-    var gd = new Gd()
+    //var gd = new Gd(undefined)
     var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
     var letterFolder = rootFolder.createFolder(this._folderName);
     letterFolder.setShareableByEditors(true);
@@ -125,35 +150,35 @@ Letter.prototype = {
     this._documentOpenUrl = undefined;
     this.letterGdId=undefined;
     return letterFolder;
-  },
+  }
   
   /*
    * Używać tylko gdy mamy wiele blobów
    * dodaje folder z plikami pisma do folderów spraw powiązanych z pismem
    * folder folder plików pisma
    */
-  addFolderToCasesFolders: function(letterFolder){
+  addFolderToCasesFolders(letterFolder){
     if(!this.isOur && this.letterFilesCount<2) throw new Error('There is no letterFolder to add to cases folders for letter with single file!');
     for(var i=0; i<this._cases.length; i++){
       var caseFolder = DriveApp.getFolderById(this._cases[i].gdFolderId);
       caseFolder.addFolder(letterFolder); //uwaga to nie jest kopia folderu. skasowanie go powoduje usunięcie z każdego folderu
     }
-  },
+  }
   /*
    * Używać tylko gdy mamy wiele blobów
    */
-  makeFolderName: function(){
+  makeFolderName(){
     return this.number + ' ' + this.creationDate;
-  },
+  }
   
-  addInDb: function(externalConn, isPartOfTransaction) {
+  addInDb(externalConn, isPartOfTransaction) {
     addInDb('Letters', this, externalConn, isPartOfTransaction);
     this.addCaseAssociationsInDb(externalConn);
     this.addEntitiesAssociationsInDb(externalConn);
     if(!this.number) this.number = this.id;
-  },
+  }
   
-  addCaseAssociationsInDb: function(externalConn){
+  addCaseAssociationsInDb(externalConn){
     var conn = (externalConn)? externalConn : connectToSql();
     try {
       for(var i=0; i<this._cases.length; i++){
@@ -170,9 +195,9 @@ Letter.prototype = {
     } finally {
       if(!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
   
-  addEntitiesAssociationsInDb: function(externalConn){
+  addEntitiesAssociationsInDb(externalConn){
     var conn = (externalConn)? externalConn : connectToSql();
     this._entitiesMain = this._entitiesMain.map(function(item){item.letterRole = 'MAIN'; 
                                                              return item 
@@ -195,20 +220,20 @@ Letter.prototype = {
     } finally {
       if(!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
   
-  editInDb: function(externalConn, isPartOfTransaction) {
+  editInDb(externalConn, isPartOfTransaction) {
     this.deleteCaseAssociationsFromDb(externalConn);
     this.deleteEntityAssociationsFromDb(externalConn);
     editInDb('Letters', this, externalConn, isPartOfTransaction);
-    this.addCaseAssociationsInDb(externalConn, isPartOfTransaction);
-    this.addEntitiesAssociationsInDb(externalConn, isPartOfTransaction);
-  },
+    this.addCaseAssociationsInDb(externalConn);
+    this.addEntitiesAssociationsInDb(externalConn);
+  }
   
   /*
    * pismo przychodzące albo nasze pismo po staremu
    */
-  editFileOrFolder: function(_blobEnviObjects){
+  editFileOrFolder(_blobEnviObjects){
     this._fileOrFolderChanged = this.deleteFromGd();
     
     if(_blobEnviObjects.length>1)
@@ -217,21 +242,21 @@ Letter.prototype = {
       var letterFile = this.createLetterFile(_blobEnviObjects);
     
     this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
-  },
+  }
   /*
    * _blobEnviObjects to załączniki do pisma
    */
-  editOurFolder: function(_blobEnviObjects){
+  editOurFolder(_blobEnviObjects){
     this._fileOrFolderChanged = this.deleteFromGd();
     var letterFolder = this.createOurLetter(_blobEnviObjects);
     //this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
-  },
+  }
   
-  deleteFromDb: function (externalConn){
-    deleteFromDb ('Letters', this);
-  },
+  deleteFromDb(externalConn){
+    deleteFromDb ('Letters', this, undefined, undefined);
+  }
   
-  deleteFromGd: function(){
+  deleteFromGd(){
     if(this.letterGdId || this.folderGdId){
       //usuwamy folder lub plik
       if(this.canUserChangeFileOrFolder()){
@@ -254,9 +279,9 @@ Letter.prototype = {
         return false;
       }
     }
-  },
+  }
   
-  deleteCaseAssociationsFromDb: function(externalConn){
+  deleteCaseAssociationsFromDb(externalConn){
     var conn = (externalConn)? externalConn : connectToSql();
     try {
       var stmt = conn.createStatement();
@@ -268,9 +293,9 @@ Letter.prototype = {
     } finally {
       if(!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
 
-  deleteEntityAssociationsFromDb: function(externalConn){
+  deleteEntityAssociationsFromDb(externalConn){
     var conn = (externalConn)? externalConn : connectToSql();
     try {
       var stmt = conn.createStatement();

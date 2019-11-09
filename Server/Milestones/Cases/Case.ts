@@ -168,8 +168,6 @@ Case.prototype = {
     ]]
     SCRUM_DATA_SHEET.getRange(lastCaseDataRow + 1, SCRUM_DATA_COL_CASE_ID + 1, 1, 5).setValues(caseData);
     SCRUM_DATA_DATA_VALUES = SCRUM_DATA_SHEET.getDataRange().getValues();
-
-    this.setDataValidation();
   },
 
   editInDb: function (externalConn, isPartOfTransaction) {
@@ -188,9 +186,6 @@ Case.prototype = {
       (this.gdFolderId) ? this.gdFolderId : ''
     ]]
     SCRUM_DATA_SHEET.getRange(caseDataRow + 1, SCRUM_DATA_COL_CASE_ID + 1, 1, 5).setValues(caseData);
-    //TODO: przerobić to także by validacja pokazywałą sprawy dla typu sprawy w kamieniu a nia dla kamienia
-    //if(!this._type.isUniquePerMilestone)
-    this.setDataValidation();
 
     //edytuj wiersze ze scruma
     var firstMilestoneRow = findFirstInRange(this.milestoneId, SCRUM_DATA_VALUES, SCRUM_COL_MILESTONE_ID);
@@ -244,19 +239,6 @@ Case.prototype = {
       SCRUM_DATA_SHEET.deleteRow(caseDataRow + 1);
       //Logger.log(caseDataRow+1);
     }
-    this.setDataValidation();
-  },
-  //używana w Contract.addinitialMilestones()
-  setDataValidation: function () {
-    var firstMilestoneRow = findFirstInRange(this.milestoneId, SCRUM_DATA_VALUES, SCRUM_COL_MILESTONE_ID) + 1;
-    var lastMilestoneRow = findLastInRange(this.milestoneId, SCRUM_DATA_VALUES, SCRUM_COL_MILESTONE_ID) + 1;
-    var rowsQuantity = lastMilestoneRow - firstMilestoneRow + 1;
-    if (!isNaN(firstMilestoneRow) && !isNaN(lastMilestoneRow))
-      this.setDataValidations([{
-        firstRow: firstMilestoneRow,
-        rowsCount: rowsQuantity,
-        milestoneId: this.milestoneId
-      }]);
   },
   /*
    * sprawdza czy sprawa ma podpiętą instancję procesu danego typu

@@ -1,7 +1,7 @@
 function synchronizeScrum(){
   synchronizeCases();
   SCRUM_DATA_VALUES = SCRUM_SHEET.getDataRange().getValues();
-  setDataValidations();
+  //setDataValidations();
   SCRUM_DATA_VALUES = SCRUM_SHEET.getDataRange().getValues();
   //pushForgottentMilestonesToScrum();
   cleanEmptyRows();
@@ -15,7 +15,7 @@ function checkCasesWithDb(){
   for(var i = SCRUM_FIRST_DATA_ROW; i <SCRUM_DATA_VALUES.length; i++){
     if (SCRUM_DATA_VALUES[i][SCRUM_COL_CASE_ID]) {
       rowStatus = (SCRUM_DATA_VALUES[i][SCRUM_COL_ROW_STATUS])? JSON.parse(SCRUM_DATA_VALUES[i][SCRUM_COL_ROW_STATUS]) : {};
-      var caseItem = new Case();
+      var caseItem = new Case(undefined);
       caseItem.initFromScrum(i);
       var dbId = caseItem.isSavedInDb();
       if (!dbId) throw new Error("Wiersz " + i + " Brak w bazie sprawy: \n" + JSON.stringify(caseItem));
@@ -133,7 +133,7 @@ function scrumMakeTimesSummary() {
     var meetings = '=SUM(planowanie!E'+ r +':H' + r +')';
     sums[8].push(meetings);
     
-    r1 = SCRUM_FIRST_DATA_ROW+1
+    var r1 = SCRUM_FIRST_DATA_ROW+1
     var sum = '=SUM(R' + r1 + 'C:' +
                    'R[-1]C)'
     sums[9].push(sum);

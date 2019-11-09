@@ -75,7 +75,7 @@ function getPersonsNameSurnameEmailListPerSystemRole(systemRoleName, externalCon
 }
 
 function test_getPersonsNameSurnameEmailList(){
-  getPersonsNameSurnameEmailListPerContract(224);
+  getPersonsNameSurnameEmailListPerContract(224, undefined);
 }
 
 function getPersonsNameSurnameEmailListPerContract(contractId, externalConn) {
@@ -161,7 +161,7 @@ function editPersonInDb(itemFromClient) {
 
 function deletePerson(itemFromClient){
   itemFromClient = JSON.parse(itemFromClient);
-  var item = new Person();
+  var item = new Person(undefined);
   item.id = itemFromClient.id;
   Logger.log(JSON.stringify(item));
   item.deleteFromDb();

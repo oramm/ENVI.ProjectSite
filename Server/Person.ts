@@ -14,7 +14,7 @@ function Person(initParamObject) {
     this._entity = initParamObject._entity;
   }
 }
-Person.getPersonDbId = function(email, externalConn){
+Person.getPersonDbId = function(email, externalConn?){
   try {
     var conn = (externalConn)? externalConn : connectToSql();
     var stmt = conn.createStatement();

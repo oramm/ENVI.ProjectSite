@@ -3,7 +3,7 @@
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
  */
 class Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
+    constructor(id, tittle, connectedResultsetComponent, mode) {
         this.id = id;
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
@@ -14,27 +14,27 @@ class Modal {
         this.$dom;
         this.$title = $('<h4 class="modalTitle">');
     }
-    initialise(){
+    initialise() {
         this.buildDom();
-        Tools.hasFunction(this.submitTrigger);       
+        Tools.hasFunction(this.submitTrigger);
     }
-    
-    buildDom(){
-        this.form = new Form("form_"+ this.id, "GET", this.formElements);
+
+    buildDom() {
+        this.form = new Form("form_" + this.id, "GET", this.formElements);
         this.$dom = $('<div id="' + this.id + '" class="modal modal-fixed-footer">');
         this.connectedResultsetComponent.$dom
             .append(this.$dom).children(':last-child')
-                .append('<div class="modal-content">').children()
-                    .append(this.form.$dom);
+            .append('<div class="modal-content">').children()
+            .append(this.form.$dom);
         this.connectedResultsetComponent.$dom.children(':last-child')
-                .append('<div class="modal-footer">').children(':last-child')
-                    .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">ZAMKNIJ</a>');
+            .append('<div class="modal-footer">').children(':last-child')
+            .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">ZAMKNIJ</a>');
         this.$dom.children('.modal-content').prepend(this.$title);
         this.setTittle(this.tittle);
         this.setSubmitAction();
     }
-    
-    setTittle(tittle){
+
+    setTittle(tittle) {
         this.$title.text(tittle);
     }
     /*
@@ -42,58 +42,58 @@ class Modal {
      * @param {Collection | Collapsible} resultsetComponent
      * @returns {Modal.createTriggerIcon.$icon}
      */
-    createTriggerIcon(){
-        var iconType = (this.mode==='ADD_NEW')? 'add' : 'edit';
+    createTriggerIcon() {
+        var iconType = (this.mode === 'ADD_NEW') ? 'add' : 'edit';
         var $triggerIcon = $('<SPAN data-target="' + this.id + '" ><i class="material-icons">' + iconType + '</i></SPAN>');
         //var _this = this;
         $triggerIcon
-            .addClass((this.mode==='ADD_NEW')? 'addNewItemIcon' : 'collectionItemEdit')
+            .addClass((this.mode === 'ADD_NEW') ? 'addNewItemIcon' : 'collectionItemEdit')
             .addClass('modal-trigger')
-        return $triggerIcon;                     
+        return $triggerIcon;
     }
     /*
      * Akcja po włączeniu modala. 
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction() 
      */
-    triggerAction(connectedResultsetComponent){
-        $(connectedResultsetComponent.$dom.css('min-height','300px'));
+    triggerAction(connectedResultsetComponent) {
+        $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
-        if(this.mode=='EDIT') 
+        if (this.mode == 'EDIT')
             this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
         else
             this.initAddNewData();
-        
+
         Materialize.updateTextFields();
     }
     /*
      * Aktualizuje dane np. w selectach. Jest uruchamiana w this.triggerAction();
      */
-    refreshDataSets(){
-        for (var i =0; i<this.formElements.length; i++){
-            if (typeof this.formElements[i].refreshDataSet==='function')
+    refreshDataSets() {
+        for (var i = 0; i < this.formElements.length; i++) {
+            if (typeof this.formElements[i].refreshDataSet === 'function')
                 this.formElements[i].refreshDataSet();
         }
     }
     /*
      * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
      */
-    preppendTriggerButtonTo($uiElelment,caption, connectedResultsetComponent){
-        var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">'+ caption +'</button>');
+    preppendTriggerButtonTo($uiElelment, caption, connectedResultsetComponent) {
+        var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">' + caption + '</button>');
         var _this = this;
-        $button.click(    function(){   //_this.connectWithResultsetComponent(connectedResultsetComponent);
-                                        //_this.initAddNewData();
-                                        _this.triggerAction(connectedResultsetComponent)
-                                    });
+        $button.click(function () {   //_this.connectWithResultsetComponent(connectedResultsetComponent);
+            //_this.initAddNewData();
+            _this.triggerAction(connectedResultsetComponent)
+        });
         $uiElelment.prepend($button);
     }
-    
+
     /*
      * wywoływana przed pokazaniem modala
      * @param {Collection | Collapsible} component
      * @returns {undefined}
      */
-    connectWithResultsetComponent(component){
+    connectWithResultsetComponent(component) {
         this.connectedResultsetComponent = component;
     }
     /*
@@ -106,41 +106,51 @@ class Modal {
             // prevent default posting of form
             event.preventDefault();
         });
-    }    
+    }
     /*
      * Używana przy Submit
      * @param {repositoryItem} currentEditedItem
      * @returns {undefined}
      */
-    isDuplicate(currentEditedItem){
+    isDuplicate(currentEditedItem) {
         var duplicate = this.connectedResultsetComponent.connectedRepository.items.find(item => _.isEqual(item, currentEditedItem));
-        return (duplicate)? true : false;
+        return (duplicate) ? true : false;
     }
-    
+
     /*
      * Krok 1 - po kliknięciu 'Submit' formularza dodawania
      * Proces: this.submitTrigger >> this.connectedResultsetComponent.connectedRepository.addNewPerson
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[PENDING]
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
-    submitTrigger(){
+    submitTrigger() {
         try {
             tinyMCE.triggerSave();
-        } catch (e){console.log('Modal.submitTrigger():: TinyMCE not defined')}
+        } catch (e) { console.log('Modal.submitTrigger():: TinyMCE not defined') }
         var repository = this.connectedResultsetComponent.connectedRepository;
         //obiekt do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(repository.currentItem);
-        
+
         this.form.submitHandler(tmpDataObject)
-            .then(()=>{
-                if (this.form.validate(tmpDataObject)){
-                        
-                        if(this.mode==='EDIT')
-                            repository.editItem(tmpDataObject, this.connectedResultsetComponent);
+            .then(() => {
+                if (this.form.validate(tmpDataObject)) {
+                    //edytuj
+                    if (this.mode === 'EDIT') {
+                        if (this.doChangeFunctionOnItemName)
+                            repository.doChangeFunctionOnItemName(tmpDataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent);
                         else
-                           repository.addNewItem(tmpDataObject, this.connectedResultsetComponent); 
-                repository.currentItem = tmpDataObject;    
-            }
+                            repository.editItem(tmpDataObject, this.connectedResultsetComponent);
+
+                    }
+                    //dodaj nowy element
+                    else {
+                        if (this.doAddNewFunctionOnItemName)
+                            repository.doAddNewFunctionOnItemName(tmpDataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent);
+                        else
+                            repository.addNewItem(tmpDataObject, this.connectedResultsetComponent);
+                    }
+                    repository.currentItem = tmpDataObject;
+                }
                 this.$dom.modal('close');
             })
     }

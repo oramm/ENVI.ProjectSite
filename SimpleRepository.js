@@ -45,6 +45,7 @@ class SimpleRepository extends Repository {
       
     //Krok 2 - wywoływana przy SUBMIT
     addNewItem(item, viewObject) {
+        return this.doAddNewFunctionOnItem(dataItem, this.addNewServerFunctionName, viewObject);
         return new Promise((resolve, reject) => {
             super.addNewItem(item,this.addNewServerFunctionName,viewObject)
                   .then((res) => {  //this.items.push(res)
@@ -56,15 +57,7 @@ class SimpleRepository extends Repository {
     
     //Krok 2 - wywoływana przy SUBMIT
     editItem(dataItem, viewObject) {
-        return this.doFunctionOnItem(dataItem, this.editServerFunctionName, viewObject);
-        return new Promise((resolve, reject) => {
-            super.editItem(dataItem,this.editServerFunctionName, viewObject)
-                  .then((res) => {  var newIndex = this.items.findIndex(item => item.id == res.id
-                                                      ); 
-                                    this.items[newIndex] = res;
-                                    console.log('zmieniono dane : ', res);
-                                 })
-        });
+        return this.doChangeFunctionOnItem(dataItem, this.editServerFunctionName, viewObject);
     }
     
     /*
@@ -84,13 +77,23 @@ class SimpleRepository extends Repository {
     /*
      * wykonuje dowolną funkcję z serwera dotyczącą danej pozycji na liście viewObject
      */
-    doFunctionOnItem(dataItem, serverFunctionName, viewObject) {
+    doChangeFunctionOnItem(dataItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
             super.editItem(dataItem,serverFunctionName, viewObject)
                   .then((res) => {  var newIndex = this.items.findIndex(item => item.id == res.id
                                                       ); 
                                     this.items[newIndex] = res;
                                     console.log('wykonano funkcję: %s', serverFunctionName, res);
+                                 })
+        });
+    }
+    /*
+     * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
+     */
+    doAddNewFunctionOnItem(dataItem, serverFunctionName, viewObject) {
+        return new Promise((resolve, reject) => {
+            super.addNewItem(dataItem,serverFunctionName, viewObject)
+                  .then((res) => {  console.log('wykonano funkcję: %s', serverFunctionName, res);
                                  })
         });
     }
