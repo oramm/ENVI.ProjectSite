@@ -1,9 +1,6 @@
-function Letter_OLD(initParamObject) {
+function LetterOld(initParamObject) {
   if(initParamObject){
     this.id = initParamObject.id;
-    this.isOur = initParamObject.isOur;
-    if(initParamObject.number)
-      this.number = initParamObject.number;
     this.description = initParamObject.description;
     
     initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
@@ -38,8 +35,8 @@ function Letter_OLD(initParamObject) {
   }
 }
 
-Letter.prototype = {
-  constructor: Letter,
+LetterOld.prototype = {
+  constructor: LetterOld,
   
   setEditorId: function(){
     if(this._editor.id)
@@ -56,6 +53,7 @@ Letter.prototype = {
       return Gd.canUserDeleteFolder(this.folderGdId);
     else if(this.letterGdId)
       return Gd.canUserDeleteFile(this.letterGdId);
+    Logger.log('executed Letter: canUserChangeFileOrFolder()');
   },
   
   /*
@@ -76,18 +74,7 @@ Letter.prototype = {
   },
   
 
-  /*
-   * Tworzy folder i plik pisma ENVI z wybranego szablonu
-   * blobEnviObjects - załączniki
-   */
-  createOurLetter: function(blobEnviObjects){
-    var letterFolder = this.createLetterFolder(blobEnviObjects);
-    var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
-    ourLetterFile.setShareableByEditors(true);
-    this.letterGdId = ourLetterFile.getId();
-    this._documentEditUrl = ourLetterFile.getUrl();
-    return letterFolder;
-  },
+  
   /*
    * Używać tylko gdy mamy pojedynczego bloba
    * dodaje plik pisma do folderów spraw powiązanych z pismem
@@ -149,7 +136,6 @@ Letter.prototype = {
     addInDb('Letters', this, externalConn, isPartOfTransaction);
     this.addCaseAssociationsInDb(externalConn);
     this.addEntitiesAssociationsInDb(externalConn);
-    if(!this.number) this.number = this.id;
   },
   
   addCaseAssociationsInDb: function(externalConn){

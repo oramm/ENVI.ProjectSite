@@ -137,7 +137,7 @@ class Modal {
                     //edytuj
                     if (this.mode === 'EDIT') {
                         if (this.doChangeFunctionOnItemName)
-                            repository.doChangeFunctionOnItemName(tmpDataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent);
+                            repository.doChangeFunctionOnItem(tmpDataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent);
                         else
                             repository.editItem(tmpDataObject, this.connectedResultsetComponent);
 
@@ -145,7 +145,7 @@ class Modal {
                     //dodaj nowy element
                     else {
                         if (this.doAddNewFunctionOnItemName)
-                            repository.doAddNewFunctionOnItemName(tmpDataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent);
+                            repository.doAddNewFunctionOnItem(tmpDataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent);
                         else
                             repository.addNewItem(tmpDataObject, this.connectedResultsetComponent);
                     }

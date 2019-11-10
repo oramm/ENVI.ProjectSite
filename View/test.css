@@ -29,6 +29,11 @@ iframe {
 .actionsMenu .row {
     margin-bottom: 0;
 }
+
+.actionsMenu button {
+    margin: 5px;
+}
+
 .collection-item .title{
     font-weight: 300;
     font-size: 1.2em;

@@ -3,7 +3,7 @@ class IncomingLetterModal extends LetterModal {
         super(id, tittle, connectedResultsetComponent, mode);
         this.controller = new IncomingLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
-        this.doAddNewFunctionOnItemName ='';
+        this.doAddNewFunctionOnItemName = 'addNewIncomingLetter';
         this.initFormElements();
 
         this.formElements = [

@@ -101,7 +101,7 @@ function editTask(itemFormClient) {
 
 function deleteTask(itemFormClient){
   itemFormClient = JSON.parse(itemFormClient);
-  var item = new Task();
+  var item = new Task(undefined);
   item.id = itemFormClient.id;
   item.deleteFromDb();
   item.deleteFromScrum();
