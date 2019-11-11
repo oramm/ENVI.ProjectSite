@@ -1,7 +1,7 @@
 class OurOldTypeLetterModal extends LetterModal {
     constructor(id, tittle, connectedResultsetComponent, mode) {
         super(id, tittle, connectedResultsetComponent, mode);
-        this.controller = new IncomingLetterModalController(this);
+        this.controller = new OurOldTypeLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
         this.doAddNewFunctionOnItemName ='';
         this.initFormElements();
@@ -26,7 +26,7 @@ class OurOldTypeLetterModal extends LetterModal {
         super.initFormElements();
         var _this = this;
         this.numberFormElement = {
-            input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, false, 25),
+            input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, true, 25),
             description: 'Nadaj ręcznie numer pisma',
             dataItemKeyName: 'number',
             refreshDataSet() {

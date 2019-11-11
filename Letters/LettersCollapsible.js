@@ -31,18 +31,20 @@ class LettersCollapsible extends SimpleCollapsible {
      */
     makeItem(dataItem, $bodyDom){
         var editModal;
-        if(dataItem.isOur)
+        if(dataItem.isOur){
+            if(dataItem._template)
+                editModal = this.editOurLetterModal;
+            else
+                editModal = this.editOurOldTypeLetterModal;
+        } else
             editModal = this.editIncomingLetterModal;
-        else if(dataItem.id == dataItem.number)
-            editModal = this.editOurLetterModal;
-        else
-            editModal = this.editOurLetterModal;
+            
         var name='';
+        name += '<strong>' + dataItem.creationDate +'</strong> ' + dataItem.description + '<Br>';
+
         name += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
-        name += 'Utworzono:&nbsp;<strong>' + dataItem.creationDate +'</strong>, ';
         name += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
-        name += '<br>Opis:&nbsp;' + dataItem.description + '<br>';
         name += (dataItem.isOur)? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;'; 
         name += this.makeEntitiesLabel(dataItem._entitiesMain)
         return {    id: dataItem.id,

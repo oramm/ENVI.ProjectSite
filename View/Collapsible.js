@@ -56,7 +56,7 @@ class Collapsible {
         this.parentViewObject = parentViewObject;
         this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
         
-        this.isEditable = (this.editModal !== undefined)? true : false;
+        //this.isEditable = (this.editModal !== undefined)? true : false;
         this.isSelectable = true;
         
         this.buildDom();
@@ -152,7 +152,7 @@ class Collapsible {
                 this.$collapsible.prepend(this.buildRow(this.makeItem(item)).$dom);
                 //this.$collapsible.children('[itemid=' + item.tmpId +']').children('.progress').remove();
                 //this.$collapsible.children('[itemid=' + item.tmpId +']').attr('itemid',item.id);
-                if (this.editModal) this.setEditAction();
+                if (this.isEditable) this.setEditAction();
                 if (this.isDeletable) this.setDeleteAction();
                 if (this.isSelectable) this.setSelectAction();
                 this.items.push(this.makeItem(item));

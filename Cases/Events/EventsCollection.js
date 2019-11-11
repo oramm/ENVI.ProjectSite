@@ -72,8 +72,8 @@ class EventsCollection extends SimpleCollection {
     makeLetterDescription(dataItem){
         var description ='';
         description += (dataItem.isOur)? 'Do:&nbsp;' : 'Od:&nbsp;'; 
-        description += dataItem.entityName + '<br>';
-        description += 'Numer&nbsp;' + dataItem.number + ', ';
+        description += this.makeEntitiesLabel(dataItem._entitiesMain) + '<br>';
+        description += 'Numer:&nbsp;' + dataItem.number + ', ';
         description += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         description += '<strong>' + dataItem.registrationDate + '</strong>, ';
         var $collectionElementDescription = $('<span>');
@@ -85,6 +85,17 @@ class EventsCollection extends SimpleCollection {
         
         return $collectionElementDescription;
     }
+
+    makeEntitiesLabel(entities){
+        var label = '';
+        for(var i=0; i<entities.length-1; i++){
+            label += entities[i].name + ', '
+        }
+        if(entities[i]) 
+            label += entities[i].name;
+        return label;
+    }
+
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */

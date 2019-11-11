@@ -30,7 +30,7 @@ class Letter {
         if (initParamObject) {
             this.id = initParamObject.id;
             this.description = initParamObject.description;
-
+            this.number = initParamObject.number;
             initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
             this.creationDate = (initParamObject.creationDate) ? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
 
@@ -57,14 +57,14 @@ class Letter {
             this.letterFilesCount = (initParamObject._blobEnviObjects) ? initParamObject._blobEnviObjects.length : initParamObject.letterFilesCount;
 
             this._editor = initParamObject._editor;
-
+            this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
             this._fileOrFolderChanged;
             this._template = initParamObject._template;
         }
     }
 
 
-    setEditorId() {
+    setEditorId(): number {
         if (this._editor.id)
             return this._editor.id;
         else
@@ -74,7 +74,7 @@ class Letter {
     /*
      * Używana przy selekcie
      */
-    canUserChangeFileOrFolder() {
+    canUserChangeFileOrFolder(): boolean {
         if (this.folderGdId)
             return Gd.canUserDeleteFolder(this.folderGdId);
         else if (this.letterGdId)
@@ -84,7 +84,7 @@ class Letter {
     /*
      * Używać tylko gdy mamy pojedynczego bloba - pismo przychodzące
      */
-    createLetterFile(blobEnviObjects): GoogleAppsScript.Drive.File {
+    createLetterFile(blobEnviObjects: any[]): GoogleAppsScript.Drive.File {
         if (this.letterFilesCount > 1) throw new Error('Cannot create a singleFile for letter with multiple files!');
         var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
         var blob = Tools._blobEnviObjectToBlob(blobEnviObjects[0]);
@@ -96,6 +96,7 @@ class Letter {
 
         this.folderGdId = undefined;
         this._gdFolderUrl = undefined;
+        this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
         return letterFile;
     }
 
@@ -104,7 +105,7 @@ class Letter {
      * dodaje plik pisma do folderów spraw powiązanych z pismem
      * file  -plik zrobiony z bloba
      */
-    addFileToCasesFolders(file) {
+    addFileToCasesFolders(file: GoogleAppsScript.Drive.File) {
         if (this.letterFilesCount > 1) throw new Error('Cannot add file to cases folders for letter with multiple files!');
         for (var i = 0; i < this._cases.length; i++) {
             var caseFolder = DriveApp.getFolderById(this._cases[i].gdFolderId);
@@ -115,7 +116,7 @@ class Letter {
     /*
      * Używać tylko gdy mamy wiele blobów
      */
-    createLetterFolder(blobEnviObjects): GoogleAppsScript.Drive.Folder {
+    createLetterFolder(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
         if (!this.isOur && this.letterFilesCount < 2) throw new Error('Cannot create a folder for Letter with single file!');
         //var gd = new Gd(undefined)
         var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
@@ -124,7 +125,6 @@ class Letter {
         this.folderGdId = letterFolder.getId();
         this._gdFolderUrl = letterFolder.getUrl();
         this._fileOrFolderOwnerEmail = letterFolder.getOwner().getEmail();
-        this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
         //letterFolder.setOwner(MY_GOOGLE_ACCOUNT_EMAIL);
         letterFolder.setShareableByEditors(true);
         for (var i = 0; i < blobEnviObjects.length; i++) {
@@ -135,6 +135,7 @@ class Letter {
 
         this._documentOpenUrl = undefined;
         this.letterGdId = undefined;
+        this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
         return letterFolder;
     }
 
@@ -143,7 +144,7 @@ class Letter {
      * dodaje folder z plikami pisma do folderów spraw powiązanych z pismem
      * folder folder plików pisma
      */
-    addFolderToCasesFolders(letterFolder) {
+    addFolderToCasesFolders(letterFolder: GoogleAppsScript.Drive.Folder) {
         if (!this.isOur && this.letterFilesCount < 2) throw new Error('There is no letterFolder to add to cases folders for letter with single file!');
         for (var i = 0; i < this._cases.length; i++) {
             var caseFolder = DriveApp.getFolderById(this._cases[i].gdFolderId);
@@ -153,11 +154,11 @@ class Letter {
     /*
      * Używać tylko gdy mamy wiele blobów
      */
-    makeFolderName() {
+    makeFolderName(): string {
         return this.number + ' ' + this.creationDate;
     }
 
-    addInDb(externalConn, isPartOfTransaction) {
+    addInDb(externalConn, isPartOfTransaction?: boolean) {
         addInDb('Letters', this, externalConn, isPartOfTransaction);
         this.addCaseAssociationsInDb(externalConn);
         this.addEntitiesAssociationsInDb(externalConn);
@@ -213,7 +214,7 @@ class Letter {
         }
     }
 
-    editInDb(externalConn?, isPartOfTransaction?:boolean) {
+    editInDb(externalConn?, isPartOfTransaction?: boolean) {
         this.deleteCaseAssociationsFromDb(externalConn);
         this.deleteEntityAssociationsFromDb(externalConn);
         editInDb('Letters', this, externalConn, isPartOfTransaction);
@@ -224,20 +225,22 @@ class Letter {
     /*
      * pismo przychodzące albo nasze pismo po staremu
      */
-    editLetterGdElements(_blobEnviObjects) {
+    editLetterGdElements(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder | GoogleAppsScript.Drive.File {
         //użytkownik chce zmienić plik
-        if (_blobEnviObjects.length > 0){
+        if (blobEnviObjects.length > 0) {
+            var letterGdElement: GoogleAppsScript.Drive.Folder | GoogleAppsScript.Drive.File;
             this._fileOrFolderChanged = this.deleteFromGd();
 
-            if (_blobEnviObjects.length > 1)
-                var letterFolder = this.createLetterFolder(_blobEnviObjects);
+            if (blobEnviObjects.length > 1)
+                letterGdElement = this.createLetterFolder(blobEnviObjects);
             else
-                var letterFile = this.createLetterFile(_blobEnviObjects);
+                letterGdElement = this.createLetterFile(blobEnviObjects);
 
             this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
         }
+        return letterGdElement;
     }
-    
+
 
     deleteFromDb(externalConn?) {
         deleteFromDb('Letters', this, externalConn);
@@ -312,7 +315,7 @@ class IncomingLetter extends Letter {
     /*
      * Odpalana w contollerze
      */
-    createLetterGdElements(blobEnviObjects): GoogleAppsScript.Drive.Folder | GoogleAppsScript.Drive.File {
+    createLetterGdElements(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder | GoogleAppsScript.Drive.File {
         if (blobEnviObjects.length > 1)
             return this.createLetterFolder(blobEnviObjects);
         else
@@ -323,12 +326,10 @@ class IncomingLetter extends Letter {
 class OurOldTypeLetter extends Letter {
     constructor(initParamObject: any) {
         super(initParamObject);
-        this.isOur = false;
-        this.number = initParamObject.number;
-
+        this.isOur = true;
     }
 
-    makeFolderName():string {
+    makeFolderName(): string {
         var folderName: string = super.makeFolderName();
         return folderName += ': Wychodzące'
     }
@@ -344,12 +345,12 @@ class OurOldTypeLetter extends Letter {
 }
 
 class OurLetter extends Letter {
-    constructor(initParamObject:any) {
+    constructor(initParamObject: any) {
         super(initParamObject);
         this.isOur = true;
         this.number = this.id;
     }
-    makeFolderName() {
+    makeFolderName(): string {
         var folderName: string = this.makeFolderName();
         return folderName += ': Wychodzące'
     }
@@ -357,7 +358,7 @@ class OurLetter extends Letter {
      * Tworzy folder i plik pisma ENVI z wybranego szablonu
      * blobEnviObjects - załączniki
      */
-    createOurLetter(blobEnviObjects) {
+    createOurLetter(blobEnviObjects: Array<any>) {
         var letterFolder = this.createLetterFolder(blobEnviObjects);
         var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
         ourLetterFile.setShareableByEditors(true);
@@ -367,7 +368,7 @@ class OurLetter extends Letter {
     }
 
     addInDb(externalConn, isPartOfTransaction?) {
-        super.addInDb(externalConn,isPartOfTransaction);
+        super.addInDb(externalConn, isPartOfTransaction);
         this.number = this.id;
     }
     /*
@@ -392,9 +393,9 @@ class OurLetter extends Letter {
     /*
      * _blobEnviObjects to załączniki do pisma
      */
-    editLetterGdElements(_blobEnviObjects) {
+    editLetterGdElements(_blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
         this._fileOrFolderChanged = this.deleteFromGd();
-        var letterFolder = this.createOurLetter(_blobEnviObjects);
+        return this.createOurLetter(_blobEnviObjects);
         //this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
     }
 }

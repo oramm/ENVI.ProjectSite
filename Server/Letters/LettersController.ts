@@ -108,37 +108,41 @@ function getLetters(sql, initParamObject, externalConn?) {
 }
 
 function test_editLetter() {
-  editLetter('')
+  editLetter('');
 }
 
 function test_addNewLetter() {
-  addNewLetter('')
+  addNewLetter('');
 }
 
-function addNewLetter(itemFormClient) {
+function addNewLetter(itemFormClient): Letter {
   try {
     itemFormClient = JSON.parse(itemFormClient);
     if (!itemFormClient._blobEnviObjects)
       itemFormClient._blobEnviObjects = [];
-    
+
     var item: OurLetter | OurOldTypeLetter | IncomingLetter;
-    //nasze pismo po nowemu
-    if (item.isOur && item._template) {
-      item.editOurFolder(itemFormClient._blobEnviObjects);
-      //pismo przychodzące albo nasze pismo po staremu
-    } else
-      if (itemFormClient._blobEnviObjects.length > 0) {
-        //użytkownik chce zmienić plik
-        item.editFileOrFolder(itemFormClient._blobEnviObjects);
-      }
-    var letterGdElement = item.createLetterFolder(itemFormClient.blobEnviObjects);
+
+    if (itemFormClient.isOur) {
+      //nasze pismo po nowemu
+      if (itemFormClient._template)
+        item = new OurLetter(itemFormClient);
+      //nasze pismo po staremu
+      else
+        item = new OurOldTypeLetter(itemFormClient);
+    }
+    //pismo przychodzące
+    else {
+      item = new IncomingLetter(itemFormClient);
+    }
+    var letterGdElement: GoogleAppsScript.Drive.File | GoogleAppsScript.Drive.Folder = item.createLetterGdElements(itemFormClient._blobEnviObjects);
 
     var conn = connectToSql();
     conn.setAutoCommit(false);
-    item.addInDb(conn,false);
+    item.addInDb(conn, false);
     conn.commit();
-    if (item.letterFilesCount > 1 || item.isOur && item._template)
-      letterGdElement.setName(item.makeFolderName());
+    //if (item.letterFilesCount > 1 || item.isOur && item._template)
+    letterGdElement.setName(item.makeFolderName());
     Logger.log(' item Added ItemId: ' + item.id);
 
     return item;
@@ -157,14 +161,17 @@ function editLetter(itemFormClient) {
   var conn;
   try {
     var item: OurLetter | OurOldTypeLetter | IncomingLetter = createProperLetter(itemFormClient);
-    item.editLetterGdElements(itemFormClient._blobEnviObjects)
+    var letterGdElement: GoogleAppsScript.Drive.File | GoogleAppsScript.Drive.Folder = item.editLetterGdElements(itemFormClient._blobEnviObjects)
 
     conn = connectToSql();
     item.editInDb(conn, true);
     conn.commit();
+    if(itemFormClient._blobEnviObjects.length>0)
+      letterGdElement.setName(item.makeFolderName());
     Logger.log('item edited ItemId: ' + item.id);
     return item;
   } catch (err) {
+    console.error(JSON.stringify(err));
     Logger.log(JSON.stringify(err));
     if (conn && conn.isValid(0)) conn.rollback();
     throw err;
