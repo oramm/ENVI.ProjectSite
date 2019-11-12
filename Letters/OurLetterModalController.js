@@ -25,10 +25,10 @@ class OurLetterModalController extends LetterModalController {
 
     setFileInputDescription() {
         var description = '';
-        if (!LettersSetup.lettersRepository.currentItem._canUserChangeFileOrFolder){
+        if (this.modal.mode === 'EDIT' && !LettersSetup.lettersRepository.currentItem._canUserChangeFileOrFolder){
             this.modal.fileFormElement.input.$dom.hide();
             description = 'Nie masz uprawnień do zmiany plików tego pisma. Może to zrobić tylko: ' + LettersSetup.lettersRepository.currentItem._fileOrFolderOwnerEmail;
-        } else{
+        } else if (LettersSetup.lettersRepository.currentItem._canUserChangeFileOrFolder){
             this.modal.fileFormElement.input.$dom.show();
             description = 'Dodaj załączniki. ';
             description += 'Aby wybrać kilka plików klikaj w nie trzymając cały czas wciśnięty klaiwsz [CTRL]. <br>';

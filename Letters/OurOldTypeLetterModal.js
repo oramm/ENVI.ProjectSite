@@ -24,7 +24,9 @@ class OurOldTypeLetterModal extends LetterModal {
 
     initFormElements() {
         super.initFormElements();
+        this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
         var _this = this;
+        
         this.numberFormElement = {
             input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, true, 25),
             description: 'Nadaj ręcznie numer pisma',

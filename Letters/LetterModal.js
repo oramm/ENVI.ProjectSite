@@ -15,7 +15,7 @@ class LetterModal extends Modal {
         this.selectedCasesHiddenInput = new HiddenInput(this.id + '_currentCasesHiddenInput', undefined, true);
 
         this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id + '_entityMainAutoCompleteTextField',
-            'Dodaj Nadawcę',
+            '',
             'business',
             false,
             'Wybierz nazwę')
