@@ -58,7 +58,7 @@ function getLetters(sql, initParamObject, externalConn?) {
         id: dbResults.getLong('Id'),
         isOur: dbResults.getBoolean('IsOur'),
         number: dbResults.getString('Number'),
-        description: dbResults.getString('Description'),
+        description: sqlToString(dbResults.getString('Description')),
         creationDate: dbResults.getString('CreationDate'),
         registrationDate: dbResults.getString('RegistrationDate'),
         letterGdId: dbResults.getString('LetterGdId'),
@@ -86,7 +86,7 @@ function getLetters(sql, initParamObject, externalConn?) {
           surname: dbResults.getString('EditorSurname'),
         }
       }
-      var item;
+      var item: IncomingLetter | OurLetter | OurOldTypeLetter;
       if (initParam.isOur) {
         if (initParam.id == initParam.number)
           item = new OurLetter(initParam);
@@ -166,7 +166,7 @@ function editLetter(itemFormClient) {
     conn = connectToSql();
     item.editInDb(conn, true);
     conn.commit();
-    if(itemFormClient._blobEnviObjects.length>0)
+    if (itemFormClient._blobEnviObjects.length > 0)
       letterGdElement.setName(item.makeFolderName());
     Logger.log('item edited ItemId: ' + item.id);
     return item;
@@ -178,6 +178,29 @@ function editLetter(itemFormClient) {
   } finally {
     if (conn && conn.isValid(0)) conn.close();
   }
+}
+
+function appendLetterAttachments(itemFormClient) {
+  itemFormClient = JSON.parse(itemFormClient);
+  var conn;
+  if (itemFormClient._blobEnviObjects.length > 0)
+    try {
+      var item: OurLetter | OurOldTypeLetter | IncomingLetter = createProperLetter(itemFormClient);
+      item.appendAttachments(itemFormClient._blobEnviObjects)
+
+      conn = connectToSql();
+      item.editInDb(conn, true);
+      conn.commit();
+      Logger.log('item edited ItemId: ' + item.id);
+      return item;
+    } catch (err) {
+      console.error(JSON.stringify(err));
+      Logger.log(JSON.stringify(err));
+      if (conn && conn.isValid(0)) conn.rollback();
+      throw err;
+    } finally {
+      if (conn && conn.isValid(0)) conn.close();
+    }
 }
 
 function deleteLetter(itemFormClient) {

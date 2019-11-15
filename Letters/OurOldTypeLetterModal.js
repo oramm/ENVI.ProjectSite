@@ -28,7 +28,7 @@ class OurOldTypeLetterModal extends LetterModal {
         var _this = this;
         
         this.numberFormElement = {
-            input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, true, 25),
+            input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, true, 40),
             description: 'Nadaj ręcznie numer pisma',
             dataItemKeyName: 'number',
             refreshDataSet() {

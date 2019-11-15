@@ -29,8 +29,8 @@ function addInDb(tableName: string, object, externalConn, isPartOfTransaction?: 
   }
 }
 //edytuje obiekt w bazie
-function editInDb(tableName: string, object, externalConn, isPartOfTransaction?: boolean) {
-  var conn = (externalConn) ? externalConn : connectToSql();
+function editInDb(tableName: string, object, externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
+  var conn: GoogleAppsScript.JDBC.JdbcConnection = (externalConn) ? externalConn : connectToSql();
   conn.setAutoCommit(false);
 
   var start: any = new Date();
@@ -50,7 +50,7 @@ function editInDb(tableName: string, object, externalConn, isPartOfTransaction?:
   }
 }
 
-function deleteFromDb(tableName:string, object, externalConn?, isPartOfTransaction?: boolean) {
+function deleteFromDb(tableName: string, object, externalConn?, isPartOfTransaction?: boolean) {
   var conn = (externalConn) ? externalConn : connectToSql();
   conn.setAutoCommit(false);
 
@@ -78,7 +78,7 @@ function deleteFromDb(tableName:string, object, externalConn?, isPartOfTransacti
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 //tworzy String prepared Statement na podstawie atrybutuów objektu
-function dynamicUpdatePreparedStmtString(tableName:string, object) {
+function dynamicUpdatePreparedStmtString(tableName: string, object) {
   var preparedStmt = 'UPDATE ' + tableName + ' SET ';
   var keys = Object.keys(object);
   for (var i = 0; i < keys.length; i++) {
@@ -96,7 +96,7 @@ function dynamicUpdatePreparedStmtString(tableName:string, object) {
   return preparedStmt;
 }
 
-function dynamicInsertPreparedStmtString(tableName:string, object) {
+function dynamicInsertPreparedStmtString(tableName: string, object) {
   //INSERT INTO Cases (Name, Description, MilestoneId) values (?, ?, ?)
   var preparedStmt = 'INSERT INTO ' + tableName + ' (';
   var keys = Object.keys(object);
@@ -118,7 +118,7 @@ function dynamicInsertPreparedStmtString(tableName:string, object) {
   return preparedStmt;
 }
 //tworzy Prepared Statement ze stringu w zależności od typu zapytania - 'queryType'
-function createPreparedStmtSql(conn, tableName, object, queryType:string) {
+function createPreparedStmtSql(conn, tableName, object, queryType: string) {
   if (queryType === 'UPDATE')
     var stmtString = dynamicUpdatePreparedStmtString(tableName, object);
   else
@@ -153,7 +153,7 @@ function createPreparedStmtSql(conn, tableName, object, queryType:string) {
  * * * * * * * * Pozostałe funkcje użytkowe
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-function connectToSql() {
+function connectToSql(): GoogleAppsScript.JDBC.JdbcConnection {
   //connecting with JDBC : https://developers.google.com/apps-script/guides/jdbc
   var dbUrl = 'jdbc:mysql://' + DB_ADDRESS + '/' + DN_NAME;
   return Jdbc.getConnection(dbUrl, DB_USER, DB_USER_PWD);
@@ -192,7 +192,7 @@ function prepareValueToPreparedStmtSql(value) {
     return null;
 }
 
-function stringToSql(string) {
+function stringToSql(string: string): string {
   var sqlString = '';
   if (string !== 'LAST_INSERT_ID()') {
     sqlString = string.replace(/\'/gi, "\\'");
@@ -203,7 +203,7 @@ function stringToSql(string) {
   return sqlString;
 }
 
-function sqlToString(sqlString) {
+function sqlToString(sqlString: string): string {
   var string = '';
   if (sqlString && string !== 'LAST_INSERT_ID()') {
     string = sqlString.replace(/\\'/gi, "\'");

@@ -296,8 +296,8 @@ function makeGdFoldersForContracts(){
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  */
 
-function test_getContractEntityAssociationsPerProjectList(){
-  getContractEntityAssociationsPerProjectList('kob.gws.01.wlasne');
+function test_getContractEntityAssociationsPerProjectList(): void{
+  getContractEntityAssociationsPerProjectList('kob.gws.01.wlasne', undefined);
 }
 function getContractEntityAssociationsList(initParamObject,externalConn){
   var projectConditon = (initParamObject && initParamObject.projectId)? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
@@ -322,11 +322,11 @@ function getContractEntityAssociationsList(initParamObject,externalConn){
 
   return getContractEntityAssociations(sql,externalConn); 
 }
-function getContractEntityAssociationsPerProjectList(projectId,externalConn){
+function getContractEntityAssociationsPerProjectList(projectId: string,externalConn: GoogleAppsScript.JDBC.JdbcConnection){
   return getContractEntityAssociationsList({projectId: projectId},externalConn)
 }
 
-function getContractEntityAssociations(sql,externalConn){
+function getContractEntityAssociations(sql: string,externalConn?): any[]{
   Logger.log(sql);
   try{
     var result = [];

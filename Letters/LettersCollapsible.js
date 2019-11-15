@@ -19,10 +19,13 @@ class LettersCollapsible extends SimpleCollapsible {
         this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj pismo wychodzące po staremu', this, 'ADD_NEW');
         this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
 
-        this.initialise(this.makeCollapsibleItemsList());  
         this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj przychodzące",this);
         this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
         this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące - stare",this);
+    
+        this.editLetterAttachmentsModal = new EditLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());  
+        
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -66,31 +69,39 @@ class LettersCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
-        var $casesUl = $('<ul class="collection">')
-        for(var i=0; i<dataItem._cases.length; i++){
-            var $caseLi = $('<li class="collection-item">')
-            var caseLabel;
-            if(dataItem._cases[i]._parent._parent.ourId)
-                caseLabel = dataItem._cases[i]._parent._parent.ourId;
-            else 
-                caseLabel = dataItem._cases[i]._parent._parent.number;
-            caseLabel += ', ' + dataItem._cases[i]._parent._type._folderNumber + ' ' + 
-                         dataItem._cases[i]._parent._type.name + 
-                          ' | ';
-            caseLabel += dataItem._cases[i]._typeFolderNumber_TypeName_Number_Name;
-            
-            $caseLi.html(caseLabel);
-            $casesUl.append($caseLi);
+        var $actionButtons = $('<div class="row">')
+        if(dataItem._canUserChangeFileOrFolder){
+            this.editLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons,'Zmień załączniki',this);
         }
+        var $casesUl = $('<ul class="collection">');
+        this.createCasesList(dataItem, $casesUl);
         var timestamp  = (dataItem._lastUpdated)? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBody' + dataItem.id)
                 .attr('letterId',dataItem.id)
+                .append($actionButtons)
                 .append($('<strong>Dotyczy spraw:</stron>'))
                 .append($casesUl)
                 .append($('<span class="comment">Ostania zmiana danych pisma: ' + timestamp + ' ' +
                            'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
                 
         return $panel;
+    }
+
+    createCasesList(dataItem, $casesUl) {
+        for (var i = 0; i < dataItem._cases.length; i++) {
+            var $caseLi = $('<li class="collection-item">');
+            var caseLabel;
+            if (dataItem._cases[i]._parent._parent.ourId)
+                caseLabel = dataItem._cases[i]._parent._parent.ourId;
+            else
+                caseLabel = dataItem._cases[i]._parent._parent.number;
+            caseLabel += ', ' + dataItem._cases[i]._parent._type._folderNumber + ' ' +
+                dataItem._cases[i]._parent._type.name +
+                ' | ';
+            caseLabel += dataItem._cases[i]._typeFolderNumber_TypeName_Number_Name;
+            $caseLi.html(caseLabel);
+            $casesUl.append($caseLi);
+        }
     }
 }

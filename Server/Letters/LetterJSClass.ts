@@ -17,7 +17,7 @@ class Letter {
     _cases?: any;
     _entitiesMain?: any;
     _entitiesCc?: any;
-    letterFilesCount?: any;
+    letterFilesCount?: number;
     _editor?: any;
     _fileOrFolderChanged?: any;
     _template?: any;
@@ -79,6 +79,9 @@ class Letter {
             return Gd.canUserDeleteFolder(this.folderGdId);
         else if (this.letterGdId)
             return Gd.canUserDeleteFile(this.letterGdId);
+    }
+    appendAttachments(blobEnviObjects: any[]): void {
+        this.letterFilesCount += blobEnviObjects.length;
     }
 
     /*
@@ -308,10 +311,33 @@ class IncomingLetter extends Letter {
 
     }
 
-    makeFolderName() {
+    public makeFolderName() {
         var folderName: string = super.makeFolderName();
         return folderName += ': Przychodzące'
     }
+
+    public appendAttachments(blobEnviObjects: any[]): void {
+        super.appendAttachments(blobEnviObjects);
+        //był tylko jeden plik pisma bez załaczników
+        if (this.letterFilesCount - blobEnviObjects.length == 1) {
+            let letterFile = DriveApp.getFileById(this.letterGdId)
+            let letterFolder = this.createLetterFolder(blobEnviObjects);
+            Gd.removeAllFileParents(letterFile);
+            letterFolder.addFile(letterFile);
+            this._documentOpenUrl = undefined;
+            this.letterGdId = undefined;
+        }
+        //folder pisma istnieje
+        else {
+            let letterFolder = DriveApp.getFolderById(this.folderGdId);
+
+            for (let i = 0; i < blobEnviObjects.length; i++) {
+                let blob = Tools._blobEnviObjectToBlob(blobEnviObjects[i]);
+                letterFolder.createFile(blob);
+            }
+        }
+    }
+
     /*
      * Odpalana w contollerze
      */
@@ -333,6 +359,29 @@ class OurOldTypeLetter extends Letter {
         var folderName: string = super.makeFolderName();
         return folderName += ': Wychodzące'
     }
+
+    public appendAttachments(blobEnviObjects: any[]): void {
+        super.appendAttachments(blobEnviObjects);
+        //był tylko jeden plik pisma bez załaczników
+        if (this.letterFilesCount - blobEnviObjects.length == 1) {
+            let letterFile = DriveApp.getFileById(this.letterGdId)
+            let letterFolder = this.createLetterFolder(blobEnviObjects);
+            Gd.removeAllFileParents(letterFile);
+            letterFolder.addFile(letterFile);
+            this._documentOpenUrl = undefined;
+            this.letterGdId = undefined;
+        }
+        //folder pisma istnieje
+        else {
+            let letterFolder = DriveApp.getFolderById(this.folderGdId);
+
+            for (let i = 0; i < blobEnviObjects.length; i++) {
+                let blob = Tools._blobEnviObjectToBlob(blobEnviObjects[i]);
+                letterFolder.createFile(blob);
+            }
+        }
+    }
+
     /*
      * Odpalana w contollerze
      */
@@ -354,6 +403,18 @@ class OurLetter extends Letter {
         var folderName: string = this.makeFolderName();
         return folderName += ': Wychodzące'
     }
+
+    public appendAttachments(blobEnviObjects: any[]): void {
+        super.appendAttachments(blobEnviObjects);
+
+        let letterFolder = DriveApp.getFolderById(this.folderGdId);
+
+        for (let i = 0; i < blobEnviObjects.length; i++) {
+            let blob = Tools._blobEnviObjectToBlob(blobEnviObjects[i]);
+            letterFolder.createFile(blob);
+        }
+    }
+
     /*
      * Tworzy folder i plik pisma ENVI z wybranego szablonu
      * blobEnviObjects - załączniki
