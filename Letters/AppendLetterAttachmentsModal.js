@@ -1,7 +1,7 @@
-class EditLetterAttachmentsModal extends Modal {
+class appendLetterAttachmentsModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent) {
         super(id, tittle, connectedResultsetComponent, 'EDIT');
-        //this.controller = new EditLetterAttachmentsModalController(this);
+        //this.controller = new appendLetterAttachmentsModalController(this);
         this.doChangeFunctionOnItemName = 'appendLetterAttachments';
     
         this.initFormElements();

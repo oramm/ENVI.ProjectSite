@@ -118,6 +118,7 @@ function test_addNewLetter() {
 function addNewLetter(itemFormClient): Letter {
   try {
     itemFormClient = JSON.parse(itemFormClient);
+    //itemFormClient.letterFilesCount = itemFormClient._blobEnviObjects.length;
     if (!itemFormClient._blobEnviObjects)
       itemFormClient._blobEnviObjects = [];
 
@@ -158,7 +159,7 @@ function addNewLetter(itemFormClient): Letter {
 
 function editLetter(itemFormClient) {
   itemFormClient = JSON.parse(itemFormClient);
-  var conn;
+  var conn: GoogleAppsScript.JDBC.JdbcConnection;
   try {
     var item: OurLetter | OurOldTypeLetter | IncomingLetter = createProperLetter(itemFormClient);
     var letterGdElement: GoogleAppsScript.Drive.File | GoogleAppsScript.Drive.Folder = item.editLetterGdElements(itemFormClient._blobEnviObjects)
@@ -166,8 +167,8 @@ function editLetter(itemFormClient) {
     conn = connectToSql();
     item.editInDb(conn, true);
     conn.commit();
-    if (itemFormClient._blobEnviObjects.length > 0)
-      letterGdElement.setName(item.makeFolderName());
+    //if (itemFormClient._blobEnviObjects.length > 0)
+    letterGdElement.setName(item.makeFolderName());
     Logger.log('item edited ItemId: ' + item.id);
     return item;
   } catch (err) {
@@ -179,18 +180,22 @@ function editLetter(itemFormClient) {
     if (conn && conn.isValid(0)) conn.close();
   }
 }
+function test_appendLetterAttachments() {
+  appendLetterAttachments('');
+}
 
-function appendLetterAttachments(itemFormClient) {
-  itemFormClient = JSON.parse(itemFormClient);
+function appendLetterAttachments(itemFormClientString:string): any {
+  var itemFormClient = JSON.parse(itemFormClientString);
   var conn;
   if (itemFormClient._blobEnviObjects.length > 0)
     try {
       var item: OurLetter | OurOldTypeLetter | IncomingLetter = createProperLetter(itemFormClient);
-      item.appendAttachments(itemFormClient._blobEnviObjects)
+      var letterFolder = item.appendAttachments(itemFormClient._blobEnviObjects);
 
       conn = connectToSql();
       item.editInDb(conn, true);
       conn.commit();
+      letterFolder.setName(item.makeFolderName());
       Logger.log('item edited ItemId: ' + item.id);
       return item;
     } catch (err) {

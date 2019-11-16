@@ -23,7 +23,7 @@ class LettersCollapsible extends SimpleCollapsible {
         this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
         this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące - stare",this);
     
-        this.editLetterAttachmentsModal = new EditLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
+        this.appendLetterAttachmentsModal = new appendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());  
         
     }
@@ -71,7 +71,7 @@ class LettersCollapsible extends SimpleCollapsible {
     makeBodyDom(dataItem){
         var $actionButtons = $('<div class="row">')
         if(dataItem._canUserChangeFileOrFolder){
-            this.editLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons,'Zmień załączniki',this);
+            this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons,'Dodaj załączniki',this);
         }
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);
