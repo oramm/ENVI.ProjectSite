@@ -1,4 +1,4 @@
-function getCaseEventsList(initParamObject, externalConn) {
+function getCaseEventsList(initParamObject, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
   var milestoneConditon = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id=' + initParamObject.milestoneId : '1';
 
   var sql = 'SELECT  Letters.Id, \n \t' +
@@ -8,6 +8,7 @@ function getCaseEventsList(initParamObject, externalConn) {
     'Letters.CreationDate AS EventDate,  \n \t' +
     'Letters.RegistrationDate, \n \t' +
     'Letters.LetterGdId AS EventGdId, \n \t' +
+    'Letters.FolderGdId AS EventFolderGdId, \n \t' +
     'Letters.LastUpdated, \n \t' +
     'Letters.ProjectId, \n \t' +
     'Cases.Id AS CaseId, \n \t' +
@@ -37,6 +38,7 @@ function getCaseEventsList(initParamObject, externalConn) {
     'Meetings.Date AS EventDate, \n \t' +
     'NULL, \n \t' +
     'Meetings.ProtocolGdId AS EventGdId, \n \t' +
+    'NULL, \n \t' +
     'MeetingArrangements.LastUpdated, \n \t' +
     'NULL, \n \t' +
     'Cases.Id AS CaseId, \n \t' +
@@ -60,14 +62,14 @@ function getCaseEventsList(initParamObject, externalConn) {
   return getCaseEvents(sql, initParamObject, externalConn)
 }
 
-function getCaseEventsListPerMilestone(milestoneId, externalConn) {
+function getCaseEventsListPerMilestone(milestoneId) {
   return getCaseEventsList({ milestoneId: milestoneId })
 }
 function test_getCaseEventsListPerMilestone() {
   getCaseEventsList({ milestoneId: '782' });
 }
 
-function getCaseEvents(sql, initParamObject, externalConn) {
+function getCaseEvents(sql: string, initParamObject, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
   try {
     Logger.log(sql);
     var result = [];
@@ -94,6 +96,7 @@ function getCaseEvents(sql, initParamObject, externalConn) {
           creationDate: dbResults.getString('EventDate'),
           registrationDate: dbResults.getString('RegistrationDate'),
           letterGdId: dbResults.getString('EventGdId'),
+          folderGdId: dbResults.getString('EventFolderGdId'),
           _lastUpdated: dbResults.getString('LastUpdated'),
           _entitiesMain: _letterEntitiesMainPerLetter.map(function (item) {
             return item._entity;
