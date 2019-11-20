@@ -1,4 +1,4 @@
-class Letter {
+abstract class Letter {
     public id?: any;
     public isOur: boolean;
     public number?: string | number;
@@ -10,17 +10,17 @@ class Letter {
     _fileOrFolderOwnerEmail?: string;
     _gdFolderUrl?: string;
     folderGdId?: string;
-    _lastUpdated?: any;
+    _lastUpdated?: string;
     _contract?: any;
     _project?: any;
     projectId?: any;
-    _cases?: any;
-    _entitiesMain?: any;
-    _entitiesCc?: any;
+    _cases?: any[];
+    _entitiesMain?: any[];
+    _entitiesCc?: any[];
     letterFilesCount?: number;
     _editor?: any;
     _fileOrFolderChanged?: boolean;
-    _template?: any;
+    
     editorId?: number;
     _canUserChangeFileOrFolder?: boolean;
     _folderName?: string;
@@ -59,7 +59,7 @@ class Letter {
             this._editor = initParamObject._editor;
             this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
             this._fileOrFolderChanged;
-            this._template = initParamObject._template;
+            
         }
     }
 
@@ -92,7 +92,7 @@ class Letter {
     /*
      * Używać tylko gdy mamy pojedynczego bloba - pismo przychodzące
      */
-    createLetterFile(blobEnviObjects: any[]): GoogleAppsScript.Drive.File {
+    protected createLetterFile(blobEnviObjects: any[]): GoogleAppsScript.Drive.File {
         var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
         var blob = Tools._blobEnviObjectToBlob(blobEnviObjects[0]);
         var letterFile = rootFolder.createFile(blob);
@@ -121,7 +121,7 @@ class Letter {
     /*
      * Używać tylko gdy mamy wiele blobów
      */
-    createLetterFolder(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
+    protected createLetterFolder(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
         if (!this.isOur && this.letterFilesCount < 2) throw new Error('Cannot create a folder for Letter with single file!');
         var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
         var letterFolder = rootFolder.createFolder(this._folderName);
@@ -410,72 +410,3 @@ class OurOldTypeLetter extends Letter {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  * * * * * * * * * * * * * * * * * * * OurLetter * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-class OurLetter extends Letter {
-    constructor(initParamObject: any) {
-        super(initParamObject);
-        this.isOur = true;
-        this.number = this.id;
-    }
-    makeFolderName(): string {
-        var folderName: string = this.makeFolderName();
-        return folderName += ': Wychodzące'
-    }
-
-    public appendAttachments(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
-        super.appendAttachments(blobEnviObjects);
-
-        let letterFolder: GoogleAppsScript.Drive.Folder = DriveApp.getFolderById(this.folderGdId);
-
-        for (let i = 0; i < blobEnviObjects.length; i++) {
-            let blob = Tools._blobEnviObjectToBlob(blobEnviObjects[i]);
-            letterFolder.createFile(blob);
-        }
-        return letterFolder;
-    }
-
-    /*
-     * Tworzy folder i plik pisma ENVI z wybranego szablonu
-     * blobEnviObjects - załączniki
-     */
-    createOurLetter(blobEnviObjects: Array<any>) {
-        var letterFolder = this.createLetterFolder(blobEnviObjects);
-        var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
-        ourLetterFile.setShareableByEditors(true);
-        this.letterGdId = ourLetterFile.getId();
-        this._documentEditUrl = ourLetterFile.getUrl();
-        return letterFolder;
-    }
-
-    addInDb(externalConn, isPartOfTransaction?) {
-        super.addInDb(externalConn, isPartOfTransaction);
-        this.number = this.id;
-    }
-    /*
-     * Odpalana w contollerze
-     */
-    createLetterGdElements(blobEnviObjects): GoogleAppsScript.Drive.Folder {
-        super.createLetterGdElements(blobEnviObjects);
-        return this.createLetterFolder(blobEnviObjects);
-    }
-    /*
-    * Tworzy folder i plik pisma ENVI z wybranego szablonu
-    * blobEnviObjects - załączniki
-    */
-    createLetterFolder(blobEnviObjects) {
-        var letterFolder = super.createLetterFolder(blobEnviObjects);
-        var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
-        ourLetterFile.setShareableByEditors(true);
-        this.letterGdId = ourLetterFile.getId();
-        this._documentEditUrl = ourLetterFile.getUrl();
-        return letterFolder;
-    }
-
-    /*
-     * _blobEnviObjects to załączniki do pisma
-     */
-    editLetterGdElements(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
-        this._fileOrFolderChanged = this.deleteFromGd();
-        this.letterFilesCount = blobEnviObjects.length;
-        return this.createOurLetter(blobEnviObjects);
-    }
-}

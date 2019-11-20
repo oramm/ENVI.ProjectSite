@@ -103,9 +103,8 @@ MaterialCard.prototype = {
   },
   
   createGdFolder: function(){
-    var gd = new Gd(undefined);
     var rootFolder = DriveApp.getFolderById(this._case.gdFolderId);
-    return gd.setFolder(rootFolder, this.setGdFolderName());
+    return Gd.setFolder(rootFolder, this.setGdFolderName());
   },
   
   editInDb: function(externalConn, isPartOfTransaction) {

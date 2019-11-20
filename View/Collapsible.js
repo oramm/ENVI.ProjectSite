@@ -259,9 +259,12 @@ class Collapsible {
             resolve(status);
         });
     }
+    hasArchivedElements(){
+        return this.items.filter(item=> item.dataItem.status && item.dataItem.status.match(/Zamknięt|Archiw/i)).length>0
+    }
     
     filterInitialise(){
-        if(this.items.length>=this.minimumItemsToFIlter){
+        if(this.items.length>=this.minimumItemsToFIlter || this.hasArchivedElements()){
             this.filter.initialise();
             this.$actionsMenu.append(this.filter.$dom);
         }

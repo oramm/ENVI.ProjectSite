@@ -152,7 +152,6 @@ function setLettersFoldersinAllProjects() {
     //conn.setAutoCommit(false);
     var projectsList = getProjectsList(undefined);
     for (var i=0; i<projectsList.length; i++){
-      //var folder = gd.setFolder(DriveApp.getFolderById(projectsList[i].gdFolderId), 'Korespondencja');
       var meetingProtocolsGdFolder = Gd.setFolder(DriveApp.getFolderById(projectsList[i].gdFolderId), 'Notatki ze spotkań');
       if (meetingProtocolsGdFolder) meetingProtocolsGdFolder.setTrashed(true);
       Logger.log('ProjectId: ' + projectsList[i].ourId);

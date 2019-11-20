@@ -27,6 +27,7 @@ class OurLetterModal extends LetterModal {
         this.templateSelectField = new SelectField(this.id + '_templateSelectField', 'Szablon', undefined, true);
         this.templateSelectField.initialise(LettersSetup.documentTemplatesRepository.items, 'name', this.controller.onTemplateChosen, this.controller);
         this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
+        this.registrationDateFormElement.input.setLabel('Data nadania');
         this.templateFormElement = {
             input: this.templateSelectField,
             description: 'Jeżeli rejestrujesz pismo po nowemu wybierz szablon. W przeciwnym razie zignoruj to pole i nadaj ręcznie numer pisma',

@@ -1,0 +1,63 @@
+class OurLetterGdFile {
+
+    public _templateGdId: string;
+    public gdFile: GoogleAppsScript.Drive.File;
+    public _letter: OurLetter;
+    _setup: OurLettersSetup.CommonLetter;
+
+    constructor(initObjectParamenter: { _templateGdId: string; _letter?: OurLetter}) {
+        this._templateGdId = initObjectParamenter._templateGdId;
+        this._letter = initObjectParamenter._letter;
+        this._setup = OurLettersSetup.CommonLetter
+    }
+    public createNamedRanges() {
+        OurLettersSetup.CommonLetter.namedRangeTags
+        GDocsTools.createNamedRangesByTags(this._templateGdId, GDocsTools.getNameRangesTagsFromTemplate(this._templateGdId));
+    }
+
+    public createOnGd(): GoogleAppsScript.Drive.File {
+        //var this.gdFile = Gd.createDuplicateFile(this._protocolTemplateId, this._contract.meetingProtocolsGdFolderId, 'Notatka ze spotkania - ' + this.date);
+        this.gdFile = Gd.createDuplicateFile(this._templateGdId, this._letter.folderGdId, this._letter.number + ' ' + this._letter.creationDate);
+        this.gdFile.setShareableByEditors(true);
+        this._letter.letterGdId = this.gdFile.getId();
+        this._letter._documentEditUrl = this.gdFile.getUrl();
+
+
+        return this.gdFile;
+    }
+
+    public setCreationDate() {
+        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#CREATION_DATE', ToolsHtml.parseHtmlToText(this._letter.creationDate));
+    }
+
+    public setAddress() {
+        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#ADDRESS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._letter._entitiesMain)));
+
+    }
+
+    public setNumber() {
+        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#ADDRESS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._letter._entitiesMain)));
+
+    }
+
+    /*
+     * tworzy etykietę z danymi address
+     */
+    private makeEntitiesDataLabel(entities: any[]) {
+        var label = '';
+        for (var i = 0; i < entities.length; i++) {
+            label += entities[i].name
+            if (entities[i].address)
+                label += '\n' + entities[i].address;
+            if (i < entities.length - 1)
+                label += '\n'
+        }
+        return label;
+    }
+
+}
+
+function test_createNamedRanges(){
+    var letter = new OurLetterGdFile({_templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4'})
+    letter.createNamedRanges();
+}

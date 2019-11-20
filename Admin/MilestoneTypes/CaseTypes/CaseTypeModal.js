@@ -8,7 +8,7 @@ class CaseTypeModal extends Modal {
             {   input: new InputTextField(this.id + '_nameTextField','Nazwa typu sprawy', undefined, false, 50),
                 dataItemKeyName: 'name'
             },
-            {   input: new InputTextField(this.id + 'folderNumberTextField','Numer folderu GD', undefined, true, 2),
+            {   input: new InputTextField(this.id + 'folderNumberTextField','Numer folderu GD', undefined, true, 5),
                 dataItemKeyName: 'folderNumber'
             },
             {   input: this.descriptionReachTextArea,

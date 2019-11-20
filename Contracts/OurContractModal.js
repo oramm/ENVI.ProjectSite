@@ -5,7 +5,7 @@ class OurContractModal extends Modal {
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(ourTypes, 'name');
         
-        this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 300);
+        this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 1000);
         
         this.statusSelectField = new SelectField(this.id + '_statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);

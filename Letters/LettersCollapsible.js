@@ -1,90 +1,95 @@
 class LettersCollapsible extends SimpleCollapsible {
-    constructor(id){
-        super({ id: id,
-                hasFilter: true,
-                isEditable: true, 
-                isAddable: false, 
-                isDeletable: true,
-                hasArchiveSwitch: true,
-                connectedRepository: LettersSetup.lettersRepository
-                //subitemsCount: 12
-              });
-        
+    constructor(id) {
+        super({
+            id: id,
+            hasFilter: true,
+            isEditable: true,
+            isAddable: false,
+            isDeletable: true,
+            hasArchiveSwitch: true,
+            connectedRepository: LettersSetup.lettersRepository
+            //subitemsCount: 12
+        });
+
         this.addNewIncomingLetterModal = new IncomingLetterModal(id + '_newIncomingLetterModal', 'Rejestruj pismo przychodzące', this, 'ADD_NEW');
         this.editIncomingLetterModal = new IncomingLetterModal(id + '_editIncomingLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
-        
+
         this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
         this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
-        
+
         this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj pismo wychodzące po staremu', this, 'ADD_NEW');
         this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
 
-        this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj przychodzące",this);
-        this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące",this);
-        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu,"Rejestruj wychodzące - stare",this);
-    
+        this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj przychodzące", this);
+        this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące", this);
+        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące - stare", this);
+
         this.appendLetterAttachmentsModal = new appendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
-        this.initialise(this.makeCollapsibleItemsList());  
-        
+        this.initialise(this.makeCollapsibleItemsList());
+
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom){
+    makeItem(dataItem, $bodyDom) {
         var editModal;
-        if(dataItem.isOur){
-            if(dataItem._template)
+        if (dataItem.isOur) {
+            if (dataItem._template)
                 editModal = this.editOurLetterModal;
             else
                 editModal = this.editOurOldTypeLetterModal;
         } else
             editModal = this.editIncomingLetterModal;
-            
-        var name='';
-        name += '<strong>' + dataItem.creationDate +'</strong> ' + dataItem.description + '<Br>';
+
+        var name = '';
+        name += '<strong>' + dataItem.creationDate + '</strong> ' + dataItem.description + '<Br>';
 
         name += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
-        name += (dataItem.isOur)? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
+        name += (dataItem.isOur) ? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
-        name += (dataItem.isOur)? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;'; 
+        name += (dataItem.isOur) ? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;';
         name += this.makeEntitiesLabel(dataItem._entitiesMain)
-        return {    id: dataItem.id,
-                    name: name,
-                    $body: $bodyDom,
-                    dataItem: dataItem,
-                    editModal: editModal
-                    };
+        return {
+            id: dataItem.id,
+            name: name,
+            $body: $bodyDom,
+            dataItem: dataItem,
+            editModal: editModal
+        };
     }
-    
-    makeEntitiesLabel(entities){
+
+    makeEntitiesLabel(entities) {
         var label = '';
-        for(var i=0; i<entities.length-1; i++){
+        for (var i = 0; i < entities.length - 1; i++) {
             label += entities[i].name + ', '
         }
-        if(entities[i]) 
+        if (entities[i])
             label += entities[i].name;
         return label;
     }
-    
-    makeBodyDom(dataItem){
+
+    makeBodyDom(dataItem) {
         var $actionButtons = $('<div class="row">')
-        if(dataItem._canUserChangeFileOrFolder){
-            this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons,'Dodaj załączniki',this);
+        if (dataItem._canUserChangeFileOrFolder) {
+            this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
         }
+        if (dataItem.isOur && dataItem.id == dataItem.number)
+            $meetingProtocolButton.append(new RaisedButton('aktalizuj plik pisma', this.refreshLetterFileAction, this).$dom);
+
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);
-        var timestamp  = (dataItem._lastUpdated)? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'
+        var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'
         var $panel = $('<div>')
-                .attr('id', 'collapsibleBody' + dataItem.id)
-                .attr('letterId',dataItem.id)
-                .append($actionButtons)
-                .append($('<strong>Dotyczy spraw:</stron>'))
-                .append($casesUl)
-                .append($('<span class="comment">Ostania zmiana danych pisma: ' + timestamp + ' ' +
-                           'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
-                
+            .attr('id', 'collapsibleBody' + dataItem.id)
+            .attr('letterId', dataItem.id)
+            .append($actionButtons)
+            .append($('<strong>Dotyczy spraw:</stron>'))
+            .append($casesUl)
+            .append($('<span class="comment">Ostania zmiana danych pisma: ' + timestamp + ' ' +
+                'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
+
         return $panel;
     }
 
@@ -103,5 +108,12 @@ class LettersCollapsible extends SimpleCollapsible {
             $caseLi.html(caseLabel);
             $casesUl.append($caseLi);
         }
+    }
+
+    /*
+     * aktualizuje dane w szablonie pisma
+     */
+    refreshLetterFileAction() {
+        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository, 'refreshLetterFile', this);
     }
 }

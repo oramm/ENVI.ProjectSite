@@ -25,6 +25,7 @@ class OurOldTypeLetterModal extends LetterModal {
     initFormElements() {
         super.initFormElements();
         this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
+        this.registrationDateFormElement.input.setLabel('Data nadania');
         var _this = this;
         
         this.numberFormElement = {
