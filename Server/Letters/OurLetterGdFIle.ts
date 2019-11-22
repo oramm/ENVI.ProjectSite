@@ -1,11 +1,10 @@
 class OurLetterGdFile {
-
     public _templateGdId: string;
     public gdFile: GoogleAppsScript.Drive.File;
     public _letter: OurLetter;
     _setup: OurLettersSetup.CommonLetter;
 
-    constructor(initObjectParamenter: { _templateGdId: string; _letter?: OurLetter}) {
+    constructor(initObjectParamenter: { _templateGdId: string; _letter?: OurLetter }) {
         this._templateGdId = initObjectParamenter._templateGdId;
         this._letter = initObjectParamenter._letter;
         this._setup = OurLettersSetup.CommonLetter
@@ -21,23 +20,18 @@ class OurLetterGdFile {
         this.gdFile.setShareableByEditors(true);
         this._letter.letterGdId = this.gdFile.getId();
         this._letter._documentEditUrl = this.gdFile.getUrl();
-
-
+        this.fillNamedRanges();
         return this.gdFile;
     }
 
-    public setCreationDate() {
-        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#CREATION_DATE', ToolsHtml.parseHtmlToText(this._letter.creationDate));
-    }
+    fillNamedRanges() {
+        var document = DocumentApp.openById(this.gdFile.getId());
 
-    public setAddress() {
-        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#ADDRESS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._letter._entitiesMain)));
-
-    }
-
-    public setNumber() {
-        GDocsTools.fillPlaceHolder(this._letter.letterGdId, '#ADDRESS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._letter._entitiesMain)));
-
+        for (var attribute in this._letter) {
+            if (GDocsTools.getNamedRangeByName(document, attribute) && typeof this[attribute] === 'string') {
+                GDocsTools.fillNamedRange(this.gdFile.getId(), attribute, this._letter[attribute]);
+            }
+        }
     }
 
     /*
@@ -57,7 +51,8 @@ class OurLetterGdFile {
 
 }
 
-function test_createNamedRanges(){
-    var letter = new OurLetterGdFile({_templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4'})
+function test_createNamedRanges() {
+    GDocsTools.getNameRangesTagsFromTemplate('1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4');
+    var letter = new OurLetterGdFile({ _templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4' })
     letter.createNamedRanges();
 }

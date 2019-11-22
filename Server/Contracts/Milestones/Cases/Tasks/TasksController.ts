@@ -82,12 +82,12 @@ function addNewTask(itemFormClient) {
     } catch (err) {
       throw err;
     } finally {
-      conn.close();
+      if(conn && conn.isValid(0)) conn.close();
     }
 }
 //TODO przetestować
 function test_editTask(){
-  editTask('{"lastUpdated":"2019-06-01 08:24:09.0","_parent":{"id":114},"caseId":14,"name":"test risk11","description":"","id":17,"ownerId":0,"status":"","nameSurnameEmail":""}')
+  editTask('')
 }
 
 function editTask(itemFormClient) {

@@ -2,17 +2,17 @@ function Gd(contract) {
   if (contract) {
     if (typeof contract.addInDb !== 'function') throw new Error("Argument Gd musi być typu 'Contract'");
     this.contract = contract;
-    this.projectFolder = this.setFolder(GD_ROOT_FOLDER, this.contract.projectId);
+    this.projectFolder = Gd.setFolder(GD_ROOT_FOLDER, this.contract.projectId);
     //przy edycji mamy już ustalone gdFolderId
     if (this.contract.gdFolderId)
       this.contractFolder = DriveApp.getFolderById(this.contract.gdFolderId);
     else if (!this.contract.ourId) {
       var parentFolder = (this.contract._ourContract.id) ? DriveApp.getFolderById(this.contract._ourContract.gdFolderId) : this.projectFolder;
-      this.contractFolder = this.setFolder(parentFolder, this.contract.number);
+      this.contractFolder = Gd.setFolder(parentFolder, this.contract.number);
     }
     //podwójne sprawdzenie potrzebne, żeby używać tego z poziomu dodawania nowych projektów (bez kontraktów jeszcze)
     else if (this.contract.ourId)
-      this.contractFolder = this.setFolder(this.projectFolder, this.contract.ourId);
+      this.contractFolder = Gd.setFolder(this.projectFolder, this.contract.ourId);
 
     //this.setCommonContractFolders();
   }
@@ -95,9 +95,9 @@ Gd.prototype = {
   setCommonContractFolders: function () {
     //if (this.contract._type.isOur) {
       //Najpierw dodaj statyczne foldery
-      //this.setFolder(this.contractFolder, '00 Umowa ENVI');
+      //Gd.setFolder(this.contractFolder, '00 Umowa ENVI');
     //} else
-      //this.setFolder(this.contractFolder, '00 Umowa z Wykonawcą');
+      //Gd.setFolder(this.contractFolder, '00 Umowa z Wykonawcą');
   },
   /*
    * Służy do tworzenia domyślnych folderów przy dodawaniu kontraktu w addNewContract()
@@ -161,10 +161,10 @@ Gd.prototype = {
   createCaseFolder: function (caseItem) {
     //znajdź (i jak trzeba utwórz) folder typu sprawy
     var milestoneFolder = DriveApp.getFolderById(caseItem._parent.gdFolderId);
-    var parentFolder = this.setFolder(milestoneFolder, caseItem._type.folderNumber + ' ' + caseItem._type.name);
+    var parentFolder = Gd.setFolder(milestoneFolder, caseItem._type.folderNumber + ' ' + caseItem._type.name);
     var caseFolder;
     if (!caseItem._type.isUniquePerMilestone) {
-      caseFolder = this.setFolder(parentFolder, 'SXX ' + caseItem.name)
+      caseFolder = Gd.setFolder(parentFolder, 'SXX ' + caseItem.name)
     }
     else {
       //Logger.log('createCaseFolder: parent name: '+ caseItem._type.folderNumber + ' ' + caseItem._type.name)
@@ -195,7 +195,7 @@ Gd.prototype = {
     //sprawy uniqe nie mają swojego foldera - nie ma czego kasować
     if (!caseItem._type.isUniquePerMilestone && caseItem.gdFolderId) {
       var folder = DriveApp.getFolderById(caseItem.gdFolderId);
-      if (this.canUserDeleteFolder(caseItem.gdFolderId))
+      if (Gd.canUserDeleteFolder(caseItem.gdFolderId))
         folder.setTrashed(true);
       else
         folder.setName(folder.getName() + '- USUŃ');
@@ -219,7 +219,7 @@ Gd.prototype = {
       else
         currentRootFolder = parent;
 
-      createdFolders.push(this.setFolder(currentRootFolder, foldersData[i].name));
+      createdFolders.push(Gd.setFolder(currentRootFolder, foldersData[i].name));
       createdFolders[i].setDescription(foldersData[i].description);
       foldersData[i].gdFolderId = createdFolders[i].getId();
     }
@@ -227,12 +227,12 @@ Gd.prototype = {
   },
 
   createIssueFolders: function (issue) {
-    var rootFolder = this.setFolder(this.contractFolder, 'Zgłoszenia');//this.searchFolderByName('11 Odpowiedzialność za wady');
-    var issueFolder = this.setFolder(rootFolder, issue.name);
+    var rootFolder = Gd.setFolder(this.contractFolder, 'Zgłoszenia');//this.searchFolderByName('11 Odpowiedzialność za wady');
+    var issueFolder = Gd.setFolder(rootFolder, issue.name);
     issueFolder.setDescription(issue.description);
 
-    this.setFolder(issueFolder, '01 Zgłoszenie');
-    this.setFolder(issueFolder, '02 Po zgłoszeniu');
+    Gd.setFolder(issueFolder, '01 Zgłoszenie');
+    Gd.setFolder(issueFolder, '02 Po zgłoszeniu');
     issue.gdFolderId = issueFolder.getId();
     issue._gdFolderUrl = this.createGdFolderUrl(issue.gdFolderId)
   },

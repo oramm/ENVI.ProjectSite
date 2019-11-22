@@ -1,5 +1,4 @@
 class GDocsTools {
-
   static paragraphFooterStyle() {
     var style = {};
     style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#339933';
@@ -19,22 +18,24 @@ class GDocsTools {
     document.getBody().replaceText(tag, ToolsHtml.parseHtmlToText(text));
   }
 
-  static fillNamedRange(documentGdId: string, rangeId: string, text: string){
+  static fillNamedRange(documentGdId: string, rangeName: string, text: string) {
     var document = DocumentApp.openById(documentGdId);
-    var namedRange = document.getNamedRangeById(rangeId);
-    namedRange.getRange().getRangeElements()[0].getElement().asText().setText(text);
+    var namedRange = this.getNamedRangeByName(document, rangeName);
+    namedRange.getRange().getRangeElements()[0].getElement().asText().setText(ToolsHtml.parseHtmlToText(text));
   }
 
-  static clearNamedRanges(documentGdId: string){
+  static clearNamedRanges(documentGdId: string) {
     var document = DocumentApp.openById(documentGdId);
-    for(var range of document.getNamedRanges())
+    for (var range of document.getNamedRanges())
       range.remove();
   }
-  static logNamedRanges(document: GoogleAppsScript.Document.Document){
+  static logNamedRanges(document: GoogleAppsScript.Document.Document) {
     var ranges: GoogleAppsScript.Document.NamedRange[] = document.getNamedRanges();
-      for(var i=0; i<ranges.length; i++)
-        Logger.log(ranges[i].getName() + ' ' + ranges[i].getId());
+    for (var i = 0; i < ranges.length; i++)
+      Logger.log(ranges[i].getName() + ' ' + ranges[i].getId());
   }
+
+
 
   //https://stackoverflow.com/questions/30654389/how-to-add-named-ranges-to-sub-paragraph-elements-in-google-apps-script
   static createNamedRangesByTags(documentGdId: string, tags: string[]) {
@@ -45,13 +46,46 @@ class GDocsTools {
       let range = document.newRange().addElement(element.getElement()).build();
       document.addNamedRange(tags[i], range);
       this.logNamedRanges(document);
-    } 
+    }
     return document.getNamedRanges();
   }
 
-  static getNameRangesTagsFromTemplate(documentGdId: string): string[]{
-    var tags:string[];
-    throw new Error('Nie zaimplementowaneo metody')
+  static getNamedRangeByName(document: GoogleAppsScript.Document.Document, name: string): GoogleAppsScript.Document.NamedRange {
+    var namedRanges = document.getNamedRanges();
+    return namedRanges.filter((item => item.getName() === name))[0]
+  }
+
+  static getNameRangesTagsFromTemplate(documentGdId: string): string[] {
+    var tags: string[] = [];
+    var document = DocumentApp.openById(documentGdId);
+    var body = document.getBody();
+    var foundElement = body.findText('#ENVI#[aA-zZ|\s]+#');
+    while (foundElement != null) {
+      var tag: string = foundElement.getElement().asParagraph().getText();
+      tags.push(tag);
+      foundElement = body.findText('#ENVI#[aA-zZ|\s]+#', foundElement);
+    }
+    Logger.log(tags);
     return tags;
+  }
+
+  static highlightText(documentGdId: string, text: string): void {
+    var body = DocumentApp.getActiveDocument().getBody();
+    var foundElement = body.findText(text);
+
+    while (foundElement != null) {
+      // Get the text object from the element
+      var foundText = foundElement.getElement().asText();
+
+      // Where in the Element is the found text?
+      var start = foundElement.getStartOffset();
+      var end = foundElement.getEndOffsetInclusive();
+
+      // Change the background color to yellow
+      foundText.setBackgroundColor(start, end, "#FCFC00");
+
+      // Find the next match
+      foundElement = body.findText(text, foundElement);
+    }
   }
 }

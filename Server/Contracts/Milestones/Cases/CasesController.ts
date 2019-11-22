@@ -256,10 +256,10 @@ function addNewCase(itemFormClient) {
     
     return item;
   } catch (err) {
-    if(conn.isValid(0)) conn.rollback();
+    if(conn && conn.isValid(0)) conn.rollback();
     throw err;
   } finally {
-    if(conn.isValid(0)) conn.close();
+    if(conn && conn.isValid(0)) conn.close();
   } 
 }
 
@@ -291,10 +291,10 @@ function editCase(itemFormClient) {
       return item;
     } catch (err) {
       Logger.log(JSON.stringify(err));
-      conn.rollback();
+      if(conn && conn.isValid(0)) conn.rollback();
       throw err;
     } finally {
-      if(conn.isValid(0)) conn.close();
+      if(conn && conn.isValid(0)) conn.close();
     }
 }
 
