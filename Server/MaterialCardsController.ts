@@ -108,11 +108,9 @@ function addNewMaterialCard(itemFormClient) {
     item.gdFolderId = gdFolder.getId();
     item._gdFolderUrl = Gd.createGdFolderUrl(item.gdFolderId);
     
-    item.addInDb(conn, true);
-    var tasks = item.createDefaultTasksInDb(conn);
+    item.addInDb(conn);
     conn.commit();
     item.editGdFolderName();
-    item.createDefaultTasksInScrum(tasks);    
     
     Logger.log(' item Added ItemId: ' + item.id);
     

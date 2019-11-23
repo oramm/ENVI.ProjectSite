@@ -22,7 +22,7 @@ function Issue(initParamObject) {
     this.originalId = initParamObject.originalId;
     if (initParamObject.gdFolderId) {
       this.gdFolderId = initParamObject.gdFolderId;
-      this._gdFolderUrl = new Gd().createGdFolderUrl(initParamObject.gdFolderId);
+      this._gdFolderUrl = Gd.createGdFolderUrl(initParamObject.gdFolderId);
     }
     this._lastUpdated = initParamObject._lastUpdated;
     

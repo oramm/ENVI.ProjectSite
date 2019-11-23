@@ -81,7 +81,7 @@ abstract class Letter {
             return Gd.canUserDeleteFile(this.letterGdId);
     }
 
-    createLetterGdElements(blobEnviObjects: any[]): void {
+    createLetterGdElements(blobEnviObjects: _blobEnviObject[]): void {
         this.letterFilesCount = blobEnviObjects.length;
     }
 

@@ -37,14 +37,15 @@ function getDocumentTemplates(sql, externalConn){
   }
 }
 function test_getDocumentTemplatesListPerMilestone(){
-  getDocumentTemplatesListPerMilestone(587)
+  getDocumentTemplatesList(587)
 }
+
 function addNewDocumentTemplate(itemFromClient) {
   try{
     itemFromClient = JSON.parse(itemFromClient);
     var item = new DocumentTemplate(itemFromClient);
     var conn = connectToSql();
-    item.addInDb();
+    item.addInDb(conn);
     Logger.log(' item Added ItemId: ' + item.id);
     return item;
   } catch (err) {
@@ -66,7 +67,7 @@ function editDocumentTemplate(itemFromClient) {
     var item = new DocumentTemplate(itemFromClient);
     var conn = connectToSql();
     
-    item.editInDb();
+    item.editInDb(conn);
     Logger.log('item edited ItemId: ' + item.id);
     return item;
   } catch (err) {
@@ -80,7 +81,7 @@ function editDocumentTemplate(itemFromClient) {
 
 function deleteDocumentTemplate(itemFromClient){
   itemFromClient = JSON.parse(itemFromClient);
-  var item = new DocumentTemplate();
+  var item = new DocumentTemplate(undefined);
   item.id = itemFromClient.id;
   Logger.log(JSON.stringify(item));
   item.deleteFromDb();

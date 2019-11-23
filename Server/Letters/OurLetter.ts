@@ -1,10 +1,12 @@
 class OurLetter extends Letter {
     private _letterGdFile: OurLetterGdFile;
+    _templateGdId: string;
 
     constructor(initParamObject: any) {
         super(initParamObject);
         this.isOur = true;
         this.number = this.id;
+        this._templateGdId = initParamObject._template.gdId;
         this._letterGdFile;
     }
 
@@ -30,7 +32,7 @@ class OurLetter extends Letter {
      */
     public createLetterGdElements(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
         super.createLetterGdElements(blobEnviObjects);
-        this._letterGdFile = new OurLetterGdFile({_templateGdId: 'this._templateGdId', _letter: this})
+        this._letterGdFile = new OurLetterGdFile({_templateGdId: this._templateGdId, _letter: this})
         return this.createLetterFolder(blobEnviObjects);
     }
     /*

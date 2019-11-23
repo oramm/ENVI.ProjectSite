@@ -36,7 +36,7 @@ function editRoleInDb(itemFromClient) {
 
 function deleteRole(itemFromClient){
   itemFromClient = JSON.parse(itemFromClient);
-  var item = new Role();
+  var item = new Role(undefined);
   item.id = itemFromClient.id;
   item.deleteFromDb();
 }

@@ -1,16 +1,18 @@
 class OurLetterGdFile {
     public _templateGdId: string;
     public gdFile: GoogleAppsScript.Drive.File;
-    public _letter: OurLetter;
-    _setup: OurLettersSetup.CommonLetter;
+    private _letter: OurLetter;
+
 
     constructor(initObjectParamenter: { _templateGdId: string; _letter?: OurLetter }) {
         this._templateGdId = initObjectParamenter._templateGdId;
-        this._letter = initObjectParamenter._letter;
-        this._setup = OurLettersSetup.CommonLetter
+        this._letter = Tools.cloneOfObject(initObjectParamenter._letter);
+
     }
+    /*
+     * Tworzy zakresy nazwane w szablonie - używać jednorazowo
+     */
     public createNamedRanges() {
-        OurLettersSetup.CommonLetter.namedRangeTags
         GDocsTools.createNamedRangesByTags(this._templateGdId, GDocsTools.getNameRangesTagsFromTemplate(this._templateGdId));
     }
 

@@ -1,26 +1,26 @@
 function Role(initParamObject) {
-  if(initParamObject){
+  if (initParamObject) {
     this.id = initParamObject.id;
     this.projectId = initParamObject.projectId;
     this.name = initParamObject.name;
-    this.description = initParamObject.description;    
+    this.description = initParamObject.description;
   }
 }
 
 
 Role.prototype = {
   constructor: Role,
-  
-  addInDb: function(conn, isPartOfTransaction) {
-     return addInDb('Roles', this, conn, isPartOfTransaction);
+
+  addInDb: function (conn, isPartOfTransaction) {
+    return addInDb('Roles', this, conn, isPartOfTransaction);
   },
-  
-  editInDb: function(externalConn, isPartOfTransaction) {
+
+  editInDb: function (externalConn, isPartOfTransaction) {
     editInDb('Roles', this, externalConn, isPartOfTransaction);
   },
-  
-  deleteFromDb: function (){
-    deleteFromDb ('Roles', this);
+
+  deleteFromDb: function () {
+    deleteFromDb('Roles', this);
   },
 }
 
@@ -29,7 +29,7 @@ Role.prototype = {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  */
 function PersonRole(initParamObject) {
-  if(initParamObject){
+  if (initParamObject) {
     this.personId = initParamObject._person.id;
     this.roleId = initParamObject._role.id;
     //id jest usuwane w addInDb(), więc przy asocjacjach musi byś ręcznie odtworeone w controllerze
@@ -43,12 +43,12 @@ function PersonRole(initParamObject) {
 
 PersonRole.prototype = {
   constructor: PersonRole,
-  
-  addInDb: function(conn) {
-    return addInDb('Persons_Roles', this);
+
+  addInDb: function (conn) {
+    return addInDb('Persons_Roles', conn, this);
   },
-  
-  deleteFromDb: function (){
-    deleteFromDb ('Persons_Roles', this);
+
+  deleteFromDb: function () {
+    deleteFromDb('Persons_Roles', this);
   }
 }

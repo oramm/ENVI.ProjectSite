@@ -133,9 +133,9 @@ function createPreparedStmtSql(conn, tableName, object, queryType: string) {
     if (keys[i].indexOf('_') < 0) {
       var currentValue = object[keys[i]];
       Logger.log(j + ' ' + keys[i] + ' = ' + currentValue);
-      if (isInteger(currentValue))
+      if (Tools.isInteger(currentValue))
         stmt.setLong(j++, prepareValueToPreparedStmtSql(currentValue));
-      else if (isBoolean(currentValue))
+      else if (Tools.isBoolean(currentValue))
         stmt.setBoolean(j++, prepareValueToPreparedStmtSql(currentValue));
       else
         stmt.setString(j++, prepareValueToPreparedStmtSql(currentValue));
