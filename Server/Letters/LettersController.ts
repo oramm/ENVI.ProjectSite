@@ -108,7 +108,7 @@ function getLetters(sql, initParamObject, externalConn?) {
 }
 
 function test_editLetter() {
-  editLetter('');
+  editLetter('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"letterGdId":"1LaSzDOhcqcrtOr1VCu3pSdoZ7633HCymUV2CVFpRbCk","_gdFolderUrl":"https://drive.google.com/drive/folders/1IOxiYPljDJ7WxjgRZzZ4fcaTlYlTmnVB","_lastUpdated":"2019-11-24 09:55:13.0","description":"opis","number":"195","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-11-24","id":195,"letterFilesCount":0,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-11-17","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1IOxiYPljDJ7WxjgRZzZ4fcaTlYlTmnVB","_cases":[{"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_displayNumber":"S00","id":1179,"_processesInstances":[],"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","typeId":75}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1LaSzDOhcqcrtOr1VCu3pSdoZ7633HCymUV2CVFpRbCk","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[]}');
 }
 
 function test_addNewLetter() {

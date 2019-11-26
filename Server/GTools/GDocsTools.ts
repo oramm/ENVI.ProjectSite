@@ -21,14 +21,25 @@ class GDocsTools {
   static fillNamedRange(documentGdId: string, rangeName: string, text: string) {
     var document = DocumentApp.openById(documentGdId);
     var namedRange = this.getNamedRangeByName(document, rangeName);
-    namedRange.getRange().getRangeElements()[0].getElement().asText().setText(ToolsHtml.parseHtmlToText(text));
+    var element = namedRange.getRange().getRangeElements()[0];
+
+    element.getElement().asText().setText(ToolsHtml.parseHtmlToText(text));
+    namedRange.remove();
+    var range = document.newRange().addElement(element.getElement()).build();
+
+    Logger.log('fillNamedRange: ' + namedRange.getName());
+    document.addNamedRange(rangeName, range);
+    //this.logNamedRanges(document);
   }
 
   static clearNamedRanges(documentGdId: string) {
     var document = DocumentApp.openById(documentGdId);
     for (var range of document.getNamedRanges())
       range.remove();
+
+    Logger.log('wyczyszczono zakresy w pliku')
   }
+
   static logNamedRanges(document: GoogleAppsScript.Document.Document) {
     var ranges: GoogleAppsScript.Document.NamedRange[] = document.getNamedRanges();
     for (var i = 0; i < ranges.length; i++)
@@ -41,18 +52,27 @@ class GDocsTools {
   static createNamedRangesByTags(documentGdId: string, tags: string[]) {
     var document = DocumentApp.openById(documentGdId);
     this.clearNamedRanges(documentGdId);
+
     for (var i = 0; i < tags.length; i++) {
       let element = document.getBody().findText(tags[i]);
       let range = document.newRange().addElement(element.getElement()).build();
-      document.addNamedRange(tags[i], range);
+      document.addNamedRange(this.templateTagToTangeName(tags[i]), range);
       this.logNamedRanges(document);
     }
     return document.getNamedRanges();
   }
 
+  private static templateTagToTangeName(tag: string): string {
+    return (tag.indexOf('#ENVI#') === 0) ? tag.substring(6, tag.length - 1) : tag;
+  }
+
   static getNamedRangeByName(document: GoogleAppsScript.Document.Document, name: string): GoogleAppsScript.Document.NamedRange {
     var namedRanges = document.getNamedRanges();
-    return namedRanges.filter((item => item.getName() === name))[0]
+    return namedRanges.filter(item => {
+      var rangeName = item.getName().toLocaleUpperCase();
+      Logger.log(rangeName + ' === ' + name.toLocaleUpperCase());
+      return rangeName === name.toLocaleUpperCase();
+    })[0]
   }
 
   static getNameRangesTagsFromTemplate(documentGdId: string): string[] {
@@ -61,7 +81,7 @@ class GDocsTools {
     var body = document.getBody();
     var foundElement = body.findText('#ENVI#[aA-zZ|\s]+#');
     while (foundElement != null) {
-      var tag: string = foundElement.getElement().asParagraph().getText();
+      var tag: string = foundElement.getElement().asText().getText();
       tags.push(tag);
       foundElement = body.findText('#ENVI#[aA-zZ|\s]+#', foundElement);
     }
@@ -88,4 +108,22 @@ class GDocsTools {
       foundElement = body.findText(text, foundElement);
     }
   }
+}
+function test_createNamedRanges() {
+  var item = new OurLetterGdFile({
+    _templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4',
+    _letter: {
+      creationDate: '22dsfsfsf sdf2',
+      letterGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'
+    }
+  });
+  //GDocsTools.createNamedRangesByTags('1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU', GDocsTools.getNameRangesTagsFromTemplate('1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4'));
+  //return 
+  var letterDocument = DocumentApp.openById('1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU');
+  GDocsTools.logNamedRanges(letterDocument);
+
+  item.fillNamedRanges();
+  GDocsTools.logNamedRanges(letterDocument);
+  var x; //= GDocsTools.getNameRangesTagsFromTemplate('1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU');
+  return x;
 }

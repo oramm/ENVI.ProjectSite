@@ -6,12 +6,13 @@ class OurLetter extends Letter {
         super(initParamObject);
         this.isOur = true;
         this.number = this.id;
-        this._templateGdId = initParamObject._template.gdId;
+        //_temlate jest potrzebny tylko przy tworzeniu pisma
+        if(initParamObject._template) this._templateGdId = initParamObject._template.gdId;
         this._letterGdFile;
     }
 
     public makeFolderName(): string {
-        var folderName: string = this.makeFolderName();
+        var folderName: string = super.makeFolderName();
         return folderName += ': Wychodzące'
     }
 
@@ -32,8 +33,8 @@ class OurLetter extends Letter {
      */
     public createLetterGdElements(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
         super.createLetterGdElements(blobEnviObjects);
-        this._letterGdFile = new OurLetterGdFile({_templateGdId: this._templateGdId, _letter: this})
-        return this.createLetterFolder(blobEnviObjects);
+        var letterFolder = this.createLetterFolder(blobEnviObjects);
+        return letterFolder;
     }
     /*
      * Tworzy folder i plik pisma ENVI z wybranego szablonu
@@ -41,8 +42,8 @@ class OurLetter extends Letter {
      */
     protected createLetterFolder(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
         var letterFolder = super.createLetterFolder(blobEnviObjects);
-        this._letterGdFile.createOnGd();
-        //var ourLetterFile = Gd.createDuplicateFile(this._template.gdId, letterFolder.getId(), this.number + ' ' + this.creationDate);
+        this._letterGdFile = new OurLetterGdFile({_templateGdId: this._templateGdId, _letter: this});
+        this._letterGdFile.create();
         
         return letterFolder;
     }
@@ -52,19 +53,14 @@ class OurLetter extends Letter {
         this.number = this.id;
     }
 
-
     /*
      * _blobEnviObjects to załączniki do pisma
      */
-    public editLetterGdElements(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
-        this._fileOrFolderChanged = this.deleteFromGd();
-        this.letterFilesCount = blobEnviObjects.length;
-        this.refreshLetterFile(blobEnviObjects);
+    public editLetterGdElements(blobEnviObjects: _blobEnviObject[]): GoogleAppsScript.Drive.Folder {
+        this.letterFilesCount = blobEnviObjects.length + 1;
+        this._letterGdFile = new OurLetterGdFile({_templateGdId: undefined, _letter: this})
+        this._letterGdFile.edit(blobEnviObjects);
 
         return DriveApp.getFolderById(this.folderGdId);
-    }
-
-    public refreshLetterFile(blobEnviObjects: any[]) {
-
     }
 }
