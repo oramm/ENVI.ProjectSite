@@ -433,11 +433,16 @@ class ReachTextArea {
                         menubar: false,
                         forced_root_block : false,
                         statusbar: true,
-                        plugins: "autoresize link",
+                        
+                        plugins: "autoresize link paste",
+                        paste_auto_cleanup_on_paste: true,
+                        paste_as_text: true,
+
                         autoresize_bottom_margin: 20,
                         autoresize_min_height: 30,
-                        max_chars: 30,
+                        //max_chars: 30,
                         branding: false,
+                        
                         setup: function (ed) {
                             var allowedKeys = [8, 37, 38, 39, 40, 46]; // backspace, delete and cursor keys
                             ed.on('keydown', function (e) {
@@ -462,6 +467,7 @@ class ReachTextArea {
                             ReachTextArea.tinymce_updateCharCounter(this, ReachTextArea.tinymce_getContentLength(), maxCharacters);
                         },
                         paste_preprocess: function (plugin, args) {
+                            return;
                             var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
                             var editor = tinymce.get(tinymce.activeEditor.id);
                             var len = editor.contentDocument.body.innerHTML.length;
@@ -491,19 +497,19 @@ class ReachTextArea {
      */
     createReachTextArea(){
         this.$dom = $('<div>');
-        var $input = $('<textarea class="materialize-textarea validate" id="' + this.id + '" name="' + this.id + '" >');
+        this.$input = $('<textarea class="materialize-textarea validate" id="' + this.id + '" name="' + this.id + '" >');
         var $label = $('<label>'+ this.label +'</label>');
         $label.addClass('active')
         
         this.$dom
             .append($label)
-            .append($input);
+            .append(this.$input);
     
-        $input
+        this.$input
             .attr('max_chars',this.maxCharacters)
             .addClass('reachTextArea')
-            //.append($input);
     }
+
     setLabel(label){
         this.label = label;
         this.$dom.find('label').text(label);
