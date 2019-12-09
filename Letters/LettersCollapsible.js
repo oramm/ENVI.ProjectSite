@@ -75,9 +75,7 @@ class LettersCollapsible extends SimpleCollapsible {
         if (dataItem._canUserChangeFileOrFolder) {
             this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
         }
-        if (dataItem.isOur && dataItem.id == dataItem.number)
-            $meetingProtocolButton.append(new RaisedButton('aktalizuj plik pisma', this.refreshLetterFileAction, this).$dom);
-
+        
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);
         var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'

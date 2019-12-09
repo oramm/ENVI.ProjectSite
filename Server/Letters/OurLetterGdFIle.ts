@@ -26,16 +26,19 @@ class OurLetterGdFile {
      */
     public create(): GoogleAppsScript.Drive.File {
         this.gdFile = Gd.createDuplicateFile(this._templateGdId, this._letter.folderGdId, this._letter.number + ' ' + this._letter.creationDate);
-        this.createNamedRangesInOurLetter();
         this.gdFile.setShareableByEditors(true);
         this._letter.letterGdId = this.gdFile.getId();
         this._letter._documentEditUrl = this.gdFile.getUrl();
+        this.createNamedRangesInOurLetter();
+        
         this.fillNamedRanges();
+        GDocsTools.fillNamedRange(this._letter.letterGdId, 'address', this.makeEntitiesDataLabel(this._letter._entitiesMain));
         return this.gdFile;
     }
 
     edit(blobEnviObjects: _blobEnviObject[]) {
         this.fillNamedRanges();
+        GDocsTools.fillNamedRange(this._letter.letterGdId, 'address', this.makeEntitiesDataLabel(this._letter._entitiesMain));
     }
 
     fillNamedRanges() {
