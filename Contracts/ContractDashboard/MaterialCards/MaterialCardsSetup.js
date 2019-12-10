@@ -5,7 +5,7 @@ var personsRepository;
 var milestonesRepository;
 var casesRepository;
 
-var statusNames = ['Nowe','W trakcie','Do akceptacji','Zakończone'];
+var statusNames = ['Robocze','Do poprawy','Do akceptacji','Zatwierdzone'];
 
 class MaterialCardsSetup {
     static get materialCardsRepository() {

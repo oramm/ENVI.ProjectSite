@@ -6,7 +6,7 @@ class OurLetter extends Letter {
         this.isOur = true;
         this.number = initParamObject.number;
         //_temlate jest potrzebny tylko przy tworzeniu pisma
-        if(initParamObject._template) this._templateGdId = initParamObject._template.gdId;
+        if (initParamObject._template) this._templateGdId = initParamObject._template.gdId;
 
     }
 
@@ -41,9 +41,9 @@ class OurLetter extends Letter {
      */
     protected createLetterFolder(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
         var letterFolder = super.createLetterFolder(blobEnviObjects);
-         var _letterGdFile = new OurLetterGdFile({_templateGdId: this._templateGdId, _letter: this});
-        _letterGdFile.create();
-        
+        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: this._templateGdId, _letter: this });
+        ourLetterGdFile.create();
+
         return letterFolder;
     }
 
@@ -57,8 +57,8 @@ class OurLetter extends Letter {
      */
     public editLetterGdElements(blobEnviObjects: _blobEnviObject[]): GoogleAppsScript.Drive.Folder {
         this.letterFilesCount = blobEnviObjects.length + 1;
-        var _letterGdFile = new OurLetterGdFile({_templateGdId: undefined, _letter: this})
-        _letterGdFile.edit(blobEnviObjects);
+        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: undefined, _letter: this })
+        ourLetterGdFile.edit(blobEnviObjects);
 
         return DriveApp.getFolderById(this.folderGdId);
     }

@@ -27,7 +27,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
         if(dataItem._owner)  collapsibleItemName += ', odpowiedzialny: <strong>' +  dataItem._owner.name + ' ' + dataItem._owner.surname + '</strong>'
         
         var editModal;
-        if(dataItem.status.match(/Nowe|W trakcie/i))     //'Nowe','W trakcie','Do akceptacji','Zakończone'
+        if(dataItem.status.match(/Robocze|Do poprawy/i))     //'Robocze','Do poprawy','Do akceptacji','Zakończone'
             editModal = this.editModalContractor;
         else editModal = this.editModal;
         
