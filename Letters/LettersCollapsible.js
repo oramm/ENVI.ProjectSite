@@ -36,7 +36,7 @@ class LettersCollapsible extends SimpleCollapsible {
     makeItem(dataItem, $bodyDom) {
         var editModal;
         if (dataItem.isOur) {
-            if (dataItem._template)
+            if (dataItem.number == dataItem.id)
                 editModal = this.editOurLetterModal;
             else
                 editModal = this.editOurOldTypeLetterModal;

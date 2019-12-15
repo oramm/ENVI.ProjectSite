@@ -41,7 +41,7 @@ class OurLetter extends Letter {
      */
     protected createLetterFolder(blobEnviObjects: any[]): GoogleAppsScript.Drive.Folder {
         var letterFolder = super.createLetterFolder(blobEnviObjects);
-        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: this._templateGdId, _letter: this });
+        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: this._templateGdId, dataObject: this });
         ourLetterGdFile.create();
 
         return letterFolder;
@@ -57,7 +57,7 @@ class OurLetter extends Letter {
      */
     public editLetterGdElements(blobEnviObjects: _blobEnviObject[]): GoogleAppsScript.Drive.Folder {
         this.letterFilesCount = blobEnviObjects.length + 1;
-        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: undefined, _letter: this })
+        var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: undefined, dataObject: this })
         ourLetterGdFile.edit(blobEnviObjects);
 
         return DriveApp.getFolderById(this.folderGdId);

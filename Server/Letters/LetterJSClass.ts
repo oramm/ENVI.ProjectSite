@@ -1,4 +1,4 @@
-abstract class Letter {
+abstract class Letter implements documentDataObject{
     public id?: any;
     public isOur: boolean;
     public number?: string | number;
@@ -6,7 +6,7 @@ abstract class Letter {
     public creationDate?: string;
     public registrationDate?: string;
     public _documentOpenUrl?: string;
-    public letterGdId?: string;
+    public documentGdId: string;
     _fileOrFolderOwnerEmail?: string;
     _gdFolderUrl?: string;
     folderGdId?: string;
@@ -37,15 +37,15 @@ abstract class Letter {
             initParamObject.registrationDate = dateDMYtoYMD(initParamObject.registrationDate);
             this.registrationDate = (initParamObject.registrationDate) ? Utilities.formatDate(new Date(initParamObject.registrationDate), "CET", "yyyy-MM-dd") : undefined;
 
-            if (initParamObject.letterGdId) {
-                this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.letterGdId);
-                this.letterGdId = initParamObject.letterGdId;
-                this._fileOrFolderOwnerEmail = DriveApp.getFileById(this.letterGdId).getOwner().getEmail();
+            if (initParamObject.documentGdId) {
+                this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.documentGdId);
+                this.documentGdId = initParamObject.documentGdId;
+                this._fileOrFolderOwnerEmail = DriveApp.getFileById(this.documentGdId).getOwner().getEmail();
             }
             if (initParamObject.folderGdId) {
                 this._gdFolderUrl = Gd.createGdFolderUrl(initParamObject.folderGdId);
                 this.folderGdId = initParamObject.folderGdId;
-                this._fileOrFolderOwnerEmail = DriveApp.getFolderById(this.folderGdId).getOwner().getEmail();
+                this._fileOrFolderOwnerEmail// = DriveApp.getFolderById(this.folderGdId).getOwner().getEmail();
             }
             this._lastUpdated = initParamObject._lastUpdated;
             this._contract = initParamObject._contract;
@@ -57,7 +57,7 @@ abstract class Letter {
             this.letterFilesCount = initParamObject.letterFilesCount;
 
             this._editor = initParamObject._editor;
-            this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
+            this._canUserChangeFileOrFolder// = this.canUserChangeFileOrFolder();
             this._fileOrFolderChanged;
             
         }
@@ -77,8 +77,8 @@ abstract class Letter {
     canUserChangeFileOrFolder(): boolean {
         if (this.folderGdId)
             return Gd.canUserDeleteFolder(this.folderGdId);
-        else if (this.letterGdId)
-            return Gd.canUserDeleteFile(this.letterGdId);
+        else if (this.documentGdId)
+            return Gd.canUserDeleteFile(this.documentGdId);
     }
 
     createLetterGdElements(blobEnviObjects: _blobEnviObject[]): void {
@@ -98,8 +98,8 @@ abstract class Letter {
         var letterFile = rootFolder.createFile(blob);
         letterFile.setShareableByEditors(true);
         this.addFileToCasesFolders(letterFile);
-        this.letterGdId = letterFile.getId();
-        this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
+        this.documentGdId = letterFile.getId();
+        this._documentOpenUrl = Gd.createDocumentOpenUrl(this.documentGdId);
         this.folderGdId = undefined;
         this._gdFolderUrl = undefined;
         this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
@@ -139,7 +139,7 @@ abstract class Letter {
         this.addFolderToCasesFolders(letterFolder);
 
         this._documentOpenUrl = undefined;
-        this.letterGdId = undefined;
+        this.documentGdId = undefined;
         this._canUserChangeFileOrFolder = this.canUserChangeFileOrFolder();
         return letterFolder;
     }
@@ -240,9 +240,9 @@ abstract class Letter {
             else
                 letterGdElement = this.createLetterFile(blobEnviObjects);
 
-            this._documentOpenUrl = Gd.createDocumentOpenUrl(this.letterGdId);
+            this._documentOpenUrl = Gd.createDocumentOpenUrl(this.documentGdId);
         } else
-            letterGdElement = (this.letterGdId) ? DriveApp.getFileById(this.letterGdId) : DriveApp.getFolderById(this.folderGdId);
+            letterGdElement = (this.documentGdId) ? DriveApp.getFileById(this.documentGdId) : DriveApp.getFolderById(this.folderGdId);
         return letterGdElement;
     }
 
@@ -252,13 +252,13 @@ abstract class Letter {
     }
 
     deleteFromGd() {
-        if (this.letterGdId || this.folderGdId) {
+        if (this.documentGdId || this.folderGdId) {
             //usuwamy folder lub plik
             if (this.canUserChangeFileOrFolder()) {
                 if (this.folderGdId)
                     DriveApp.getFolderById(this.folderGdId).setTrashed(true);
                 else
-                    DriveApp.getFileById(this.letterGdId).setTrashed(true);
+                    DriveApp.getFileById(this.documentGdId).setTrashed(true);
                 return true;
             }
             //zmieniamy nazwę folderu lub pliku ze wzgędu na brak uprawnień do usuwania 
@@ -268,7 +268,7 @@ abstract class Letter {
                     folder.setName(folder.getName() + '- USUŃ');
                 }
                 else {
-                    var file = DriveApp.getFileById(this.letterGdId)
+                    var file = DriveApp.getFileById(this.documentGdId)
                     file.setName(file.getName() + '- USUŃ');
                 }
                 return false;
@@ -326,12 +326,12 @@ class IncomingLetter extends Letter {
         let letterFolder: GoogleAppsScript.Drive.Folder;
         //był tylko jeden plik pisma bez załaczników
         if (this.letterFilesCount - blobEnviObjects.length == 1) {
-            let letterFile = DriveApp.getFileById(this.letterGdId)
+            let letterFile = DriveApp.getFileById(this.documentGdId)
             letterFolder = this.createLetterFolder(blobEnviObjects);
             Gd.removeAllFileParents(letterFile);
             letterFolder.addFile(letterFile);
             this._documentOpenUrl = undefined;
-            this.letterGdId = undefined;
+            this.documentGdId = undefined;
         }
         //folder pisma istnieje
         else {
@@ -376,12 +376,12 @@ class OurOldTypeLetter extends Letter {
         let letterFolder: GoogleAppsScript.Drive.Folder;
         //był tylko jeden plik pisma bez załaczników
         if (this.letterFilesCount - blobEnviObjects.length == 1) {
-            let letterFile = DriveApp.getFileById(this.letterGdId)
+            let letterFile = DriveApp.getFileById(this.documentGdId)
             letterFolder = this.createLetterFolder(blobEnviObjects);
             Gd.removeAllFileParents(letterFile);
             letterFolder.addFile(letterFile);
             this._documentOpenUrl = undefined;
-            this.letterGdId = undefined;
+            this.documentGdId = undefined;
         }
         //folder pisma istnieje
         else {

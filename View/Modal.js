@@ -8,6 +8,7 @@ class Modal {
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.mode = mode;
+        this.formElements = [];
         if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT') throw new SyntaxError('Zła wartość mode');
         this.dataObject;
         this.form;

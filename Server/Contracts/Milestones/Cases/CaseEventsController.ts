@@ -79,8 +79,9 @@ function getCaseEvents(sql: string, initParamObject, externalConn?: GoogleAppsSc
     var stmt = conn.createStatement();
     var dbResults = stmt.executeQuery(sql);
     var _letterEntitiesPerProject = getLetterEntityAssociationsPerProjectList(initParamObject.projectId, conn);
-    var item;
+
     while (dbResults.next()) {
+      let item;
       if (dbResults.getString('Number') && !dbResults.getString('Name')) {
         var _letterEntitiesMainPerLetter = _letterEntitiesPerProject.filter(function (item) {
           return item.letterId == dbResults.getLong('Id') && item.letterRole == 'MAIN';
@@ -88,7 +89,8 @@ function getCaseEvents(sql: string, initParamObject, externalConn?: GoogleAppsSc
         var _letterEntitiesCcPerLetter = _letterEntitiesPerProject.filter(function (item) {
           return item.letterId == dbResults.getLong('Id') && item.letterRole == 'Cc';
         });
-        item = new Letter({
+        
+        var letterInitParams = {
           id: dbResults.getLong('Id'),
           isOur: dbResults.getBoolean('IsOur'),
           number: dbResults.getString('Number'),
@@ -112,7 +114,15 @@ function getCaseEvents(sql: string, initParamObject, externalConn?: GoogleAppsSc
           _project: {
             id: dbResults.getString('ProjectId'),
           }
-        });
+        }
+        if (letterInitParams.isOur) {
+          if (letterInitParams.id == parseInt(letterInitParams.number))
+            item = new OurLetter(letterInitParams);
+          else
+            item = new OurOldTypeLetter(letterInitParams);
+        }
+        else
+          item = new IncomingLetter(letterInitParams);
         item._eventType = 'LETTER'
       } else {
         item = new MeetingArrangement({

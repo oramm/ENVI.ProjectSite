@@ -1,0 +1,3 @@
+interface documentDataObject{
+    documentGdId: string;
+}

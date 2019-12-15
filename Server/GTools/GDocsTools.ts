@@ -112,9 +112,10 @@ class GDocsTools {
 function test_createNamedRanges() {
   var item = new OurLetterGdFile({
     _templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4',
-    _letter: {
+    dataObject: {
+      _templateGdId: '',
       creationDate: '22dsfsfsf sdf2',
-      letterGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'
+      documentGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'
     }
   });
   //GDocsTools.createNamedRangesByTags('1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU', GDocsTools.getNameRangesTagsFromTemplate('1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4'));

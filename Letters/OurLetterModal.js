@@ -3,23 +3,23 @@ class OurLetterModal extends LetterModal {
         super(id, tittle, connectedResultsetComponent, mode);
         this.controller = new OurLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
-        this.doAddNewFunctionOnItemName ='';
+        this.doAddNewFunctionOnItemName = '';
         var _this = this;
         this.initFormElements();
 
-        this.formElements = [
-            this.templateFormElement,
-            this.contractFormElement,
-            this.milestoneFormElement,
-            this.caseFormElement,
-            this.selectedCasesFormElement,
-            this.creationDateFormElement,
-            this.registrationDateFormElement,
-            this.entityMainFormElement,
-            this.selectedEntitiesMainFormElement,
-            this.descriptionFormElement,
-            this.fileFormElement
-        ];
+        if(this.mode==='ADD_NEW')
+            this.formElements.push(this.templateFormElement);
+        this.formElements.push(this.contractFormElement);
+        this.formElements.push(this.milestoneFormElement);
+        this.formElements.push(this.caseFormElement);
+        this.formElements.push(this.selectedCasesFormElement);
+        this.formElements.push(this.creationDateFormElement);
+        this.formElements.push(this.registrationDateFormElement);
+        this.formElements.push(this.entityMainFormElement);
+        this.formElements.push(this.selectedEntitiesMainFormElement);
+        this.formElements.push(this.descriptionFormElement);
+        this.formElements.push(this.fileFormElement);
+        
         this.initialise();
     }
     initFormElements() {
@@ -30,7 +30,7 @@ class OurLetterModal extends LetterModal {
         this.registrationDateFormElement.input.setLabel('Data nadania');
         this.templateFormElement = {
             input: this.templateSelectField,
-            description: 'Jeżeli rejestrujesz pismo po nowemu wybierz szablon. W przeciwnym razie zignoruj to pole i nadaj ręcznie numer pisma',
+            description: '',
             dataItemKeyName: '_template',
         };
         this.fileFormElement.input.isRequired = false;

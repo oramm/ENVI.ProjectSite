@@ -7,7 +7,7 @@ function getLettersListPerProject(initParamObject, externalConn?) {
     'Letters.Description, \n \t' +
     'Letters.CreationDate, \n \t' +
     'Letters.RegistrationDate, \n \t' +
-    'Letters.LetterGdId, \n \t' +
+    'Letters.DocumentGdId, \n \t' +
     'Letters.FolderGdId, \n \t' +
     'Letters.LetterFilesCount, \n \t' +
     'Letters.LastUpdated, \n \t' +
@@ -61,7 +61,7 @@ function getLetters(sql, initParamObject, externalConn?) {
         description: sqlToString(dbResults.getString('Description')),
         creationDate: dbResults.getString('CreationDate'),
         registrationDate: dbResults.getString('RegistrationDate'),
-        letterGdId: dbResults.getString('LetterGdId'),
+        documentGdId: dbResults.getString('DocumentGdId'),
         folderGdId: dbResults.getString('FolderGdId'),
         letterFilesCount: dbResults.getInt('LetterFilesCount'),
         _lastUpdated: dbResults.getString('LastUpdated'),
@@ -108,7 +108,7 @@ function getLetters(sql, initParamObject, externalConn?) {
 }
 
 function test_editLetter() {
-  editLetter('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"letterGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[]}');
+  editLetter('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"documentGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[]}');
 }
 
 function test_addNewLetter() {
@@ -142,10 +142,10 @@ function addNewLetter(itemFormClient): Letter {
     conn.setAutoCommit(false);
     item.addInDb(conn, false);
     conn.commit();
-    GDocsTools.fillNamedRange(item.letterGdId, 'number', item.number.toString());
+    GDocsTools.fillNamedRange(item.documentGdId, 'number', item.number.toString());
     letterGdElement.setName(item.makeFolderName());
     if (itemFormClient.isOur && itemFormClient._template)
-      DriveApp.getFileById(item.letterGdId).setName(item.makeFolderName());
+      DriveApp.getFileById(item.documentGdId).setName(item.makeFolderName());
     Logger.log(' item Added ItemId: ' + item.id);
 
     return item;
@@ -171,8 +171,8 @@ function editLetter(itemFormClient) {
     conn.commit();
 
     letterGdElement.setName(item.makeFolderName());
-    if (item.isOur && item.letterGdId && item.id == item.number)
-      DriveApp.getFileById(item.letterGdId).setName(item.makeFolderName());
+    if (item.isOur && item.documentGdId && item.id == item.number)
+      DriveApp.getFileById(item.documentGdId).setName(item.makeFolderName());
     Logger.log('item edited ItemId: ' + item.id);
     return item;
   } catch (err) {
@@ -185,7 +185,7 @@ function editLetter(itemFormClient) {
   }
 }
 function test_appendLetterAttachments() {
-  appendLetterAttachments('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"letterGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[{"blobBase64String":"ZHVwYSBqYXNpdQ==","name":"test PS.txt","mimeType":"text/plain"}]}');
+  appendLetterAttachments('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"documentGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[{"blobBase64String":"ZHVwYSBqYXNpdQ==","name":"test PS.txt","mimeType":"text/plain"}]}');
 }
 
 function appendLetterAttachments(itemFormClientString: string): any {
@@ -259,7 +259,7 @@ function getLetterCaseAssociationsPerProjectList(initParamObject, externalConn?)
     'Letters.Description, \n \t' +
     'Letters.CreationDate, \n \t' +
     'Letters.RegistrationDate, \n \t' +
-    'Letters.LetterGdId, \n \t' +
+    'Letters.DocumentGdId, \n \t' +
     'Letters.FolderGdId, \n \t' +
     'Letters.LastUpdated, \n \t' +
     'Cases.Name AS CaseName, \n \t' +
@@ -311,7 +311,7 @@ function getLetterCaseAssociations(sql, externalConn) {
           description: dbResults.getString('Description'),
           creationDate: dbResults.getString('CreationDate'),
           registrationDate: dbResults.getString('RegistrationDate'),
-          letterGdId: dbResults.getString('LetterGdId'),
+          documentGdId: dbResults.getString('DocumentGdId'),
           folderGdId: dbResults.getString('FolderGdId')
         },
         _case: new Case({

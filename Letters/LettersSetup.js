@@ -1,74 +1,79 @@
-var lettersRepository;
-var contractsRepository;
-var milestonesRepository;
-var casesRepository;
-var caseTypesRepository;
-var personsRepository;
-var documentTemplatesRepository;
-var entitiesRepository;
+
 
 class LettersSetup {
+    static _lettersRepository;
+    static get lettersRepository() {
+        return LettersSetup._lettersRepository;
+    }
+    static set lettersRepository(value) {
+        LettersSetup._lettersRepository = value;
+    }
+    static _letterCasesRepository;
+    static get letterCasesRepository() {
+        return LettersSetup._letterCasesRepository;
+    }
+    static set letterCasesRepository(value) {
+        LettersSetup._letterCasesRepository = value;
+    }
+    static _letterEntitiesRepository;
+    static get letterEntitiesRepository() {
+        return LettersSetup._letterEntitiesRepository;
+    }
+    static set letterEntitiesRepository(value) {
+        LettersSetup._letterEntitiesRepository = value;
+    }
+    
+    static _contractsRepository;
+    static get contractsRepository() {
+        return LettersSetup._contractsRepository;
+    }
+    static set contractsRepository(value) {
+        LettersSetup._contractsRepository = value;
+    }
+    static _milestonesRepository;
+    static get milestonesRepository() {
+        return LettersSetup._milestonesRepository;
+    }
+    static set milestonesRepository(value) {
+        LettersSetup._milestonesRepository = value;
+    }
+    static _casesRepository;
+    static get casesRepository() {
+        return LettersSetup._casesRepository;
+    }
+    static set casesRepository(value) {
+        LettersSetup._casesRepository = value;
+    }
+    static _caseTypesRepository;
+    static get caseTypesRepository() {
+        return LettersSetup._caseTypesRepository;
+    }
+    static set caseTypesRepository(value) {
+        LettersSetup._caseTypesRepository = value;
+    }
+    static _personsRepository;
+    static get personsRepository() {
+        return LettersSetup._personsRepository;
+    }
+    static set personsRepository(value) {
+        LettersSetup._personsRepository = value;
+    }
+    static _documentTemplatesRepository;
+    static get documentTemplatesRepository() {
+        return LettersSetup._documentTemplatesRepository;
+    }
+    static set documentTemplatesRepository(value) {
+        LettersSetup._documentTemplatesRepository = value;
+    }
+    static entitiesRepository;
+
     static get currentProject() {
         return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
     }
-    
+
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem('Current User'));
     }
+
     
-    static get lettersRepository() {
-        return lettersRepository;
-    }
-    static set lettersRepository(data) {
-        lettersRepository = data;
-    }
-    
-    static get contractsRepository() {
-        return contractsRepository;
-    }    
-    static set contractsRepository(data) {
-        contractsRepository = data;
-    }
-    
-    static get milestonesRepository() {
-        return milestonesRepository;
-    }    
-    static set milestonesRepository(data) {
-        milestonesRepository = data;
-    }
-    
-    static get casesRepository() {
-        return casesRepository;
-    }
-    static set casesRepository(data) {
-        casesRepository = data;
-    }
-    
-    static get caseTypesRepository() {
-        return caseTypesRepository;
-    }
-    static set caseTypesRepository(data) {
-        caseTypesRepository = data;
-    }
-    
-    static get personsRepository() {
-        return personsRepository;
-    }
-    static set personsRepository(data) {
-        personsRepository = data;
-    }
-    
-    static get documentTemplatesRepository() {
-        return documentTemplatesRepository;
-    }
-    static set documentTemplatesRepository(data) {
-        documentTemplatesRepository = data;
-    }
-    
-    static get entitiesRepository() {
-        return entitiesRepository;
-    }
-    static set entitiesRepository(data) {
-        entitiesRepository = data;
-    }
 }
