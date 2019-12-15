@@ -34,6 +34,7 @@ function test_getLettersListPerProject() {
 
 function getLetters(sql, initParamObject, externalConn?) {
   try {
+    var start = new Date();
     Logger.log(sql);
     var result = [];
     var conn = (externalConn) ? externalConn : connectToSql();
@@ -97,7 +98,8 @@ function getLetters(sql, initParamObject, externalConn?) {
         item = new IncomingLetter(initParam);
       result.push(item);
     }
-
+    var end = new Date();
+    Logger.log('Time elapsed: %sms', end.getTime() - start.getTime());
     return result;
   } catch (e) {
     Logger.log(e);
@@ -108,11 +110,11 @@ function getLetters(sql, initParamObject, externalConn?) {
 }
 
 function test_editLetter() {
-  editLetter('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"documentGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[]}');
+  editLetter('');
 }
 
 function test_addNewLetter() {
-  addNewLetter('{"_cases":[{"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","number":0,"_parent":{"_parent":{"number":"K1"},"contractId":224,"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784,"gdFolderId":"162khYw80_4EvrTOv4IbRbhvfrK3H4zgb"},"_displayNumber":"S00","id":1179,"_processesInstances":[],"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50,"_processes":[]},"_folderName":"01 Umowa","typeId":75}],"_entitiesMain":[{"address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"_entitiesCc":[],"_project":{"qualifiedValue":"53580874.00","endDate":"2020-11-23","_gdFolderUrl":"https://drive.google.com/drive/folders/1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy","googleCalendarId":"q1u012vcirureqkuov3epcmkf0@group.calendar.google.com","ourId":"KOB.GWS.01.WLASNE","financialComment":"","alias":"Kanalizacja","id":14,"_ourId_Alias":"KOB.GWS.01.WLASNE Kanalizacja","totalValue":"69075000.00","_googleCalendarUrl":"https://calendar.google.com/calendar/embed?src=q1u012vcirureqkuov3epcmkf0@group.calendar.google.com&ctz=Europe%2FWarsaw","_employers":[{"name":"Gmina Kobierzyce","id":90}],"_engineers":[{"address":"ul. Jana Brzechwy 3, 49-305 Brzeg","phone":"","www":"","name":"ENVI","taxNumber":"747-156-40-59","id":1,"fax":"","email":""}],"lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","name":"Budowa kanalizacji w gminie Kobierzyce","comment":"- kanały sanitarne grawitacyjne ok. 36 km<br />- rurociągi ciśnieniowe sieci kanalizacyjnej (z tranzytem pomiędzy miejscowościami) ok. 30 km,<br />- sieciowe przepompownie ściek&oacute;w ok. 29","startDate":"2017-10-31","status":"W trakcie","dotationValue":"13333300.00"},"_editor":{"name":"Marek Gazda","surname":"","systemEmail":"marek@envi.com.pl"},"_lastUpdated":"","isOur":true,"_template":{"caseTypeId":0,"gdId":"1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4","name":"Papier firmowy","description":"czysty papier firmowy","id":1},"_contract":{"_contractors":[{"name":"ATA - TECHNIK","id":5}],"endDate":"2020-11-23","_gdFolderUrl":"https://drive.google.com/drive/folders/1FPN4FdM-RsdKTbdZwUK_mUq8M1VITlps","gdFolderId":"1FPN4FdM-RsdKTbdZwUK_mUq8M1VITlps","_ourContract":{"ourId":"KOB.IK.01","_gdFolderUrl":"https://drive.google.com/drive/folders/14EHaDImBAjMSmft3Y2YLYS2_eDt0jfIi","_ourIdName":"KOB.IK.01 Zarządzanie i nadzór nad budową kanalizacji w gmin...","name":"Zarządzanie i nadzór nad budową kanalizacji w gminie Kobierzyce","id":"114","gdFolderId":"14EHaDImBAjMSmft3Y2YLYS2_eDt0jfIi","_ourType":"IK"},"number":"K1","meetingProtocolsGdFolderId":"1LBE-aIhTWKBtvu_QMInmBSY-EXnHocb_","id":224,"_manager":{},"name":"„Budowa kanalizacji w gminie Kobierzyce” ","typeId":3,"projectId":"KOB.GWS.01.WLASNE","startDate":"2017-10-31","status":"W trakcie","_ourIdOrNumber_Alias":"K1 Kanalizacja","ourIdRelated":"KOB.IK.01","alias":"Kanalizacja","_employers":[{"name":"Gmina Kobierzyce","id":90}],"_type":{"name":"Żółty","description":"3","id":3,"isOur":false},"_numberName":"K1 „Budowa kanalizacji w gminie Kobierzyce” ...","_engineers":[{"address":"ul. Jana Brzechwy 3, 49-305 Brzeg","phone":"","www":"","name":"ENVI","taxNumber":"747-156-40-59","id":1,"fax":"","email":""}],"_ourIdOrNumber_Name":"K1 „Budowa kanalizacji w gminie Kobierzyce” ...","_admin":{},"comment":""},"_milestone":{"endDate":"2020-11-23","_gdFolderUrl":"https://drive.google.com/drive/folders/162khYw80_4EvrTOv4IbRbhvfrK3H4zgb","description":"","gdFolderId":"162khYw80_4EvrTOv4IbRbhvfrK3H4zgb","_parent":{"_contractors":[],"_ourContract":{"ourId":"KOB.IK.01","_ourType":"IK"},"number":"K1","id":224,"_manager":{"id":0},"typeId":3,"projectId":"KOB.GWS.01.WLASNE","_ourIdOrNumber_Alias":"K1","ourIdRelated":"KOB.IK.01","_employers":[],"_type":{"name":"Żółty","description":"Kontrakt na roboty - w trybie projketuj i buduj.<br />Nie musi to być FIDIC","id":3,"isOur":false},"_engineers":[],"_admin":{"id":0},"scrumSheet":{}},"_FolderNumber_TypeName_Name":"00 Administracja - umowa zewnętrzna | ","id":784,"_type":{"isUniquePerContract":true,"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50,"_isDefault":true},"name":"","_folderName":"00 Administracja - umowa zewnętrzna","contractId":224,"typeId":50,"startDate":"2017-10-31","status":"W trakcie"},"creationDate":"2019-12-02","registrationDate":"2019-11-04","description":"ssadaa","_blobEnviObjects":[],"_tmpId":"57_pending","id":"57_pending"}');
+  addNewLetter('');
 }
 
 function addNewLetter(itemFormClient): Letter {
@@ -185,7 +187,7 @@ function editLetter(itemFormClient) {
   }
 }
 function test_appendLetterAttachments() {
-  appendLetterAttachments('{"_project":{"ourId":"KOB.GWS.01.WLASNE","lettersGdFolderId":"1QA8RuS5h6-qWyyxn--SgHnjjloFDacJi","id":"14","gdFolderId":"1dbiaItXJFmlTxc4c3z44Bd2gyTCpQOOy"},"documentGdId":"1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","_gdFolderUrl":"https://drive.google.com/drive/folders/1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_lastUpdated":"2019-11-28 18:51:16.0","description":"test fsdsdfsf asdfas daf asd<br />wdwd","number":"242","_fileOrFolderOwnerEmail":"marek@envi.com.pl","registrationDate":"2019-12-07","id":242,"letterFilesCount":1,"_canUserChangeFileOrFolder":true,"_entitiesMain":[{"letterRole":"MAIN","address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","phone":"","www":"","name":"ADESI Sp. z o.o.","taxNumber":"9291859529","id":199,"fax":"","email":"winturski@poczta.onet.pl"}],"creationDate":"2019-12-07","_editor":{"surname":"Gazda","name":"Marek","id":125},"folderGdId":"1L2cdW3U1xHKWSxW3B5h9Lvt0TJ8fUV0F","_cases":[{"_parent":{"_parent":{"number":"K1"},"_type":{"_folderNumber":"00","name":"Administracja - umowa zewnętrzna","id":50},"id":784},"_gdFolderUrl":"https://drive.google.com/drive/folders/1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER","milestoneId":784,"_type":{"isDefault":true,"isUniquePerMilestone":true,"folderNumber":"01","name":"Umowa","id":75,"milestoneTypeId":50},"_folderName":"01 Umowa","description":"","_typeFolderNumber_TypeName_Number_Name":"01 Umowa","typeId":75,"_displayNumber":"S00","id":1179,"_processesInstances":[],"gdFolderId":"1h3mwR5AB6FtTyEGzYxpA1GJHEwkmIsER"}],"projectId":"14","_documentOpenUrl":"https://drive.google.com/open?id=1_BXYTWZza9V_9gA6LqAdVQ7qKgDKbtVI-tDsvtA9hgY","isOur":true,"_entitiesCc":[],"_blobEnviObjects":[{"blobBase64String":"ZHVwYSBqYXNpdQ==","name":"test PS.txt","mimeType":"text/plain"}]}');
+  appendLetterAttachments('');
 }
 
 function appendLetterAttachments(itemFormClientString: string): any {
@@ -220,7 +222,7 @@ function deleteLetter(itemFormClient) {
     var success = item.deleteFromGd();
     return {
       success: success,
-      message: (success) ? undefined : 'Usunięto dane pisma z bazy, ale musisz ręcznie usunąć pliki z Drive. \n Dla ułatwienia do nazwy dodano dopisek "- USUŃ"',
+      message: (success) ? undefined : 'Usunięto dane pisma z bazy, ale pliku nadal są na Drive. \n Dla ułatwienia do nazwy dodano dopisek "- USUŃ"',
       externalUrl: (success) ? undefined : Gd.createGdFolderUrl(item._project.lettersGdFolderId)
     }
   } catch (err) {

@@ -81,6 +81,17 @@ Gd.removeAllFileParents = function (file: GoogleAppsScript.Drive.File): void {
   }
 }
 
+/*
+ * Odpina folder od wszystkich rodziców - folder zostaje sierotą
+ */
+Gd.removeAllFolderParents = function (folder: GoogleAppsScript.Drive.Folder): void {
+  var parentFolders: GoogleAppsScript.Drive.FolderIterator = folder.getParents();
+  while (parentFolders.hasNext()) {
+    var folder: GoogleAppsScript.Drive.Folder = parentFolders.next();
+    folder.removeFolder(folder);
+  }
+}
+
 Gd.prototype = {
   constructor: Gd,
 

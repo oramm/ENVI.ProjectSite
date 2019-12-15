@@ -7,7 +7,6 @@ abstract class Letter implements documentDataObject{
     public registrationDate?: string;
     public _documentOpenUrl?: string;
     public documentGdId: string;
-    _fileOrFolderOwnerEmail?: string;
     _gdFolderUrl?: string;
     folderGdId?: string;
     _lastUpdated?: string;
@@ -40,12 +39,10 @@ abstract class Letter implements documentDataObject{
             if (initParamObject.documentGdId) {
                 this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.documentGdId);
                 this.documentGdId = initParamObject.documentGdId;
-                this._fileOrFolderOwnerEmail = DriveApp.getFileById(this.documentGdId).getOwner().getEmail();
             }
             if (initParamObject.folderGdId) {
                 this._gdFolderUrl = Gd.createGdFolderUrl(initParamObject.folderGdId);
                 this.folderGdId = initParamObject.folderGdId;
-                this._fileOrFolderOwnerEmail// = DriveApp.getFolderById(this.folderGdId).getOwner().getEmail();
             }
             this._lastUpdated = initParamObject._lastUpdated;
             this._contract = initParamObject._contract;
@@ -128,8 +125,7 @@ abstract class Letter implements documentDataObject{
         letterFolder.setShareableByEditors(true);
         this.folderGdId = letterFolder.getId();
         this._gdFolderUrl = letterFolder.getUrl();
-        this._fileOrFolderOwnerEmail = letterFolder.getOwner().getEmail();
-
+        
         //letterFolder.setOwner(MY_GOOGLE_ACCOUNT_EMAIL);
         letterFolder.setShareableByEditors(true);
         for (var i = 0; i < blobEnviObjects.length; i++) {
@@ -266,11 +262,14 @@ abstract class Letter implements documentDataObject{
                 if (this.folderGdId) {
                     var folder = DriveApp.getFolderById(this.folderGdId)
                     folder.setName(folder.getName() + '- USUŃ');
+                    Gd.removeAllFolderParents(folder);
                 }
                 else {
                     var file = DriveApp.getFileById(this.documentGdId)
                     file.setName(file.getName() + '- USUŃ');
+                    Gd.removeAllFileParents(file);
                 }
+
                 return false;
             }
         }

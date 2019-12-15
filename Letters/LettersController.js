@@ -13,18 +13,6 @@ class LettersController {
             'editLetter',
             'deleteLetter');
 
-        LettersSetup.letterCasesRepository = new SimpleRepository('LetterCases repository',
-            'getLetterCaseAssociationsPerProjectList',
-            'addNewLetterCaseAssociation',
-            '',
-            'deleteLetterCaseAssociation');
-
-        LettersSetup.letterEntitiesRepository = new SimpleRepository('LetterEntities repository',
-            'getLetterEntityAssociationsPerProjectList',
-            'addNewLetterEntityAssociation',
-            '',
-            'deleteLetterEntityAssociation');
-
         LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
             'getContractsListPerProject'
         );
@@ -59,7 +47,6 @@ class LettersController {
         promises[7] = LettersSetup.entitiesRepository.initialise();
 
         Promise.all(promises)
-            .then(() => this.setLettersData())
             .then(() => {
                 console.log("Repositories initialised");
                 return listView.initialise();
@@ -86,25 +73,5 @@ class LettersController {
             .catch(err => {
                 console.error(err);
             });
-    }
-
-    setLettersData() {
-        return new Promise((resolve, reject) => {
-            for (var letter of LettersSetup.lettersRepository.items) {
-                var casesAssociationsPerLetter = LettersSetup.letterCasesRepository.items
-                    .filter(item => item.letterId == letter.id);
-                var letterEntitiesMainPerLetter = LettersSetup.letterEntitiesRepository.items.filter(function (item) {
-                    return item.letterId == letter.id && item.letterRole == 'MAIN';
-                });
-                var letterEntitiesCcPerLetter = _letterEntitiesPerProject.filter(function (item) {
-                    return item.letterId == dbResults.getLong('Id') && item.letterRole == 'Cc';
-                });
-                letter._cases = casesAssociationsPerLetter.map(item => item._case);
-                letter._entitiesMain = letterEntitiesMainPerLetter.map(item => item._entity);
-                letter._entitiesCc = letterEntitiesCcPerLetter.map(item => item._entity);
-            }
-            console.log("LettersData is Set");
-            resolve();
-        });
     }
 }
