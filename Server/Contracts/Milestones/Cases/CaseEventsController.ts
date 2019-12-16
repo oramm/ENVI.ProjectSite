@@ -7,7 +7,7 @@ function getCaseEventsList(initParamObject, externalConn?: GoogleAppsScript.JDBC
     'Letters.Description, \n \t' +
     'Letters.CreationDate AS EventDate,  \n \t' +
     'Letters.RegistrationDate, \n \t' +
-    'Letters.LetterGdId AS EventGdId, \n \t' +
+    'Letters.DocumentGdId AS EventGdId, \n \t' +
     'Letters.FolderGdId AS EventFolderGdId, \n \t' +
     'Letters.LastUpdated, \n \t' +
     'Letters.ProjectId, \n \t' +
