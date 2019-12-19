@@ -97,7 +97,7 @@ function getCaseEvents(sql: string, initParamObject, externalConn?: GoogleAppsSc
           description: dbResults.getString('Description'),
           creationDate: dbResults.getString('EventDate'),
           registrationDate: dbResults.getString('RegistrationDate'),
-          letterGdId: dbResults.getString('EventGdId'),
+          documentGdId: dbResults.getString('EventGdId'),
           folderGdId: dbResults.getString('EventFolderGdId'),
           _lastUpdated: dbResults.getString('LastUpdated'),
           _entitiesMain: _letterEntitiesMainPerLetter.map(function (item) {
