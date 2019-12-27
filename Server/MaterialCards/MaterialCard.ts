@@ -10,15 +10,15 @@ class MaterialCard {
   status?: string;
   creationDate?: any;
   deadline?: any;
-  lastUpdated?: any;
+  _lastUpdated?: any;
   _editor?: any;
   _owner?: any;
   ownerId?: any;
-  _contractId?: any;
-  _case?: any;
-  caseId?: number;
+  contractId?: any;
+  _contract?: any;
   gdFolderId?: string;
   _gdFolderUrl?: string;
+  _versions?: MaterialCardVersion[] = [];
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
@@ -30,20 +30,23 @@ class MaterialCard {
       this.creationDate = (initParamObject.creationDate) ? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
 
       this.deadline = initParamObject.deadline;
-      this.lastUpdated = initParamObject.lastUpdated;
+      this._lastUpdated = initParamObject._lastUpdated;
       this._editor = initParamObject._editor;
       this._owner = initParamObject._owner;
       if (initParamObject._owner)
         this.ownerId = initParamObject._owner.id;
-      this._contractId = initParamObject._contractId;
-      this._case = (initParamObject._case) ? initParamObject._case : this.getCaseData(initParamObject.externalConn);
-      this.caseId = this._case.id;
+      this._contract = initParamObject._contract;
+      if (initParamObject._contract)
+        this.contractId = initParamObject.contractId;
+
       this.gdFolderId = initParamObject.gdFolderId;
       this._gdFolderUrl = Gd.createGdFolderUrl(this.gdFolderId);
+      this._versions = initParamObject._versions;
     }
   }
 
-  getCaseData(conn) {
+  getCaseData(externalConn) {
+    var conn = (externalConn) ? externalConn : connectToSql();
     var stmt = conn.createStatement();
     var query = 'SELECT \n \t' +
       'Cases.Id, \n \t' +
@@ -51,6 +54,7 @@ class MaterialCard {
       'Cases.Name, \n \t' +
       'Cases.Description, \n \t' +
       'Cases.GdFolderId, \n \t' +
+      'Milestones.ContractId, \n \t' +
       'CaseTypes.Id AS TypeId, \n \t' +
       'CaseTypes.Name AS TypeName, \n \t' +
       'CaseTypes.FolderNumber AS TypeFolderNumber \n' +
@@ -58,11 +62,11 @@ class MaterialCard {
       'JOIN CaseTypes ON CaseTypes.Id=Cases.TypeId \n' +
       'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
       'JOIN Contracts  ON Milestones.ContractId = Contracts.Id \n' +
-      'WHERE Contracts.Id = ' + this._contractId + ' AND CaseTypes.Id=51';
+      'WHERE Cases.Id = '// + this._caseId;
     Logger.log(query)
     var dbResults = stmt.executeQuery(query);
     dbResults.last();
-    return new Case({
+    var item = new Case({
       id: dbResults.getLong('Id'),
       number: dbResults.getInt('Number'),
       gdFolderId: dbResults.getString('GdFolderId'),
@@ -70,8 +74,10 @@ class MaterialCard {
         id: dbResults.getLong('TypeId'),
         name: dbResults.getString('TypeName'),
         folderNumber: dbResults.getString('TypeFolderNumber')
-      }
+      },
     });
+    item.contractId = dbResults.getLong('ContractId');
+    return item;
   }
 
   setGdFolderName(): string {
@@ -80,53 +86,32 @@ class MaterialCard {
 
   addInDb(conn) {
     addInDb('MaterialCards', this, conn, true);
+    this.addNewVersion(conn);
   }
-  /*
-   * @depreciated
-   */
-  createDefaultTasksInDb(externalConn) {
-    var conn = (externalConn) ? externalConn : connectToSql();
-    var defaultTaskTemplates = getTaskTemplatesListPerCaseType(this._case._type.id, externalConn);
-    var _this = this;
-    defaultTaskTemplates.map(function (item) { item.name += ': ' + _this.setGdFolderName() })
-    var tasks = this._case.createDefaultTasksInDb({
-      defaultTaskTemplates: defaultTaskTemplates,
-      externalConn: externalConn
+
+  private addNewVersion(conn) {
+    var version = new MaterialCardVersion({
+      parentId: this.id,
+      _editor: this._editor,
+      status: this.status
     });
-    return tasks;
-  }
-  /*
-   * @depreciated
-   */
-  createDefaultTasksInScrum(tasks) {
-    var conn = connectToSql();
     try {
-      var minRow = 0;
-      //dodaj zadania do scruma
-      for (var i = 0; i < tasks.length; i++) {
-        var taskScrumData = tasks[i].addInScrum(conn, 'SKIP_MAKE_TIMES_SUMMARY');
-        if (taskScrumData) {
-          var lastContractRow = taskScrumData.lastContractRow;
-          if (minRow > lastContractRow || !minRow) minRow = lastContractRow;
-        }
-      }
-      if (minRow && minRow < 13)
-        scrumMakeTimesSummary();
-    } catch (e) {
-      Logger.log('createDefaultTasksInScrum error');
-      throw e;
-    } finally {
-      if (conn && conn.isValid(0)) conn.close();
+      version.addInDb(conn);
+      this._versions.push(version);
+    } catch (err) {
+      Logger.log(JSON.stringify(err));
+      throw err;
     }
   }
 
   createGdFolder() {
-    var rootFolder = DriveApp.getFolderById(this._case.gdFolderId);
+    var rootFolder = DriveApp.getFolderById(this._contract.materialCardsGdFolderId);
     return Gd.setFolder(rootFolder, this.setGdFolderName());
   }
 
   editInDb(externalConn, isPartOfTransaction) {
     editInDb('MaterialCards', this, externalConn, isPartOfTransaction);
+    this.addNewVersion(externalConn);
   }
 
   //prostszy wariant niż dla spraw - ma opcji zmiany typu sprawy
@@ -146,26 +131,9 @@ class MaterialCard {
       return true;
     }
     else {
-      var rootFolder = DriveApp.getFolderById(this._case.gdFolderId);
+      var rootFolder = DriveApp.getFolderById(this._contract.materialCardsGdFolderId);
       rootFolder.removeFolder(folder);
       return false;
-    }
-  }
-  /*
-   * @depreciated
-   */
-  deleteFromScrum(tasks) {
-    var minRow = 0;
-    for (var i = 0; i < tasks.length; i++) {
-      var row = findFirstInRange(tasks[i].id, SCRUM_DATA_VALUES, SCRUM_COL_TASK_ID) + 1;
-      if (row) {
-        if (minRow > row || !minRow) minRow = row;
-        SCRUM_SHEET.deleteRow(row);
-      }
-    }
-    if (minRow && minRow < 13) {
-      //odtwórz #TimesSummary i #Times
-      scrumMakeTimesSummary();
     }
   }
 }

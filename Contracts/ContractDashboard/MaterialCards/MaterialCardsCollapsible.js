@@ -40,16 +40,36 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
     }
     
     makeBodyDom(dataItem){
+        var $versionsUl = $('<ul class="collection">');
+        this.createVersionsList(dataItem, $versionsUl);
+        var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'
+        
+        
         var $panel = $('<div>')
                 .attr('id', 'collapsibleBodyForMaterialCard' + dataItem.id)
                 .attr('materialCardid',dataItem.id)
                 .attr('status',dataItem.status)
                 .append('<b>Opis:</b><br>' + dataItem.description + '<br>')
                 .append('<b>Uwagi:</b><br>' + dataItem.contractorsDescription)
-                .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
+                .append($('<br><span class="comment">Ostania zmiana danych: ' + timestamp + ' ' +
+                'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'))
+                .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)
+                .append($('<br><strong>Historia zmian:</stron>'))
+                .append($versionsUl);
         return $panel;
     }
     
-
+    createVersionsList(dataItem, $casesUl) {
+        for (var i = 0; i < dataItem._versions.length; i++) {
+            var $caseLi = $('<li class="collection-item">');
+            var caseLabel='';
+            caseLabel += ', ' + dataItem._versions[i].status+ ' ' +
+                dataItem._versions[i].id +
+                ' | ';
+            caseLabel += dataItem._versions[i]._typeFolderNumber_TypeName_Number_Name;
+            $caseLi.html(caseLabel);
+            $casesUl.append($caseLi);
+        }
+    }
    
 }

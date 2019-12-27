@@ -43,6 +43,7 @@ function Contract(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection) 
       this._gdFolderUrl = 'https://drive.google.com/drive/folders/' + initParamObject.gdFolderId;
     }
     this.meetingProtocolsGdFolderId = initParamObject.meetingProtocolsGdFolderId;
+    this.materialCardsGdFolderId = initParamObject.materialCardsGdFolderId;
     if (initParamObject.ourId && this.name)
       this._ourIdName = initParamObject.ourId + ' ' + initParamObject.name.substr(0, 50) + '...';
     else if (this.name)
@@ -113,7 +114,7 @@ Contract.prototype = {
     try {
 
       var stmt = conn.createStatement();
-      var sql = 'INSERT INTO Contracts (TypeId, Number, Name, Alias, ourIdRelated, ProjectOurId, StartDate, EndDate, Value, Comment, Status, GdFolderId, MeetingProtocolsGdFolderId) \n' +
+      var sql = 'INSERT INTO Contracts (TypeId, Number, Name, Alias, ourIdRelated, ProjectOurId, StartDate, EndDate, Value, Comment, Status, GdFolderId, MeetingProtocolsGdFolderId,MaterialCardsGdFolderId) \n' +
         'VALUES (' +
         prepareValueToSql(this.typeId) + ', \n \t' +
         prepareValueToSql(this.number) + ', \n \t' +
@@ -128,6 +129,7 @@ Contract.prototype = {
         prepareValueToSql(this.status) + ', \n \t' +
         prepareValueToSql(this.gdFolderId) + ', \n \t' +
         prepareValueToSql(this.meetingProtocolsGdFolderId) + ' \n' +
+        prepareValueToSql(this.materialCardsGdFolderId) + ' \n' +
         ')';
 
       //Logger.log(sql);
@@ -367,7 +369,7 @@ Contract.prototype = {
 
     try {
       var stmt = conn.prepareStatement('UPDATE Contracts ' +
-        'SET Number=?,Name=?,Alias=?,ourIdRelated=?,ProjectOurId=?, StartDate=?, EndDate=?, Value=?, Comment=?,Status=?,MeetingProtocolsGdFolderId=? ' +
+        'SET Number=?,Name=?,Alias=?,ourIdRelated=?,ProjectOurId=?, StartDate=?, EndDate=?, Value=?, Comment=?,Status=?,MeetingProtocolsGdFolderId=?,MaterialCardsGdFolderId=? ' +
         'WHERE Id = ?;');
       var test = prepareValueToSql(this.projectId);
       stmt.setString(1, prepareValueToPreparedStmtSql(this.number));
@@ -381,6 +383,7 @@ Contract.prototype = {
       stmt.setString(9, prepareValueToPreparedStmtSql(this.comment));
       stmt.setString(10, prepareValueToPreparedStmtSql(this.status));
       stmt.setString(11, prepareValueToPreparedStmtSql(this.meetingProtocolsGdFolderId));
+      stmt.setString(12, prepareValueToPreparedStmtSql(this.materialCardsGdFolderId));
       stmt.setLong(12, this.id);
       stmt.addBatch();
       var batch = stmt.executeBatch();

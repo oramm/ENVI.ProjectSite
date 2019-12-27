@@ -23,6 +23,7 @@ function getContractsListPerProject(initParamObject) {
                      'mainContracts.Status, \n \t' +
                      'mainContracts.GdFolderId, \n \t' +
                      'mainContracts.MeetingProtocolsGdFolderId, \n \t' +
+                     'mainContracts.MaterialCardsGdFolderId, \n \t' +
                         'OurContractsData.OurId, \n \t' +
                         'OurContractsData.ManagerId, \n \t' +
                         'OurContractsData.AdminId, \n \t' +
@@ -82,6 +83,7 @@ function getContractsListPerProject(initParamObject) {
                              status : dbResults.getString('Status'),
                              gdFolderId: dbResults.getString('GdFolderId'),
                              meetingProtocolsGdFolderId: dbResults.getString('MeetingProtocolsGdFolderId'),
+                             materialCardsGdFolderId: dbResults.getString('MaterialCardsGdFolderId'),
                              ourId: dbResults.getString('OurId'),
                              _manager: {id: dbResults.getString('ManagerId'),
                                         name: dbResults.getString('ManagerName'),

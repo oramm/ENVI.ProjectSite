@@ -8,6 +8,9 @@ var casesRepository;
 var statusNames = ['Robocze','Do poprawy','Do akceptacji','Zatwierdzone'];
 
 class MaterialCardsSetup {
+    static get currentUser() {
+        return JSON.parse(sessionStorage.getItem('Current User'));
+    }
     static get materialCardsRepository() {
         return materialCardsRepository;
     }
