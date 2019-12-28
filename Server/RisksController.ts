@@ -133,16 +133,14 @@ function test_editRisk(itemFormClient) {
 
 function deleteRisk(itemFormClient){
   itemFormClient = JSON.parse(itemFormClient);
-  var item = new Risk();
-  item.id = itemFormClient.id;
+  var item = new Risk({id: itemFormClient.id});
   Logger.log(JSON.stringify(item));
   item.deleteFromDb();
   //item.deleteFromScrum()
 }
 
-function test_deleteRisk(){
-  var item = new Risk();
-  item.id = 3;
+function test_deleteRisk(itemFormClient?){
+  var item = new Risk({id: itemFormClient.id});
   Logger.log(JSON.stringify(item));
   item.deleteFromDb();
 }

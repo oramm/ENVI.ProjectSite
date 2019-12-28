@@ -4,17 +4,18 @@ function getMaterialCardsVersionsListPerContract(contractId: number): MaterialCa
   var sql = 'SELECT MaterialCardVersions.Id, \n \t' +
     'MaterialCardVersions.Status, \n \t' +
     'MaterialCardVersions.ParentId, \n \t' +
-    'MaterialCards.LastUpdated, \n \t' +
+    'MaterialCardVersions.LastUpdated, \n \t' +
     'Editors.Id AS EditorId, \n \t' +
     'Editors.Name AS EditorName, \n \t' +
     'Editors.Surname AS EditorSurname, \n \t' +
     'Editors.Email AS EditorEmail \n' +
     'FROM MaterialCardVersions \n' +
+    'JOIN MaterialCards ON MaterialCards.Id=MaterialCardVersions.ParentId \n' +
     'JOIN Persons AS Editors ON Editors.Id=MaterialCardVersions.EditorId \n' +
     'WHERE ' + contractConditon + '\n' +
     'ORDER BY MaterialCardVersions.Id DESC';
   Logger.log(sql);
-  return getMaterialCardVersions(sql, {contractId: contractId});
+  return getMaterialCardVersions(sql, { contractId: contractId });
 }
 function test_getMaterialCardVersionsListPerContract() {
   getMaterialCardsVersionsListPerContract(361)
@@ -25,13 +26,13 @@ function getMaterialCardVersions(sql, initParamObject): MaterialCardVersion[] {
   var conn = connectToSql();
   var stmt = conn.createStatement();
   try {
-    
+
     var dbResults = stmt.executeQuery(sql);
     while (dbResults.next()) {
       var item = new MaterialCardVersion({
         id: dbResults.getLong('Id'),
         status: dbResults.getString('Status'),
-        lastUpdated: dbResults.getString('LastUpdated'),
+        _lastUpdated: dbResults.getString('LastUpdated'),
         parentId: dbResults.getInt('ParentId'),
         //ostatni edytujący
         _editor: {

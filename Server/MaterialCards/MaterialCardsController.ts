@@ -36,6 +36,7 @@ function getMaterialCardsListPerContract(contractId?: number) {
     'FROM MaterialCards \n' +
     'JOIN Contracts ON Contracts.Id=MaterialCards.ContractId \n' +
     'JOIN ContractTypes ON ContractTypes.Id = Contracts.TypeId \n' +
+    'LEFT JOIN OurContractsData ON OurContractsData.Id = Contracts.Id \n' +
     'JOIN Projects ON Projects.OurId=Contracts.ProjectOurId \n' +
     'JOIN Persons AS Editors ON Editors.Id=MaterialCards.EditorId \n' +
     'JOIN Persons AS Owners ON Owners.Id=MaterialCards.OwnerId \n' +
@@ -98,7 +99,7 @@ function getMaterialCards(sql: string, initParamObject) {
           surname: dbResults.getString('OwnerSurname'),
           email: dbResults.getString('OwnerEmail')
         },
-        _versions: versions.filter(item => item.parentId == this.id)
+        _versions: versions.filter(item => item.parentId == dbResults.getLong('Id'))
       });
       item._owner.nameSurnameEmail = item._owner.name + ' ' + item._owner.surname + ' ' + item._owner.email;
       result.push(item);
@@ -177,20 +178,26 @@ function deleteMaterialCard(itemFormClient) {
 }
 
 function makeContratcIdForMaterialCards() {
-  var mcards: MaterialCard[] = getMaterialCardsListPerContract();
+  var mcards = getMaterialCardsListPerContract();
   var conn = connectToSql();
   conn.setAutoCommit(false);
-  for (var item of mcards) {
-
-    item.contractId = item.getCaseData(conn).contractId;
-    
-    var stmt = conn.createStatement();
-    var x=''
-    stmt.executeUpdate('UPDATE MaterialCards SET ContractId = ${item.contractId} WHERE id = ${item.id}')
-    stmt.close();
-    //item.editInDb(conn, true)
+  try {
+    for (var _i = 0, mcards_1 = mcards; _i < mcards_1.length; _i++) {
+      var item = mcards_1[_i];
+      item.contractId = item.getCaseData(conn).contractId;
+      var stmt = conn.createStatement();
+      var x = '';
+      stmt.executeUpdate('UPDATE MaterialCards SET ContractId = ${item.contractId} WHERE id = ${item.id}');
+      stmt.close();
+      //item.editInDb(conn, true)
+    }
+    conn.commit();
+  } catch (e) {
+    Logger.log(JSON.stringify(item))
+  } finally {
+    conn.close();
   }
-  conn.commit();
-  conn.close();
+
 }
+
 

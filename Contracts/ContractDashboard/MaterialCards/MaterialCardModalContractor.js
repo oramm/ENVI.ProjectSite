@@ -45,9 +45,7 @@ class MaterialCardModalContractor extends Modal {
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {    
             _contractId: MaterialCardsSetup.contractsRepository.currentItem.id,
-            _parent:  MaterialCardsSetup.milestonesRepository.items.filter((   item => item._type.id==7 && 
-                                                                               item.contractId==MaterialCardsSetup.contractsRepository.currentItem.id
-                                                                        ))[0],  
+            _contract:  MaterialCardsSetup.contractsRepository.currentItem,  
             contractId: this.connectedResultsetComponent.connectedRepository.parentItemId,
             _versions: [],
             _editor: {

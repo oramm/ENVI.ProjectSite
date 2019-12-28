@@ -384,7 +384,7 @@ Contract.prototype = {
       stmt.setString(10, prepareValueToPreparedStmtSql(this.status));
       stmt.setString(11, prepareValueToPreparedStmtSql(this.meetingProtocolsGdFolderId));
       stmt.setString(12, prepareValueToPreparedStmtSql(this.materialCardsGdFolderId));
-      stmt.setLong(12, this.id);
+      stmt.setLong(13, this.id);
       stmt.addBatch();
       var batch = stmt.executeBatch();
 

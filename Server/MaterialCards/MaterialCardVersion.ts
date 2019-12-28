@@ -5,7 +5,7 @@
 
 class MaterialCardVersion {
   id?: number;
-  lastUpdated?: any;
+  _lastUpdated?: any;
   _editor: any;
   editorId: number;
   status: string;
@@ -17,7 +17,7 @@ class MaterialCardVersion {
       this.editorId = initParamObject._editor.id;
       this.status = initParamObject.status;
       this.parentId = initParamObject.parentId;
-      this.lastUpdated = initParamObject.lastUpdated;
+      this._lastUpdated = initParamObject._lastUpdated;
       this._editor = initParamObject._editor;
     }
   }

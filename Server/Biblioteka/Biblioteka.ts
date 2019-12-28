@@ -175,7 +175,7 @@ function createStaticFolderInContracts() {
   var name = 'Wnioski materiałowe';
   var contracts = getContractsListPerProject({});
   for (var item of contracts) {
-    if (!item.materialCardsGdFolderId) {
+    if (!item.materialCardsGdFolderId && item.status !== 'Archiwalny') {
       var gdId: string = Gd.setFolder(DriveApp.getFolderById(item.gdFolderId), name).getId();
       item.materialCardsGdFolderId = gdId;
       item.editInDb();

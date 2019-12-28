@@ -142,11 +142,11 @@ function addNewCaseTemplate(itemFormClient) {
 
 
 function test_addNewCaseTemplate(){
-  addNewCaseTemplate('{"_milestoneType":{"isInScrumByDefault":false,"isUniquePerContract":true,"_contractType":{"name":"IK","description":"Inżynier","id":1},"isDefault":true,"_folderNumber":"01","name":"Administracja","id":1,"_folderNumber_MilestoneTypeName":"01 Administracja"},"name":"","description":"test11"}')
+  addNewCaseTemplate('')
 }
 
 function test_editCaseTemplate(){
-  editCaseTemplate('{"_gdFolderUrl":"https://drive.google.com/drive/folders/1xdE_9LZGw1Gbwy2ZptDwa25gtYzCwTyU","milestoneId":511,"description":"wetw rdt","_typeFolderNumber_TypeName_Number_Name":"04.02 ZNWU | S00 null","gdFolderId":"1xdE_9LZGw1Gbwy2ZptDwa25gtYzCwTyU","number":0,"_parent":{"contractId":367,"id":511,"gdFolderId":"19gn0o5V504b00RSy-1wzJUpKOb_uEwYv"},"_displayNumber":"S00","id":308,"_processesInstances":[{"_editor":{"id":0},"_task":{"id":185},"_case":{"id":308},"_lastUpdated":"2019-07-09 22:48:46.0","id":15,"_stepsInstances":[{"processInstanceId":15,"_processStep":{"name":"Podpisanie umowy o Roboty","description":"Archiwizacja umowy w wersji elektronicznej (skan) w SIRM","id":2},"_case":{"id":308},"_lastUpdated":"2019-07-09 22:48:47.0","processStepId":2,"id":6,"status":"Nie rozpoczęte"},{"processInstanceId":15,"_processStep":{"name":"Przekazanie Inżynierowi polisy ubezpieczenia robót","description":"","id":3},"_case":{"id":308},"_lastUpdated":"2019-07-09 22:48:47.0","processStepId":3,"id":7,"status":"Nie rozpoczęte"},{"processInstanceId":15,"_processStep":{"name":"Weryfikacja polisy ubezpieczeniowej Wykonawcy Robót wg Listy sprawdzającej","description":"Przekazać brokerowi","id":4},"_case":{"id":308},"_lastUpdated":"2019-07-09 22:48:47.0","processStepId":4,"id":8,"status":"Nie rozpoczęte"},{"processInstanceId":15,"_processStep":{"name":"Akceptacja polisy Wykonawcy Robót","description":"Przesłać do Zamawiającego pismo z akceptacją","id":5},"_case":{"id":308},"_lastUpdated":"2019-07-09 22:48:48.0","processStepId":5,"id":9,"status":"Nie rozpoczęte"}],"_process":{"name":"Rozpoczęcie robót","description":"procedura uruchamiana po zakończeniu projektowania w kontraktach na roboty.","id":1}}],"_type":{"isDefault":false,"isUniquePerMilestone":true,"folderNumber":"04.02","name":"ZNWU","id":12,"milestoneTypeId":7,"_processes":[]},"typeId":12,"name":""}')
+  editCaseTemplate('')
 }
 
 

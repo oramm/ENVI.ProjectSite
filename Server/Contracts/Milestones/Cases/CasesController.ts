@@ -264,7 +264,7 @@ function addNewCase(itemFormClient) {
 }
 
 function test_editCase(){
-  editCase('{"_gdFolderUrl":"https://drive.google.com/drive/folders/12rAlJRQHQ3Qc2Nbn3MKGZIiP65HcORqQ","milestoneId":609,"description":"","_typeFolderNumber_TypeName_Number_Name":"07.01 Wnioski materiałowe","gdFolderId":"12rAlJRQHQ3Qc2Nbn3MKGZIiP65HcORqQ","number":1,"_parent":{"_parent":{"number":"K1"},"contractId":224,"_type":{"_folderNumber":"03","name":"Roboty - nadzór","id":7},"id":609,"gdFolderId":"1RKegdt8AHr4DbYjrf1c5XPYJU5KbtDjr"},"_displayNumber":"S01","id":837,"_processesInstances":[],"_type":{"isDefault":true,"isUniquePerMilestone":true,"_milestoneType":{"id":7},"folderNumber":"07.01","name":"Wnioski materiałowe","id":51,"milestoneTypeId":7,"_processes":[]},"_folderName":"07.01 Wnioski materiałowe","_wasChangedToUniquePerMilestone":true,"typeId":51,"name":""}')
+  editCase('')
 }
 
 

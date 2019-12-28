@@ -18,7 +18,7 @@ class MaterialCard {
   _contract?: any;
   gdFolderId?: string;
   _gdFolderUrl?: string;
-  _versions?: MaterialCardVersion[] = [];
+  _versions?: MaterialCardVersion[];
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
@@ -41,43 +41,8 @@ class MaterialCard {
 
       this.gdFolderId = initParamObject.gdFolderId;
       this._gdFolderUrl = Gd.createGdFolderUrl(this.gdFolderId);
-      this._versions = initParamObject._versions;
+      this._versions = (initParamObject._versions) ? initParamObject._versions : [];
     }
-  }
-
-  getCaseData(externalConn) {
-    var conn = (externalConn) ? externalConn : connectToSql();
-    var stmt = conn.createStatement();
-    var query = 'SELECT \n \t' +
-      'Cases.Id, \n \t' +
-      'Cases.Number, \n \t' +
-      'Cases.Name, \n \t' +
-      'Cases.Description, \n \t' +
-      'Cases.GdFolderId, \n \t' +
-      'Milestones.ContractId, \n \t' +
-      'CaseTypes.Id AS TypeId, \n \t' +
-      'CaseTypes.Name AS TypeName, \n \t' +
-      'CaseTypes.FolderNumber AS TypeFolderNumber \n' +
-      'FROM Cases \n' +
-      'JOIN CaseTypes ON CaseTypes.Id=Cases.TypeId \n' +
-      'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
-      'JOIN Contracts  ON Milestones.ContractId = Contracts.Id \n' +
-      'WHERE Cases.Id = '// + this._caseId;
-    Logger.log(query)
-    var dbResults = stmt.executeQuery(query);
-    dbResults.last();
-    var item = new Case({
-      id: dbResults.getLong('Id'),
-      number: dbResults.getInt('Number'),
-      gdFolderId: dbResults.getString('GdFolderId'),
-      _type: {
-        id: dbResults.getLong('TypeId'),
-        name: dbResults.getString('TypeName'),
-        folderNumber: dbResults.getString('TypeFolderNumber')
-      },
-    });
-    item.contractId = dbResults.getLong('ContractId');
-    return item;
   }
 
   setGdFolderName(): string {
@@ -114,7 +79,6 @@ class MaterialCard {
     this.addNewVersion(externalConn);
   }
 
-  //prostszy wariant niż dla spraw - ma opcji zmiany typu sprawy
   editGdFolderName() {
     var folder = DriveApp.getFolderById(this.gdFolderId);
     folder.setName(this.setGdFolderName());
@@ -138,6 +102,8 @@ class MaterialCard {
   }
 }
 
+
+
 function test_editMaterialCard() {
-  editMaterialCard('')
+  editMaterialCard('{"_owner":{"nameSurnameEmail":"Ewa  Brachowska e.brachowska@hydrotech.info.pl","surname":"Brachowska","name":"Ewa ","id":271,"email":"e.brachowska@hydrotech.info.pl"},"_gdFolderUrl":"https://drive.google.com/drive/folders/1sw3E0LK3o7Oh62llVR0DFm8eNIytnDKk","_lastUpdated":"2019-12-27 16:08:14.0","description":"sssss","gdFolderId":"1sw3E0LK3o7Oh62llVR0DFm8eNIytnDKk","ownerId":271,"id":130,"_versions":[{"_editor":{"surname":"Gazda","name":"Marek","id":125,"email":"marek@envi.com.pl"},"editorId":125,"lastUpdated":"2019-12-27 16:26:28.0","id":354,"parentId":130,"status":"Robocze"}],"_contract":{"number":"K1","_parent":{"ourId":"NOW.GWS.01.POIS","name":"Budowa kanalizacji sanitarnej w Wykrotach wraz z przyłączami","gdFolderId":"1dL5vgvnD_a0EyI8jEwjt8cKXIsOkmADR"},"name":"Budowa kanalizacji sanitarnej w Wykrotach wraz z przyłączami","_type":{"name":"Żółty","description":"3","id":3,"isOur":false},"id":395,"gdFolderId":"1mqvF0fhML8nEhhfzEYGBfIqyg8vOl3eq"},"creationDate":"2019-12-27","_editor":{"surname":"Gazda","name":"Marek","id":125,"email":"marek@envi.com.pl"},"name":"zmiana","contractId":395,"status":"Robocze"}')
 }
