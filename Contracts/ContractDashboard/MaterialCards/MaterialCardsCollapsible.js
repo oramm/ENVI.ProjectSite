@@ -12,9 +12,10 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
         });
 
         this.addNewModal = new MaterialCardModalContractor(id + '_newMaterialCard', 'Złoż wniosek', this, 'ADD_NEW');
-        this.editModal = new MaterialCardModalEngineer(id + '_editMaterialCard', 'Edytuj wniosek', this, 'EDIT');
-        this.editModalContractor = new MaterialCardModalContractor(id + '_editMaterialCardMaterialCardContractor', 'Edytuj wniosek (Wykonawca)', this, 'EDIT');
-
+        this.editModal = new MaterialCardModalContractor(id + '_editMaterialCardMaterialCardContractor', 'Edytuj wniosek (Wykonawca)', this, 'EDIT');
+        this.editModalEngineer = new MaterialCardModalEngineer(id + '_editMaterialCardEngineer', 'Sprawdź wniosek (Inżynier)', this, 'EDIT');
+        this.editModalEmployer = new MaterialCardModalEmployer(id + '_editMaterialEmployer', 'Dodaj uwagi (Zamawiający)', this, 'EDIT');
+        
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*
@@ -29,8 +30,8 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
 
         var editModal;
         if (dataItem.status.match(/Robocze|Do poprawy/i))     //'Robocze','Do poprawy','Do akceptacji','Zakończone'
-            editModal = this.editModalContractor;
-        else editModal = this.editModal;
+            editModal = this.editModal;
+        else editModal = this.editModalEngineer;
 
         return {
             id: dataItem.id,
@@ -42,18 +43,26 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
     }
 
     makeBodyDom(dataItem) {
+        var $actionButtons = $('<div class="row">')
+        if (!dataItem.status.match(/'Robocze|Zakończone/i)) {
+            this.editModalEmployer.preppendTriggerButtonTo($actionButtons, 'Dodaj uwagi Zamawiającego', this);
+        }
+
         var $versionsUl = $('<ul class="collection">');
         this.createVersionsList(dataItem, $versionsUl);
         var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświetli po odświeżeniu]'
         var description = (dataItem.description) ? dataItem.description : '';
-        var contractorsDescription = (dataItem.contractorsDescription) ? dataItem.contractorsDescription : 'brak';
+        var contractorsComment = (dataItem.contractorsComment) ? dataItem.contractorsComment : 'brak';
+        var employersComment = (dataItem.employersComment) ? dataItem.employersComment : 'brak';
 
         var $panel = $('<div>')
             .attr('id', 'collapsibleBodyForMaterialCard' + dataItem.id)
             .attr('materialCardid', dataItem.id)
             .attr('status', dataItem.status)
+            .append($actionButtons)
             .append('<b>Opis:</b><br>' + description + '<br>')
-            .append('<b>Uwagi:</b><br>' + contractorsDescription)
+            .append('<b>Uwagi Inżyniera:</b><br>' + contractorsComment + '<br>')
+            .append('<b>Uwagi Zamawiającego:</b><br>' + employersComment + '<br>')
             .append($('<br><span class="comment">Ostania zmiana danych: ' + timestamp + ' ' +
                 'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'))
             .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)

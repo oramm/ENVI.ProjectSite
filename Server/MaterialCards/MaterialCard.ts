@@ -7,6 +7,8 @@ class MaterialCard {
   id?: any;
   name?: string;
   description?: string;
+  engineersComment?: string;
+  employersComment?: string;
   status?: string;
   creationDate?: any;
   deadline?: any;
@@ -24,6 +26,8 @@ class MaterialCard {
       this.id = initParamObject.id;
       this.name = initParamObject.name;
       this.description = initParamObject.description;
+      this.engineersComment = initParamObject.engineersComment;
+      this.employersComment = initParamObject.employersComment;
       this.status = initParamObject.status;
       this.creationDate = initParamObject.creationDate;
       initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);

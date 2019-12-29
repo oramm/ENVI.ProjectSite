@@ -5,6 +5,8 @@ function getMaterialCardsListPerContract(contractId?: number) {
     'MaterialCards.Status, \n \t' +
     'MaterialCards.Name, \n \t' +
     'MaterialCards.Description, \n \t' +
+    'MaterialCards.EngineersComment, \n \t' +
+    'MaterialCards.EmployersComment, \n \t' +
     'MaterialCards.CreationDate, \n \t' +
     'MaterialCards.Deadline, \n \t' +
     'MaterialCards.LastUpdated, \n \t' +
@@ -61,6 +63,8 @@ function getMaterialCards(sql: string, initParamObject) {
         id: dbResults.getLong('Id'),
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
+        engineersComment: dbResults.getString('EngineersComment'),
+        employersComment: dbResults.getString('EmployersComment'),
         status: dbResults.getString('Status'),
         creationDate: dbResults.getString('CreationDate'),
         deadline: dbResults.getString('Deadline'),
