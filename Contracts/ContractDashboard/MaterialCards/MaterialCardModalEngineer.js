@@ -1,7 +1,7 @@
 class MaterialCardModalEngineer extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent,mode);
-        this.contractorsCommentReachTextArea = new ReachTextArea (this.id + '_contractorsCommentReachTextArea','Uwagi Inżyniera', false, 1000);
+        this.engineersCommentReachTextArea = new ReachTextArea (this.id + '_engineersCommentReachTextArea','Uwagi Inżyniera', false, 1000);
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
         this.statusSelectField.initialise(MaterialCardsSetup.statusNames);
@@ -17,8 +17,8 @@ class MaterialCardModalEngineer extends Modal {
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 150),
                 dataItemKeyName: 'name'
             },
-            {   input: this.contractorsCommentReachTextArea,
-                dataItemKeyName: 'contractorsComment'
+            {   input: this.engineersCommentReachTextArea,
+                dataItemKeyName: 'engineersComment'
             },
             {   input: this.deadLinePicker,
                 dataItemKeyName: 'deadline'

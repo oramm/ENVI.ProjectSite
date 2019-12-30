@@ -24,10 +24,10 @@ class MaterialCard {
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
-      this.name = initParamObject.name;
-      this.description = initParamObject.description;
-      this.engineersComment = initParamObject.engineersComment;
-      this.employersComment = initParamObject.employersComment;
+      if(initParamObject.name) this.name = initParamObject.name;
+      if(initParamObject.description) this.description = initParamObject.description;
+      if(initParamObject.engineersComment) this.engineersComment = initParamObject.engineersComment;
+      if(initParamObject.employersComment) this.employersComment = initParamObject.employersComment;
       this.status = initParamObject.status;
       this.creationDate = initParamObject.creationDate;
       initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);

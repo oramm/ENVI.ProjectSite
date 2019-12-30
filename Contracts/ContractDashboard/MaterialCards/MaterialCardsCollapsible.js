@@ -52,7 +52,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
         this.createVersionsList(dataItem, $versionsUl);
         var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświetli po odświeżeniu]'
         var description = (dataItem.description) ? dataItem.description : '';
-        var contractorsComment = (dataItem.contractorsComment) ? dataItem.contractorsComment : 'brak';
+        var engineersComment = (dataItem.engineersComment) ? dataItem.engineersComment : 'brak';
         var employersComment = (dataItem.employersComment) ? dataItem.employersComment : 'brak';
 
         var $panel = $('<div>')
@@ -61,7 +61,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
             .attr('status', dataItem.status)
             .append($actionButtons)
             .append('<b>Opis:</b><br>' + description + '<br>')
-            .append('<b>Uwagi Inżyniera:</b><br>' + contractorsComment + '<br>')
+            .append('<b>Uwagi Inżyniera:</b><br>' + engineersComment + '<br>')
             .append('<b>Uwagi Zamawiającego:</b><br>' + employersComment + '<br>')
             .append($('<br><span class="comment">Ostania zmiana danych: ' + timestamp + ' ' +
                 'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'))
