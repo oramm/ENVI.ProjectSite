@@ -7,10 +7,9 @@ class DocumentTemplateGdFile {
     constructor(initObjectParamenter: { _templateGdId: string; dataObject?: any }) {
         this._templateGdId = initObjectParamenter._templateGdId;
         this.dataObject = initObjectParamenter.dataObject;
-
     }
     /*
-     * Tworzy zakresy nazwane w dokumencie - używać przy dodawaniu naszych pism
+     * Tworzy zakresy nazwane w dokumencie - używać przy generowaniu doumentu na podstawie szablonu
      */
     public createNamedRanges() {
         GDocsTools.createNamedRangesByTags(this.dataObject.documentGdId, GDocsTools.getNameRangesTagsFromTemplate(this._templateGdId));

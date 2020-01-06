@@ -48,7 +48,6 @@ Person.prototype = {
                 'WHERE ' + systemEmailCondition + ' AND ' + personIdCondition;
       Logger.log(sql);
       
-      var conn = connectToSql();
       var stmt = conn.createStatement();
       var results = stmt.executeQuery(sql);
       results.last();

@@ -1,8 +1,3 @@
-/* 1. Wniosek materiałowy jest szczególnym typem sprawy
- * 2. Każdy wniosek jest przypisany do kamienia '04 Roboty Nadzór' i do unikalnej  sprawy typu '07.01 Wnioski Materiałowe'
- * 3. Cykl życia sprawy wniosku jest powiązany z cyklem życia powiązanych zadań (CRUD) - dodanie/edycja/usunięcie wniosku tworzy/zmienia/kasuje powiązane zadania
- */
-
 class MaterialCard {
   id?: any;
   name?: string;
@@ -30,7 +25,7 @@ class MaterialCard {
       if(initParamObject.employersComment) this.employersComment = initParamObject.employersComment;
       this.status = initParamObject.status;
       this.creationDate = initParamObject.creationDate;
-      initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
+      initParamObject.creationDate =ToolsDate.dateDMYtoYMD(initParamObject.creationDate);
       this.creationDate = (initParamObject.creationDate) ? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
 
       this.deadline = initParamObject.deadline;
@@ -109,5 +104,5 @@ class MaterialCard {
 
 
 function test_editMaterialCard() {
-  editMaterialCard('{"_owner":{"nameSurnameEmail":"Ewa  Brachowska e.brachowska@hydrotech.info.pl","surname":"Brachowska","name":"Ewa ","id":271,"email":"e.brachowska@hydrotech.info.pl"},"_gdFolderUrl":"https://drive.google.com/drive/folders/1sw3E0LK3o7Oh62llVR0DFm8eNIytnDKk","_lastUpdated":"2019-12-27 16:08:14.0","description":"sssss","gdFolderId":"1sw3E0LK3o7Oh62llVR0DFm8eNIytnDKk","ownerId":271,"id":130,"_versions":[{"_editor":{"surname":"Gazda","name":"Marek","id":125,"email":"marek@envi.com.pl"},"editorId":125,"lastUpdated":"2019-12-27 16:26:28.0","id":354,"parentId":130,"status":"Robocze"}],"_contract":{"number":"K1","_parent":{"ourId":"NOW.GWS.01.POIS","name":"Budowa kanalizacji sanitarnej w Wykrotach wraz z przyłączami","gdFolderId":"1dL5vgvnD_a0EyI8jEwjt8cKXIsOkmADR"},"name":"Budowa kanalizacji sanitarnej w Wykrotach wraz z przyłączami","_type":{"name":"Żółty","description":"3","id":3,"isOur":false},"id":395,"gdFolderId":"1mqvF0fhML8nEhhfzEYGBfIqyg8vOl3eq"},"creationDate":"2019-12-27","_editor":{"surname":"Gazda","name":"Marek","id":125,"email":"marek@envi.com.pl"},"name":"zmiana","contractId":395,"status":"Robocze"}')
+  editMaterialCard('')
 }

@@ -7,10 +7,10 @@ function ExternalAchievement(initParamObject) {
     this.worksValue = initParamObject.worksValue;
     this.projectValue = initParamObject.projectValue;
     
-    initParamObject.startDate = dateDMYtoYMD(initParamObject.startDate);
+    initParamObject.startDate =ToolsDate.dateDMYtoYMD(initParamObject.startDate);
     this.startDate = Utilities.formatDate(new Date(initParamObject.startDate), "CET", "yyyy-MM-dd");
     
-    initParamObject.endDate = dateDMYtoYMD(initParamObject.endDate);
+    initParamObject.endDate =ToolsDate.dateDMYtoYMD(initParamObject.endDate);
     this.endDate = Utilities.formatDate(new Date(initParamObject.endDate), "CET", "yyyy-MM-dd");
     this.employer = initParamObject.employer;
     this.ownerId = initParamObject._owner.id;

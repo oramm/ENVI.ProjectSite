@@ -30,10 +30,10 @@ abstract class Letter implements documentDataObject{
             this.id = initParamObject.id;
             this.description = initParamObject.description;
             this.number = initParamObject.number;
-            initParamObject.creationDate = dateDMYtoYMD(initParamObject.creationDate);
+            initParamObject.creationDate =ToolsDate.dateDMYtoYMD(initParamObject.creationDate);
             this.creationDate = (initParamObject.creationDate) ? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
 
-            initParamObject.registrationDate = dateDMYtoYMD(initParamObject.registrationDate);
+            initParamObject.registrationDate =ToolsDate.dateDMYtoYMD(initParamObject.registrationDate);
             this.registrationDate = (initParamObject.registrationDate) ? Utilities.formatDate(new Date(initParamObject.registrationDate), "CET", "yyyy-MM-dd") : undefined;
 
             if (initParamObject.documentGdId) {

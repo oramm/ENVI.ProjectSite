@@ -4,7 +4,7 @@ function MeetingArrangement(initParamObject) {
     this.name = initParamObject.name;
     this.description = initParamObject.description;
     
-    initParamObject.deadline = dateDMYtoYMD(initParamObject.deadline);
+    initParamObject.deadline =ToolsDate.dateDMYtoYMD(initParamObject.deadline);
     this.deadline = (initParamObject.deadline)? Utilities.formatDate(new Date(initParamObject.deadline), "CET", "yyyy-MM-dd") : undefined;
 
     if(initParamObject._owner && initParamObject._owner.id){

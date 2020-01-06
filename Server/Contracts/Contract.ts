@@ -1,90 +1,125 @@
-function Contract(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection) {
-  if (initParamObject) {
-    this.id = initParamObject.id;
-    this.alias = initParamObject.alias;
-    this.typeId = initParamObject._type.id;
-    this._type = initParamObject._type;
-    //id tworzone tymczasowo po stronie klienta do obsługi tymczasowego wiersza resultsecie
-    this._tmpId = initParamObject._tmpId;
-    this.number = initParamObject.number;
-    this.name = initParamObject.name;
-    //kontrakt na roboty może być obsługiwany przez ourContract
-    if (initParamObject._ourContract && initParamObject._ourContract.ourId) {
-      if (initParamObject.ourId) throw new Error("Nie można powiązać ze sobą dwóch Umów ENVI!!!");
-      if (initParamObject._ourContract.ourId.indexOf(' ') > 0)
-        //TODO: linijka do usunięcia chyba
-        initParamObject.ourIdRelated = initParamObject.ourIdRelated.substring(0, initParamObject.ourIdRelated.indexOf(' '));
+class Contract {
+  id?: number;
+  alias?: string;
+  typeId?: number;
+  _type?: any;
+  _tmpId?: any;
+  number?: string;
+  name?: string;
+  _ourContract?: any;
+  ourIdRelated?: string;
+  projectId?: string;
+  startDate?: string;
+  endDate?: string;
+  value?: any;
+  comment?: string;
+  ourId?: string;
+  _ourType?: any;
+  gdFolderId?: string;
+  _gdFolderUrl?: string;
+  meetingProtocolsGdFolderId?: string;
+  materialCardsGdFolderId?: string;
+  _ourIdName?: string;
+  _numberName?: string;
+  _ourIdOrNumber_Name?: string;
+  _ourIdOrNumber_Alias?: string;
+  _manager?: any;
+  _admin?: any;
+  _contractors?: any[];
+  _engineers?: any[];
+  _employers?: any[];
+  contractUrl?: string;
+  gdUrl?: string;
+  status?: string;
+  scrumSheet?: any;
+  _parent?: any;
 
-      this._ourContract = initParamObject._ourContract;
-      this._ourContract.ourId = initParamObject._ourContract.ourId.toUpperCase();
-      this._ourContract._ourType = this.getType(initParamObject._ourContract.ourId);
-      this._ourContract._gdFolderUrl = Gd.createGdFolderUrl(initParamObject._ourContract.gdFolderId);
-      if (initParamObject._ourContract.name)
-        this._ourContract._ourIdName = initParamObject._ourContract.ourId + ' ' + initParamObject._ourContract.name.substr(0, 50) + '...';
-      this.ourIdRelated = initParamObject._ourContract.ourId;
+  constructor(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection) {
+    if (initParamObject) {
+      this.id = initParamObject.id;
+      this.alias = initParamObject.alias;
+      this.typeId = initParamObject._type.id;
+      this._type = initParamObject._type;
+      //id tworzone tymczasowo po stronie klienta do obsługi tymczasowego wiersza resultsecie
+      this._tmpId = initParamObject._tmpId;
+      this.number = initParamObject.number;
+      this.name = initParamObject.name;
+      //kontrakt na roboty może być obsługiwany przez ourContract
+      if (initParamObject._ourContract && initParamObject._ourContract.ourId) {
+        if (initParamObject.ourId) throw new Error("Nie można powiązać ze sobą dwóch Umów ENVI!!!");
+        if (initParamObject._ourContract.ourId.indexOf(' ') > 0)
+          //TODO: linijka do usunięcia chyba
+          initParamObject.ourIdRelated = initParamObject.ourIdRelated.substring(0, initParamObject.ourIdRelated.indexOf(' '));
+
+        this._ourContract = initParamObject._ourContract;
+        this._ourContract.ourId = initParamObject._ourContract.ourId.toUpperCase();
+        this._ourContract._ourType = this.getType(initParamObject._ourContract.ourId);
+        this._ourContract._gdFolderUrl = Gd.createGdFolderUrl(initParamObject._ourContract.gdFolderId);
+        if (initParamObject._ourContract.name)
+          this._ourContract._ourIdName = initParamObject._ourContract.ourId + ' ' + initParamObject._ourContract.name.substr(0, 50) + '...';
+        this.ourIdRelated = initParamObject._ourContract.ourId;
+      }
+      if (initParamObject._ourContract) this.ourIdRelated = initParamObject._ourContract.ourId;
+      this.projectId = initParamObject.projectId;
+
+      initParamObject.startDate = ToolsDate.dateDMYtoYMD(initParamObject.startDate);
+      this.startDate = (initParamObject.startDate) ? Utilities.formatDate(new Date(initParamObject.startDate), "CET", "yyyy-MM-dd") : undefined;
+      initParamObject.endDate = ToolsDate.dateDMYtoYMD(initParamObject.endDate);
+      this.endDate = (initParamObject.endDate) ? Utilities.formatDate(new Date(initParamObject.endDate), "CET", "yyyy-MM-dd") : undefined;
+
+      this.value = initParamObject.value;
+      this.comment = initParamObject.comment;
+
+      if (initParamObject.ourId) {
+        this.ourId = initParamObject.ourId.toUpperCase();
+        this._ourType = this.getType(this.ourId);
+      }
+      if (initParamObject.gdFolderId) {
+        this.gdFolderId = initParamObject.gdFolderId;
+        this._gdFolderUrl = 'https://drive.google.com/drive/folders/' + initParamObject.gdFolderId;
+      }
+      this.meetingProtocolsGdFolderId = initParamObject.meetingProtocolsGdFolderId;
+      this.materialCardsGdFolderId = initParamObject.materialCardsGdFolderId;
+      if (initParamObject.ourId && this.name)
+        this._ourIdName = initParamObject.ourId + ' ' + initParamObject.name.substr(0, 50) + '...';
+      else if (this.name)
+        this._numberName = initParamObject.number + ' ' + initParamObject.name.substr(0, 50) + '...';
+
+      //znacznik uniwersalny gdy chemy wybierać ze wszystkich kontraktów Our i Works
+      var _ourIdOrNumber = '';
+      if (this.ourId) _ourIdOrNumber = this.ourId;
+      if (this.number) _ourIdOrNumber = this.number;
+
+      if (this.name) {
+        this._ourIdOrNumber_Name = _ourIdOrNumber + ' ' + this.name.substr(0, 50) + '...'
+      }
+      this._ourIdOrNumber_Alias = _ourIdOrNumber;
+      if (this.alias)
+        this._ourIdOrNumber_Alias += ' ' + this.alias;
+
+      this._manager = (initParamObject._manager) ? initParamObject._manager : {};
+      this._admin = (initParamObject._admin) ? initParamObject._admin : {};
+
+      this._contractors = (initParamObject._contractors) ? initParamObject._contractors : [];
+
+      this._engineers = (initParamObject._engineers) ? initParamObject._engineers : [];
+      this._employers = (initParamObject._employers) ? initParamObject._employers : [];
+
+      this.contractUrl = initParamObject.contractUrl;
+      this.gdUrl = initParamObject.gdUrl;
+
+      this.status = initParamObject.status;
+
+      this.scrumSheet = new ScrumSheet();
     }
-    if (initParamObject._ourContract) this.ourIdRelated = initParamObject._ourContract.ourId;
-    this.projectId = initParamObject.projectId;
-
-    initParamObject.startDate = dateDMYtoYMD(initParamObject.startDate);
-    this.startDate = (initParamObject.startDate) ? Utilities.formatDate(new Date(initParamObject.startDate), "CET", "yyyy-MM-dd") : undefined;
-    initParamObject.endDate = dateDMYtoYMD(initParamObject.endDate);
-    this.endDate = (initParamObject.endDate) ? Utilities.formatDate(new Date(initParamObject.endDate), "CET", "yyyy-MM-dd") : undefined;
-
-    this.value = initParamObject.value;
-    this.comment = initParamObject.comment;
-
-    if (initParamObject.ourId) {
-      this.ourId = initParamObject.ourId.toUpperCase();
-      this._ourType = this.getType(this.ourId);
-    }
-    if (initParamObject.gdFolderId) {
-      this.gdFolderId = initParamObject.gdFolderId;
-      this._gdFolderUrl = 'https://drive.google.com/drive/folders/' + initParamObject.gdFolderId;
-    }
-    this.meetingProtocolsGdFolderId = initParamObject.meetingProtocolsGdFolderId;
-    this.materialCardsGdFolderId = initParamObject.materialCardsGdFolderId;
-    if (initParamObject.ourId && this.name)
-      this._ourIdName = initParamObject.ourId + ' ' + initParamObject.name.substr(0, 50) + '...';
-    else if (this.name)
-      this._numberName = initParamObject.number + ' ' + initParamObject.name.substr(0, 50) + '...';
-
-    //znacznik uniwersalny gdy chemy wybierać ze wszystkich kontraktów Our i Works
-    var _ourIdOrNumber = '';
-    if (this.ourId) _ourIdOrNumber = this.ourId;
-    if (this.number) _ourIdOrNumber = this.number;
-
-    if (this.name) {
-      this._ourIdOrNumber_Name = _ourIdOrNumber + ' ' + this.name.substr(0, 50) + '...'
-    }
-    this._ourIdOrNumber_Alias = _ourIdOrNumber;
-    if (this.alias)
-      this._ourIdOrNumber_Alias += ' ' + this.alias;
-
-    this._manager = (initParamObject._manager) ? initParamObject._manager : {};
-    this._admin = (initParamObject._admin) ? initParamObject._admin : {};
-
-    this._contractors = (initParamObject._contractors) ? initParamObject._contractors : [];
-
-    this._engineers = (initParamObject._engineers) ? initParamObject._engineers : [];
-    this._employers = (initParamObject._employers) ? initParamObject._employers : [];
-
-    this.contractUrl = initParamObject.contractUrl;
-    this.gdUrl = initParamObject.gdUrl;
-
-    this.status = initParamObject.status;
-
-    this.scrumSheet = new ScrumSheet();
   }
-}
 
-Contract.prototype = {
-  constructor: Contract,
-  isOur: function (): boolean {
+
+  isOur(): boolean {
     return this._type.isOur;
-  },
+  }
 
-  setEntitiesFromParent: function (conn) {
+  setEntitiesFromParent(conn) {
     if (this._parent)
       this._engineers = this._parent._engineers;
     else {
@@ -100,14 +135,15 @@ Contract.prototype = {
       if (employersPerProject[0])
         this._employers = employersPerProject.map(function (item) { return item._entity });
     }
-  },
+  }
 
-  createMeetingProtocolsGdFolder: function () {
+  createStaticGdFolders() {
     var root = DriveApp.getFolderById(this.gdFolderId);
-    return Gd.setFolder(root, 'Notatki ze spotkań');
-  },
+    this.meetingProtocolsGdFolderId = Gd.setFolder(root, 'Notatki ze spotkań').getId();
+    this.materialCardsGdFolderId = Gd.setFolder(root, 'Wnioski Materiałowe').getId();
+  }
 
-  addInDb: function (externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
+  addInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
     var conn: GoogleAppsScript.JDBC.JdbcConnection = (externalConn) ? externalConn : connectToSql();
     conn.setAutoCommit(false);
 
@@ -128,7 +164,7 @@ Contract.prototype = {
         prepareValueToSql(this.comment) + ', \n \t' +
         prepareValueToSql(this.status) + ', \n \t' +
         prepareValueToSql(this.gdFolderId) + ', \n \t' +
-        prepareValueToSql(this.meetingProtocolsGdFolderId) + ' \n' +
+        prepareValueToSql(this.meetingProtocolsGdFolderId) + ', \n \t' +
         prepareValueToSql(this.materialCardsGdFolderId) + ' \n' +
         ')';
 
@@ -157,9 +193,9 @@ Contract.prototype = {
         Logger.log('Closing connection' + ' ExternalConnection: ')
       }
     }
-  },
+  }
 
-  addEntitiesAssociationsInDb: function (externalConn: GoogleAppsScript.JDBC.JdbcConnection) {
+  addEntitiesAssociationsInDb(externalConn: GoogleAppsScript.JDBC.JdbcConnection): any {
     var conn = (externalConn) ? externalConn : connectToSql();
     this._contractors = this._contractors.map(function (item) {
       item.contractRole = 'CONTRACTOR';
@@ -189,9 +225,9 @@ Contract.prototype = {
     } finally {
       if (!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
 
-  addOurContractInDb: function (stmt) {
+  addOurContractInDb(stmt) {
     try {
       var sql = 'INSERT INTO OurContractsData (Id, OurId, ManagerId, AdminId, ContractURL) \n' +
         'VALUES (' +
@@ -209,11 +245,9 @@ Contract.prototype = {
       Logger.log(sql);
       throw e;
     }
-  },
-  /*  
-   *
-   */
-  createDefaultTasksInDb: function (foldersGdData, externalConn, isPartOfTransaction) {
+  }
+
+  createDefaultTasksInDb(foldersGdData, externalConn, isPartOfTransaction: Boolean) {
     var conn = (externalConn) ? externalConn : connectToSql();
     try {
       var defaultMilestoneTemplates = getMilestoneTemplatesPerContractTypeId({
@@ -233,9 +267,11 @@ Contract.prototype = {
 
       Logger.log('Pobrano szablony z db');
 
-      var defaultMilestones = [], allDefaultMilestonesdefaultCaseItems = [], allDefaultCasesDefaultTasks = [];
+      var defaultMilestones: Milestone[] = [],
+        allDefaultMilestonesdefaultCaseItems: Case[] = [],
+        allDefaultCasesDefaultTasks: Task[] = [];
       for (var i = 0; i < defaultMilestoneTemplates.length; i++) {
-        var currentMilestone = this.createDefaultMilestone(defaultMilestoneTemplates[i], foldersGdData, conn);
+        var currentMilestone: Milestone = this.createDefaultMilestone(defaultMilestoneTemplates[i], foldersGdData, conn);
         defaultMilestones.push(currentMilestone);
         var defaultItems = currentMilestone.createDefaultCasesInDb({
           foldersGdData: foldersGdData,
@@ -266,7 +302,7 @@ Contract.prototype = {
     } finally {
       //if (!externalConn) conn.close();
     }
-  },
+  }
 
   /*
    * ustawia Id folderów na podstawie danych z generatora folderów. Wywyływana prz tworzeniu kontraktu.
@@ -274,7 +310,7 @@ Contract.prototype = {
    * tworzenie zadań musi być podzielone na etap Db i potem scrum i przypisanie ID do folderów bo trzeba skrócić czas trwania połaczenia z bazą
    * param(defaultItems) pochodzi z this.createDefaultTasksInDb() i są to {milestones[], caseItems[], tasks[]}
    */
-  setDefaultsubItemFolderIdFromFoldersData: function (defaultItemDb, foldersGdData) {
+  setDefaultsubItemFolderIdFromFoldersData(defaultItemDb, foldersGdData) {
     var j = 0;
     //ustaw j na własciwy folder
     while (j < foldersGdData.length &&
@@ -289,11 +325,11 @@ Contract.prototype = {
 
     defaultItemDb.gdFolderId = foldersGdData[j].gdFolderId;
     foldersGdData = foldersGdData.filter(function (item) { return item.name != foldersGdData[j].name });
-  },
+  }
 
   //tworzy domyślny kamień milowy i zapisuje go w db
-  createDefaultMilestone: function (template, foldersGdData, conn) {
-    // TODO: wymusić obowiązek podawania dat początki i końca dla kontraktu      
+  createDefaultMilestone(template, foldersGdData, conn): Milestone {
+    // TODO: wymusić obowiązek podawania dat początku i końca dla kontraktu      
     var milestone = new Milestone({
       name: template.name,// jeśli kamień jest uniqe, nazwa jest niepotrzebna,
       _type: template._milestoneType,
@@ -308,10 +344,10 @@ Contract.prototype = {
     this.setDefaultsubItemFolderIdFromFoldersData(milestone, foldersGdData);
     milestone.addInDb(conn, true);
     return milestone;
-  },
+  }
 
-  addInScrum: function (defaultItems) {
-    if (this.isOur()) {
+  addInScrum(defaultItems: { milestones: Milestone[], caseItems: Case[], tasks: Task[] }) {
+    if (this.shouldBeInScrum() && this.isOur()) {
       var rowsQuantity = 1;
       //wstaw wiersze nowej umowy
       SCRUM_SHEET.insertRowAfter(SCRUM_FIRST_DATA_ROW - 1);
@@ -330,13 +366,13 @@ Contract.prototype = {
       SCRUM_DATA_VALUES = SCRUM_SHEET.getDataRange().getValues();
     }
     this.createDefaultTasksInScrum(defaultItems);
-  },
+  }
 
   /*
    * tworzenie zadań musi być podzielone na etap Db i scrum bo trzeba skrócić czas trwania połaczenia z bazą
    * param(defaultItems) pochodzi z this.createDefaultTasksInDb();
    */
-  createDefaultTasksInScrum: function (defaultItems) {
+  protected createDefaultTasksInScrum(defaultItems: { milestones: Milestone[], caseItems: Case[], tasks: Task[] }) {
     var conn = connectToSql();
     try {
       //dodaj zadania do scruma
@@ -346,10 +382,6 @@ Contract.prototype = {
       //po dodaniu zadań do scruma trzeba dodać sprawy do scrumboarda dla porządku
       for (var i = 0; i < defaultItems.caseItems.length; i++) {
         defaultItems.caseItems[i].addInScrum();
-        //ustaw walidację dla sprawy
-        //var caseRange = SCRUM_SHEET.getRange(SCRUM_FIRST_DATA_ROW+i+1,SCRUM_COL_CASE_NAME+1);
-        //Logger.log('setCaseNameDataValidationInScrum::' + (SCRUM_FIRST_DATA_ROW+i+1)/1 + ' currentCase.name ' + defaultItems.caseItems[i].name);
-        //this.scrumSheet.setCaseNameDataValidationInScrum(caseRange, [defaultItems.caseItems[i].name]);
       }
 
       this.scrumSheet.setSumInContractRow(SCRUM_FIRST_DATA_ROW, defaultItems.tasks.length); //musi być tutaj po zakończeniu dodawania wierszy zadań
@@ -361,9 +393,9 @@ Contract.prototype = {
     } finally {
       if (conn && !conn.isClosed()) conn.close();
     }
-  },
+  }
 
-  editInDb: function (externalConn: GoogleAppsScript.JDBC.JdbcConnection) {
+  editInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
     var conn = (externalConn) ? externalConn : connectToSql();
     conn.setAutoCommit(false);
 
@@ -395,9 +427,9 @@ Contract.prototype = {
     } finally {
       if (!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
 
-  editOurContractInDb: function (conn: GoogleAppsScript.JDBC.JdbcConnection) {
+  editOurContractInDb(conn: GoogleAppsScript.JDBC.JdbcConnection) {
     var stmt = conn.prepareStatement('UPDATE OurContractsData SET ' +
       'OurId = ?, ManagerId = ?, AdminId = ?, ContractURL = ? ' +
       'WHERE Id = ?;');
@@ -411,9 +443,9 @@ Contract.prototype = {
     stmt.executeBatch();
 
     Logger.log('ourContract edited: ' + this.ourId);
-  },
+  }
 
-  editOurContractInScrum: function () {
+  editOurContractInScrum() {
     var firstRow = findFirstInRange(this.ourId, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_OUR_ID) + 1;
 
     if (firstRow) {
@@ -438,11 +470,11 @@ Contract.prototype = {
         ]])
       SCRUM_DATA_VALUES = SCRUM_SHEET.getDataRange().getValues();
     }
-  },
+  }
   /* przy zmianie numeru kontraktu trzeba podmienić go w wierszaz dotyczącymi go kamieniami milowymi
    *
    */
-  editWorksContractInScrum: function (): void {
+  editWorksContractInScrum(): void {
     if (this._ourContract && this._ourContract.id) {
       var firstRow = findFirstInRange(this.id, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_DB_ID) + 1;
       if (firstRow) {
@@ -458,13 +490,13 @@ Contract.prototype = {
         }
       }
     }
-  },
+  }
 
-  deleteFromDb: function (conn: GoogleAppsScript.JDBC.JdbcConnection) {
+  deleteFromDb(conn?: GoogleAppsScript.JDBC.JdbcConnection) {
     deleteFromDb('Contracts', this, conn);
-  },
+  }
 
-  deleteEntitiesAssociationsFromDb: function (externalConn: GoogleAppsScript.JDBC.JdbcConnection): void {
+  deleteEntitiesAssociationsFromDb(externalConn: GoogleAppsScript.JDBC.JdbcConnection): void {
     var conn = (externalConn) ? externalConn : connectToSql();
     try {
       var stmt = conn.createStatement();
@@ -476,16 +508,16 @@ Contract.prototype = {
     } finally {
       if (!externalConn && conn.isValid(0)) conn.close();
     }
-  },
+  }
 
-  deleteFromScrum: function (): void {
+  deleteFromScrum(): void {
     if (this.isOur())
       this.deleteOurContractFromScrum();
     else if (this.ourIdRelated)
       this.deleteWorksContractFromScrum();
-  },
+  }
 
-  deleteOurContractFromScrum: function (): void {
+  deleteOurContractFromScrum(): void {
     var firstRow = findFirstInRange(this.ourId, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_OUR_ID) + 1;
     if (firstRow) {
       var lastRow = findLastInRange(this.ourId, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_OUR_ID) + 1;
@@ -502,9 +534,9 @@ Contract.prototype = {
         scrumMakeTimesSummary();
       }
     }
-  },
+  }
 
-  deleteWorksContractFromScrum: function (): void {
+  deleteWorksContractFromScrum(): void {
     var firstRow = findFirstInRange(this.id, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_DB_ID) + 1;
     if (firstRow) {
       var lastRow = findLastInRange(this.id, SCRUM_DATA_VALUES, SCRUM_COL_CONTRACT_DB_ID) + 1;
@@ -521,9 +553,24 @@ Contract.prototype = {
         scrumMakeTimesSummary();
       }
     }
-  },
+  }
 
-  getPersonDbId: function (email: String): Number {
+  /*
+   * sprawdza czy zadanie powinno znaleźć się w arkuszu SCRUM
+   */
+  shouldBeInScrum(): boolean {
+    var test = false;
+    if (this.status !== 'Archiwalny') {
+      if (this._admin && this._admin.id)
+        test = Setup.getSystemRole({ id: this._admin.id }).systemRoleId <= 3;
+      if (!test && this._manager && this._manager.id)
+        test = Setup.getSystemRole({ id: this._manager.id }).systemRoleId <= 3
+    }
+    Logger.log('Contract: ' + this.name + ' shouldBeInScrum: ' + test + '\n');
+    return test;
+  }
+
+  getPersonDbId(email: String): Number {
     try {
       var conn = connectToSql();
       var stmt = conn.createStatement();
@@ -538,20 +585,20 @@ Contract.prototype = {
     } finally {
       conn.close();
     }
-  },
+  }
 
-  getType: function (ourId:String): String {
+  getType(ourId: String): String {
     return ourId.substring(ourId.indexOf('.') + 1, ourId.lastIndexOf('.'));
-  },
+  }
 
-  getMilestones: function ():any[] {
+  getMilestones(): any[] {
     return getMilestonesListPerProject(this.projectId);
-  },
+  }
 
   /*
    * Wykorzystywana w Gd do tworzenia folderów dla typów spraw dla kamieni milowych
    */
-  getCaseTypes: function (initParamObject):any[] {
+  getCaseTypes(initParamObject): any[] {
     if (!initParamObject) initParamObject = {};
     try {
       var result = [];
@@ -606,7 +653,7 @@ Contract.prototype = {
  * * * * * * * * * * *  Contracts_Entities * * * * * * * * * * * * * * * * * * * * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  */
-function ContractEntity(initParamObject):void {
+function ContractEntity(initParamObject): void {
   if (initParamObject) {
     this.contractId = initParamObject._contract.id;
     this._contract = initParamObject._contract;

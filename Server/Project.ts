@@ -5,11 +5,11 @@ function Project(initParamObject) {
     if (initParamObject.name) this.name = initParamObject.name;
     this.alias = initParamObject.alias;
     if (initParamObject.startDate){ 
-      initParamObject.startDate = dateDMYtoYMD(initParamObject.startDate);
+      initParamObject.startDate =ToolsDate.dateDMYtoYMD(initParamObject.startDate);
       this.startDate = Utilities.formatDate(new Date(initParamObject.startDate), "CET", "yyyy-MM-dd");
     }
     if (initParamObject.endDate){ 
-      initParamObject.endDate = dateDMYtoYMD(initParamObject.endDate);
+      initParamObject.endDate =ToolsDate.dateDMYtoYMD(initParamObject.endDate);
       this.endDate = Utilities.formatDate(new Date(initParamObject.endDate), "CET", "yyyy-MM-dd");
     }
     if (initParamObject.status) this.status = initParamObject.status;

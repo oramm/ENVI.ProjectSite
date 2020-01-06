@@ -14,7 +14,6 @@ function Gd(contract) {
     else if (this.contract.ourId)
       this.contractFolder = Gd.setFolder(this.projectFolder, this.contract.ourId);
 
-    //this.setCommonContractFolders();
   }
 }
 Gd.setFolder = function (root: GoogleAppsScript.Drive.Folder, name: string): GoogleAppsScript.Drive.Folder {
@@ -53,7 +52,7 @@ Gd.createDuplicateFile = function (gdSourceFileId: string, destinationFolderId: 
   return newFile;
 }
 
-Gd.canUserDeleteFile = function (fileGdId:string): boolean {
+Gd.canUserDeleteFile = function (fileGdId: string): boolean {
   if (!fileGdId) throw new Error('fileGdId musi być zdefiniowane');
   var userEmail = Session.getEffectiveUser().getEmail();
   console.log('userEmail: ' + userEmail + ', fileGdId: ' + fileGdId);
@@ -100,16 +99,6 @@ Gd.prototype = {
       return 'https://drive.google.com/drive/folders/' + gdFolderId;
   },
 
-  /*
-   * wywoływana w konstruktorze
-   */
-  setCommonContractFolders: function () {
-    //if (this.contract._type.isOur) {
-      //Najpierw dodaj statyczne foldery
-      //Gd.setFolder(this.contractFolder, '00 Umowa ENVI');
-    //} else
-      //Gd.setFolder(this.contractFolder, '00 Umowa z Wykonawcą');
-  },
   /*
    * Służy do tworzenia domyślnych folderów przy dodawaniu kontraktu w addNewContract()
    */

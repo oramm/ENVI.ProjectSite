@@ -4,7 +4,7 @@ function Meeting(initParamObject) {
     this.name = initParamObject.name;
     this.description = initParamObject.description;
     
-    initParamObject.date = dateDMYtoYMD(initParamObject.date);
+    initParamObject.date =ToolsDate.dateDMYtoYMD(initParamObject.date);
     this.date = (initParamObject.date)? Utilities.formatDate(new Date(initParamObject.date), "CET", "yyyy-MM-dd") : undefined;
     
     if(initParamObject.protocolGdId){

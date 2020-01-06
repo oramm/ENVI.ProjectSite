@@ -8,7 +8,7 @@ function ProcessStepInstance(initParamObject) {
     //this.caseId = initParamObject._case.id;
     this.editorId = initParamObject.editorId;
     
-    initParamObject.deadline = dateDMYtoYMD(initParamObject.deadline);
+    initParamObject.deadline =ToolsDate.dateDMYtoYMD(initParamObject.deadline);
     this.deadline = (initParamObject.deadline)? Utilities.formatDate(new Date(initParamObject.deadline), "CET", "yyyy-MM-dd") : undefined;
     
     this._lastUpdated = initParamObject._lastUpdated;

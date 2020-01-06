@@ -19,6 +19,8 @@ class GDocsTools {
   }
 
   static fillNamedRange(documentGdId: string, rangeName: string, text: string) {
+    if (ToolsDate.isStringAYMDDate(text))
+      text = ToolsDate.dateYMDtoDMY(text)
     var document = DocumentApp.openById(documentGdId);
     var namedRange = this.getNamedRangeByName(document, rangeName);
     var element = namedRange.getRange().getRangeElements()[0];

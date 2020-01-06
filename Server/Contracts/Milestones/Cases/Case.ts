@@ -1,48 +1,62 @@
-function Case(initParamObject) {
-  if (initParamObject) {
-    this.id = initParamObject.id;
-    this.number = initParamObject.number;
-    if (initParamObject._type.isUniquePerMilestone && this.number) this._wasChangedToUniquePerMilestone = true;
+class Case {
+  id?: number;
+  number?: number;
+  _wasChangedToUniquePerMilestone?: boolean;
+  name?: string;
+  description?: string;
+  _type?: any;
+  typeId?: number;
+  _typeFolderNumber_TypeName_Number_Name?: string;
+  _displayNumber?: string;
+  milestoneId?: number;
+  _parent?: any;
+  _processesInstances?: any[];
+  gdFolderId?: string;
+  _gdFolderUrl?: string;
+  _folderName?: string;
 
-    this.name = (initParamObject.name !== '') ? initParamObject.name : undefined;
-    if (initParamObject.description !== undefined) // musi być sprawdzenie undefined, żeby obsłużyć pusty ciąg
-      this.description = initParamObject.description;
-    if (initParamObject._type) {
-      this._type = initParamObject._type;
-      if (initParamObject._type.id)
-        this.typeId = initParamObject._type.id;
+  constructor(initParamObject) {
+    if (initParamObject) {
+      this.id = initParamObject.id;
+      this.number = initParamObject.number;
+      if (initParamObject._type.isUniquePerMilestone && this.number) this._wasChangedToUniquePerMilestone = true;
 
-      this.setDisplayNumber(); //ustawia też this._folderName - uruchamia this.setGdFolderName();
-      this._typeFolderNumber_TypeName_Number_Name = this._type.folderNumber + ' ' + this._type.name;
-      if (!this._type.isUniquePerMilestone)
-        this._typeFolderNumber_TypeName_Number_Name += ' | ' + this._displayNumber + ' ' + this.name;
-    }
-    if (initParamObject.gdFolderId) {
-      this.setGdFolderId(initParamObject.gdFolderId);
-    }
-    if (initParamObject._parent) {
-      this.milestoneId = initParamObject._parent.id;
-      this._parent = initParamObject._parent;
-    }
+      this.name = (initParamObject.name !== '') ? initParamObject.name : undefined;
+      if (initParamObject.description !== undefined) // musi być sprawdzenie undefined, żeby obsłużyć pusty ciąg
+        this.description = initParamObject.description;
+      if (initParamObject._type) {
+        this._type = initParamObject._type;
+        if (initParamObject._type.id)
+          this.typeId = initParamObject._type.id;
 
-    this._processesInstances = (initParamObject._processesInstances) ? initParamObject._processesInstances : [];
+        this.setDisplayNumber(); //ustawia też this._folderName - uruchamia this.setGdFolderName();
+        this._typeFolderNumber_TypeName_Number_Name = this._type.folderNumber + ' ' + this._type.name;
+        if (!this._type.isUniquePerMilestone)
+          this._typeFolderNumber_TypeName_Number_Name += ' | ' + this._displayNumber + ' ' + this.name;
+      }
+      if (initParamObject.gdFolderId) {
+        this.setGdFolderId(initParamObject.gdFolderId);
+      }
+      if (initParamObject._parent) {
+        this.milestoneId = initParamObject._parent.id;
+        this._parent = initParamObject._parent;
+      }
+
+      this._processesInstances = (initParamObject._processesInstances) ? initParamObject._processesInstances : [];
+    }
   }
-}
 
 
-Case.prototype = {
-  constructor: Case,
-
-  setGdFolderId: function (gdFolderId) {
+  setGdFolderId(gdFolderId) {
     this.gdFolderId = gdFolderId;
     this._gdFolderUrl = Gd.createGdFolderUrl(gdFolderId);
-  },
-  setAsUniquePerMilestone: function () {
+  }
+  setAsUniquePerMilestone() {
     this.number = undefined;
     this.name = null;
-  },
+  }
   //ustawia numer do wyświetlenia w sytemie na podstawie danych z bazy
-  setDisplayNumber: function () {
+  setDisplayNumber() {
     var _displayNumber;
     if (!this.number)
       _displayNumber = '00'
@@ -53,9 +67,9 @@ Case.prototype = {
     _displayNumber = 'S' + _displayNumber;
     this._displayNumber = _displayNumber;
     this.setGdFolderName();
-  },
+  }
 
-  setGdFolderName: function () {
+  setGdFolderName() {
     var caseName = (this.name) ? ' ' + this.name : '';
     this._folderName = this._displayNumber + caseName;
 
@@ -63,15 +77,15 @@ Case.prototype = {
       this._folderName += ' - przenieś pliki i usuń folder'
     else if (this._type.isUniquePerMilestone)
       this._folderName = this._type.folderNumber + ' ' + this._type.name;
-  },
+  }
 
-  initFromScrum: function (row) {
+  initFromScrum(row) {
     this.id = SCRUM_DATA_VALUES[row][SCRUM_COL_CASE_ID];
     this.name = SCRUM_DATA_VALUES[row][SCRUM_COL_CASE_NAME];
     this.milestoneId = SCRUM_DATA_VALUES[row][SCRUM_COL_MILESTONE_ID];
-  },
+  }
   //zwraca id z arkusza danych w scrum, który jest synchronizowany z db
-  getIdFromDb: function () {
+  getIdFromDb() {
     var id;
     for (var i = 1; i < SCRUM_DATA_DATA_VALUES.length; i++) {
       if (SCRUM_DATA_DATA_VALUES[i][SCRUM_DATA_COL_CASE_TYPE_ID] == this.typeId &&
@@ -79,9 +93,9 @@ Case.prototype = {
         SCRUM_DATA_DATA_VALUES[i][SCRUM_DATA_COL_CASE_NAME] == this.name)
         return SCRUM_DATA_DATA_VALUES[i][SCRUM_DATA_COL_CASE_ID];
     }
-  },
+  }
 
-  getNumberFromDb: function (externalConnection, isPartOfTransaction) {
+  getNumberFromDb(externalConnection, isPartOfTransaction) {
     try {
       var conn = (externalConnection) ? externalConnection : connectToSql();
       var stmt = conn.createStatement();
@@ -97,21 +111,21 @@ Case.prototype = {
     } finally {
       //if (!isPartOfTransaction) conn.close();
     }
-  },
+  }
   //zwraca id z arkusza danych w scrum, który jest synchronizowany z db
-  isSavedInDb: function () {
+  isSavedInDb() {
     for (var i = 1; i < SCRUM_DATA_DATA_VALUES.length; i++) {
       var id = SCRUM_DATA_DATA_VALUES[i][SCRUM_DATA_COL_CASE_ID];
       if (id == this.id)
         return id;
     }
-  },
+  }
 
   /*
    * Tworzy domyślne sprawy i zapisuje je w db
    * argument: {defaultTaskTemplates, externalConn, isPartOfTransaction}
    */
-  createDefaultTasksInDb: function (initParamObject) {
+  createDefaultTasksInDb(initParamObject) {
     var conn = (initParamObject.externalConn) ? initParamObject.externalConn : connectToSql();
     var defaultTasks = [];
 
@@ -123,12 +137,12 @@ Case.prototype = {
       if (currentTask) defaultTasks.push(currentTask);
     }
     return defaultTasks;
-  },
+  }
   /*
    * tworzy domyślne zadanie i zapisuje je w db, dodaje też zadanie do Scruma
    * initParamObject: {template, externalConn}
    */
-  createDefaultTask: function (initParamObject) {
+  createDefaultTask(initParamObject) {
     if (this._type.id == initParamObject.template._caseTemplate._caseType.id) {
       var currentTask = new Task({
         name: initParamObject.template.name,
@@ -142,16 +156,16 @@ Case.prototype = {
       currentTask.addInDb(initParamObject.externalConn, true);
       return currentTask;
     }
-  },
+  }
 
-  addInDb: function (conn, isPartOfTransaction) {
+  addInDb(conn?, isPartOfTransaction?) {
     addInDb('Cases', this, conn, true);
     //if(!this._type.isUniquePerMilestone) 
     this.number = this.getNumberFromDb(conn, isPartOfTransaction);
     this.setDisplayNumber();
-  },
+  }
 
-  addInScrum: function () {
+  addInScrum() {
     var nameCaption;
     if (this.gdFolderId)
       nameCaption = '=HYPERLINK("' + this._gdFolderUrl + '";"' + this.name + '")'
@@ -168,13 +182,13 @@ Case.prototype = {
     ]]
     SCRUM_DATA_SHEET.getRange(lastCaseDataRow + 1, SCRUM_DATA_COL_CASE_ID + 1, 1, 5).setValues(caseData);
     SCRUM_DATA_DATA_VALUES = SCRUM_DATA_SHEET.getDataRange().getValues();
-  },
+  }
 
-  editInDb: function (externalConn, isPartOfTransaction) {
+  editInDb(externalConn, isPartOfTransaction) {
     editInDb('Cases', this, externalConn, isPartOfTransaction);
-  },
+  }
 
-  editInScrum: function () {
+  editInScrum() {
     //edytuj wiersz bazy w arkuszu Data
     var caseDataRow = findFirstInRange(this.id, SCRUM_DATA_DATA_VALUES, SCRUM_DATA_COL_CASE_ID);
 
@@ -207,13 +221,13 @@ Case.prototype = {
         }
       }
     }
-  },
+  }
 
-  deleteFromDb: function () {
+  deleteFromDb() {
     deleteFromDb('Cases', this, undefined, undefined);
-  },
+  }
 
-  deleteFromScrum: function () {
+  deleteFromScrum() {
     var firstMilestoneRow = findFirstInRange(this.milestoneId, SCRUM_DATA_VALUES, SCRUM_COL_MILESTONE_ID);
     if (firstMilestoneRow) {
       var lastMilestoneRow = findLastInRange(this.milestoneId, SCRUM_DATA_VALUES, SCRUM_COL_MILESTONE_ID);
@@ -239,11 +253,11 @@ Case.prototype = {
       SCRUM_DATA_SHEET.deleteRow(caseDataRow + 1);
       //Logger.log(caseDataRow+1);
     }
-  },
+  }
   /*
    * sprawdza czy sprawa ma podpiętą instancję procesu danego typu
    */
-  hasProcessConnected: function (processId) {
+  hasProcessConnected(processId) {
     for (var i = 0; i < this._processesInstances.length; i++)
       if (this._processesInstances[i]._process.id == processId) {
         Logger.log('hasProcessConnected:: ' + this._processesInstances[i]._process.id + ' == ' + processId);
