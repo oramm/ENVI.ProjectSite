@@ -4,7 +4,6 @@ class OurLetterModal extends LetterModal {
         this.controller = new OurLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
         this.doAddNewFunctionOnItemName = '';
-        var _this = this;
         this.initFormElements();
 
         if(this.mode==='ADD_NEW')

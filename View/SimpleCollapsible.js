@@ -10,6 +10,7 @@ class SimpleCollapsible extends Collapsible {
         super.initialise();
         this.makeBodyDoms();
     }
+    
     makeCollapsibleItemsList(){
         var itemsList = [];
         for (var i=0; i<this.connectedRepository.items.length; i++){

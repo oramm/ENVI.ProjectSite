@@ -7,11 +7,11 @@ var eventsRepository;
 
 class CasesSetup {
     //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
-    
+
     static get currentMilestone() {
         return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
     }
-    
+
     static get casesRepository() {
         return casesRepository;
     }
@@ -43,10 +43,10 @@ class CasesSetup {
         processesStepsInstancesRepository = data;
     }
     static get processesStepsInstancesStatusNames() {
-        return  ['Nie rozpoczęte',
-                    'W trakcie',
-                    'Zrobione'
-                ];;
+        return ['Nie rozpoczęte',
+            'W trakcie',
+            'Zrobione'
+        ];
     }
     static set eventsRepository(data) {
         eventsRepository = data;

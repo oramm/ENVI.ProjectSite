@@ -4,15 +4,21 @@ function getProcessesStepsInstancesListPerMilestone(milestoneId, externalConn) {
     'ProcessInstances.CaseId, \n \t' +
     'ProcessesStepsInstances.Status, \n \t' +
     'ProcessesStepsInstances.Deadline, \n \t' +
+    'ProcessesStepsInstances.OurLetterId, \n \t' +
     'ProcessesStepsInstances.LastUpdated, \n \t' +
     'ProcessesStepsInstances.EditorId \n \t,' +
-    'ProcessesSteps.Id, \n \t' +
-    'ProcessesSteps.Name, \n \t' +
-    'ProcessesSteps.Description, \n \t' +
-    'ProcessesSteps.DocumentTemplateId \n' +
+    'ProcessesSteps.Id AS ProcessStepId, \n \t' +
+    'ProcessesSteps.Name AS ProcessStepName, \n \t' +
+    'ProcessesSteps.Description AS ProcessStepDescription, \n \t' +
+    'Letters.DocumentGdId AS OurLetterDocumentGdId, \n \t' +
+    'Letters.FolderGdId AS OurLetterFolderGdId, \n \t' +
+    'DocumentTemplates.Name AS DocumentTemplateName, \n \t' +
+    'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
     'FROM ProcessesStepsInstances \n' +
     'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
     'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
     'JOIN Milestones ON Milestones.Id = Cases.MilestoneId \n' +
@@ -26,15 +32,21 @@ function getProcessesStepsInstancesListPerContract(contractId, externalConn) {
     'ProcessInstances.CaseId, \n \t' +
     'ProcessesStepsInstances.Status, \n \t' +
     'ProcessesStepsInstances.Deadline, \n \t' +
+    'ProcessesStepsInstances.OurLetterId, \n \t' +
     'ProcessesStepsInstances.LastUpdated, \n \t' +
     'ProcessesStepsInstances.EditorId \n \t,' +
-    'ProcessesSteps.Id, \n \t' +
-    'ProcessesSteps.Name, \n \t' +
-    'ProcessesSteps.Description, \n \t' +
-    'ProcessesSteps.DocumentTemplateId \n' +
+    'ProcessesSteps.Id AS ProcessStepId, \n \t' +
+    'ProcessesSteps.Name AS ProcessStepName, \n \t' +
+    'ProcessesSteps.Description AS ProcessStepDescription, \n \t' +
+    'Letters.DocumentGdId AS OurLetterDocumentGdId, \n \t' +
+    'Letters.FolderGdId AS OurLetterFolderGdId, \n \t' +
+    'DocumentTemplates.Name AS DocumentTemplateName, \n \t' +
+    'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
     'FROM ProcessesStepsInstances \n' +
     'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
     'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
     'JOIN Milestones ON Milestones.Id = Cases.MilestoneId \n' +
@@ -53,17 +65,25 @@ function getProcessesStepsInstances(sql, parentDataObject, externalConn) {
 
     while (dbResults.next()) {
       var item = new ProcessStepInstance({
-        id: dbResults.getLong(1),
-        processInstanceId: dbResults.getLong(2),
-        processStepId: dbResults.getLong(6),
-        status: dbResults.getString(4),
-        deadline: dbResults.getString(5),
-        _lastUpdated: dbResults.getString(6),
+        id: dbResults.getLong('Id'),
+        processInstanceId: dbResults.getLong('ProcessInstanceId'),
+        processStepId: dbResults.getLong('ProcessStepId'),
+        status: dbResults.getString('Status'),
+        deadline: dbResults.getString('Deadline'),
+        _ourletter: {
+          id: dbResults.getLong('OurLetterId'),
+          documentGdId: dbResults.getString('OurLetterDocumentGdId'),
+          folderGdId: dbResults.getString('OurLetterFolderGdId'),
+        },
+        _lastUpdated: dbResults.getString('LastUpdated'),
         _processStep: {
-          id: dbResults.getLong(8),
-          name: dbResults.getString(9),
-          description: dbResults.getString(10),
-          documentTemplateId: dbResults.getString(11)
+          id: dbResults.getLong('ProcessStepId'),
+          name: dbResults.getString('ProcessStepName'),
+          description: dbResults.getString('ProcessStepDescription'),
+          _documentTemplate: {
+            name: dbResults.getString('DocumentTemplateName'),
+            gdId: dbResults.getString('DocumentTemplateGdId'),
+          },
         },
         _case: {
           id: dbResults.getLong(3)
@@ -96,13 +116,13 @@ function getProcessesStepsInstancesListPerMilestone_Test() {
 function addNewProcessStepInstance(itemFromClient) {
   try {
     itemFromClient = JSON.parse(itemFromClient);
-    var item = new ProcessInstance(itemFromClient);
+    var item = new ProcessStepInstance(itemFromClient);
     var conn = connectToSql();
     conn.setAutoCommit(false);
     item.addInDb(conn);
     conn.commit();
     Logger.log(' item Added ItemId: ' + item.id);
-    return item.id;
+    return item;
   } catch (err) {
     Logger.log(JSON.stringify(err));
     if (conn.isValid(0)) conn.rollback();
@@ -112,10 +132,16 @@ function addNewProcessStepInstance(itemFromClient) {
   }
 }
 
-
 function test_addNewProcessInstance() {
 }
 
+function addNewProcessStepInstanceOurLetter(itemFromClient) {
+  return itemFromClient._processStepInstance;
+  var letter = addNewLetter(itemFromClient);
+  var stepInstance = new ProcessStepInstance(itemFromClient._processStepInstance);
+  stepInstance.editInDb();
+  return stepInstance;
+}
 
 function editProcessStepInstance(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);

@@ -8,7 +8,8 @@ class LetterModal extends Modal {
     initFormElements() {
 
         this.contractSelectField = new SelectField(this.id + '_contractSelectField', 'Kontrakt', undefined, this.mode === 'ADD_NEW');
-        this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name', this.controller.onContractChosen, this.controller);
+        if (LettersSetup.contractsRepository)
+            this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name', this.controller.onContractChosen, this.controller);
 
         this.milestoneSelectField = new SelectField(this.id + '_milestoneSelectField', 'Kamień Milowy', undefined, false);
         this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);

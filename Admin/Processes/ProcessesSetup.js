@@ -1,6 +1,7 @@
 var processesRepository;
 var processStepsRepository;
 var caseTypesRepository;
+var documentTemplatesRepository;
 
 class ProcessesSetup {
     static get processesRepository() {
@@ -25,5 +26,13 @@ class ProcessesSetup {
     
     static set caseTypesRepository(data) {
         caseTypesRepository = data;
+    }
+
+    static get documentTemplatesRepository() {
+        return documentTemplatesRepository;
+    }
+    
+    static set documentTemplatesRepository(data) {
+        documentTemplatesRepository = data;
     }
 }

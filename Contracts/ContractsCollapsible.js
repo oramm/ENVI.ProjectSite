@@ -63,7 +63,7 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     addRowCrudButtons(row){
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-        if (row.dataItem._gdFolderUrl) $crudMenu.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+        if (row.dataItem._gdFolderUrl) $crudMenu.append(new ExternalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl).$dom);
         if (this.isDeletable || this.isEditable){
             var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
             if (row.dataItem.ourId){ 

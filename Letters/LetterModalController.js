@@ -7,7 +7,7 @@ class LetterModalController {
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
     initAddNewDataHandler() {
-        this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
+        LettersSetup.lettersRepository.currentItem = {
             //Ustaw tu parametry kontekstowe jeśli konieczne
             _cases: [],
             _entitiesMain: [],

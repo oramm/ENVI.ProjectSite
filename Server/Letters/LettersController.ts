@@ -144,10 +144,11 @@ function addNewLetter(itemFormClient): Letter {
     conn.setAutoCommit(false);
     item.addInDb(conn, false);
     conn.commit();
-    GDocsTools.fillNamedRange(item.documentGdId, 'number', item.number.toString());
     letterGdElement.setName(item.makeFolderName());
-    if (itemFormClient.isOur && itemFormClient._template)
+    if (itemFormClient.isOur && itemFormClient._template) {
+      GDocsTools.fillNamedRange(item.documentGdId, 'number', item.number.toString());
       DriveApp.getFileById(item.documentGdId).setName(item.makeFolderName());
+    }
     Logger.log(' item Added ItemId: ' + item.id);
 
     return item;

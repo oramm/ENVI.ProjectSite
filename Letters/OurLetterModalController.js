@@ -7,8 +7,13 @@ class OurLetterModalController extends LetterModalController {
      */
     initAddNewDataHandler() {
         super.initAddNewDataHandler();
-        this.modal.connectedResultsetComponent.connectedRepository.currentItem.isOur = true;
+        LettersSetup.lettersRepository.currentItem.isOur = true;
+        this.modal.form.fillWithData({
+            creationDate: Tools.dateJStoDMY(new Date()),
+            registrationDate: Tools.dateJStoDMY(new Date())
+        });
     }
+    
     onTemplateChosen(chosenItem) {
         if (chosenItem && chosenItem !== this.modal.templateFormElement.defaultDisabledOption) {
             LettersSetup.documentTemplatesRepository.currentItem = chosenItem;

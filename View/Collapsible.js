@@ -123,11 +123,11 @@ class Collapsible {
      */       
     addRowCrudButtons(row){
         if (row.dataItem._gdFolderUrl) 
-            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl));
+            row.$crudButtons.append(new ExternalResourcesIconLink('GD_ICON',row.dataItem._gdFolderUrl).$dom);
         if (row.dataItem._documentOpenUrl) 
-            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentOpenUrl));
+            row.$crudButtons.append(new ExternalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentOpenUrl).$dom);
         if (row.dataItem._documentEditUrl) 
-            row.$crudButtons.append(Setup.$externalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentEditUrl));
+            row.$crudButtons.append(new ExternalResourcesIconLink('GD_DOCUMENT_ICON',row.dataItem._documentEditUrl).$dom);
         
         if (this.isDeletable || this.isEditable){
             row.$crudButtons

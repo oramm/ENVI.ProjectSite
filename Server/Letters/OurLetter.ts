@@ -5,9 +5,9 @@ class OurLetter extends Letter {
         super(initParamObject);
         this.isOur = true;
         this.number = initParamObject.number;
-        //_temlate jest potrzebny tylko przy tworzeniu pisma
-        if (initParamObject._template) this._templateGdId = initParamObject._template.gdId;
-
+        //_temlpate jest potrzebny tylko przy tworzeniu pisma
+        if (initParamObject._template)
+            this._templateGdId = initParamObject._template.gdId;
     }
 
     public makeFolderName(): string {

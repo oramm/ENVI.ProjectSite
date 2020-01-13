@@ -8,6 +8,7 @@ class Modal {
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.mode = mode;
+        this.forceEditBehavior = false; //używać gdy chcemy symulować edycję wobec resultseta (Collection lub Collapsible)
         this.formElements = [];
         if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT') throw new SyntaxError('Zła wartość mode');
         this.dataObject;
@@ -15,6 +16,7 @@ class Modal {
         this.$dom;
         this.$title = $('<h4 class="modalTitle">');
     }
+
     initialise() {
         this.buildDom();
         Tools.hasFunction(this.submitTrigger);
@@ -136,7 +138,7 @@ class Modal {
             .then(() => {
                 if (this.form.validate(tmpDataObject)) {
                     //edytuj
-                    if (this.mode === 'EDIT') {
+                    if (this.mode === 'EDIT' || this.forceEditBehavior) {
                         if (this.doChangeFunctionOnItemName)
                             repository.doChangeFunctionOnItem(tmpDataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent);
                         else

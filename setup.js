@@ -22,38 +22,3 @@ var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"
 var gAuth;
 var mainWindowView;
 var user;
-
-class Setup {
-    
-    static $externalResourcesIconLink(icon, url){
-        if (!icon) throw new SyntaxError('Icon must be defined!');
-        switch (icon) {
-            case 'GD_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Drive-icon.png';
-                break;
-            case 'GD_DOCUMENT_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Docs-icon.png';
-                break;
-            case 'GD_DOCUMENT_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Sheets-icon.png';
-                break;
-            case 'GGROUP_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Groups-icon.png';
-                break;
-            case 'GCALENDAR_ICON':
-                icon = 'https://ps.envi.com.pl/Resources/View/Google-Calendar-icon.png';
-                break;
-            case 'ATTACH_FILE':
-                icon = 'https://ps.envi.com.pl/Resources/View/attach-file-icon.png';
-                break;
-        }
-        var $link = $('<a  target="_blank">');
-        if (url) $link.attr('href',url);
-        var $img = $('<img height=21px>');
-        $img.attr('src',icon);
-        
-        $link.append($img);
-        
-        return $link;
-    }
-}

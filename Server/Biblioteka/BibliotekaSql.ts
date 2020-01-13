@@ -1,5 +1,5 @@
 //dodaje do bazy obiekt
-function addInDb(tableName: string, object, externalConn, isPartOfTransaction?: boolean) {
+function addInDb(tableName: string, object, externalConn: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
   var conn = (externalConn) ? externalConn : connectToSql();
   conn.setAutoCommit(false);
 
@@ -79,7 +79,7 @@ function deleteFromDb(tableName: string, object, externalConn?, isPartOfTransact
 
 //tworzy String prepared Statement na podstawie atrybutuów objektu
 function dynamicUpdatePreparedStmtString(tableName: string, object) {
-  if(Object.getOwnPropertyNames(object)[0]!== 'id')
+  if (Object.getOwnPropertyNames(object)[0] !== 'id')
     throw new Error('Edytowany obiekt musi mieć atrybut Id jako pierwszy w konstruktorze!');
   var preparedStmt = 'UPDATE ' + tableName + ' SET ';
   var keys = Object.keys(object);
