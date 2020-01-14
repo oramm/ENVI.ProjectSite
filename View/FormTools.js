@@ -1173,13 +1173,12 @@ class IconButton {
                 break;
         }
 
-        var $link = $('<a  target="_blank">');
-        if (this.url) $link.attr('href', this.url);
+        this.$dom = $('<a  target="_blank">');
+        if (this.url) this.$dom.attr('href', this.url);
         var $img = $('<img height=21px>');
         $img.attr('src', this.icon);
 
-        $link.append($img);
-        this.dom = $link;
+        this.$dom.append($img);
 
         this.$dom.click(() => this.onClickFunction.apply(this.viewObject, []));
     }
@@ -1191,6 +1190,7 @@ class ExternalResourcesIconLink {
         this.icon = icon;
         this.url = url;
         this.buidDom();
+        this.$dom;
     }
 
     buidDom() {
@@ -1215,14 +1215,12 @@ class ExternalResourcesIconLink {
                 break;
         }
 
-        var $link = $('<a  target="_blank">');
-        if (this.url) $link.attr('href', this.url);
+        this.$dom = $('<a  target="_blank">');
+        if (this.url) this.$dom.attr('href', this.url);
         var $img = $('<img height=21px>');
         $img.attr('src', this.icon);
 
-        $link.append($img);
-
-        this.dom = $link;
+        this.$dom.append($img);
     }
 }
 
