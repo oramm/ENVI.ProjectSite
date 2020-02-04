@@ -11,6 +11,7 @@ class ProcessStepInstance {
   _documentOpenUrl?: string;
   _ourLetter?: any;
   ourLetterId?: number;
+  _extRepoTmpDataObject?: any;
 
   constructor(initParamObject) {
     if (initParamObject) {
@@ -21,10 +22,9 @@ class ProcessStepInstance {
         this.processStepId = initParamObject._processStep.id;
       }
       this.status = (initParamObject.status) ? initParamObject.status : 'Nie rozpoczęte';
-      if (initParamObject._ourLetter) {
+      if (initParamObject._ourLetter && initParamObject._ourLetter.id) {
         this._ourLetter = initParamObject._ourLetter;
         this.ourLetterId = initParamObject._ourLetter.id;
-        this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject._ourLetter.documentGdId);
         this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject._ourLetter.documentGdId);
       }
       this.editorId = initParamObject.editorId;

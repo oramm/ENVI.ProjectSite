@@ -1,5 +1,6 @@
 function getLettersListPerProject(initParamObject, externalConn?) {
   var projectConditon = (initParamObject && initParamObject.projectId) ? 'Projects.OurId="' + initParamObject.projectId + '"' : '1';
+  var milestoneConditon = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id=' + initParamObject.milestoneId : '1';
 
   var sql = 'SELECT  Letters.Id, \n \t' +
     'Letters.IsOur, \n \t' +
@@ -21,9 +22,11 @@ function getLettersListPerProject(initParamObject, externalConn?) {
     'FROM Letters \n' +
     //'JOIN Letters_Cases ON Letters_Cases.LetterId=Letters.Id \n' +
     'JOIN Projects ON Letters.ProjectId=Projects.Id \n' +
+    'JOIN Contracts ON Contracts.ProjectOurId=Projects.OurId \n' +
+    'JOIN Milestones ON Milestones.ContractId= Contracts.Id \n' +
     'JOIN Persons ON Letters.EditorId=Persons.Id \n' +
-    'WHERE ' + projectConditon + '\n' +
-    //'GROUP BY Letters.Id \n' +
+    'WHERE ' + projectConditon + ' AND ' + milestoneConditon + '\n' +
+    'GROUP BY Letters.Id \n' +
     'ORDER BY Letters.RegistrationDate, Letters.CreationDate';
   return getLetters(sql, initParamObject, externalConn)
 }
@@ -154,7 +157,7 @@ function addNewLetter(itemFormClient): Letter {
     return item;
   } catch (err) {
     if (conn && conn.isValid(0)) conn.rollback();
-    item.deleteFromGd();
+    if (item) item.deleteFromGd();
     Logger.log(JSON.stringify(err));
     throw err;
   } finally {

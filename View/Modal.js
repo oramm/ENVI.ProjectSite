@@ -1,12 +1,14 @@
 /* 
  * http://materializecss.com/modals.html#!
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
+ * externalrepository - jeżeli edytujemy obiekt spoza listy - inne repo niż connectedResultsetComponent.connectedRepository
  */
 class Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
+    constructor(id, tittle, connectedResultsetComponent, mode, externalRepository) {
         this.id = id;
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
+        this.externalRepository = (externalRepository) ? externalRepository : {};
         this.mode = mode;
         this.forceEditBehavior = false; //używać gdy chcemy symulować edycję wobec resultseta (Collection lub Collapsible)
         this.formElements = [];
@@ -56,14 +58,14 @@ class Modal {
     }
     /*
      * Akcja po włączeniu modala. 
-     * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction() 
+     * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
         $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
         if (this.mode == 'EDIT')
-            this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
+            this.form.fillWithData(this.externalRepository.currentItem || this.connectedResultsetComponent.connectedRepository.currentItem);
         else
             this.initAddNewData();
 
@@ -130,31 +132,51 @@ class Modal {
         try {
             tinyMCE.triggerSave();
         } catch (e) { console.log('Modal.submitTrigger():: TinyMCE not defined') }
+
         var repository = this.connectedResultsetComponent.connectedRepository;
-        //obiekt do zapisania danych z formularza
+        //obiekt z bieżącej pozycji na liście connectedResultsetComponent do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(repository.currentItem);
+        //obiekt do zapisania spoza connectedResultsetComponent
+        var extRepoDataObject;
+        if (this.externalRepository) extRepoDataObject = Tools.cloneOfObject(this.externalRepository.currentItem);
 
-        this.form.submitHandler(tmpDataObject)
+        this.form.submitHandler(extRepoDataObject || tmpDataObject)
             .then(() => {
-                if (this.form.validate(tmpDataObject)) {
-                    //edytuj
-                    if (this.mode === 'EDIT' || this.forceEditBehavior) {
-                        if (this.doChangeFunctionOnItemName)
-                            repository.doChangeFunctionOnItem(tmpDataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent);
-                        else
-                            repository.editItem(tmpDataObject, this.connectedResultsetComponent);
-
-                    }
-                    //dodaj nowy element
-                    else {
-                        if (this.doAddNewFunctionOnItemName)
-                            repository.doAddNewFunctionOnItem(tmpDataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent);
-                        else
-                            repository.addNewItem(tmpDataObject, this.connectedResultsetComponent);
-                    }
+                //do serwera wysyłam edytowany obiekt z zewnerznego repozytorium - trzeba tam używać tej zmiennej
+                tmpDataObject._extRepoTmpDataObject = extRepoDataObject;
+                if (this.form.validate(extRepoDataObject || tmpDataObject)) {
+                    if (this.mode === 'EDIT' || this.forceEditBehavior)
+                        this.editSubmitTrigger(tmpDataObject, repository);
+                    else
+                        this.addNewSubmitTrigger(tmpDataObject, repository)
                     repository.currentItem = tmpDataObject;
-                }
+                } else
+                    alert('Formularz źle wypełniony')
                 this.$dom.modal('close');
             })
+    }
+
+    editSubmitTrigger(dataObject, repository) {
+        if (this.doChangeFunctionOnItemName)
+            repository.doChangeFunctionOnItem(dataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent)
+                .then((editedItem) => {
+                    if (this.externalRepository && editedItem._extRepoTmpDataObject) {
+                        this.externalRepository.clientSideEditItemHandler(dataObject._extRepoTmpDataObject);
+                    }
+                });
+        else
+            repository.editItem(dataObject, this.connectedResultsetComponent);
+    }
+
+    addNewSubmitTrigger(dataObject, repository) {
+        if (this.doAddNewFunctionOnItemName)
+            repository.doAddNewFunctionOnItem(dataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent)
+                .then((editedItem) => {
+                    if (this.externalRepository && dataObject._extRepoTmpDataObject) {
+                        this.externalRepository.clientSideAddNewItemHandler(editedItem._extRepoTmpDataObject);
+                    }
+                });
+        else
+            repository.addNewItem(dataObject, this.connectedResultsetComponent);
     }
 } 

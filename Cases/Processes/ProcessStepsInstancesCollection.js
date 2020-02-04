@@ -24,6 +24,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
         this.editOurLetterModal = initParamObject.editOurLetterModal;
         this.appendLetterAttachmentsModal = initParamObject.appendLetterAttachmentsModal;
 
+
         this.initialise(this.makeList());
     }
     /*
@@ -95,21 +96,26 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
 
     selectTrigger(itemId) {
         super.selectTrigger(itemId);
+        //wybierz letter
+        var currentLetter = {};
+        if (this.connectedRepository.currentItem._ourLetter)
+            currentLetter = Tools.search(parseInt(this.connectedRepository.currentItem._ourLetter.id), 'id', LettersSetup.lettersRepository.items);
+        LettersSetup.lettersRepository.currentItem = currentLetter;
     }
 
     addPlainRowCrudButtons(row) {
         super.addPlainRowCrudButtons(row)
-        //if (row.dataItem._processStep.documentTemplateId)
-        if (row.dataItem._ourletter)
-            this.appendLetterAttachmentsModal.preppendTriggerButtonTo(row.$crudButtons, 'Dodaj załączniki', this);
-        else
-            this.addNewOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Generuj pismo', this);
+        if (row.dataItem._processStep._documentTemplate.gdId) {
+            if (row.dataItem._ourLetter.id) {
+                this.appendLetterAttachmentsModal.preppendTriggerButtonTo(row.$crudButtons, 'Dodaj załączniki', this);
+                this.editOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Edytuj pismo', this);
+                row.$crudButtons.append(new RaisedButton('Usuń pismo', this.deleteOurLetterAction, this).$dom);
+            } else
+                this.addNewOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Generuj pismo', this);
+        }
     }
 
-    /*
-     * aktualizuje dane w szablonie pisma
-     */
-    refreshLetterFileAction() {
-        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository, 'refreshLetterFile', this);
+    deleteOurLetterAction() {
+        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository.currentItem._ourLetter, '1deleteLetter', this);
     }
 }

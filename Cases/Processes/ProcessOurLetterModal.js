@@ -1,11 +1,11 @@
 class ProcessOurLetterModal extends LetterModal {
     constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+        super(id, tittle, connectedResultsetComponent, mode, LettersSetup.lettersRepository);
         this.forceEditBehavior = true;
         this.controller = new ProcessOurLetterModalController(this);
-        this.doChangeFunctionOnItemName = 'addNewProcessStepInstanceOurLetter';
-        this.doAddNewFunctionOnItemName = '';
-        
+        this.doChangeFunctionOnItemName = 'editProcessStepInstanceOurLetter';
+        this.doAddNewFunctionOnItemName = 'addNewProcessStepInstanceOurLetter';
+
         this.initFormElements();
 
         this.formElements = [

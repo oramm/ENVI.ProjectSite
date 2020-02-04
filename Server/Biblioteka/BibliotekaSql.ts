@@ -162,12 +162,12 @@ function connectToSql(): GoogleAppsScript.JDBC.JdbcConnection {
 }
 
 function prepareValueToSql(value) {
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     if (typeof value === 'number' || typeof value === 'boolean')
       return value;
     var date = value.split("-");
     if (value.length == 10 && date.length == 3 && date[2].length == 4) //czy mamy datę
-      return '\'' + dateJsToSql(value) + '\'';
+      return '\'' + ToolsDate.dateJsToSql(value) + '\'';
     else
       return '\'' + stringToSql(value) + '\'';
   }
@@ -184,7 +184,7 @@ function prepareValueToPreparedStmtSql(value) {
       return value;
     var date = value.split("-");
     if (value.length == 10 && date.length == 3 && date[2].length == 4) //czy mamy datę
-      return dateJsToSql(value);
+      return ToolsDate.dateJsToSql(value);
     else
       return stringToSql(value);
   }

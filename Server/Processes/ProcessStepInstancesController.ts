@@ -70,7 +70,7 @@ function getProcessesStepsInstances(sql, parentDataObject, externalConn) {
         processStepId: dbResults.getLong('ProcessStepId'),
         status: dbResults.getString('Status'),
         deadline: dbResults.getString('Deadline'),
-        _ourletter: {
+        _ourLetter: {
           id: dbResults.getLong('OurLetterId'),
           documentGdId: dbResults.getString('OurLetterDocumentGdId'),
           folderGdId: dbResults.getString('OurLetterFolderGdId'),
@@ -86,10 +86,10 @@ function getProcessesStepsInstances(sql, parentDataObject, externalConn) {
           },
         },
         _case: {
-          id: dbResults.getLong(3)
+          id: dbResults.getLong('CaseId')
         },
         _editor: {
-          id: dbResults.getLong(7)
+          id: dbResults.getLong('EditorId')
         },
 
       });
@@ -110,7 +110,7 @@ function getProcessesStepsInstances(sql, parentDataObject, externalConn) {
 
 
 function getProcessesStepsInstancesListPerMilestone_Test() {
-  var x = getProcessesStepsInstancesListPerMilestone(511, undefined);
+  var x = getProcessesStepsInstancesListPerMilestone(609, undefined);
 }
 
 function addNewProcessStepInstance(itemFromClient) {
@@ -132,13 +132,15 @@ function addNewProcessStepInstance(itemFromClient) {
   }
 }
 
-function test_addNewProcessInstance() {
+function test_addNewProcessStepInstanceOurLetter() {
+  addNewProcessStepInstanceOurLetter(ToolsHtml.parseHtmlToText(''));
 }
 
 function addNewProcessStepInstanceOurLetter(itemFromClient) {
-  return itemFromClient._processStepInstance;
-  var letter = addNewLetter(itemFromClient);
-  var stepInstance = new ProcessStepInstance(itemFromClient._processStepInstance);
+  itemFromClient = JSON.parse(itemFromClient);
+  //itemFromClient._extRepoTmpDataObject to standardowy obiekt dla zewnętrznego repozytorium z Modal.submitTrigger()
+  itemFromClient._ourLetter = addNewLetter(JSON.stringify(itemFromClient._extRepoTmpDataObject));
+  var stepInstance = new ProcessStepInstance(itemFromClient);
   stepInstance.editInDb();
   return stepInstance;
 }
@@ -148,6 +150,17 @@ function editProcessStepInstance(itemFromClient) {
   var item = new ProcessStepInstance(itemFromClient);
   item.editInDb();
   Logger.log('item edited ItemId: ' + item.id);
+  return item;
+}
+
+function editProcessStepInstanceOurLetter(itemFromClient){
+  itemFromClient = JSON.parse(itemFromClient);
+  //itemFromClient._extRepoTmpDataObject to standardowy obiekt dla zewnętrznego repozytorium z Modal.submitTrigger()
+  itemFromClient._ourLetter = editLetter(JSON.stringify(itemFromClient._extRepoTmpDataObject));
+  var stepInstance = new ProcessStepInstance(itemFromClient);
+  stepInstance.editInDb();
+  stepInstance._extRepoTmpDataObject = itemFromClient._ourLetter;
+  return stepInstance;
 }
 
 function test_editProcessStepInstance() {

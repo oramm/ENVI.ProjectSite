@@ -3,10 +3,7 @@ class StepModal extends Modal {
         super(id, tittle, connectedResultsetComponent, mode);
 
         this.documentTemplateSelectField = new SelectField(this.id + 'typeSelectField', 'Szablon pisma', undefined, false);
-        var documentTemplatesForStep =  ProcessesSetup.documentTemplatesRepository.items.filter(
-            item => item.caseTypeId && item.caseTypeId == ProcessesSetup.processesRepository.currentItem.caseTypeId
-        )
-        this.documentTemplateSelectField.initialise(documentTemplatesForStep, 'name');
+
 
         this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', false, 500);
 
@@ -21,7 +18,13 @@ class StepModal extends Modal {
             },
             {
                 input: this.documentTemplateSelectField,
-                dataItemKeyName: '_documentTemplate'
+                dataItemKeyName: '_documentTemplate',
+                refreshDataSet() {
+                    var documentTemplatesForStep = ProcessesSetup.documentTemplatesRepository.items.filter(
+                        item => item.caseTypeId && item.caseTypeId == ProcessesSetup.processesRepository.currentItem.caseTypeId
+                    )
+                    this.input.initialise(documentTemplatesForStep, 'name');
+                }
             }
 
         ];

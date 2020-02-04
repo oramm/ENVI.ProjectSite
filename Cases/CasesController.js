@@ -57,6 +57,7 @@ class CasesController {
         promises[4] = CasesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId);
         promises[5] = CasesSetup.eventsRepository.initialise(CasesSetup.casesRepository.parentItemId);
         promises[6] = LettersSetup.documentTemplatesRepository.initialise();
+        promises[7] = LettersSetup.lettersRepository.initialise({ milestoneId: LettersSetup.lettersRepository.parentItemId });
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");

@@ -107,11 +107,4 @@ class LettersCollapsible extends SimpleCollapsible {
             $casesUl.append($caseLi);
         }
     }
-
-    /*
-     * aktualizuje dane w szablonie pisma
-     */
-    refreshLetterFileAction() {
-        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository, 'refreshLetterFile', this);
-    }
 }

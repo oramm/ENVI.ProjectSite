@@ -92,7 +92,7 @@ class Tools {
     }
 
     static cloneOfObject(object) {
-        return JSON.parse(JSON.stringify(object));
+        if (object) return JSON.parse(JSON.stringify(object));
     }
 
     static areEqualObjects(obj1, obj2) {

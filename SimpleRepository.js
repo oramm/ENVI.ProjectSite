@@ -30,7 +30,7 @@ class SimpleRepository extends Repository {
         return new Promise((resolve, reject) => {
             this.doServerFunction(this.getItemsListServerFunctionName, serverFunctionParameters)
                 .then(result => {
-                this.items = result;
+                    this.items = result;
                     sessionStorage.setItem(this.name, JSON.stringify(this));
                     resolve(this.name + " initialised");
                 });
@@ -47,13 +47,6 @@ class SimpleRepository extends Repository {
     //Krok 2 - wywoływana przy SUBMIT
     addNewItem(dataItem, viewObject) {
         return this.doAddNewFunctionOnItem(dataItem, this.addNewServerFunctionName, viewObject);
-        return new Promise((resolve, reject) => {
-            super.addNewItem(dataItem, this.addNewServerFunctionName, viewObject)
-                .then((res) => {  //this.items.push(res)
-                    //this.currentItem = res;
-                    console.log('dodano element: ', res);
-                });
-        });
     }
 
     //Krok 2 - wywoływana przy SUBMIT
@@ -82,13 +75,14 @@ class SimpleRepository extends Repository {
         return new Promise((resolve, reject) => {
             super.editItem(dataItem, serverFunctionName, viewObject)
                 .then((res) => {
-                    var newIndex = this.items.findIndex(item => item.id == res.id
-                    );
+                    var newIndex = this.items.findIndex(item => item.id == res.id);
                     this.items[newIndex] = res;
-                    console.log('wykonano funkcję: %s', serverFunctionName, res);
+                    console.log('%s:: wykonano funkcję: %s', this.name, serverFunctionName, res);
+                    resolve(res);
                 })
         });
     }
+
     /*
      * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
      */
@@ -96,8 +90,35 @@ class SimpleRepository extends Repository {
         return new Promise((resolve, reject) => {
             super.addNewItem(dataItem, serverFunctionName, viewObject)
                 .then((res) => {
-                    console.log('wykonano funkcję: %s', serverFunctionName, res);
+                    console.log('%s:: wykonano funkcję: %s, %o', this.name, serverFunctionName, res);
+                    resolve(res);
                 })
         });
     }
+
+    /*
+     * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
+     * gdy edytujemy element nieposiadający listy
+     */
+    clientSideEditItemHandler(dataItem) {
+        return new Promise((resolve, reject) => {
+            var newIndex = this.items.findIndex(item => item.id == dataItem.id);
+            this.items[newIndex] = dataItem;
+            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideEditItemHandler', dataItem);
+            resolve(dataItem);
+        });
+    }
+
+    /*
+     * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
+     */
+    clientSideAddNewItemHandler(dataItem) {
+        return new Promise((resolve, reject) => {
+            this.items.push(dataItem);
+            this.currentItem = dataItem;
+            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideAddNewItemHandler', dataItem);
+            resolve(dataItem);
+        });
+    }
+
 };

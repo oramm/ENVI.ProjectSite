@@ -1,12 +1,11 @@
 class LetterModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, tittle, connectedResultsetComponent, mode, externalRepository) {
+        super(id, tittle, connectedResultsetComponent, mode, externalRepository);
     }
     /*
      * uruchamiana po konstruktorze, przed jej wywołąniem musi być ustawiony controller
      */
     initFormElements() {
-
         this.contractSelectField = new SelectField(this.id + '_contractSelectField', 'Kontrakt', undefined, this.mode === 'ADD_NEW');
         if (LettersSetup.contractsRepository)
             this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name', this.controller.onContractChosen, this.controller);

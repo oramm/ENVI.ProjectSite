@@ -5,56 +5,56 @@ class Repository {
      * @param {type} name
      * @returns {Repository}
      */
-    constructor(initParameter){
+    constructor(initParameter) {
         if (initParameter === undefined) throw new SyntaxError("Repository must have a name!");
-        
+
         this.itemsLocalData;
         this.result;
-        
-        if (typeof initParameter === 'string'){
+
+        if (typeof initParameter === 'string') {
             //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
             this.name = initParameter;
-            this.currentItemLocalData={};
-            
+            this.currentItemLocalData = {};
+
             //Repository może mieć wiele bieżących elementów (multiselect)
-            this.currentItemsLocalData=[];
-            
+            this.currentItemsLocalData = [];
+
             //sessionStorage.setItem(this.name, JSON.stringify(this));
         }
         //mamy obiekt z SessionStorage
-        else if (typeof initParameter === 'object'){
+        else if (typeof initParameter === 'object') {
             this.name = initParameter.name;
-            this.currentItemLocalData=initParameter.currentItemLocalData;
+            this.currentItemLocalData = initParameter.currentItemLocalData;
             this.itemsLocalData = initParameter.itemsLocalData;
-            console.log(this.name + ' items from SessionStorage: %o', this.itemsLocalData )
+            console.log(this.name + ' items from SessionStorage: %o', this.itemsLocalData)
         }
     }
-    
-    get items () {
-        return (this.itemsLocalData)? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).items;
+
+    get items() {
+        return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).items;
     }
     set items(data) {
         this.itemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    
-    get currentItem () {
-        return (this.currentItemLocalData)? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
+
+    get currentItem() {
+        return (this.currentItemLocalData) ? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
     }
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
-    get currentItems () {
-        return (this.currentItemsLocalData)? this.currentItemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItems;
+    get currentItems() {
+        return (this.currentItemsLocalData) ? this.currentItemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItems;
     }
-    
+
     set currentItems(data) {
         this.currentItemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    
+
     set currentItem(item) {
-        if (typeof item !== 'object' && item!==undefined) throw new Error("Selected repository item must be an object!");
+        if (typeof item !== 'object' && item !== undefined) throw new Error("Selected repository item must be an object!");
         //nie przesyłamy do repozytorium blobów z FileInput
-        if(item!==undefined){
+        if (item !== undefined) {
             delete item._blobEnviObjects;
             this.currentItemId = item.id;
         } else
@@ -62,36 +62,36 @@ class Repository {
         this.currentItemLocalData = item;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    
+
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     addToCurrentItems(newDataItem) {
         if (!newDataItem || typeof newDataItem !== 'object') throw new Error("Selected repository item must be an object!");
         if (!newDataItem.id) throw new Error("repository item must have an id parameter!");
-        
-        var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem=>existingDataItem.id==newDataItem.id)[0];
-        if(!wasItemAlreadySelected)
+
+        var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem => existingDataItem.id == newDataItem.id)[0];
+        if (!wasItemAlreadySelected)
             this.currentItemsLocalData.push(newDataItem);
-        
+
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    
+
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     deleteFromCurrentItems(item) {
         if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
-        
-        var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item); 
+
+        var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item);
         this.currentItemsLocalData.splice(index, 1)
-        
+
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    
+
     setCurrentItemById(id) {
         if (id === undefined) throw new SyntaxError("Selected item id must be specified!");
         this.currentItemId = id;
-        this.currentItem = Tools.search(parseInt(id),"id", this.items);
+        this.currentItem = Tools.search(parseInt(id), "id", this.items);
     }
 
-    doServerFunction(serverFunctionName,serverFunctionParameters) {
+    doServerFunction(serverFunctionName, serverFunctionParameters) {
         return new Promise((resolve, reject) => {
             // Create an execution request object.
             // Create execution request.
@@ -109,17 +109,19 @@ class Repository {
             });
 
             op
-              .then((resp) => this.handleDoServerFunction(resp.result))
-              .then((result) => {   console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
-                                    resolve(result);
-                                })
-              .catch(err => {   console.error (serverFunctionName, err);
-                                window.alert('Wystąił Błąd! \n ' + err);
-                                throw err;
-                            });
+                .then((resp) => this.handleDoServerFunction(resp.result))
+                .then((result) => {
+                    console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
+                    resolve(result);
+                })
+                .catch(err => {
+                    console.error(serverFunctionName, err);
+                    window.alert('Wystąił Błąd! \n ' + err);
+                    throw err;
+                });
         });
     }
-   
+
     //TODO: scalić funkcje handleDoServerFunction() z handleAddNewItem
     handleDoServerFunction(resp) {
         return new Promise((resolve, reject) => {
@@ -145,9 +147,9 @@ class Repository {
                     this.result = 'Script error stacktrace:';
                     for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                         var trace = error.scriptStackTraceElements[i];
-                        this.result += ('\t' + trace.function+':' + trace.lineNumber);
+                        this.result += ('\t' + trace.function + ':' + trace.lineNumber);
                     }
-                throw resp.error.details[0].errorMessage;
+                    throw resp.error.details[0].errorMessage;
                 }
             } else {
                 // The structure of the result will depend upon what the Apps
@@ -164,18 +166,21 @@ class Repository {
             }
         });
     }
-    
-    //wywoływana przy SUBMIT
+
+    /*
+     * wywoływana przy SUBMIT
+     */
+
     addNewItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            var newItemTmpId = this.items.length+1 + '_pending';
+            var newItemTmpId = this.items.length + 1 + '_pending';
             newItem._tmpId = newItemTmpId;
             //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
             this.items.push(newItem);
             this.currentItem = Tools.cloneOfObject(newItem);
-            viewObject.addNewHandler.apply(viewObject,["PENDING",newItem]);
-            
-            
+            viewObject.addNewHandler.apply(viewObject, ["PENDING", newItem]);
+
+
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -192,39 +197,39 @@ class Repository {
             });
 
             op
-              .then(resp => {  
-                  this.handleAddNewItem(resp.result)
-                      .then((result) => { 
-                        var newItemFromServer = result;
-                        //(typeof result==='object')? newItem = result : newItem.id = result;
-                        
-                        //usuń z repozytorium tymczasowy obiekt
-                        var index = this.items.findIndex( item => item._tmpid == newItemTmpId); 
-                        this.items.splice(index,1);
-                        //wstaw do repozytorium nowy obiekt z serwera
-                        this.items.push(newItemFromServer);
-                        this.currentItem = newItemFromServer;
-                        //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
-                        newItemFromServer._tmpId = newItemTmpId;
-                        viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
-                        resolve(newItemFromServer);
-                      })
-                      .catch(err => {
-                          //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          //newItem._tmpId = newItemTmpId;
-                          //usuń z repozytorium pechowy obiekt
-                          var index = this.items.findIndex(item => item._tmpid == newItemTmpId); 
-                          this.items.splice(index,1);
-                          this.currentItem = {};
-                          viewObject.addNewHandler.apply(viewObject,["ERROR",newItem, err]);
-                          //reject(err);
-                      });
-                  })
-              .catch(err => {
-                    console.error ("test 2 ", err);
-                    viewObject.addNewHandler.apply(viewObject,["ERROR",newItem, err]);
+                .then(resp => {
+                    this.handleAddNewItem(resp.result)
+                        .then((result) => {
+                            var newItemFromServer = result;
+                            //(typeof result==='object')? newItem = result : newItem.id = result;
+
+                            //usuń z repozytorium tymczasowy obiekt
+                            var index = this.items.findIndex(item => item._tmpid == newItemTmpId);
+                            this.items.splice(index, 1);
+                            //wstaw do repozytorium nowy obiekt z serwera
+                            this.items.push(newItemFromServer);
+                            this.currentItem = newItemFromServer;
+                            //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
+                            newItemFromServer._tmpId = newItemTmpId;
+                            viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
+                            resolve(newItemFromServer);
+                        })
+                        .catch(err => {
+                            //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
+                            //newItem._tmpId = newItemTmpId;
+                            //usuń z repozytorium pechowy obiekt
+                            var index = this.items.findIndex(item => item._tmpid == newItemTmpId);
+                            this.items.splice(index, 1);
+                            this.currentItem = {};
+                            viewObject.addNewHandler.apply(viewObject, ["ERROR", newItem, err]);
+                            //reject(err);
+                        });
+                })
+                .catch(err => {
+                    console.error("test 2 ", err);
+                    viewObject.addNewHandler.apply(viewObject, ["ERROR", newItem, err]);
                     throw err;
-              });
+                });
         });
     }
 
@@ -252,9 +257,9 @@ class Repository {
                     this.result = 'Script error stacktrace:';
                     for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                         var trace = error.scriptStackTraceElements[i];
-                        this.result += ('\t' + trace.function+':' + trace.lineNumber);
+                        this.result += ('\t' + trace.function + ':' + trace.lineNumber);
                     }
-                throw resp.error.details[0].errorMessage;
+                    throw resp.error.details[0].errorMessage;
                 }
             } else {
                 // The structure of the result will depend upon what the Apps
@@ -277,7 +282,7 @@ class Repository {
      */
     editItem(newItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            viewObject.editHandler.apply(viewObject,["PENDING",newItem]);
+            viewObject.editHandler.apply(viewObject, ["PENDING", newItem]);
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -294,42 +299,42 @@ class Repository {
             });
 
             op
-              .then(resp => {  
-                  this.handleAddNewItem(resp.result)
-                      .then((result) => { 
-                        if(!result) throw new Error('Serwer powinien zwrócić obiekt')
-                        var newItemFromServer = result;
-                        //usuń z repozytorium tymczasowy obiekt
-                        var index = this.items.findIndex(item => item.id == newItem.id); 
-                        this.items.splice(index,1);
-                        //wstaw do repozytorium nowy obiekt z serwera
-                        this.items.push(newItemFromServer);
-                        this.currentItem = newItemFromServer;
-                        viewObject.editHandler.apply(viewObject, ["DONE", newItemFromServer])
-                        resolve(newItemFromServer);
-                      })
-                      .catch(err => {
-                          //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          viewObject.editHandler.apply(viewObject,["ERROR",newItem, err]);
-                          throw err;
-                      });
-                  })
-              .catch(err => {
-                    console.error ("test 2 ", err);
-                    viewObject.editHandler.apply(viewObject,["ERROR",newItem, err]);
+                .then(resp => {
+                    this.handleAddNewItem(resp.result)
+                        .then((result) => {
+                            if (!result) throw new Error('Serwer powinien zwrócić obiekt')
+                            var newItemFromServer = result;
+                            //usuń z repozytorium tymczasowy obiekt
+                            var index = this.items.findIndex(item => item.id == newItem.id);
+                            this.items.splice(index, 1);
+                            //wstaw do repozytorium nowy obiekt z serwera
+                            this.items.push(newItemFromServer);
+                            this.currentItem = newItemFromServer;
+                            viewObject.editHandler.apply(viewObject, ["DONE", newItemFromServer])
+                            resolve(newItemFromServer);
+                        })
+                        .catch(err => {
+                            //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
+                            viewObject.editHandler.apply(viewObject, ["ERROR", newItem, err]);
+                            throw err;
+                        });
+                })
+                .catch(err => {
+                    console.error("test 2 ", err);
+                    viewObject.editHandler.apply(viewObject, ["ERROR", newItem, err]);
                     throw err;
-              });
+                });
         });
     }
     /*
      * Do serwera idzie cały Item, do Kroku 3 idzie tylko item.id
      */
-    deleteItem(oldItem,serverFunctionName, viewObject) {
+    deleteItem(oldItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            var index = this.items.findIndex( item => item.id == oldItem.id); 
-            this.items.splice(index,1);
+            var index = this.items.findIndex(item => item.id == oldItem.id);
+            this.items.splice(index, 1);
             this.currentItem = {};
-            viewObject.removeHandler.apply(viewObject,["PENDING", oldItem.id]);
+            viewObject.removeHandler.apply(viewObject, ["PENDING", oldItem.id]);
             // Create an execution request object.
             // Create execution request.
             var request = {
@@ -346,28 +351,28 @@ class Repository {
             });
 
             op
-              .then(resp => {  
-                  this.handleDeleteItem(resp.result)
-                      .then((result) => { 
-                        //viewHandler.apply(viewObject, ["DONE", item.id]);
-                        viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id, undefined, result]);
-                        resolve(oldItem);
-                      })
-                      .catch(err => {
-                          //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
-                          this.items.push(oldItem);
-                          this.currentItem = oldItem;
-                          viewObject.removeHandler.apply(viewObject,["ERROR",oldItem.id, err]);
-                      });
-                  })
-              .catch(err => {
-                    console.error ("test 1 ", err);
+                .then(resp => {
+                    this.handleDeleteItem(resp.result)
+                        .then((result) => {
+                            //viewHandler.apply(viewObject, ["DONE", item.id]);
+                            viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id, undefined, result]);
+                            resolve(oldItem);
+                        })
+                        .catch(err => {
+                            //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
+                            this.items.push(oldItem);
+                            this.currentItem = oldItem;
+                            viewObject.removeHandler.apply(viewObject, ["ERROR", oldItem.id, err]);
+                        });
+                })
+                .catch(err => {
+                    console.error("test 1 ", err);
                     throw err;
-              });
+                });
         });
 
     }
-    
+
     handleDeleteItem(resp) {
         return new Promise((resolve, reject) => {
             if (resp.error && resp.error.status) {
@@ -392,9 +397,9 @@ class Repository {
                     this.result = 'Script error stacktrace:';
                     for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                         var trace = error.scriptStackTraceElements[i];
-                        this.result += ('\t' + trace.function+':' + trace.lineNumber);
+                        this.result += ('\t' + trace.function + ':' + trace.lineNumber);
                     }
-                throw resp.error.details[0].errorMessage;
+                    throw resp.error.details[0].errorMessage;
                 }
             } else {
                 // The structure of the result will depend upon what the Apps
