@@ -45,7 +45,7 @@ PersonRole.prototype = {
   constructor: PersonRole,
 
   addInDb: function (conn) {
-    return addInDb('Persons_Roles', conn, this);
+    return addInDb('Persons_Roles', this, conn);
   },
 
   deleteFromDb: function () {

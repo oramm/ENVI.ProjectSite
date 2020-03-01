@@ -4,13 +4,11 @@
  * externalrepository - jeżeli edytujemy obiekt spoza listy - inne repo niż connectedResultsetComponent.connectedRepository
  */
 class Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode, externalRepository) {
+    constructor(id, tittle, connectedResultsetComponent, mode) {
         this.id = id;
         this.tittle = tittle;
         this.connectedResultsetComponent = connectedResultsetComponent;
-        this.externalRepository = (externalRepository) ? externalRepository : {};
         this.mode = mode;
-        this.forceEditBehavior = false; //używać gdy chcemy symulować edycję wobec resultseta (Collection lub Collapsible)
         this.formElements = [];
         if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT') throw new SyntaxError('Zła wartość mode');
         this.dataObject;
@@ -65,11 +63,13 @@ class Modal {
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
         if (this.mode == 'EDIT')
-            this.form.fillWithData(this.externalRepository.currentItem || this.connectedResultsetComponent.connectedRepository.currentItem);
+            this.fillForm();
         else
             this.initAddNewData();
-
         Materialize.updateTextFields();
+    }
+    fillForm() {
+        this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
     }
     /*
      * Aktualizuje dane np. w selectach. Jest uruchamiana w this.triggerAction();
@@ -133,50 +133,34 @@ class Modal {
             tinyMCE.triggerSave();
         } catch (e) { console.log('Modal.submitTrigger():: TinyMCE not defined') }
 
-        var repository = this.connectedResultsetComponent.connectedRepository;
         //obiekt z bieżącej pozycji na liście connectedResultsetComponent do zapisania danych z formularza
-        var tmpDataObject = Tools.cloneOfObject(repository.currentItem);
-        //obiekt do zapisania spoza connectedResultsetComponent
-        var extRepoDataObject;
-        if (this.externalRepository) extRepoDataObject = Tools.cloneOfObject(this.externalRepository.currentItem);
+        var tmpDataObject = Tools.cloneOfObject(this.connectedResultsetComponent.connectedRepository.currentItem);
 
-        this.form.submitHandler(extRepoDataObject || tmpDataObject)
+        this.form.submitHandler(tmpDataObject)
             .then(() => {
-                //do serwera wysyłam edytowany obiekt z zewnerznego repozytorium - trzeba tam używać tej zmiennej
-                tmpDataObject._extRepoTmpDataObject = extRepoDataObject;
-                if (this.form.validate(extRepoDataObject || tmpDataObject)) {
-                    if (this.mode === 'EDIT' || this.forceEditBehavior)
-                        this.editSubmitTrigger(tmpDataObject, repository);
+                if (this.form.validate(tmpDataObject)) {
+                    if (this.mode === 'EDIT')
+                        this.editSubmitTrigger(tmpDataObject);
                     else
-                        this.addNewSubmitTrigger(tmpDataObject, repository)
-                    repository.currentItem = tmpDataObject;
+                        this.addNewSubmitTrigger(tmpDataObject)
+                    this.connectedResultsetComponent.connectedRepository.currentItem = tmpDataObject;
                 } else
                     alert('Formularz źle wypełniony')
                 this.$dom.modal('close');
             })
     }
 
-    editSubmitTrigger(dataObject, repository) {
+    editSubmitTrigger(dataObject) {
         if (this.doChangeFunctionOnItemName)
-            repository.doChangeFunctionOnItem(dataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent)
-                .then((editedItem) => {
-                    if (this.externalRepository && editedItem._extRepoTmpDataObject) {
-                        this.externalRepository.clientSideEditItemHandler(dataObject._extRepoTmpDataObject);
-                    }
-                });
+            this.connectedResultsetComponent.connectedRepository.doChangeFunctionOnItem(dataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent)
         else
-            repository.editItem(dataObject, this.connectedResultsetComponent);
+            this.connectedResultsetComponent.connectedRepository.editItem(dataObject, this.connectedResultsetComponent);
     }
 
-    addNewSubmitTrigger(dataObject, repository) {
+    addNewSubmitTrigger(dataObject) {
         if (this.doAddNewFunctionOnItemName)
-            repository.doAddNewFunctionOnItem(dataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent)
-                .then((editedItem) => {
-                    if (this.externalRepository && dataObject._extRepoTmpDataObject) {
-                        this.externalRepository.clientSideAddNewItemHandler(editedItem._extRepoTmpDataObject);
-                    }
-                });
+            this.connectedResultsetComponent.connectedRepository.doAddNewFunctionOnItem(dataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent)
         else
-            repository.addNewItem(dataObject, this.connectedResultsetComponent);
+            this.connectedResultsetComponent.connectedRepository.addNewItem(dataObject, this.connectedResultsetComponent);
     }
 } 

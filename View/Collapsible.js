@@ -1,23 +1,15 @@
 /* 
  * http://materializecss.com/collapsible.html
  */
-class Collapsible {
+class Collapsible extends Resultset{
     constructor(initParamObject) {
-        this.id = initParamObject.id;
-        this.parentId = initParamObject.parentId;
-        this.hasFilter = (initParamObject.hasFilter === undefined) ? true : initParamObject.hasFilter;
-        this.minimumItemsToFIlter = (initParamObject.minimumItemsToFIlter) ? initParamObject.minimumItemsToFIlter : 6;
-        this.isAddable = (initParamObject.isAddable === undefined) ? true : initParamObject.isAddable;
-        this.isDeletable = (initParamObject.isDeletable === undefined) ? true : initParamObject.isDeletable;
-        this.isEditable = initParamObject.isEditable;
+        super(initParamObject)
         this.isExpandable = (initParamObject.isExpandable === undefined) ? false : initParamObject.isExpandable;
         this.isMultiSelectable = initParamObject.isMultiSelectable;
         this.hasArchiveSwitch = initParamObject.hasArchiveSwitch;
         this.subitemsCount = initParamObject.subitemsCount;
         this.currentItems = []; //wybrany wiersz
-        this.$dom;
         this.$collapsible;
-        this.$actionsMenu;
 
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
@@ -265,7 +257,7 @@ class Collapsible {
     }
 
     filterInitialise() {
-        if (this.items.length >= this.minimumItemsToFIlter || this.hasArchivedElements()) {
+        if (this.items.length >= this.minimumItemsToFilter || this.hasArchivedElements()) {
             this.filter.initialise();
             this.$actionsMenu.append(this.filter.$dom);
         }

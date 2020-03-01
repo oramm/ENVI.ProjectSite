@@ -106,7 +106,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
     addPlainRowCrudButtons(row) {
         super.addPlainRowCrudButtons(row)
         if (row.dataItem._processStep._documentTemplate.gdId) {
-            if (row.dataItem._ourLetter.id) {
+            if (row.dataItem._ourLetter) {
                 this.appendLetterAttachmentsModal.preppendTriggerButtonTo(row.$crudButtons, 'Dodaj załączniki', this);
                 this.editOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Edytuj pismo', this);
                 row.$crudButtons.append(new RaisedButton('Usuń pismo', this.deleteOurLetterAction, this).$dom);
@@ -116,6 +116,7 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
     }
 
     deleteOurLetterAction() {
-        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository.currentItem._ourLetter, '1deleteLetter', this);
+        this.connectedRepository.currentItem._ourLetter = LettersSetup.lettersRepository.currentItem;
+        this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository.currentItem, 'deleteProcessStepInstanceOurLetter', this);
     }
 }

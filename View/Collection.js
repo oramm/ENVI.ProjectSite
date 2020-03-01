@@ -1,7 +1,7 @@
 /* 
  * http://materializecss.com/collections.html
  */
-class Collection {
+class Collection extends Resultset{
     /*
      * @param {Object} initParamObject {
      *      @param {String} id
@@ -16,22 +16,11 @@ class Collection {
      * @returns {Collection}
      */
     constructor(initParamObject) {
-        this.id = initParamObject.id;
-        this.parentDataItem = initParamObject.parentDataItem;
+        super(initParamObject);
         this.isPlain = initParamObject.isPlain;
-        this.title = (initParamObject.title === undefined) ? "" : initParamObject.title;
-        this.isSelectable = (initParamObject.isSelectable === undefined) ? true : initParamObject.isSelectable;
-        this.hasFilter = (initParamObject.hasFilter === undefined) ? true : initParamObject.hasFilter;
-        this.minimumItemsToFIlter = (initParamObject.minimumItemsToFIlter) ? initParamObject.minimumItemsToFIlter : 6;
-        this.isAddable = (initParamObject.isAddable === undefined) ? true : initParamObject.isAddable;
-        this.isDeletable = (initParamObject.isDeletable === undefined) ? true : initParamObject.isDeletable;
-        this.isEditable = initParamObject.isEditable;
         this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
-        this.editModal = initParamObject.editModal;
-        this.addNewModal = initParamObject.addNewModal;
         this.$addNewTriggerIcon;
-        this.$dom;
-        this.$actionsMenu;
+        
         this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
 
 
@@ -373,7 +362,7 @@ class Collection {
 
 
     filterInitialise() {
-        if (this.items.length >= this.minimumItemsToFIlter) {
+        if (this.items.length >= this.minimumItemsToFilter) {
             this.filter.initialise();
             this.$actionsMenu.append(this.filter.$dom);
             //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",

@@ -60,8 +60,7 @@ class SimpleRepository extends Repository {
     deleteItem(item, viewObject) {
         return new Promise((resolve, reject) => {
             super.deleteItem(item, this.deleteServerFunctionName, viewObject)
-                .then((res) => {//var index = this.items.findIndex( item => item.id == res.id); 
-                    //this.items.splice(index,1);
+                .then((res) => {
                     console.log('usunięto: ', res)
                     resolve(this.name + ': item deleted');
                 });
@@ -95,30 +94,4 @@ class SimpleRepository extends Repository {
                 })
         });
     }
-
-    /*
-     * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
-     * gdy edytujemy element nieposiadający listy
-     */
-    clientSideEditItemHandler(dataItem) {
-        return new Promise((resolve, reject) => {
-            var newIndex = this.items.findIndex(item => item.id == dataItem.id);
-            this.items[newIndex] = dataItem;
-            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideEditItemHandler', dataItem);
-            resolve(dataItem);
-        });
-    }
-
-    /*
-     * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
-     */
-    clientSideAddNewItemHandler(dataItem) {
-        return new Promise((resolve, reject) => {
-            this.items.push(dataItem);
-            this.currentItem = dataItem;
-            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideAddNewItemHandler', dataItem);
-            resolve(dataItem);
-        });
-    }
-
 };

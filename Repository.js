@@ -91,6 +91,46 @@ class Repository {
         this.currentItem = Tools.search(parseInt(id), "id", this.items);
     }
 
+    /*
+     * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
+     * gdy edytujemy element nieposiadający listy
+     */
+    clientSideEditItemHandler(dataItem) {
+        return new Promise((resolve, reject) => {
+            var newIndex = this.items.findIndex(item => item.id == dataItem.id);
+            this.items[newIndex] = dataItem;
+            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideEditItemHandler', dataItem);
+            resolve(dataItem);
+        });
+    }
+
+    /*
+     * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
+     * gdy edytujemy element nieposiadający listy
+     */
+    clientSideAddNewItemHandler(dataItem) {
+        return new Promise((resolve, reject) => {
+            this.items.push(dataItem);
+            this.currentItem = dataItem;
+            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideAddNewItemHandler', dataItem);
+            resolve(dataItem);
+        });
+    }
+
+    /*
+     * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
+     * gdy edytujemy element nieposiadający listy
+     */
+    clientSideDeleteItemHandler(dataItem) {
+        return new Promise((resolve, reject) => {
+            var index = this.items.findIndex(item => item.id == dataItem.id);
+            this.items.splice(index, 1);
+            this.currentItem = {};
+            console.log('%s:: wykonano funkcję: %s, %o', this.name, 'clientSideDeleteItemHandler', dataItem);
+            resolve(dataItem);
+        });
+    }
+
     doServerFunction(serverFunctionName, serverFunctionParameters) {
         return new Promise((resolve, reject) => {
             // Create an execution request object.
@@ -207,8 +247,7 @@ class Repository {
                             var index = this.items.findIndex(item => item._tmpid == newItemTmpId);
                             this.items.splice(index, 1);
                             //wstaw do repozytorium nowy obiekt z serwera
-                            this.items.push(newItemFromServer);
-                            this.currentItem = newItemFromServer;
+                            this.clientSideAddNewItemHandler(newItemFromServer)
                             //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
                             newItemFromServer._tmpId = newItemTmpId;
                             viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
@@ -331,9 +370,7 @@ class Repository {
      */
     deleteItem(oldItem, serverFunctionName, viewObject) {
         return new Promise((resolve, reject) => {
-            var index = this.items.findIndex(item => item.id == oldItem.id);
-            this.items.splice(index, 1);
-            this.currentItem = {};
+            this.clientSideDeleteItemHandler(oldItem);
             viewObject.removeHandler.apply(viewObject, ["PENDING", oldItem.id]);
             // Create an execution request object.
             // Create execution request.

@@ -226,7 +226,7 @@ function deleteLetter(itemFormClient) {
     var success = item.deleteFromGd();
     return {
       success: success,
-      message: (success) ? undefined : 'Usunięto dane pisma z bazy, ale pliku nadal są na Drive. \n Dla ułatwienia do nazwy dodano dopisek "- USUŃ"',
+      message: (success) ? undefined : 'Usunięto dane pisma z bazy, ale pliki nadal są na Drive. \n Dla ułatwienia do nazwy dodano dopisek "- USUŃ"',
       externalUrl: (success) ? undefined : Gd.createGdFolderUrl(item._project.lettersGdFolderId)
     }
   } catch (err) {
