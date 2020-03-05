@@ -136,16 +136,13 @@ class Collection extends Resultset{
                 case "DONE":
                     this.items = this.items.filter(function (searchItem) { return searchItem.id !== item.id });
                     this.items.push(item);
-                    this.setEditAction();
-
                     var $oldRow = this.$collection.find('#' + item.id);
-
-
                     var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
                     $oldRow.after($newRow);
                     $oldRow.remove();
                     if (this.isDeletable) this.setDeleteAction();
                     if (this.isSelectable) this.setSelectAction();
+                    if (this.isEditable) this.setEditAction();
                     break;
                 case "PENDING":
                     var $oldRow = this.$collection.find('#' + item.id);

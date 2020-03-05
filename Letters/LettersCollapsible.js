@@ -72,9 +72,8 @@ class LettersCollapsible extends SimpleCollapsible {
 
     makeBodyDom(dataItem) {
         var $actionButtons = $('<div class="row">')
-        if (dataItem._canUserChangeFileOrFolder) {
+        //if (dataItem._canUserChangeFileOrFolder)
             this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
-        }
         
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);

@@ -185,17 +185,17 @@ function deleteProcessStepInstance(itemFromClient) {
   item.deleteFromDb();
 }
 
-function deleteProcessStepInstanceOurLetter(itemFormClient) {
-  itemFormClient = JSON.parse(itemFormClient);
+function deleteProcessStepInstanceOurLetter(itemFromClient) {
+  var stepInstance = JSON.parse(itemFromClient);
   try {
-    var item: OurLetter = new OurLetter(itemFormClient._ourLetter);
+    var item: OurLetter = new OurLetter(stepInstance._ourLetter);
     item.deleteFromDb();
-    var success = item.deleteFromGd();
-    return {
-      success: success,
-      message: (success) ? undefined : 'Usunięto dane pisma z bazy, ale pliki nadal są na Drive. \n Dla ułatwienia do nazwy dodano dopisek "- USUŃ"',
-      externalUrl: (success) ? undefined : Gd.createGdFolderUrl(item._project.lettersGdFolderId)
-    }
+    item.deleteFromGd();
+    delete stepInstance._ourLetter;
+    delete stepInstance._documentOpenUrl;
+    delete stepInstance._extRepoTmpDataObject;
+    return stepInstance;
+
   } catch (err) {
     Logger.log(err)
     throw err;
