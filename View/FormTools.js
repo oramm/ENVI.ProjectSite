@@ -1100,7 +1100,7 @@ class ArchiveSwitchInput extends SwitchInput {
         var _this = this;
         this.$dom.find("input[type=checkbox]").on("change", function () {
             _this.value = $(this).prop('checked');
-            _this.connectedFilterObject.archiveSwitchHandler(_this.value);
+            _this.connectedFilterObject.changeFilterCriteriaHandler(_this.value);
         });
     }
 }

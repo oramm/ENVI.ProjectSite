@@ -23,7 +23,7 @@ class ProcessStep {
         this.status = initParamObject.status;
 
       this._lastUpdated = initParamObject._lastUpdated;
-      if (initParamObject._documentTemplate) {
+      if (initParamObject._documentTemplate && initParamObject._documentTemplate.id) {
         this._documentTemplate = new DocumentTemplate(initParamObject._documentTemplate)
         this.documentTemplateId = this._documentTemplate.id;
         this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject._documentTemplate.gdId);

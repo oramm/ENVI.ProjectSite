@@ -8,12 +8,15 @@ class Filter {
         this.$dom = $('<div class="row">');
 
     }
-    initialise() {
+    initialise(filterElements) {
         this.addDefaultFilter();
+        for (const element in filterElements)
+            this.addInput(element)
         if (this.connectedResultsetComponent.hasArchiveSwitch) {
             this.addArchiveSwitch();
         }
     }
+
     addDefaultFilter() {
         var filterElement = {
             input: this.createFilterInputField(this.connectedResultsetComponent.id + "-filter", this.connectedResultsetComponent.$dom.find('li')),
@@ -34,7 +37,7 @@ class Filter {
      * @param {boolean} showArchive
      * @returns {undefined}
      */
-    archiveSwitchHandler() {
+    changeFilterCriteriaHandler() {
         var _this = this;
         var $filteredListObject;
         if (this.connectedResultsetComponent.$collapsible)
@@ -53,10 +56,13 @@ class Filter {
      * Sprawdza czy wiersz connectedResultsetComponent pasuje do kreyteriów wyszukiwania
      * @param {type} $row
      * @returns {Filter@call;isRowArchived|Boolean}
+     * 
+     * //TODO: obsłużyć dodatkowe pola
+     * https://www.w3schools.com/bootstrap/bootstrap_filters.asp
      */
     checkIfRowMatchesFilters($row) {
         //na początku pokaż tylko aktywne wiersze (ukryj arhiwum)
-        //var test = true;
+        //to działa nawet gdy nie ma fltra żywane tylko przy buildDom w Resultsecie - przemyśleć zmianę tak, aby bo build dom odpalać tą funkcję, wtedy niepotrzebna ten cały if
         if (this.filterElements.length == 0)
             return (this.connectedResultsetComponent.hasArchiveSwitch) ? this.isRowActive($row) : true;
         //pole tekstowe
@@ -103,16 +109,13 @@ class Filter {
      * Podstawowe pole filtrowania
      */
     createFilterInputField(id, $filteredObject) {
-
         var $textField = FormTools.createInputField(id, 'Filtruj listę');
         var _this = this;
         var value;
         $textField.children('input').on("keyup", function () {
             _this.filterElements[0].input.value = $(this).val().toLowerCase();
-            _this.archiveSwitchHandler();
-
+            _this.changeFilterCriteriaHandler();
         });
-
         return { $dom: $textField, value: '' };
     }
 

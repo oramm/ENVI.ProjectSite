@@ -1,49 +1,34 @@
-function getProcessInstancesListPerMilestone(milestoneId: number, externalConn: GoogleAppsScript.JDBC.JdbcConnection): any[] {
+function getProcessInstancesList(initParamObject: any, externalConn: GoogleAppsScript.JDBC.JdbcConnection): any[] {
+  var projectConditon = (initParamObject && initParamObject.projectId) ? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
+  var contractConditon = (initParamObject && initParamObject.contractId) ? 'Contracts.Id="' + initParamObject.contractId + '"' : '1';
+  var milestoneConditon = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id="' + initParamObject.milestoneId + '"' : '1';
   var sql = 'SELECT  ProcessInstances.Id, \n \t' +
     'ProcessInstances.CaseId, \n \t' +
     'ProcessInstances.TaskId, \n \t' +
     'ProcessInstances.EditorId, \n \t' +
     'ProcessInstances.LastUpdated, \n \t' +
-    'Processes.Id, \n \t' +
-    'Processes.Name, \n \t' +
-    'Processes.Description \n' +
-    'FROM ProcessInstances \n' +
-    'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
-    'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
-    'JOIN Milestones ON Milestones.Id = Cases.MilestoneId \n' +
-    'WHERE Milestones.Id = ' + milestoneId;
-
-  return getProcessInstances(sql, { milestoneId: milestoneId }, externalConn);
-}
-
-function getProcessInstancesListPerContract(contractId: number, externalConn: GoogleAppsScript.JDBC.JdbcConnection): any[] {
-  var sql = 'SELECT  ProcessInstances.Id, \n \t' +
-    'ProcessInstances.CaseId, \n \t' +
-    'ProcessInstances.TaskId, \n \t' +
-    'ProcessInstances.EditorId, \n \t' +
-    'ProcessInstances.LastUpdated, \n \t' +
-    'Processes.Id, \n \t' +
-    'Processes.Name, \n \t' +
-    'Processes.Description \n' +
+    'Processes.Id AS ProcessId, \n \t' +
+    'Processes.Name AS ProcessName, \n \t' +
+    'Processes.Description  AS ProcessDescription \n' +
     'FROM ProcessInstances \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
     'JOIN Milestones ON Milestones.Id = Cases.MilestoneId \n' +
     'JOIN Contracts ON Milestones.ContractId = Contracts.Id \n' +
-    'WHERE Contracts.Id = ' + contractId;
+    'WHERE ' + milestoneConditon + ' AND ' + contractConditon + ' AND ' + projectConditon;
 
-  return getProcessInstances(sql, { contractId: contractId }, externalConn);
+  return getProcessInstances(sql, initParamObject, externalConn);
 }
 
-function getProcessInstancesList(externalConn: GoogleAppsScript.JDBC.JdbcConnection): any[] {
+function getProcessInstancesList_OLD(externalConn: GoogleAppsScript.JDBC.JdbcConnection): any[] {
   var sql = 'SELECT  ProcessInstances.Id, \n \t' +
     'ProcessInstances.CaseId, \n \t' +
     'ProcessInstances.TaskId, \n \t' +
     'ProcessInstances.EditorId, \n \t' +
     'ProcessInstances.LastUpdated, \n \t' +
-    'Processes.Id, \n \t' +
-    'Processes.Name, \n \t' +
-    'Processes.Description \n' +
+    'Processes.Id AS ProcessId, \n \t' +
+    'Processes.Name AS ProcessName, \n \t' +
+    'Processes.Description  AS ProcessDescription \n' +
     'FROM ProcessInstances \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
@@ -60,38 +45,28 @@ function getProcessInstances(sql: string, parentDataObject, externalConn: Google
     var result = [];
     var dbResults = stmt.executeQuery(sql);
 
-    var processesStepsInstances;
-    if (!parentDataObject)
-      processesStepsInstances = [];
-    else if (parentDataObject.contractId)
-      processesStepsInstances = getProcessesStepsInstancesListPerContract(parentDataObject.contractId, conn);
-    else if (parentDataObject.milestoneId)
-      processesStepsInstances = getProcessesStepsInstancesListPerMilestone(parentDataObject.milestoneId, conn);
-
     while (dbResults.next()) {
       var item = {
-        id: dbResults.getLong(1),
+        id: dbResults.getLong('Id'),
         _case: {
-          id: dbResults.getLong(2)
+          id: dbResults.getLong('CaseId')
         },
         _task: {
-          id: dbResults.getLong(3)
+          id: dbResults.getLong('TaskId')
         },
         _editor: {
-          id: dbResults.getLong(4)
+          id: dbResults.getLong('EditorId')
         },
-        _lastUpdated: dbResults.getString(5),
+        _lastUpdated: dbResults.getString('LastUpdated'),
         _process: {
-          id: dbResults.getLong(6),
-          name: dbResults.getString(7),
-          description: dbResults.getString(8),
-        },
-        _stepsInstances: processesStepsInstances.filter(function (item) { return item._case.id == dbResults.getLong(2) })
+          id: dbResults.getLong('ProcessId'),
+          name: dbResults.getString('ProcessName'),
+          description: dbResults.getString('ProcessDescription'),
+        }
       }
 
       result.push(item);
     }
-
     dbResults.close();
     return result;
   } catch (e) {

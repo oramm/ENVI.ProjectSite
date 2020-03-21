@@ -7,7 +7,7 @@ function getProcessesList(initParamObject, externalConn) {
                     'Processes.LastUpdated, \n \t' +
                     'Processes.EditorId, \n \t' +
                     'Processes.CaseTypeId, \n \t' +
-                    'CaseTypes.Name, \n \t' +
+                    'CaseTypes.Name As CaseTypeName, \n \t' +
                     'CaseTypes.FolderNumber, \n \t' +
                     'TaskTemplatesForProcesses.Id AS TaskTemplateId, \n \t' +
                     'TaskTemplatesForProcesses.Name AS TaskTemplateName, \n \t' +
@@ -34,7 +34,7 @@ function getProcesses(sql, externalConn){
                               description: dbResults.getString('Description'),
                               status: dbResults.getString('Status'),
                               _caseType: {id: dbResults.getLong('CaseTypeId'),
-                                          name: dbResults.getString('Name')
+                                          name: dbResults.getString('CaseTypeName')
                                          },
                               _lastUpdated: dbResults.getString('LastUpdated'),
                               _editor: { id: dbResults.getLong('EditorId')

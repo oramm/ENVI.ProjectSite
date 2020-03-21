@@ -20,6 +20,7 @@ class OurLetterGdFile extends DocumentTemplateGdFile {
     edit(blobEnviObjects: _blobEnviObject[]) {
         super.edit(blobEnviObjects);
         GDocsTools.fillNamedRange(this.dataObject.documentGdId, 'address', this.makeEntitiesDataLabel(this.dataObject._entitiesMain));
+        GDocsTools.fillNamedRange(this.dataObject.documentGdId, 'description', this.dataObject._project.ourId + ': ' + this.dataObject.description);
     }
 
     /*

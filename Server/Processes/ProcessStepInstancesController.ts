@@ -55,6 +55,36 @@ function getProcessesStepsInstancesListPerContract(contractId, externalConn) {
   return getProcessesStepsInstances(sql, { contractId: contractId }, externalConn);
 }
 
+function getProcessesStepsInstancesListPerProject(projectId, externalConn) {
+  var sql = 'SELECT  ProcessesStepsInstances.Id, \n \t' +
+    'ProcessesStepsInstances.ProcessInstanceId, \n \t' +
+    'ProcessInstances.CaseId, \n \t' +
+    'ProcessesStepsInstances.Status, \n \t' +
+    'ProcessesStepsInstances.Deadline, \n \t' +
+    'ProcessesStepsInstances.OurLetterId, \n \t' +
+    'ProcessesStepsInstances.LastUpdated, \n \t' +
+    'ProcessesStepsInstances.EditorId \n \t,' +
+    'ProcessesSteps.Id AS ProcessStepId, \n \t' +
+    'ProcessesSteps.Name AS ProcessStepName, \n \t' +
+    'ProcessesSteps.Description AS ProcessStepDescription, \n \t' +
+    'Letters.DocumentGdId AS OurLetterDocumentGdId, \n \t' +
+    'Letters.FolderGdId AS OurLetterFolderGdId, \n \t' +
+    'DocumentTemplates.Name AS DocumentTemplateName, \n \t' +
+    'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
+    'FROM ProcessesStepsInstances \n' +
+    'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
+    'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
+    'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
+    'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
+    'JOIN Milestones ON Milestones.Id = Cases.MilestoneId \n' +
+    'JOIN Contracts ON Contracts.Id = Milestones.ContractId \n' +
+    'JOIN Projects ON Projects.OurId = Contracts.ProjectOurId \n' +
+    'WHERE Projects.OurId = "' + projectId + '"';
+  return getProcessesStepsInstances(sql, { projectId: projectId }, externalConn);
+}
+
 function getProcessesStepsInstances(sql, parentDataObject, externalConn) {
   Logger.log(sql);
   try {

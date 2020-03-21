@@ -25,7 +25,7 @@ class CasesController {
         caseTypesRepository = new SimpleRepository('CaseTypes repository',
             'getCaseTypesListPerMilestone');
 
-        CasesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
+        ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
             'getProcessesStepsInstancesListPerMilestone',
             '',
             'editProcessStepInstance');
@@ -54,7 +54,7 @@ class CasesController {
         promises[1] = CasesSetup.casesRepository.initialise(casesRepository.parentItemId);
         promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
         promises[3] = CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId);
-        promises[4] = CasesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId);
+        promises[4] = ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId);
         promises[5] = CasesSetup.eventsRepository.initialise(CasesSetup.casesRepository.parentItemId);
         promises[6] = LettersSetup.documentTemplatesRepository.initialise();
         promises[7] = LettersSetup.lettersRepository.initialise({ milestoneId: LettersSetup.lettersRepository.parentItemId });

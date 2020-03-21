@@ -12,6 +12,7 @@ class Task {
   ownerName?: string;
   rowStatus?: any;
   sheetRow?: any;
+  milestoneId?: number;
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
@@ -180,7 +181,7 @@ class Task {
     }
   }
 
-  editInDb(externalConn, isPartOfTransaction) {
+  editInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
     editInDb('Tasks', this, externalConn, isPartOfTransaction);
   }
 
@@ -226,7 +227,7 @@ class Task {
   /*
    * sprawdza czy zadanie powinno znaleźć się w arkuszu SCRUM
    */
-  shouldBeInScrum(externalConn): boolean {
+  shouldBeInScrum(externalConn?: GoogleAppsScript.JDBC.JdbcConnection): boolean {
     var test = false;
     if (this._owner && this._owner.id)
       test = this.status !== 'Backlog' && Setup.getSystemRole({ id: this._owner.id }).systemRoleId <= 3

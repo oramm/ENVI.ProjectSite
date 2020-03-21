@@ -16,14 +16,13 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
             isEditable: true,
             isAddable: false,
             isDeletable: false,
-            connectedRepository: CasesSetup.processesStepsInstancesRepository
+            connectedRepository: ProcessesInstancesSetup.processesStepsInstancesRepository
         })
         this.status = initParamObject.status;
 
         this.addNewOurLetterModal = initParamObject.addNewOurLetterModal;
         this.editOurLetterModal = initParamObject.editOurLetterModal;
         this.appendLetterAttachmentsModal = initParamObject.appendLetterAttachmentsModal;
-
 
         this.initialise(this.makeList());
     }

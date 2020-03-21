@@ -22,5 +22,6 @@ class MainWindowView extends Popup{
         this.autocomplete.chosenItem = search(inputValue, "_ourId_Alias", projectsRepository.items);
         projectsRepository.currentItem = this.autocomplete.chosenItem;
         this.navigationBar.initialiseMenuItems();
+        this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link)
     }
 }

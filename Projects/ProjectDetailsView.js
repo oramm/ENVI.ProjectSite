@@ -5,7 +5,9 @@ class ProjectDetailsView extends Popup {
     initialise(){
         this.setTittle("Informacje o projekcie");
         this.projectDetailsCollection = new ProjectDetailsCollection('projectDetailsCollection');
-        $('#actionsMenu').after(this.projectDetailsCollection.$dom);
+        $('#projectDetails').append(this.projectDetailsCollection.$dom);
+        $("#processes").append(new ProcessesCollapsible('processCollapsible').$dom);
+        
         this.actionsMenuInitialise();
         this.dataLoaded(true);
     }

@@ -10,7 +10,7 @@ class ProcessOurLetterModalController extends OurLetterModalController {
         this.modal.externalRepository.currentItem = {
             //Ustaw tu parametry kontekstowe jeśli konieczne
             _cases: [casesRepository.currentItem],
-            _template: CasesSetup.processesStepsInstancesRepository.currentItem._processStep._documentTemplate,
+            _template: ProcessesInstancesSetup.processesStepsInstancesRepository.currentItem._processStep._documentTemplate,
             _entitiesMain: [],
             _entitiesCc: [],
             _project: LettersSetup.currentProject,
@@ -20,7 +20,6 @@ class ProcessOurLetterModalController extends OurLetterModalController {
                 systemEmail: LettersSetup.currentUser.systemEmail
             },
             _lastUpdated: '',
-            //_processStepInstance: CasesSetup.processesStepsInstancesRepository.currentItem,
             isOur: true
         };
         

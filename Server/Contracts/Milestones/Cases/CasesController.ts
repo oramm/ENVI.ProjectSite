@@ -186,13 +186,12 @@ function getCases(sql, parentDataObject) {
     var processes = getProcessesList(undefined, conn);
     var processesInstances;
     if (!parentDataObject)
-      processesInstances = getProcessInstancesList(conn);
-    else if (parentDataObject.projectId)
-      processesInstances = [];
-    else if (parentDataObject.contractId)
-      processesInstances = getProcessInstancesListPerContract(parentDataObject.contractId, conn);
-    else if (parentDataObject.milestoneId)
-      processesInstances = getProcessInstancesListPerMilestone(parentDataObject.milestoneId, conn);
+      processesInstances = getProcessInstancesList(undefined, conn);
+    //else if (parentDataObject.projectId)
+    //  processesInstances = [];
+    else if (parentDataObject.projectId || parentDataObject.contractId || parentDataObject.milestoneId)
+      processesInstances = getProcessInstancesList(parentDataObject, conn);
+
 
     while (dbResults.next()) {
       var item = new Case({
@@ -227,7 +226,7 @@ function getCases(sql, parentDataObject) {
             number: dbResults.getString('ContractNumber')
           }
         },
-        _processesInstances: processesInstances.filter(function (item) { return item._case.id == dbResults.getLong(1) })
+        _processesInstances: processesInstances.filter(function (item) { return item._case.id == dbResults.getLong('Id') })
       });
       result.push(item);
     }

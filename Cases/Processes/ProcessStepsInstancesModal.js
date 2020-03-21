@@ -3,7 +3,7 @@ class ProcessStepsInstancesModal extends Modal {
         super(id, tittle, connectedResultsetComponent,mode);
         
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
-        this.statusSelectField.initialise(CasesSetup.processesStepsInstancesStatusNames);
+        this.statusSelectField.initialise(ProcessesInstancesSetup.processesStepsInstancesStatusNames);
         
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
         
