@@ -690,6 +690,10 @@ class InputTextField {
             this.$input.removeAttr('required');
     }
 
+    getValue() {
+        return this.$input.val();
+    }
+
     setValue(inputvalue) {
         this.$input.val(inputvalue);
     }
@@ -1060,10 +1064,10 @@ class SwitchInput {
     buildDom() {
         this.$dom
             .append('<label>').children()
-            .append(this.onLabel)
+            .append(this.offLabel)
             .append('<input type="checkbox">')
             .append('<span class="lever">')
-            .append(this.offLabel);
+            .append(this.onLabel);
     }
 
     setChangeAction() {
@@ -1088,9 +1092,9 @@ class SwitchInput {
  * Używana w klasie FIlter jako domyślny komponent
  * @type type
  */
-class ArchiveSwitchInput extends SwitchInput {
-    constructor(connectedFilterObject) {
-        super('Archiwum', 'Aktualne');
+class FilterSwitchInput extends SwitchInput {
+    constructor(onLabel, offLabel, connectedFilterObject) {
+        super(onLabel, offLabel);
         this.connectedFilterObject = connectedFilterObject;
         this.$dom.find('input').attr('checked', (this.connectedFilterObject.showActiveRows) ? 'true' : 'false');
         this.value = (this.connectedFilterObject.showActiveRows) ? true : false;
@@ -1100,7 +1104,7 @@ class ArchiveSwitchInput extends SwitchInput {
         var _this = this;
         this.$dom.find("input[type=checkbox]").on("change", function () {
             _this.value = $(this).prop('checked');
-            _this.connectedFilterObject.changeFilterCriteriaHandler(_this.value);
+            _this.connectedFilterObject.changeFilterCriteriaHandler();
         });
     }
 }

@@ -1,7 +1,7 @@
 /* 
  * http://materializecss.com/collections.html
  */
-class Collection extends Resultset{
+class Collection extends Resultset {
     /*
      * @param {Object} initParamObject {
      *      @param {String} id
@@ -20,7 +20,7 @@ class Collection extends Resultset{
         this.isPlain = initParamObject.isPlain;
         this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
         this.$addNewTriggerIcon;
-        
+        this.title = initParamObject.title;
         this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
 
 
@@ -29,6 +29,9 @@ class Collection extends Resultset{
         this.$dom = $('<div>')
             .attr('id', 'container' + '_' + this.id)
             .addClass('collection-container');
+        this.$title = $('<div class="resultset-title">')
+        this.$title.text(this.title);
+
         this.$actionsMenu = $('<div>')
             .attr('id', 'actionsMenu' + '_' + this.id)
             .addClass('cyan lighten-5')
@@ -41,7 +44,7 @@ class Collection extends Resultset{
      * @param {type} parentViewObject - nie używane
      * @param {function} parentViewObjectSelectHandler - nie używane
      */
-    initialise(items) {
+    initialise(items, filterElements = []) {
         this.items = items;
 
         this.buildDom();
@@ -49,7 +52,7 @@ class Collection extends Resultset{
             this.$dom
             //.append(this.$emptyList);    
         }
-        this.actionsMenuInitialise();
+        this.actionsMenuInitialise(filterElements);
 
         if (this.isAddable) Tools.hasFunction(this.addNewHandler);
         Tools.hasFunction(this.makeItem);
@@ -58,7 +61,7 @@ class Collection extends Resultset{
     buildDom() {
         this.$collection = $('<ul class="collection">');
         if (this.title)
-            this.$dom.append('<div class="collection-title">' + this.title + '</div>');
+            this.$dom.prepend(this.$title);
         this.$dom
             .append(this.$actionsMenu)
             .append(this.$collection);
@@ -358,9 +361,9 @@ class Collection extends Resultset{
     }
 
 
-    filterInitialise() {
+    filterInitialise(filterElements) {
         if (this.items.length >= this.minimumItemsToFilter) {
-            this.filter.initialise();
+            this.filter.initialise(filterElements);
             this.$actionsMenu.append(this.filter.$dom);
             //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
             //                                                          this.$collection.children('li'))
@@ -368,7 +371,7 @@ class Collection extends Resultset{
         }
     }
 
-    actionsMenuInitialise() {
+    actionsMenuInitialise(filterElements) {
         if (this.isAddable) {
             this.$addNewTriggerIcon = this.addNewModal.createTriggerIcon();
             this.$actionsMenu.prepend(this.$addNewTriggerIcon);
@@ -376,7 +379,7 @@ class Collection extends Resultset{
         }
         //this.addNewModal.preppendTriggerIconTo(this.$actionsMenu,this);
         if (this.hasFilter)
-            this.filterInitialise();
+            this.filterInitialise(filterElements);
 
     }
 

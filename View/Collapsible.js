@@ -1,7 +1,7 @@
 /* 
  * http://materializecss.com/collapsible.html
  */
-class Collapsible extends Resultset{
+class Collapsible extends Resultset {
     constructor(initParamObject) {
         super(initParamObject)
         this.isExpandable = (initParamObject.isExpandable === undefined) ? false : initParamObject.isExpandable;
@@ -13,18 +13,19 @@ class Collapsible extends Resultset{
 
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
+        this.$dom = $('<div>')
+            .attr('id', 'container' + '_' + this.id);
         this.$collapsible = $('<ul class="collapsible">');
         this.$collapsible.attr('id', this.id);
         this.$collapsible.attr('data-collapsible', (this.isExpandable) ? 'expandable' : 'accordion');
+        this.$title = $('<div class="resultset-title">')
+        this.$title.text(this.title);
         this.$actionsMenu = $('<div>')
             .attr('id', 'actionsMenu' + '_' + this.id)
             .addClass('cyan lighten-5')
             .addClass('actionsMenu');
 
-        this.$dom = $('<div>')
-            .attr('id', 'container' + '_' + this.id)
-            .append(this.$actionsMenu)
-            .append(this.$collapsible);
+
         this.filter = new Filter(this);
     }
 
@@ -43,16 +44,12 @@ class Collapsible extends Resultset{
      * @param {type} parentViewObjectSelectHandler
      * @returns {undefined}
      */
-    initialise(items, parentViewObject, parentViewObjectSelectHandler) {
+    initialise(items, filterElements) {
         this.items = items;
-        this.parentViewObject = parentViewObject;
-        this.parentViewObjectSelectHandler = parentViewObjectSelectHandler;
-
-        //this.isEditable = (this.editModal !== undefined)? true : false;
         this.isSelectable = true;
 
+        this.actionsMenuInitialise(filterElements);
         this.buildDom();
-        this.actionsMenuInitialise();
 
         Tools.hasFunction(this.makeItem);
         Tools.hasFunction(this.makeBodyDom);
@@ -66,6 +63,12 @@ class Collapsible extends Resultset{
         }
         this.$collapsible.collapsible();//inicjacja wg instrukcji materialisecss
 
+        this.$dom
+            .append(this.$actionsMenu)
+            .append(this.$collapsible);
+        if (this.title)
+            this.$dom.prepend(this.$title)
+            
         if (this.isEditable) this.setEditAction();
         if (this.isDeletable) this.setDeleteAction();
         if (this.isSelectable) this.setSelectAction();
@@ -96,12 +99,15 @@ class Collapsible extends Resultset{
             .attr('itemId', item.id)
             .addClass('collapsible-item');
         //obsłuż status - potrzebne np. przy filtrowaniu
-        if (item.dataItem.status)
-            row.$dom.attr('status', item.dataItem.status);
+        for (const element of this.filter.filterElements) {
+            if (element.inputType == 'FilterSwitchInput')
+                row.$dom.attr(element.attributeToCheck, item.dataItem[element.attributeToCheck]);
+        }
         if (!this.filter.checkIfRowMatchesFilters(row.$dom))
             row.$dom.hide();
-        if (this.subitemsCount)
-            row.$dom.children('.collapsible-header').append(new Badge(item.id, this.subitemsCount, 'light-blue').$dom);
+
+        if (item.subitemsCount)
+            row.$dom.children('.collapsible-header').append(new Badge(item.id, item.subitemsCount, 'teal lighten-2').$dom);
         row.$dom.children('.collapsible-header')
             .css('display', 'block')
             .append(row.$crudButtons);
@@ -256,9 +262,9 @@ class Collapsible extends Resultset{
         return this.items.filter(item => item.dataItem.status && item.dataItem.status.match(/Zamknięt|Archiw/i)).length > 0
     }
 
-    filterInitialise() {
+    filterInitialise(filterElements) {
+        this.filter.initialise(filterElements);
         if (this.items.length >= this.minimumItemsToFilter || this.hasArchivedElements()) {
-            this.filter.initialise();
             this.$actionsMenu.append(this.filter.$dom);
         }
     }
@@ -266,7 +272,7 @@ class Collapsible extends Resultset{
      * Klasa pochodna musi mieć zadeklarowaną metodę addNewHandler()
      * TODO: do usunięcia
      */
-    actionsMenuInitialise() {
+    actionsMenuInitialise(filterElements) {
         //var $buttonsPanel = $('<div class="row">');
         //this.$actionsMenu.append($buttonsPanel);
         //if (this.addNewModal !== undefined)
@@ -276,9 +282,8 @@ class Collapsible extends Resultset{
             this.$actionsMenu.prepend(this.addNewModal.createTriggerIcon());
             this.setAddNewAction();
         }
-
         if (this.hasFilter)
-            this.filterInitialise();
+            this.filterInitialise(filterElements);
     }
 
     setSelectAction() {
@@ -301,7 +306,6 @@ class Collapsible extends Resultset{
 
     defaultSelectAction(selectedItemId) {
         this.currentItems[0] = this.items.filter(item => item.id == selectedItemId)[0];
-        //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
     }
 
     multiSelectAction(selectedItemId) {
@@ -313,7 +317,6 @@ class Collapsible extends Resultset{
         }
         else
             this.currentItems.push();
-        //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
     }
 
     /*

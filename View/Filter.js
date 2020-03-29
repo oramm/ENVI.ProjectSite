@@ -1,5 +1,6 @@
 class Filter {
     constructor(connectedResultsetComponent, showActiveRows) {
+        this.id = connectedResultsetComponent.id + "-filter";
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.showActiveRows = (showActiveRows === undefined) ? true : showActiveRows;
         this.filterElements = [];
@@ -8,9 +9,9 @@ class Filter {
         this.$dom = $('<div class="row">');
 
     }
-    initialise(filterElements) {
+    initialise(filterElements = []) {
         this.addDefaultFilter();
-        for (const element in filterElements)
+        for (const element of filterElements)
             this.addInput(element)
         if (this.connectedResultsetComponent.hasArchiveSwitch) {
             this.addArchiveSwitch();
@@ -19,16 +20,21 @@ class Filter {
 
     addDefaultFilter() {
         var filterElement = {
-            input: this.createFilterInputField(this.connectedResultsetComponent.id + "-filter", this.connectedResultsetComponent.$dom.find('li')),
-            colSpan: 12
+            inputType: 'InputTextField',
+            colSpan: 12,
+            label: 'Filtruj listę'
         };
         this.addInput(filterElement);
     }
 
     addArchiveSwitch() {
         var filterElement = {
-            input: new ArchiveSwitchInput(this),
-            colSpan: 3
+            inputType: 'FilterSwitchInput',
+            colSpan: 3,
+            onLabel: 'Aktualne',
+            offLabel: 'Archiwum',
+            attributeToCheck: 'status',
+            searchedRegex: /^((?!Zamknięt|Archiw).)*$/
         };
         this.addInput(filterElement);
     }
@@ -45,7 +51,6 @@ class Filter {
         else if (this.connectedResultsetComponent.$collection)
             $filteredListObject = this.connectedResultsetComponent.$collection;
         $filteredListObject.children("li").map(function () {
-            //if (showArchived) $(this).toggle();
             if (!_this.checkIfRowMatchesFilters($(this)))
                 $(this).hide()
             else
@@ -61,62 +66,67 @@ class Filter {
      * https://www.w3schools.com/bootstrap/bootstrap_filters.asp
      */
     checkIfRowMatchesFilters($row) {
-        //na początku pokaż tylko aktywne wiersze (ukryj arhiwum)
-        //to działa nawet gdy nie ma fltra żywane tylko przy buildDom w Resultsecie - przemyśleć zmianę tak, aby bo build dom odpalać tą funkcję, wtedy niepotrzebna ten cały if
-        if (this.filterElements.length == 0)
-            return (this.connectedResultsetComponent.hasArchiveSwitch) ? this.isRowActive($row) : true;
-        //pole tekstowe
-        if (!$row.text().toLowerCase().includes(this.filterElements[0].input.value))
-            return false;
-
-        if (this.connectedResultsetComponent.hasArchiveSwitch && this.isRowActive($row) != this.filterElements[1].input.value)
-            return false
-
+        for (var i = 0; i < this.filterElements.length; i++)
+            switch (this.filterElements[i].inputType) {
+                case 'InputTextField':
+                    if (!$row.text().toLowerCase().includes(this.filterElements[i].input.getValue().toLowerCase()))
+                        return false;
+                    break;
+                case 'FilterSwitchInput':
+                    if ($row.attr(this.filterElements[i].attributeToCheck) !== undefined) {
+                        var attrValueIsPositive = $row.attr(this.filterElements[i].attributeToCheck).match(this.filterElements[i].searchedRegex);
+                        attrValueIsPositive = (!attrValueIsPositive) ? false : true;
+                        var valeshouldBepositive = this.filterElements[this.filterElements.length - 1].input.getValue()
+                        if (attrValueIsPositive != valeshouldBepositive)
+                            return false;
+                    }
+                    break;
+            }
         return true;
-    }
-
-    isRowActive($row) {
-        var test = false;
-        if ($row.attr('status') === undefined)
-            test = true;
-        else if (!$row.attr('status').match(/Zamknięt|Archiw/i))
-            test = true;
-        return test;
     }
 
     /*
      * dodaje nistandardowy element do filtra (lista i $dom)
      */
     addInput(filterElement) {
+        switch (filterElement.inputType) {
+            case 'InputTextField':
+                filterElement.input = this.createInputTextField(filterElement);
+                break;
+            case 'FilterSwitchInput':
+                filterElement.input = new FilterSwitchInput(filterElement.onLabel, filterElement.offLabel, this);
+                break;
+            default:
+                throw new Error(filterElement.inputType + " to niewłaściwy typ pola filtrującego!")
+        }
         var $col = $('<div>');
-
         this.filterElements.push(filterElement);
         this.$dom
             .append($col).children(':last-child')
             .append(filterElement.input.$dom);
         this.setElementSpan(filterElement, filterElement.colSpan);
         //skoryguj szerokość gównego pola filtrowania
-        this.setElementSpan(this.filterElements[0], 12 - this.totalElementsColsPan());
+        var newDefaultElementColspan = 12 - this.totalElementsColsPan()
+        this.filterElements[0].input.$dom.removeClass('col s' + this.filterElements[0].colSpan);
+        this.setElementSpan(this.filterElements[0], newDefaultElementColspan);
     }
     /*
      * Ustawia szerokość elementu w siatce GUI
      */
     setElementSpan(filterElement, colSpan) {
         filterElement.colSpan = colSpan;
-        filterElement.input.$dom.parent().attr('class', 'col s' + filterElement.colSpan);
+        filterElement.input.$dom.addClass('col s' + filterElement.colSpan);
     }
     /*
      * Podstawowe pole filtrowania
      */
-    createFilterInputField(id, $filteredObject) {
-        var $textField = FormTools.createInputField(id, 'Filtruj listę');
+    createInputTextField(filterElement) {
+        var textField = new InputTextField(this.id + this.filterElements.length, filterElement.label);
         var _this = this;
-        var value;
-        $textField.children('input').on("keyup", function () {
-            _this.filterElements[0].input.value = $(this).val().toLowerCase();
+        textField.$input.on("keyup", function () {
             _this.changeFilterCriteriaHandler();
         });
-        return { $dom: $textField, value: '' };
+        return textField;
     }
 
     totalElementsColsPan() {
@@ -125,13 +135,5 @@ class Filter {
             colSpan += this.filterElements[i].colSpan;
         }
         return colSpan;
-    }
-
-    buildDom() {
-
-    }
-
-    clear() {
-
     }
 }

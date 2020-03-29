@@ -177,8 +177,8 @@ function getCurrentMilestonesList() {
       if (item._parent._manager.name)
         item._parent._manager.nameSurnameEmail = item._parent._manager.name.trim() + ' ' + item._parent._manager.surname.trim();
       
-      item.projectId = dbResults.getString('ProjectOurId');
-      item.projectName = dbResults.getString('ProjectName');
+      //item.projectId = dbResults.getString('ProjectOurId');
+      //item.projectName = dbResults.getString('ProjectName');
       result.push(item);
     }
     return result;
@@ -288,7 +288,6 @@ function writeAllMilestonesInDbFromContractsRegistry() {
   
   var start = new Date();
   
-  var milestone;
   for (var i = milestonesRegistryFirstDataRow; i < milestonesRegistryDataValues.length; i++) {
     var dataRow = milestonesRegistryDataValues[i];
     

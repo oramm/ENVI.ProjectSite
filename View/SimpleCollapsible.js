@@ -1,36 +1,29 @@
 class SimpleCollapsible extends Collapsible {
-    constructor(initParamObject){
-        if (initParamObject.subitemsCount && typeof initParamObject.subitemsCount  !== 'number') throw SyntaxError('subitemsCount must be a number!');
+    constructor(initParamObject) {
+        if (initParamObject.subitemsCount && typeof initParamObject.subitemsCount !== 'number') throw SyntaxError('subitemsCount must be a number!');
         super(initParamObject);
         this.connectedRepository = initParamObject.connectedRepository;
-        
-        this.$bodyDoms=[];  
+
+        this.$bodyDoms = [];
     }
-    initialize(){
-        super.initialise();
-        this.makeBodyDoms();
-    }
-    
-    makeCollapsibleItemsList(){
+
+    makeCollapsibleItemsList() {
         var itemsList = [];
-        for (var i=0; i<this.connectedRepository.items.length; i++){
-            itemsList.push(this.makeItem(this.connectedRepository.items[i],
-                           this.$bodyDoms[i])
-                          );
-            }
+        var i = 0;
+        for (const item of this.connectedRepository.items) {
+            itemsList.push(this.makeItem(item,
+                this.$bodyDoms[i++])
+            );
+        }
         return itemsList;
     }
-    
-    makeBodyDoms(){
-        for(var i=0; i<this.connectedRepository.items.length; i++){
+
+    makeBodyDoms() {
+        for (var i = 0; i < this.connectedRepository.items.length; i++) {
             this.$bodyDoms[i] = this.makeBodyDom(this.connectedRepository.items[i]);
         }
-    }    
-    
-    actionsMenuInitialise(){
-        super.actionsMenuInitialise();
     }
-   
+
     /*
      * Krok 1 - po kliknięciu w przycisk 'usuń' 
      * Proces: this.removeTrigger >> xxxxRepository.deleteItem()
@@ -38,17 +31,17 @@ class SimpleCollapsible extends Collapsible {
      *                                      >> repository.deleteItem >> collection.removeHandler[DONE]
 
      */
-    removeTrigger(itemId){
-        var item = search(parseInt(itemId),"id", this.connectedRepository.items);
+    removeTrigger(itemId) {
+        var item = search(parseInt(itemId), "id", this.connectedRepository.items);
 
         this.connectedRepository.deleteItem(item, this)
             .catch(err => {
-                      console.error(err);
-                    });
+                console.error(err);
+            });
     }
-    
-    selectTrigger(itemId){
+
+    selectTrigger(itemId) {
         this.connectedRepository.setCurrentItemById(itemId);
     }
-    
+
 }

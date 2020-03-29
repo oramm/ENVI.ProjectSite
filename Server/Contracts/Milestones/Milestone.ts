@@ -15,6 +15,8 @@ class Milestone {
   _gdFolderUrl?: string;
   _folderName?: string;
   isOur?: boolean;
+  _FolderNumber_TypeName_Name?: string;
+
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
@@ -196,7 +198,7 @@ class Milestone {
     }
   }
 
-  editInDb(externalConn, isPartOfTransaction) {
+  editInDb(externalConn?, isPartOfTransaction?: boolean) {
     editInDb('Milestones', this, externalConn, isPartOfTransaction);
   }
 

@@ -39,13 +39,13 @@ iframe {
     font-size: 1.2em;
 }
 
-.collection-title{
+.resultset-title{
     font-weight: 300;
     font-size: 1.1em;
     color: #26a69a;
 }
 
-.scrumBoard .collection-title{
+.scrumBoard .resultset-title{
     font-weight: 300;
     font-size: 1.1em;
     color: #595959;

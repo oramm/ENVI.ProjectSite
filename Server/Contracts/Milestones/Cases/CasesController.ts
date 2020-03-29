@@ -22,6 +22,7 @@ function getCasesListPerMilestone(milestoneId) {
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
@@ -56,6 +57,7 @@ function getCasesListPerContract(contractId) {
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
@@ -92,6 +94,7 @@ function getCasesListPerProject(initParamObject) {
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
@@ -130,6 +133,7 @@ function getCasesListPerIdsList(initParamObject) {
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
@@ -164,6 +168,7 @@ function getCasesList() {
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
@@ -223,7 +228,8 @@ function getCases(sql, parentDataObject) {
           },
           _parent: {
             ourId: dbResults.getString('ContractOurId'),
-            number: dbResults.getString('ContractNumber')
+            number: dbResults.getString('ContractNumber'),
+            alias: dbResults.getString('ContractAlias')
           }
         },
         _processesInstances: processesInstances.filter(function (item) { return item._case.id == dbResults.getLong('Id') })
