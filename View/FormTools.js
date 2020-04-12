@@ -616,7 +616,7 @@ class DatePicker {
         return this.$dom;
     }
     //https://stackoverflow.com/questions/30324552/how-to-set-the-date-in-materialize-datepicker
-    setChosenDate(date) {
+    setValue(date) {
         var $generatedInput = this.$input.pickadate()
 
         // Use the picker object directly.
@@ -823,7 +823,7 @@ class Form {
                     tinyMCE.triggerSave();
                     break;
                 case 'DatePicker':
-                    this.elements[i].input.setChosenDate(inputvalue)
+                    this.elements[i].input.setValue(inputvalue)
                     break;
                 case 'SelectField':
                     this.elements[i].input.simulateChosenItem(inputvalue);

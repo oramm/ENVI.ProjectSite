@@ -6,7 +6,7 @@ class OurLetterModal extends LetterModal {
         this.doAddNewFunctionOnItemName = '';
         this.initFormElements();
 
-        if(this.mode==='ADD_NEW')
+        if (this.mode === 'ADD_NEW')
             this.formElements.push(this.templateFormElement);
         this.formElements.push(this.contractFormElement);
         this.formElements.push(this.milestoneFormElement);
@@ -17,8 +17,9 @@ class OurLetterModal extends LetterModal {
         this.formElements.push(this.entityMainFormElement);
         this.formElements.push(this.selectedEntitiesMainFormElement);
         this.formElements.push(this.descriptionFormElement);
-        this.formElements.push(this.fileFormElement);
-        
+        if (this.mode === 'ADD_NEW')
+            this.formElements.push(this.fileFormElement);
+
         this.initialise();
     }
     initFormElements() {

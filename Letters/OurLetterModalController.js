@@ -8,10 +8,6 @@ class OurLetterModalController extends LetterModalController {
     initAddNewDataHandler() {
         super.initAddNewDataHandler();
         LettersSetup.lettersRepository.currentItem.isOur = true;
-        this.modal.form.fillWithData({
-            creationDate: Tools.dateJStoDMY(new Date()),
-            registrationDate: Tools.dateJStoDMY(new Date())
-        });
     }
     
     onTemplateChosen(chosenItem) {

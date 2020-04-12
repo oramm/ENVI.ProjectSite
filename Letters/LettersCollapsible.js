@@ -6,7 +6,7 @@ class LettersCollapsible extends SimpleCollapsible {
             isEditable: true,
             isAddable: false,
             isDeletable: true,
-            hasArchiveSwitch: true,
+            hasArchiveSwitch: false,
             connectedRepository: LettersSetup.lettersRepository
             //subitemsCount: 12
         });

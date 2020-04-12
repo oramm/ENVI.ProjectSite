@@ -55,11 +55,9 @@ class OurLetter extends Letter {
     /*
      * _blobEnviObjects to załączniki do pisma
      */
-    public editLetterGdElements(blobEnviObjects: _blobEnviObject[]): GoogleAppsScript.Drive.Folder {
-        this.letterFilesCount = blobEnviObjects.length + 1;
+    public editLetterGdElements(): GoogleAppsScript.Drive.Folder {
         var ourLetterGdFile = new OurLetterGdFile({ _templateGdId: undefined, dataObject: this })
-        ourLetterGdFile.edit(blobEnviObjects);
-
+        ourLetterGdFile.edit();
         return DriveApp.getFolderById(this.folderGdId);
     }
 }

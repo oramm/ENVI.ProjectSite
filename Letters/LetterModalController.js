@@ -21,6 +21,8 @@ class LetterModalController {
             _lastUpdated: ''
         };
         LettersSetup.casesRepository.currentItems = [];
+        this.modal.creationDateFormElement.input.setValue(new Date());
+        this.modal.registrationDateFormElement.input.setValue(new Date());
     }
 
 

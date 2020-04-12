@@ -28,7 +28,7 @@ class DocumentTemplateGdFile {
         return this.gdFile;
     }
 
-    edit(blobEnviObjects: _blobEnviObject[]) {
+    edit() {
         this.fillNamedRanges();
     }
 

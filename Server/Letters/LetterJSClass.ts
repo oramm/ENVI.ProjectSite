@@ -60,7 +60,6 @@ abstract class Letter implements documentDataObject{
         }
     }
 
-
     setEditorId(): number {
         if (this._editor.id)
             return this._editor.id;
