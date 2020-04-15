@@ -119,11 +119,14 @@ body {
     font-size: 1.2em;
 }
 
-.collection .active strong {
+.collection .active strong, .collapsible .selected strong {
     color: #eafaf9;
     font-size: 1.2em;
 }
-
+.collapsible-item.selected > .collapsible-header{
+    color: #eafaf9;
+    background: #26a69a;
+}
 .collapsible .comment{
     
     font-size: 0.8em;

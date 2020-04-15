@@ -77,9 +77,9 @@ class GDocsTools {
     })[0]
   }
 
-  static getNameRangesTagsFromTemplate(documentGdId: string): string[] {
+  static getNameRangesTagsFromTemplate(templateGdId: string): string[] {
     var tags: string[] = [];
-    var document = DocumentApp.openById(documentGdId);
+    var document = DocumentApp.openById(templateGdId);
     var body = document.getBody();
     var foundElement = body.findText('#ENVI#[aA-zZ|\s]+#');
     while (foundElement != null) {
@@ -113,12 +113,11 @@ class GDocsTools {
 }
 function test_createNamedRanges() {
   var item = new OurLetterGdFile({
-    _templateGdId: '1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4',
-    dataObject: {
-      _templateGdId: '',
+    _template: new DocumentTemplate({ id: 1, gdId: '', caseTypeId: 1, contents: '' }),
+    document: new OurLetter({
       creationDate: '22dsfsfsf sdf2',
       documentGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'
-    }
+    })
   });
   //GDocsTools.createNamedRangesByTags('1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU', GDocsTools.getNameRangesTagsFromTemplate('1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4'));
   //return 

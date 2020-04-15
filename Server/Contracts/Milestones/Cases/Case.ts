@@ -10,6 +10,7 @@ class Case {
   _displayNumber?: string;
   milestoneId?: number;
   _parent?: any;
+  _risk: any;
   _processesInstances?: any[];
   gdFolderId?: string;
   _gdFolderUrl?: string;
@@ -41,7 +42,7 @@ class Case {
         this.milestoneId = initParamObject._parent.id;
         this._parent = initParamObject._parent;
       }
-
+      this._risk = initParamObject._risk;
       this._processesInstances = (initParamObject._processesInstances) ? initParamObject._processesInstances : [];
     }
   }

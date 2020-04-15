@@ -23,13 +23,17 @@ function getCasesListPerMilestone(milestoneId) {
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Risks.Id AS RiskId, \n \t' +
+    'Risks.Probability AS RiskProbability, \n \t' +
+    'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
     'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
     'WHERE MilestoneId=' + milestoneId + '\n' +
     'ORDER BY Cases.MilestoneId, CaseTypes.FolderNumber';
@@ -58,13 +62,17 @@ function getCasesListPerContract(contractId) {
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Risks.Id AS RiskId, \n \t' +
+    'Risks.Probability AS RiskProbability, \n \t' +
+    'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
     'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
     'WHERE Milestones.ContractId=' + contractId + '\n' +
     'ORDER BY Cases.MilestoneId, CaseTypes.FolderNumber';
@@ -95,13 +103,17 @@ function getCasesListPerProject(initParamObject) {
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Risks.Id AS RiskId, \n \t' +
+    'Risks.Probability AS RiskProbability, \n \t' +
+    'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
     'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
     'WHERE ' + projectCondition + ' \n' +
     'ORDER BY Contracts.Id, Milestones.Id, CaseTypes.FolderNumber';
@@ -134,13 +146,17 @@ function getCasesListPerIdsList(initParamObject) {
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Risks.Id AS RiskId, \n \t' +
+    'Risks.Probability AS RiskProbability, \n \t' +
+    'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
     'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
     'WHERE Id IN (' + initParamObject.idsList + ') \n' +
     'ORDER BY Cases.MilestoneId, CaseTypes.FolderNumber';
@@ -169,13 +185,17 @@ function getCasesList() {
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Risks.Id AS RiskId, \n \t' +
+    'Risks.Probability AS RiskProbability, \n \t' +
+    'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
     'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n';
 
   return getCases(sql, undefined);
@@ -232,6 +252,11 @@ function getCases(sql, parentDataObject) {
             alias: dbResults.getString('ContractAlias')
           }
         },
+        _risk: new Risk({
+          id: dbResults.getLong('RiskId'),
+          probability: dbResults.getInt('RiskProbability'),
+          overallImpact: dbResults.getInt('RiskOverallImpact')
+        }),
         _processesInstances: processesInstances.filter(function (item) { return item._case.id == dbResults.getLong('Id') })
       });
       result.push(item);

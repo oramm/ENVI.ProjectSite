@@ -1,4 +1,4 @@
-abstract class Letter implements documentDataObject{
+abstract class Letter implements Envi.Document{
     public id?: any;
     public isOur: boolean;
     public number?: string | number;

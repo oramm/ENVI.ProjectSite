@@ -32,7 +32,7 @@ class RisksController {
         
         
         promises[0] = RisksSetup.reactionsRepository.initialise(RisksSetup.reactionsRepository.parentItemId);
-        promises[1] = RisksSetup.risksRepository.initialise(RisksSetup.contractsRepository.parentItemId);
+        promises[1] = RisksSetup.risksRepository.initialise({projectOurId: RisksSetup.contractsRepository.parentItemId});
         promises[2] = RisksSetup.casesRepository.initialise(RisksSetup.casesRepository.parentItemId);
         
         

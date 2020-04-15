@@ -1,26 +1,35 @@
-class OurLetterGdFile extends DocumentTemplateGdFile {
-    constructor(initObjectParamenter: { _templateGdId: string; dataObject?: any }) {
+class OurLetterGdFile extends DocumentGdFile {
+    constructor(initObjectParamenter: { _template: DocumentTemplate; document: OurLetter }) {
         super(initObjectParamenter)
     }
     /*
      * Tworzy zakresy nazwane w szablonie - używać przy dodawaniu naszych pism
      */
     public createNamedRanges() {
-        GDocsTools.createNamedRangesByTags(this.dataObject.documentGdId, GDocsTools.getNameRangesTagsFromTemplate(this._templateGdId));
+        GDocsTools.createNamedRangesByTags(this.document.documentGdId, GDocsTools.getNameRangesTagsFromTemplate(this._template.gdId));
     }
     /*
      * tworzy plik z szablonu w folderze pisma na GD
      */
     public create(): GoogleAppsScript.Drive.File {
         super.create();
-        GDocsTools.fillNamedRange(this.dataObject.documentGdId, 'address', this.makeEntitiesDataLabel(this.dataObject._entitiesMain));
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'address', this.makeEntitiesDataLabel(this.document._entitiesMain));
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'contents', this._template.contents);
         return this.gdFile;
     }
 
     edit() {
         super.edit();
-        GDocsTools.fillNamedRange(this.dataObject.documentGdId, 'address', this.makeEntitiesDataLabel(this.dataObject._entitiesMain));
-        GDocsTools.fillNamedRange(this.dataObject.documentGdId, 'description', this.dataObject._project.ourId + ': ' + this.dataObject.description);
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'address', this.makeEntitiesDataLabel(this.document._entitiesMain));
+        var description = this.document._project.ourId + ': ' + this.makeCasesList() + '. ' + this.document.description
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'description', description);
+    }
+
+    private makeCasesList(): string {
+        let casesLabel : string = '';
+        for(const item of this.document._cases)
+            casesLabel += item._typeFolderNumber_TypeName_Number_Name + ', '
+        return casesLabel.substring(0, casesLabel.length-2)
     }
 
     /*

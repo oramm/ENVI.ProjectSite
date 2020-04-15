@@ -16,5 +16,4 @@ class Resultset{
         this.$dom;
         this.$actionsMenu;
     }
-
 }

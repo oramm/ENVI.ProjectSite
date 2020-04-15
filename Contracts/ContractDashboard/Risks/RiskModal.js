@@ -63,7 +63,7 @@ class RiskModal extends Modal {
      */
     initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {
-                projectId: RisksSetup.contractsRepository.parentItemId
+                projectOurId: RisksSetup.contractsRepository.parentItemId
             }
     }
 }

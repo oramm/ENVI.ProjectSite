@@ -37,10 +37,10 @@ class CasesCollapsible extends SimpleCollapsible {
         var typeName = (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]';
         var name = (dataItem.name) ? dataItem.name : ' ';
         var caseNumber = (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '';
-
+        var riskLabel = (dataItem._risk.id)? '<strong> [Poziom ryzyka: ' + dataItem._risk._rate + ']</strong> ' : '';
         return {
             id: dataItem.id,
-            name: folderNumber + ' ' + typeName + ' | ' + caseNumber + name,
+            name: folderNumber + ' ' + typeName + ' | ' + caseNumber + name + riskLabel,
             $body: $bodyDom,
             dataItem: dataItem,
             editModal: this.editModal,

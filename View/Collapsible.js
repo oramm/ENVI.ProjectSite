@@ -68,7 +68,7 @@ class Collapsible extends Resultset {
             .append(this.$collapsible);
         if (this.title)
             this.$dom.prepend(this.$title)
-            
+
         if (this.isEditable) this.setEditAction();
         if (this.isDeletable) this.setDeleteAction();
         if (this.isSelectable) this.setSelectAction();
@@ -301,6 +301,9 @@ class Collapsible extends Resultset {
                 .css('visibility', 'hidden');
             $(this).children('.crudButtons')
                 .css('visibility', 'visible');
+            
+            $(this).closest('.collapsible').children('.collapsible-item').removeClass('selected');
+            $(this).parent().addClass('selected')
         });
     }
 
