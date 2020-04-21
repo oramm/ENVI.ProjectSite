@@ -4,12 +4,12 @@ class PersonsRolesAssociationView extends Popup {
     }
     initialise(){
         return new Promise((resolve, reject) => {
-            this.personsRolesCollection = new PersonsRolesCollection('personsRolesCollection');
+            this.personRoleGroupsCollapsible = new PersonRoleGroupsCollapsible('personRoleGroupsCollapsible');
             this.setTittle("Lista kontaktowa");
 
-            $('#actionsMenu').after(this.personsRolesCollection.$dom);
+            $('#actionsMenu').after(this.personRoleGroupsCollapsible.$dom);
             this.dataLoaded(true);
-            resolve('personsRolesCollection ok');
+            resolve('personRoleGroupsCollapsible ok');
         });
     }
     

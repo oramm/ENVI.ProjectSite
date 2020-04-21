@@ -1,18 +1,24 @@
 class RolesView extends Popup {
-    constructor(){
+    constructor() {
         super();
     }
-    initialise(){
+    initialise() {
         return new Promise((resolve, reject) => {
-            this.rolesCollection = new RolesCollection('rolesCollection');
             this.setTittle("Role w projekcie");
+            //var $orgChart = $('<div id="orgchart">')
+            $('#actionsMenu')
+                .after(new RoleGroupsCollapsible('roleGroupsCollapsible').$dom)
+                //.after($orgChart)
 
-            $('#actionsMenu').after(this.rolesCollection.$dom);
+            //var orgchart = new OrgChart({
+            //    parentNode: $orgChart[0],
+            //    connectedRepository: RolesSetup.rolesRepository
+           //})
             this.dataLoaded(true);
             resolve('rolesCollection ok');
         });
     }
-    
-    actionsMenuInitialise(){
+
+    actionsMenuInitialise() {
     }
 }

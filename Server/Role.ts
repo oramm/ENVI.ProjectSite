@@ -1,27 +1,37 @@
-function Role(initParamObject) {
-  if (initParamObject) {
-    this.id = initParamObject.id;
-    this.projectId = initParamObject.projectId;
-    this.name = initParamObject.name;
-    this.description = initParamObject.description;
+class Role {
+  id: number;
+  projectOurId: string;
+  name: string;
+  description: string;
+  groupName: string;
+  managerId: number;
+  _group: any;
+
+  constructor(initParamObject) {
+    if (initParamObject) {
+      this.id = initParamObject.id;
+      this.projectOurId = initParamObject.projectOurId;
+      this.name = initParamObject.name;
+      this.description = initParamObject.description;
+      this.groupName = initParamObject._group.name;
+      this._group = initParamObject._group;
+      if (initParamObject.managerId)
+        this.managerId = initParamObject.managerId;
+    }
   }
-}
 
 
-Role.prototype = {
-  constructor: Role,
+  addInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
+    return addInDb('Roles', this, externalConn, isPartOfTransaction);
+  }
 
-  addInDb: function (conn, isPartOfTransaction) {
-    return addInDb('Roles', this, conn, isPartOfTransaction);
-  },
-
-  editInDb: function (externalConn, isPartOfTransaction) {
+  editInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
     editInDb('Roles', this, externalConn, isPartOfTransaction);
-  },
+  }
 
-  deleteFromDb: function () {
+  deleteFromDb() {
     deleteFromDb('Roles', this);
-  },
+  }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 

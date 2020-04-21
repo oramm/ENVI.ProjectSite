@@ -56,8 +56,8 @@ class Collapsible extends Resultset {
     }
 
     buildDom() {
-        for (var i = 0; i < this.items.length; i++) {
-            var row = this.buildRow(this.items[i]);
+        for (const item of this.items) {
+            var row = this.buildRow(item);
             this.$collapsible
                 .append(row.$dom);
         }
@@ -301,7 +301,7 @@ class Collapsible extends Resultset {
                 .css('visibility', 'hidden');
             $(this).children('.crudButtons')
                 .css('visibility', 'visible');
-            
+
             $(this).closest('.collapsible').children('.collapsible-item').removeClass('selected');
             $(this).parent().addClass('selected')
         });

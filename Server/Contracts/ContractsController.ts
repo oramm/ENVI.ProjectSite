@@ -134,10 +134,10 @@ function getContractsListPerProject(initParamObject): Contract[] {
   return result;
 }
 
-function getContractsKeyDataListPerProject(projectId) {
+function getContractsKeyDataListPerProject(projectId: string, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
   if (projectId === undefined) projectId = '%'
   var result = [];
-  var conn = connectToSql();
+  var conn = (externalConn) ? externalConn : connectToSql();
   var stmt = conn.createStatement();
   var query = 'SELECT  Contracts.Id, \n \t' +
     'Contracts.Number, \n \t' +

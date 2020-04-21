@@ -1,14 +1,16 @@
 class RoleModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
+    constructor(id, tittle, connectedResultsetComponent, mode) {
         super(id, tittle, connectedResultsetComponent, mode);
-        
-        this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', true, 500);
+
+        this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', true, 500);
         
         this.formElements = [
-            {   input: new InputTextField (this.id + 'nameTextField','Nazwa roli', undefined, true, 100),
+            {
+                input: new InputTextField(this.id + 'nameTextField', 'Nazwa roli', undefined, true, 100),
                 dataItemKeyName: 'name'
             },
-            {   input: this.descriptionReachTextArea,
+            {
+                input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             }
         ];
@@ -18,7 +20,11 @@ class RoleModal extends Modal {
      * Używana przy włączaniu Modala w celu dodania nowego rekordu
      * @returns {undefined}
      */
-    initAddNewData(){
-        this.connectedResultsetComponent.connectedRepository.currentItem.projectId = RolesSetup.rolesRepository.parentItemId; 
+    initAddNewData() {
+        this.connectedResultsetComponent.connectedRepository.currentItem =
+        {
+            projectOurId: RolesSetup.rolesRepository.parentItemId,
+            _group: this.connectedResultsetComponent.parentDataItem
+        };
     }
 };
