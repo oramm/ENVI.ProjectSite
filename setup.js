@@ -11,14 +11,58 @@ var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
- SCOPES =  'https://www.google.com/calendar/feeds ' + 
-            'https://www.googleapis.com/auth/documents ' +
-            'https://www.googleapis.com/auth/drive ' +
-            'https://www.googleapis.com/auth/script.external_request ' +  
-            'https://www.googleapis.com/auth/spreadsheets ' +
-            'https://www.googleapis.com/auth/userinfo.email ' + 
-            'https://www.googleapis.com/auth/userinfo.profile ';
+SCOPES = 'https://www.google.com/calendar/feeds ' +
+    'https://www.googleapis.com/auth/documents ' +
+    'https://www.googleapis.com/auth/drive ' +
+    'https://www.googleapis.com/auth/script.external_request ' +
+    'https://www.googleapis.com/auth/spreadsheets ' +
+    'https://www.googleapis.com/auth/userinfo.email ' +
+    'https://www.googleapis.com/auth/userinfo.profile ';
 
 var gAuth;
 var mainWindowView;
 var user;
+
+class MainSetup {
+    static get currentUser() {
+        return JSON.parse(sessionStorage.getItem('Current User'));
+    }
+
+    static get currentProject() {
+        return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+    }
+    static get currentContract() {
+        return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
+    }
+
+
+    static get projectsRepository() {
+        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Projects repository')));
+    }
+    static get contractsRepository() {
+        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Contracts repository')));
+    }
+    static get entitiesRepository() {
+        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Entities repository')));
+    }
+    
+    static get personsRepository() {
+        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+    }
+    static set personsRepository(data) {
+        MainSetup.personsRepositoryLocalData = data;
+    }
+    static get personsPerProjectRepository() {
+        return new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerProject repository')));
+    }
+    static set personsPerProjectRepository(data) {
+        MainSetup.personsPerProjectRepositoryLocalData = data;
+    }
+}
+
+MainSetup.projectsRepositoryLocalData;
+MainSetup.entitiesRepositoryLocalData;
+
+MainSetup.personsRepositoryLocalData;
+MainSetup.personsPerProjectRepositoryLocalData;
+

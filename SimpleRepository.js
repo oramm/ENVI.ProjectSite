@@ -19,7 +19,6 @@ class SimpleRepository extends Repository {
         this.addNewServerFunctionName = addNewServerFunctionName;
         this.editServerFunctionName = editServerFunctionName;
         this.deleteServerFunctionName = deleteServerFunctionName;
-        
         if (typeof initParemeter === 'string') {
             this.parentItemIdFromURL();
             sessionStorage.setItem(this.name, JSON.stringify(this));

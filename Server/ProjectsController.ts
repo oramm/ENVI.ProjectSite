@@ -34,7 +34,7 @@ function getProjectsList(projectId) {
                       'Projects.GoogleCalendarId,  \n \t'+
                       'Projects.LastUpdated \n'+
               'FROM Projects \n' + 
-              'JOIN Roles ON Roles.ProjectId = Projects.OurId \n' +
+              'JOIN Roles ON Roles.ProjectOurId = Projects.OurId \n' +
               'JOIN Persons_Roles ON Persons_Roles.RoleID = Roles.Id \n' + 
               'WHERE Persons_Roles.PersonID = @x := (SELECT Persons.Id FROM Persons WHERE Persons.SystemEmail = "' + currentUser.systemEmail + '") \n' +
               'GROUP BY Projects.Id';

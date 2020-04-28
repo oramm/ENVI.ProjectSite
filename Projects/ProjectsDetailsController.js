@@ -40,9 +40,8 @@ class ProjectDetailsController {
             ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(MainSetup.currentProject.ourId),
             CasesSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
             LettersSetup.documentTemplatesRepository.initialise(),
-            LettersSetup.lettersRepository.initialise({ projectId: MainSetup.currentProject.ourId })
-        ]
-
+            LettersSetup.lettersRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+        ];
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");

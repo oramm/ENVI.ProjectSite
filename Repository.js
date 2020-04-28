@@ -31,7 +31,7 @@ class Repository {
     }
 
     get items() {
-        return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).items;
+        return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).itemsLocalData;
     }
     set items(data) {
         this.itemsLocalData = data;
