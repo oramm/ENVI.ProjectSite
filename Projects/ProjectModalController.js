@@ -19,7 +19,7 @@ class ProjectModalController {
         if (this.modal.mode=='ADD_NEW')
             this.modal.selectedEmployersHiddenInput.value = [];
         if (this.modal.mode=='EDIT') {
-            this.modal.selectedEmployersHiddenInput.value = ProjectsSetup.projectsRepository.currentItem._employers;
+            this.modal.selectedEmployersHiddenInput.value = MainSetup.currentProject._employers;
             for (var i=0; i<this.modal.selectedEmployersHiddenInput.value.length; i++){
                 this.appendEmployerChip(this.modal.selectedEmployersHiddenInput.value[i]);
             }

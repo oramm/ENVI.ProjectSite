@@ -7,7 +7,7 @@ class RolesCollection extends SimpleCollection {
             addNewModal: initParamObject.addNewModal,
             editModal: initParamObject.editModal,
             isPlain: true,
-            hasFilter: true,
+            hasFilter: false,
             isEditable: true,
             isAddable: true,
             isDeletable: true,
@@ -36,6 +36,7 @@ class RolesCollection extends SimpleCollection {
             dataItem: dataItem
         };
     }
+
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */

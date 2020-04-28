@@ -16,22 +16,19 @@ class PsNavigationBar extends NavigationBar {
     
     initialiseMenuItems(){
         this.menuItems = [{ caption: "Dane projektu", 
-                            link: 'Projects/projectDetails.html?parentItemId=' + projectsRepository.currentItem.ourId
+                            link: 'Projects/projectDetails.html?parentItemId=' + MainSetup.currentProject.ourId
                           },
                           { caption: "Kontrakty", 
-                            link: 'Contracts/ContractsList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                            link: 'Contracts/ContractsList.html?parentItemId=' + MainSetup.currentProject.ourId
                           },
                           { caption: "Pisma", 
-                            link: 'Letters/LettersList.html?parentItemId=' + projectsRepository.currentItem.ourId
+                            link: 'Letters/LettersList.html?parentItemId=' + MainSetup.currentProject.ourId
                           },
-                          { caption: "Lista kontaktowa", 
-                            link: 'PersonRoles/personRoles.html?parentItemId=' + projectsRepository.currentItem.ourId
-                          },
-                          { caption: "Zarządzaj rolami", 
-                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          { caption: "Osoby", 
+                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + MainSetup.currentProject.ourId
                           }
                           //{ caption: "Gant", 
-                          //  link: 'Contracts/Gant/Gant.html?parentItemId=' + projectsRepository.currentItem.ourId
+                          //  link: 'Contracts/Gant/Gant.html?parentItemId=' + MainSetup.currentProject.ourId
                           //}
                          ];
         this.addMenuItems($('#main-nav ul'));

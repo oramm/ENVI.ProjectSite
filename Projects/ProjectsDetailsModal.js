@@ -13,7 +13,7 @@ class ProjectsDetailsModal extends Modal {
                                                                      'business', 
                                                                      false, 
                                                                      'Wybierz nazwę')
-        this.employerAutoCompleteTextField.initialise(ProjectsSetup.entitiesRepository,'name',this.controller.onEmployerChosen,this.controller);
+        this.employerAutoCompleteTextField.initialise(MainSetup.entitiesRepository,'name',this.controller.onEmployerChosen,this.controller);
         this.selectedEmployersHiddenInput = new HiddenInput (this.id + '_currentEmployersHiddenInput', undefined, false);
         var _this=this;
         

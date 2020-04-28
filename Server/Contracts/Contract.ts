@@ -560,7 +560,7 @@ class Contract {
    */
   shouldBeInScrum(): boolean {
     var test = false;
-    if (this.status !== 'Archiwalny') {
+    if (this.status !== 'Archiwalny' && !this._type.name.match(/AQM/i)) {
       if (this._admin && this._admin.id)
         test = Setup.getSystemRole({ id: this._admin.id }).systemRoleId <= 3;
       if (!test && this._manager && this._manager.id)
@@ -568,23 +568,6 @@ class Contract {
     }
     Logger.log('Contract: ' + this.name + ' shouldBeInScrum: ' + test + '\n');
     return test;
-  }
-
-  getPersonDbId(email: String): Number {
-    try {
-      var conn = connectToSql();
-      var stmt = conn.createStatement();
-      var results = stmt.executeQuery('SELECT Persons.Id FROM Persons \n' +
-        'WHERE Persons.Email="' + email + '"');
-      var end = new Date();
-      //pobierz do gsheet Id krotki z bazy - potrzebne przy edycji
-      results.last();
-      return results.getLong(1);
-    } catch (e) {
-      throw e;
-    } finally {
-      conn.close();
-    }
   }
 
   getType(ourId: String): String {

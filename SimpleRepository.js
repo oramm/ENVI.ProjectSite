@@ -15,12 +15,12 @@ class SimpleRepository extends Repository {
         deleteServerFunctionName) {
         super(initParemeter);
         this.parentItemId = initParemeter.parentItemId;
+        this.getItemsListServerFunctionName = getItemsListServerFunctionName
+        this.addNewServerFunctionName = addNewServerFunctionName;
+        this.editServerFunctionName = editServerFunctionName;
+        this.deleteServerFunctionName = deleteServerFunctionName;
+        
         if (typeof initParemeter === 'string') {
-            this.getItemsListServerFunctionName = getItemsListServerFunctionName
-            this.addNewServerFunctionName = addNewServerFunctionName;
-            this.editServerFunctionName = editServerFunctionName;
-            this.deleteServerFunctionName = deleteServerFunctionName;
-
             this.parentItemIdFromURL();
             sessionStorage.setItem(this.name, JSON.stringify(this));
         }

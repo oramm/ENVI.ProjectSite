@@ -5,8 +5,6 @@ class RolesController {
         $("#authorize-div").hide();
         rolesView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
-        RolesSetup.personsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
 
         RolesSetup.roleGroupsRepository = new StaticRepository({
             name: 'RoleGroups repository',

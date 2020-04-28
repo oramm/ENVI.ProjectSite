@@ -4,11 +4,23 @@ function getRolesPerProjectList(initParamObject) {
   var sql = 'SELECT \n \t' +
     'Roles.Id, \n \t' +
     'Roles.ProjectOurId, \n \t' +
+    'Roles.ContractId, \n \t' +
     'Roles.Name, \n \t' +
     'Roles.Description, \n \t' +
     'Roles.GroupName, \n \t' +
-    'Roles.ManagerId \n' +
+    'Roles.ManagerId, \n \t' +
+    'Persons.Id AS PersonId, \n \t' +
+    'Persons.Name AS PersonName, \n \t' +
+    'Persons.Surname AS PersonSurName, \n \t' +
+    'Persons.Email AS PersonEmail, \n \t' +
+    'Persons.Cellphone AS PersonCellphone, \n \t' +
+    'Persons.Phone AS PersonPhone, \n \t' +
+    'Entities.Name as EntityName, \n \t' +
+    'SystemRoles.Name AS SystemRoleName\n' +
     'FROM Roles \n' +
+    'JOIN Persons ON Persons.Id=Roles.PersonId \n' +
+    'JOIN Entities ON Entities.Id=Persons.EntityId \n' +
+    'JOIN SystemRoles ON SystemRoles.Id=Persons.SystemRoleId \n' +
     'WHERE ' + projectCondition + ' \n' +
     'ORDER BY Roles.Name';
 
@@ -26,8 +38,18 @@ function getRoles(sql: string, parentDataObject: any) {
       var item = new Role({
         id: dbResults.getLong('Id'),
         projectOurId: dbResults.getString('ProjectOurId'),
+        contractId: dbResults.getLong('ContractId'),
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
+        _person: new Person({
+          id: dbResults.getLong('PersonId'),
+          name: dbResults.getString('PersonName').trim(),
+          surname: dbResults.getString('PersonSurName').trim(),
+          email: dbResults.getString('PersonEmail').trim(),
+          cellphone: dbResults.getString('PersonCellphone'),
+          phone: dbResults.getString('PersonPhone'),
+          entityName: (dbResults.getString('SystemRoleName') == 'ENVI_COOPERATOR') ? 'ENVI' : dbResults.getString('EntityName').trim()
+        }),
         _group: {
           id: dbResults.getString('GroupName'),
           name: dbResults.getString('GroupName')
@@ -85,7 +107,8 @@ function getPersonRoleAssociationsPerProject(initParamObject) {
       'Persons.Email AS PersonEmail, \n \t' +
       'Persons.Cellphone AS PersonCellphone, \n \t' +
       'Persons.Phone AS PersonPhone, \n \t' +
-      'Roles.Name AS RoleName, \n \t' +
+      'Roles.ProjectOurId AS RoleProjectOurId, \n \t' +
+      'Roles.ContractId AS RoleContractId, \n \t' +
       'Roles.Description AS RoleDescription, \n \t' +
       'Roles.GroupName AS RoleGroupName, \n \t' +
       'Roles.ManagerId AS RoleManagerId,\n \t' +
@@ -103,7 +126,7 @@ function getPersonRoleAssociationsPerProject(initParamObject) {
     while (dbResults.next()) {
       var item = {
         id: parseInt('' + dbResults.getLong('PersonId') + dbResults.getLong('RoleId')),
-        _person: {
+        _person: new Person({
           id: dbResults.getLong('PersonId'),
           name: dbResults.getString('PersonName'),
           surname: dbResults.getString('PersonSurName'),
@@ -111,7 +134,7 @@ function getPersonRoleAssociationsPerProject(initParamObject) {
           cellphone: dbResults.getString('PersonCellphone'),
           phone: dbResults.getString('PersonPhone'),
           entityName: (dbResults.getString('SystemRoleName') == 'ENVI_COOPERATOR') ? 'ENVI' : dbResults.getString('EntityName')
-        },
+        }),
         _role: new Role({
           id: dbResults.getLong('RoleId'),
           name: dbResults.getString('RoleName'),
@@ -139,17 +162,23 @@ function getPersonRoleAssociationsPerProject_test(projectId) {
   return x;
 }
 
-function addNewPersonRoleAssociationInDb(itemFormClient) {
+function addNewPersonRoleAssociationInDb_OLD(itemFormClient) {
   itemFormClient = JSON.parse(itemFormClient);
   var item = new PersonRole(itemFormClient);
 
   item.addInDb();
-  Logger.log('association added ItemId: ' + item._associationId / 1);
   return item;
 }
 
-function test_addNewPersonRoleAssociationInDb() {
-  addNewPersonRoleAssociationInDb('');
+function addNewPersonRoleAssociation(itemFormClient) {
+  itemFormClient = JSON.parse(itemFormClient);
+  var item = new PersonRole(itemFormClient);
+  item.addInDb();
+  return item;
+}
+
+function test_addNewPersonRoleAssociation() {
+  addNewPersonRoleAssociation('');
 }
 
 function deletePersonRoleAssociation(item) {

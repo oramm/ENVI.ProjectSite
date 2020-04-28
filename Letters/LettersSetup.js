@@ -71,8 +71,6 @@ class LettersSetup {
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem('Current User'));
     }
-
-    
 }
 
 LettersSetup._lettersRepository;

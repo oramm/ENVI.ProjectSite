@@ -8,7 +8,7 @@ class ProjectDetailsCollection extends Collection {
                isDeletable: false,
                isSelectable: false
               });  
-        this.connectedRepository = window.parent.projectsRepository;
+        this.connectedRepository = MainSetup.projectsRepository;
         this.editModal = new ProjectsDetailsModal(this.id + '_editProject', 'Edytuj dane projektu', this,'EDIT');
         
         this.$externalLinks = $('<span class="externalLinks">');
@@ -58,8 +58,8 @@ class ProjectDetailsCollection extends Collection {
         
         itemsList[0] = new CollectionItem('projectId',
                                            'info', //icon
-                                           window.parent.projectsRepository.currentItem.ourId,
-                                           window.parent.projectsRepository.currentItem.name
+                                           MainSetup.currentProject.ourId,
+                                           MainSetup.currentProject.name
                                           );
         itemsList[1] = new CollectionItem(  'employers',
                                             'business', //icon
@@ -68,25 +68,25 @@ class ProjectDetailsCollection extends Collection {
                                           );
         itemsList[2] = new CollectionItem('projectId',
                                            'date_range', //icon
-                                           window.parent.projectsRepository.currentItem.status,
-                                           'Rozpoczęcie: ' + window.parent.projectsRepository.currentItem.startDate + '<BR>' +
-                                           'Zakończenie: ' + window.parent.projectsRepository.currentItem.endDate
+                                           MainSetup.currentProject.status,
+                                           'Rozpoczęcie: ' + MainSetup.currentProject.startDate + '<BR>' +
+                                           'Zakończenie: ' + MainSetup.currentProject.endDate
                                           );
         itemsList[3] = new CollectionItem('technicalDescription',
                                            'info', //icon
                                            'Zakres rzeczowy',
-                                           window.parent.projectsRepository.currentItem.comment
+                                           MainSetup.currentProject.comment
                                           );
-        var totalValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.totalValue);
-        var qualifiedValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.qualifiedValue);
-        var dotationValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(window.parent.projectsRepository.currentItem.dotationValue);
+        var totalValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(MainSetup.currentProject.totalValue);
+        var qualifiedValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(MainSetup.currentProject.qualifiedValue);
+        var dotationValue = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(MainSetup.currentProject.dotationValue);
         itemsList[4] = new CollectionItem('financialDescription',
                                            'euro_symbol', //icon
                                            'Dane finansowe',
                                            'Wartość całkowita netto: ' + totalValue  + '<BR>' +
                                            'Wydatki kwalifikowalne: ' + qualifiedValue  + '<BR>' +
                                            'Wartość dotacji: ' + dotationValue,
-                                           window.parent.projectsRepository.currentItem.financialComment
+                                           MainSetup.currentProject.financialComment
                                           );
         return itemsList;
     }

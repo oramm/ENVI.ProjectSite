@@ -6,14 +6,6 @@ class ProjectDetailsController {
         projectDetailsView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        personsRepository = new SimpleRepository('Persons repository',
-            'getPersonsNameSurnameEmailList',
-        );
-
-        ProjectsSetup.entitiesRepository = new SimpleRepository(
-            'Entities repository',
-            'getEntitiesList',
-        );
         ProcessesInstancesSetup.processesInstancesRepository = new SimpleRepository(
             'ProcessesInstantces repository',
             'getProcessInstancesList'
@@ -41,16 +33,15 @@ class ProjectDetailsController {
             'getDocumentTemplatesList',
         );
 
-        LettersSetup.entitiesRepository = ProjectsSetup.entitiesRepository;
+        LettersSetup.entitiesRepository = MainSetup.entitiesRepository;
 
-        var promises = [];
-        promises[0] = ProjectsSetup.entitiesRepository.initialise();
-        promises[1] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
-        promises[2] = ProcessesInstancesSetup.processesInstancesRepository.initialise({ projectId: ProjectsSetup.projectsRepository.currentItem.ourId });
-        promises[3] = ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(ProjectsSetup.projectsRepository.currentItem.ourId);
-        promises[4] = CasesSetup.casesRepository.initialise({ projectId: ProjectsSetup.projectsRepository.currentItem.ourId });
-        promises[5] = LettersSetup.documentTemplatesRepository.initialise();
-        promises[6] = LettersSetup.lettersRepository.initialise({ projectId: ProjectsSetup.projectsRepository.currentItem.ourId });
+        var promises = [
+            ProcessesInstancesSetup.processesInstancesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+            ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(MainSetup.currentProject.ourId),
+            CasesSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+            LettersSetup.documentTemplatesRepository.initialise(),
+            LettersSetup.lettersRepository.initialise({ projectId: MainSetup.currentProject.ourId })
+        ]
 
         Promise.all(promises)
             .then(() => {
