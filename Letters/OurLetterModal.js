@@ -25,7 +25,7 @@ class OurLetterModal extends LetterModal {
     initFormElements() {
         super.initFormElements();
         this.templateSelectField = new SelectField(this.id + '_templateSelectField', 'Szablon', undefined, true);
-        this.templateSelectField.initialise(LettersSetup.documentTemplatesRepository.items, 'name', this.controller.onTemplateChosen, this.controller);
+        this.templateSelectField.initialise(MainSetup.documentTemplatesRepository.items, 'name', this.controller.onTemplateChosen, this.controller);
         this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
         this.registrationDateFormElement.input.setLabel('Data nadania');
         this.templateFormElement = {

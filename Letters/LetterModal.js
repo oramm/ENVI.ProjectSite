@@ -19,7 +19,7 @@ class LetterModal extends Modal {
             'business',
             false,
             'Wybierz nazwę')
-        this.entityMainAutoCompleteTextField.initialise(LettersSetup.entitiesRepository, 'name', this.controller.onEntityMainChosen, this.controller);
+        this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEntityMainChosen, this.controller);
         this.selectedEntitiesMainHiddenInput = new HiddenInput(this.id + '_currentEntitiesMainHiddenInput', undefined, true);
 
         this.letterFileInput = new FileInput(this.id + '_letter_FileInput', 'Wybierz plik', this, this.mode === 'ADD_NEW');

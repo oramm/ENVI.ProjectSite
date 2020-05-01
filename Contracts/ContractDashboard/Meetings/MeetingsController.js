@@ -33,7 +33,7 @@ class MeetingsController {
         var promises = [];
         promises[0] = MeetingsSetup.meetingsRepository.initialise(MeetingsSetup.currentContract.id);
         promises[1] = MeetingsSetup.meetingArrangementsRepository.initialise(MeetingsSetup.meetingsRepository.parentItemId);
-        promises[2] = MeetingsSetup.casesRepository.initialise({ projectId: MeetingsSetup.currentProject.ourId });
+        promises[2] = MeetingsSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId });
         promises[3] = MeetingsSetup.caseTypesRepository.initialise();
         promises[4] = MeetingsSetup.personsRepository.initialise({ projectId: MeetingsSetup.meetingsRepository.parentItemId });
 
@@ -46,16 +46,7 @@ class MeetingsController {
             .then(() => {
                 $('select').material_select();
                 $('.modal').modal();
-                $('.datepicker').pickadate({
-                    selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15, // Creates a dropdown of 15 years to control year,
-                    today: 'Dzisiaj',
-                    clear: 'Wyszyść',
-                    close: 'Ok',
-                    closeOnSelect: false, // Close upon selecting a date,
-                    container: undefined, // ex. 'body' will append picker to body
-                    format: 'dd-mm-yyyy'
-                });
+                $('.datepicker').pickadate(MainSetup.datePickerSettings);
                 ReachTextArea.reachTextAreaInit();
                 Materialize.updateTextFields();
                 $('ul.tabs').tabs();

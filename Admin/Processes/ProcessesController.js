@@ -27,17 +27,12 @@ class ProcessesController {
             'editCaseType',
             'deleteCaseType'
         );
-        
-        ProcessesSetup.documentTemplatesRepository = new SimpleRepository('DocumentTemplates repository',
-            'getDocumentTemplatesList',
-        );
-        
-        var promises = [];
-        promises[0] = ProcessesSetup.processesRepository.initialise({ status: 'ACTIVE' });
-        promises[1] = ProcessesSetup.processStepsRepository.initialise();
-        promises[2] = ProcessesSetup.caseTypesRepository.initialise();
-        promises[3] = ProcessesSetup.documentTemplatesRepository.initialise();
 
+        var promises = [
+            ProcessesSetup.processesRepository.initialise({ status: 'ACTIVE' }),
+            ProcessesSetup.processStepsRepository.initialise(),
+            ProcessesSetup.caseTypesRepository.initialise()
+        ];
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");
@@ -46,16 +41,7 @@ class ProcessesController {
             .then(() => {
                 $('select').material_select();
                 $('.modal').modal();
-                $('.datepicker').pickadate({
-                    selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15, // Creates a dropdown of 15 years to control year,
-                    today: 'Dzisiaj',
-                    clear: 'Wyszyść',
-                    close: 'Ok',
-                    closeOnSelect: false, // Close upon selecting a date,
-                    container: undefined, // ex. 'body' will append picker to body
-                    format: 'dd-mm-yyyy'
-                });
+                $('.datepicker').pickadate(MainSetup.datePickerSettings);
                 ReachTextArea.reachTextAreaInit();
                 Materialize.updateTextFields();
                 $('ul.tabs').tabs();

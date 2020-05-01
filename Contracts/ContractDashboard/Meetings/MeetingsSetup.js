@@ -3,7 +3,6 @@ var meetingArrangementsRepository;
 var milestonesRepository;
 var casesRepository;
 var caseTypesRepository;
-var personsRepository;
 
 class MeetingsSetup {
     static get currentProject() {
@@ -47,12 +46,5 @@ class MeetingsSetup {
     }
     static set caseTypesRepository(data) {
         caseTypesRepository = data;
-    }
-    
-    static get personsRepository() {
-        return personsRepository;
-    }
-    static set personsRepository(data) {
-        personsRepository = data;
     }
 }

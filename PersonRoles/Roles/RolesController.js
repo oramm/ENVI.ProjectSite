@@ -5,8 +5,6 @@ class RolesController {
         $("#authorize-div").hide();
         rolesView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
-        RolesSetup.personsRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
 
         RolesSetup.roleGroupsRepository = new StaticRepository({
             name: 'RoleGroups repository',
@@ -20,9 +18,9 @@ class RolesController {
             'deleteRole'
         );
 
-        var promises = [];
-        promises[0] = RolesSetup.rolesRepository.initialise({ projectOurId: RolesSetup.rolesRepository.parentItemId });
-
+        var promises = [
+            RolesSetup.rolesRepository.initialise({ projectOurId: RolesSetup.rolesRepository.parentItemId })
+        ];
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");

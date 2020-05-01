@@ -1,57 +1,49 @@
-var contractTypesRepository;
 var contractsRepository;
 var otherContractsRepository;
-var personsRepository;
-var entitiesRepository;
 
-const statusNames = [   'Nie rozpoczęty',
-                        'W trakcie',
-                        'Zakończony',
-                        'Archiwalny'
-                    ];
+const statusNames = ['Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony',
+    'Archiwalny'
+];
 
 class ContractsSetup {
-    static get currentProject() {
-        return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get personsPerContractRepository() {
+        if (!ContractsSetup.personsRepositoryLocalData)
+            ContractsSetup.personsPerContractRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerContract repository')));
+        return ContractsSetup.personsPerContractRepositoryLocalData;
     }
-    
-    static get contractTypesRepository() {
-        return contractTypesRepository;
+    static set personsPerContractRepository(data) {
+        ContractsSetup.personsPerContractRepositoryLocalData = data;
     }
-    static set contractTypesRepository(data) {
-        contractTypesRepository = data;
-    }
-    
+
     static get statusNames() {
         return statusNames;
     }
-    
+
     static get contractsRepository() {
         return contractsRepository;
     }
-    
+
     static set contractsRepository(data) {
         contractsRepository = data;
     }
-    
+
     static get otherContractsRepository() {
         return otherContractsRepository;
     }
     static set otherContractsRepository(data) {
         otherContractsRepository = data;
     }
-    
+
     static get personsRepository() {
-        return personsRepository;
+        return ContractsSetuppersonsRepository;
     }
     static set personsRepository(data) {
         personsRepository = data;
     }
-    
-    static get entitiesRepository() {
-        return entitiesRepository;
-    }
-    static set entitiesRepository(data) {
-        entitiesRepository = data;
-    }
+
 }
+
+ContractsSetup.personsPerContractRepositoryLocalData;

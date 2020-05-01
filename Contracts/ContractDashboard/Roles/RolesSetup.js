@@ -18,15 +18,8 @@ class RolesSetup {
         return RolesSetup._groups;
     }
 
-    static get personsRepository() {
-        return RolesSetup.personsRepository;
-    }
-    
-    static set personsRepository(data) {
-        RolesSetup.personsRepository = data;
-    }
 }
-RolesSetup.personsRepository;
+
 RolesSetup._rolesRepository;
 RolesSetup._roleGroupsRepository;
 RolesSetup._groups = [

@@ -35,34 +35,111 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
-
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get projectsRepository() {
-        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Projects repository')));
+        if (!MainSetup.projectsRepositoryLocalData)
+            MainSetup.projectsRepositoryLocalData = new SimpleRepository(
+                JSON.parse(sessionStorage.getItem('Projects repository')),
+                'getProjectsList',
+                'addNewProject',
+                'editProject'
+            );
+        return MainSetup.projectsRepositoryLocalData;
     }
-    static get contractsRepository() {
-        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Contracts repository')));
-    }
+
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get entitiesRepository() {
-        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Entities repository')));
+        if (!MainSetup.entitiesRepositoryLocalData)
+            MainSetup.entitiesRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('Entities repository')));
+        return MainSetup.entitiesRepositoryLocalData;
     }
-    
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get personsRepository() {
-        return new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+        if (!MainSetup.personsRepositoryLocalData)
+            MainSetup.personsRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+        return MainSetup.personsRepositoryLocalData;
     }
     static set personsRepository(data) {
         MainSetup.personsRepositoryLocalData = data;
     }
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get personsPerProjectRepository() {
-        return new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerProject repository')));
+        if (!MainSetup.personsPerProjectRepositoryLocalData)
+            MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerProject repository')))
+        return MainSetup.personsPerProjectRepositoryLocalData;
     }
     static set personsPerProjectRepository(data) {
         MainSetup.personsPerProjectRepositoryLocalData = data;
     }
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get personsEnviRepository() {
+        if (!MainSetup.personsEnviRepositoryLocalData)
+            MainSetup.personsEnviRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsEnvi repository')));
+        return MainSetup.personsEnviRepositoryLocalData;
+    }
+    static set personsEnviRepository(data) {
+        MainSetup.personsEnviRepositoryLocalData = data;
+    }
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get documentTemplatesRepository() {
+        if (!MainSetup.documentTemplatesRepositoryLocalData)
+            MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository(
+                JSON.parse(sessionStorage.getItem('DocumentTemplates repository'))
+            );
+        return MainSetup.documentTemplatesRepositoryLocalData;
+    }
+    static set documentTemplatesRepository(data) {
+        MainSetup.documentTemplatesRepositoryLocalData = data;
+    }
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get contractTypesRepository() {
+        if (!MainSetup.contractTypesRepositoryLocalData)
+            MainSetup.contractTypesRepositoryLocalData = new SimpleRepository(
+                JSON.parse(sessionStorage.getItem('ContractTypes repository'))
+            );
+        return MainSetup.contractTypesRepositoryLocalData;
+    }
+    static set contractTypesRepository(data) {
+        MainSetup.contractTypesRepositoryLocalData = data;
+    }
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get caseTypesRepository() {
+        if (!MainSetup.caseTypesRepositoryLocalData)
+            MainSetup.caseTypesRepositoryLocalData = new SimpleRepository(
+                JSON.parse(sessionStorage.getItem('CaseTypes repository'))
+            );
+        return MainSetup.caseTypesRepositoryLocalData;
+    }
+    static set caseTypesRepository(data) {
+        MainSetup.caseTypesRepositoryLocalData = data;
+    }
+    static datePickerSettings = {
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        showWeekdaysShort: true,
+        monthsFull: ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'],
+        monthsShort: ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'],
+        weekdaysFull: ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'],
+        weekdaysShort: ['nie', 'pon', 'wt', 'śr', 'czw', 'pi', 'sob'],
+        firstDay: 1,
+        today: 'Dzisiaj',
+        clear: 'Wyszyść',
+        close: 'Ok',
+        closeOnSelect: false, // Close upon selecting a date,
+        container: undefined, // ex. 'body' will append picker to body
+        format: 'dd-mm-yyyy',
+        formatSubmit: 'yyyy-mm-dd'
+    }
+    
 }
 
 MainSetup.projectsRepositoryLocalData;
 MainSetup.entitiesRepositoryLocalData;
+MainSetup.documentTemplatesRepositoryLocalData;
 
 MainSetup.personsRepositoryLocalData;
 MainSetup.personsPerProjectRepositoryLocalData;
+MainSetup.personsEnviRepositoryLocalData;
+MainSetup.contractTypesRepositoryLocalData;
+MainSetup.caseTypesRepositoryLocalData;
 

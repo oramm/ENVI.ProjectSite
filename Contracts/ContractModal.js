@@ -3,7 +3,7 @@ class ContractModal extends Modal {
         super(id, tittle, connectedResultsetComponent, mode);
         this.controller = new ContractModalController(this);
 
-        var notOurTypes = ContractsSetup.contractTypesRepository.items.filter(item => !item.isOur)
+        var notOurTypes = MainSetup.contractTypesRepository.items.filter(item => !item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(notOurTypes, 'name');
 
@@ -19,7 +19,7 @@ class ContractModal extends Modal {
             'business',
             false,
             'Wybierz nazwę')
-        this.contractorAutoCompleteTextField.initialise(ContractsSetup.entitiesRepository, 'name', this.controller.onContractorChosen, this.controller);
+        this.contractorAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onContractorChosen, this.controller);
         this.selectedContractorsHiddenInput = new HiddenInput(this.id + '_currentContractorsHiddenInput', undefined, false);
 
         this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_employerAutoCompleteTextField',
@@ -27,7 +27,7 @@ class ContractModal extends Modal {
             'business',
             false,
             'Wybierz nazwę')
-        this.employerAutoCompleteTextField.initialise(ContractsSetup.entitiesRepository, 'name', this.controller.onEmployerChosen, this.controller);
+        this.employerAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEmployerChosen, this.controller);
         this.selectedEmployersHiddenInput = new HiddenInput(this.id + '_currentEmployersHiddenInput', undefined, false);
 
         var _this = this;

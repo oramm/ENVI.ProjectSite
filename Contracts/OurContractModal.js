@@ -1,7 +1,7 @@
 class OurContractModal extends Modal {
     constructor(id, tittle, connectedResultsetComponent, mode){
         super(id, tittle, connectedResultsetComponent, mode);
-        var ourTypes = ContractsSetup.contractTypesRepository.items.filter(item=>item.isOur)
+        var ourTypes = MainSetup.contractTypesRepository.items.filter(item=>item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(ourTypes, 'name');
         
@@ -14,13 +14,13 @@ class OurContractModal extends Modal {
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko')
-        this.managerAutoCompleteTextField.initialise(ContractsSetup.personsRepository,"nameSurnameEmail", this.onManagerChosen, this);
+        this.managerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"nameSurnameEmail", this.onManagerChosen, this);
         this.adminAutoCompleteTextField = new AutoCompleteTextField(this.id+'_adminAutoCompleteTextField',
                                                                      'Administrator', 
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko')
-        this.adminAutoCompleteTextField.initialise(ContractsSetup.personsRepository,"nameSurnameEmail", this.onAdminChosen, this);
+        this.adminAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"nameSurnameEmail", this.onAdminChosen, this);
         
         this.formElements = [
             {   input: this.typeSelectField,

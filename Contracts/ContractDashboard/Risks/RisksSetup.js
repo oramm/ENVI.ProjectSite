@@ -1,7 +1,6 @@
 var risksRepository;
 var reactionsRepository;
 var contractsRepository;
-var personsRepository;
 var milestonesRepository;
 var casesRepository;
 const probabilityRates = [1,2,3,4];
@@ -20,12 +19,7 @@ class RisksSetup {
     static set reactionsRepository(data) {
         reactionsRepository = data;
     }
-    static get personsRepository() {
-        return personsRepository;
-    }
-    static set personsRepository(data) {
-        personsRepository = data;
-    }
+
     static get contractsRepository() {
         return contractsRepository;
     }

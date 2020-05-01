@@ -12,10 +12,10 @@ class OurLetterModalController extends LetterModalController {
     
     onTemplateChosen(chosenItem) {
         if (chosenItem && chosenItem !== this.modal.templateFormElement.defaultDisabledOption) {
-            LettersSetup.documentTemplatesRepository.currentItem = chosenItem;
+            MainSetup.documentTemplatesRepository.currentItem = chosenItem;
         }
         else {
-            LettersSetup.documentTemplatesRepository.currentItem = {};
+            MainSetup.documentTemplatesRepository.currentItem = {};
         }
     }
 

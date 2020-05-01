@@ -20,7 +20,7 @@ class StepModal extends Modal {
                 input: this.documentTemplateSelectField,
                 dataItemKeyName: '_documentTemplate',
                 refreshDataSet() {
-                    var documentTemplatesForStep = ProcessesSetup.documentTemplatesRepository.items.filter(
+                    var documentTemplatesForStep = MainSetup.documentTemplatesRepository.items.filter(
                         item => item.caseTypeId && item.caseTypeId == ProcessesSetup.processesRepository.currentItem.caseTypeId
                     )
                     this.input.initialise(documentTemplatesForStep, 'name');

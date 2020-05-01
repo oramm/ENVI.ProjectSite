@@ -1,6 +1,5 @@
 var issuesRepository;
 var reactionsRepository;
-var personsRepository;
 
 var statusNames = ['Nowe','W trakcie','Do akceptacji','Zakończone','Duplikat'];
 
@@ -20,12 +19,7 @@ class IssuesSetup {
     static set reactionsRepository(data) {
         reactionsRepository = data;
     }
-    static get personsRepository() {
-        return personsRepository;
-    }
-    static set personsRepository(data) {
-        personsRepository = data;
-    }
+    
     static get statusNames() {
         return statusNames;
     }

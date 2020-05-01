@@ -11,8 +11,8 @@ class ContractModalController {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
             projectId: this.modal.connectedResultsetComponent.connectedRepository.parentItemId
         };
-        if(ContractsSetup.currentProject._employers[0])
-            this.onEmployerChosen(ContractsSetup.currentProject._employers[0]);
+        if(MainSetup.currentProject._employers[0])
+            this.onEmployerChosen(MainSetup.currentProject._employers[0]);
     }
     //--------------------------------- Contractors HiddenInput ------------------------------------
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna

@@ -1,10 +1,5 @@
 class PersonsSetup {
-    static get personsRepository() {
-        return PersonsSetup._personsRepository;
-    }
-    static set personsRepository(value) {
-        PersonsSetup._personsRepository = value;
-    }
+
 
     static get personRoleAssociationsRepository() {
         return PersonsSetup._personRoleAssociationsRepository;
@@ -14,5 +9,4 @@ class PersonsSetup {
     }
 }
 
-PersonsSetup._personsRepository;
 PersonsSetup.personRoleAssociationsRepository;

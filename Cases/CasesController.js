@@ -18,10 +18,6 @@ class CasesController {
             'editTask',
             'deleteTask');
 
-        personsRepository = new SimpleRepository('Persons repository',
-            'getPersonsNameSurnameEmailList',
-        );
-
         caseTypesRepository = new SimpleRepository('CaseTypes repository',
             'getCaseTypesListPerMilestone');
 
@@ -39,25 +35,16 @@ class CasesController {
             'editLetter',
             'deleteLetter');
 
-        LettersSetup.personsRepository = personsRepository;
-        LettersSetup.casesRepository = CasesSetup.casesRepository
+        LettersSetup.casesRepository = CasesSetup.casesRepository;
 
-        LettersSetup.documentTemplatesRepository = new SimpleRepository('DocumentTemplates repository',
-            'getDocumentTemplatesList',
-        );
-
-        LettersSetup.entitiesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Entities repository')));
-
-        var promises = [];
-
-        promises[0] = tasksRepository.initialise(tasksRepository.parentItemId);
-        promises[1] = CasesSetup.casesRepository.initialise(casesRepository.parentItemId);
-        promises[2] = personsRepository.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
-        promises[3] = CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId);
-        promises[4] = ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId);
-        promises[5] = CasesSetup.eventsRepository.initialise(CasesSetup.casesRepository.parentItemId);
-        promises[6] = LettersSetup.documentTemplatesRepository.initialise();
-        promises[7] = LettersSetup.lettersRepository.initialise({ milestoneId: LettersSetup.lettersRepository.parentItemId });
+        var promises = [
+            tasksRepository.initialise(tasksRepository.parentItemId),
+            CasesSetup.casesRepository.initialise(casesRepository.parentItemId),
+            CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId),
+            ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId),
+            CasesSetup.eventsRepository.initialise(CasesSetup.casesRepository.parentItemId),
+            LettersSetup.lettersRepository.initialise({ milestoneId: LettersSetup.lettersRepository.parentItemId })
+        ]
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");
@@ -66,16 +53,7 @@ class CasesController {
             .then(() => {
                 $('select').material_select();
                 $('.modal').modal();
-                $('.datepicker').pickadate({
-                    selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15, // Creates a dropdown of 15 years to control year,
-                    today: 'Dzisiaj',
-                    clear: 'Wyszyść',
-                    close: 'Ok',
-                    closeOnSelect: false, // Close upon selecting a date,
-                    container: undefined, // ex. 'body' will append picker to body
-                    format: 'dd-mm-yyyy'
-                });
+                $('.datepicker').pickadate(MainSetup.datePickerSettings);
                 ReachTextArea.reachTextAreaInit();
                 Materialize.updateTextFields();
             }

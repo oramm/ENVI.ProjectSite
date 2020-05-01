@@ -71,17 +71,26 @@ function getPersonsNameSurnameEmailList(initParamObject, externalConn) {
     'ORDER BY Surname';
   return getPersonsNameSurnameEmail(sql, initParamObject, externalConn)
 }
+function getPersonsNameSurnameEmailListEnvi(externalConn) {
+  return getPersonsNameSurnameEmailList({ systemRoleName: 'ENVI_EMPLOYEE|ENVI_MANAGER' }, externalConn);
+}
 
 function getPersonsNameSurnameEmailListPerSystemRole(systemRoleName, externalConn) {
   return getPersonsNameSurnameEmailList({ systemRoleName: systemRoleName }, externalConn);
 }
 
 function test_getPersonsNameSurnameEmailList() {
-  getPersonsNameSurnameEmailListPerContract(224, undefined);
+  getPersonsNameSurnameEmailListPerProject({ projectOurId: 'KOB.GWS.01.POIS' }, undefined);
 }
 
-function getPersonsNameSurnameEmailListPerContract(contractId, externalConn) {
-  var contractConditon = (contractId) ? 'Roles.ProjectId=(SELECT ProjectOurId FROM Contracts WHERE Contracts.Id=' + contractId + ')' : '1';
+function getPersonsNameSurnameEmailListPerProject(initParamObject: any, externalConn) {
+  var projectConditon = (initParamObject && initParamObject.projectOurId) ? 'Roles.ProjectOurId="' + initParamObject.projectOurId + '"' : '1';
+  var contractConditon;
+  if (initParamObject && initParamObject.contractId)
+    contractConditon =
+      '(Roles.ContractId=(SELECT ProjectOurId FROM Contracts WHERE Contracts.Id=' + initParamObject.contractId + ') OR Roles.ContractId IS NULL)'
+  else
+    contractConditon = '1';
 
   var sql = 'SELECT  \n \t' +
     'Persons_Roles.PersonId, \n \t' +
@@ -101,7 +110,7 @@ function getPersonsNameSurnameEmailListPerContract(contractId, externalConn) {
     'JOIN Roles ON Persons_Roles.RoleId = Roles.Id \n' +
     'JOIN Persons ON Persons.Id = Persons_Roles.PersonId \n' +
     'JOIN SystemRoles ON SystemRoles.Id=Persons.SystemRoleId \n' +
-    'WHERE ' + contractConditon + ' \n' +
+    'WHERE ' + projectConditon + ' AND ' + contractConditon + ' \n' +
     'GROUP BY Persons_Roles.PersonId, Persons_Roles.RoleId \n' +
     'ORDER BY Surname';
   return getPersonsNameSurnameEmail(sql, undefined, externalConn)

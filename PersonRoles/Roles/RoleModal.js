@@ -8,7 +8,7 @@ class RoleModal extends Modal {
             'person',
             true,
             'Wybierz imię i nazwisko')
-            this.personAutoCompleteTextField.initialise(RolesSetup.personsRepository, "nameSurnameEmail", this.onOwnerChosen, this);
+            this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
 
 
         this.formElements = [

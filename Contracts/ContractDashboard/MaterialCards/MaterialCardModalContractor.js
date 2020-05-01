@@ -13,7 +13,7 @@ class MaterialCardModalContractor extends Modal {
                                                                      'person', 
                                                                      true, 
                                                                      'Wybierz imię i nazwisko');
-        this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        this.personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"nameSurnameEmail", this.onOwnerChosen, this);
         
         this.formElements = [
             {   input: this.datePicker,
@@ -48,9 +48,9 @@ class MaterialCardModalContractor extends Modal {
             contractId: this.connectedResultsetComponent.connectedRepository.parentItemId,
             _versions: [],
             _editor: {
-                name: MaterialCardsSetup.currentUser.name,
-                surname: MaterialCardsSetup.currentUser.surname,
-                systemEmail: MaterialCardsSetup.currentUser.systemEmail
+                name: MainSetup.currentUser.name,
+                surname: MainSetup.currentUser.surname,
+                systemEmail: MainSetup.currentUser.systemEmail
             },
             _lastUpdated: ''
             };

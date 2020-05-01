@@ -12,11 +12,11 @@ class LetterModalController {
             _cases: [],
             _entitiesMain: [],
             _entitiesCc: [],
-            _project: LettersSetup.currentProject,
+            _project: MainSetup.currentProject,
             _editor: {
-                name: LettersSetup.currentUser.name,
-                surname: LettersSetup.currentUser.surname,
-                systemEmail: LettersSetup.currentUser.systemEmail
+                name: MainSetup.currentUser.name,
+                surname: MainSetup.currentUser.surname,
+                systemEmail: MainSetup.currentUser.systemEmail
             },
             _lastUpdated: ''
         };
@@ -177,7 +177,7 @@ class LetterModalController {
 
     }
     onEntityUnchosen(unchosenItem) {
-        //LettersSetup.entitiesRepository.deleteFromCurrentItems(unchosenItem);
+        //MainSetup.entitiesRepository.deleteFromCurrentItems(unchosenItem);
         this.removeEntityItem(unchosenItem);
     }
 

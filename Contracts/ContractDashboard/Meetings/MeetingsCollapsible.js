@@ -75,7 +75,7 @@ class MeetingsCollapsible extends SimpleCollapsible {
     
     createProtocolAction(){
         MeetingsSetup.meetingsRepository.currentItem._contract = MeetingsSetup.currentContract;
-        MeetingsSetup.meetingsRepository.currentItem._contract._parent = MeetingsSetup.currentProject;
+        MeetingsSetup.meetingsRepository.currentItem._contract._parent = MainSetup.currentProject;
         MeetingsSetup.meetingsRepository.doChangeFunctionOnItem(MeetingsSetup.meetingsRepository.currentItem, 'createMeetingProtocol',this);
     }
 }

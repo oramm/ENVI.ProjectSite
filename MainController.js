@@ -6,27 +6,51 @@ class MainController {
         $("#authorize-div").hide();
         mainWindowView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
+
         MainSetup.projectsRepositoryLocalData = new SimpleRepository('Projects repository',
             'getProjectsList',
             'addNewProject',
             'editProject'
         );
+        MainSetup.contractTypesRepositoryLocalData = new SimpleRepository('ContractTypes repository',
+            'getContractTypesList'
+        );
+        MainSetup.caseTypesRepositoryLocaData = new SimpleRepository('CaseTypes repository',
+            'getCaseTypesListPerMilestoneType',
+            'addNewCaseType',
+            'editCaseType',
+            'deleteCaseType'
+        );
+
         MainSetup.personsRepositoryLocalData = new SimpleRepository('Persons repository',
             'getPersonsNameSurnameEmailList',
         );
 
+        //inicjowana po wyborze projketu w MainWindowView.onProjectChosen
         MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository('PersonsPerProject repository',
-            'getPersonsNameSurnameEmailListPerSystemRole',
+            'getPersonsNameSurnameEmailListPerProject',
         );
+
+        MainSetup.personsEnviRepositoryLocalData = new SimpleRepository('PersonsEnvi repository',
+            'getPersonsNameSurnameEmailListEnvi',
+        );
+
         MainSetup.entitiesRepositoryLocalData = new SimpleRepository(
             'Entities repository',
             'getEntitiesList',
         );
 
+        MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository('DocumentTemplates repository',
+            'getDocumentTemplatesList',
+        );
+
+
         MainSetup.personsRepositoryLocalData.initialise();
-        MainSetup.personsPerProjectRepositoryLocalData.initialise('ENVI_EMPLOYEE|ENVI_MANAGER');
+
+        MainSetup.personsEnviRepositoryLocalData.initialise();
         MainSetup.entitiesRepositoryLocalData.initialise();
+        MainSetup.documentTemplatesRepositoryLocalData.initialise();
+        MainSetup.contractTypesRepositoryLocalData.initialise('ACTIVE');
         MainSetup.projectsRepositoryLocalData.initialise(gAuth.userEmail)
             .then(() => {
                 sessionStorage.setItem('Current User', JSON.stringify({
@@ -47,4 +71,3 @@ class MainController {
             });
     }
 }
-
