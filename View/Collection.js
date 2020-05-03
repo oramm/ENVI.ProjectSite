@@ -365,9 +365,6 @@ class Collection extends Resultset {
         if (this.items.length >= this.minimumItemsToFilter) {
             this.filter.initialise(filterElements);
             this.$actionsMenu.append(this.filter.$dom);
-            //this.$actionsMenu.append(FormTools.createFilterInputField("contract-filter",
-            //                                                          this.$collection.children('li'))
-            //                        );
         }
     }
 
@@ -388,14 +385,6 @@ class Collection extends Resultset {
             this.$addNewTriggerIcon.show();
         else
             this.$addNewTriggerIcon.hide();
-    }
-
-    makePreloader(id) {
-        var $preloader = $('<div class="progress">');
-        $preloader
-            .attr('id', id)
-            .append('<div class="indeterminate">');
-        return $preloader;
     }
 }
 

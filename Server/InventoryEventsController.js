@@ -40,7 +40,7 @@ function getInventoryEventsList() {
       var surname = (dbResults.getString(12))? dbResults.getString(12): '';
       var email = (dbResults.getString(13))? dbResults.getString(13): '';
       if (name)
-        item._owner.nameSurnameEmail = name.trim() + ' ' + surname.trim() + ': ' + email.trim();
+        item._owner._nameSurnameEmail = name.trim() + ' ' + surname.trim() + ': ' + email.trim();
       result.push(item);
     }
     

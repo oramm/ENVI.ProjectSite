@@ -131,7 +131,7 @@ function getPersonsNameSurnameEmail(sql, initParamObject, externalConn) {
         id: dbResults.getLong('Id'),
         name: dbResults.getString('Name').trim(),
         surname: dbResults.getString('Surname').trim(),
-        nameSurnameEmail: dbResults.getString('Name').trim() + ' ' + dbResults.getString('Surname').trim() + ': ' + dbResults.getString('Email').trim(),
+        _nameSurnameEmail: dbResults.getString('Name').trim() + ' ' + dbResults.getString('Surname').trim() + ': ' + dbResults.getString('Email').trim(),
         position: dbResults.getString('Position').trim(),
         email: dbResults.getString('Email').trim(),
         cellphone: dbResults.getString('Cellphone').trim(),

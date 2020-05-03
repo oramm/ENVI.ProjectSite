@@ -10,7 +10,7 @@ function MeetingArrangement(initParamObject) {
     if(initParamObject._owner && initParamObject._owner.id){
       this._owner = initParamObject._owner;
       this.ownerId = initParamObject._owner.id;
-      this._owner.nameSurnameEmail = this._owner.name + ' ' + this._owner.surname + ' ' + this._owner.email;
+      this._owner._nameSurnameEmail = this._owner.name + ' ' + this._owner.surname + ' ' + this._owner.email;
     }
     this._parent = initParamObject._parent;
     this.meetingId = initParamObject._parent.id;

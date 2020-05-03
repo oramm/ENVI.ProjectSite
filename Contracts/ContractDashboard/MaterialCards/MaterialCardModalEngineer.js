@@ -11,7 +11,7 @@ class MaterialCardModalEngineer extends Modal {
             'person',
             true,
             'Wybierz imię i nazwisko');
-        this.personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "nameSurnameEmail", this.onOwnerChosen, this);
+        this.personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
 
         this.formElements = [
             {

@@ -27,8 +27,8 @@ class TasksCollection extends SimpleCollection {
      */
     makeItem(dataItem){
         //potrzebne sprawdzenie i ew. podmiana na '', żeby nie wyświetlać takstu 'undefined'
-        (dataItem.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
-        var nameSurnameEmailLabel = (dataItem.nameSurnameEmail)? (dataItem.nameSurnameEmail)  + '<BR>': "";
+        (dataItem._nameSurnameEmail)? true : dataItem._nameSurnameEmail="";
+        var nameSurnameEmailLabel = (dataItem._nameSurnameEmail)? (dataItem._nameSurnameEmail)  + '<BR>': "";
         
         return {    id: dataItem.id,
                     icon:   undefined,
@@ -76,9 +76,9 @@ class TasksCollection extends SimpleCollection {
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        personAutoCompleteTextField.initialise(MainSetup.personsEnviRepository,"_nameSurnameEmail", this.onOwnerChosen, this);
         
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail, 
+        var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail, 
                                                         dataItem, 
                                                         personAutoCompleteTextField,
                                                         'nameSurnameEmail',

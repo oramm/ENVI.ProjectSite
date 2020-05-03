@@ -37,12 +37,12 @@ function getExternalAchievementsList(personId) {
         employer: dbResults.getString(9).trim(),
         _owner: {
           id: dbResults.getLong(10),
-          nameSurnameEmail: ''
+          _nameSurnameEmail: ''
         }
       }
       //init: function(id, roleName, description, worksScope, worksValue, projectValue,  startDate, endDate, employer, ownerId)
 
-      item._owner.nameSurnameEmail = dbResults.getString(11).trim() + ' ' + dbResults.getString(12).trim() + ': ' + dbResults.getString(13).trim();
+      item._owner._nameSurnameEmail = dbResults.getString(11).trim() + ' ' + dbResults.getString(12).trim() + ': ' + dbResults.getString(13).trim();
 
 
       result.push(item);

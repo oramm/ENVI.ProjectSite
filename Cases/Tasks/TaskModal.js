@@ -12,7 +12,7 @@ class TaskModal extends Modal {
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko');
-        this.personAutoCompleteTextField.initialise(MainSetup.personsEnviRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        this.personAutoCompleteTextField.initialise(MainSetup.personsEnviRepository,"_nameSurnameEmail", this.onOwnerChosen, this);
         
         this.formElements = [
             {   input: new InputTextField (this.id + 'nameTextField','Nazwa zadania', undefined, true, 150),

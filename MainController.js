@@ -23,7 +23,10 @@ class MainController {
         );
 
         MainSetup.personsRepositoryLocalData = new SimpleRepository('Persons repository',
-            'getPersonsNameSurnameEmailList',
+        'getPersonsList',
+        'addNewPersonInDb',
+        'editPersonInDb',
+        'deletePerson'
         );
 
         //inicjowana po wyborze projketu w MainWindowView.onProjectChosen
@@ -38,6 +41,9 @@ class MainController {
         MainSetup.entitiesRepositoryLocalData = new SimpleRepository(
             'Entities repository',
             'getEntitiesList',
+            'addNewEntityInDb',
+            'editEntityInDb',
+            'deleteEntity'
         );
 
         MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository('DocumentTemplates repository',

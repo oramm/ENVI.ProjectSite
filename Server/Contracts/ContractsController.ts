@@ -122,10 +122,10 @@ function getContractsListPerProject(initParamObject): Contract[] {
       item.setEntitiesFromParent(conn);
     //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
     if (item._admin.id)
-      item._admin.nameSurnameEmail = item._admin.name.trim() + ' ' + item._admin.surname.trim() + ': ' + item._admin.email.trim();
+      item._admin._nameSurnameEmail = item._admin.name.trim() + ' ' + item._admin.surname.trim() + ': ' + item._admin.email.trim();
     //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
     if (item._manager.id)
-      item._manager.nameSurnameEmail = item._manager.name.trim() + ' ' + item._manager.surname.trim() + ': ' + item._manager.email.trim();
+      item._manager._nameSurnameEmail = item._manager.name.trim() + ' ' + item._manager.surname.trim() + ': ' + item._manager.email.trim();
 
     delete item.scrumSheet;
     result.push(item);
@@ -161,7 +161,7 @@ function getContractsKeyDataListPerProject(projectId: string, externalConn?: Goo
 }
 
 function test_addNewContract() {
-  addNewContract('{"projectId":"ROZNE.ENVI.00","_type":{"name":"INNE","description":"Umowy niepasujące do pozostałych typ&oacute;w.","id":6,"status":"ACTIVE","isOur":true},"number":"brak","name":"test nazwa","alias":"test","startDate":"2020-01-13","endDate":"2020-01-14","value":"234242","status":"Nie rozpoczęty","comment":"sdfddd","ourId":"TEST.IK.22","_manager":{"nameSurnameEmail":"Gabriel Benisz: biuro@unimark.pl","phone":"33 823 42 89","surname":"Benisz","name":"Gabriel","cellphone":"605470720","comment":"","id":258,"position":"Kierownik Budowy","email":"biuro@unimark.pl"},"_admin":{"nameSurnameEmail":"Gabriel Benisz: biuro@unimark.pl","phone":"33 823 42 89","surname":"Benisz","name":"Gabriel","cellphone":"605470720","comment":"","id":258,"position":"Kierownik Budowy","email":"biuro@unimark.pl"},"_tmpId":"39_pending","id":"39_pending"}');
+  addNewContract('{"projectId":"ROZNE.ENVI.00","_type":{"name":"INNE","description":"Umowy niepasujące do pozostałych typ&oacute;w.","id":6,"status":"ACTIVE","isOur":true},"number":"brak","name":"test nazwa","alias":"test","startDate":"2020-01-13","endDate":"2020-01-14","value":"234242","status":"Nie rozpoczęty","comment":"sdfddd","ourId":"TEST.IK.22","_manager":{"_nameSurnameEmail":"Gabriel Benisz: biuro@unimark.pl","phone":"33 823 42 89","surname":"Benisz","name":"Gabriel","cellphone":"605470720","comment":"","id":258,"position":"Kierownik Budowy","email":"biuro@unimark.pl"},"_admin":{"_nameSurnameEmail":"Gabriel Benisz: biuro@unimark.pl","phone":"33 823 42 89","surname":"Benisz","name":"Gabriel","cellphone":"605470720","comment":"","id":258,"position":"Kierownik Budowy","email":"biuro@unimark.pl"},"_tmpId":"39_pending","id":"39_pending"}');
 }
 
 function addNewContract(itemFromClient) {

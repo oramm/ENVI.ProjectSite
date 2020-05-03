@@ -48,25 +48,27 @@ function getRoles(sql: string, parentDataObject: any) {
           email: dbResults.getString('PersonEmail').trim(),
           cellphone: dbResults.getString('PersonCellphone'),
           phone: dbResults.getString('PersonPhone'),
-          entityName: (dbResults.getString('SystemRoleName') == 'ENVI_COOPERATOR') ? 'ENVI' : dbResults.getString('EntityName').trim()
+          _entity: {
+            name: (dbResults.getString('SystemRoleName') == 'ENVI_COOPERATOR') ? 'ENVI' : dbResults.getString('EntityName').trim()
+        },
         }),
         _group: {
           id: dbResults.getString('GroupName'),
           name: dbResults.getString('GroupName')
         },
         managerId: dbResults.getLong('ManagerId')
-      })
-      result.push(item);
-    }
-    dbResults.close();
-    stmt.close();
-    return result;
-  } catch (e) {
-    Logger.log(JSON.stringify(e));
-    throw e;
-  } finally {
-    if (conn && conn.isValid(0)) conn.close();
+    })
+    result.push(item);
   }
+    dbResults.close();
+  stmt.close();
+  return result;
+} catch (e) {
+  Logger.log(JSON.stringify(e));
+  throw e;
+} finally {
+  if (conn && conn.isValid(0)) conn.close();
+}
 }
 
 function addNewRole(itemFromClient) {

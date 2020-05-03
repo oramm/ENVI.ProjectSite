@@ -39,7 +39,7 @@ function getTasksListPerMilestone(milestoneId) {
         //var name = (dbResults.getString(8))? dbResults.getString(8): '';
         //var surname = (dbResults.getString(9))? dbResults.getString(9): '';
         var email = (dbResults.getString(10))? dbResults.getString(10): '';
-        item._owner.nameSurnameEmail = item._owner.name.trim() + ' ' + item._owner.surname.trim() + ': ' + email.trim();
+        item._owner._nameSurnameEmail = item._owner.name.trim() + ' ' + item._owner.surname.trim() + ': ' + email.trim();
       }
       result.push(item);
     }
@@ -108,5 +108,5 @@ function deleteTask(itemFormClient){
 }
 
 function test_deleteTask(){
-  deleteTask('{"milestoneId":"103","description":"ddddd","ownerId":2,"nameSurnameEmail":"Aleksandra Zdybicka: aleksandra.zdybicka@ekowodrol.pl","caseId":6,"name":"zadaneczko","id":11,"deadline":"2018-08-26","status":"Nie rozpoczęty"}')
+  deleteTask('{"milestoneId":"103","description":"ddddd","ownerId":2,"_nameSurnameEmail":"Aleksandra Zdybicka: aleksandra.zdybicka@ekowodrol.pl","caseId":6,"name":"zadaneczko","id":11,"deadline":"2018-08-26","status":"Nie rozpoczęty"}')
 }

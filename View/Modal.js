@@ -4,9 +4,9 @@
  * externalrepository - jeżeli edytujemy obiekt spoza listy - inne repo niż connectedResultsetComponent.connectedRepository
  */
 class Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
+    constructor(id, title, connectedResultsetComponent, mode) {
         this.id = id;
-        this.tittle = tittle;
+        this.title = title;
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.mode = mode;
         this.formElements = [];
@@ -33,12 +33,12 @@ class Modal {
             .append('<div class="modal-footer">').children(':last-child')
             .append('<button class="modal-action modal-close waves-effect waves-green btn-flat ">ZAMKNIJ</a>');
         this.$dom.children('.modal-content').prepend(this.$title);
-        this.setTittle(this.tittle);
+        this.setTitle(this.title);
         this.setSubmitAction();
     }
 
-    setTittle(tittle) {
-        this.$title.text(tittle);
+    setTitle(title) {
+        this.$title.text(title);
     }
     /*
      * Tworzy ikonę edycji lub dodania rekordu do listy
@@ -59,7 +59,8 @@ class Modal {
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
-        $(connectedResultsetComponent.$dom.css('min-height', '300px'));
+        if (Object.getPrototypeOf(Object.getPrototypeOf(connectedResultsetComponent)).constructor.name !== 'RawPanel')
+            $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
         if (this.mode == 'EDIT')

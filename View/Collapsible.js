@@ -349,12 +349,4 @@ class Collapsible extends Resultset {
             Materialize.updateTextFields();
         });
     }
-
-    makePreloader(id) {
-        var $preloader = $('<div class="progress">');
-        $preloader
-            .attr('id', id)
-            .append('<div class="indeterminate">');
-        return $preloader;
-    }
 }

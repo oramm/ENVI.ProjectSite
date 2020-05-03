@@ -12,6 +12,7 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
         });
         this.addNewRoleModal = new RoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this, 'ADD_NEW');
         this.editRoleModal = new RoleModal(this.id + '_editRoleModal', 'Edytuj rolę', this, 'EDIT');
+        
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*

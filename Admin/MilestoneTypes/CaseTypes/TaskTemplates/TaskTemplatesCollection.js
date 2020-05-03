@@ -31,8 +31,8 @@ class TaskTemplatesCollection extends SimpleCollection {
      */
     makeItem(dataItem){
         //potrzebne sprawdzenie i ew. podmiana na '', żeby nie wyświetlać takstu 'undefined'
-        (dataItem.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
-        var nameSurnameEmailLabel = (dataItem.nameSurnameEmail)? (dataItem.nameSurnameEmail)  + '<BR>': "";
+        (dataItem._nameSurnameEmail)? true : dataItem._nameSurnameEmail="";
+        var nameSurnameEmailLabel = (dataItem._nameSurnameEmail)? (dataItem._nameSurnameEmail)  + '<BR>': "";
         
         return {    id: dataItem.id,
                     icon:   undefined,

@@ -16,4 +16,12 @@ class Resultset{
         this.$dom;
         this.$actionsMenu;
     }
+    
+    makePreloader(id) {
+        var $preloader = $('<div class="progress">');
+        $preloader
+            .attr('id', id)
+            .append('<div class="indeterminate">');
+        return $preloader;
+    }
 }

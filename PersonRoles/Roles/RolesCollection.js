@@ -27,7 +27,7 @@ class RolesCollection extends SimpleCollection {
             icon: 'person',
             $title: dataItem._person.name + ' ' +
                 dataItem._person.surname + ': ' +
-                dataItem._person.entityName,
+                dataItem._person._entity.name,
             $description: dataItem.name + '<BR>' +
                 cellphoneLabel +
                 phoneLabel +

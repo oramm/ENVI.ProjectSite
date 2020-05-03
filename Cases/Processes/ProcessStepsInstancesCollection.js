@@ -72,9 +72,9 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
             'person',
             false,
             'Wybierz imię i nazwisko')
-        personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "nameSurnameEmail", this.onOwnerChosen, this);
+        personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
 
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem.nameSurnameEmail,
+        var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail,
             dataItem,
             personAutoCompleteTextField,
             'nameSurnameEmail',

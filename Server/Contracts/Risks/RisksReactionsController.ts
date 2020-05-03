@@ -70,13 +70,13 @@ function getRisksReactions(sql) {
           //contractNumber: dbResults.getString(10),
           //contractName: dbResults.getString(11)
         },
-        nameSurnameEmail: ''
+        _nameSurnameEmail: ''
       };
       var name = (dbResults.getString(8)) ? dbResults.getString(12) : '';
       var surname = (dbResults.getString(9)) ? dbResults.getString(13) : '';
       var email = (dbResults.getString(10)) ? dbResults.getString(14) : '';
       if (name)
-        item.nameSurnameEmail = name.trim() + ' ' + surname.trim() + ': ' + email.trim();
+        item._nameSurnameEmail = name.trim() + ' ' + surname.trim() + ': ' + email.trim();
 
       result.push(item);
     }

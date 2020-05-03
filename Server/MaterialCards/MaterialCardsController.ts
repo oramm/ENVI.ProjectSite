@@ -105,7 +105,7 @@ function getMaterialCards(sql: string, initParamObject) {
         },
         _versions: versions.filter(item => item.parentId == dbResults.getLong('Id'))
       });
-      item._owner.nameSurnameEmail = item._owner.name + ' ' + item._owner.surname + ' ' + item._owner.email;
+      item._owner._nameSurnameEmail = item._owner.name + ' ' + item._owner.surname + ' ' + item._owner.email;
       result.push(item);
     }
     dbResults.close();

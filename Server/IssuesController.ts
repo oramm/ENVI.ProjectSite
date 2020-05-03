@@ -43,7 +43,7 @@ function getIssuesListPerContract(contractId) {
         _lastUpdated: dbResults.getString(11),
         _owner: {
           id: dbResults.getString(12),
-          nameSurnameEmail: ''
+          _nameSurnameEmail: ''
         },
         _parent: {
           id: dbResults.getString(3),
@@ -58,7 +58,7 @@ function getIssuesListPerContract(contractId) {
       var name = (dbResults.getString(17)) ? dbResults.getString(17) : '';
       var surname = (dbResults.getString(18)) ? dbResults.getString(18) : '';
       if (name)
-        item._owner.nameSurnameEmail = name.trim() + ' ' + surname.trim();
+        item._owner._nameSurnameEmail = name.trim() + ' ' + surname.trim();
 
       result.push(item);
     }
@@ -135,7 +135,7 @@ function getCurrentIssuesList() {
         _lastUpdated: dbResults.getString(11),
         _owner: {
           id: dbResults.getLong(12),
-          nameSurnameEmail: ''
+          _nameSurnameEmail: ''
         },
         _parent: {
           id: dbResults.getLong(3),
@@ -150,7 +150,7 @@ function getCurrentIssuesList() {
       var name = (dbResults.getString(17)) ? dbResults.getString(17) : '';
       var surname = (dbResults.getString(18)) ? dbResults.getString(18) : '';
       if (name)
-        item._owner.nameSurnameEmail = name.trim() + ' ' + surname.trim();
+        item._owner._nameSurnameEmail = name.trim() + ' ' + surname.trim();
       result.push(item);
     }
     return result;

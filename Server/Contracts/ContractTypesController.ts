@@ -190,7 +190,7 @@ function addNewMilestoneTypeContractTypeAssociation(itemFormClient) {
 
 function test_addNewMilestoneTypeContractTypeAssociationInDb() {
   addNewMilestoneTypeContractTypeAssociation(
-    '{"_role":{"name":"Kierownik Projektu, Inspektor br. budowlanej","description":"","id":32,"projectId":"SKW.GWS.01.POIS"},"_person":{"nameSurnameEmail":"Marta Listwan: mlistwan@ugk.pl","phone":"71 36 98 192","surname":"Listwan","name":"Marta","cellphone":"","comment":"","id":1,"position":"","email":"mlistwan@ugk.pl"},"id":132,"tmpId":"9_pending"}'
+    '{"_role":{"name":"Kierownik Projektu, Inspektor br. budowlanej","description":"","id":32,"projectId":"SKW.GWS.01.POIS"},"_person":{"_nameSurnameEmail":"Marta Listwan: mlistwan@ugk.pl","phone":"71 36 98 192","surname":"Listwan","name":"Marta","cellphone":"","comment":"","id":1,"position":"","email":"mlistwan@ugk.pl"},"id":132,"tmpId":"9_pending"}'
   );
 
 }

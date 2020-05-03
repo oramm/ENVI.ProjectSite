@@ -1,21 +1,21 @@
 class ReactionModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent){
+    constructor(id, tittle, connectedResultsetComponent) {
         super(id, tittle, connectedResultsetComponent);
-        
-        this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300);
-        this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField','Termin wykonania', true);
+
+        this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', false, 300);
+        this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField', 'Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);
         this.statusSelectField.initialise(ReactionsSetup.statusNames);
-        
-        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
-                                                                     'Imię i nazwisko', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
-        
+
+        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField',
+            'Imię i nazwisko',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
+        this.personAutoCompleteTextField.initialise(MainSetup.personsEnviRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
+
         this.formElements = [
-            new InputTextField (this.id + 'nameTextField','Nazwa zadania', undefined, true, 150),
+            new InputTextField(this.id + 'nameTextField', 'Nazwa zadania', undefined, true, 150),
             this.descriptionReachTextArea,
             this.deadLinePicker,
             //this.statusSelectField,
@@ -24,13 +24,13 @@ class ReactionModal extends Modal {
         this.initialise();
     }
 
-    fillWithData(){
+    fillWithData() {
         this.form.fillWithData([
             teactionsRepository.currentItem.name,
             teactionsRepository.currentItem.description,
             teactionsRepository.currentItem.deadline,
             //teactionsRepository.currentItem.status,
-            teactionsRepository.currentItem.nameSurnameEmail,
+            teactionsRepository.currentItem._nameSurnameEmail,
         ]);
     }
     /*
@@ -39,22 +39,23 @@ class ReactionModal extends Modal {
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[PENDING]
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
-    submitTrigger(){
+    submitTrigger() {
         tinyMCE.triggerSave();
-        this.dataObject = { name: '',
-                            description: '',
-                            deadline: '',
-                            //status: '',
-                            chosenPerson: '',
-                          };
+        this.dataObject = {
+            name: '',
+            description: '',
+            deadline: '',
+            //status: '',
+            chosenPerson: '',
+        };
         this.form.submitHandler(this.dataObject);
-        if (this.form.validate(this.dataObject)){
-            
+        if (this.form.validate(this.dataObject)) {
+
             this.dataObject.caseId = casesRepository.currentItem.id;
-            
-            this.dataObject.nameSurnameEmail = this.dataObject.chosenPerson.nameSurnameEmail;
+
+            this.dataObject._nameSurnameEmail = this.dataObject.chosenPerson._nameSurnameEmail;
             this.dataObject.ownerId = this.dataObject.chosenPerson.id;
-            
+
         }
-    }    
+    }
 };

@@ -9,7 +9,7 @@ class PersonsRolesAssociationModal extends Modal {
             'person',
             true,
             'Wybierz imię i nazwisko')
-        this.personAutoCompleteTextField.initialise(PersonsSetup.personsRepository, "nameSurnameEmail", this.onOwnerChosen, this);
+        this.personAutoCompleteTextField.initialise(PersonsSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
 
         this.roleSelectField = new SelectFieldBrowserDefault(this.id + 'roleSelectField', 'Pełniona rola', true);
         this.roleSelectField.initialise(RolesSetup.rolesRepository.items);

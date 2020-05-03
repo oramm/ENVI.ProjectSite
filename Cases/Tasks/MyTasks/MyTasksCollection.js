@@ -17,8 +17,8 @@ class MyTasksCollection extends SimpleCollection {
      * Dodano atrybut z caseId_Hidden, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
     */
     makeItem(dataItem){
-        (dataItem._owner.nameSurnameEmail)? true : dataItem.nameSurnameEmail="";
-        var nameSurnameEmailLabel = (dataItem._owner.nameSurnameEmail)? (dataItem._owner.nameSurnameEmail)  + '<BR>': "";
+        (dataItem._owner._nameSurnameEmail)? true : dataItem._nameSurnameEmail="";
+        var nameSurnameEmailLabel = (dataItem._owner._nameSurnameEmail)? (dataItem._owner._nameSurnameEmail)  + '<BR>': "";
         
         (dataItem.description)? true : dataItem.description="";
         var descriptionLabel = (dataItem.description)? (dataItem.description)  + '<BR>': "";
@@ -30,7 +30,7 @@ class MyTasksCollection extends SimpleCollection {
         return {    id: dataItem.id,
                     $title:  this.makeTitle(dataItem),
                     $description:    this.makeDescription(dataItem),
-                    userEmail_Hidden:  dataItem._owner.nameSurnameEmail,
+                    userEmail_Hidden:  dataItem._owner._nameSurnameEmail,
                     dataItem: dataItem
                 };
     }

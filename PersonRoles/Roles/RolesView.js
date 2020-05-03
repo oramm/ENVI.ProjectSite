@@ -6,14 +6,16 @@ class RolesView extends Popup {
         return new Promise((resolve, reject) => {
             this.setTittle("Role w projekcie");
             //var $orgChart = $('<div id="orgchart">')
+
             $('#actionsMenu')
+                .append(new ActionsMenuRawPanel().$dom)
                 .after(new RoleGroupsCollapsible('roleGroupsCollapsible').$dom)
-                //.after($orgChart)
+            //.after($orgChart)
 
             //var orgchart = new OrgChart({
             //    parentNode: $orgChart[0],
             //    connectedRepository: RolesSetup.rolesRepository
-           //})
+            //})
             this.dataLoaded(true);
             resolve('rolesCollection ok');
         });

@@ -13,7 +13,7 @@ class IssueModalEngineer extends Modal {
                                                                      'person', 
                                                                      false, 
                                                                      'Wybierz imię i nazwisko');
-        this.personAutoCompleteTextField.initialise(personsRepository,"nameSurnameEmail", this.onOwnerChosen, this);
+        this.personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"_nameSurnameEmail", this.onOwnerChosen, this);
         
         this.formElements = [
             {   input: this.datePicker,
