@@ -46,7 +46,7 @@ class RawPanel extends Resultset {
                 break;
             case "PENDING":
                 item.id = item._tmpId;
-                this.$dom.find('[itemid=' + item.id + ']').append(this.makePreloader('preloader' + item.id))
+                this.$dom.append(this.makePreloader('preloader' + item.id))
                 return item.id;
                 break;
             case "ERROR":

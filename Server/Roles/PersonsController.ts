@@ -93,8 +93,6 @@ function getPersonsNameSurnameEmailListPerProject(initParamObject: any, external
     contractConditon = '1';
 
   var sql = 'SELECT  \n \t' +
-    'Persons_Roles.PersonId, \n \t' +
-    'Persons_Roles.RoleId, \n \t' +
     'Persons.Id, \n \t' +
     'Persons.Name, \n \t' +
     'Persons.Surname,  \n \t' +
@@ -106,8 +104,8 @@ function getPersonsNameSurnameEmailListPerProject(initParamObject: any, external
     'Roles.Name, \n \t' +
     'Roles.Description, \n \t' +
     'SystemRoles.Name \n' +
-    'FROM Persons_Roles \n' +
-    'JOIN Roles ON Persons_Roles.RoleId = Roles.Id \n' +
+    'FROM Persons \n' +
+    'JOIN Roles ON Roles.PersonId = Persons.Id \n' +
     'JOIN Persons ON Persons.Id = Persons_Roles.PersonId \n' +
     'JOIN SystemRoles ON SystemRoles.Id=Persons.SystemRoleId \n' +
     'WHERE ' + projectConditon + ' AND ' + contractConditon + ' \n' +

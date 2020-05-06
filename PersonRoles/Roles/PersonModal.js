@@ -11,7 +11,7 @@ class PersonModal extends Modal {
 
         this.formElements = [
             {
-                input: new InputTextField(this.id + 'nameTextField', 'Nazwa roli', undefined, true, 100),
+                input: new InputTextField(this.id + 'nameTextField', 'Imię', undefined, true, 100),
                 dataItemKeyName: 'name'
             },
             {
@@ -19,7 +19,7 @@ class PersonModal extends Modal {
                 dataItemKeyName: 'surname'
             },
             {
-                input: new InputTextField(this.id + 'positionTextField', 'Stanowisko', undefined, true, 50, '.{3,}'),
+                input: new InputTextField(this.id + 'positionTextField', 'Stanowisko', undefined, false, 50, '.{3,}'),
                 dataItemKeyName: 'position'
             },
             {

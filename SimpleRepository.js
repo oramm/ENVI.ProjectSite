@@ -21,8 +21,8 @@ class SimpleRepository extends Repository {
         this.deleteServerFunctionName = deleteServerFunctionName;
         if (typeof initParemeter === 'string') {
             this.parentItemIdFromURL();
-            sessionStorage.setItem(this.name, JSON.stringify(this));
         }
+        sessionStorage.setItem(this.name, JSON.stringify(this));
     }
 
     initialise(serverFunctionParameters) {

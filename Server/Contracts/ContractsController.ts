@@ -226,7 +226,7 @@ function editContract(itemFromClient) {
       if (firstRowInScrum) {
         (item.status != 'Archiwalny') ? item.editOurContractInScrum() : item.deleteFromScrum();
       } else
-        if (item.status != 'Archiwalny')
+        if (item.status != 'Archiwalny' && item.shouldBeInScrum())
           throw new Error('Jeśli kontrakt jest zakończony popraw jego status! \n' +
             'Kontrakt istnieje w bazie, ale nie został jeszcze prawidłowo zsynchronizowany ze Scrumboardem!\n' +
             'Zmiany nie zostaną zapisane. \n' +
