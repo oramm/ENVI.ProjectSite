@@ -106,10 +106,8 @@ function getPersonsNameSurnameEmailListPerProject(initParamObject: any, external
     'SystemRoles.Name \n' +
     'FROM Persons \n' +
     'JOIN Roles ON Roles.PersonId = Persons.Id \n' +
-    'JOIN Persons ON Persons.Id = Persons_Roles.PersonId \n' +
     'JOIN SystemRoles ON SystemRoles.Id=Persons.SystemRoleId \n' +
     'WHERE ' + projectConditon + ' AND ' + contractConditon + ' \n' +
-    'GROUP BY Persons_Roles.PersonId, Persons_Roles.RoleId \n' +
     'ORDER BY Surname';
   return getPersonsNameSurnameEmail(sql, undefined, externalConn)
 }
@@ -157,7 +155,7 @@ function addNewPersonInDb(itemFromClient) {
 
   var newId = person.addInDb();
   Logger.log(' item Added ItemId: ' + person.id);
-  return newId;
+  return person;
 }
 
 function editPersonInDb(itemFromClient) {
@@ -167,6 +165,7 @@ function editPersonInDb(itemFromClient) {
   delete person.systemEmail;
   person.editInDb();
   Logger.log(' item edited ItemId: ' + person.id);
+  return person;
 }
 
 function deletePerson(itemFromClient) {

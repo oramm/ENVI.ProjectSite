@@ -19,14 +19,16 @@ class RawPanel extends Resultset {
      * @param {type} parentViewObjectSelectHandler
      * @returns {undefined}
      */
-    initialise() {
+    initialise(modal) {
+        this.modal = modal;
         this.buildDom();
     }
 
     buildDom() {
+
         this.$dom
-            .append(this.$actionsMenu)
-            .append(this.$collapsible);
+            .append(this.$actionsMenu);
+        this.modal.preppendTriggerButtonTo(this.$actionsMenu, this.modal.title, this);
         if (this.title)
             this.$dom.prepend(this.$title)
     }
@@ -55,13 +57,5 @@ class RawPanel extends Resultset {
                 return status;
                 break;
         }
-    }
-
-    makePreloader(id) {
-        var $preloader = $('<div class="progress">');
-        $preloader
-            .attr('id', id)
-            .append('<div class="indeterminate">');
-        return $preloader;
     }
 }

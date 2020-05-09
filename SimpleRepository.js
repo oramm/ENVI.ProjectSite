@@ -1,28 +1,37 @@
 class SimpleRepository extends Repository {
     /*
      * 
-     * @param {String || Object} initParemeter może to być nazwa repozytorim, albo obiekt z session Strorage
+     * @param {String || Object} initParameter może to być nazwa repozytorim, albo obiekt z session Strorage
      * @param {String} getItemsListServerFunctionName
      * @param {String} addNewServerFunctionName
      * @param {String} editServerFunctionName
      * @param {String} deleteServerFunctionName
      * @returns {SimpleRepository}
      */
-    constructor(initParemeter,
+    constructor(initParameter,
         getItemsListServerFunctionName,
         addNewServerFunctionName,
         editServerFunctionName,
         deleteServerFunctionName) {
-        super(initParemeter);
-        this.parentItemId = initParemeter.parentItemId;
-        this.getItemsListServerFunctionName = getItemsListServerFunctionName
-        this.addNewServerFunctionName = addNewServerFunctionName;
-        this.editServerFunctionName = editServerFunctionName;
-        this.deleteServerFunctionName = deleteServerFunctionName;
-        if (typeof initParemeter === 'string') {
+        super(initParameter);
+        this.parentItemId = initParameter.parentItemId;
+        if (typeof initParameter === 'string') {
             this.parentItemIdFromURL();
+            
+            this.getItemsListServerFunctionName = getItemsListServerFunctionName
+            this.addNewServerFunctionName = addNewServerFunctionName;
+            this.editServerFunctionName = editServerFunctionName;
+            this.deleteServerFunctionName = deleteServerFunctionName;
+            sessionStorage.setItem(this.name, JSON.stringify(this));
         }
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+        //mamy obiekt z SessionStorage
+        else if (typeof initParameter === 'object') {
+            this.getItemsListServerFunctionName = initParameter.getItemsListServerFunctionName
+            this.addNewServerFunctionName = initParameter.addNewServerFunctionName;
+            this.editServerFunctionName = initParameter.editServerFunctionName;
+            this.deleteServerFunctionName = initParameter.deleteServerFunctionName;
+        }
+        
     }
 
     initialise(serverFunctionParameters) {

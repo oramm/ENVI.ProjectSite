@@ -7,7 +7,7 @@ class PersonModal extends Modal {
             'business_center',
             true,
             'Wybierz nazwę podmiotu z listy')
-        this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);
+        
 
         this.formElements = [
             {
@@ -28,7 +28,10 @@ class PersonModal extends Modal {
             },
             {
                 input: this.entityAutocompleteTextField,
-                dataItemKeyName: '_entity'
+                dataItemKeyName: '_entity',
+                refreshDataSet() {
+                    _this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);;
+                }
             },
             {
                 input: new InputTextField(this.id + 'cellphoneTextField', 'Tel. kom.', undefined, false, 25, '.{7,}'),
@@ -51,7 +54,9 @@ class PersonModal extends Modal {
      */
     initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem = {
-            
+         
         }
+        this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);
+        this.entityAutocompleteTextField.setChosenItem(MainSetup.entitiesRepository.currentItem);
     }
 };

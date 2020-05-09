@@ -25,7 +25,7 @@ class PsNavigationBar extends NavigationBar {
                             link: 'Letters/LettersList.html?parentItemId=' + MainSetup.currentProject.ourId
                           },
                           { caption: "Osoby", 
-                            link: 'PersonRoles/Roles/roles.html?parentItemId=' + MainSetup.currentProject.ourId
+                            link: 'PersonRoles/Roles.html?parentItemId=' + MainSetup.currentProject.ourId
                           }
                           //{ caption: "Gant", 
                           //  link: 'Contracts/Gant/Gant.html?parentItemId=' + MainSetup.currentProject.ourId

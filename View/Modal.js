@@ -59,7 +59,7 @@ class Modal {
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
-        if (Object.getPrototypeOf(Object.getPrototypeOf(connectedResultsetComponent)).constructor.name !== 'RawPanel')
+        if (Object.getPrototypeOf(connectedResultsetComponent).constructor.name !== 'RawPanel')
             $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();

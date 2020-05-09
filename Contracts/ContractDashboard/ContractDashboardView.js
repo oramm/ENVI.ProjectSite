@@ -32,7 +32,7 @@ class ContractDashboardView extends Popup {
             });
             tabsData.push({
                 name: 'Osoby',
-                url: 'Roles/Roles.html?parentItemId=' + parentItemId
+                url: 'Roles.html?parentItemId=' + parentItemId
             })
         }
         $('#content').prepend(new Tabs({

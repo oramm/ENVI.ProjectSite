@@ -23,10 +23,10 @@ class MainController {
         );
 
         MainSetup.personsRepositoryLocalData = new SimpleRepository('Persons repository',
-        'getPersonsList',
-        'addNewPersonInDb',
-        'editPersonInDb',
-        'deletePerson'
+            'getPersonsList',
+            'addNewPersonInDb',
+            'editPersonInDb',
+            'deletePerson'
         );
 
         //inicjowana po wyborze projketu w MainWindowView.onProjectChosen
