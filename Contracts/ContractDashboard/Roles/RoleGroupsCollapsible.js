@@ -22,15 +22,17 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
     makeItem(dataItem, $bodyDom) {
         var editModal;
         editModal = this.editRoleModal;
+        if (!$bodyDom) $bodyDom = this.makeBodyDom(dataItem);
         return {
             id: dataItem.id,
             name: dataItem.name,
             $body: $bodyDom,
             dataItem: dataItem,
             editModal: editModal,
-            subitemsCount: RolesSetup.rolesRepository.items.filter(item => item._group.name == dataItem.id).length
+            subitemsCount: $bodyDom.find('.collection-item').length
         };
     }
+
 
     makeBodyDom(dataItem) {
         var $panel = $('<div>')

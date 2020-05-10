@@ -4,7 +4,6 @@ function getRolesPerProjectList(initParamObject) {
   var sql = 'SELECT \n \t' +
     'Roles.Id, \n \t' +
     'Roles.ProjectOurId, \n \t' +
-    'Roles.ContractId, \n \t' +
     'Roles.Name, \n \t' +
     'Roles.Description, \n \t' +
     'Roles.GroupName, \n \t' +
@@ -15,12 +14,17 @@ function getRolesPerProjectList(initParamObject) {
     'Persons.Email AS PersonEmail, \n \t' +
     'Persons.Cellphone AS PersonCellphone, \n \t' +
     'Persons.Phone AS PersonPhone, \n \t' +
-    'Entities.Name as EntityName, \n \t' +
+    'Entities.Name AS EntityName, \n \t' +
+    'Contracts.Id AS ContractId, \n \t' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'OurContractsData.OurId AS ContractOurId, \n \t' +
     'SystemRoles.Name AS SystemRoleName\n' +
     'FROM Roles \n' +
     'JOIN Persons ON Persons.Id=Roles.PersonId \n' +
     'JOIN Entities ON Entities.Id=Persons.EntityId \n' +
     'JOIN SystemRoles ON SystemRoles.Id=Persons.SystemRoleId \n' +
+    'LEFT JOIN Contracts ON Contracts.Id=Roles.ContractId \n' +
+    'LEFT JOIN OurContractsData ON Contracts.Id=OurContractsData.Id \n' +
     'WHERE ' + projectCondition + ' \n' +
     'ORDER BY Roles.Name';
 
@@ -38,9 +42,13 @@ function getRoles(sql: string, parentDataObject: any) {
       var item = new Role({
         id: dbResults.getLong('Id'),
         projectOurId: dbResults.getString('ProjectOurId'),
-        contractId: dbResults.getLong('ContractId'),
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
+        _contract: {
+          id: dbResults.getLong('ContractId'),
+          ourId: dbResults.getString('ContractOurId'),
+          number: dbResults.getString('ContractNumber'),
+        },
         _person: new Person({
           id: dbResults.getLong('PersonId'),
           name: dbResults.getString('PersonName').trim(),
@@ -50,25 +58,25 @@ function getRoles(sql: string, parentDataObject: any) {
           phone: dbResults.getString('PersonPhone'),
           _entity: {
             name: (dbResults.getString('SystemRoleName') == 'ENVI_COOPERATOR') ? 'ENVI' : dbResults.getString('EntityName').trim()
-        },
+          },
         }),
         _group: {
           id: dbResults.getString('GroupName'),
           name: dbResults.getString('GroupName')
         },
         managerId: dbResults.getLong('ManagerId')
-    })
-    result.push(item);
-  }
+      })
+      result.push(item);
+    }
     dbResults.close();
-  stmt.close();
-  return result;
-} catch (e) {
-  Logger.log(JSON.stringify(e));
-  throw e;
-} finally {
-  if (conn && conn.isValid(0)) conn.close();
-}
+    stmt.close();
+    return result;
+  } catch (e) {
+    Logger.log(JSON.stringify(e));
+    throw e;
+  } finally {
+    if (conn && conn.isValid(0)) conn.close();
+  }
 }
 
 function addNewRole(itemFromClient) {

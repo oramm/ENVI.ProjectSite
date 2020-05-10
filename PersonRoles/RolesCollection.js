@@ -9,7 +9,7 @@ class RolesCollection extends SimpleCollection {
             isPlain: true,
             hasFilter: true,
             isEditable: true,
-            isAddable: true,
+            isAddable: initParamObject.parentDataItem.name.match(/Wykon/i) === null,
             isDeletable: true,
             connectedRepository: RolesSetup.rolesRepository
         });
@@ -21,14 +21,19 @@ class RolesCollection extends SimpleCollection {
         var phoneLabel = (dataItem._person.phone) ? 'tel.: <a href="tel:' + dataItem._person.phone + '">' + dataItem._person.phone + '</a> ' : '';
         var cellphoneLabel = (dataItem._person.cellphone) ? 'kom.: <a href="tel:' + dataItem._person.cellphone + '">' + dataItem._person.cellphone + '</a> ' : '';
         var mailLabel = (dataItem._person.email) ? 'mail: <a href="mailto:' + dataItem._person.email + '">' + dataItem._person.email + '</a>' : '';
-        var description = (dataItem.description)? '<br>' + dataItem.description : '';
+        var description = (dataItem.description) ? '<br>' + dataItem.description : '';
+        var contractNumber = '';
+        if (dataItem._contract.number)
+            contractNumber = dataItem._contract.number
+        else if (dataItem._contract.ourId)
+            contractNumber = dataItem._contract.ourId
         return {
             id: dataItem.id,
             icon: 'person',
             $title: dataItem._person.name + ' ' +
                 dataItem._person.surname + ': ' +
                 dataItem._person._entity.name,
-            $description: dataItem.name + '<BR>' +
+            $description: contractNumber + ' ' + dataItem.name + '<BR>' +
                 cellphoneLabel +
                 phoneLabel +
                 mailLabel +

@@ -40,7 +40,7 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
                 id: 'rolesCollection_' + dataItem.id,
                 parentDataItem: dataItem,
                 addNewModal: this.addNewRoleModal,
-                editModal: this.editRoleModal
+                editModal: this.editRoleModal,
             }).$dom)
         return $panel;
     }

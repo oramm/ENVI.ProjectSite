@@ -118,7 +118,9 @@ body {
     color: #26a69a;
     font-size: 1.2em;
 }
-
+.collection .active a{
+    color: #b3e5fc;
+}
 .collection .active strong, .collapsible .selected strong {
     color: #eafaf9;
     font-size: 1.2em;

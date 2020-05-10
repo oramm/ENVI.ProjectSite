@@ -6,18 +6,20 @@ class Role {
   description: string;
   groupName: string;
   managerId: number;
-  personId:number;
+  personId: number;
   _person: any;
   _nameSurnameEmail: string;
   _group: any;
+  _contract: any;
 
   constructor(initParamObject) {
     if (initParamObject) {
       this.id = initParamObject.id;
       if (initParamObject.projectOurId)
         this.projectOurId = initParamObject.projectOurId;
-      if (initParamObject.contractId)
-        this.contractId = initParamObject.contractId;
+      this._contract = initParamObject._contract;
+      if (initParamObject._contract && initParamObject._contract.id)
+        this.contractId = initParamObject._contract.id;
       this._person = initParamObject._person;
       this.personId = initParamObject._person.id;
       this._nameSurnameEmail = initParamObject._person._nameSurnameEmail;

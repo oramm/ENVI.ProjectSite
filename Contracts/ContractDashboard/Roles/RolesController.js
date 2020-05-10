@@ -18,9 +18,9 @@ class RolesController {
             'deleteRole'
         );
 
-        var promises = [];
-        promises[0] = RolesSetup.rolesRepository.initialise({ projectOurId: RolesSetup.rolesRepository.parentItemId });
-
+        var promises = [
+            RolesSetup.rolesRepository.initialise({ projectOurId: MainSetup.currentProject.ourId })
+        ];
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");

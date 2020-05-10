@@ -9,7 +9,7 @@ class RolesCollection extends SimpleCollection {
             isPlain: true,
             hasFilter: false,
             isEditable: true,
-            isAddable: true,
+            isAddable: initParamObject.parentDataItem.name.match(/Wykonaw/i),
             isDeletable: true,
             connectedRepository: RolesSetup.rolesRepository
         });
@@ -21,13 +21,13 @@ class RolesCollection extends SimpleCollection {
         var phoneLabel = (dataItem._person.phone) ? 'tel.: <a href="tel:' + dataItem._person.phone + '">' + dataItem._person.phone + '</a> ' : '';
         var cellphoneLabel = (dataItem._person.cellphone) ? 'kom.: <a href="tel:' + dataItem._person.cellphone + '">' + dataItem._person.cellphone + '</a> ' : '';
         var mailLabel = (dataItem._person.email) ? 'mail: <a href="mailto:' + dataItem._person.email + '">' + dataItem._person.email + '</a>' : '';
-        var description = (dataItem.description)? '<br>' + dataItem.description : '';
+        var description = (dataItem.description) ? '<br>' + dataItem.description : '';
         return {
             id: dataItem.id,
             icon: 'person',
             $title: dataItem._person.name + ' ' +
                 dataItem._person.surname + ': ' +
-                dataItem._person.entityName,
+                dataItem._person._entity.name,
             $description: dataItem.name + '<BR>' +
                 cellphoneLabel +
                 phoneLabel +
@@ -68,6 +68,12 @@ class RolesCollection extends SimpleCollection {
     }
 
     makeList() {
-        return super.makeList().filter((item) => item.dataItem.groupName == this.parentDataItem.name);
+        return super.makeList().filter(
+            (item) => {
+                var test = item.dataItem.groupName == this.parentDataItem.name;
+                if (test && this.parentDataItem.name == 'Wykonawca/Podwykonawcy')
+                    test = item.dataItem.contractId == MainSetup.currentContract.id
+                return test;
+            });
     }
 }
