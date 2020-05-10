@@ -130,10 +130,11 @@ class MainSetup {
         format: 'dd-mm-yyyy',
         formatSubmit: 'yyyy-mm-dd'
     }
-    
+
 }
 
 MainSetup.projectsRepositoryLocalData;
+
 MainSetup.entitiesRepositoryLocalData;
 MainSetup.documentTemplatesRepositoryLocalData;
 
