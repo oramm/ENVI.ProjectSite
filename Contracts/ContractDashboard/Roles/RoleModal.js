@@ -40,7 +40,7 @@ class RoleModal extends Modal {
             _contract: MainSetup.currentContract,
             _group: this.connectedResultsetComponent.parentDataItem
         };
-        this.personAutoCompleteTextField.setChosenItem(MainSetup.personsRepository.currentItem)
+        this.personAutoCompleteTextField.setValue(MainSetup.personsRepository.currentItem)
         this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
     }
 };

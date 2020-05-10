@@ -39,7 +39,7 @@ class RoleModal extends Modal {
             projectOurId: MainSetup.currentProject.ourId,
             _group: this.connectedResultsetComponent.parentDataItem
         };
-        this.personAutoCompleteTextField.setChosenItem(MainSetup.personsRepository.currentItem)
+        this.personAutoCompleteTextField.setValue(MainSetup.personsRepository.currentItem)
         this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
     }
 };

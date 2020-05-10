@@ -21,6 +21,7 @@ class LetterModalController {
             _lastUpdated: ''
         };
         LettersSetup.casesRepository.currentItems = [];
+        this.caseSelectFieldInitialize();
         this.modal.creationDateFormElement.input.setValue(new Date());
         this.modal.registrationDateFormElement.input.setValue(new Date());
     }
@@ -71,7 +72,7 @@ class LetterModalController {
     onMilestoneChosen(chosenItem) {
         LettersSetup.milestonesRepository.currentItem = chosenItem;
         if (chosenItem)
-            this.caseSelectFieldInitialize(chosenItem);
+            this.caseSelectFieldInitialize();
     }
 
     caseSelectFieldInitialize() {
@@ -92,8 +93,10 @@ class LetterModalController {
         return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
     }
     onCaseChosen(chosenItem) {
-        this.addCaseItem(chosenItem);
-        this.caseSelectFieldInitialize(chosenItem);
+        if (chosenItem) {
+            this.addCaseItem(chosenItem);
+            this.caseSelectFieldInitialize();
+        }
     }
 
     addCaseItem(caseDataItem) {
@@ -121,6 +124,7 @@ class LetterModalController {
     onCaseUnchosen(unchosenItem) {
         //LettersSetup.casesRepository.deleteFromCurrentItems(unchosenItem);
         this.removeCaseItem(unchosenItem);
+        this.caseSelectFieldInitialize();
     }
 
     //usuwa caseItem z listy HiddenInput.value[]

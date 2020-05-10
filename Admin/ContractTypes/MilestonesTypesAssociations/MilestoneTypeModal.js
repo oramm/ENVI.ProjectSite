@@ -34,8 +34,6 @@ class MilestoneTypeModal extends Modal {
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
     initAddNewData(){
-        //this.contractsAutoCompleteTextField.setDefaultItem();
-        //zainicjuj dane kontekstowe
     }
    /*
     onContractChosen(chosenItem){

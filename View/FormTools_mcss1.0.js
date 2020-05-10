@@ -63,7 +63,7 @@ class AutoCompleteTextField_1 {
            data: autocompleteList,
            limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
            onAutocomplete: (inputValue) => {
-                                this.setChosenItem(inputValue);
+                                this.setValue(inputValue);
                                 if (typeof this.onCompleteCallBack === "function") { 
                                     this.onCompleteCallBack.apply(this.viewObject,[inputValue]);
                                 }
@@ -72,7 +72,7 @@ class AutoCompleteTextField_1 {
              });
         }
 
-    setChosenItem(inputValue){
+    setValue(inputValue){
             this.chosenItem = search(inputValue, this.key, this.repository.items);
             this.repository.selectedItem = this.chosenItem;
             if (this.chosenItem !== undefined) this.$dom.children('input').attr('pattern','^' + inputValue + '$')

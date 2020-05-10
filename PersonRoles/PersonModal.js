@@ -57,6 +57,6 @@ class PersonModal extends Modal {
          
         }
         this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);
-        this.entityAutocompleteTextField.setChosenItem(MainSetup.entitiesRepository.currentItem);
+        this.entityAutocompleteTextField.setValue(MainSetup.entitiesRepository.currentItem);
     }
 };

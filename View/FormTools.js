@@ -72,17 +72,14 @@ class AutoCompleteTextField {
             data: autocompleteList,
             limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
             onAutocomplete: (inputValue) => {
-                this.setChosenItem(inputValue);
+                this.setValue(inputValue);
             },
             minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
             onChange: () => alert(inputValue)
         });
     }
-    setDefaultItem() {
-        if (this.objectList.length === 1)
-            this.setChosenItem(this.objectList[0])
-    }
-    setChosenItem(inputValue) {
+
+    setValue(inputValue) {
         if (inputValue !== undefined) {
             //inputValue pochodzi z formularza
             if (typeof inputValue !== 'object') {
@@ -106,6 +103,12 @@ class AutoCompleteTextField {
             }
         }
     }
+
+    setDefaultValue() {
+        if (this.objectList.length === 1)
+            this.setValue(this.objectList[0])
+    }
+
     clearChosenItem() {
         this.chosenItem = undefined;
         this.$dom.children('input').val('');
@@ -242,6 +245,11 @@ class SelectField {
             }
             this.$dom.find('li:nth-child(' + itemSelectedId + ')').click();
         }
+    }
+
+    clearChosenItem() {
+        this.chosenItem = undefined;
+        this.$dom.find('input').val('');
     }
 
     validate() {
@@ -575,18 +583,18 @@ class SelectFieldBrowserDefault {
         return this.chosenItem;
     }
     //uruchamiana na click
-    setChosenItem(inputValue) {
+    setValue(inputValue) {
         this.chosenItem = search(inputValue, 'name', this.optionsData);
     }
 
     setChangeAction() {
         var _this = this;
         this.$select.change(function () {
-            _this.setChosenItem($(this).val());
+            _this.setValue($(this).val());
         });
     }
     simulateChosenItem(inputValue) {
-        this.setChosenItem(inputValue);
+        this.setValue(inputValue);
         var itemSelectedId = this.optionsData.findIndex(x => x.hello === inputValue);
         //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
         this.$dom.find('li:nth-child(' + itemSelectedId + ')').click();
@@ -829,7 +837,7 @@ class Form {
                     this.elements[i].input.simulateChosenItem(inputvalue);
                     break;
                 case 'AutoCompleteTextField':
-                    this.elements[i].input.setChosenItem(inputvalue);
+                    this.elements[i].input.setValue(inputvalue);
                     break;
                 case 'SelectFieldBrowserDefault':
                     this.elements[i].input.simulateChosenItem(inputvalue);
