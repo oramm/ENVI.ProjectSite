@@ -84,11 +84,13 @@ class Modal {
     /*
      * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
      */
-    preppendTriggerButtonTo($uiElelment, caption, connectedResultsetComponent) {
-        var $button = $('<button data-target="' + this.id + '" class="btn modal-trigger">' + caption + '</button>');
+    preppendTriggerButtonTo($uiElelment, caption, connectedResultsetComponent, buttonStyle) {
+        var $button = $('<button data-target="' + this.id + '">' + caption + '</button>');
+        $button
+        .addClass((buttonStyle === 'FLAT') ? 'btn-flat' : 'btn')  
+        .addClass('modal-trigger');
         var _this = this;
-        $button.click(function () {   //_this.connectWithResultsetComponent(connectedResultsetComponent);
-            //_this.initAddNewData();
+        $button.click(function () {
             _this.triggerAction(connectedResultsetComponent)
         });
         $uiElelment.prepend($button);

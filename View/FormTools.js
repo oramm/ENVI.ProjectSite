@@ -1154,6 +1154,18 @@ class RaisedButton {
     }
 }
 
+class FlatButton extends RaisedButton {
+    constructor(caption, onClickFunction, viewObject) {
+        super(caption, onClickFunction, viewObject)
+    }
+    buidDom() {
+        super.buidDom();
+        this.$dom
+            .removeClass('btn')
+            .addClass('btn-flat');
+    }
+}
+
 //kopatybilny z FormTools_mcss1.0
 class IconButton {
     constructor(icon, onClickFunction, viewObject) {

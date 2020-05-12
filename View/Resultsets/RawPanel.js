@@ -19,16 +19,16 @@ class RawPanel extends Resultset {
      * @param {type} parentViewObjectSelectHandler
      * @returns {undefined}
      */
-    initialise(modal) {
+    initialise(modal, buttonStyle) {
         this.modal = modal;
-        this.buildDom();
+        this.buildDom(buttonStyle);
     }
 
-    buildDom() {
+    buildDom(buttonStyle) {
 
         this.$dom
             .append(this.$actionsMenu);
-        this.modal.preppendTriggerButtonTo(this.$actionsMenu, this.modal.title, this);
+        this.modal.preppendTriggerButtonTo(this.$actionsMenu, this.modal.title, this, buttonStyle);
         if (this.title)
             this.$dom.prepend(this.$title)
     }

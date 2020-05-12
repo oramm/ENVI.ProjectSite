@@ -1,9 +1,6 @@
 class LettersListView extends Popup {
     constructor(){
-        super();
-        this.$contractsPanel;
-        this.$casesPanel;
-        this.$lettersPanel;        
+        super();       
     }
     
     initialise(){

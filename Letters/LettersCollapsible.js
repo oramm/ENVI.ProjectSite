@@ -22,8 +22,13 @@ class LettersCollapsible extends SimpleCollapsible {
 
         this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj przychodzące", this);
         this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące", this);
-        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące - stare", this);
-
+        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące - stare", this, 'FLAT');
+        var entityRawPanel = new RawPanel({
+            id: 'newEntityRawPanel',
+            connectedRepository: MainSetup.entitiesRepository
+        });
+        entityRawPanel.initialise(new EntityModal('newEntityModal', 'Dodaj podmiot', entityRawPanel, 'ADD_NEW'), 'FLAT');
+        this.$actionsMenu.append(entityRawPanel.$dom);
         this.appendLetterAttachmentsModal = new AppendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
 
@@ -73,8 +78,8 @@ class LettersCollapsible extends SimpleCollapsible {
     makeBodyDom(dataItem) {
         var $actionButtons = $('<div class="row">')
         //if (dataItem._canUserChangeFileOrFolder)
-            this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
-        
+        this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
+
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);
         var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświelti po odświeżeniu]'

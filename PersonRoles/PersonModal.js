@@ -8,7 +8,7 @@ class PersonModal extends Modal {
             true,
             'Wybierz nazwę podmiotu z listy')
         
-
+        var _this = this;
         this.formElements = [
             {
                 input: new InputTextField(this.id + 'nameTextField', 'Imię', undefined, true, 100),
@@ -30,7 +30,7 @@ class PersonModal extends Modal {
                 input: this.entityAutocompleteTextField,
                 dataItemKeyName: '_entity',
                 refreshDataSet() {
-                    _this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);;
+                    _this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);
                 }
             },
             {

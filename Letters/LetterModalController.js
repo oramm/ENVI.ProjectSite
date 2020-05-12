@@ -22,6 +22,7 @@ class LetterModalController {
         };
         LettersSetup.casesRepository.currentItems = [];
         this.caseSelectFieldInitialize();
+        this.modal.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.onEntityMainChosen, this);
         this.modal.creationDateFormElement.input.setValue(new Date());
         this.modal.registrationDateFormElement.input.setValue(new Date());
     }
