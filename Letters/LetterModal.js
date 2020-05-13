@@ -66,7 +66,7 @@ class LetterModal extends Modal {
             description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnego podmiotu, możesz to pole zignorować' : '',
             dataItemKeyName: '_entityMain',
             refreshDataSet(){
-                _this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEntityMainChosen, this.controller);
+                _this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', _this.controller.onEntityMainChosen, this.controller);
             }
         };
 
