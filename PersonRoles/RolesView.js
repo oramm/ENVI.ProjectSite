@@ -17,8 +17,8 @@ class RolesView extends Popup {
                 connectedRepository: MainSetup.personsRepository
             });
             personRawPanel.initialise(new PersonModal('newPersonModal', 'Dodaj osobę', personRawPanel, 'ADD_NEW'));
-            entityRawPanel.$dom.addClass('col l1');
-            personRawPanel.$dom.addClass('col l1');
+            entityRawPanel.$dom.addClass('col m3 s6');
+            personRawPanel.$dom.addClass('col m3 s6');
             $('#actionsMenu')
                 .append(entityRawPanel.$dom)
                 .append(personRawPanel.$dom)

@@ -1,5 +1,4 @@
 var casesRepository;
-var personsRepository;
 var caseTypesRepository;
 var eventsRepository;
 
