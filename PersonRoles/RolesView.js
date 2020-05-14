@@ -10,13 +10,13 @@ class RolesView extends Popup {
                 id: 'newEntityRawPanel',
                 connectedRepository: MainSetup.entitiesRepository
             });
-            entityRawPanel.initialise(new EntityModal('newEntityModal', 'Dodaj podmiot', entityRawPanel, 'ADD_NEW'));
+            entityRawPanel.initialise(new EntityModal('newEntityModal', 'Dodaj podmiot', entityRawPanel, 'ADD_NEW'), 'FLAT');
 
             var personRawPanel = new RawPanel({
                 id: 'newPersonRawPanel',
                 connectedRepository: MainSetup.personsRepository
             });
-            personRawPanel.initialise(new PersonModal('newPersonModal', 'Dodaj osobę', personRawPanel, 'ADD_NEW'));
+            personRawPanel.initialise(new PersonModal('newPersonModal', 'Dodaj osobę', personRawPanel, 'ADD_NEW'), 'FLAT');
             entityRawPanel.$dom.addClass('col m3 s6');
             personRawPanel.$dom.addClass('col m3 s6');
             $('#actionsMenu')
