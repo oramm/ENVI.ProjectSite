@@ -2,11 +2,12 @@ function getDocumentTemplatesList(externalConn) {
   var sql = 'SELECT  DocumentTemplates.Id, \n \t' +
     'DocumentTemplates.Name, \n \t' +
     'DocumentTemplates.Description, \n \t' +
-    'DocumentTemplates.CaseTypeId, \n \t' +
     'DocumentTemplates.GdId \n \t, ' +
-    'DocumentTemplatesContents.Contents \n' +
+    'DocumentTemplatesContents.GdId AS ContentsGdId, \n \t' +
+    'DocumentTemplatesContents.Alias AS ContentsAlias, \n \t' +
+    'DocumentTemplatesContents.CaseTypeId AS ContentsCaseTypeId \n' +
     'FROM DocumentTemplates \n' +
-    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplates.Id = DocumentTemplatesContents.TemplateId';
+    'JOIN DocumentTemplatesContents ON DocumentTemplates.Id = DocumentTemplatesContents.TemplateId';
 
   return getDocumentTemplates(sql, externalConn);
 }
@@ -24,9 +25,12 @@ function getDocumentTemplates(sql, externalConn) {
         id: dbResults.getLong('Id'),
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
-        caseTypeId: dbResults.getInt('CaseTypeId'),
         gdId: dbResults.getString('GdId'),
-        contents: dbResults.getString('Contents'),
+        _contents: {
+          gdId: dbResults.getString('ContentsGdId'),
+          alias: dbResults.getString('ContentsAlias'),
+          caseTypeId: dbResults.getLong('ContentsCaseTypeId')
+        },
       });
       result.push(item);
     }

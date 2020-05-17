@@ -12,6 +12,31 @@ class GDocsTools {
     return style;
   }
 
+  static copyDoc(sourceGdocument: GoogleAppsScript.Document.Document, targetGdocument: GoogleAppsScript.Document.Document, targetRange: GoogleAppsScript.Document.NamedRange) {
+    var sourceGdocumentBody = sourceGdocument.getBody();
+    var totalElements = sourceGdocumentBody.getNumChildren();
+    var startElement = targetRange.getRange().getRangeElements()[0].getElement();
+    Logger.log(startElement.asText().getText());
+    var startElementIndex = targetGdocument.getBody().getChildIndex(startElement.getParent());//zignorować błąd - tak ma być
+    startElement.removeFromParent();
+    for (var j = 0; j < totalElements; ++j) {
+      var body = targetGdocument.getBody();
+      var targetElement = sourceGdocumentBody.getChild(j).copy();
+      var type = targetElement.getType();
+      if (type == DocumentApp.ElementType.PARAGRAPH) {
+        Logger.log(targetElement.asParagraph().getText())
+        body.insertParagraph(startElementIndex + j, targetElement.asParagraph());
+      }
+      else if (type == DocumentApp.ElementType.TABLE) {
+        body.appendTable(targetElement.asTable());
+      }
+      else if (type == DocumentApp.ElementType.LIST_ITEM) {
+        body.appendListItem(targetElement.asListItem());
+      }
+    }
+    targetGdocument.saveAndClose();
+    var x;
+  }
   //https://stackoverflow.com/questions/19455158/what-is-the-best-way-to-parse-html-in-google-apps-script
   static fillPlaceHolder(documentGdId: string, tag: string, text: string) {
     var document = DocumentApp.openById(documentGdId);
@@ -111,9 +136,21 @@ class GDocsTools {
     }
   }
 }
+function test_copyDocs() {
+  var contentsGdoc = DocumentApp.openById('1IFDP6uCs-Nvr95W77Iz6x_7H2kiAPkFRrh15QbtPQKw');
+  var targetGdoc = DocumentApp.openById('1jsmt_m-Br0yXAJ2-l4-d_-rwDwqeeeEIi8WIifjQbwc');
+  GDocsTools.createNamedRangesByTags(
+    '1jsmt_m-Br0yXAJ2-l4-d_-rwDwqeeeEIi8WIifjQbwc',
+    GDocsTools.getNameRangesTagsFromTemplate('1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4')
+  );
+  var namedRange = GDocsTools.getNamedRangeByName(targetGdoc, 'contents');
+  Logger.log(namedRange.getName());
+  GDocsTools.copyDoc(contentsGdoc, targetGdoc, namedRange);
+}
+
 function test_createNamedRanges() {
   var item = new OurLetterGdFile({
-    _template: new DocumentTemplate({ id: 1, gdId: '', caseTypeId: 1, contents: '' }),
+    _template: new DocumentTemplate({ id: 1, gdId: '', name:'', caseTypeId: 1, _contents: {alias:'', gdId:''} }),
     document: new OurLetter({
       creationDate: '22dsfsfsf sdf2',
       documentGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'

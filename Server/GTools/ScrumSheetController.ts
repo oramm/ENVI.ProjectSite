@@ -10,7 +10,6 @@ function synchronizeScrum(){
 }
 //sprawdza czy sprawy w Scrum są spójne z Db
 function checkCasesWithDb(){
-  var caseItem;
   var rowStatus;
   for(var i = SCRUM_FIRST_DATA_ROW; i <SCRUM_DATA_VALUES.length; i++){
     if (SCRUM_DATA_VALUES[i][SCRUM_COL_CASE_ID]) {

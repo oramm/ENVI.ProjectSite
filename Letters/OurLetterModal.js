@@ -6,12 +6,12 @@ class OurLetterModal extends LetterModal {
         this.doAddNewFunctionOnItemName = '';
         this.initFormElements();
 
-        if (this.mode === 'ADD_NEW')
-            this.formElements.push(this.templateFormElement);
         this.formElements.push(this.contractFormElement);
         this.formElements.push(this.milestoneFormElement);
         this.formElements.push(this.caseFormElement);
         this.formElements.push(this.selectedCasesFormElement);
+        if (this.mode === 'ADD_NEW')
+            this.formElements.push(this.templateFormElement);
         this.formElements.push(this.creationDateFormElement);
         this.formElements.push(this.registrationDateFormElement);
         this.formElements.push(this.entityMainFormElement);
@@ -25,7 +25,6 @@ class OurLetterModal extends LetterModal {
     initFormElements() {
         super.initFormElements();
         this.templateSelectField = new SelectField(this.id + '_templateSelectField', 'Szablon', undefined, true);
-        this.templateSelectField.initialise(MainSetup.documentTemplatesRepository.items, 'name', this.controller.onTemplateChosen, this.controller);
         this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
         this.registrationDateFormElement.input.setLabel('Data nadania');
         this.templateFormElement = {

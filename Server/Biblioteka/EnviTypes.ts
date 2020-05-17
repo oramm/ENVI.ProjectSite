@@ -6,12 +6,20 @@ interface _blobEnviObject {
 
 namespace Envi {
     export interface DocumentTemplate {
-        id: number,
+        id?: number,
+        gdId: string,
+        _contents: Envi.DocumentContents,
+        name: string
+        description?: string,
+        _nameConentsAlias?: string
+    }
+
+    export interface DocumentContents {
+        id?: number, 
         gdId: string,
         caseTypeId: number,
-        contents: string,
-        name?: string
-        description?: string
+        alias:string,
+        documentTemplateId?: number
     }
 
     export interface Document {

@@ -25,7 +25,16 @@ class DocumentGdFile {
         this.createNamedRanges();
 
         this.fillNamedRanges();
+        if(this._template.gdId)
+            this.fillContentsFromTemplate();
         return this.gdFile;
+    }
+
+    fillContentsFromTemplate() {
+        var contentsGdoc = DocumentApp.openById(this._template._contents.gdId);
+        var targetGdoc = DocumentApp.openById(this.document.documentGdId)
+        var namedRange = GDocsTools.getNamedRangeByName(targetGdoc, 'contents');
+        GDocsTools.copyDoc(contentsGdoc, targetGdoc, namedRange);
     }
 
     edit() {

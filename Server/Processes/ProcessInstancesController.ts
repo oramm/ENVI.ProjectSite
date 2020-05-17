@@ -171,7 +171,7 @@ function refreshAllProcessInstances() {
   try {
     var conn = connectToSql();
     conn.setAutoCommit(false);
-    var cases = getCasesList();
+    var cases = getCasesListPerProject({ projectId: 'MOG.GWS.01.POIS' })//getCasesList();
     var processes = getProcessesList(undefined, undefined);
     for (var i = 0; i < cases.length; i++) {
       for (var j = 0; j < processes.length; j++) {

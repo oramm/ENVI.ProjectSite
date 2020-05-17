@@ -9,7 +9,31 @@ class OurLetterModalController extends LetterModalController {
         super.initAddNewDataHandler();
         LettersSetup.lettersRepository.currentItem.isOur = true;
     }
-    
+
+    onCaseChosen(chosenItem) {
+        super.onCaseChosen(chosenItem);
+        this.initaliseTemplateSelectField();
+    }
+
+    onCaseUnchosen(unChosenItem) {
+        super.onCaseUnchosen(unChosenItem);
+        this.initaliseTemplateSelectField();
+    }
+
+    initaliseTemplateSelectField() {
+        var templatesForCases = MainSetup.documentTemplatesRepository.items.filter(
+            template => {
+                var test = false;
+                for (const caseItem of this.modal.selectedCasesHiddenInput.value) {
+                    test = !template._contents.caseTypeId || template._contents.caseTypeId === caseItem._type.id;
+                    if (test) return test;
+                }
+                return test;
+            });
+
+        this.modal.templateSelectField.initialise(templatesForCases, '_nameConentsAlias', this.onTemplateChosen, this);
+    }
+
     onTemplateChosen(chosenItem) {
         if (chosenItem && chosenItem !== this.modal.templateFormElement.defaultDisabledOption) {
             MainSetup.documentTemplatesRepository.currentItem = chosenItem;

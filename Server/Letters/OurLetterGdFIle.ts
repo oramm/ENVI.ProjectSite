@@ -1,5 +1,5 @@
 class OurLetterGdFile extends DocumentGdFile {
-    constructor(initObjectParamenter: { _template: DocumentTemplate; document: OurLetter }) {
+    constructor(initObjectParamenter: { _template: DocumentTemplate, document: OurLetter }) {
         super(initObjectParamenter)
     }
     /*
@@ -14,7 +14,6 @@ class OurLetterGdFile extends DocumentGdFile {
     public create(): GoogleAppsScript.Drive.File {
         super.create();
         GDocsTools.fillNamedRange(this.document.documentGdId, 'address', this.makeEntitiesDataLabel(this.document._entitiesMain));
-        GDocsTools.fillNamedRange(this.document.documentGdId, 'contents', this._template.contents);
         return this.gdFile;
     }
 

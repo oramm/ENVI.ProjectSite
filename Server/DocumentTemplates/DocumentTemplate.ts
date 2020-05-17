@@ -1,19 +1,19 @@
 class DocumentTemplate implements Envi.DocumentTemplate {
   id: any;
-  name?: string;
+  name: string;
   description?: string;
-  caseTypeId: any;
   gdId: string;
-  contents: string;
+  _contents: any;
+  _nameConentsAlias: string;
 
   constructor(initParamObject: Envi.DocumentTemplate) {
     if (initParamObject) {
       this.id = initParamObject.id;
       this.name = initParamObject.name;
       this.description = initParamObject.description;
-      this.caseTypeId = initParamObject.caseTypeId;
       this.gdId = initParamObject.gdId;
-      this.contents = initParamObject.contents
+      this._contents = initParamObject._contents;
+      this._nameConentsAlias = (initParamObject._contents.alias)? initParamObject._contents.alias : initParamObject.name;
     }
   }
 

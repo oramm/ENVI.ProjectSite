@@ -10,11 +10,14 @@ function getProcessStepsList(externalConn) {
     'DocumentTemplates.Id AS DocumentTemplateId, \n \t' +
     'DocumentTemplates.Name AS DocumentTemplateName, \n \t' +
     'DocumentTemplates.Description AS DocumentTemplateDescription, \n \t' +
-    'DocumentTemplates.CaseTypeId AS DocumentTemplateCaseTypeId, \n \t' +
-    'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
+    'DocumentTemplates.GdId AS DocumentTemplateGdId, \n \t' +
+    'DocumentTemplatesContents.GdId AS ContentsGdId, \n \t' +
+    'DocumentTemplatesContents.Alias AS ContentsAlias, \n \t' +
+    'DocumentTemplatesContents.CaseTypeId AS ContentsCaseTypeId \n' +
     'FROM ProcessesSteps \n' +
     'JOIN Processes ON Processes.Id=ProcessesSteps.ProcessId \n' +
-    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId'
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplatesContentsId \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId';
   return getProcessesSteps(sql, externalConn);
 }
 
@@ -30,11 +33,14 @@ function getProcessesStepsListForProcess(processId, externalConn) {
     'DocumentTemplates.Id AS DocumentTemplateId, \n \t' +
     'DocumentTemplates.Name AS DocumentTemplateName, \n \t' +
     'DocumentTemplates.Description AS DocumentTemplateDescription, \n \t' +
-    'DocumentTemplates.CaseTypeId AS DocumentTemplateCaseTypeId, \n \t' +
-    'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
+    'DocumentTemplates.GdId AS DocumentTemplateGdId, \n \t' +
+    'DocumentTemplatesContents.GdId AS ContentsGdId, \n \t' +
+    'DocumentTemplatesContents.Alias AS ContentsAlias, \n \t' +
+    'DocumentTemplatesContents.CaseTypeId AS ContentsCaseTypeId \n' +
     'FROM ProcessesSteps \n' +
     'JOIN Processes ON Processes.Id=ProcessesSteps.ProcessId \n' +
-    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplatesContentsId \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId \n' +
     'WHERE ProcessesSteps.ProcessId=' + processId;
 
   return getProcessesSteps(sql, externalConn);
@@ -54,13 +60,17 @@ function getProcessesSteps(sql, externalConn) {
         id: dbResults.getLong('Id'),
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
-        _documentTemplate: {
+        _documentTemplate: new DocumentTemplate({
           id: dbResults.getLong('DocumentTemplateId'),
           name: dbResults.getString('DocumentTemplateName'),
           description: dbResults.getString('DocumentTemplateDescription'),
-          caseTypeId: dbResults.getInt('DocumentTemplateCaseTypeId'),
           gdId: dbResults.getString('DocumentTemplateGdId'),
-        },
+          _contents: {
+            gdId: dbResults.getString('ContentsGdId'),
+            alias: dbResults.getString('ContentsAlias'),
+            caseTypeId: dbResults.getLong('ContentsCaseTypeId')
+          }
+        }),
         documentTemplateId: dbResults.getLong('DocumentTemplateId'),
         _parent: {
           id: dbResults.getLong('ProcessId'),
