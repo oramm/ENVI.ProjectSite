@@ -2,6 +2,7 @@ class DocumentGdFile {
     public _template: DocumentTemplate;
     public gdFile: GoogleAppsScript.Drive.File;
     protected document: Envi.Document;
+    description?: string;
 
 
     constructor(initObjectParamenter: { _template: DocumentTemplate; document: Envi.Document }) {
@@ -25,7 +26,7 @@ class DocumentGdFile {
         this.createNamedRanges();
 
         this.fillNamedRanges();
-        if(this._template.gdId)
+        if(this._template._contents.gdId)
             this.fillContentsFromTemplate();
         return this.gdFile;
     }

@@ -1,6 +1,4 @@
-
 class Tools {
-
   //http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/#Inheritance_in_JavaScript
   static inheritPrototype(childObject, parentObject) {
     // As discussed above, we use the Crockford’s method to copy the properties and methods from the parentObject onto the childObject​
@@ -26,7 +24,7 @@ class Tools {
    *   mimeType: blob.mimeType
    * }
    */
-  static _blobEnviObjectToBlob(_blobEnviObject: _blobEnviObject) {
+  static _blobEnviObjectToBlob(_blobEnviObject: Envi._blobEnviObject) {
     return this.b64ToBlob(_blobEnviObject.blobBase64String, _blobEnviObject.mimeType, _blobEnviObject.name);
   }
 
@@ -76,6 +74,31 @@ class Tools {
   }
 }
 
+namespace Envi {
+  export class ToolsArray {
+    static onlyUnique(array) {
+      return array.filter(
+        (value, index, self) => self.indexOf(value) === index
+      );
+    }
+
+    //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects?page=1&tab=votes#tab-top
+    
+    static groupBy(array, key) {
+      return array.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+      }, {});
+    };
+    //finds an element in Array by its value
+    static search(nameKey, property, myArray) {
+      for (const item of myArray)
+        if (item[property] === nameKey)
+          return item;
+    }
+  }
+}
+
 function roundToCurrency(x) {
   var number = Math.round(x * 100) / 100;
   return parseFloat('' + number).toFixed(2);
@@ -115,15 +138,6 @@ function testStringToJSON(string) {
   string = stringToJSON('{"comment":"/n<div>- sieciowe</div>"}')
   var x = JSON.parse(string);
   return string;
-}
-
-//finds an alament in Array by its value
-function search(nameKey, property, myArray) {
-  for (var i = 0; i < myArray.length; i++) {
-    if (myArray[i][property] === nameKey) {
-      return myArray[i];
-    }
-  }
 }
 
 //returns row Number in scheet by DbId of en alement

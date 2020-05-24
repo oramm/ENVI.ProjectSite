@@ -112,12 +112,8 @@ function getLetters(sql, initParamObject, externalConn?) {
   }
 }
 
-function test_editLetter() {
-  editLetter('');
-}
-
 function test_addNewLetter() {
-  addNewLetter('');
+  addNewLetter('{"_cases":[{"_gdFolderUrl":"https://drive.google.com/drive/folders/1ze0Jf2xyubqAkrCp7XbFVLTIfuH8AdLH","milestoneId":412,"description":"","_typeFolderNumber_TypeName_Number_Name":"00 Umowa  i zmiany | S01 null","gdFolderId":"1ze0Jf2xyubqAkrCp7XbFVLTIfuH8AdLH","number":1,"_parent":{"_parent":{"number":"JRP/1/1093096/3/2018","ourId":"OLE.IK.01","alias":"KS, OŚ"},"contractId":100,"_type":{"_folderNumber":"01","name":"Administracja","id":1},"id":412,"gdFolderId":"1GRRl1DJbOb0J66ReUKBXCJ3iD8Qnllyb"},"_displayNumber":"S01","id":1785,"_processesInstances":[],"_risk":{"overallImpact":0,"probability":0,"_contract":{},"_rate":"M","_parent":{},"_smallRateLimit":4,"id":0,"_bigRateLimit":12},"_type":{"isDefault":true,"isUniquePerMilestone":false,"folderNumber":"00","name":"Umowa  i zmiany","id":85,"milestoneTypeId":1,"_processes":[]},"_folderName":"S01","typeId":85}],"_entitiesMain":[{"address":"Lubliniecka 3a, 46-300 Olesno","phone":"34 358 24 84","www":"http://oleskiewodociagi.pl/33/strona-glowna.html","name":"Oleskie Przedsiębiorstwo Wodociągów i Kanalizacji Sp. z o.o.","taxNumber":"5761580396","id":210,"fax":"","email":"biuro@oleskiewodociagi.pl"}],"_entitiesCc":[],"_project":{"qualifiedValue":"10449316.50","endDate":"2020-12-31","_gdFolderUrl":"https://drive.google.com/drive/folders/1J76VBiOmjv7yVJlj0xa_gJlH1OKFwOvi","gdFolderId":"1J76VBiOmjv7yVJlj0xa_gJlH1OKFwOvi","ourId":"OLE.GWS.01.POIS","id":20,"_ourId_Alias":"OLE.GWS.01.POIS","totalValue":"17030293.70","_employers":[],"_engineers":[{"address":"ul. Jana Brzechwy 3, 49-305 Brzeg","name":"ENVI","taxNumber":"747-156-40-59","id":1}],"lettersGdFolderId":"1DrcTipAku3gnd6T2dO--v4j2yRxeImEN","name":"Rozbudowa i modernizacja oczyszczalni ścieków w Oleśnie oraz rozbudowa i modernizacja sieci kanalizacyjnej i wodociągowej na terenie aglomeracji Olesno","comment":"Projekt obejmuje 16 zadań wod-kan oraz budowę oczyszczalni (zad. 17)","startDate":"2018-01-29","status":"W trakcie","dotationValue":"8881919.02"},"_editor":{"name":"Marek Gazda","surname":"","systemEmail":"marek@envi.com.pl"},"_lastUpdated":"","isOur":true,"_contract":{"_contractors":[],"endDate":"2020-12-31","_gdFolderUrl":"https://drive.google.com/drive/folders/1LKVaECdfPgg0C-o1cNrjEaLR5TObhJ1w","gdFolderId":"1LKVaECdfPgg0C-o1cNrjEaLR5TObhJ1w","number":"JRP/1/1093096/3/2018","meetingProtocolsGdFolderId":"1PDR_H0DTBCK_Jmp9kL_t5TeoWMmjTJ5V","contractUrl":"https://drive.google.com/drive/folders/1QP9w62wwBt6Dgj--yzN9ykvcLmbjBG7Z","id":100,"_ourType":"IK","_ourIdName":"OLE.IK.01 Inżynier i Pomoc Techniczna...","_manager":{"surname":"Tymczyszyn","name":"Monika","id":"152","_nameSurnameEmail":"Monika Tymczyszyn: monika.tymczyszyn@envi.com.pl","email":"monika.tymczyszyn@envi.com.pl"},"name":"Inżynier i Pomoc Techniczna","materialCardsGdFolderId":"1fpe_hD4iFohprxHmDOSeXBxyUyhqaNUD","typeId":1,"projectId":"OLE.GWS.01.POIS","startDate":"2018-03-28","status":"W trakcie","_ourIdOrNumber_Alias":"JRP/1/1093096/3/2018 KS, OŚ","ourId":"OLE.IK.01","alias":"KS, OŚ","value":"460000.00","_employers":[],"_type":{"name":"IK","description":"1","id":1,"isOur":true},"_engineers":[],"_ourIdOrNumber_Name":"JRP/1/1093096/3/2018 Inżynier i Pomoc Techniczna...","_admin":{"surname":"Tymczyszyn","name":"Monika","id":"152","_nameSurnameEmail":"Monika Tymczyszyn: monika.tymczyszyn@envi.com.pl","email":"monika.tymczyszyn@envi.com.pl"},"comment":"Inżynier i pomoc techniczna"},"_milestone":{"endDate":"2020-12-31","_gdFolderUrl":"https://drive.google.com/drive/folders/1GRRl1DJbOb0J66ReUKBXCJ3iD8Qnllyb","description":"","gdFolderId":"1GRRl1DJbOb0J66ReUKBXCJ3iD8Qnllyb","_parent":{"_contractors":[],"number":"JRP/1/1093096/3/2018","id":100,"_ourType":"IK","_manager":{"id":152},"typeId":1,"projectId":"OLE.GWS.01.POIS","_ourIdOrNumber_Alias":"JRP/1/1093096/3/2018","ourId":"OLE.IK.01","_employers":[],"_type":{"name":"IK","description":"Inżynier","id":1,"isOur":true},"_engineers":[],"_admin":{"id":152},"scrumSheet":{}},"_FolderNumber_TypeName_Name":"01 Administracja | ","id":412,"_type":{"isUniquePerContract":true,"_folderNumber":"01","name":"Administracja","id":1,"_isDefault":true},"name":"","_folderName":"01 Administracja","contractId":100,"typeId":1,"startDate":"2018-03-28","status":"W trakcie"},"_template":{"gdId":"1hkBgKLNW56XzNnj7EwHfxd6givKjiawAPHs5wdsaAo4","name":"Papier firmowy","_nameConentsAlias":"Papier firmowy","description":"czysty papier firmowy","id":1,"_contents":{"caseTypeId":0,"alias":""}},"creationDate":"2020-05-24","registrationDate":"2020-05-24","description":"roszczenie IK","_blobEnviObjects":[],"_tmpId":"1_pending","id":"1_pending"}');
 }
 
 function addNewLetter(itemFormClient): Letter {
@@ -284,7 +280,8 @@ function getLetterCaseAssociationsPerProjectList(initParamObject, externalConn?)
     'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
     'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
     'OurContractsData.OurId AS ContractOurId, \n \t' +
-    'Contracts.Number AS ContractNumber \n' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName \n' +
     'FROM Letters_Cases \n' +
     'JOIN Letters ON Letters_Cases.LetterId = Letters.Id \n' +
     'JOIN Cases ON Letters_Cases.CaseId = Cases.Id \n' +
@@ -343,7 +340,8 @@ function getLetterCaseAssociations(sql, externalConn) {
             },
             _parent: {
               ourId: dbResults.getString('ContractOurId'),
-              number: dbResults.getString('ContractNumber')
+              number: dbResults.getString('ContractNumber'),
+              name: dbResults.getString('ContractName')
             }
           },
         })

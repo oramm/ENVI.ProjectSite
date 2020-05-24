@@ -3,7 +3,7 @@ class DocumentTemplate implements Envi.DocumentTemplate {
   name: string;
   description?: string;
   gdId: string;
-  _contents: any;
+  _contents: Envi.DocumentContents;
   _nameConentsAlias: string;
 
   constructor(initParamObject: Envi.DocumentTemplate) {

@@ -2,7 +2,6 @@ function getProcessStepsList(externalConn) {
   var sql = 'SELECT  ProcessesSteps.Id, \n \t' +
     'ProcessesSteps.Name, \n \t' +
     'ProcessesSteps.Description, \n \t' +
-    'ProcessesSteps.DocumentTemplateId, \n \t' +
     'ProcessesSteps.LastUpdated, \n \t' +
     'Processes.Id AS ProcessId, \n \t' +
     'Processes.Name AS ProcessName, \n \t' +
@@ -16,7 +15,7 @@ function getProcessStepsList(externalConn) {
     'DocumentTemplatesContents.CaseTypeId AS ContentsCaseTypeId \n' +
     'FROM ProcessesSteps \n' +
     'JOIN Processes ON Processes.Id=ProcessesSteps.ProcessId \n' +
-    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplatesContentsId \n' +
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplateContentsId \n' +
     'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId';
   return getProcessesSteps(sql, externalConn);
 }
@@ -25,7 +24,6 @@ function getProcessesStepsListForProcess(processId, externalConn) {
   var sql = 'SELECT  ProcessesSteps.Id, \n \t' +
     'ProcessesSteps.Name, \n \t' +
     'ProcessesSteps.Description, \n \t' +
-    'ProcessesSteps.DocumentTemplateId, \n \t' +
     'ProcessesSteps.LastUpdated, \n \t' +
     'Processes.Id AS ProcessId, \n \t' +
     'Processes.Name AS ProcessName, \n \t' +
@@ -39,7 +37,7 @@ function getProcessesStepsListForProcess(processId, externalConn) {
     'DocumentTemplatesContents.CaseTypeId AS ContentsCaseTypeId \n' +
     'FROM ProcessesSteps \n' +
     'JOIN Processes ON Processes.Id=ProcessesSteps.ProcessId \n' +
-    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplatesContentsId \n' +
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplateContentsId \n' +
     'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId \n' +
     'WHERE ProcessesSteps.ProcessId=' + processId;
 
@@ -61,7 +59,6 @@ function getProcessesSteps(sql, externalConn) {
         name: dbResults.getString('Name'),
         description: dbResults.getString('Description'),
         _documentTemplate: new DocumentTemplate({
-          id: dbResults.getLong('DocumentTemplateId'),
           name: dbResults.getString('DocumentTemplateName'),
           description: dbResults.getString('DocumentTemplateDescription'),
           gdId: dbResults.getString('DocumentTemplateGdId'),

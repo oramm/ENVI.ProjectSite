@@ -16,8 +16,9 @@ function getProcessesStepsInstancesListPerMilestone(milestoneId, externalConn) {
     'DocumentTemplates.GdId AS DocumentTemplateGdId \n' +
     'FROM ProcessesStepsInstances \n' +
     'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
-    'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
-    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +    
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplateContentsId \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId \n' +
     'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
@@ -45,7 +46,8 @@ function getProcessesStepsInstancesListPerContract(contractId, externalConn) {
     'FROM ProcessesStepsInstances \n' +
     'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
     'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
-    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplateContentsId \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId \n' +
     'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +
@@ -74,7 +76,8 @@ function getProcessesStepsInstancesListPerProject(projectId, externalConn) {
     'FROM ProcessesStepsInstances \n' +
     'JOIN ProcessInstances ON ProcessesStepsInstances.ProcessInstanceId = ProcessInstances.Id \n' +
     'JOIN ProcessesSteps ON ProcessesStepsInstances.ProcessStepId = ProcessesSteps.Id \n' +
-    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=ProcessesSteps.DocumentTemplateId \n' +
+    'LEFT JOIN DocumentTemplatesContents ON DocumentTemplatesContents.Id = ProcessesSteps.DocumentTemplateContentsId \n' +
+    'LEFT JOIN DocumentTemplates ON DocumentTemplates.Id=DocumentTemplatesContents.TemplateId \n' +
     'LEFT JOIN Letters ON Letters.Id=ProcessesStepsInstances.OurLetterId \n' +
     'JOIN Processes ON ProcessInstances.ProcessId = Processes.Id \n' +
     'JOIN Cases ON Cases.Id = ProcessInstances.CaseId \n' +

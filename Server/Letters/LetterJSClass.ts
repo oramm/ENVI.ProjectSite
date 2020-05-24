@@ -77,7 +77,7 @@ abstract class Letter implements Envi.Document{
             return Gd.canUserDeleteFile(this.documentGdId);
     }
 
-    createLetterGdElements(blobEnviObjects: _blobEnviObject[]): void {
+    createLetterGdElements(blobEnviObjects: Envi._blobEnviObject[]): void {
         this.letterFilesCount = blobEnviObjects.length;
     }
 

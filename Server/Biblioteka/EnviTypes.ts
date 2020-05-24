@@ -1,10 +1,10 @@
-interface _blobEnviObject {
-    blobBase64String: string; //base64data,
-    name: string; //blob.name,
-    mimeType: string; //blob.mimeType
-}
-
 namespace Envi {
+    export interface _blobEnviObject {
+        blobBase64String: string; //base64data,
+        name: string; //blob.name,
+        mimeType: string; //blob.mimeType
+    }
+
     export interface DocumentTemplate {
         id?: number,
         gdId: string,

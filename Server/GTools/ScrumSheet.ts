@@ -133,7 +133,7 @@ ScrumSheet.prototype = {
       cases[i] = { milestoneId: cases[i].milestoneId,
                   caseName: cases[i].name
                  }
-    var milestonesIds = onlyUnique(getColumnArray(SCRUM_DATA_VALUES,SCRUM_COL_MILESTONE_ID));
+    var milestonesIds = Envi.ToolsArray.onlyUnique(getColumnArray(SCRUM_DATA_VALUES,SCRUM_COL_MILESTONE_ID));
     milestonesIds = milestonesIds.filter(function(item){return item>0});
     var milestonesCases = [];
     
