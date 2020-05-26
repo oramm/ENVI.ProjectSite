@@ -35,6 +35,7 @@ class CasesController {
             'editLetter',
             'deleteLetter');
 
+        LettersSetup.milestonesRepository = CasesSetup.casesRepository
         LettersSetup.casesRepository = CasesSetup.casesRepository;
 
         var promises = [

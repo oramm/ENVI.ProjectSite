@@ -78,7 +78,7 @@ class LetterModalController {
 
     caseSelectFieldInitialize() {
         var currentCases = LettersSetup.casesRepository.items.filter(
-            item => item._parent.id == CasesSetup.currentMilestone.currentItem.id &&
+            item => item._parent.id == LettersSetup.milestonesRepository.currentItem.id &&
                 this.checkCase(item)
         );
         this.modal.caseSelectField.initialise(currentCases, '_typeFolderNumber_TypeName_Number_Name', this.onCaseChosen, this);
