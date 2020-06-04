@@ -118,10 +118,10 @@ body {
     color: #26a69a;
     font-size: 1.2em;
 }
-.collection .active a, .collapsible .selected strong{
+.collection .active a, .collapsible-header.active .selected a{
     color: #b3e5fc;
 }
-.collection .active strong, .collapsible .selected strong {
+.collection .active strong, .collapsible-header.active strong {
     color: #eafaf9;
     font-size: 1.2em;
 }
