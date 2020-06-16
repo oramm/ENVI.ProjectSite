@@ -6,7 +6,7 @@ class ProcessesListView extends Popup {
     initialise(){
         this.setTittle("Procesy");
         
-        $("#tittle").after(new ProcessesCollapsible('processesCollapsible').$dom);  
+        $("#title").after(new ProcessesCollapsible('processesCollapsible').$dom);  
         this.dataLoaded(true);
         
     }

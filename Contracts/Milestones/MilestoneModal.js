@@ -1,6 +1,6 @@
 class MilestoneModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
         /*
         this.contractsAutoCompleteTextField = new AutoCompleteTextField(this.id+'personAutoCompleteTextField',
                                                                         'Dotyczy kontraktu', 

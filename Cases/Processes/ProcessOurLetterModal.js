@@ -1,6 +1,6 @@
 class ProcessOurLetterModal extends ModalExternalRepository {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode, LettersSetup.lettersRepository);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode, LettersSetup.lettersRepository);
         this.controller = new ProcessOurLetterModalController(this);
         this.doChangeFunctionOnItemName = 'editProcessStepInstanceOurLetter';
         this.doAddNewFunctionOnItemName = 'addNewProcessStepInstanceOurLetter';

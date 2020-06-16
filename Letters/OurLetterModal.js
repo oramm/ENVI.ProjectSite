@@ -1,6 +1,6 @@
 class OurLetterModal extends LetterModal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
         this.controller = new OurLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
         this.doAddNewFunctionOnItemName = '';

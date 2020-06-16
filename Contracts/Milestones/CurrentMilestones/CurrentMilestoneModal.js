@@ -1,6 +1,6 @@
 class CurrentMilestoneModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent, mode);
    
         
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, false);

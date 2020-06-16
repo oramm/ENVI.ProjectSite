@@ -1,6 +1,6 @@
 class ProcessAppendLetterAttachmentsModal extends ModalExternalRepository {
-    constructor(id, tittle, connectedResultsetComponent) {
-        super(id, tittle, connectedResultsetComponent, 'EDIT', LettersSetup.lettersRepository);
+    constructor(id, title, connectedResultsetComponent) {
+        super(id, title, connectedResultsetComponent, 'EDIT', LettersSetup.lettersRepository);
         this.doChangeFunctionOnItemName = 'appendProcessStepInstanceOurLetterAttachments';
 
         this.initFormElements();

@@ -1,6 +1,6 @@
 class RiskModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent,mode);      
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent,mode);      
         
         this.milestonesSelectField = new SelectField(this.id + '_milestonesSelectField', 'Kamień milowy', undefined, true);
         this.milestonesSelectField.initialise(RisksSetup.milestonesRepository.items.filter(

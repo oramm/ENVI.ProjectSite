@@ -254,11 +254,53 @@ class SelectField {
 
     validate() {
         if (this.isRequired) {
-            //if(typeof this.optionsData[0] !== 'object')
             return this.chosenItem !== this.defaultDisabledOption && this.chosenItem !== undefined;
         } else
             return true;
 
+    }
+}
+
+class CollapsibleSelect {
+    constructor(id, label, collapsible, isRequired, parentForm) {
+        this.id = id;
+        this.label = label;
+        this.isRequired = isRequired;
+        this.parentForm = parentForm;
+        this.chosenItem;
+        this.$dom;
+        this.collapsible = collapsible;
+        this.showCollapsibleButton = new RaisedButton('Wybierz opcję', this.showCollapsible, this)
+        this.buildDom();
+    }
+
+    buildDom() {
+        this.$dom = $('<div>');
+        this.$dom.append(this.showCollapsibleButton.$dom);
+        this.collapsible.$dom.hide();
+        this.$dom.append(this.collapsible.$dom);
+    }
+
+    showCollapsible(){
+        this.collapsible.$dom.show();
+        this.showCollapsibleButton.$dom.hide();
+    }
+
+    hideCollapsible(){
+        this.collapsible.$dom.hide();
+        this.showCollapsibleButton.$dom.show();
+    }
+
+    validate() {
+        if (this.isRequired) {
+            return this.chosenItem !== this.defaultDisabledOption && this.chosenItem !== undefined;
+        } else
+            return true;
+
+    }
+
+    getValue(){
+        return this.chosenItem;
     }
 }
 

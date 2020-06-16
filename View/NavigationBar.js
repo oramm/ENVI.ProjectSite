@@ -1,7 +1,7 @@
 class NavigationBar {
-    constructor(tittle, parentViewObject){
+    constructor(title, parentViewObject){
         this.parentViewObject = parentViewObject;
-        this.tittle = tittle;
+        this.title = title;
     }
     
     /*
@@ -15,7 +15,7 @@ class NavigationBar {
             .prepend(this.$mainNavDom);
         $('nav').append('<div class="nav-wrapper" id="main-nav">');
         $('.nav-wrapper')
-            .append('<a  class="brand-logo">'+ this.tittle +'</a>')
+            .append('<a  class="brand-logo">'+ this.title +'</a>')
             .append('<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>')
             .append('<ul class="right hide-on-med-and-down">');
         this.setShowMainPageAction();      

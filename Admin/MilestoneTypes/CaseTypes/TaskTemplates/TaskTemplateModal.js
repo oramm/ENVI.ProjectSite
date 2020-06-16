@@ -1,6 +1,6 @@
 class TaskTemplateModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent,mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent,mode);
         
         this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 300);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);

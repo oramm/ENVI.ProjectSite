@@ -1,6 +1,6 @@
 class ContractModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
         this.controller = new ContractModalController(this);
 
         var notOurTypes = MainSetup.contractTypesRepository.items.filter(item => !item.isOur)

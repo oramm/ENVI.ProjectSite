@@ -1,6 +1,6 @@
 class ProjectsDetailsModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent, mode);
         this.controller = new ProjectModalController(this);
         this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis techniczny', false, 500);
         this.financialCommentReachTextArea = new ReachTextArea (this.id + '_financialCommentReachTextArea','Opis finansowy', false, 500);

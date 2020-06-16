@@ -1,6 +1,6 @@
 class MaterialCardModalEngineer extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
         this.engineersCommentReachTextArea = new ReachTextArea(this.id + '_engineersCommentReachTextArea', 'Uwagi Inżyniera', false, 1000);
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField', 'Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);

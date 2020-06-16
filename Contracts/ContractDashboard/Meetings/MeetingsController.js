@@ -22,21 +22,14 @@ class MeetingsController {
         MeetingsSetup.casesRepository = new SimpleRepository('Cases repository',
             'getCasesListPerProject'
         );
-        MeetingsSetup.caseTypesRepository = new SimpleRepository('CaseTypes repository',
-            'getCaseTypesList');
 
-        MeetingsSetup.personsRepository = new SimpleRepository('Persons repository',
-            'getPersonsNameSurnameEmailList',
-        );
         MeetingsSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
 
-        var promises = [];
-        promises[0] = MeetingsSetup.meetingsRepository.initialise(MeetingsSetup.currentContract.id);
-        promises[1] = MeetingsSetup.meetingArrangementsRepository.initialise(MeetingsSetup.meetingsRepository.parentItemId);
-        promises[2] = MeetingsSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId });
-        promises[3] = MeetingsSetup.caseTypesRepository.initialise();
-        promises[4] = MeetingsSetup.personsRepository.initialise({ projectId: MeetingsSetup.meetingsRepository.parentItemId });
-
+        var promises = [
+            MeetingsSetup.meetingsRepository.initialise(MeetingsSetup.currentContract.id),
+            MeetingsSetup.meetingArrangementsRepository.initialise(MeetingsSetup.meetingsRepository.parentItemId),
+            MeetingsSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+        ]
 
         Promise.all(promises)
             .then(() => {

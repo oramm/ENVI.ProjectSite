@@ -1,6 +1,6 @@
 class LetterModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode, externalRepository) {
-        super(id, tittle, connectedResultsetComponent, mode, externalRepository);
+    constructor(id, title, connectedResultsetComponent, mode, externalRepository) {
+        super(id, title, connectedResultsetComponent, mode, externalRepository);
     }
     /*
      * uruchamiana po konstruktorze, przed jej wywołąniem musi być ustawiony controller

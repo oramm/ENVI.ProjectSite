@@ -1,6 +1,6 @@
 class ProcessModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent, mode);
         
         this.caseTypeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ sprawy', undefined, false);
         this.caseTypeSelectField.initialise(ProcessesSetup.caseTypesRepository.items, 'name');

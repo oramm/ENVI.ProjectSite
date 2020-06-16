@@ -1,6 +1,6 @@
 class StepModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
 
         this.documentTemplateSelectField = new SelectField(this.id + 'typeSelectField', 'Szablon pisma', undefined, false);
 

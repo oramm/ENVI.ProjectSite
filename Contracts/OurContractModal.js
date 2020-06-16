@@ -1,6 +1,6 @@
 class OurContractModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent, mode);
         var ourTypes = MainSetup.contractTypesRepository.items.filter(item=>item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(ourTypes, 'name');

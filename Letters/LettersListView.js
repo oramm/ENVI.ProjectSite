@@ -5,7 +5,7 @@ class LettersListView extends Popup {
     
     initialise(){
         this.setTittle("Pisma");
-        $("#tittle").after(new LettersCollapsible('lettersCollapsible').$dom);
+        $("#title").after(new LettersCollapsible('lettersCollapsible').$dom);
         this.dataLoaded(true); 
     }
 }

@@ -1,6 +1,6 @@
 class RoleModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
 
         this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', true, 500);
         this.personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField',

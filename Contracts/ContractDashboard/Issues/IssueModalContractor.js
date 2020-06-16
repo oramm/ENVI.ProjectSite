@@ -1,6 +1,6 @@
 class IssueModalContractor extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode){
-        super(id, tittle, connectedResultsetComponent,mode);
+    constructor(id, title, connectedResultsetComponent, mode){
+        super(id, title, connectedResultsetComponent,mode);
         
         this.contractorsDescriptionReachTextArea = new ReachTextArea (this.id + '_contractorsdescriptionReachTextArea','Opis', false, 500);
         this.solvedDatePicker = new DatePicker(this.id + 'solvedDatePickerField','Data wykonania', true);

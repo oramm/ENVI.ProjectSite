@@ -6,7 +6,7 @@ class MilestoneTypesListView extends Popup {
     initialise(){
         this.setTittle("Typy kamieni milowych");
         
-        $("#tittle").after(new MilestoneTypesCollapsible('molestoneTypesCollapsible').$dom);  
+        $("#title").after(new MilestoneTypesCollapsible('molestoneTypesCollapsible').$dom);  
         this.dataLoaded(true);
         
     }

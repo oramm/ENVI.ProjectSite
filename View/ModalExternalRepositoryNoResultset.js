@@ -1,6 +1,6 @@
 class ModalExternalRepositoryNoResultset extends Modal {
-    constructor(id, tittle, mode, repository) {
-        super(id, tittle, undefined, mode)
+    constructor(id, title, mode, repository) {
+        super(id, title, undefined, mode)
         this.repository = (repository) ? repository : {};
     }
     /*

@@ -1,6 +1,6 @@
 class ReactionModal extends Modal {
-    constructor(id, tittle, connectedResultsetComponent) {
-        super(id, tittle, connectedResultsetComponent);
+    constructor(id, title, connectedResultsetComponent) {
+        super(id, title, connectedResultsetComponent);
 
         this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', false, 300);
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField', 'Termin wykonania', true);

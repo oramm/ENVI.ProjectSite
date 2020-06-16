@@ -6,7 +6,7 @@ class ContractTypesListView extends Popup {
     initialise(){
         this.setTittle("Typy kontraktów");
         
-        $("#tittle").after(new ContractTypesCollapsible('contractTypesCollapsible').$dom);  
+        $("#title").after(new ContractTypesCollapsible('contractTypesCollapsible').$dom);  
         this.dataLoaded(true);
         
     }

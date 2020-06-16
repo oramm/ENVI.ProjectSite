@@ -1,6 +1,6 @@
 class MaterialCardModalEmployer extends Modal {
-    constructor(id, tittle, connectedResultsetComponent, mode) {
-        super(id, tittle, connectedResultsetComponent, mode);
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
         this.employersCommentReachTextArea = new ReachTextArea(this.id + '_employersCommentReachTextArea', 'Uwagi Zamawiającego', false, 500);
         this.deadLinePicker = new DatePicker(this.id + 'deadLinePickerField', 'Termin wykonania', true);
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', true);

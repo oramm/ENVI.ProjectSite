@@ -17,12 +17,12 @@ class LettersCollapsible extends SimpleCollapsible {
         this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
         this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
 
-        this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj pismo wychodzące po staremu', this, 'ADD_NEW');
+        this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj email', this, 'ADD_NEW');
         this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
 
         this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj przychodzące", this);
         this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące", this);
-        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące - stare", this, 'FLAT');
+        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj email", this, 'FLAT');
         var entityRawPanel = new RawPanel({
             id: 'newEntityRawPanel',
             connectedRepository: MainSetup.entitiesRepository
