@@ -288,9 +288,8 @@ class Collapsible extends Resultset {
 
     setSelectAction() {
         var _this = this;
-        this.$dom.find(".collapsible-header").click(function () {
+        this.$collapsible.find(".collapsible-header").click(function () {
             var selectedItemId = $(this).parent().attr("itemId");
-
             if (_this.isMultiSelectable)
                 _this.multiSelectAction(selectedItemId);
             else
@@ -328,22 +327,23 @@ class Collapsible extends Resultset {
     setDeleteAction() {
         this.$dom.find(".collapsibleItemDelete").off('click');
         var _this = this;
-        this.$dom.find(".collapsibleItemDelete").click(function () {
+        this.$collapsible.find(".collapsibleItemDelete").click(function () {
             if (confirm("Czy na pewno chcesz usunąć ten element?"))
                 _this.removeTrigger($(this).parent().parent().parent().attr("itemId"));
         });
     }
 
     setAddNewAction() {
+        this.$actionsMenu.find(".addNewItemIcon").off('click');
         this.$actionsMenu.find(".addNewItemIcon").click(
             () => this.addNewModal.triggerAction(this)
         );
     }
 
     setEditAction() {
-        this.$dom.find(".collapsibleItemEdit").off('click');
+        this.$collapsible.find(".collapsibleItemEdit").off('click');
         var _this = this;
-        this.$dom.find(".collapsibleItemEdit").click(function () {
+        this.$collapsible.find(".collapsibleItemEdit").click(function () {
             $(this).closest('.collapsible-header').trigger('click');
             _this.currentItems[0].editModal.triggerAction(_this);
             Materialize.updateTextFields();

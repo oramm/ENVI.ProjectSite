@@ -262,14 +262,127 @@ class SelectField {
 }
 
 class CollapsibleSelect {
-    constructor(id, label, collapsible, isRequired, parentForm) {
+    constructor(id, label, collapsibleRepository, makeCollapsibleItemNameFunction, collectionRepository, makeCollectionItemNameFunction, isRequired, parentForm) {
         this.id = id;
         this.label = label;
+        this.collapsibleRepository = collapsibleRepository;
+        this.makeCollapsibleItemNameFunction = makeCollapsibleItemNameFunction;
+        this.collectionRepository = collectionRepository;
+        this.makeCollectionItemNameFunction = makeCollectionItemNameFunction;
         this.isRequired = isRequired;
         this.parentForm = parentForm;
         this.chosenItem;
         this.$dom;
-        this.collapsible = collapsible;
+        var _this = this;
+        this.Collection = class extends SimpleCollection {
+            constructor(initParamObject) {
+                super({
+                    id: initParamObject.id,
+                    parentDataItem: initParamObject.parentDataItem,
+                    title: initParamObject.title,
+                    isPlain: true,
+                    hasFilter: true,
+                    isEditable: false,
+                    isAddable: false,
+                    isDeletable: false,
+                    isSelectable: true,
+                    connectedRepository: _this.collectionRepository
+                });
+
+                this.initialise(this.makeList());
+            }
+            /*
+             * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
+             * @dataItem connectedRepository.items[i]
+             */
+            makeItem(dataItem) {
+                (dataItem.description) ? true : dataItem.description = "";
+                return {
+                    id: dataItem.id,
+                    //icon:   'info',
+                    $title: this.makeTitle(dataItem),
+                    $description: this.makeDescription(dataItem),
+                    editUrl: dataItem.editUrl,
+                    dataItem: dataItem
+                };
+            }
+
+            /*
+             * @param {dataItem} this.connectedRepository.items[i])
+             */
+            makeTitle(dataItem) {
+                var titleAtomicEditLabel = new AtomicEditLabel(_this.makeCollectionItemNameFunction(dataItem),
+                    dataItem,
+                    new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
+                    'name',
+                    this);
+                return titleAtomicEditLabel.$dom;
+            }
+            /*
+             * @param {dataItem} this.connectedRepository.currentItem
+             */
+            makeDescription(dataItem) {
+                var $collectionElementDescription = $('<span>');
+
+                if (dataItem.description)
+                    $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
+
+                return $collectionElementDescription;
+            }
+
+            makeList() {
+                return super.makeList().filter((item) => {
+                    //console.log('this.parentDataItem.id: %s ==? %s', this.parentDataItem.id, item.dataItem._parent.id)
+                    return item.dataItem._parent.id == this.parentDataItem.id
+                });
+            }
+
+            selectTrigger(itemId) {
+                if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId) {
+                    super.selectTrigger(itemId);
+                    _this.chosenItem = this.connectedRepository.currentItem;
+                    _this.hideCollapsible();
+                }
+            }
+        }
+        this.Collapsible = class extends SimpleCollapsible {
+            constructor() {
+                super({
+                    id: _this.id + '_CollapsibleSelect_itemsListCollapsible_' + _this.id,
+                    hasFilter: true,
+                    isEditable: false,
+                    isAddable: false,
+                    isDeletable: false,
+                    hasArchiveSwitch: false,
+                    connectedRepository: _this.collapsibleRepository,
+                    //subitemsCount: 12
+                });
+                this.initialise(this.makeCollapsibleItemsList());
+            }
+            /*
+             * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
+             * @param {type} connectedRepository.items[i]
+             * @returns {Collapsible.Item}
+             */
+            makeItem(dataItem, $bodyDom) {
+                return {
+                    id: dataItem.id,
+                    name: _this.makeCollapsibleItemNameFunction(dataItem),
+                    $body: $bodyDom,
+                    dataItem: dataItem,
+                };
+            }
+
+            makeBodyDom(dataItem) {
+                var casesCollection = new _this.Collection({
+                    id: _this.id + '_CollapsibleSelect_itemsListCollection_' + dataItem.id,
+                    title: '',
+                    parentDataItem: dataItem
+                })
+                return casesCollection.$dom;
+            }
+        }
+        this.collapsible = new this.Collapsible();
         this.showCollapsibleButton = new RaisedButton('Wybierz opcję', this.showCollapsible, this)
         this.buildDom();
     }
@@ -281,14 +394,21 @@ class CollapsibleSelect {
         this.$dom.append(this.collapsible.$dom);
     }
 
-    showCollapsible(){
+    showCollapsible() {
+        this.$dom.children().hide();
         this.collapsible.$dom.show();
-        this.showCollapsibleButton.$dom.hide();
     }
 
-    hideCollapsible(){
+    hideCollapsible() {
         this.collapsible.$dom.hide();
         this.showCollapsibleButton.$dom.show();
+        this.$dom.find('.chip').remove();
+        this.$dom
+            .prepend(new Chip('CollapsibleSelect_itemsListCollection_case_' + this.getValue().id,
+                this.makeCollectionItemNameFunction(this.getValue()),
+                this.getValue(),
+                undefined,
+                this).$dom);
     }
 
     validate() {
@@ -298,8 +418,12 @@ class CollapsibleSelect {
             return true;
 
     }
+    simulateChosenItem(inputvalue){
+        this.chosenItem = inputvalue;
+        this.hideCollapsible();
+    }
 
-    getValue(){
+    getValue() {
         return this.chosenItem;
     }
 }
@@ -321,8 +445,10 @@ class Chip {
         this.$dom
             .attr('id', 'chip_' + this.id)
             .addClass('chip')
-            .html(this.caption)
-            .append('<i class="close material-icons">close</i>');
+            .html(this.caption);
+
+        if (this.onDeleteCallBack)
+            this.$dom.append('<i class="close material-icons">close</i>');
     }
 
     setOnDeleteAction() {
@@ -882,6 +1008,7 @@ class Form {
                     this.elements[i].input.setValue(inputvalue);
                     break;
                 case 'SelectFieldBrowserDefault':
+                case 'CollapsibleSelect':
                     this.elements[i].input.simulateChosenItem(inputvalue);
                     break;
                 case 'SwitchInput':
@@ -901,6 +1028,7 @@ class Form {
                 case 'SelectField':
                 case 'HiddenInput':
                 case 'FileInput':
+                case 'CollapsibleSelect':
                     test = this.elements[i].input.validate(dataObject[this.elements[i].input.dataItemKeyName]);
                     if (!test) {
                         alert('Formularz źle wypełniony');
@@ -954,6 +1082,7 @@ class Form {
                 case 'Chips':
                 case 'HiddenInput':
                 case 'FileInput':
+                case 'CollapsibleSelect':
                     dataObject[this.elements[i].dataItemKeyName] = await this.elements[i].input.getValue();
                     break;
 

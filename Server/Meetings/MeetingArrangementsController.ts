@@ -5,33 +5,33 @@ function getMeetingArrangementsList(initParamObject, externalConn?: GoogleAppsSc
   var caseConditon = (initParamObject && initParamObject.caseId) ? 'MeetingArrangements.CaseId=' + initParamObject.caseId : '1';
 
   var sql = 'SELECT  MeetingArrangements.Id, \n \t' +
-                    'MeetingArrangements.MeetingId, \n \t' +
-                    'MeetingArrangements.Name, \n \t' +
-                    'MeetingArrangements.Description, \n \t' +
-                    'MeetingArrangements.Deadline, \n \t' +
-                    'MeetingArrangements.LastUpdated, \n \t' +
-                    'Cases.Id AS CaseId, \n \t' +
-                    'Cases.Name AS CaseName, \n \t' +
-                    'CaseTypes.Id AS CaseTypeId, \n \t' +
-                    'CaseTypes.Name AS CaseTypeName, \n \t' +
-                    'CaseTypes.FolderNumber, \n \t' +
-                    'Milestones.Id AS MilestoneId, \n \t' +
-                    'Milestones.Name AS MilestoneName, \n \t' +
-                    'Contracts.Id AS ContractId, \n \t' +
-                    'Contracts.Number AS ContractNumber, \n \t' +
-                    'Contracts.Name AS ContractName, \n \t' +
-                    'CaseTypes.FolderNumber, \n \t' +
-                    'Persons.Id AS OwnerId, \n \t' +
-                    'Persons.Name AS OwnerName, \n \t' +
-                    'Persons.Surname AS OwnerSurname, \n \t' +
-                    'Persons.Email AS OwnerEmail \n' +
-              'FROM MeetingArrangements \n' +
-              'JOIN Cases ON MeetingArrangements.CaseId=Cases.Id \n' +
-              'JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
-              'JOIN Milestones ON Cases.MilestoneId=Milestones.Id \n' +
-              'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-              'LEFT JOIN Persons ON MeetingArrangements.OwnerId=Persons.Id \n' +
-              'WHERE ' + projectCondition + ' AND ' + caseConditon + ' AND ' + meetingCondition;
+    'MeetingArrangements.MeetingId, \n \t' +
+    'MeetingArrangements.Name, \n \t' +
+    'MeetingArrangements.Description, \n \t' +
+    'MeetingArrangements.Deadline, \n \t' +
+    'MeetingArrangements.LastUpdated, \n \t' +
+    'Cases.Id AS CaseId, \n \t' +
+    'Cases.Name AS CaseName, \n \t' +
+    'CaseTypes.Id AS CaseTypeId, \n \t' +
+    'CaseTypes.Name AS CaseTypeName, \n \t' +
+    'CaseTypes.FolderNumber, \n \t' +
+    'Milestones.Id AS MilestoneId, \n \t' +
+    'Milestones.Name AS MilestoneName, \n \t' +
+    'Contracts.Id AS ContractId, \n \t' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
+    'CaseTypes.FolderNumber, \n \t' +
+    'Persons.Id AS OwnerId, \n \t' +
+    'Persons.Name AS OwnerName, \n \t' +
+    'Persons.Surname AS OwnerSurname, \n \t' +
+    'Persons.Email AS OwnerEmail \n' +
+    'FROM MeetingArrangements \n' +
+    'JOIN Cases ON MeetingArrangements.CaseId=Cases.Id \n' +
+    'JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
+    'JOIN Milestones ON Cases.MilestoneId=Milestones.Id \n' +
+    'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
+    'LEFT JOIN Persons ON MeetingArrangements.OwnerId=Persons.Id \n' +
+    'WHERE ' + projectCondition + ' AND ' + caseConditon + ' AND ' + meetingCondition;
   return getMeetingArrangements(sql, externalConn)
 }
 
@@ -110,7 +110,7 @@ function getMeetingArrangements(sql: string, externalConn?: GoogleAppsScript.JDB
 }
 
 function test_addNewMeetingArrangement() {
-  addNewMeetingArrangement('')
+  addNewMeetingArrangement('');
 }
 
 function addNewMeetingArrangement(itemFormClient) {

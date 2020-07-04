@@ -81,7 +81,7 @@ class TasksCollection extends SimpleCollection {
         var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail, 
                                                         dataItem, 
                                                         personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
+                                                        '_nameSurnameEmail',
                                                         this);
         
         $collectionElementDescription

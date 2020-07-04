@@ -15,9 +15,6 @@ class MeetingArrangementsCollection extends SimpleCollection {
             connectedRepository: MeetingsSetup.meetingArrangementsRepository
         });
         this.initialise(this.makeList());
-        this.$actionsMenu.hide();
-        //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
-
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db

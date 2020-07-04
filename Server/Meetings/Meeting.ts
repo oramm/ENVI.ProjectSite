@@ -1,17 +1,17 @@
 function Meeting(initParamObject) {
-  if(initParamObject){
+  if (initParamObject) {
     this.id = initParamObject.id;
     this.name = initParamObject.name;
     this.description = initParamObject.description;
-    
-    initParamObject.date =ToolsDate.dateDMYtoYMD(initParamObject.date);
-    this.date = (initParamObject.date)? Utilities.formatDate(new Date(initParamObject.date), "CET", "yyyy-MM-dd") : undefined;
-    
-    if(initParamObject.protocolGdId){
+
+    initParamObject.date = ToolsDate.dateDMYtoYMD(initParamObject.date);
+    this.date = (initParamObject.date) ? Utilities.formatDate(new Date(initParamObject.date), "CET", "yyyy-MM-dd") : undefined;
+
+    if (initParamObject.protocolGdId) {
       this.protocolGdId = initParamObject.protocolGdId;
       this._documentEditUrl = Gd.createDocumentEditUrl(initParamObject.protocolGdId);
     }
-    if(initParamObject._contract){
+    if (initParamObject._contract) {
       this._contract = initParamObject._contract;
       this.contractId = initParamObject._contract.id;
     }
@@ -22,11 +22,11 @@ function Meeting(initParamObject) {
 
 Meeting.prototype = {
   constructor: Meeting,
-  
-  createProtocol: function(){
-    
+
+  createProtocol: function () {
+
     var protocolDocument = Gd.createDuplicateFile(this._protocolTemplateId, this._contract.meetingProtocolsGdFolderId, 'Notatka ze spotkania - ' + this.date);
-    this.protocolGdId = protocolDocument.getId(); 
+    this.protocolGdId = protocolDocument.getId();
     this._documentEditUrl = protocolDocument.getUrl();
     GDocsTools.fillPlaceHolder(this.protocolGdId, '#MEETING_DESCRIPTION', ToolsHtml.parseHtmlToText(this.description));
     GDocsTools.fillPlaceHolder(this.protocolGdId, '#MEETING_NAME', ToolsHtml.parseHtmlToText(this.name));
@@ -42,77 +42,77 @@ Meeting.prototype = {
   /*
    * tworzy etykietę z danymi podmiotów w protokole
    */
-  makeEntitiesDataLabel: function(entities){
+  makeEntitiesDataLabel: function (entities) {
     var label = '';
-    for (var i=0; i<entities.length; i++){
+    for (var i = 0; i < entities.length; i++) {
       label += entities[i].name
-      if(entities[i].address)
+      if (entities[i].address)
         label += '\n' + entities[i].address;
-      if(i<entities.length-1) 
+      if (i < entities.length - 1)
         label += '\n'
     }
     return label;
   },
-  
-  setArrangementsInProtocol: function(){
+
+  setArrangementsInProtocol: function () {
     var document = DocumentApp.openById(this.protocolGdId);
     var arrangements = getMeetingArrangementsListPerMeeting(this.id);
     var body = document.getBody();
     //pos - pozycja paragrafu w dokumencie, przy każdej zmianie szablonu trzeba to zaktualizować
-    for(var i=0, pos=4; i<arrangements.length; i++, pos+=3){
+    for (var i = 0, pos = 4; i < arrangements.length; i++, pos += 3) {
       var headerString = arrangements[i]._case._parent._parent.number + ' - ' + arrangements[i]._case._type.folderNumber + ' ' + arrangements[i]._case._type.name + ', ' + arrangements[i].name;
       var headerDocElement = body.insertParagraph(pos, headerString);
       headerDocElement.setHeading(DocumentApp.ParagraphHeading.HEADING3);
-      body.insertParagraph(pos+1, ToolsHtml.parseHtmlToText(arrangements[i].description));
-      if(arrangements[i].deadline || arrangements[i]._owner){
-        var footerDocElement = body.insertParagraph(pos+2, '');
-        
-        if(arrangements[i].deadline){
+      body.insertParagraph(pos + 1, ToolsHtml.parseHtmlToText(arrangements[i].description));
+      if (arrangements[i].deadline || arrangements[i]._owner) {
+        var footerDocElement = body.insertParagraph(pos + 2, '');
+
+        if (arrangements[i].deadline) {
           footerDocElement.setText('Wykonać do: ' + arrangements[i].deadline + '\t ');
           footerDocElement.setAttributes(GDocsTools.paragraphFooterStyle());
-          footerDocElement.editAsText().setAttributes(12, 
-                                                      footerDocElement.getText().length-1,
-                                                      GDocsTools.paragraphEmphasisStyle(true)
-                                                     );
+          footerDocElement.editAsText().setAttributes(12,
+            footerDocElement.getText().length - 1,
+            GDocsTools.paragraphEmphasisStyle(true)
+          );
         }
-        if(arrangements[i]._owner){
+        if (arrangements[i]._owner) {
           var x = footerDocElement.getText().length;
           var ownerLabel = 'Przypisane do: ' + arrangements[i]._owner.name + ' ' + arrangements[i]._owner.surname;
           Logger.log(JSON.stringify(arrangements[i]._owner));
-          if(!arrangements[i].deadline){
+          if (!arrangements[i].deadline) {
             footerDocElement.setText(ownerLabel);
             footerDocElement.setAttributes(GDocsTools.paragraphFooterStyle());
           } else
             footerDocElement.appendText(ownerLabel);
           footerDocElement.editAsText().setAttributes(x,
-                                                      x+14,
-                                                      GDocsTools.paragraphEmphasisStyle(false)
-                                                     );
+            x + 14,
+            GDocsTools.paragraphEmphasisStyle(false)
+          );
         }
       }
     }
   },
 
-  addInDb: function(conn, isPartOfTransaction) {
-  return addInDb('Meetings', this, conn, isPartOfTransaction);
+  addInDb: function (conn, isPartOfTransaction) {
+    return addInDb('Meetings', this, conn, isPartOfTransaction);
   },
-  
-  editInDb: function(externalConn, isPartOfTransaction) {
+
+  editInDb: function (externalConn, isPartOfTransaction) {
     editInDb('Meetings', this, externalConn, isPartOfTransaction);
   },
-  
-  deleteFromDb: function (){
-    deleteFromDb ('Meetings', this);
+
+  deleteFromDb: function () {
+    deleteFromDb('Meetings', this);
   },
-  
-  deleteProtocolFromGd: function(){
-    if(this.protocolGdId){
+
+  deleteProtocolFromGd: function () {
+    if (this.protocolGdId) {
       var file = DriveApp.getFileById(this.protocolGdId);
-      if(Gd.canUserDeleteFile(this.protocolGdId)){
+      if (Gd.canUserDeleteFile(this.protocolGdId)) {
         file.setTrashed(true);
         return true;
       }
-      else{
+      else {
         var rootFolder = DriveApp.getFolderById(this._contract.meetingProtocolsGdFolderId);
         rootFolder.removeFile(file);
         return false;

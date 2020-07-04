@@ -88,7 +88,7 @@ class ReactionsCollection extends SimpleCollection {
         var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail, 
                                                         dataItem, 
                                                         personAutoCompleteTextField,
-                                                        'nameSurnameEmail',
+                                                        '_nameSurnameEmail',
                                                         this);
         
         //var statusSelectField = new SelectField(this.id + '_' + dataItem.id + '_statusSelectField', 'Status', true);

@@ -9,8 +9,21 @@ class MeetingArrangementModal extends Modal {
             'person',
             false,
             'Wybierz imię i nazwisko')
-        this.ownerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, 'nameSurnameEmail', undefined, this);
-        this.caseCollapsibleSelect = new CollapsibleSelect(this.id + "_casesCollapsibleSelect", 'Wybierz sprawę', new MilestonesCollapsible(this.id + '_milestonesCollapsible'), true)
+        this.ownerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, '_nameSurnameEmail', undefined, this);
+        this.caseCollapsibleSelect = new CollapsibleSelect(
+            this.id + "_casesCollapsibleSelect",
+            'Wybierz sprawę',
+            MeetingsSetup.milestonesRepository,
+            (dataItem) => dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name,
+            MeetingsSetup.casesRepository,
+            (dataItem) => {
+                var title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
+                title += (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]' + ' | ';
+                title += (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '' + ' ';
+                title += (dataItem.name) ? dataItem.name : ' ';
+                return title;
+            },
+            true);
 
         this.formElements = [
             {
@@ -44,8 +57,7 @@ class MeetingArrangementModal extends Modal {
     initAddNewData() {
         //zainicjuj dane kontekstowe
         this.connectedResultsetComponent.connectedRepository.currentItem = {
-            _parent: MeetingsSetup.meetingsRepository.currentItem,
-            _case: MeetingsSetup.casesRepository.currentItem
+            _parent: MeetingsSetup.meetingsRepository.currentItem
         };
 
     }
