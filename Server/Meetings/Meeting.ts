@@ -1,30 +1,39 @@
-function Meeting(initParamObject) {
-  if (initParamObject) {
-    this.id = initParamObject.id;
-    this.name = initParamObject.name;
-    this.description = initParamObject.description;
+class Meeting {
+  id: any;
+  name: string;
+  description: string;
+  date: string;
+  protocolGdId: string;
+  _documentEditUrl: string;
+  _contract: any;
+  contractId: any;
+  location: string;
+  _protocolTemplateId: string;
 
-    initParamObject.date = ToolsDate.dateDMYtoYMD(initParamObject.date);
-    this.date = (initParamObject.date) ? Utilities.formatDate(new Date(initParamObject.date), "CET", "yyyy-MM-dd") : undefined;
+  constructor(initParamObject) {
+    if (initParamObject) {
+      this.id = initParamObject.id;
+      this.name = initParamObject.name;
+      this.description = initParamObject.description;
 
-    if (initParamObject.protocolGdId) {
-      this.protocolGdId = initParamObject.protocolGdId;
-      this._documentEditUrl = Gd.createDocumentEditUrl(initParamObject.protocolGdId);
+      initParamObject.date = ToolsDate.dateDMYtoYMD(initParamObject.date);
+      this.date = (initParamObject.date) ? Utilities.formatDate(new Date(initParamObject.date), "CET", "yyyy-MM-dd") : undefined;
+
+      if (initParamObject.protocolGdId) {
+        this.protocolGdId = initParamObject.protocolGdId;
+        this._documentEditUrl = Gd.createDocumentEditUrl(initParamObject.protocolGdId);
+      }
+      if (initParamObject._contract) {
+        this._contract = initParamObject._contract;
+        this.contractId = initParamObject._contract.id;
+      }
+      this.location = initParamObject.location;
+      this._protocolTemplateId = DOCS_PROTOCOL_TEMPLATE_ID;
     }
-    if (initParamObject._contract) {
-      this._contract = initParamObject._contract;
-      this.contractId = initParamObject._contract.id;
-    }
-    this.location = initParamObject.location;
-    this._protocolTemplateId = DOCS_PROTOCOL_TEMPLATE_ID;
   }
-}
 
-Meeting.prototype = {
-  constructor: Meeting,
 
-  createProtocol: function () {
-
+  public createProtocol() {
     var protocolDocument = Gd.createDuplicateFile(this._protocolTemplateId, this._contract.meetingProtocolsGdFolderId, 'Notatka ze spotkania - ' + this.date);
     this.protocolGdId = protocolDocument.getId();
     this._documentEditUrl = protocolDocument.getUrl();
@@ -38,11 +47,11 @@ Meeting.prototype = {
     GDocsTools.fillPlaceHolder(this.protocolGdId, '#ENGINEERS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._contract._engineers)));
     GDocsTools.fillPlaceHolder(this.protocolGdId, '#CONTRACTORS', ToolsHtml.parseHtmlToText(this.makeEntitiesDataLabel(this._contract._contractors)));
     this.setArrangementsInProtocol();
-  },
+  }
   /*
    * tworzy etykietę z danymi podmiotów w protokole
    */
-  makeEntitiesDataLabel: function (entities) {
+  makeEntitiesDataLabel(entities) {
     var label = '';
     for (var i = 0; i < entities.length; i++) {
       label += entities[i].name
@@ -52,9 +61,9 @@ Meeting.prototype = {
         label += '\n'
     }
     return label;
-  },
+  }
 
-  setArrangementsInProtocol: function () {
+  setArrangementsInProtocol() {
     var document = DocumentApp.openById(this.protocolGdId);
     var arrangements = getMeetingArrangementsListPerMeeting(this.id);
     var body = document.getBody();
@@ -91,21 +100,21 @@ Meeting.prototype = {
         }
       }
     }
-  },
+  }
 
-  addInDb: function (conn, isPartOfTransaction) {
+  addInDb(conn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
     return addInDb('Meetings', this, conn, isPartOfTransaction);
-  },
+  }
 
-  editInDb: function (externalConn, isPartOfTransaction) {
+  editInDb(externalConn?: GoogleAppsScript.JDBC.JdbcConnection, isPartOfTransaction?: boolean) {
     editInDb('Meetings', this, externalConn, isPartOfTransaction);
-  },
+  }
 
-  deleteFromDb: function () {
+  deleteFromDb() {
     deleteFromDb('Meetings', this);
-  },
+  }
 
-  deleteProtocolFromGd: function () {
+  deleteProtocolFromGd() {
     if (this.protocolGdId) {
       var file = DriveApp.getFileById(this.protocolGdId);
       if (Gd.canUserDeleteFile(this.protocolGdId)) {
