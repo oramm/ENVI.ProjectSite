@@ -60,13 +60,15 @@ class LetterModalController {
     onContractChosen(chosenItem) {
         LettersSetup.contractsRepository.currentItem = chosenItem;
         if (chosenItem) {
-            this.milestoneSelectFieldInitialize(chosenItem);
-
-            this.caseSelectFieldInitializeNew();
-        }
+            this.caseSelectFieldInitialize();
+            this.modal.caseCollapsibleMultiSelect.showCollapsibleButton.setEnabled(true);
+        } else
+            this.modal.caseCollapsibleMultiSelect.showCollapsibleButton.setEnabled(false);
     }
-
-    caseSelectFieldInitializeNew() {
+    /* 
+     * wywoływane przy wyborze kontraktu i przy edycji
+     */
+    caseSelectFieldInitialize() {
         this.modal.caseCollapsibleMultiSelect.initialise(
             LettersSetup.contractsRepository.currentItem,
             '_parent',
@@ -85,77 +87,11 @@ class LetterModalController {
         );
     }
 
-    milestoneSelectFieldInitialize() {
-        var currentMilestones = LettersSetup.milestonesRepository.items.filter(
-            item => item._parent.id == LettersSetup.contractsRepository.currentItem.id
-        );
-        this.modal.milestoneSelectField.initialise(currentMilestones, '_FolderNumber_TypeName_Name', this.onMilestoneChosen, this);
-    }
-
-    onMilestoneChosen(chosenItem) {
-        LettersSetup.milestonesRepository.currentItem = chosenItem;
-        if (chosenItem)
-            this.caseSelectFieldInitializeNew();
-    }
-
-    caseSelectFieldInitializeNew() {
-        var currentCases = LettersSetup.casesRepository.items.filter(
-            item => item._parent.id == LettersSetup.milestonesRepository.currentItem.id &&
-                this.checkCase(item)
-        );
-        this.modal.caseSelectField.initialise(currentCases, '_typeFolderNumber_TypeName_Number_Name', this.onCaseChosen, this);
-    }
-
-    checkCase(caseItem) {
-        //wyklucz sprawy wybrane już wcześniej
-        var allowType = true;
-        this.modal.selectedCasesHiddenInput.value.map(existingCaseItem => {
-            if (existingCaseItem.id == caseItem.id)
-                allowType = false;
-        });
-        return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
-    }
     onCaseChosen(chosenItem) {
         if (chosenItem) {
-            this.addCaseItem(chosenItem);
-            this.caseSelectFieldInitializeNew();
+            this.caseSelectFieldInitialize();
         }
     }
-
-    addCaseItem(caseDataItem) {
-        this.modal.selectedCasesHiddenInput.value.push(caseDataItem);
-        this.appendCaseChip(caseDataItem);
-    }
-
-    appendCaseChip(caseDataItem) {
-        var chipLabel;
-        if (caseDataItem._parent._parent.ourId)
-            chipLabel = caseDataItem._parent._parent.ourId;
-        else chipLabel = caseDataItem._parent._parent.number;
-        chipLabel += ', ' + caseDataItem._parent._type._folderNumber + ' ' +
-            caseDataItem._parent._type.name +
-            ' | '
-        chipLabel += caseDataItem._typeFolderNumber_TypeName_Number_Name
-        this.modal.selectedCasesHiddenInput.$dom.parent()
-            .prepend(new Chip('case_',
-                chipLabel,
-                caseDataItem,
-                this.onCaseUnchosen,
-                this).$dom);
-
-    }
-    onCaseUnchosen(unchosenItem) {
-        //LettersSetup.casesRepository.deleteFromCurrentItems(unchosenItem);
-        //this.removeCaseItem(unchosenItem);
-        //this.caseSelectFieldInitialize();
-    }
-
-    //usuwa caseItem z listy HiddenInput.value[]
-    removeCaseItem(caseDataItem) {
-        var index = Tools.arrGetIndexOf(this.modal.selectedCasesHiddenInput.value, 'id', caseDataItem.id);
-        this.modal.selectedCasesHiddenInput.value.splice(index, 1);
-    }
-
 
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
     entitiesChipsMainRefreshDataSet() {

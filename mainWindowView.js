@@ -19,7 +19,7 @@ class MainWindowView extends Popup{
     
 
     onProjectChosen(inputValue){
-        this.autocomplete.chosenItem = search(inputValue, "_ourId_Alias", MainSetup.projectsRepository.items);
+        this.autocomplete.chosenItem = Tools.search(inputValue, "_ourId_Alias", MainSetup.projectsRepository.items);
         MainSetup.projectsRepository.currentItem = this.autocomplete.chosenItem;
         MainSetup.personsPerProjectRepositoryLocalData.initialise({ projectOurId: this.autocomplete.chosenItem.ourId });
         this.navigationBar.initialiseMenuItems();

@@ -9,9 +9,7 @@ class IncomingLetterModal extends LetterModal {
         this.formElements = [
             this.numberFormElement,
             this.contractFormElement,
-            this.milestoneFormElement,
-            this.caseFormElement,
-            this.selectedCasesFormElement,
+            this.caseNEWFormElement,
             this.creationDateFormElement,
             this.registrationDateFormElement,
             this.entityMainFormElement,

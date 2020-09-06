@@ -180,20 +180,3 @@ class Tools {
         return blob;
     }
 }
-
-//finds an alament in Array by its value
-function search(nameKey, property, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-        if (myArray[i][property] == nameKey) {
-            return myArray[i];
-        }
-    }
-}
-//retrieves GET variables from URL
-function getUrlVars_OLD() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-        vars[key] = value;
-    });
-    return vars;
-}

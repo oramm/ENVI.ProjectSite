@@ -10,9 +10,6 @@ class LetterModal extends Modal {
         if (LettersSetup.contractsRepository)
             this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name', this.controller.onContractChosen, this.controller);
 
-        this.milestoneSelectField = new SelectField(this.id + '_milestoneSelectField', 'Kamień Milowy', undefined, false);
-        this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);
-        this.selectedCasesHiddenInput = new HiddenInput(this.id + '_currentCasesHiddenInput', undefined, true);
         this.caseCollapsibleMultiSelect = new CollapsibleMultiSelect(
             this.id + "_casesCollapsibleMultiSelect",
             'Wybierz sprawy',
@@ -36,33 +33,13 @@ class LetterModal extends Modal {
             dataItemKeyName: '_contract',
         };
 
-        this.milestoneFormElement = {
-            input: this.milestoneSelectField,
-            description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
-            dataItemKeyName: '_milestone'
-        }
-        this.caseFormElement = {
-            input: this.caseSelectField,
-            description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
-            dataItemKeyName: '_cases',
-            refreshDataSet() {
-                _this.controller.initCasesChips();
-            }
-        };
-
-        this.selectedCasesFormElement = {
-            input: this.selectedCasesHiddenInput,
-            dataItemKeyName: '_cases',
-            //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-            refreshDataSet() {
-                _this.controller.initCasesChips();
-            }
-        };
-
         this.caseNEWFormElement = {
             input: this.caseCollapsibleMultiSelect,
             description: (this.mode == 'EDIT') ? 'Przypisz pismo do jednej lub kilku spraw' : '',
-            dataItemKeyName: '_cases'
+            dataItemKeyName: '_cases',
+            refreshDataSet() {
+                _this.controller.caseSelectFieldInitialize();
+            }
         };
 
         this.creationDateFormElement = {

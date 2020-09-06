@@ -76,9 +76,9 @@ class Modal {
      * Aktualizuje dane np. w selectach. Jest uruchamiana w this.triggerAction();
      */
     refreshDataSets() {
-        for (var i = 0; i < this.formElements.length; i++) {
-            if (typeof this.formElements[i].refreshDataSet === 'function')
-                this.formElements[i].refreshDataSet();
+        for (var element of this.formElements) {
+            if (typeof element.refreshDataSet === 'function')
+                element.refreshDataSet();
         }
     }
     /*

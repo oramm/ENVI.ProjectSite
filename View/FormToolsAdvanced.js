@@ -79,7 +79,7 @@ class CollapsibleSelect {
         this.lastSelectedItem;
         this.$dom;
         this.showCollapsibleButton = new RaisedButton('Wybierz opcję', this.showCollapsible, this);
-        this.hideCollapsibleButton = new RaisedButton('OK', this.hideCollapsible, this)
+        this.hideCollapsibleButton = new RaisedButton('Nie wybieraj', this.hideCollapsible, this)
         this.buildDom();
 
         var _this = this;
@@ -160,7 +160,6 @@ class CollapsibleSelect {
 
         this.collapsible = new this.Collapsible({ parentDataItem: parenDataItem });
         this.$dom.append(this.collapsible.$dom);
-        this.showCollapsibleButton.setEnabled(true);
         this.hideCollapsible();
     }
 
@@ -169,7 +168,7 @@ class CollapsibleSelect {
         this.lastSelectedItem = this.connectedRepository.currentItem;
         this.$dom.find('.chip').remove();
         this.hideCollapsible();
-        this.addChip();
+        this.addChip(this.lastSelectedItem);
         if (this.itemChosenHandler) this.itemChosenHandler();
     }
 
@@ -185,14 +184,15 @@ class CollapsibleSelect {
         this.hideCollapsibleButton.$dom.hide();
     }
 
-    addChip() {
+    addChip(dataItem) {
         this.$selectedOptionsPanel
-            .append(new Chip('CollapsibleSelect_itemsListCollection_case_' + this.getValue().id,
+            .append(new Chip('CollapsibleSelect_itemsListCollection_case_' + dataItem.id,
                 this.makeCollectionItemNameFunction(this.lastSelectedItem),
-                this.lastSelectedItem,
+                dataItem,
                 this.onItemUnchosen,
                 this).$dom);
     }
+
     clear() {
         this.$selectedOptionsPanel.children().remove();
         this.connectedRepository.currentItem = undefined;
@@ -214,7 +214,8 @@ class CollapsibleSelect {
     simulateChosenItem(inputvalue) {
         this.value = inputvalue;
         this.lastSelectedItem = inputvalue;
-        this.addChip();
+        if (!Tools.search(inputvalue.id, 'id', this.value))
+            this.addChip(this.lastSelectedItem);
         this.hideCollapsible();
         if (this.itemChosenHandler) this.itemChosenHandler();
     }
@@ -232,15 +233,16 @@ class CollapsibleMultiSelect extends CollapsibleSelect {
         this.value = Array.from(this.collectionRepository.currentItems);
         this.lastSelectedItem = this.collectionRepository.currentItem;
         this.hideCollapsible();
-        this.addChip();
+        this.addChip(this.lastSelectedItem);
         if (this.itemChosenHandler) this.itemChosenHandler();
     }
 
     simulateChosenItem(inputvalue) {
         this.value = inputvalue;
         for (const item of inputvalue) {
-            this.lastSelectedItem = inputvalue;
-            this.addChip();
+            this.lastSelectedItem = item;
+            if (!Tools.search(item.id, 'id', this.value))
+                this.addChip(this.lastSelectedItem);
         }
         this.hideCollapsible();
         this.itemChosenHandler();

@@ -73,7 +73,7 @@ class AutoCompleteTextField_1 {
         }
 
     setValue(inputValue){
-            this.chosenItem = search(inputValue, this.key, this.repository.items);
+            this.chosenItem = Tools.search(inputValue, this.key, this.repository.items);
             this.repository.selectedItem = this.chosenItem;
             if (this.chosenItem !== undefined) this.$dom.children('input').attr('pattern','^' + inputValue + '$')
             this.$dom.children('input').val(inputValue);

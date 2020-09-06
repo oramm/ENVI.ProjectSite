@@ -16,7 +16,6 @@ class OurLetterModalController extends LetterModalController {
     }
 
     onCaseUnchosen(unChosenItem) {
-        super.onCaseUnchosen(unChosenItem);
         this.initaliseTemplateSelectField();
     }
 

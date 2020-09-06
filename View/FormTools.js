@@ -83,7 +83,7 @@ class AutoCompleteTextField {
         if (inputValue !== undefined) {
             //inputValue pochodzi z formularza
             if (typeof inputValue !== 'object') {
-                this.chosenItem = search(inputValue, this.key, this.repository.items);
+                this.chosenItem = Tools.search(inputValue, this.key, this.repository.items);
                 this.repository.currentItem = this.chosenItem;
                 if (this.chosenItem) this.$dom.children('input').attr('pattern', '^' + inputValue + '$');
                 this.$dom.children('input').val(inputValue);
@@ -590,7 +590,7 @@ class SelectFieldBrowserDefault {
     }
     //uruchamiana na click
     setValue(inputValue) {
-        this.chosenItem = search(inputValue, 'name', this.optionsData);
+        this.chosenItem = Tools.search(inputValue, 'name', this.optionsData);
     }
 
     setChangeAction() {
@@ -871,7 +871,7 @@ class Form {
                 case 'CollapsibleMultiSelect':
                     test = this.elements[i].input.validate(dataObject[this.elements[i].input.dataItemKeyName]);
                     if (!test) {
-                        alert('Formularz źle wypełniony');
+                        alert('Źle wypełnione pole "' + this.elements[i].input.name +'"');
                         return false;
                     }
                     break;
