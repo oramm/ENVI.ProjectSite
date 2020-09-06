@@ -21,7 +21,7 @@ class LetterModalController {
             _lastUpdated: ''
         };
         LettersSetup.casesRepository.currentItems = [];
-        this.caseSelectFieldInitialize();
+        //this.caseSelectFieldInitialize();
         this.modal.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.onEntityMainChosen, this);
         this.modal.creationDateFormElement.input.setValue(new Date());
         this.modal.registrationDateFormElement.input.setValue(new Date());
@@ -59,8 +59,30 @@ class LetterModalController {
 
     onContractChosen(chosenItem) {
         LettersSetup.contractsRepository.currentItem = chosenItem;
-        if (chosenItem)
+        if (chosenItem) {
             this.milestoneSelectFieldInitialize(chosenItem);
+
+            this.caseSelectFieldInitializeNew();
+        }
+    }
+
+    caseSelectFieldInitializeNew() {
+        this.modal.caseCollapsibleMultiSelect.initialise(
+            LettersSetup.contractsRepository.currentItem,
+            '_parent',
+            LettersSetup.milestonesRepository,
+            (dataItem) => dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name,
+            LettersSetup.casesRepository,
+            (dataItem) => {
+                var title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
+                title += (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]' + ' | ';
+                title += (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '' + ' ';
+                title += (dataItem.name) ? dataItem.name : ' ';
+                return title;
+            },
+            () => this.onCaseChosen(),
+            () => this.onCaseUnchosen()
+        );
     }
 
     milestoneSelectFieldInitialize() {
@@ -73,10 +95,10 @@ class LetterModalController {
     onMilestoneChosen(chosenItem) {
         LettersSetup.milestonesRepository.currentItem = chosenItem;
         if (chosenItem)
-            this.caseSelectFieldInitialize();
+            this.caseSelectFieldInitializeNew();
     }
 
-    caseSelectFieldInitialize() {
+    caseSelectFieldInitializeNew() {
         var currentCases = LettersSetup.casesRepository.items.filter(
             item => item._parent.id == LettersSetup.milestonesRepository.currentItem.id &&
                 this.checkCase(item)
@@ -96,7 +118,7 @@ class LetterModalController {
     onCaseChosen(chosenItem) {
         if (chosenItem) {
             this.addCaseItem(chosenItem);
-            this.caseSelectFieldInitialize();
+            this.caseSelectFieldInitializeNew();
         }
     }
 
@@ -124,8 +146,8 @@ class LetterModalController {
     }
     onCaseUnchosen(unchosenItem) {
         //LettersSetup.casesRepository.deleteFromCurrentItems(unchosenItem);
-        this.removeCaseItem(unchosenItem);
-        this.caseSelectFieldInitialize();
+        //this.removeCaseItem(unchosenItem);
+        //this.caseSelectFieldInitialize();
     }
 
     //usuwa caseItem z listy HiddenInput.value[]
@@ -162,8 +184,8 @@ class LetterModalController {
         return allowType;//entityTypeItem.milestoneTypeId==EntitiesSetup.currentMilestone._type.id;
     }
     onEntityMainChosen(chosenItem) {
+        this.modal.entityMainAutoCompleteTextField.clearInput();
         this.addEntityMainItem(chosenItem);
-        this.entitySelectFieldInitialize(chosenItem);
     }
 
     addEntityMainItem(entityDataItem) {
@@ -190,5 +212,6 @@ class LetterModalController {
     removeEntityItem(entityDataItem) {
         var index = Tools.arrGetIndexOf(this.modal.selectedEntitiesMainHiddenInput.value, 'id', entityDataItem.id);
         this.modal.selectedEntitiesMainHiddenInput.value.splice(index, 1);
+        this.modal.entityMainAutoCompleteTextField.repository.deleteFromCurrentItems(entityDataItem);
     }
 };

@@ -10,15 +10,13 @@ class Repository {
 
         this.itemsLocalData;
         this.result;
+        //Repository może mieć wiele bieżących elementów (multiselect)
+        this.currentItemsLocalData = [];
 
         if (typeof initParameter === 'string') {
             //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
             this.name = initParameter;
             this.currentItemLocalData = {};
-
-            //Repository może mieć wiele bieżących elementów (multiselect)
-            this.currentItemsLocalData = [];
-
             //sessionStorage.setItem(this.name, JSON.stringify(this));
         }
         //mamy obiekt z SessionStorage
@@ -60,27 +58,26 @@ class Repository {
         } else
             this.currentItemId = undefined;
         this.currentItemLocalData = item;
+        if (item !== {}) this.addToCurrentItems(item);
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
 
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     addToCurrentItems(newDataItem) {
-        if (!newDataItem || typeof newDataItem !== 'object') throw new Error("Selected repository item must be an object!");
-        if (!newDataItem.id) throw new Error("repository item must have an id parameter!");
-
-        var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem => existingDataItem.id == newDataItem.id)[0];
+        if (this.currentItemsLocalData && this.currentItemsLocalData[0])
+            var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem => existingDataItem.id == newDataItem.id)[0];
         if (!wasItemAlreadySelected)
             this.currentItemsLocalData.push(newDataItem);
 
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+        //sessionStorage.setItem(this.name, JSON.stringify(this));
     }
 
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     deleteFromCurrentItems(item) {
         if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
 
-        var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item);
-        this.currentItemsLocalData.splice(index, 1)
+        var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item.id);
+        if (index !== undefined) this.currentItemsLocalData.splice(index, 1)
 
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }

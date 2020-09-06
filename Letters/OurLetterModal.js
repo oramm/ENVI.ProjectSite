@@ -7,9 +7,7 @@ class OurLetterModal extends LetterModal {
         this.initFormElements();
 
         this.formElements.push(this.contractFormElement);
-        this.formElements.push(this.milestoneFormElement);
-        this.formElements.push(this.caseFormElement);
-        this.formElements.push(this.selectedCasesFormElement);
+        this.formElements.push(this.caseNEWFormElement);
         if (this.mode === 'ADD_NEW')
             this.formElements.push(this.templateFormElement);
         this.formElements.push(this.creationDateFormElement);

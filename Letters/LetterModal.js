@@ -13,6 +13,10 @@ class LetterModal extends Modal {
         this.milestoneSelectField = new SelectField(this.id + '_milestoneSelectField', 'Kamień Milowy', undefined, false);
         this.caseSelectField = new SelectField(this.id + '_caseSelectField', 'Sprawa', undefined, false);
         this.selectedCasesHiddenInput = new HiddenInput(this.id + '_currentCasesHiddenInput', undefined, true);
+        this.caseCollapsibleMultiSelect = new CollapsibleMultiSelect(
+            this.id + "_casesCollapsibleMultiSelect",
+            'Wybierz sprawy',
+            true);
 
         this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id + '_entityMainAutoCompleteTextField',
             '',
@@ -40,7 +44,10 @@ class LetterModal extends Modal {
         this.caseFormElement = {
             input: this.caseSelectField,
             description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnej sprawy do pisma, możesz to pole zignorować' : '',
-            dataItemKeyName: '_case'
+            dataItemKeyName: '_cases',
+            refreshDataSet() {
+                _this.controller.initCasesChips();
+            }
         };
 
         this.selectedCasesFormElement = {
@@ -50,6 +57,12 @@ class LetterModal extends Modal {
             refreshDataSet() {
                 _this.controller.initCasesChips();
             }
+        };
+
+        this.caseNEWFormElement = {
+            input: this.caseCollapsibleMultiSelect,
+            description: (this.mode == 'EDIT') ? 'Przypisz pismo do jednej lub kilku spraw' : '',
+            dataItemKeyName: '_cases'
         };
 
         this.creationDateFormElement = {
@@ -65,7 +78,7 @@ class LetterModal extends Modal {
             input: this.entityMainAutoCompleteTextField,
             description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnego podmiotu, możesz to pole zignorować' : '',
             dataItemKeyName: '_entityMain',
-            refreshDataSet(){
+            refreshDataSet() {
                 _this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', _this.controller.onEntityMainChosen, this.controller);
             }
         };

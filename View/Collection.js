@@ -79,6 +79,13 @@ class Collection extends Resultset {
         if (this.isSelectable) this.setSelectAction();
     }
 
+    showRow(id) {
+        this.$dom.find('.collection-item#' + id).show();
+    }
+    
+    hideRow(id) {
+        this.$dom.find('.collection-item#' + id).hide();
+    }
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
@@ -206,6 +213,7 @@ class Collection extends Resultset {
 
     setSelectAction() {
         this.$dom.find("li").off('click');
+        this.$dom.find("li").off('mousedown');
         var _this = this;
         //wyłącz klasę active
         this.$dom.find("li").mousedown(function () {
