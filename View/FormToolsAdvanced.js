@@ -78,6 +78,7 @@ class CollapsibleSelect {
         this.value;
         this.lastSelectedItem;
         this.$dom;
+        this.$label = $('<label>' + this.label + '</label>');
         this.showCollapsibleButton = new RaisedButton('Wybierz opcję', this.showCollapsible, this);
         this.hideCollapsibleButton = new RaisedButton('Nie wybieraj', this.hideCollapsible, this)
         this.buildDom();
@@ -138,6 +139,7 @@ class CollapsibleSelect {
         this.showCollapsibleButton.setEnabled(false);
         this.hideCollapsibleButton.$dom.hide();
         this.$dom
+            .append(this.$label)
             .append(this.$selectedOptionsPanel)
             .append(this.showCollapsibleButton.$dom)
             .append(this.hideCollapsibleButton.$dom);
