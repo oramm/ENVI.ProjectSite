@@ -1,46 +1,82 @@
-function getTasksListPerMilestone(milestoneId) {
+function getTasksList(initParamObject, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
+  var contractCondition = (initParamObject && initParamObject.contractId) ? 'Contracts.Id=' + initParamObject.contractId : '1';
+  var milestoneCondition = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id=' + initParamObject.milestoneId : '1';
+  var contractStatusCondition = (initParamObject && initParamObject.contractStatusCondition) ? 'Contracts.Status REGEXP "' + initParamObject.contractStatusCondition + '"' : '1';
+
+  var sql = 'SELECT  Tasks.Id, \n \t' +
+    'Tasks.Name AS TaskName, \n \t' +
+    'Tasks.Description AS TaskDescription, \n \t ' +
+    'Tasks.Deadline AS TaskDeadline, \n \t' +
+    'Tasks.Status AS TaskStatus, \n \t' +
+    'Tasks.OwnerId, \n \t' +
+    'Cases.Id AS CaseId, \n \t' +
+    'Cases.Name AS CaseName, \n \t' +
+    'Cases.TypeId AS CaseTypeId, \n \t' +
+    'Cases.GdFolderId AS CaseGdFolderId, \n \t' +
+    'CaseTypes.Id AS CaseTypeId, \n \t' +
+    'CaseTypes.Name AS CaseTypeName, \n \t' +
+    'CaseTypes.IsDefault, \n \t' +
+    'CaseTypes.IsUniquePerMilestone, \n \t' +
+    'CaseTypes.MilestoneTypeId, \n \t' +
+    'CaseTypes.FolderNumber AS CaseTypeFolderNumber, \n \t' +
+    'Milestones.Id AS MilestoneId, \n \t' +
+    'Milestones.ContractId, \n \t' +
+    'Owners.Name AS OwnerName, \n \t' +
+    'Owners.Surname AS OwnerSurname, \n \t' +
+    'Owners.Email AS OwnerEmail \n' +
+    'FROM Tasks \n' +
+    'JOIN Cases ON Cases.Id=Tasks.CaseId \n' +
+    'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
+    'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
+    'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
+    'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'LEFT JOIN Persons AS Owners ON Owners.Id = Tasks.OwnerId \n' +
+    'WHERE ' + contractCondition + ' AND ' + milestoneCondition + ' AND ' + contractStatusCondition;
+
+  return getTasks(sql, externalConn);
+}
+function test_getTasksList() {
+  getTasksList({ contractId: 114 })
+}
+
+function getTasks(sql: string, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
   try {
-    var result = [];
-    var conn = connectToSql();
-    var stmt = conn.createStatement();
-    if(!milestoneId) milestoneId = '"%"'
-    var sql = 'SELECT  Tasks.Id, \n \t' +
-                        'Tasks.CaseId, \n \t' +
-                        'Tasks.Name, \n \t' +
-                        'Tasks.Description, \n \t ' +
-                        'Tasks.Deadline, \n \t' +
-                        'Tasks.Status, \n \t' +
-                        'Tasks.OwnerId, \n \t' +
-                        'Persons.Name, \n \t' +
-                        'Persons.Surname, \n \t' +
-                        'Persons.Email \n' +
-                'FROM Tasks \n' +
-                'JOIN Cases ON Cases.MilestoneId='+ milestoneId +' AND Cases.Id=Tasks.CaseId \n' +
-                'LEFT JOIN Persons ON Persons.Id = Tasks.OwnerId';
-    var dbResults = stmt.executeQuery(sql);
-    
     Logger.log(sql);
+    var result = [];
+    var conn = (externalConn) ? externalConn : connectToSql();
+    if (!conn.isValid(0)) throw new Error('getTasks:: połączenie przerwane');
+
+    var stmt = conn.createStatement();
+    var dbResults = stmt.executeQuery(sql);
+
     while (dbResults.next()) {
-      
-      var item = new Task({id: dbResults.getLong(1),
-                           name: dbResults.getString(3),
-                           description: dbResults.getString(4),
-                           deadline: dbResults.getString(5),
-                           status: dbResults.getString(6),
-                           _owner: {id: (dbResults.getLong(7))? dbResults.getLong(7) : undefined,
-                                    name: (dbResults.getString(8))? dbResults.getString(8): '',
-                                    surname: (dbResults.getString(9))? dbResults.getString(9): ''
-                                   },
-                           _parent: {id: dbResults.getLong(2)}
-                         });
-      Logger.log(item._owner);
-      item.milestoneId = milestoneId/1;
-      if(item._owner.id){
-        //var name = (dbResults.getString(8))? dbResults.getString(8): '';
-        //var surname = (dbResults.getString(9))? dbResults.getString(9): '';
-        var email = (dbResults.getString(10))? dbResults.getString(10): '';
-        item._owner._nameSurnameEmail = item._owner.name.trim() + ' ' + item._owner.surname.trim() + ': ' + email.trim();
-      }
+
+      var item = new Task({
+        id: dbResults.getLong('Id'),
+        name: dbResults.getString('TaskName'),
+        description: dbResults.getString('TaskDescription'),
+        deadline: dbResults.getString('TaskDeadline'),
+        status: dbResults.getString('TaskStatus'),
+        _owner: {
+          id: (dbResults.getLong('OwnerId')) ? dbResults.getLong('OwnerId') : undefined,
+          name: (dbResults.getString('OwnerName')) ? dbResults.getString('OwnerName') : '',
+          surname: (dbResults.getString('OwnerSurname')) ? dbResults.getString('OwnerSurname') : '',
+          email: (dbResults.getString('OwnerEmail')) ? dbResults.getString('OwnerEmail') : ''
+        },
+        _parent: new Case({
+          id: dbResults.getLong('CaseId'),
+          name: dbResults.getString('CaseName'),
+          gdFolderId: dbResults.getString('CaseGdFolderId'),
+          _type: {
+            id: dbResults.getInt('CaseTypeId'),
+            name: dbResults.getString('CaseTypeName'),
+            isDefault: dbResults.getBoolean('IsDefault'),
+            isUniquePerMilestone: dbResults.getBoolean('isUniquePerMilestone'),
+            milestoneTypeId: dbResults.getInt('MilestoneTypeId'),
+            folderNumber: dbResults.getString('CaseTypeFolderNumber'),
+          },
+        })
+      });
       result.push(item);
     }
 
@@ -49,17 +85,13 @@ function getTasksListPerMilestone(milestoneId) {
     Logger.log(e);
     throw e;
   } finally {
-    conn.close();
+    if (!externalConn && conn.isValid(0)) conn.close();
   }
 }
 
-function test_getTasksListPerMilestone(){
-  getTasksListPerMilestone(247);
-}
-
-function test_getTaskParents(){
-  try{
-    var item = new Task({caseId:108});
+function test_getTaskParents() {
+  try {
+    var item = new Task({ caseId: 108 });
     var conn = connectToSql();
     var t = item.getParents(conn);
     Logger.log(t);
@@ -71,22 +103,22 @@ function test_getTaskParents(){
 }
 
 function addNewTask(itemFormClient) {
-    itemFormClient = JSON.parse(itemFormClient);
-    var item = new Task(itemFormClient);
-    try{
-      var conn = connectToSql();
-      var newId = item.addInDb(conn);
-      item.addInScrum(conn);
-      Logger.log(' item Added ItemId: ' + item.id);
-      return item;
-    } catch (err) {
-      throw err;
-    } finally {
-      if(conn && conn.isValid(0)) conn.close();
-    }
+  itemFormClient = JSON.parse(itemFormClient);
+  var item = new Task(itemFormClient);
+  try {
+    var conn = connectToSql();
+    var newId = item.addInDb(conn);
+    item.addInScrum(conn);
+    Logger.log(' item Added ItemId: ' + item.id);
+    return item;
+  } catch (err) {
+    throw err;
+  } finally {
+    if (conn && conn.isValid(0)) conn.close();
+  }
 }
 //TODO przetestować
-function test_editTask(){
+function test_editTask() {
   editTask('')
 }
 
@@ -99,7 +131,7 @@ function editTask(itemFormClient) {
   return item;
 }
 
-function deleteTask(itemFormClient){
+function deleteTask(itemFormClient) {
   itemFormClient = JSON.parse(itemFormClient);
   var item = new Task(undefined);
   item.id = itemFormClient.id;
@@ -107,6 +139,6 @@ function deleteTask(itemFormClient){
   item.deleteFromScrum();
 }
 
-function test_deleteTask(){
-  deleteTask('{"milestoneId":"103","description":"ddddd","ownerId":2,"_nameSurnameEmail":"Aleksandra Zdybicka: aleksandra.zdybicka@ekowodrol.pl","caseId":6,"name":"zadaneczko","id":11,"deadline":"2018-08-26","status":"Nie rozpoczęty"}')
+function test_deleteTask() {
+  deleteTask('')
 }

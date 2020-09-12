@@ -165,7 +165,9 @@ class Case {
     this.number = this.getNumberFromDb(conn, isPartOfTransaction);
     this.setDisplayNumber();
   }
-
+  /*
+   * Dodaje sprawę do arkusza danych
+   */
   addInScrum() {
     var nameCaption;
     if (this.gdFolderId)

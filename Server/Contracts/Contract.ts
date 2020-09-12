@@ -346,7 +346,7 @@ class Contract {
     return milestone;
   }
 
-  addInScrum(defaultItems: { milestones: Milestone[], caseItems: Case[], tasks: Task[] }) {
+  addInScrum(subItems: { caseItems: Case[], tasks: Task[] }) {
     if (this.shouldBeInScrum() && this.isOur()) {
       var rowsQuantity = 1;
       //wstaw wiersze nowej umowy
@@ -365,26 +365,26 @@ class Contract {
         ]]);
       SCRUM_DATA_VALUES = SCRUM_SHEET.getDataRange().getValues();
     }
-    this.createDefaultTasksInScrum(defaultItems);
+    this.createDefaultTasksInScrum(subItems);
   }
 
   /*
    * tworzenie zadań musi być podzielone na etap Db i scrum bo trzeba skrócić czas trwania połaczenia z bazą
    * param(defaultItems) pochodzi z this.createDefaultTasksInDb();
    */
-  protected createDefaultTasksInScrum(defaultItems: { milestones: Milestone[], caseItems: Case[], tasks: Task[] }) {
+  protected createDefaultTasksInScrum(subItems: { caseItems: Case[], tasks: Task[] }) {
     var conn = connectToSql();
     try {
       //dodaj zadania do scruma
-      for (var i = 0; i < defaultItems.tasks.length; i++)
-        defaultItems.tasks[i].addInScrum(conn, 'SKIP_MAKE_TIMES_SUMMARY');
+      for (var i = 0; i < subItems.tasks.length; i++)
+        subItems.tasks[i].addInScrum(conn, 'SKIP_MAKE_TIMES_SUMMARY');
 
       //po dodaniu zadań do scruma trzeba dodać sprawy do scrumboarda dla porządku
-      for (var i = 0; i < defaultItems.caseItems.length; i++) {
-        defaultItems.caseItems[i].addInScrum();
+      for (var i = 0; i < subItems.caseItems.length; i++) {
+        subItems.caseItems[i].addInScrum();
       }
 
-      this.scrumSheet.setSumInContractRow(SCRUM_FIRST_DATA_ROW, defaultItems.tasks.length); //musi być tutaj po zakończeniu dodawania wierszy zadań
+      this.scrumSheet.setSumInContractRow(SCRUM_FIRST_DATA_ROW, subItems.tasks.length); //musi być tutaj po zakończeniu dodawania wierszy zadań
       this.scrumSheet.getTimesRange(SCRUM_FIRST_DATA_ROW + 7, 5).copyTo(this.scrumSheet.getTimesRange(SCRUM_FIRST_DATA_ROW + 1, 5));
       scrumMakeTimesSummary();
     } catch (e) {

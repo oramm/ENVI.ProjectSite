@@ -227,13 +227,13 @@ function editContract(itemFromClient) {
         (item.status != 'Archiwalny') ? item.editOurContractInScrum() : item.deleteFromScrum();
       } else
         if (item.status != 'Archiwalny' && item.shouldBeInScrum()) {
-          throw new Error('Jeśli kontrakt jest zakończony popraw jego status! \n' +
-            'Kontrakt istnieje w bazie, ale nie został jeszcze prawidłowo zsynchronizowany ze Scrumboardem!\n' +
-            'Zmiany nie zostaną zapisane. \n' +
-            'Jeżeli kontrakt nie jest zakończony zgłoś problem administrarowi systemu i spróbuj ponownie po potwierdzeniu wykonania sycnchronizacji ze Scrumboardem.'
-          );
-          var defaultItems = item.createDefaultTasksInDb(contractFoldersData, conn, true);
-          item.addInScrum(defaultItems);
+          let tasks: Task[] = getTasksList({ contractId: item.id });
+          let cases: Case[] = [];
+          for (var i = 0; i < tasks.length; i++) {
+            if (i == 0 || tasks[i]._parent.id !== tasks[i - 1]._parent.id)
+              cases.push(new Case(tasks[i]._parent))
+          }
+          item.addInScrum({ caseItems: cases, tasks: tasks });
         }
       //kontrakt na roboty lub dostawy
     } else {

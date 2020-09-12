@@ -26,6 +26,8 @@ class Task {
       if (initParamObject._owner) {
         this.ownerId = initParamObject._owner.id;
         this._owner = initParamObject._owner;
+        if (this._owner.id)
+          this._owner._nameSurnameEmail = this._owner.name.trim() + ' ' + this._owner.surname.trim() + ': ' + this._owner.email.trim();
       }
       if (initParamObject._parent) {
         this.caseId = initParamObject._parent.id;

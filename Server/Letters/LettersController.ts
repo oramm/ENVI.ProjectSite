@@ -37,7 +37,6 @@ function test_getLettersListPerProject() {
 
 function getLetters(sql, initParamObject, externalConn?) {
   try {
-    var start = new Date();
     Logger.log(sql);
     var result = [];
     var conn = (externalConn) ? externalConn : connectToSql();
@@ -101,8 +100,6 @@ function getLetters(sql, initParamObject, externalConn?) {
         item = new IncomingLetter(initParam);
       result.push(item);
     }
-    var end = new Date();
-    Logger.log('Time elapsed: %sms', end.getTime() - start.getTime());
     return result;
   } catch (e) {
     Logger.log(e);

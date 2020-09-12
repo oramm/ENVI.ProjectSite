@@ -66,23 +66,9 @@ function synchronizePersonsInScrum() {
  *   milestoneId: this.milestoneId
  * }
  */
-function setDataValidations(milestonesRangesInScrum) {
+function setDataValidations() {
   var scrumSheet = new ScrumSheet();
   scrumSheet.setTaskOwnerDataValidationInScrum();
-  return;
-  //do przerobienia
-  if (!milestonesRangesInScrum)
-    milestonesRangesInScrum = scrumSheet.makeMilestonesRangesInScrum();
-  //przypisz każdemu milestonowi listę spraw
-  var casesForMilestonesIds = scrumSheet.setCasesForMilestonesIds();
-  //dla każdego zakresu ustaw listę spraw
-  for (var i = 0; i < milestonesRangesInScrum.length; i++) {
-    var currentMilestoneId = milestonesRangesInScrum[i].milestoneId;
-    var cases = casesForMilestonesIds.filter(function (item) { return item.milestoneId == currentMilestoneId })[0].cases;
-    var range = SCRUM_SHEET.getRange(milestonesRangesInScrum[i].firstRow, SCRUM_COL_CASE_NAME + 1, milestonesRangesInScrum[i].rowsCount);
-
-    scrumSheet.setCaseNameDataValidationInScrum(range, cases);
-  }
 }
 
 /* -----------------------------------------------------------------------------------------------------------------------------------------

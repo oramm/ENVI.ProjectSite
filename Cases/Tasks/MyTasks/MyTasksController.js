@@ -6,15 +6,15 @@ class MyTasksController {
         myTasksView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        tasksRepository = new SimpleRepository('Cases repository',
-            'getTasksListPerMilestone',
+        tasksRepository = new SimpleRepository('MyTasks repository',
+            'getTasksList',
             'addNewTask',
             'editTask',
             'deleteTask');
 
 
         var promises = [
-            tasksRepository.initialise()
+            tasksRepository.initialise({contractStatusCondition: 'Nie rozpoczęty|W trakcie'})
         ]
 
         Promise.all(promises)

@@ -13,7 +13,7 @@ class CasesController {
             'deleteCase');
 
         tasksRepository = new SimpleRepository('Tasks repository',
-            'getTasksListPerMilestone',
+            'getTasksList',
             'addNewTask',
             'editTask',
             'deleteTask');
@@ -39,7 +39,7 @@ class CasesController {
         LettersSetup.casesRepository = CasesSetup.casesRepository;
 
         var promises = [
-            tasksRepository.initialise(tasksRepository.parentItemId),
+            tasksRepository.initialise({milestoneId: tasksRepository.parentItemId}),
             CasesSetup.casesRepository.initialise(casesRepository.parentItemId),
             CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId),
             ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId),
