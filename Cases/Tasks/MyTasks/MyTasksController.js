@@ -7,7 +7,7 @@ class MyTasksController {
         //signoutButton.style.display = 'block';
 
         tasksRepository = new SimpleRepository('MyTasks repository',
-            'getTasksList',
+            'getMyTasksList',
             'addNewTask',
             'editTask',
             'deleteTask');

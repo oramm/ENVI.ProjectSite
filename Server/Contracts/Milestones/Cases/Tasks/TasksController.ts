@@ -2,6 +2,8 @@ function getTasksList(initParamObject, externalConn?: GoogleAppsScript.JDBC.Jdbc
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'Contracts.Id=' + initParamObject.contractId : '1';
   var milestoneCondition = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id=' + initParamObject.milestoneId : '1';
   var contractStatusCondition = (initParamObject && initParamObject.contractStatusCondition) ? 'Contracts.Status REGEXP "' + initParamObject.contractStatusCondition + '"' : '1';
+  var ownerCondition = (initParamObject && initParamObject.ownerCondition) ? 'Owners.Email REGEXP "' + initParamObject.ownerCondition + '"' : '1';
+
 
   var sql = 'SELECT  Tasks.Id, \n \t' +
     'Tasks.Name AS TaskName, \n \t' +
@@ -21,6 +23,13 @@ function getTasksList(initParamObject, externalConn?: GoogleAppsScript.JDBC.Jdbc
     'CaseTypes.FolderNumber AS CaseTypeFolderNumber, \n \t' +
     'Milestones.Id AS MilestoneId, \n \t' +
     'Milestones.ContractId, \n \t' +
+    'Milestones.GdFolderId AS MilestoneGdFolderId, \n \t' +
+    'MilestoneTypes.Id AS MilestoneTypeId, \n \t' +
+    'MilestoneTypes.Name AS MilestoneTypeName, \n \t' +
+    'MilestoneTypes_ContractTypes.FolderNumber AS MilestoneTypeFolderNumber, \n \t' +
+    'OurContractsData.OurId AS ContractOurId, \n \t' +
+    'Contracts.Alias AS ContractAlias, \n \t' +
+    'Contracts.Number AS ContractNumber, \n \t' +
     'Owners.Name AS OwnerName, \n \t' +
     'Owners.Surname AS OwnerSurname, \n \t' +
     'Owners.Email AS OwnerEmail \n' +
@@ -28,13 +37,20 @@ function getTasksList(initParamObject, externalConn?: GoogleAppsScript.JDBC.Jdbc
     'JOIN Cases ON Cases.Id=Tasks.CaseId \n' +
     'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
+    'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
+    'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
     'LEFT JOIN Persons AS Owners ON Owners.Id = Tasks.OwnerId \n' +
-    'WHERE ' + contractCondition + ' AND ' + milestoneCondition + ' AND ' + contractStatusCondition;
+    'WHERE ' + contractCondition + ' AND ' + milestoneCondition + ' AND ' + contractStatusCondition + ' AND ' + ownerCondition;
 
   return getTasks(sql, externalConn);
 }
+
+function getMyTasksList(){
+  return getTasksList({ownerCondition: Session.getEffectiveUser().getEmail()})
+}
+
 function test_getTasksList() {
   getTasksList({ contractId: 114 })
 }
@@ -74,6 +90,19 @@ function getTasks(sql: string, externalConn?: GoogleAppsScript.JDBC.JdbcConnecti
             isUniquePerMilestone: dbResults.getBoolean('isUniquePerMilestone'),
             milestoneTypeId: dbResults.getInt('MilestoneTypeId'),
             folderNumber: dbResults.getString('CaseTypeFolderNumber'),
+          },
+          _parent: {
+            id: dbResults.getLong('MilestoneId'),
+            _type: {
+              id: dbResults.getLong('MilestoneTypeId'),
+              name: dbResults.getString('MilestoneTypeName'),
+              _folderNumber: dbResults.getString('MilestoneTypeFolderNumber'),
+            },
+            _parent: {
+              ourId: dbResults.getString('ContractOurId'),
+              number: dbResults.getString('ContractNumber'),
+              alias: dbResults.getString('ContractAlias')
+            }
           },
         })
       });

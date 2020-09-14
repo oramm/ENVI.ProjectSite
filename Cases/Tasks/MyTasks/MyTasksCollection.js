@@ -37,15 +37,9 @@ class MyTasksCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        var titleAtomicEditLabel = new AtomicEditLabel(dataItem._parent._typeFolderNumber_TypeName_Number_Name + ', ' + dataItem.name,
-            dataItem,
-            {
-                input: new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
-                dataItemKeyName: 'name'
-            },
-            'name',
-            this);
-        return titleAtomicEditLabel.$dom
+        var label = '<strong>' + dataItem._parent._parent._parent.ourId + '</strong> ' 
+        label += dataItem._parent._typeFolderNumber_TypeName_Number_Name + ', ' +  dataItem.name;
+        return label
     }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
