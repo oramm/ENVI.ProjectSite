@@ -201,7 +201,7 @@ function getCasesList() {
   return getCases(sql, undefined);
 }
 
-function getCases(sql, parentDataObject) {
+function getCases(sql: string, parentDataObject: any) {
   Logger.log(sql);
   var result = [];
   var conn = connectToSql();

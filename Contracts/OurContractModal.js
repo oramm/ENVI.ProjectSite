@@ -1,63 +1,75 @@
 class OurContractModal extends Modal {
-    constructor(id, title, connectedResultsetComponent, mode){
+    constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
-        var ourTypes = MainSetup.contractTypesRepository.items.filter(item=>item.isOur)
+        var ourTypes = MainSetup.contractTypesRepository.items.filter(item => item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(ourTypes, 'name');
-        
-        this.commentReachTextArea = new ReachTextArea (this.id + '_commentReachTextArea','Opis', false, 1000);
-        
+
+        this.commentReachTextArea = new ReachTextArea(this.id + '_commentReachTextArea', 'Opis', false, 1000);
+
         this.statusSelectField = new SelectField(this.id + '_statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
-        this.managerAutoCompleteTextField = new AutoCompleteTextField(this.id+'_managerAutoCompleteTextField',
-                                                                     'Koordynator', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        this.managerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"_nameSurnameEmail", this.onManagerChosen, this);
-        this.adminAutoCompleteTextField = new AutoCompleteTextField(this.id+'_adminAutoCompleteTextField',
-                                                                     'Administrator', 
-                                                                     'person', 
-                                                                     false, 
-                                                                     'Wybierz imię i nazwisko')
-        this.adminAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository,"_nameSurnameEmail", this.onAdminChosen, this);
-        
+        this.managerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_managerAutoCompleteTextField',
+            'Koordynator',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
+        this.managerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onManagerChosen, this);
+        this.adminAutoCompleteTextField = new AutoCompleteTextField(this.id + '_adminAutoCompleteTextField',
+            'Administrator',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
+        this.adminAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onAdminChosen, this);
+
         this.formElements = [
-            {   input: this.typeSelectField,
+            {
+                input: this.typeSelectField,
                 dataItemKeyName: '_type'
             },
-            {   input: new InputTextField (this.id + 'numberTextField','Numer kontraktu', undefined, true, 150),
+            {
+                input: new InputTextField(this.id + 'numberTextField', 'Numer kontraktu', undefined, true, 150),
                 dataItemKeyName: 'number'
             },
-            {   input: new InputTextField (this.id + 'nameTextField','Nazwa', undefined, true, 300),
+            {
+                input: new InputTextField(this.id + 'nameTextField', 'Nazwa', undefined, true, 300),
                 dataItemKeyName: 'name'
             },
-            {   input: new InputTextField (this.id + '_aliasTextField','Alias kontraktu', undefined, false, 30),
+            {
+                input: new InputTextField(this.id + '_aliasTextField', 'Alias kontraktu', undefined, false, 30),
                 description: 'Podaj krótką etykietę pomocną w wyszukiwaniu w systemie i w scrumboardzie',
                 dataItemKeyName: 'alias'
             },
-            {   input: new DatePicker(this.id + 'startDatePickerField','Rozpoczęcie', true),
+            {
+                input: new DatePicker(this.id + 'startDatePickerField', 'Rozpoczęcie', true),
                 dataItemKeyName: 'startDate'
             },
-            {   input: new DatePicker(this.id + 'endDatePickerField','Termin wykonania', true),
+            {
+                input: new DatePicker(this.id + 'endDatePickerField', 'Termin wykonania', true),
                 dataItemKeyName: 'endDate'
             },
-            {   input: new InputTextField (this.id + 'valueTextField','Wartość umowy netto', undefined, true, 20),
+            {
+                input: new InputTextField(this.id + 'valueTextField', 'Wartość umowy netto', undefined, true, 20),
                 dataItemKeyName: 'value'
             },
-            {   input: this.statusSelectField,
+            {
+                input: this.statusSelectField,
                 dataItemKeyName: 'status'
             },
-            {   input: this.commentReachTextArea,
+            {
+                input: this.commentReachTextArea,
                 dataItemKeyName: 'comment'
             },
-            {   input: new InputTextField (this.id + 'ourIdTextField','Oznaczenie zlecenia ENVI', undefined, true, 150),
+            {
+                input: new InputTextField(this.id + 'ourIdTextField', 'Oznaczenie zlecenia ENVI', undefined, true, 150),
                 dataItemKeyName: 'ourId'
             },
-            {   input: this.managerAutoCompleteTextField,
+            {
+                input: this.managerAutoCompleteTextField,
                 dataItemKeyName: '_manager'
             },
-            {   input: this.adminAutoCompleteTextField,
+            {
+                input: this.adminAutoCompleteTextField,
                 dataItemKeyName: '_admin'
             }
         ];
@@ -66,7 +78,7 @@ class OurContractModal extends Modal {
     /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
-    initAddNewData(){
+    initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem = {
             projectId: this.connectedResultsetComponent.connectedRepository.parentItemId
         };

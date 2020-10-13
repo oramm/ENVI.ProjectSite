@@ -1,5 +1,4 @@
 class MainWindowView extends Popup{
-    
     constructor(){
         super();
         this.navigationBar;

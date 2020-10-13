@@ -90,6 +90,9 @@ Gd.removeAllFolderParents = function (folder: GoogleAppsScript.Drive.Folder): vo
     folder.removeFolder(folder);
   }
 }
+Gd.getIdFromUrl = function (url) {
+  if (url) return url.match(/[-\w]{25,}$/)[0];
+}
 
 Gd.prototype = {
   constructor: Gd,

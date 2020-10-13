@@ -100,6 +100,10 @@ var SCRUM_DATA_COL_CASE_NAME = SCRUM_DATA_DATA_VALUES[0].indexOf("CaseName");
  * -------------------------- Google Drive --------------------------------
  * ----------------------------------------------------------------- 
  */
+namespace MainSetup {
+  export var INVOICES_FOLDER_ID = '1WsNoU0m9BoeVHeb_leAFwtRa94k0CD71';
+}
+
 var GD_ROOT_FOLDER_ID = '1C_wMgQJtzsFmgsmHp7Dr_F1VJx4v1mjo';
 var GD_ROOT_FOLDER = DriveApp.getFolderById(GD_ROOT_FOLDER_ID);
 

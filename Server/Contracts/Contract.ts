@@ -88,7 +88,7 @@ class Contract {
       //znacznik uniwersalny gdy chemy wybierać ze wszystkich kontraktów Our i Works
       var _ourIdOrNumber = '';
       if (this.ourId) _ourIdOrNumber = this.ourId;
-      if (this.number) _ourIdOrNumber = this.number;
+      else if (this.number) _ourIdOrNumber = this.number;
 
       if (this.name) {
         this._ourIdOrNumber_Name = _ourIdOrNumber + ' ' + this.name.substr(0, 50) + '...'

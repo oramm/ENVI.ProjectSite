@@ -1,16 +1,23 @@
-function getContract(contractId) {
-  getContractsListPerProject({ contractId: contractId });
+function getContract(contractId): Contract {
+  return getContractsListPerProject({ contractId: contractId })[0];
+}
+
+function getContractByOurId(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract {
+  return getContractsListPerProject(initParamObject, conn)[0];
 }
 
 function test_getContractsListPerProject() {
   getContractsListPerProject({ projectId: 'KOB.GWS.01.WLASNE' });
 }
 
-function getContractsListPerProject(initParamObject): Contract[] {
+function getContractsListPerProject(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract[] {
   var projectCondition = (initParamObject && initParamObject.projectId) ? 'mainContracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'mainContracts.Id=' + initParamObject.contractId : '1';
+  var contractOurIdCondition = (initParamObject && initParamObject.contractOurId) ? 'OurContractsData.OurId="' + initParamObject.contractOurId + '"' : '1';
 
-  var query = 'SELECT mainContracts.Id, \n \t' +
+  var onlyOurContractsCondition = (initParamObject && initParamObject.onlyOur) ? 'OurContractsData.OurId IS NOT NULL' : '1';
+
+  var sql = 'SELECT mainContracts.Id, \n \t' +
     'mainContracts.Alias, \n \t' +
     'mainContracts.Number, \n \t' +
     'mainContracts.Name, \n \t' +
@@ -28,136 +35,194 @@ function getContractsListPerProject(initParamObject): Contract[] {
     'OurContractsData.ManagerId, \n \t' +
     'OurContractsData.AdminId, \n \t' +
     'OurContractsData.ContractURL, \n \t' +
-    '(SELECT Name FROM Persons WHERE Persons.Id=OurContractsData.AdminId) AS AdminName, \n \t' +
-    '(SELECT Surname FROM Persons WHERE Persons.Id=OurContractsData.AdminId) AS AdminSurname, \n \t' +
-    '(SELECT Email FROM Persons WHERE Persons.Id=OurContractsData.AdminId) AS AdminEmail, \n \t' +
-    '(SELECT Name FROM Persons WHERE Persons.Id=OurContractsData.ManagerId) AS ManagerName, \n \t' +
-    '(SELECT Surname FROM Persons WHERE Persons.Id=OurContractsData.ManagerId) AS ManagerSurname, \n \t' +
-    '(SELECT Email FROM Persons WHERE Persons.Id=OurContractsData.ManagerId) AS ManagerEmail, \n \t' +
+    'Admins.Name AS AdminName, \n \t' +
+    'Admins.Surname AS AdminSurname, \n \t' +
+    'Admins.Email AS AdminEmail, \n \t' +
+    'Managers.Name AS ManagerName, \n \t' +
+    'Managers.Surname AS ManagerSurname, \n \t' +
+    'Managers.Email AS ManagerEmail, \n \t' +
     'relatedContracts.Id AS RelatedId, \n \t' +
     'relatedContracts.Name AS RelatedName, \n \t' +
     'relatedContracts.GdFolderId AS RelatedGdFolderId, \n \t' +
     'ContractTypes.Id AS TypeId, \n \t' +
     'ContractTypes.Name AS TypeName, \n \t' +
     'ContractTypes.IsOur AS TypeIsOur, \n \t' +
-    'ContractTypes.Id AS TypeDescription \n' +
+    'ContractTypes.Description AS TypeDescription \n' +
     'FROM Contracts AS mainContracts \n' +
     'LEFT JOIN OurContractsData ON OurContractsData.Id=mainContracts.id \n' +
     'LEFT JOIN Contracts AS relatedContracts ON relatedContracts.Id=(SELECT OurContractsData.Id FROM OurContractsData WHERE OurId=mainContracts.OurIdRelated) \n' +
     'LEFT JOIN ContractTypes ON ContractTypes.Id = mainContracts.TypeId \n' +
-    'WHERE ' + projectCondition + ' AND ' + contractCondition + '\n' +
+    'LEFT JOIN Persons AS Admins ON OurContractsData.AdminId = Admins.Id \n' +
+    'LEFT JOIN Persons AS Managers ON OurContractsData.ManagerId = Managers.Id \n' +
+    'WHERE ' + projectCondition + ' AND ' + contractCondition + ' AND ' + onlyOurContractsCondition + ' AND ' + contractOurIdCondition + '\n' +
     'ORDER BY OurContractsData.OurId DESC, mainContracts.Number';
 
-  Logger.log(query);
+  return (initParamObject.onlyKeyData) ? getContractsKeyData(sql, initParamObject) : getContracts(sql, initParamObject, conn);
+}
+
+function getContracts(sql: string, initParamObject: any, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract[] {
+  Logger.log(sql);
+  var result: Contract[] = [];
+  if (!conn) conn = connectToSql();
+  var stmt = conn.createStatement();
+  try {
+    var dbResults = stmt.executeQuery(sql);
+
+    var entitiesPerProject = (initParamObject.projectId) ? getContractEntityAssociationsPerProjectList(initParamObject.projectId, conn) : [];
+    while (dbResults.next()) {
+      var contractors = entitiesPerProject.filter(function (item) {
+        return item.contractId == dbResults.getLong('Id') && item.contractRole == 'CONTRACTOR';
+      });
+      var engineers = entitiesPerProject.filter(function (item) {
+        return item.contractId == dbResults.getLong('Id') && item.contractRole == 'ENGINEER';
+      });
+      var employers = entitiesPerProject.filter(function (item) {
+        return item.contractId == dbResults.getLong('Id') && item.contractRole == 'EMPLOYER';
+      });
+      var item = new Contract({
+        id: dbResults.getLong('Id'),
+        alias: dbResults.getString('Alias'),
+        number: dbResults.getString('Number'),
+        name: sqlToString(dbResults.getString('Name')),
+        //kontrakt powiązany z kontraktem na roboty
+        _ourContract: {
+          ourId: dbResults.getString('OurIdRelated'),
+          id: dbResults.getString('RelatedId'),
+          name: sqlToString(dbResults.getString('RelatedName')),
+          gdFolderId: dbResults.getString('RelatedGdFolderId')
+        },
+        projectId: dbResults.getString('ProjectOurId'),
+        startDate: dbResults.getString('StartDate'),
+        endDate: dbResults.getString('EndDate'),
+        value: dbResults.getString('Value'),
+        comment: sqlToString(dbResults.getString('Comment')),
+        status: dbResults.getString('Status'),
+        gdFolderId: dbResults.getString('GdFolderId'),
+        meetingProtocolsGdFolderId: dbResults.getString('MeetingProtocolsGdFolderId'),
+        materialCardsGdFolderId: dbResults.getString('MaterialCardsGdFolderId'),
+        ourId: dbResults.getString('OurId'),
+        _manager: {
+          id: dbResults.getString('ManagerId'),
+          name: dbResults.getString('ManagerName'),
+          surname: dbResults.getString('ManagerSurname'),
+          email: dbResults.getString('ManagerEmail')
+        },
+        _admin: {
+          id: dbResults.getString('AdminId'),
+          name: dbResults.getString('AdminName'),
+          surname: dbResults.getString('AdminSurname'),
+          email: dbResults.getString('AdminEmail')
+        },
+        contractUrl: dbResults.getString('ContractURL'),
+        _type: {
+          id: dbResults.getInt('TypeId'),
+          name: dbResults.getString('TypeName'),
+          description: dbResults.getString('TypeDescription'),
+          isOur: dbResults.getBoolean('TypeIsOur')
+        },
+        _contractors: contractors.map(function (item) {
+          return item._entity;
+        }),
+        _engineers: engineers.map(function (item) {
+          return item._entity;
+        }),
+        _employers: employers.map(function (item) {
+          return item._entity;
+        })
+      });
+
+      //ustaw inżyniera i zamawiaącego z projektu jeśli nie ma przypisanych
+      if (item._engineers.length === 0 || item._employers.length === 0)
+        item.setEntitiesFromParent(conn);
+      //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
+      if (item._admin.id)
+        item._admin._nameSurnameEmail = item._admin.name.trim() + ' ' + item._admin.surname.trim() + ': ' + item._admin.email.trim();
+      //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
+      if (item._manager.id)
+        item._manager._nameSurnameEmail = item._manager.name.trim() + ' ' + item._manager.surname.trim() + ': ' + item._manager.email.trim();
+
+      delete item.scrumSheet;
+      result.push(item);
+    }
+    conn.close();
+    return result;
+  } catch (err) {
+    Logger.log(err);
+    throw err;
+  } finally {
+    if (conn && conn.isValid(0)) conn.close();
+  }
+}
+
+function getContractsKeyData(sql: string, initParamObject: any): Contract[] {
+  Logger.log(sql);
   var result: Contract[] = [];
   var conn = connectToSql();
   var stmt = conn.createStatement();
-  var dbResults = stmt.executeQuery(query);
+  try {
+    var dbResults = stmt.executeQuery(sql);
+    while (dbResults.next()) {
+      var item = new Contract({
+        id: dbResults.getLong('Id'),
+        alias: dbResults.getString('Alias'),
+        number: dbResults.getString('Number'),
+        name: sqlToString(dbResults.getString('Name')),
+        //kontrakt powiązany z kontraktem na roboty
+        _ourContract: {
+          ourId: dbResults.getString('OurIdRelated'),
+          id: dbResults.getString('RelatedId'),
+          name: sqlToString(dbResults.getString('RelatedName')),
+          gdFolderId: dbResults.getString('RelatedGdFolderId')
+        },
+        projectId: dbResults.getString('ProjectOurId'),
+        startDate: dbResults.getString('StartDate'),
+        endDate: dbResults.getString('EndDate'),
+        value: dbResults.getString('Value'),
+        comment: sqlToString(dbResults.getString('Comment')),
+        status: dbResults.getString('Status'),
+        gdFolderId: dbResults.getString('GdFolderId'),
+        meetingProtocolsGdFolderId: dbResults.getString('MeetingProtocolsGdFolderId'),
+        materialCardsGdFolderId: dbResults.getString('MaterialCardsGdFolderId'),
+        ourId: dbResults.getString('OurId'),
+        _manager: {
+          id: dbResults.getString('ManagerId'),
+          name: dbResults.getString('ManagerName'),
+          surname: dbResults.getString('ManagerSurname'),
+          email: dbResults.getString('ManagerEmail')
+        },
+        _admin: {
+          id: dbResults.getString('AdminId'),
+          name: dbResults.getString('AdminName'),
+          surname: dbResults.getString('AdminSurname'),
+          email: dbResults.getString('AdminEmail')
+        },
+        contractUrl: dbResults.getString('ContractURL'),
+        _type: {
+          id: dbResults.getInt('TypeId'),
+          name: dbResults.getString('TypeName'),
+          description: dbResults.getString('TypeDescription'),
+          isOur: dbResults.getBoolean('TypeIsOur')
+        },
+      });
 
-  var entitiesPerProject = (initParamObject.projectId) ? getContractEntityAssociationsPerProjectList(initParamObject.projectId, conn) : [];
-  while (dbResults.next()) {
-    var contractors = entitiesPerProject.filter(function (item) {
-      return item.contractId == dbResults.getLong('Id') && item.contractRole == 'CONTRACTOR';
-    });
-    var engineers = entitiesPerProject.filter(function (item) {
-      return item.contractId == dbResults.getLong('Id') && item.contractRole == 'ENGINEER';
-    });
-    var employers = entitiesPerProject.filter(function (item) {
-      return item.contractId == dbResults.getLong('Id') && item.contractRole == 'EMPLOYER';
-    });
-    var item = new Contract({
-      id: dbResults.getLong('Id'),
-      alias: dbResults.getString('Alias'),
-      number: dbResults.getString('Number'),
-      name: sqlToString(dbResults.getString('Name')),
-      //kontrakt powiązany z kontraktem na roboty
-      _ourContract: {
-        ourId: dbResults.getString('OurIdRelated'),
-        id: dbResults.getString('RelatedId'),
-        name: sqlToString(dbResults.getString('RelatedName')),
-        gdFolderId: dbResults.getString('RelatedGdFolderId')
-      },
-      projectId: dbResults.getString('ProjectOurId'),
-      startDate: dbResults.getString('StartDate'),
-      endDate: dbResults.getString('EndDate'),
-      value: dbResults.getString('Value'),
-      comment: sqlToString(dbResults.getString('Comment')),
-      status: dbResults.getString('Status'),
-      gdFolderId: dbResults.getString('GdFolderId'),
-      meetingProtocolsGdFolderId: dbResults.getString('MeetingProtocolsGdFolderId'),
-      materialCardsGdFolderId: dbResults.getString('MaterialCardsGdFolderId'),
-      ourId: dbResults.getString('OurId'),
-      _manager: {
-        id: dbResults.getString('ManagerId'),
-        name: dbResults.getString('ManagerName'),
-        surname: dbResults.getString('ManagerSurname'),
-        email: dbResults.getString('ManagerEmail')
-      },
-      _admin: {
-        id: dbResults.getString('AdminId'),
-        name: dbResults.getString('AdminName'),
-        surname: dbResults.getString('AdminSurname'),
-        email: dbResults.getString('AdminEmail')
-      },
-      contractUrl: dbResults.getString('ContractURL'),
-      _type: {
-        id: dbResults.getInt('TypeId'),
-        name: dbResults.getString('TypeName'),
-        description: dbResults.getString('TypeDescription'),
-        isOur: dbResults.getBoolean('TypeIsOur')
-      },
-      _contractors: contractors.map(function (item) {
-        return item._entity;
-      }),
-      _engineers: engineers.map(function (item) {
-        return item._entity;
-      }),
-      _employers: employers.map(function (item) {
-        return item._entity;
-      })
-    });
+      //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
+      if (item._admin.id)
+        item._admin._nameSurnameEmail = item._admin.name.trim() + ' ' + item._admin.surname.trim() + ': ' + item._admin.email.trim();
+      //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
+      if (item._manager.id)
+        item._manager._nameSurnameEmail = item._manager.name.trim() + ' ' + item._manager.surname.trim() + ': ' + item._manager.email.trim();
 
-    //ustaw inżyniera i zamawiaącego z projketu jeśli nie ma przypisanych
-    if (item._engineers.length === 0 || item._employers.length === 0)
-      item.setEntitiesFromParent(conn);
-    //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
-    if (item._admin.id)
-      item._admin._nameSurnameEmail = item._admin.name.trim() + ' ' + item._admin.surname.trim() + ': ' + item._admin.email.trim();
-    //sprawdzenie konieczne tylko ze względu na historyczne kontrakty
-    if (item._manager.id)
-      item._manager._nameSurnameEmail = item._manager.name.trim() + ' ' + item._manager.surname.trim() + ': ' + item._manager.email.trim();
-
-    delete item.scrumSheet;
-    result.push(item);
+      delete item.scrumSheet;
+      result.push(item);
+    }
+    conn.close();
+    return result;
+  } catch (err) {
+    Logger.log(err);
+    throw err;
+  } finally {
+    if (conn && conn.isValid(0)) conn.close();
   }
-  conn.close();
-  return result;
-}
-
-function getContractsKeyDataListPerProject(projectId: string, externalConn?: GoogleAppsScript.JDBC.JdbcConnection) {
-  if (projectId === undefined) projectId = '%'
-  var result = [];
-  var conn = (externalConn) ? externalConn : connectToSql();
-  var stmt = conn.createStatement();
-  var query = 'SELECT  Contracts.Id, \n \t' +
-    'Contracts.Number, \n \t' +
-    'Contracts.Name, \n \t' +
-    'OurContractsData.OurId \n \t' +
-    'FROM Contracts \n' +
-    'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.id \n' +
-    'WHERE Contracts.ProjectOurId LIKE "' + projectId + '"';
-  Logger.log(query);
-  var dbResults = stmt.executeQuery(query);
-
-  while (dbResults.next()) {
-    result.push({
-      id: dbResults.getLong(1),
-      ourIdNumberName: dbResults.getString(4) + ' ' + dbResults.getString(2) + ' ' + dbResults.getString(3)
-    });
-  }
-
-  conn.close();
-  return result;
 }
 
 function test_addNewContract() {
