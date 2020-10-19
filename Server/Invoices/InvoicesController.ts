@@ -1,7 +1,9 @@
 function getInvoicesList(initParamObject?: any) {
   var projectCondition = (initParamObject && initParamObject.projectId) ? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'Milestones.ContractId=' + initParamObject.contractId : '1';
+  initParamObject.endDate = (!initParamObject.endDate)? initParamObject.endDate = 'CURDATE()' : '"' + ToolsDate.dateDMYtoYMD(initParamObject.endDate) + '"';
 
+  var dateCondition = (initParamObject && initParamObject.startDate) ? 'Invoices.IssueDate BETWEEN "' + ToolsDate.dateDMYtoYMD(initParamObject.startDate) + '" AND DATE_ADD(' + initParamObject.endDate + ', INTERVAL 1 DAY)' : '1';
   var sql = 'SELECT Invoices.Id, \n \t' +
     'Invoices.Number, \n \t' +
     'Invoices.Description, \n \t' +
@@ -44,13 +46,13 @@ function getInvoicesList(initParamObject?: any) {
     'JOIN Projects ON Projects.OurId=Contracts.ProjectOurId \n' +
     'LEFT JOIN Persons AS Editors ON Editors.Id=Invoices.EditorId \n' +
     'LEFT JOIN Persons AS Owners ON Owners.Id=Invoices.OwnerId \n' +
-    'WHERE ' + projectCondition + ' AND ' + contractCondition + '\n' +
-    'ORDER BY Invoices.Id DESC';
+    'WHERE ' + projectCondition + ' AND ' + contractCondition + ' AND ' + dateCondition + '\n' +
+    'ORDER BY Invoices.IssueDate DESC';
   Logger.log(sql);
   return getInvoices(sql, initParamObject);
 }
-function test_getInvoicesListPerContract() {
-  getInvoicesList(361)
+function test_getInvoicesList() {
+  getInvoicesList({ startDate: '2018-01-01'})
 }
 
 function getInvoices(sql: string, initParamObject): Invoice[] {

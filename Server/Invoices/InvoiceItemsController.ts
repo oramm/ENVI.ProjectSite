@@ -1,5 +1,8 @@
 function getInvoiceItemsList(initParamObject: any, externalConnection?: GoogleAppsScript.JDBC.JdbcConnection): InvoiceItem[] {
   var invoiceCondition = (initParamObject && initParamObject.invoiceId) ? 'InvoiceItems.ParentId="' + initParamObject.invoiceId + '"' : '1';
+  initParamObject.endDate = (!initParamObject.endDate) ? initParamObject.endDate = 'CURDATE()' : '"' + ToolsDate.dateDMYtoYMD(initParamObject.endDate) + '"';
+
+  var dateCondition = (initParamObject && initParamObject.startDate) ? 'Invoices.IssueDate BETWEEN "' + ToolsDate.dateDMYtoYMD(initParamObject.startDate) + '" AND DATE_ADD(' + initParamObject.endDate + ', INTERVAL 1 DAY)' : '1';
 
   var sql = 'SELECT InvoiceItems.Id, \n \t' +
     'InvoiceItems.ParentId, \n \t' +
@@ -13,8 +16,9 @@ function getInvoiceItemsList(initParamObject: any, externalConnection?: GoogleAp
     'Editors.Surname AS EditorSurname, \n \t' +
     'Editors.Email AS EditorEmail \n' +
     'FROM InvoiceItems \n' +
+    'JOIN Invoices ON Invoices.Id=InvoiceItems.ParentId \n' +
     'JOIN Persons AS Editors ON Editors.Id=InvoiceItems.EditorId \n' +
-    'WHERE ' + invoiceCondition + '\n' +
+    'WHERE ' + invoiceCondition + ' AND ' + dateCondition + '\n' +
     'ORDER BY InvoiceItems.Id DESC';
   Logger.log(sql);
   return getInvoiceItems(sql, externalConnection);
@@ -36,7 +40,7 @@ function getInvoiceItems(sql, externalConnection): InvoiceItem[] {
         _parent: {
           id: dbResults.getLong('ParentId'),
         },
-        description: dbResults.getString('Description'),
+        description: sqlToString(dbResults.getString('Description')),
         quantity: dbResults.getString('Quantity'),
         unitPrice: dbResults.getString('UnitPrice'),
         vatTax: dbResults.getString('VatTax'),
@@ -112,7 +116,7 @@ function deleteInvoiceItem(itemFormClient) {
 }
 
 function initInvoiceItemFromSheet(row, headerDataRow: String[], parent: Invoice, personId: number) {
-  
+
   var item = new InvoiceItem({
     _parent: parent,
     description: row[headerDataRow.indexOf('FV opis')],
