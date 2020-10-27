@@ -1,7 +1,7 @@
 function getInvoicesList(initParamObject?: any) {
   var projectCondition = (initParamObject && initParamObject.projectId) ? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'Milestones.ContractId=' + initParamObject.contractId : '1';
-  initParamObject.endDate = (!initParamObject.endDate)? initParamObject.endDate = 'CURDATE()' : '"' + ToolsDate.dateDMYtoYMD(initParamObject.endDate) + '"';
+  initParamObject.endDate = (!initParamObject.endDate) ? initParamObject.endDate = 'CURDATE()' : '"' + ToolsDate.dateDMYtoYMD(initParamObject.endDate) + '"';
 
   var dateCondition = (initParamObject && initParamObject.startDate) ? 'Invoices.IssueDate BETWEEN "' + ToolsDate.dateDMYtoYMD(initParamObject.startDate) + '" AND DATE_ADD(' + initParamObject.endDate + ', INTERVAL 1 DAY)' : '1';
   var sql = 'SELECT Invoices.Id, \n \t' +
@@ -19,6 +19,7 @@ function getInvoicesList(initParamObject?: any) {
     'Entities.Id AS EntityId, \n \t' +
     'Entities.Name AS EntityName, \n \t' +
     'Entities.Address AS EntityAddress, \n \t' +
+    'Entities.TaxNumber AS EntityTaxNumber, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
     'Contracts.Name AS ContractName, \n \t' +
     'Contracts.GdFolderId AS ContractGdFolderId, \n \t' +
@@ -47,12 +48,12 @@ function getInvoicesList(initParamObject?: any) {
     'LEFT JOIN Persons AS Editors ON Editors.Id=Invoices.EditorId \n' +
     'LEFT JOIN Persons AS Owners ON Owners.Id=Invoices.OwnerId \n' +
     'WHERE ' + projectCondition + ' AND ' + contractCondition + ' AND ' + dateCondition + '\n' +
-    'ORDER BY Invoices.IssueDate DESC';
+    'ORDER BY Invoices.IssueDate ASC';
   Logger.log(sql);
   return getInvoices(sql, initParamObject);
 }
 function test_getInvoicesList() {
-  getInvoicesList({ startDate: '2018-01-01'})
+  getInvoicesList({ startDate: '2018-01-01' })
 }
 
 function getInvoices(sql: string, initParamObject): Invoice[] {
@@ -79,6 +80,7 @@ function getInvoices(sql: string, initParamObject): Invoice[] {
           id: dbResults.getLong('EntityId'),
           name: sqlToString(dbResults.getString('EntityName')),
           address: dbResults.getString('EntityAddress'),
+          taxNumber: dbResults.getString('EntityTaxNumber')
         },
         _contract: {
           id: dbResults.getLong('ContractId'),
@@ -162,13 +164,15 @@ function editInvoice(itemFormClient) {
 
   try {
     var item = new Invoice(itemFormClient);
+    if (itemFormClient._blobEnviObjects)
+      item.editInGd(itemFormClient._blobEnviObjects);
+
     var conn = connectToSql();
     conn.setAutoCommit(false);
 
     item.editInDb(conn, true);
     conn.commit();
-    if (itemFormClient._blobEnviObjects)
-      item.editInGd(itemFormClient._blobEnviObjects);
+
     Logger.log('item edited ItemId: ' + item.id);
     return item;
   } catch (err) {

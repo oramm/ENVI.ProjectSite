@@ -61,7 +61,7 @@ class Invoice {
       this._contract = initParamObject._contract;
       this.contractId = this._contract.id
       this._items = initParamObject._items;
-      
+
       if (initParamObject.gdId) {
         this._documentOpenUrl = Gd.createDocumentOpenUrl(initParamObject.gdId);
         this.gdId = initParamObject.gdId;
@@ -128,7 +128,7 @@ class Invoice {
       file = this.createFile(blobEnviObjects);
 
       this._documentOpenUrl = Gd.createDocumentOpenUrl(this.gdId);
-    } else
+    } else if (this.gdId)
       file = DriveApp.getFileById(this.gdId);
     return file;
   }
@@ -142,6 +142,7 @@ class Invoice {
       //usuwamy folder lub plik
       if (Gd.canUserDeleteFile(this.gdId)) {
         DriveApp.getFileById(this.gdId).setTrashed(true);
+        Logger.log('uswam plik - do kosza: '+ this.gdId)
         return true;
       }
       //zmieniamy nazwę pliku ze wzgędu na brak uprawnień do usuwania 
