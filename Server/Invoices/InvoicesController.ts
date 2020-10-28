@@ -129,20 +129,20 @@ function getInvoices(sql: string, initParamObject): Invoice[] {
 }
 
 //tworzy nowy wniosek i folder dla tego wniosku w folderze 07.01
-function addNewInvoice(itemFormClient) {
-  itemFormClient = JSON.parse(itemFormClient);
+function addNewInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
 
   try {
     var conn = connectToSql();
     conn.setAutoCommit(false);
-    itemFormClient._editor.id = Person.getPersonDbId(itemFormClient._editor.systemEmail, conn);
-    var item = new Invoice(itemFormClient);
+    itemFromClient._editor.id = Person.getPersonDbId(itemFromClient._editor.systemEmail, conn);
+    var item = new Invoice(itemFromClient);
 
     item.addInDb(conn);
     conn.commit();
 
-    if (itemFormClient._blobEnviObjects)
-      item.createFile(itemFormClient);
+    if (itemFromClient._blobEnviObjects)
+      item.createFile(itemFromClient);
     Logger.log(' item Added ItemId: ' + item.id);
 
     return item;
@@ -159,13 +159,13 @@ function test_editInvoice() {
   editInvoice('{"_owner":{"surname":"Brodziak","name":"Agnieszka","id":200,"_nameSurnameEmail":"Agnieszka Brodziak agnieszka.brodziak@envi.com.pl","email":"agnieszka.brodziak@envi.com.pl"},"_lastUpdated":"2020-09-28 07:47:33.0","description":"asdsssss","ownerId":200,"_entity":{"address":"ul. Waszczyka nr 2C, 65-664 Zielona Góra","name":"ADESI Sp. z o.o.","id":199},"number":"12/1212","id":4,"issueDate":"2020-09-28","editorId":125,"daysToPay":"12","entityId":199,"_contract":{"_contractors":[],"endDate":"2021-11-30","_gdFolderUrl":"https://drive.google.com/drive/folders/1IjsVjSwWP2ohC5ziR0ZJX91xCHTnv3ft","gdFolderId":"1IjsVjSwWP2ohC5ziR0ZJX91xCHTnv3ft","number":"1/2019","meetingProtocolsGdFolderId":"1iVJp7Xs2bYf02ESqXSmGuuQqqGoy4-i-","id":535,"_ourType":"IK","_ourIdName":"ZZT.IK.01 Pełnienie funkcji Inżyniera Kontraktu na Projekcie...","_manager":{"surname":"Kowalski","name":"Jan ","id":"336","_nameSurnameEmail":"Jan Kowalski: test@test.test","email":"test@test.test"},"name":"Pełnienie funkcji Inżyniera Kontraktu na Projekcie X","materialCardsGdFolderId":"1X44RdggVBitWRuKS_2ke9rsv0vZEGPtN","typeId":1,"projectId":"ZZTEST","startDate":"2019-03-05","status":"W trakcie","_ourIdOrNumber_Alias":"ZZT.IK.01 ZZT.IK.01","ourId":"ZZT.IK.01","alias":"ZZT.IK.01","value":"100000.00","_employers":[],"_type":{"name":"IK","description":"1","id":1,"isOur":true},"_engineers":[],"_ourIdOrNumber_Name":"ZZT.IK.01 Pełnienie funkcji Inżyniera Kontraktu na Projekcie...","_admin":{"surname":"Kowalski","name":"Jan ","id":"336","_nameSurnameEmail":"Jan Kowalski: test@test.test","email":"test@test.test"},"comment":""},"creationDate":"2020-09-28","_editor":{"surname":"Gazda","name":"Marek","id":125,"email":"marek@envi.com.pl"},"contractId":535,"status":"Na później","_blobEnviObjects":[{"blobBase64String":"ZHVwYSBqYXNpdQ==","name":"test PS.txt","mimeType":"text/plain"}]}');
 }
 
-function editInvoice(itemFormClient) {
-  itemFormClient = JSON.parse(itemFormClient);
+function editInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
 
   try {
-    var item = new Invoice(itemFormClient);
-    if (itemFormClient._blobEnviObjects)
-      item.editInGd(itemFormClient._blobEnviObjects);
+    var item = new Invoice(itemFromClient);
+    if (itemFromClient._blobEnviObjects)
+      item.editInGd(itemFromClient._blobEnviObjects);
 
     var conn = connectToSql();
     conn.setAutoCommit(false);
@@ -183,9 +183,15 @@ function editInvoice(itemFormClient) {
   }
 }
 
-function deleteInvoice(itemFormClient) {
-  itemFormClient = JSON.parse(itemFormClient);
-  var item = new Invoice(itemFormClient);
+function issueInvoice(itemFromClient){
+  itemFromClient = JSON.parse(itemFromClient);
+  itemFromClient.status = 'Zrobiona';
+  return editInvoice(JSON.stringify(itemFromClient));
+}
+
+function deleteInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
+  var item = new Invoice(itemFromClient);
   item.deleteFromDb();
   item.deleteFromGd();
 }
