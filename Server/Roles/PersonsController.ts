@@ -1,9 +1,12 @@
-function getPersonsList(systemRoleName) {
+function getPersonsList(initParamObject: { systemRoleName?: string, systemEmail?: string, id?: number }, externalConn?) {
   try {
     var result = [];
-    var conn = connectToSql();
+    var conn = (externalConn) ? externalConn : connectToSql();
     var stmt = conn.createStatement();
-    var condition = (systemRoleName) ? ' AND SystemRoles.Name REGEXP "' + systemRoleName + '"' : ''
+    var systemRolecondition = (initParamObject && initParamObject.systemRoleName) ? 'SystemRoles.Name REGEXP "' + initParamObject.systemRoleName + '"' : '1'
+    var systemEmailCondition = (initParamObject && initParamObject.systemEmail) ? 'Persons.systemEmail="' + initParamObject.systemEmail + '"' : '1';
+    var idCondition = (initParamObject && initParamObject.id) ? 'Persons.Id=' + initParamObject.id : '1';
+
     var query = 'SELECT  Persons.Id,  \n \t' +
       'Persons.EntityId,  \n \t' +
       'Persons.Name,  \n \t' +
@@ -17,15 +20,14 @@ function getPersonsList(systemRoleName) {
       'Entities.Name  \n' +
       'FROM Persons \n' +
       'JOIN Entities ON Persons.EntityId=Entities.Id \n' +
-      'JOIN SystemRoles ON Persons.SystemRoleId=SystemRoles.Id' + condition + '\n' +
+      'JOIN SystemRoles ON Persons.SystemRoleId=SystemRoles.Id \n' +
+      'WHERE ' + systemRolecondition + ' AND ' + idCondition + ' AND ' + systemEmailCondition + '\n' +
       'ORDER BY Persons.Surname, Persons.Name';
     Logger.log(query);
     var dbResults = stmt.executeQuery(query);
 
     while (dbResults.next()) {
-      var item;
-      //init: function(id, entityId, name, surname, position, email, cellphone,  phone, comment){
-      item = new Person({
+      var item = new Person({
         id: dbResults.getLong(1),
         name: dbResults.getString(3).trim(),
         surname: dbResults.getString(4).trim(),
@@ -49,7 +51,7 @@ function getPersonsList(systemRoleName) {
     Logger.log(e);
     throw e;
   } finally {
-    conn.close();
+    if (!externalConn && conn && conn.isValid(0)) conn.close();
   }
 }
 

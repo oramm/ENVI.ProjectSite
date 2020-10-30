@@ -47,7 +47,7 @@ function pushForgottentMilestonesToScrum() {
 }
 
 function synchronizePersonsInScrum() {
-  var persons = getPersonsList('ENVI_EMPLOYEE|ENVI_MANAGER');
+  var persons = getPersonsList({ systemRoleName: 'ENVI_EMPLOYEE|ENVI_MANAGER' });
   //persons=persons.filter(function(person){return person.email.indexOf("envi.com.pl")!== -1});
   var personsData = [];
   for (var i = 0; i < persons.length; i++) {

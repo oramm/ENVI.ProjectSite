@@ -30,11 +30,11 @@ class ContractDashboardView extends Popup {
                 name: 'Zgłoszenia',
                 url: 'Issues/IssuesList.html?parentItemId=' + parentItemId
             });
-            tabsData.push({
-                name: 'Osoby',
-                url: 'Roles/Roles.html?parentItemId=' + parentItemId
-            })
         }
+        tabsData.push({
+            name: 'Osoby',
+            url: 'Roles/Roles.html?parentItemId=' + parentItemId
+        })
         $('#content').prepend(new Tabs({
             id: 'contratTabs',
             parentId: parentItemId,

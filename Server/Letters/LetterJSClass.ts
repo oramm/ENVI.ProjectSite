@@ -1,4 +1,4 @@
-abstract class Letter implements Envi.Document{
+abstract class Letter implements Envi.Document {
     public id?: any;
     public isOur: boolean;
     public number?: string | number;
@@ -19,7 +19,7 @@ abstract class Letter implements Envi.Document{
     letterFilesCount?: number;
     _editor?: any;
     _fileOrFolderChanged?: boolean;
-    
+
     editorId?: number;
     _canUserChangeFileOrFolder?: boolean;
     _folderName?: string;
@@ -30,10 +30,10 @@ abstract class Letter implements Envi.Document{
             this.id = initParamObject.id;
             this.description = initParamObject.description;
             this.number = initParamObject.number;
-            initParamObject.creationDate =ToolsDate.dateDMYtoYMD(initParamObject.creationDate);
+            initParamObject.creationDate = ToolsDate.dateDMYtoYMD(initParamObject.creationDate);
             this.creationDate = (initParamObject.creationDate) ? Utilities.formatDate(new Date(initParamObject.creationDate), "CET", "yyyy-MM-dd") : undefined;
 
-            initParamObject.registrationDate =ToolsDate.dateDMYtoYMD(initParamObject.registrationDate);
+            initParamObject.registrationDate = ToolsDate.dateDMYtoYMD(initParamObject.registrationDate);
             this.registrationDate = (initParamObject.registrationDate) ? Utilities.formatDate(new Date(initParamObject.registrationDate), "CET", "yyyy-MM-dd") : undefined;
 
             if (initParamObject.documentGdId) {
@@ -56,7 +56,7 @@ abstract class Letter implements Envi.Document{
             this._editor = initParamObject._editor;
             this._canUserChangeFileOrFolder// = this.canUserChangeFileOrFolder();
             this._fileOrFolderChanged;
-            
+
         }
     }
 
@@ -64,7 +64,7 @@ abstract class Letter implements Envi.Document{
         if (this._editor.id)
             return this._editor.id;
         else
-            return Person.getPersonDbId(Session.getActiveUser().getEmail(), undefined);
+            return Person.getPerson({ systemEmail: Session.getActiveUser().getEmail() }).id;
     }
 
     /*
@@ -124,7 +124,7 @@ abstract class Letter implements Envi.Document{
         letterFolder.setShareableByEditors(true);
         this.folderGdId = letterFolder.getId();
         this._gdFolderUrl = letterFolder.getUrl();
-        
+
         //letterFolder.setOwner(MY_GOOGLE_ACCOUNT_EMAIL);
         letterFolder.setShareableByEditors(true);
         for (var i = 0; i < blobEnviObjects.length; i++) {

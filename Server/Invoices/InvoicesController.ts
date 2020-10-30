@@ -135,7 +135,8 @@ function addNewInvoice(itemFromClient) {
   try {
     var conn = connectToSql();
     conn.setAutoCommit(false);
-    itemFromClient._editor.id = Person.getPersonDbId(itemFromClient._editor.systemEmail, conn);
+    itemFromClient._editor = Person.getPerson({ systemEmail: Session.getEffectiveUser().getEmail() }, conn);
+
     var item = new Invoice(itemFromClient);
 
     item.addInDb(conn);
@@ -161,7 +162,7 @@ function test_editInvoice() {
 
 function editInvoice(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);
-
+  itemFromClient._editor = Person.getPerson({ systemEmail: Session.getEffectiveUser().getEmail() }, conn);
   try {
     var item = new Invoice(itemFromClient);
     if (itemFromClient._blobEnviObjects)
@@ -183,9 +184,27 @@ function editInvoice(itemFromClient) {
   }
 }
 
-function issueInvoice(itemFromClient){
+function issueInvoice(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);
   itemFromClient.status = 'Zrobiona';
+  return editInvoice(JSON.stringify(itemFromClient));
+}
+
+function setAsToMakeInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
+  itemFromClient.status = 'Do zrobienia';
+  return editInvoice(JSON.stringify(itemFromClient));
+}
+
+function setAsSentInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
+  itemFromClient.status = 'Wysłana';
+  return editInvoice(JSON.stringify(itemFromClient));
+}
+
+function setAsPaidInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
+  itemFromClient.status = 'Zapłacona';
   return editInvoice(JSON.stringify(itemFromClient));
 }
 
@@ -233,7 +252,7 @@ function initInvoiceFromSheet(row, headerDataRow: String[], conn: GoogleAppsScri
     contractOurId: row[headerDataRow.indexOf('Oznaczenie zlecenia')],
     onlyKeyData: true
   }, conn);
-  var personId = Person.getPersonDbId(row[headerDataRow.indexOf('Adres e-mail')], conn);
+  var personId = Person.getPerson(row[headerDataRow.indexOf('Adres e-mail')], conn).id;
   var creationDate = Utilities.formatDate(row[headerDataRow.indexOf('Data sprzedaży')], "CET", "yyyy-MM-dd");
 
   var sentDate = (row[headerDataRow.indexOf('Data nadania')]) ? Utilities.formatDate(row[headerDataRow.indexOf('Data nadania')], "CET", "yyyy-MM-dd") : undefined;

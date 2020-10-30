@@ -38,7 +38,9 @@ class Invoice {
 
       this.sentDate = ToolsDate.dateDMYtoYMD(initParamObject.sentDate);
       this.sentDate = (initParamObject.sentDate) ? Utilities.formatDate(new Date(initParamObject.sentDate), "CET", "yyyy-MM-dd") : undefined;
-
+      if (this.sentDate) {
+        this.paymentDeadline = ToolsDate.addDays(new Date(initParamObject.sentDate), this.daysToPay);
+      }
       this.daysToPay = initParamObject.daysToPay;
       this.gdId = initParamObject.gdId;
       initParamObject.paymentDeadline = ToolsDate.dateDMYtoYMD(initParamObject.paymentDeadline);
@@ -142,7 +144,7 @@ class Invoice {
       //usuwamy folder lub plik
       if (Gd.canUserDeleteFile(this.gdId)) {
         DriveApp.getFileById(this.gdId).setTrashed(true);
-        Logger.log('uswam plik - do kosza: '+ this.gdId)
+        Logger.log('uswam plik - do kosza: ' + this.gdId)
         return true;
       }
       //zmieniamy nazwę pliku ze wzgędu na brak uprawnień do usuwania 

@@ -20,15 +20,22 @@ class OurLetterGdFile extends DocumentGdFile {
         super.create();
         GDocsTools.fillNamedRange(this.document.documentGdId, 'address', this.makeEntitiesDataLabel(this.document._entitiesMain));
         GDocsTools.fillNamedRange(this.document.documentGdId, 'description', this.description);
-        GDocsTools.fillNamedRange(this.document.documentGdId, 'projectContext', this.projectContext);
+        var projectContextStyle = {};
+        projectContextStyle[DocumentApp.Attribute.FONT_SIZE] = 9;
+        projectContextStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#666666';
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'projectContext', this.projectContext, projectContextStyle);
         return this.gdFile;
     }
 
     edit() {
         super.edit();
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'number', '' + this.document.number);
         GDocsTools.fillNamedRange(this.document.documentGdId, 'address', this.makeEntitiesDataLabel(this.document._entitiesMain));
         GDocsTools.fillNamedRange(this.document.documentGdId, 'description', this.description);
-        GDocsTools.fillNamedRange(this.document.documentGdId, 'projectContext', this.projectContext);
+        var projectContextStyle = {};
+        projectContextStyle[DocumentApp.Attribute.FONT_SIZE] = 10;
+        projectContextStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#b6bbb9';
+        GDocsTools.fillNamedRange(this.document.documentGdId, 'projectContext', this.projectContext, projectContextStyle);
     }
 
     private makeCasesList(): string {

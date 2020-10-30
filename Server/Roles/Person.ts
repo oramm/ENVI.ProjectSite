@@ -30,22 +30,8 @@ class Person {
       this._nameSurnameEmail = this.name + ' ' + this.surname + ' ' + this.email;
     }
   }
-
-  static getPersonDbId(email, externalConn?) {
-    try {
-      var conn = (externalConn) ? externalConn : connectToSql();
-      var stmt = conn.createStatement();
-      var results = stmt.executeQuery('SELECT Persons.Id FROM Persons \n' +
-        'WHERE Persons.Email="' + email + '" OR Persons.SystemEmail="' + email + '"'
-      );
-      //pobierz do gsheet Id krotki z bazy - potrzebne przy edycji
-      results.last();
-      return results.getLong(1);
-    } catch (e) {
-      throw e;
-    } finally {
-      if (!externalConn && conn && conn.isValid(0)) conn.close();
-    }
+  static getPerson(initParamObject: { systemRoleName?: string, systemEmail?: string, id?: number }, externalConn?): Person {
+    return getPersonsList(initParamObject, externalConn)[0];
   }
 
   getSystemRole(externalConn?) {

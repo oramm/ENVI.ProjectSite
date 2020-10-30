@@ -35,7 +35,6 @@ class GDocsTools {
       }
     }
     targetGdocument.saveAndClose();
-    var x;
   }
   //https://stackoverflow.com/questions/19455158/what-is-the-best-way-to-parse-html-in-google-apps-script
   static fillPlaceHolder(documentGdId: string, tag: string, text: string) {
@@ -43,14 +42,16 @@ class GDocsTools {
     document.getBody().replaceText(tag, ToolsHtml.parseHtmlToText(text));
   }
 
-  static fillNamedRange(documentGdId: string, rangeName: string, text: string) {
+  static fillNamedRange(documentGdId: string, rangeName: string, text: string, style?: {}) {
     if (ToolsDate.isStringAYMDDate(text))
       text = ToolsDate.dateYMDtoDMY(text)
     var document = DocumentApp.openById(documentGdId);
     var namedRange = this.getNamedRangeByName(document, rangeName);
     var element = namedRange.getRange().getRangeElements()[0];
-
     element.getElement().asText().setText(ToolsHtml.parseHtmlToText(text));
+    if (style) {
+      element.getElement().asText().setAttributes(style);
+    }
     namedRange.remove();
     var range = document.newRange().addElement(element.getElement()).build();
 
@@ -150,7 +151,7 @@ function test_copyDocs() {
 
 function test_createNamedRanges() {
   var item = new OurLetterGdFile({
-    _template: new DocumentTemplate({ id: 1, gdId: '', name:'', caseTypeId: 1, _contents: {alias:'', gdId:''} }),
+    _template: new DocumentTemplate({ id: 1, gdId: '', name: '', caseTypeId: 1, _contents: { alias: '', gdId: '' } }),
     document: new OurLetter({
       creationDate: '22dsfsfsf sdf2',
       documentGdId: '1IdRiwPxFLoSohJ4-JJwhbNYSwk65WWhGWRFFgmxTLiU'

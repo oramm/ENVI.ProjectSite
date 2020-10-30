@@ -72,7 +72,7 @@ function addNewInvoiceItem(itemFormClient) {
   try {
     var conn = connectToSql();
     conn.setAutoCommit(false);
-    itemFormClient._editor.id = Person.getPersonDbId(itemFormClient._editor.systemEmail, conn);
+    itemFormClient._editor = Person.getPerson({systemEmail: Session.getEffectiveUser().getEmail()}, conn);
     var item = new InvoiceItem(itemFormClient);
     item.addInDb(conn);
     conn.commit();
