@@ -41,9 +41,9 @@ function getInvoiceItems(sql, externalConnection): InvoiceItem[] {
           id: dbResults.getLong('ParentId'),
         },
         description: sqlToString(dbResults.getString('Description')),
-        quantity: dbResults.getString('Quantity'),
+        quantity: dbResults.getInt('Quantity'),
         unitPrice: dbResults.getString('UnitPrice'),
-        vatTax: dbResults.getString('VatTax'),
+        vatTax: dbResults.getInt('VatTax'),
         _lastUpdated: dbResults.getString('LastUpdated'),
 
         //ostatni edytujący
