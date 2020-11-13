@@ -184,6 +184,17 @@ function editInvoice(itemFromClient) {
   }
 }
 
+function copyInvoice(itemFromClient) {
+  itemFromClient = JSON.parse(itemFromClient);
+  delete itemFromClient.gdId;
+  delete itemFromClient.number;
+  delete itemFromClient.sentDate;
+  delete itemFromClient.paymentDeadline;
+  itemFromClient.description += ' - kopia';
+  itemFromClient.status = 'Na później'
+  return addNewInvoice(JSON.stringify(itemFromClient));
+}
+
 function issueInvoice(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);
   itemFromClient.status = 'Zrobiona';
