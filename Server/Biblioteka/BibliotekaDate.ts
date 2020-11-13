@@ -30,7 +30,7 @@ class ToolsDate {
       date = new Date(date);
     }
     if (this.isValidDate(date))
-      date.setDate(date.getDate() + days);
+      date.setDate(date.getDate() + days / 1);
     return date;
   }
 

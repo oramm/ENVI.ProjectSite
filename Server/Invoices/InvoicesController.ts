@@ -72,7 +72,7 @@ function getInvoices(sql: string, initParamObject): Invoice[] {
         creationDate: dbResults.getString('CreationDate'),
         issueDate: dbResults.getString('IssueDate'),
         sentDate: dbResults.getString('SentDate'),
-        daysToPay: dbResults.getString('DaysToPay'),
+        daysToPay: dbResults.getInt('DaysToPay'),
         paymentDeadline: dbResults.getString('PaymentDeadline'),
         gdId: dbResults.getString('GdId'),
         _lastUpdated: dbResults.getString('LastUpdated'),

@@ -38,14 +38,13 @@ class Invoice {
 
       this.sentDate = ToolsDate.dateDMYtoYMD(initParamObject.sentDate);
       this.sentDate = (initParamObject.sentDate) ? Utilities.formatDate(new Date(initParamObject.sentDate), "CET", "yyyy-MM-dd") : undefined;
-      if (this.sentDate) {
-        this.paymentDeadline = ToolsDate.addDays(new Date(initParamObject.sentDate), this.daysToPay);
-      }
+
       this.daysToPay = initParamObject.daysToPay;
       this.gdId = initParamObject.gdId;
       initParamObject.paymentDeadline = ToolsDate.dateDMYtoYMD(initParamObject.paymentDeadline);
-      this.paymentDeadline = (initParamObject.paymentDeadline) ? Utilities.formatDate(new Date(initParamObject.paymentDeadline), "CET", "yyyy-MM-dd") : this.setPaymentDeadline();
-
+      //this.paymentDeadline = (initParamObject.paymentDeadline) ? Utilities.formatDate(new Date(initParamObject.paymentDeadline), "CET", "yyyy-MM-dd") : this.paymentDeadline();
+      //tymczasowa linijka do usunięcia po nadpisaniu złych danych
+      this.paymentDeadline = this.countPaymentDeadline();
       this._lastUpdated = initParamObject._lastUpdated;
 
       this._entity = initParamObject._entity;
@@ -71,7 +70,7 @@ class Invoice {
     }
   }
 
-  setPaymentDeadline() {
+  countPaymentDeadline() {
     if (this.sentDate) {
       var payDay: Date = ToolsDate.addDays(this.sentDate, this.daysToPay);
       return Utilities.formatDate(payDay, "CET", "yyyy-MM-dd");
