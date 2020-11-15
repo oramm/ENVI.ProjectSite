@@ -3,7 +3,7 @@ function getExternalAchievementsList(personId) {
     var result = [];
     var conn = connectToSql();
     var stmt = conn.createStatement();
-    var query = 'SELECT  AchievementsExternal.Id,  \n \t' +
+    var sql = 'SELECT  AchievementsExternal.Id,  \n \t' +
       'AchievementsExternal.RoleName,  \n \t' +
       'AchievementsExternal.Description,  \n \t' +
       'AchievementsExternal.WorksScope,  \n \t' +
@@ -12,39 +12,33 @@ function getExternalAchievementsList(personId) {
       'AchievementsExternal.StartDate,  \n \t' +
       'AchievementsExternal.EndDate,  \n \t' +
       'AchievementsExternal.Employer,  \n \t' +
-      'AchievementsExternal.OwnerId,  \n \t' +
-      'Persons.Name,  \n \t' +
-      'Persons.Surname,  \n \t' +
-      'Persons.Email  \n' +
+      'Persons.Id AS OwnerId,  \n \t' +
+      'Persons.Name AS OwnerName,  \n \t' +
+      'Persons.Surname AS OwnerSurname,  \n \t' +
+      'Persons.Email AS OwnerEmail \n' +
       'FROM AchievementsExternal \n' +
       'JOIN Persons ON AchievementsExternal.OwnerId = Persons.Id \n' +
       'ORDER BY AchievementsExternal.Id DESC';
-    //  'GROUP BY Tasks.Id;'
-    var dbResults = stmt.executeQuery(query);
 
-    Logger.log(query);
-    var numCols = dbResults.getMetaData().getColumnCount();
+    var dbResults = stmt.executeQuery(sql);
+
+    Logger.log(sql);
     while (dbResults.next()) {
       var item = {
-        id: dbResults.getLong(1),
-        roleName: dbResults.getString(2).trim(),
-        description: dbResults.getString(3).trim(),
-        worksScope: dbResults.getString(4).trim(),
-        worksValue: dbResults.getString(5).trim(),
-        projectValue: dbResults.getString(6).trim(),
-        startDate: dbResults.getString(7).trim(),
-        endDate: dbResults.getString(8).trim(),
-        employer: dbResults.getString(9).trim(),
+        id: dbResults.getLong('Id'),
+        roleName: dbResults.getString('RoleName').trim(),
+        description: stringToSql(dbResults.getString('Description')).trim(),
+        worksScope: dbResults.getString('WorksScope').trim(),
+        worksValue: dbResults.getString('WorksValue').trim(),
+        projectValue: dbResults.getString('ProjectValue').trim(),
+        startDate: dbResults.getString('StartDate'),
+        endDate: dbResults.getString('EndDate'),
+        employer: stringToSql(dbResults.getString('Employer')).trim(),
         _owner: {
-          id: dbResults.getLong(10),
-          _nameSurnameEmail: ''
+          id: dbResults.getLong('OwnerId'),
+          _nameSurnameEmail: dbResults.getString('OwnerName').trim() + ' ' + dbResults.getString('OwnerSurname').trim() + ': ' + dbResults.getString('OwnerEmail').trim()
         }
       }
-      //init: function(id, roleName, description, worksScope, worksValue, projectValue,  startDate, endDate, employer, ownerId)
-
-      item._owner._nameSurnameEmail = dbResults.getString(11).trim() + ' ' + dbResults.getString(12).trim() + ': ' + dbResults.getString(13).trim();
-
-
       result.push(item);
     }
     return result;
@@ -54,30 +48,29 @@ function getExternalAchievementsList(personId) {
   } finally {
     conn.close();
   }
-
 }
 
-function addNewExternalAchievementInDb(itemFromClient) {
+function addNewExternalAchievement(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);
-  var externalAchievement = new ExternalAchievement(itemFromClient);
-  //init: function(id, roleName, description, worksScope, worksValue, projectValue,  startDate, endDate, employer, ownerId){
+  var item = new ExternalAchievement(itemFromClient);
 
-  externalAchievement.addInDb();
-  Logger.log(' item Added ItemId: ' + externalAchievement.id);
-  return externalAchievement.id;
+  item.addInDb();
+  Logger.log(' item Added ItemId: ' + item.id);
+  return item;
 }
 
 function test_addNewExternalAchievementInDb() {
-  addNewExternalAchievementInDb(
-    '{"id":258,"ownerId":1,"ownerNameSurnameEmail":"Marta Listwan: mlistwan@ugk.pl","roleName":"Inspektor Nadzoru - Sanitarny","description":"opis doświadczxenie","worksScope":"zakres robót","worksValue":"11111","projectValue":"22222","startDate":"12-06-2018","endDate":"12-08-2019","employer":"PWoK testowe","tmpId":"258_pending"}')
+  addNewExternalAchievement(
+    '')
 
 }
 
-function editExternalAchievementInDb(itemFromClient) {
+function editExternalAchievement(itemFromClient) {
   itemFromClient = JSON.parse(itemFromClient);
-  var externalAchievement = new ExternalAchievement(itemFromClient);
-  externalAchievement.editInDb();
-  Logger.log('item edited ItemId: ' + externalAchievement.id);
+  var item = new ExternalAchievement(itemFromClient);
+  item.editInDb();
+  Logger.log('item edited ItemId: ' + item.id);
+  return item;
 }
 
 function deleteExternalAchievement(itemFromClient) {

@@ -24,6 +24,7 @@ function getCasesListPerMilestone(milestoneId) {
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
     'Risks.Id AS RiskId, \n \t' +
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
@@ -63,6 +64,7 @@ function getCasesListPerContract(contractId) {
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
     'Risks.Id AS RiskId, \n \t' +
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
@@ -104,6 +106,7 @@ function getCasesListPerProject(initParamObject) {
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
     'Risks.Id AS RiskId, \n \t' +
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
@@ -147,6 +150,7 @@ function getCasesListPerIdsList(initParamObject) {
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
     'Risks.Id AS RiskId, \n \t' +
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
@@ -186,6 +190,7 @@ function getCasesList() {
     'OurContractsData.OurId AS ContractOurId, \n \t' +
     'Contracts.Alias AS ContractAlias, \n \t' +
     'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
     'Risks.Id AS RiskId, \n \t' +
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
@@ -232,9 +237,9 @@ function getCases(sql: string, parentDataObject: any) {
             return item._caseType.id == dbResults.getInt('CaseTypeId')
           })
         },
-        name: dbResults.getString('Name'),
+        name: sqlToString(dbResults.getString('Name')),
         number: dbResults.getInt('Number'),
-        description: dbResults.getString('Description'),
+        description: sqlToString(dbResults.getString('Description')),
         gdFolderId: dbResults.getString('GdFolderId'),
         lastUpdated: dbResults.getString('LastUpdated'),
         _parent: {
@@ -249,7 +254,8 @@ function getCases(sql: string, parentDataObject: any) {
           _parent: {
             ourId: dbResults.getString('ContractOurId'),
             number: dbResults.getString('ContractNumber'),
-            alias: dbResults.getString('ContractAlias')
+            alias: dbResults.getString('ContractAlias'),
+            name: sqlToString(dbResults.getString('ContractName')),
           }
         },
         _risk: new Risk({

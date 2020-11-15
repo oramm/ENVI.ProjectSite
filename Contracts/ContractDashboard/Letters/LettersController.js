@@ -26,7 +26,7 @@ class LettersController {
         );
 
         var promises = [
-            LettersSetup.lettersRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
+            LettersSetup.lettersRepository.initialise({ contractId: MainSetup.currentContract }),
             LettersSetup.contractsRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
             LettersSetup.milestonesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
             LettersSetup.casesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId })

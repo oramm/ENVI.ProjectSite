@@ -1,6 +1,7 @@
-function getLettersListPerProject(initParamObject, externalConn?) {
+function getLettersList(initParamObject, externalConn?) {
   var projectConditon = (initParamObject && initParamObject.projectId) ? 'Projects.OurId="' + initParamObject.projectId + '"' : '1';
   var milestoneConditon = (initParamObject && initParamObject.milestoneId) ? 'Milestones.Id=' + initParamObject.milestoneId : '1';
+  var contractConditon = (initParamObject && initParamObject.contractId) ? 'Contracts.Id=' + initParamObject.contractId : '1';
 
   var sql = 'SELECT  Letters.Id, \n \t' +
     'Letters.IsOur, \n \t' +
@@ -25,14 +26,14 @@ function getLettersListPerProject(initParamObject, externalConn?) {
     'JOIN Contracts ON Contracts.ProjectOurId=Projects.OurId \n' +
     'JOIN Milestones ON Milestones.ContractId= Contracts.Id \n' +
     'JOIN Persons ON Letters.EditorId=Persons.Id \n' +
-    'WHERE ' + projectConditon + ' AND ' + milestoneConditon + '\n' +
+    'WHERE ' + projectConditon + ' AND ' + contractConditon + ' AND ' + milestoneConditon + '\n' +
     'GROUP BY Letters.Id \n' +
     'ORDER BY Letters.RegistrationDate, Letters.CreationDate';
   return getLetters(sql, initParamObject, externalConn)
 }
 
-function test_getLettersListPerProject() {
-  getLettersListPerProject({ projectId: 'KOB.GWS.01.WLASNE' });
+function test_getLettersList() {
+  getLettersList({ projectId: 'KOB.GWS.01.WLASNE' });
 }
 
 function getLetters(sql, initParamObject, externalConn?) {

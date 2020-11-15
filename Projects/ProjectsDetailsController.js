@@ -21,7 +21,7 @@ class ProjectDetailsController {
             'getCasesListPerProject');
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersListPerProject',
+            'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');

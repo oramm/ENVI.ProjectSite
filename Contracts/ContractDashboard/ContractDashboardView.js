@@ -11,6 +11,10 @@ class ContractDashboardView extends Popup {
         //                url: 'Details/ContractDetails.html?parentItemId=' + parentItemId
         //              });
         tabsData.push({
+            name: "Pisma",
+            url: 'Letters/LettersList.html?parentItemId=' + parentItemId
+        });
+        tabsData.push({
             name: "Spotkania",
             url: 'Meetings/MeetingsList.html?parentItemId=' + parentItemId
         });

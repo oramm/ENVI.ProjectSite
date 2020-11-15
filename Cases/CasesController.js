@@ -30,7 +30,7 @@ class CasesController {
             'getCaseEventsListPerMilestone');
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersListPerProject',
+            'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');
