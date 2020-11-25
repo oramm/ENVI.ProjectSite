@@ -575,7 +575,7 @@ class Contract {
   }
 
   getMilestones(): any[] {
-    return getMilestonesListPerProject(this.projectId);
+    return getMilestonesList(this.projectId);
   }
 
   /*

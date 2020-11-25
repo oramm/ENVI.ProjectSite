@@ -14,11 +14,11 @@ class LettersController {
             'deleteLetter');
 
         LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsListPerProject'
+            'getContractsList'
         );
 
         LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesListPerProject'
+            'getMilestonesList'
         );
 
         LettersSetup.casesRepository = new SimpleRepository('Cases repository',

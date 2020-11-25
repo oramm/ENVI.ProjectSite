@@ -29,7 +29,7 @@ function getLettersList(initParamObject, externalConn?) {
     'WHERE ' + projectConditon + ' AND ' + contractConditon + ' AND ' + milestoneConditon + '\n' +
     'GROUP BY Letters.Id \n' +
     'ORDER BY Letters.RegistrationDate, Letters.CreationDate';
-  return getLetters(sql, initParamObject, externalConn)
+  return getLetters(sql, initParamObject, externalConn);
 }
 
 function test_getLettersList() {

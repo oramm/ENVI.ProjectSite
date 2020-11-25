@@ -14,11 +14,11 @@ class LettersController {
             'deleteLetter');
 
         LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsListPerProject'
+            'getContractsList'
         );
 
         LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesListPerProject'
+            'getMilestonesList'
         );
 
         LettersSetup.casesRepository = new SimpleRepository('Cases repository',
@@ -26,10 +26,10 @@ class LettersController {
         );
 
         var promises = [
-            LettersSetup.lettersRepository.initialise({ contractId: MainSetup.currentContract }),
-            LettersSetup.contractsRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.milestonesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.casesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId })
+            LettersSetup.lettersRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
+            LettersSetup.contractsRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
+            LettersSetup.milestonesRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
+            LettersSetup.casesRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId })
         ];
 
         Promise.all(promises)

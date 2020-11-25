@@ -7,14 +7,14 @@ class ContractsController {
         //signoutButton.style.display = 'block';
         
         MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesListPerProject',
+            'getMilestonesList',
             'addNewMilestone',
             'editMilestone',
             'deleteMilestone'
         );
 
         ContractsSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsListPerProject',
+            'getContractsList',
             'addNewContract',
             'editContract',
             'deleteContract'

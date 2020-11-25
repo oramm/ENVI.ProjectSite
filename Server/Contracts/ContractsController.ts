@@ -1,16 +1,16 @@
 function getContract(contractId): Contract {
-  return getContractsListPerProject({ contractId: contractId })[0];
+  return getContractsList({ contractId: contractId })[0];
 }
 
 function getContractByOurId(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract {
-  return getContractsListPerProject(initParamObject, conn)[0];
+  return getContractsList(initParamObject, conn)[0];
 }
 
-function test_getContractsListPerProject() {
-  getContractsListPerProject({ projectId: 'KOB.GWS.01.WLASNE' });
+function test_getContractsList() {
+  getContractsList({ projectId: 'KOB.GWS.01.WLASNE' });
 }
 
-function getContractsListPerProject(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract[] {
+function getContractsList(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConnection): Contract[] {
   var projectCondition = (initParamObject && initParamObject.projectId) ? 'mainContracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'mainContracts.Id=' + initParamObject.contractId : '1';
   var contractOurIdCondition = (initParamObject && initParamObject.contractOurId) ? 'OurContractsData.OurId="' + initParamObject.contractOurId + '"' : '1';
@@ -345,7 +345,7 @@ function test_deleteContract() {
 }
 
 function contractForlderIterate(argFunction: Function) {
-  var contracts = getContractsListPerProject({});
+  var contracts = getContractsList({});
   try {
     var conn = connectToSql();
     for (var contract of contracts)

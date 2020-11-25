@@ -1,28 +1,43 @@
-function getExternalAchievementsList(personId) {
+function getExternalAchievementsList(initParamObject , externalConn?) {
+  var result = [];
+  var sql = 'SELECT  AchievementsExternal.Id,  \n \t' +
+    'AchievementsExternal.RoleName,  \n \t' +
+    'AchievementsExternal.Description,  \n \t' +
+    'AchievementsExternal.WorksScope,  \n \t' +
+    'AchievementsExternal.WorksValue,  \n \t' +
+    'AchievementsExternal.ProjectValue,  \n \t' +
+    'AchievementsExternal.StartDate,  \n \t' +
+    'AchievementsExternal.EndDate,  \n \t' +
+    'AchievementsExternal.Employer,  \n \t' +
+    'Persons.Id AS OwnerId,  \n \t' +
+    'Persons.Name AS OwnerName,  \n \t' +
+    'Persons.Surname AS OwnerSurname,  \n \t' +
+    'Persons.Email AS OwnerEmail, \n \t' +
+    'NULL AS OurContractId \n' +
+    'FROM AchievementsExternal \n' +
+    'JOIN Persons ON AchievementsExternal.OwnerId = Persons.Id \n' +
+    
+    'UNION \n \n' +
+    'NULL As Id, \n \t' +
+    'SELECT Roles.Name AS RoleName' + 
+    'FROM Roles \n' +
+    'JOIN Persons ON AchievementsExternal.OwnerId = Persons.Id \n' +
+    'ORDER BY AchievementsExternal.Id DESC';
+
+    return getAchievements(sql, initParamObject, externalConn)
+
+}
+
+
+
+function getAchievements(sql, initParamObject, externalConn?) {
+  Logger.log(sql);
   try {
     var result = [];
-    var conn = connectToSql();
+    var conn = (externalConn) ? externalConn : connectToSql();
+    if (!conn.isValid(0)) throw new Error('getAchievements:: połączenie przerwane');
     var stmt = conn.createStatement();
-    var sql = 'SELECT  AchievementsExternal.Id,  \n \t' +
-      'AchievementsExternal.RoleName,  \n \t' +
-      'AchievementsExternal.Description,  \n \t' +
-      'AchievementsExternal.WorksScope,  \n \t' +
-      'AchievementsExternal.WorksValue,  \n \t' +
-      'AchievementsExternal.ProjectValue,  \n \t' +
-      'AchievementsExternal.StartDate,  \n \t' +
-      'AchievementsExternal.EndDate,  \n \t' +
-      'AchievementsExternal.Employer,  \n \t' +
-      'Persons.Id AS OwnerId,  \n \t' +
-      'Persons.Name AS OwnerName,  \n \t' +
-      'Persons.Surname AS OwnerSurname,  \n \t' +
-      'Persons.Email AS OwnerEmail \n' +
-      'FROM AchievementsExternal \n' +
-      'JOIN Persons ON AchievementsExternal.OwnerId = Persons.Id \n' +
-      'ORDER BY AchievementsExternal.Id DESC';
-
     var dbResults = stmt.executeQuery(sql);
-
-    Logger.log(sql);
     while (dbResults.next()) {
       var item = {
         id: dbResults.getLong('Id'),
@@ -46,7 +61,7 @@ function getExternalAchievementsList(personId) {
     Logger.log(e);
     throw e;
   } finally {
-    conn.close();
+    if (!externalConn && conn.isValid(0)) conn.close();
   }
 }
 

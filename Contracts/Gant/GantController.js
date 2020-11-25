@@ -8,13 +8,13 @@ class GantController {
         
        
         milestonesRepository = new SimpleRepository('Milestones repository',
-                                                    'getMilestonesListPerProject',
+                                                    'getMilestonesList',
                                                     'addNewMilestone',
                                                     'editMilestone',
                                                     'deleteMilestone');
         
         contractsRepository = new SimpleRepository('Contracts repository',
-                                                    'getContractsListPerProject',
+                                                    'getContractsList',
                                                     'addNewContract',
                                                     'editContract',
                                                     'deleteContract');

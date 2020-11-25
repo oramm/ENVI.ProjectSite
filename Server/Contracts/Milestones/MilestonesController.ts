@@ -1,4 +1,4 @@
-function getMilestonesListPerProject(initParamObject) {
+function getMilestonesList(initParamObject) {
   var projectCondition = (initParamObject && initParamObject.projectId) ? 'Contracts.ProjectOurId="' + initParamObject.projectId + '"' : '1';
   var contractCondition = (initParamObject && initParamObject.contractId) ? 'Milestones.ContractId=' + initParamObject.contractId : '1';
   try {
@@ -199,8 +199,8 @@ function getCurrentMilestonesList() {
   }
 }
 
-function getMilestonesListPerProject_Test() {
-  var x = getMilestonesListPerProject('KOB.GWS.01.WLASNE');
+function getMilestonesList_Test() {
+  var x = getMilestonesList('KOB.GWS.01.WLASNE');
   return x;
 }
 

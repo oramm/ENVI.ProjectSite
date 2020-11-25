@@ -8,6 +8,8 @@ class OurLetterModalController extends LetterModalController {
     initAddNewDataHandler() {
         super.initAddNewDataHandler();
         LettersSetup.lettersRepository.currentItem.isOur = true;
+        if (LettersSetup.contractsRepository.items.length === 1)
+            this.modal.contractFormElement.input.simulateChosenItem(LettersSetup.contractsRepository.items[0]);
     }
 
     onCaseChosen(chosenItem) {
@@ -31,6 +33,8 @@ class OurLetterModalController extends LetterModalController {
             });
 
         this.modal.templateSelectField.initialise(templatesForCases, '_nameConentsAlias', this.onTemplateChosen, this);
+        if (templatesForCases.length === 1)
+            this.modal.templateSelectField.simulateChosenItem(templatesForCases[0]);
     }
 
     onTemplateChosen(chosenItem) {
