@@ -42,7 +42,7 @@ function Project(initParamObject) {
       id: 1,
       name: 'ENVI',
       address: 'ul. Jana Brzechwy 3, 49-305 Brzeg',
-      taxNumber: '747-156-40-59',
+      taxNumber: '747-191-75-75',
     };
     this._engineers = (initParamObject._engineers && initParamObject._engineers[0]) ? initParamObject._engineers : [defaultEngineer];
     this._employers = (initParamObject._employers) ? initParamObject._employers : [];

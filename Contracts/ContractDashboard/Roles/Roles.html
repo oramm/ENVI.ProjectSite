@@ -68,7 +68,10 @@
 </body>
 
 <script async defer src="https://apis.google.com/js/api.js"
-    onload="this.onload=function(){}; gAuth = new GAuth2();   gAuth.handleClientLoad(new RolesController())"
+    onload="this.onload=function(){}; 
+            //gAuth = new GAuth2();
+            gAuth = parent.gAuth;
+            gAuth.handleClientLoad(new RolesController())"
     onreadystatechange="if (this.readyState === 'complete') this.onload()">
         $(document).ready(function () {
             $('.collapsible').collapsible();

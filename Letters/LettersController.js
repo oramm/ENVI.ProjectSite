@@ -26,10 +26,10 @@ class LettersController {
         );
 
         var promises = [
-            LettersSetup.lettersRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.contractsRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.milestonesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.casesRepository.initialise({ projectId: LettersSetup.lettersRepository.parentItemId })
+            LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.contractsRepository.initialiseNodeJS('contracts/?projectId=' + LettersSetup.lettersRepository.parentItemId ),
+            LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + LettersSetup.lettersRepository.parentItemId ),
+            LettersSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + LettersSetup.lettersRepository.parentItemId )
         ];
 
         Promise.all(promises)

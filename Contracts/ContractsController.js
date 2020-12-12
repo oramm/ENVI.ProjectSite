@@ -5,7 +5,7 @@ class ContractsController {
         $("#authorize-div").hide();
         contractsListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        
+
         MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
             'getMilestonesList',
             'addNewMilestone',
@@ -27,9 +27,9 @@ class ContractsController {
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
 
         var promises = [
-            milestonesRepository.initialise({ projectId: milestonesRepository.parentItemId }),
-            contractsRepository.initialise({ projectId: contractsRepository.parentItemId }),
-            MilestonesSetup.milestoneTypesRepository.initialise(contractsRepository.parentItemId),
+            milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
+            contractsRepository.initialiseNodeJS('contracts/?projectId=' + contractsRepository.parentItemId ),
+            MilestonesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes/?projectId=' + contractsRepository.parentItemId),
         ];
 
         Promise.all(promises)

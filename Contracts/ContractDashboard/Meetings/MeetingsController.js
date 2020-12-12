@@ -26,9 +26,9 @@ class MeetingsController {
         MeetingsSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
 
         var promises = [
-            MeetingsSetup.meetingsRepository.initialise(MeetingsSetup.currentContract.id),
-            MeetingsSetup.meetingArrangementsRepository.initialise(MeetingsSetup.meetingsRepository.parentItemId),
-            MeetingsSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+            MeetingsSetup.meetingsRepository.initialiseNodeJS('meetings/?contractId=' + MeetingsSetup.meetingsRepository.parentItemId),
+            MeetingsSetup.meetingArrangementsRepository.initialiseNodeJS('meetingArrangements/?meetingId=' + MeetingsSetup.meetingsRepository.parentItemId),
+            MeetingsSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + MainSetup.currentProject.ourId),
         ]
 
         Promise.all(promises)

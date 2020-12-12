@@ -13,7 +13,7 @@ class DocumentTemplate implements Envi.DocumentTemplate {
       this.description = initParamObject.description;
       this.gdId = initParamObject.gdId;
       this._contents = initParamObject._contents;
-      this._nameConentsAlias = (initParamObject._contents.alias)? initParamObject._contents.alias : initParamObject.name;
+      this._nameConentsAlias = (initParamObject._contents.alias) ? initParamObject._contents.alias : initParamObject.name;
     }
   }
 

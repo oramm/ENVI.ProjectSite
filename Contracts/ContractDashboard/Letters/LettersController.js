@@ -25,11 +25,11 @@ class LettersController {
             'getCasesListPerProject'
         );
 
-        var promises = [
-            LettersSetup.lettersRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.contractsRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.milestonesRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId }),
-            LettersSetup.casesRepository.initialise({ contractId: LettersSetup.lettersRepository.parentItemId })
+        let promises = [
+            LettersSetup.lettersRepository.initialiseNodeJS('letters/?contractId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.contractsRepository.initialiseNodeJS('contracts/?contractId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?contractId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.casesRepository.initialiseNodeJS('cases/?contractId=' + LettersSetup.lettersRepository.parentItemId)
         ];
 
         Promise.all(promises)

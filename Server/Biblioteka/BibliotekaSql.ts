@@ -157,7 +157,7 @@ function createPreparedStmtSql(conn, tableName, object, queryType: string) {
 
 function connectToSql(): GoogleAppsScript.JDBC.JdbcConnection {
   //connecting with JDBC : https://developers.google.com/apps-script/guides/jdbc
-  var dbUrl = 'jdbc:mysql://' + DB_ADDRESS + '/' + DN_NAME;
+  var dbUrl = 'jdbc:mysql://' + DB_ADDRESS + '/' + DB_NAME;
   return Jdbc.getConnection(dbUrl, DB_USER, DB_USER_PWD);
 }
 

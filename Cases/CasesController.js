@@ -39,12 +39,12 @@ class CasesController {
         LettersSetup.casesRepository = CasesSetup.casesRepository;
 
         var promises = [
-            tasksRepository.initialise({milestoneId: tasksRepository.parentItemId}),
-            CasesSetup.casesRepository.initialise(casesRepository.parentItemId),
-            CasesSetup.caseTypesRepository.initialise(CasesSetup.caseTypesRepository.parentItemId),
-            ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(CasesSetup.casesRepository.parentItemId),
-            CasesSetup.eventsRepository.initialise(CasesSetup.casesRepository.parentItemId),
-            LettersSetup.lettersRepository.initialise({ milestoneId: LettersSetup.lettersRepository.parentItemId })
+            tasksRepository.initialiseNodeJS('tasks/?milestoneId=' + tasksRepository.parentItemId),
+            CasesSetup.casesRepository.initialiseNodeJS('cases/?milestoneId=' + casesRepository.parentItemId),
+            CasesSetup.caseTypesRepository.initialiseNodeJS('caseTypes/?milestoneId=' + CasesSetup.caseTypesRepository.parentItemId),
+            ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS('processStepInstances/?milestoneId=' + CasesSetup.casesRepository.parentItemId),
+            CasesSetup.eventsRepository.initialiseNodeJS('caseEvents/?milestoneId='+ CasesSetup.casesRepository.parentItemId),
+            LettersSetup.lettersRepository.initialiseNodeJS('letters/?milestoneId=' + LettersSetup.lettersRepository.parentItemId)
         ]
         Promise.all(promises)
             .then(() => {

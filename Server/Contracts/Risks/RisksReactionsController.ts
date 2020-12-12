@@ -31,12 +31,12 @@ function getRisksReactionsListPerContract(contractId) {
     'Tasks.Status, \n \t' +
     'Tasks.OwnerId, \n \t' +
     'Tasks.LastUpdated, \n \t' +
-    'Contracts.Id, \n \t' +
-    'Contracts.Number, \n \t' +
-    'Contracts.Name, \n \t' +
-    'Persons.Name, \n \t' +
-    'Persons.Surname, \n \t' +
-    'Persons.Email \n' +
+    'Contracts.Id AS ContractId, \n \t' +
+    'Contracts.Number AS ContractNumber, \n \t' +
+    'Contracts.Name AS ContractName, \n \t' +
+    'Persons.Name AS OwnerName, \n \t' +
+    'Persons.Surname AS OwnerSurname, \n \t' +
+    'Persons.Email AS OwnerEmail \n' +
     'FROM Tasks \n' +
     'JOIN Cases ON Cases.Id=Tasks.CaseId \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
@@ -57,24 +57,22 @@ function getRisksReactions(sql) {
 
     while (dbResults.next()) {
       var item = {
-        id: dbResults.getLong(1),
-        caseId: dbResults.getLong(2),
-        name: dbResults.getString(3),
-        description: dbResults.getString(4),
-        deadline: dbResults.getString(5),
-        status: dbResults.getString(6),
-        ownerId: dbResults.getInt(7),
-        lastUpdated: dbResults.getString(8),
+        id: dbResults.getLong('Id'),
+        caseId: dbResults.getLong('CaseId'),
+        name: dbResults.getString('Name'),
+        description: dbResults.getString('Description'),
+        deadline: dbResults.getString('Deadline'),
+        status: dbResults.getString('Status'),
+        ownerId: dbResults.getInt('OwnerId'),
+        lastUpdated: dbResults.getString('LastUpdated'),
         _parent: {
-          id: dbResults.getLong(2),
-          //contractNumber: dbResults.getString(10),
-          //contractName: dbResults.getString(11)
+          id: dbResults.getLong('CaseId'),
         },
         _nameSurnameEmail: ''
       };
-      var name = (dbResults.getString(8)) ? dbResults.getString(12) : '';
-      var surname = (dbResults.getString(9)) ? dbResults.getString(13) : '';
-      var email = (dbResults.getString(10)) ? dbResults.getString(14) : '';
+      var name = (dbResults.getString('OwnerName')) ? dbResults.getString('OwnerName') : '';
+      var surname = (dbResults.getString('OwnerSurname')) ? dbResults.getString('OwnerSurname') : '';
+      var email = (dbResults.getString('OwnerEmail')) ? dbResults.getString('OwnerEmail') : '';
       if (name)
         item._nameSurnameEmail = name.trim() + ' ' + surname.trim() + ': ' + email.trim();
 

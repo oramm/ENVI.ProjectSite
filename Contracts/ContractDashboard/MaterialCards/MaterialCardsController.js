@@ -17,7 +17,7 @@ class MaterialCardsController {
         MaterialCardsSetup.milestonesRepository = new SimpleRepository(JSON.parse(sessionStorage.getItem('Milestones repository')));
 
         var promises = [
-            MaterialCardsSetup.materialCardsRepository.initialise(MaterialCardsSetup.materialCardsRepository.parentItemId)
+            MaterialCardsSetup.materialCardsRepository.initialiseNodeJS('materialCards/?contractId=' + MaterialCardsSetup.materialCardsRepository.parentItemId)
         ];
         Promise.all(promises)
             .then(() => {

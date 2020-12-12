@@ -51,13 +51,14 @@ class MainController {
         );
 
 
-        MainSetup.personsRepositoryLocalData.initialise();
+        MainSetup.personsRepositoryLocalData.initialiseNodeJS('persons/');
 
-        MainSetup.personsEnviRepositoryLocalData.initialise();
-        MainSetup.entitiesRepositoryLocalData.initialise();
-        MainSetup.documentTemplatesRepositoryLocalData.initialise();
-        MainSetup.contractTypesRepositoryLocalData.initialise('ACTIVE');
-        MainSetup.projectsRepositoryLocalData.initialise(gAuth.userEmail)
+        MainSetup.personsEnviRepositoryLocalData.initialiseNodeJS('persons/?systemRoleName=ENVI_EMPLOYEE|ENVI_MANAGER');
+        MainSetup.entitiesRepositoryLocalData.initialiseNodeJS('entities/');
+        MainSetup.documentTemplatesRepositoryLocalData.initialiseNodeJS('documentTemplates/');
+        MainSetup.contractTypesRepositoryLocalData.initialiseNodeJS('contractTypes/?status=ACTIVE');
+        console.log(gAuth.userEmail)
+        MainSetup.projectsRepositoryLocalData.initialiseNodeJS('projects/'+ gAuth.userEmail)
             .then(() => {
                 sessionStorage.setItem('Current User', JSON.stringify({
                     name: gAuth.userName,

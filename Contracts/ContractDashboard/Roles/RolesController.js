@@ -19,7 +19,7 @@ class RolesController {
         );
 
         var promises = [
-            RolesSetup.rolesRepository.initialise({ projectOurId: MainSetup.currentProject.ourId })
+            RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + MainSetup.currentProject.ourId)
         ];
         Promise.all(promises)
             .then(() => {

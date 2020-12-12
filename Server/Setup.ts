@@ -4,7 +4,7 @@ function Setup(){
 var DB_ADDRESS = 'envi.com.pl:3306';
 var DB_USER = 'envikons_myEnvi';
 var DB_USER_PWD = '7Fj2*j!lA3t@#D';
-var DN_NAME = 'envikons_myEnvi';
+var DB_NAME = 'envikons_myEnvi';
 
 var DB_STATUS_COL_NAME = 'dbStatus';
 var DB_ID_COL_NAME = 'dbId';

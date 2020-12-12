@@ -29,10 +29,10 @@ class ProjectDetailsController {
         LettersSetup.casesRepository = CasesSetup.casesRepository;
 
         var promises = [
-            ProcessesInstancesSetup.processesInstancesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
-            ProcessesInstancesSetup.processesStepsInstancesRepository.initialise(MainSetup.currentProject.ourId),
-            CasesSetup.casesRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
-            LettersSetup.lettersRepository.initialise({ projectId: MainSetup.currentProject.ourId }),
+            ProcessesInstancesSetup.processesInstancesRepository.initialiseNodeJS('processInstances/?projectId=' + MainSetup.currentProject.ourId),
+            ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS('processStepInstances/?projectId=' + MainSetup.currentProject.ourId),
+            CasesSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + MainSetup.currentProject.ourId),
+            LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + MainSetup.currentProject.ourId),
         ];
         Promise.all(promises)
             .then(() => {

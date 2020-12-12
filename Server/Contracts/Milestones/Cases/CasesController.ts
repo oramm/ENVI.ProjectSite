@@ -69,7 +69,7 @@ function getCasesListPerContract(contractId) {
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
-    'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
+    'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
@@ -111,7 +111,7 @@ function getCasesListPerProject(initParamObject) {
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
-    'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
+    'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
@@ -195,7 +195,7 @@ function getCasesList() {
     'Risks.Probability AS RiskProbability, \n \t' +
     'Risks.OverallImpact AS RiskOverallImpact \n' +
     'FROM Cases \n' +
-    'LEFT JOIN CaseTypes ON Cases.typeId=CaseTypes.Id \n' +
+    'LEFT JOIN CaseTypes ON Cases.TypeId=CaseTypes.Id \n' +
     'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
     'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
     'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +

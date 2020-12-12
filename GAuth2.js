@@ -57,12 +57,12 @@ class GAuth2 {
    *  Called when the signed in status changes, to update the UI
    *  appropriately. After a sign-in, the API is called.
    */
-  updateSigninStatus(isSignedIn) {
+  async updateSigninStatus(isSignedIn) {
     var _this = this;
     if (isSignedIn) {
+      await _this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
       var mainController = new MainController();
       mainController.main();
-      _this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
       //personRolesController = new PersonRolesController();
       //personRolesController.main();
     } else {
@@ -79,7 +79,7 @@ class GAuth2 {
    * https://developers.google.com/identity/sign-in/web/sign-in
    * @param {type} googleUser - gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile()
    */
-  onSignIn(googleUser) {
+  async onSignIn(googleUser) {
     var profile = googleUser;
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
