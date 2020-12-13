@@ -1,26 +1,26 @@
-class MainWindowView extends Popup{
-    constructor(){
+class MainWindowView extends Popup {
+    constructor() {
         super();
         this.navigationBar;
         this.autocomplete;
     }
-    
-    initialise(){
+
+    initialise() {
         this.navigationBar = new PsNavigationBar(this)
-        this.autocomplete = new AutoCompleteTextField_1('projectsPickerAutoComplete','Wybierz projekt');
-        this.autocomplete.initialise(MainSetup.projectsRepository,"_ourId_Alias", this.onProjectChosen, this)
-        
+        this.autocomplete = new AutoCompleteTextField_1('projectsPickerAutoComplete', 'Wybierz projekt');
+        this.autocomplete.initialise(MainSetup.projectsRepository, "_ourId_Alias", this.onProjectChosen, this)
+
     }
-    
-    loadDashBoard(){
+
+    loadDashBoard() {
         this.loadIframe("iframeMain", 'Dashboard/dashboard.html');
     }
-    
 
-    onProjectChosen(inputValue){
+
+    onProjectChosen(inputValue) {
         this.autocomplete.chosenItem = Tools.search(inputValue, "_ourId_Alias", MainSetup.projectsRepository.items);
         MainSetup.projectsRepository.currentItem = this.autocomplete.chosenItem;
-        MainSetup.personsPerProjectRepositoryLocalData.initialise({ projectOurId: this.autocomplete.chosenItem.ourId });
+        MainSetup.personsPerProjectRepositoryLocalData.initialiseNodeJS('persons/?projectId=' + this.autocomplete.chosenItem.ourId);
         this.navigationBar.initialiseMenuItems();
         this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link)
     }
