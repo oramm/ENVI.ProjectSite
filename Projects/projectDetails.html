@@ -72,9 +72,10 @@
 
 <script async defer src="https://apis.google.com/js/api.js"
         onload="this.onload=function(){}; 
-        gAuth = new GAuth2();
-        //gAuth = parent.gAuth;   
-        gAuth.handleClientLoad(new ProjectDetailsController())"
+        gapi = parent.gapi;
+        gAuth = parent.gAuth;   
+        ProjectDetailsController.main();
+        //gAuth.handleClientLoad(new ProjectDetailsController())"
     onreadystatechange="if (this.readyState === 'complete') this.onload()">
 </script>  
 </html>

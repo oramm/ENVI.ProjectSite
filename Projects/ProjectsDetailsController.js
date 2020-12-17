@@ -1,5 +1,5 @@
 class ProjectDetailsController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var projectDetailsView = new ProjectDetailsView();
         $("#authorize-div").hide();
@@ -45,8 +45,6 @@ class ProjectDetailsController {
                 $('.datepicker').pickadate(MainSetup.datePickerSettings);
                 ReachTextArea.reachTextAreaInit();
                 Materialize.updateTextFields();
-            }
-            )
+            });
     }
 }
-

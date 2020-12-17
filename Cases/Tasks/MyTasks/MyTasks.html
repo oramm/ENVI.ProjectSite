@@ -56,8 +56,9 @@
 
 <script async defer src="https://apis.google.com/js/api.js"
     onload="this.onload=function(){}; 
-            //gAuth = new GAuth2();   
-            gAuth = parent.gAuth;
+            gapi = parent.gapi;
+            gAuth = parent.gAuth;  
+    
             gAuth.handleClientLoad(new MyTasksController())"
     onreadystatechange="if (this.readyState === 'complete') this.onload()">
 </script>  
