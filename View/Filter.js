@@ -86,7 +86,7 @@ class Filter {
     }
 
     /*
-     * dodaje nistandardowy element do filtra (lista i $dom)
+     * dodaje niestandardowy element do filtra (lista i $dom)
      */
     addInput(filterElement) {
         switch (filterElement.inputType) {

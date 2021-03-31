@@ -27,21 +27,6 @@ class LetterModalController {
         this.modal.registrationDateFormElement.input.setValue(new Date());
     }
 
-
-    /*
-     * ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-     */
-    initCasesChips() {
-        this.modal.selectedCasesHiddenInput.$dom.parent().children('.chip').remove();
-        if (this.modal.mode == 'ADD_NEW')
-            this.modal.selectedCasesHiddenInput.value = [];
-        if (this.modal.mode == 'EDIT') {
-            this.modal.selectedCasesHiddenInput.value = LettersSetup.lettersRepository.currentItem._cases;
-            for (var i = 0; i < this.modal.selectedCasesHiddenInput.value.length; i++) {
-                this.appendCaseChip(this.modal.selectedCasesHiddenInput.value[i]);
-            }
-        }
-    }
     /*
      * ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
      */
