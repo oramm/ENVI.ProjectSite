@@ -30,8 +30,8 @@ class ProjectDetailsController {
 
         var promises = [
             ProcessesInstancesSetup.processesInstancesRepository.initialiseNodeJS('processInstances/?projectId=' + MainSetup.currentProject.ourId),
-            ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS('processStepInstances/?projectId=' + MainSetup.currentProject.ourId),
-            CasesSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + MainSetup.currentProject.ourId),
+            ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS(`processStepInstances/?projectId=${MainSetup.currentProject.ourId}`),
+            CasesSetup.casesRepository.initialiseNodeJS(`cases/?projectId=${MainSetup.currentProject.ourId}&hasProcesses=true`),
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + MainSetup.currentProject.ourId),
         ];
         Promise.all(promises)

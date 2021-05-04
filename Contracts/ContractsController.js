@@ -28,7 +28,7 @@ class ContractsController {
 
         var promises = [
             milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
-            contractsRepository.initialiseNodeJS('contracts/?projectId=' + contractsRepository.parentItemId ),
+            contractsRepository.initialiseNodeJS(`contracts/?projectId=${contractsRepository.parentItemId}&isArchived=true`),
             MilestonesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes/?projectId=' + contractsRepository.parentItemId),
         ];
 

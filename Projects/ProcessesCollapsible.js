@@ -8,6 +8,7 @@ class ProcessesCollapsible extends SimpleCollapsible {
             isDeletable: false,
             hasArchiveSwitch: false,
             connectedRepository: CasesSetup.casesRepository,
+            connectedRepositoryGetRoute: `cases/?projectId=${MainSetup.currentProject.ourId}`,
             title: 'Aktualne procesy'
             //subitemsCount: 12
         });
@@ -19,12 +20,12 @@ class ProcessesCollapsible extends SimpleCollapsible {
 
         var filterElements = [
             {
+                serverSideReload: true,
                 inputType: 'FilterSwitchInput',
                 colSpan: 6,
                 onLabel: 'Z Procesem',
                 offLabel: 'Bez procesu',
-                attributeToCheck: 'hasProcesses',
-                searchedRegex: /true|1/
+                attributeToCheck: 'hasProcesses'
             }
         ]
         this.initialise(this.makeCollapsibleItemsList(), filterElements);

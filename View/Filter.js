@@ -29,12 +29,12 @@ class Filter {
 
     addArchiveSwitch() {
         var filterElement = {
+            serverSideReload: true,
             inputType: 'FilterSwitchInput',
             colSpan: 3,
             onLabel: 'Aktualne',
             offLabel: 'Archiwum',
-            attributeToCheck: 'status',
-            searchedRegex: /^((?!Zamknięt|Archiw).)*$/
+            attributeToCheck: 'isArchived'
         };
         this.addInput(filterElement);
     }
@@ -43,7 +43,10 @@ class Filter {
      * @param {boolean} showArchive
      * @returns {undefined}
      */
-    changeFilterCriteriaHandler() {
+    async changeFilterCriteriaHandler(lastChangedFilterElement) {
+        if (lastChangedFilterElement.serverSideReload) {
+            this.connectedResultsetComponent.reload();
+        }
         var _this = this;
         var $filteredListObject;
         if (this.connectedResultsetComponent.$collapsible)
@@ -58,6 +61,17 @@ class Filter {
         });
     }
     /*
+     * tworzy paramatry zapytania GET do serwer - pierwszy człon jest tworzony w Resultset
+     */
+    makeRequestParams() {
+        let paramsString = '';
+        for (const filterElement of this.filterElements) {
+            if (filterElement.serverSideReload)
+                paramsString += `&${filterElement.attributeToCheck}=${filterElement.input.getValue()}`
+        }
+        return paramsString;
+    }
+    /*
      * Sprawdza czy wiersz connectedResultsetComponent pasuje do kreyteriów wyszukiwania
      * @param {type} $row
      * @returns {Filter@call;isRowArchived|Boolean}
@@ -66,22 +80,27 @@ class Filter {
      * https://www.w3schools.com/bootstrap/bootstrap_filters.asp
      */
     checkIfRowMatchesFilters($row) {
-        for (var i = 0; i < this.filterElements.length; i++)
-            switch (this.filterElements[i].inputType) {
-                case 'InputTextField':
-                    if (!$row.text().toLowerCase().includes(this.filterElements[i].input.getValue().toLowerCase()))
-                        return false;
-                    break;
-                case 'FilterSwitchInput':
-                    if ($row.attr(this.filterElements[i].attributeToCheck) !== undefined) {
-                        var attrValueIsPositive = $row.attr(this.filterElements[i].attributeToCheck).match(this.filterElements[i].searchedRegex);
-                        attrValueIsPositive = (!attrValueIsPositive) ? false : true;
-                        var valeshouldBepositive = this.filterElements[this.filterElements.length - 1].input.getValue()
-                        if (attrValueIsPositive != valeshouldBepositive)
+        for (const filterElement of this.filterElements)
+            if (!filterElement.serverSideReload)
+                switch (filterElement.inputType) {
+                    case 'InputTextField':
+                        if (!$row.text().toLowerCase().includes(filterElement.input.getValue().toLowerCase()))
                             return false;
-                    }
-                    break;
-            }
+                        break;
+                    case 'FilterSwitchInput':
+                        if ($row.attr(filterElement.attributeToCheck) !== undefined) {
+                            var attrValueIsPositive = $row.attr(filterElement.attributeToCheck).match(filterElement.searchedRegex);
+                            attrValueIsPositive = (!attrValueIsPositive) ? false : true;
+                            var valeshouldBepositive = this.filterElements[this.filterElements.length - 1].input.getValue()
+                            if (attrValueIsPositive != valeshouldBepositive)
+                                return false;
+                        }
+                        break;
+                    case 'SelectField':
+                        if (filterElement.input.getValue() && $row.attr(filterElement.attributeToCheck) != filterElement.input.getValue());
+                        return false
+                        break
+                }
         return true;
     }
 
@@ -94,7 +113,10 @@ class Filter {
                 filterElement.input = this.createInputTextField(filterElement);
                 break;
             case 'FilterSwitchInput':
-                filterElement.input = new FilterSwitchInput(filterElement.onLabel, filterElement.offLabel, this);
+                filterElement.input = new FilterSwitchInput(filterElement, this);
+                break;
+            case 'SelectField':
+                filterElement.input = this.createSelectField(filterElement);
                 break;
             default:
                 throw new Error(filterElement.inputType + " to niewłaściwy typ pola filtrującego!")
@@ -124,15 +146,20 @@ class Filter {
         var textField = new InputTextField(this.id + this.filterElements.length, filterElement.label);
         var _this = this;
         textField.$input.on("keyup", function () {
-            _this.changeFilterCriteriaHandler();
+            _this.changeFilterCriteriaHandler(filterElement);
         });
         return textField;
+    }
+    createSelectField(filterElement) {
+        var selectField = new SelectField(this.id + this.filterElements.length, filterElement.label, undefined, false, 'Wszystkie');
+        selectField.initialise(filterElement.selectItems, filterElement, this.changeFilterCriteriaHandler, this);
+        return selectField;
     }
 
     totalElementsColsPan() {
         var colSpan = 0;
-        for (var i = 1; i < this.filterElements.length; i++) {
-            colSpan += this.filterElements[i].colSpan;
+        for (const element of this.filterElements) {
+            colSpan += element.colSpan;
         }
         return colSpan;
     }

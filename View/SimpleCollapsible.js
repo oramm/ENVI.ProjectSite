@@ -2,26 +2,8 @@ class SimpleCollapsible extends Collapsible {
     constructor(initParamObject) {
         if (initParamObject.subitemsCount && typeof initParamObject.subitemsCount !== 'number') throw SyntaxError('subitemsCount must be a number!');
         super(initParamObject);
-        this.connectedRepository = initParamObject.connectedRepository;
 
         this.$bodyDoms = [];
-    }
-
-    makeCollapsibleItemsList() {
-        var itemsList = [];
-        var i = 0;
-        for (const item of this.connectedRepository.items) {
-            itemsList.push(this.makeItem(item,
-                this.$bodyDoms[i++])
-            );
-        }
-        return itemsList;
-    }
-
-    makeBodyDoms() {
-        for (var i = 0; i < this.connectedRepository.items.length; i++) {
-            this.$bodyDoms[i] = this.makeBodyDom(this.connectedRepository.items[i]);
-        }
     }
 
     /*

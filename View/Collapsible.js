@@ -31,7 +31,7 @@ class Collapsible extends Resultset {
 
     $rowEditIcon(modalId) {
         //if (!modalId) modalId = this.editModal.id;
-        var $icon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');;
+        var $icon = $('<span class="collapsibleItemEdit modal-trigger"><i class="material-icons">edit</i></span>');
         $icon.attr('data-target', modalId);
         return $icon;
     }
@@ -55,7 +55,56 @@ class Collapsible extends Resultset {
         Tools.hasFunction(this.makeBodyDom);
     }
 
+    reloadRows() {
+        this.items = this.makeCollapsibleItemsList();
+        this.buildRows();
+    }
+    async reloadRepositories() {
+        const promises = [];
+        let query = this.connectedRepositoryGetRoute + this.filter.makeRequestParams();
+        console.log(query);
+        promises.push(this.connectedRepository.initialiseNodeJS(query));
+        return await Promise.all(promises);
+    }
+
+    async reload() {
+        let $preloader = this.makePreloader(this.filter.id + 'preloader');
+        this.$collapsible.empty();
+        this.$actionsMenu.append($preloader);
+        await this.reloadRepositories();
+        this.reloadRows();
+        $preloader.remove();
+    }
+
+    makeCollapsibleItemsList() {
+        var itemsList = [];
+        var i = 0;
+        for (const item of this.connectedRepository.items) {
+            itemsList.push(this.makeItem(item,
+                this.$bodyDoms[i++])
+            );
+        }
+        return itemsList;
+    }
+
+    makeBodyDoms() {
+        for (let i = 0; i < this.connectedRepository.items.length; i++) {
+            this.$bodyDoms[i] = this.makeBodyDom(this.connectedRepository.items[i]);
+        }
+    }
+
     buildDom() {
+        this.$dom.append(this.$actionsMenu);
+        this.buildRows();
+
+        this.$dom.append(this.$collapsible);
+        if (this.title)
+            this.$dom.prepend(this.$title)
+
+    }
+    buildRows() {
+        this.$collapsible.empty();
+
         for (const item of this.items) {
             var row = this.buildRow(item);
             this.$collapsible
@@ -63,16 +112,14 @@ class Collapsible extends Resultset {
         }
         this.$collapsible.collapsible();//inicjacja wg instrukcji materialisecss
 
-        this.$dom
-            .append(this.$actionsMenu)
-            .append(this.$collapsible);
-        if (this.title)
-            this.$dom.prepend(this.$title)
-
-        if (this.isEditable) this.setEditAction();
-        if (this.isDeletable) this.setDeleteAction();
-        if (this.isSelectable) this.setSelectAction();
+        if (this.isEditable)
+            this.setEditAction();
+        if (this.isDeletable)
+            this.setDeleteAction();
+        if (this.isSelectable)
+            this.setSelectAction();
     }
+
     /*
      * Tworzy element listy
      * @param {type} item - to gotowy item dla Collapsible (na podstawie surowych danych w repozytorium)

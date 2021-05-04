@@ -7,8 +7,9 @@ class ContractsCollapsible extends SimpleCollapsible {
             isAddable: true,
             isDeletable: true,
             hasArchiveSwitch: true,
-            connectedRepository: ContractsSetup.contractsRepository
-            //subitemsCount: 12
+            connectedRepository: ContractsSetup.contractsRepository,
+            connectedRepositoryGetRoute: `contracts/?projectId=${contractsRepository.parentItemId}`,
+            minimumItemsToFilter: 1
         });
         this.formatterPln = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
         this.addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', this, 'ADD_NEW');
