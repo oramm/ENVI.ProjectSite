@@ -32,31 +32,29 @@ class CasesCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        var folderNumber = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ';
-        var typeName = (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]';
-        var name = (dataItem.name) ? dataItem.name : ' ';
-        var caseNumber = (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '';
-        var riskLabel = (dataItem._risk.id)? '<strong> [Poziom ryzyka: ' + dataItem._risk._rate + ']</strong> ' : '';
-        return {
-            id: dataItem.id,
-            name: folderNumber + ' ' + typeName + ' | ' + caseNumber + name + riskLabel,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: this.editModal,
-            subitemsCount: TasksSetup.tasksRepository.items.filter(item => item.caseId == dataItem.id).length
-        };
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        const folderNumber = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ';
+        const typeName = (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]';
+        const name = (dataItem.name) ? dataItem.name : ' ';
+        const caseNumber = (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '';
+        const riskLabel = (dataItem._risk.id) ? '<strong> [Poziom ryzyka: ' + dataItem._risk._rate + ']</strong> ' : '';
+        item.name = folderNumber + ' ' + typeName + ' | ' + caseNumber + name + riskLabel;
+        item.subitemsCount = TasksSetup.tasksRepository.items.filter(item => item.caseId == dataItem.id).length;
+        return item;
     }
 
-    makeBodyDom(dataItem) {
+    makeBody(dataItem) {
         var $body = this.makeTabs(dataItem).$dom;
-        var $bodyDom = $('<div>')
+        var $panel = $('<div>')
             .attr('id', 'tasksActionsMenuForCase' + dataItem.id)
             .attr('caseid', dataItem.id)
             //.append('<div class="row">Zarządzaj zadaniami</div>')
             .append($body)
-        //.append(this.makeScrumBoardTab())
-        return $bodyDom;
+        return {
+            collection: undefined,
+            $dom: $panel
+        };
     }
 
     makeTabs(dataItem) {

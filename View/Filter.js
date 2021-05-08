@@ -91,14 +91,14 @@ class Filter {
                         if ($row.attr(filterElement.attributeToCheck) !== undefined) {
                             var attrValueIsPositive = $row.attr(filterElement.attributeToCheck).match(filterElement.searchedRegex);
                             attrValueIsPositive = (!attrValueIsPositive) ? false : true;
-                            var valeshouldBepositive = this.filterElements[this.filterElements.length - 1].input.getValue()
+                            var valeshouldBepositive = this.filterElements[this.filterElements.length - 1].input.getValue();
                             if (attrValueIsPositive != valeshouldBepositive)
                                 return false;
                         }
                         break;
                     case 'SelectField':
-                        if (filterElement.input.getValue() && $row.attr(filterElement.attributeToCheck) != filterElement.input.getValue());
-                        return false
+                        if (filterElement.input.getValue() && $row.attr(filterElement.attributeToCheck) != filterElement.input.getValue())
+                            return false;
                         break
                 }
         return true;

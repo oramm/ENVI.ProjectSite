@@ -10,8 +10,8 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
             connectedRepository: RolesSetup.roleGroupsRepository
             //subitemsCount: 12
         });
-        this.addNewRoleModal = new RoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this, 'ADD_NEW');
-        this.editRoleModal = new RoleModal(this.id + '_editRoleModal', 'Edytuj rolę', this, 'EDIT');
+        this.addNewModal = new RoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this, 'ADD_NEW');
+        this.editModal = new RoleModal(this.id + '_editRoleModal', 'Edytuj rolę', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*
@@ -19,30 +19,23 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        var editModal;
-        editModal = this.editRoleModal;
-        if (!$bodyDom) $bodyDom = this.makeBodyDom(dataItem);
-        return {
-            id: dataItem.id,
-            name: dataItem.name,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: editModal,
-            subitemsCount: $bodyDom.find('.collection-item').length
-        };
+    makeItem(dataItem) {
+        return super.makeItem(dataItem);
     }
 
-
-    makeBodyDom(dataItem) {
-        var $panel = $('<div>')
+    makeBody(dataItem) {
+        let subCollection = new RolesCollection({
+            id: 'rolesCollection_' + dataItem.id,
+            parentDataItem: dataItem,
+            addNewModal: this.addNewModal,
+            editModal: this.editModal
+        });
+        let $panel = $('<div>')
             .attr('id', 'collapsibleBody' + dataItem.id)
-            .append(new RolesCollection({
-                id: 'rolesCollection_' + dataItem.id,
-                parentDataItem: dataItem,
-                addNewModal: this.addNewRoleModal,
-                editModal: this.editRoleModal
-            }).$dom)
-        return $panel;
+            .append(subCollection.$dom);
+        return {
+            collection: subCollection,
+            $dom: $panel
+        };
     }
 }

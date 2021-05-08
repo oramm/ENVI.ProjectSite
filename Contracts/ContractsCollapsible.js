@@ -32,34 +32,34 @@ class ContractsCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        var valueLabel = '';
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        let valueLabel = '';
         if (dataItem.value)
             valueLabel = this.formatterPln.format(dataItem.value);
-
-        var ourId = (dataItem.ourId) ? '<strong>' + dataItem.ourId + '</strong>; ' : '';
-        return {
-            id: dataItem.id,
-            name: dataItem.number + '; ' + ourId + dataItem.name + '; ' + valueLabel,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: this.editModal
-        };
+        const ourId = (dataItem.ourId) ? '<strong>' + dataItem.ourId + '</strong>; ' : '';
+        item.name = dataItem.number + '; ' + ourId + dataItem.name + '; ' + valueLabel;
+        item.subitemsCount = undefined;
+        return item;
     }
 
-    makeBodyDom(dataItem) {
+    makeBody(dataItem) {
+        let subCollection = new MilestonesCollection({
+            id: 'milestonesListCollection' + dataItem.id,
+            title: "Kamienie milowe",
+            addNewModal: this.addNewMilestoneModal,
+            editModal: this.editMilestoneModal,
+            parentDataItem: dataItem
+        });
         var $panel = $('<div>')
             .attr('id', 'collapsibleBodyForContract' + dataItem.id)
             .attr('contractid', dataItem.id)
-            .append(new MilestonesCollection({
-                id: 'milestonesListCollection' + dataItem.id,
-                title: "Kamienie milowe",
-                addNewModal: this.addNewMilestoneModal,
-                editModal: this.editMilestoneModal,
-                parentDataItem: dataItem
-            },
-            ).$dom);
-        return $panel;
+            .append(subCollection.$dom);
+
+        return {
+            collection: subCollection,
+            $dom: $panel
+        };
     }
     /*
      * Ustawia pryciski edycji wierszy, 

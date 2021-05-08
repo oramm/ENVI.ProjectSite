@@ -38,8 +38,9 @@ class LettersCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        var editModal;
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        let editModal;
         if (dataItem.isOur) {
             if (dataItem.number == dataItem.id)
                 editModal = this.editOurLetterModal;
@@ -56,13 +57,10 @@ class LettersCollapsible extends SimpleCollapsible {
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
         name += (dataItem.isOur) ? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;';
         name += this.makeEntitiesLabel(dataItem._entitiesMain)
-        return {
-            id: dataItem.id,
-            name: name,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: editModal
-        };
+
+        item.name = name;
+        item.editModal = editModal;
+        return item;
     }
 
     makeEntitiesLabel(entities) {
@@ -75,7 +73,7 @@ class LettersCollapsible extends SimpleCollapsible {
         return label;
     }
 
-    makeBodyDom(dataItem) {
+    makeBody(dataItem) {
         var $actionButtons = $('<div class="row">')
         //if (dataItem._canUserChangeFileOrFolder)
         this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
@@ -92,7 +90,10 @@ class LettersCollapsible extends SimpleCollapsible {
             .append($('<span class="comment">Ostania zmiana: ' + timestamp + ' ' +
                 'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
 
-        return $panel;
+        return {
+            collection: undefined,
+            $dom: $panel
+        };
     }
 
     createCasesList(dataItem, $casesUl) {

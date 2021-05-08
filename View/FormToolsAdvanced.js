@@ -105,13 +105,10 @@ class CollapsibleSelect {
              * @param {type} connectedRepository.items[i]
              * @returns {Collapsible.Item}
              */
-            makeItem(dataItem, $bodyDom) {
-                return {
-                    id: dataItem.id,
-                    name: _this.makeCollapsibleItemNameFunction(dataItem),
-                    $body: $bodyDom,
-                    dataItem: dataItem,
-                };
+            makeItem(dataItem) {
+                let item = super.makeItem(dataItem);
+                item.name = _this.makeCollapsibleItemNameFunction(dataItem);
+                return item;
             }
 
             makeCollapsibleItemsList() {
@@ -120,15 +117,22 @@ class CollapsibleSelect {
                 );
             }
 
-            makeBodyDom(dataItem) {
-                var casesCollection = new CollapsibleSelectCollection({
+            makeBody(dataItem) {
+                const subCollection = new CollapsibleSelectCollection({
                     id: _this.id + '_CollapsibleSelect_itemsListCollection_' + dataItem.id,
                     title: '',
                     parentDataItem: dataItem,
                     parentCollapsibleSelect: _this,
                     collectionRepository: _this.collectionRepository
-                })
-                return casesCollection.$dom;
+                });
+                const $panel = $('<div>')
+                    .attr('id', 'collapsibleBody' + dataItem.id)
+                    .append(subCollection.$dom);
+
+                return {
+                    collection: subCollection,
+                    $dom: $panel
+                };
             }
         }
     }

@@ -59,6 +59,7 @@ class Modal {
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
+        //ReachTextArea.reachTextAreaInit();
         if (Object.getPrototypeOf(connectedResultsetComponent).constructor.name !== 'RawPanel')
             $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
@@ -87,8 +88,8 @@ class Modal {
     preppendTriggerButtonTo($uiElelment, caption, connectedResultsetComponent, buttonStyle) {
         var $button = $('<button data-target="' + this.id + '">' + caption + '</button>');
         $button
-        .addClass((buttonStyle === 'FLAT') ? 'btn-flat' : 'btn')  
-        .addClass('modal-trigger');
+            .addClass((buttonStyle === 'FLAT') ? 'btn-flat' : 'btn')
+            .addClass('modal-trigger');
         var _this = this;
         $button.click(function () {
             _this.triggerAction(connectedResultsetComponent)
@@ -154,16 +155,20 @@ class Modal {
     }
 
     editSubmitTrigger(dataObject) {
-        if (this.doChangeFunctionOnItemName)
-            this.connectedResultsetComponent.connectedRepository.doChangeFunctionOnItem(dataObject, this.doChangeFunctionOnItemName, this.connectedResultsetComponent)
-        else
+        if (!this.doChangeFunctionOnItemName && !this.doChangeOnItemRoute)
             this.connectedResultsetComponent.connectedRepository.editItem(dataObject, this.connectedResultsetComponent);
+        else {
+            let argument = (this.doChangeFunctionOnItemName) ? this.doChangeFunctionOnItemName : this.doChangeOnItemRoute;
+            this.connectedResultsetComponent.connectedRepository.doChangeFunctionOnItem(dataObject, argument, this.connectedResultsetComponent);
+        }
     }
 
     addNewSubmitTrigger(dataObject) {
-        if (this.doAddNewFunctionOnItemName)
-            this.connectedResultsetComponent.connectedRepository.doAddNewFunctionOnItem(dataObject, this.doAddNewFunctionOnItemName, this.connectedResultsetComponent)
-        else
+        if (!this.doAddNewFunctionOnItemName && !this.doAddNewItemRoute)
             this.connectedResultsetComponent.connectedRepository.addNewItem(dataObject, this.connectedResultsetComponent);
+        else {
+            let argument = (this.doAddNewFunctionOnItemName) ? this.doAddNewFunctionOnItemName : this.doAddNewItemRoute;
+            this.connectedResultsetComponent.connectedRepository.doAddNewFunctionOnItem(dataObject, argument, this.connectedResultsetComponent);
+        }
     }
-} 
+}

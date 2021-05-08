@@ -129,7 +129,7 @@ class SelectField {
      * @param {type} isRequired
      * @returns {SelectField}
      */
-    constructor(id, label, icon, isRequired) {
+    constructor(id, label, icon, isRequired, defaultDisabledOption = "Wybierz opcję") {
         this.id = id;
         this.label = label;
         this.icon = icon;
@@ -137,7 +137,7 @@ class SelectField {
         this.chosenItem;
         this.$dom;
         this.$select;
-        this.defaultDisabledOption = "Wybierz opcję";
+        this.defaultDisabledOption = defaultDisabledOption;
         this.buildDom(id, label, icon, isRequired);
     }
 
@@ -423,6 +423,7 @@ class FileInput {
                 .then(() => resolve(blobs));
         });
     }
+
     validate() {
         var test = true;
         if (this.isRequired && !this.getFiles()[0])
@@ -559,7 +560,7 @@ class SelectFieldBrowserDefault {
         else
             this.optionsData = optionsData;
 
-        this.$select.append('<option value="" disabled selected>Wybierz opcję</option>')
+        this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>')
         for (var i in optionsData) {
             var $option = $('<option>')
                 .val(optionsData[i].name)
@@ -627,6 +628,7 @@ class DatePicker {
         this.$dom
             .append(this.$input)
             .append($label);
+        this.$input.pickadate(MainSetup.datePickerSettings);
         return this.$dom;
     }
     //https://stackoverflow.com/questions/30324552/how-to-set-the-date-in-materialize-datepicker
@@ -635,7 +637,11 @@ class DatePicker {
 
         // Use the picker object directly.
         var picker = $generatedInput.pickadate('picker')
-        picker.set('select', date, { format: 'yyyy-mm-dd' })
+        //picker.set('select', date, { format: 'yyyy-mm-dd' })
+        picker.set('select', date)
+    }
+    getValue() {
+        return this.$input.val();
     }
 
     validate() {
@@ -779,27 +785,39 @@ class Tabs {
 }
 
 class Form {
-    constructor(id, method, elements) {
+    constructor(id, method, elements, noRows = false, submitCaption = 'Zapisz') {
         this.id = id;
         this.method = method;
         this.elements = elements;
+        this.noRows = noRows;
+        this.submitCaption = submitCaption;
         this.$dom;
         this.buidDom();
         this.dataObject //do refactoringu w przyszłości przenieść tu obsługę SubmitRrigger() z modali
+
     }
 
     buidDom() {
         this.$dom = $('<form id="' + this.id + '" method="' + this.method + '">');
-        for (var i = 0; i < this.elements.length; i++) {
+        for (const element of this.elements) {
             var $inputDescription = '';
-            if (this.elements[i].description)
-                $inputDescription = $('<span class="envi-input-description">' + this.elements[i].description + '</span>')
-            this.$dom
-                .append('<div class="row">').children(':last-child')
+            if (element.description)
+                $inputDescription = $('<span class="envi-input-description">' + element.description + '</span>')
+            var $inputContainer = $('<div>')
+            if (!this.noRows)
+                $inputContainer.addClass('row');
+            this.$dom.append($inputContainer);
+            $inputContainer
                 .append($inputDescription)
-                .append(this.elements[i].input.$dom);
+                .append(element.input.$dom);
         }
-        this.$dom.append(FormTools.createSubmitButton("Zapisz"));
+        this.$dom.append(FormTools.createSubmitButton(this.submitCaption));
+
+        if (this.noRows) {
+            let $tmpDom = this.$dom;
+            this.$dom = $('<div class="row">');
+            this.$dom.append($tmpDom);
+        }
     }
     /*
      * Ustawia opis elementu formularza
@@ -948,10 +966,9 @@ class AtomicEditForm extends Form {
      * Klasa pochodna musi mieć metodę submitTrigger()
      * @param {function} submitTrigger
      */
-    setSubmitAction(submitTrigger) {
+    setSubmitAction() {
         this.$dom.submit((event) => {
             this.submitTrigger();
-            //(typeof submitTrigger  === 'function')? submitTrigger() : this.submitTrigger();
             // prevent default posting of form
             event.preventDefault();
         });

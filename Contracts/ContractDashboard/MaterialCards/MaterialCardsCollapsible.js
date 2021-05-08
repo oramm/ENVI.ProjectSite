@@ -15,7 +15,7 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
         this.editModal = new MaterialCardModalContractor(id + '_editMaterialCardMaterialCardContractor', 'Edytuj wniosek (Wykonawca)', this, 'EDIT');
         this.editModalEngineer = new MaterialCardModalEngineer(id + '_editMaterialCardEngineer', 'Sprawdź wniosek (Inżynier)', this, 'EDIT');
         this.editModalEmployer = new MaterialCardModalEmployer(id + '_editMaterialEmployer', 'Dodaj uwagi (Zamawiający)', this, 'EDIT');
-        
+
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*
@@ -23,8 +23,9 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        var collapsibleItemName = '<strong>' + dataItem.id + '</strong> ' + dataItem.name
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        let collapsibleItemName = '<strong>' + dataItem.id + '</strong> ' + dataItem.name
         if (dataItem.deadline) collapsibleItemName += '<br>Załatwić do: <strong>' + dataItem.deadline + '</strong>';
         if (dataItem._owner) collapsibleItemName += ', odpowiedzialny: <strong>' + dataItem._owner.name + ' ' + dataItem._owner.surname + '</strong>'
 
@@ -33,16 +34,12 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
             editModal = this.editModal;
         else editModal = this.editModalEngineer;
 
-        return {
-            id: dataItem.id,
-            name: collapsibleItemName,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: editModal
-        };
+        item.editModal = editModal;
+        item.name = collapsibleItemName;
+        return item;
     }
 
-    makeBodyDom(dataItem) {
+    makeBody(dataItem) {
         var $actionButtons = $('<div class="row">')
         if (!dataItem.status.match(/'Robocze|Zakończone/i)) {
             this.editModalEmployer.preppendTriggerButtonTo($actionButtons, 'Dodaj uwagi Zamawiającego', this);
@@ -68,7 +65,10 @@ class MaterialCardsCollapsible extends SimpleCollapsible {
             .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)
             .append($('<br><strong>Historia zmian:</stron>'))
             .append($versionsUl);
-        return $panel;
+        return {
+            collection: undefined,
+            $dom: $panel
+        };
     }
 
     createVersionsList(dataItem, $casesUl) {

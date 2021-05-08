@@ -28,17 +28,13 @@ class MeetingsCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    makeItem(dataItem, $bodyDom) {
-        return {
-            id: dataItem.id,
-            name: dataItem.name + ' ' + dataItem.date,
-            $body: $bodyDom,
-            dataItem: dataItem,
-            editModal: this.editModal
-        };
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        item.name = dataItem.name + ' ' + dataItem.date;
+        return item;
     }
 
-    makeBodyDom(dataItem) {
+    makeBody(dataItem) {
         var descriptionLabel = (dataItem.description) ? '<div class="row">' + dataItem.description + '</div>' : '';
         var title;
         var $meetingProtocolButton = $('<div class="row">')
@@ -51,21 +47,25 @@ class MeetingsCollapsible extends SimpleCollapsible {
             $meetingProtocolButton
                 .append(new RaisedButton('Popraw notatkę', this.createProtocolAction, this).$dom)
         }
-
+        let subCollection = new MeetingArrangementsCollection({
+            id: 'meetingArrangementsCollection_' + dataItem.id,
+            title: title,
+            addNewModal: this.addNewMeetingArrangementModal,
+            editModal: this.editMeetingArrangementModal,
+            parentDataItem: dataItem,
+            connectedResultsetComponent: this
+        });
         var $panel = $('<div>')
             .attr('id', 'collapsibleBody' + dataItem.id)
             .attr('meetingId', dataItem.id)
             .append($meetingProtocolButton)
             .append(descriptionLabel)
-            .append(new MeetingArrangementsCollection({
-                id: 'meetingArrangementsCollection_' + dataItem.id,
-                title: title,
-                addNewModal: this.addNewMeetingArrangementModal,
-                editModal: this.editMeetingArrangementModal,
-                parentDataItem: dataItem,
-                connectedResultsetComponent: this
-            }).$dom);
-        return $panel;
+            .append(subCollection.$dom);
+
+        return {
+            collection: subCollection,
+            $dom: $panel
+        };
     }
 
     /*
