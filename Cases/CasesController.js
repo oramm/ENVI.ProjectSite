@@ -7,30 +7,24 @@ class CasesController {
         //signoutButton.style.display = 'block';
 
         CasesSetup.casesRepository = new SimpleRepository('Cases repository',
-            'getCasesListPerMilestone',
             'addNewCase',
             'editCase',
             'deleteCase');
 
         tasksRepository = new SimpleRepository('Tasks repository',
-            'getTasksList',
             'addNewTask',
             'editTask',
             'deleteTask');
 
-        caseTypesRepository = new SimpleRepository('CaseTypes repository',
-            'getCaseTypesListPerMilestone');
+        caseTypesRepository = new SimpleRepository('CaseTypes repository');
 
         ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
-            'getProcessesStepsInstancesListPerMilestone',
             '',
             'editProcessStepInstance');
 
-        CasesSetup.eventsRepository = new SimpleRepository('CaseEvents repository',
-            'getCaseEventsListPerMilestone');
+        CasesSetup.eventsRepository = new SimpleRepository('CaseEvents repository');
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');
@@ -43,7 +37,7 @@ class CasesController {
             CasesSetup.casesRepository.initialiseNodeJS('cases/?milestoneId=' + casesRepository.parentItemId),
             CasesSetup.caseTypesRepository.initialiseNodeJS('caseTypes/?milestoneId=' + CasesSetup.caseTypesRepository.parentItemId),
             ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS('processStepInstances/?milestoneId=' + CasesSetup.casesRepository.parentItemId),
-            CasesSetup.eventsRepository.initialiseNodeJS('caseEvents/?milestoneId='+ CasesSetup.casesRepository.parentItemId),
+            CasesSetup.eventsRepository.initialiseNodeJS('caseEvents/?milestoneId=' + CasesSetup.casesRepository.parentItemId),
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?milestoneId=' + LettersSetup.lettersRepository.parentItemId)
         ]
         Promise.all(promises)

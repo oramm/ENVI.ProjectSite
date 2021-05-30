@@ -7,35 +7,32 @@ class ContractTypesController {
         //signoutButton.style.display = 'block';
 
 
-        ContractTypesSetup.contractTypesRepository = new SimpleRepository('ContractTypes repository',
-            'getContractTypesList',
-            'addNewContractType',
-            'editContractType',
-            'deleteContractType');
+        ContractTypesSetup.contractTypesRepository = new SimpleRepository({
+            name: 'ContractTypes repository',
+            actionsNodeJSSetup: { addNewRoute: 'contractType', editRoute: 'contractType', deleteRoute: 'contractType' },
+        });
 
-        ContractTypesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
-            'getAllMilestoneTypesList',
-            'addNewMilestoneType',
-            'editMilestoneType',
-            'deleteMilestoneType');
+        ContractTypesSetup.milestoneTypesRepository = new SimpleRepository({
+            name: 'MilestoneTypes repository',
+            actionsNodeJSSetup: { addNewRoute: 'milestoneType', editRoute: 'milestoneType', deleteRoute: 'milestoneType' },
+        });
 
+        ContractTypesSetup.milestoneTemplatesRepository = new SimpleRepository({
+            name: 'MilestoneTemplates repository',
+            actionsNodeJSSetup: { addNewRoute: 'milestoneTemplate', editRoute: 'milestoneTemplate', deleteRoute: 'milestoneTemplate' },
+        });
 
-        ContractTypesSetup.milestoneTemplatesRepository = new SimpleRepository('MilestoneTemplates repository',
-            'getMilestoneTemplatesList',
-            'addNewMilestoneTemplate',
-            'editMilestoneTemplate',
-            'deleteMilestoneTemplate');
-        ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository = new SimpleRepository('MilestoneTypeContractTypeAssociations repository',
-            'getMilestoneTypeContractTypeAssociationsList',
-            'addNewMilestoneTypeContractTypeAssociation',
-            'editMilestoneTypeContractTypeAssociation',
-            'deleteMilestoneTypeContractTypeAssociation'
-        );
-        var promises = [];
-        promises[0] = ContractTypesSetup.contractTypesRepository.initialise('ACTIVE');
-        promises[1] = ContractTypesSetup.milestoneTypesRepository.initialise();
-        promises[2] = ContractTypesSetup.milestoneTemplatesRepository.initialise();
-        promises[3] = ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.initialise();
+        ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository = new SimpleRepository({
+            name: 'MilestoneTypeContractTypeAssociations repository',
+            actionsNodeJSSetup: { addNewRoute: 'milestoneTypeContractTypeAssociation', editRoute: 'milestoneTypeContractTypeAssociation', deleteRoute: 'milestoneTypeContractTypeAssociation' },
+        });
+
+        const promises = [
+            ContractTypesSetup.contractTypesRepository.initialiseNodeJS('contractTypes/?status=ACTIVE'),
+            ContractTypesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes'),
+            ContractTypesSetup.milestoneTemplatesRepository.initialiseNodeJS('milestoneTemplates'),
+            ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.initialiseNodeJS('milestoneTypeContractTypeAssociations'),
+        ];
 
         Promise.all(promises)
             .then(() => {

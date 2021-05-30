@@ -7,21 +7,16 @@ class ProjectDetailsController {
         //signoutButton.style.display = 'block';
 
         ProcessesInstancesSetup.processesInstancesRepository = new SimpleRepository(
-            'ProcessesInstantces repository',
-            'getProcessInstancesList'
-        );
+            'ProcessesInstantces repository');
 
         ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
-            'getProcessesStepsInstancesListPerProject',
             '',
             'editProcessStepInstance');
 
 
-        CasesSetup.casesRepository = new SimpleRepository('Cases repository',
-            'getCasesListPerProject');
+        CasesSetup.casesRepository = new SimpleRepository('Cases repository');
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');

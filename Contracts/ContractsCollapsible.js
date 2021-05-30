@@ -34,11 +34,15 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     makeItem(dataItem) {
         let item = super.makeItem(dataItem);
+
+        let editModal = (dataItem.ourId) ? this.editOurModal : this.editModal;
+
         let valueLabel = '';
         if (dataItem.value)
             valueLabel = this.formatterPln.format(dataItem.value);
         const ourId = (dataItem.ourId) ? '<strong>' + dataItem.ourId + '</strong>; ' : '';
         item.name = dataItem.number + '; ' + ourId + dataItem.name + '; ' + valueLabel;
+        item.editModal = editModal;
         item.subitemsCount = undefined;
         return item;
     }
@@ -84,19 +88,6 @@ class ContractsCollapsible extends SimpleCollapsible {
         }
     }
 
-    /*
-     * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
-     */
-    setEditAction() {
-        this.$dom.find(".collapsibleItemEdit").off('click');
-        var _this = this;
-        this.$dom.find(".collapsibleItemEdit").click(function () {
-            var isOur = $(this).closest('.collapsible-item')
-                .attr('isOur')
-            $(this).closest('.collapsible-item').trigger('click');
-            (isOur) ? _this.editOurModal.triggerAction(_this) : _this.editModal.triggerAction(_this);
-        });
-    }
     /*
      * 
      */

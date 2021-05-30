@@ -125,6 +125,8 @@ class Collapsible extends Resultset {
             this.setDeleteAction();
         if (this.isSelectable)
             this.setSelectAction();
+        if (this.isCopyable)
+            this.setCopyAction();
     }
 
     /*

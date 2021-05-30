@@ -22,6 +22,7 @@ class MainWindowView extends Popup {
         MainSetup.projectsRepository.currentItem = this.autocomplete.chosenItem;
         MainSetup.personsPerProjectRepositoryLocalData.initialiseNodeJS('persons/?projectId=' + this.autocomplete.chosenItem.ourId);
         this.navigationBar.initialiseMenuItems();
-        this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link)
+        this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link);
+        console.log('łąduję iframe z danymi projektu')
     }
 }

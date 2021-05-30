@@ -7,28 +7,25 @@ class ContractsController {
         //signoutButton.style.display = 'block';
 
         MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesList',
             'addNewMilestone',
             'editMilestone',
             'deleteMilestone'
         );
 
         ContractsSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsList',
             'addNewContract',
             'editContract',
             'deleteContract'
         );
 
         MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
-            'getMilestoneTypesList'
         );
 
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
 
-        var promises = [
-            milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
-            contractsRepository.initialiseNodeJS(`contracts/?projectId=${contractsRepository.parentItemId}&isArchived=true`),
+        const promises = [
+            MilestonesSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
+            ContractsSetup.contractsRepository.initialiseNodeJS(`contracts/?projectId=${contractsRepository.parentItemId}&isArchived=true`),
             MilestonesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes/?projectId=' + contractsRepository.parentItemId),
         ];
 

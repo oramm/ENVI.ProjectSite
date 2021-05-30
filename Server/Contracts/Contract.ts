@@ -560,6 +560,8 @@ class Contract {
    */
   shouldBeInScrum(): boolean {
     var test = false;
+    if (this._admin.email.match(/urszula.juzwiak/i))
+      return false;
     if (this.status !== 'Archiwalny' && !this._type.name.match(/AQM/i)) {
       if (this._admin && this._admin.id)
         test = Setup.getSystemRole({ id: this._admin.id }).systemRoleId <= 3;

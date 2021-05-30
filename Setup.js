@@ -35,15 +35,18 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
+    //static serverUrl = 'http://localhost:3000/';
+    static serverUrl = 'https://erp-envi.herokuapp.com/';
+
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get projectsRepository() {
-        if (!MainSetup.projectsRepositoryLocalData)
+        if (MainSetup.projectsRepositoryLocalData) console.log('### true: MainSetup.projectsRepositoryLocalData: ')
+        if (!MainSetup.projectsRepositoryLocalData) {
+            console.log('### !MainSetup.projectsRepositoryLocalData: ')
             MainSetup.projectsRepositoryLocalData = new SimpleRepository(
-                JSON.parse(sessionStorage.getItem('Projects repository')),
-                'getProjectsList',
-                'addNewProject',
-                'editProject'
+                JSON.parse(sessionStorage.getItem('Projects repository'))
             );
+        }
         return MainSetup.projectsRepositoryLocalData;
     }
 

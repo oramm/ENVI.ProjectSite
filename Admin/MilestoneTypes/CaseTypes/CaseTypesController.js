@@ -6,23 +6,20 @@ class CaseTypesController {
         listView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        CaseTypesSetup.caseTypesRepository = new SimpleRepository('CaseTypes repository',
-            'getCaseTypesListPerMilestoneType',
-            'addNewCaseType',
-            'editCaseType',
-            'deleteCaseType');
-
-        CaseTypesSetup.caseTemplatesRepository = new SimpleRepository('CaseTemplates repository',
-            'getCaseTemplatesListPerMilestoneType',
-            'addNewCaseTemplate',
-            'editCaseTemplate',
-            'deleteCaseTemplate');
-        var promises = [];
-
-        promises[0] = CaseTypesSetup.caseTypesRepository.initialise(CaseTypesSetup.caseTypesRepository.parentItemId);
-        promises[1] = CaseTypesSetup.caseTemplatesRepository.initialise({
-            milestoneTypeId: CaseTypesSetup.caseTemplatesRepository.parentItemId
+        CaseTypesSetup.caseTypesRepository = new SimpleRepository({
+            name: 'CaseTypes repository',
+            actionsNodeJSSetup: { addNewRoute: 'caseType', editRoute: 'caseType', deleteRoute: 'caseType' },
         });
+
+        CaseTypesSetup.caseTemplatesRepository = new SimpleRepository({
+            name: 'CaseTemplates repository',
+            actionsNodeJSSetup: { addNewRoute: 'caseTemplate', editRoute: 'caseTemplate', deleteRoute: 'caseTemplate' },
+        });
+
+        const promises = [
+            CaseTypesSetup.caseTypesRepository.initialiseNodeJS(`caseTypes/?milestoneTypeId=${CaseTypesSetup.caseTypesRepository.parentItemId}`),
+            CaseTypesSetup.caseTemplatesRepository.initialiseNodeJS(`caseTemplates/?milestoneTypeId=${CaseTypesSetup.caseTemplatesRepository.parentItemId}`),
+        ];
         Promise.all(promises)
             .then(() => {
                 console.log("Repositories initialised");
