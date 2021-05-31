@@ -8,7 +8,7 @@ class LettersController {
 
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersList',
+            //'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');

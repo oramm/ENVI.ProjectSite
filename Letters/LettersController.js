@@ -8,7 +8,7 @@ class LettersController {
 
 
         LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            'getLettersList',
+            //'getLettersList',
             'addNewLetter',
             'editLetter',
             'deleteLetter');
@@ -27,9 +27,9 @@ class LettersController {
 
         var promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + LettersSetup.lettersRepository.parentItemId),
-            LettersSetup.contractsRepository.initialiseNodeJS('contracts/?projectId=' + LettersSetup.lettersRepository.parentItemId ),
-            LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + LettersSetup.lettersRepository.parentItemId ),
-            LettersSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + LettersSetup.lettersRepository.parentItemId )
+            LettersSetup.contractsRepository.initialiseNodeJS('contracts/?projectId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + LettersSetup.lettersRepository.parentItemId),
+            LettersSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + LettersSetup.lettersRepository.parentItemId)
         ];
 
         Promise.all(promises)

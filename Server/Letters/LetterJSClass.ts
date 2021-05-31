@@ -120,7 +120,7 @@ abstract class Letter implements Envi.Document {
     protected createLetterFolder(blobEnviObjects: Array<any>): GoogleAppsScript.Drive.Folder {
         if (!this.isOur && this.letterFilesCount < 2) throw new Error('Cannot create a folder for Letter with single file!');
         var rootFolder = DriveApp.getFolderById(this._project.lettersGdFolderId);
-        var letterFolder = rootFolder.createFolder(this._folderName);
+        var letterFolder = rootFolder.createFolder(this._folderName || 'tmpName');
         letterFolder.setShareableByEditors(true);
         this.folderGdId = letterFolder.getId();
         this._gdFolderUrl = letterFolder.getUrl();

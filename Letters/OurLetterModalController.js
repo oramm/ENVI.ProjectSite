@@ -32,7 +32,7 @@ class OurLetterModalController extends LetterModalController {
                 return test;
             });
 
-        this.modal.templateSelectField.initialise(templatesForCases, '_nameConentsAlias', this.onTemplateChosen, this);
+        this.modal.templateSelectField.initialise(templatesForCases, '_nameContentsAlias', this.onTemplateChosen, this);
         if (templatesForCases.length === 1)
             this.modal.templateSelectField.simulateChosenItem(templatesForCases[0]);
     }
