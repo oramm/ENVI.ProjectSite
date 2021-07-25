@@ -49,16 +49,8 @@ class MainController {
         MainSetup.entitiesRepositoryLocalData.initialiseNodeJS('entities/');
         MainSetup.documentTemplatesRepositoryLocalData.initialiseNodeJS('documentTemplates/');
         MainSetup.contractTypesRepositoryLocalData.initialiseNodeJS('contractTypes/?status=ACTIVE');
-        console.log(gAuth.userEmail);
-        MainSetup.projectsRepositoryLocalData.initialiseNodeJS('projects/' + gAuth.userEmail)
+        MainSetup.projectsRepositoryLocalData.initialiseNodeJS('projects/' + MainSetup.currentUser.systemEmail)
             .then(() => {
-                sessionStorage.setItem('Current User', JSON.stringify({
-                    name: gAuth.userName,
-                    surname: '',
-                    systemEmail: gAuth.userEmail,
-                    googleImage: gAuth.userGoogleImage
-                })
-                );
 
                 console.log("Projects initialised");
                 mainWindowView.initialise();

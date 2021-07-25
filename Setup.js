@@ -19,13 +19,16 @@ SCOPES = 'https://www.google.com/calendar/feeds ' +
     'https://www.googleapis.com/auth/userinfo.email ' +
     'https://www.googleapis.com/auth/userinfo.profile ';
 
-var gAuth;
+
 var mainWindowView;
-var user;
 
 class MainSetup {
     static get currentUser() {
-        return JSON.parse(sessionStorage.getItem('Current User'));
+        return MainSetup.currentUserLocalData;//JSON.parse(sessionStorage.getItem('Current User'));
+    }
+
+    static set currentUser(data) {
+        MainSetup.currentUserLocalData = data;
     }
 
     static get currentProject() {
@@ -35,14 +38,13 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
-    //static serverUrl = 'http://localhost:3000/';
-    static serverUrl = 'https://erp-envi.herokuapp.com/';
+    static serverUrl = 'http://localhost:3000/';
+    //static serverUrl = 'https://erp-envi.herokuapp.com/';
 
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get projectsRepository() {
         if (MainSetup.projectsRepositoryLocalData) console.log('### true: MainSetup.projectsRepositoryLocalData: ')
         if (!MainSetup.projectsRepositoryLocalData) {
-            console.log('### !MainSetup.projectsRepositoryLocalData: ')
             MainSetup.projectsRepositoryLocalData = new SimpleRepository(
                 JSON.parse(sessionStorage.getItem('Projects repository'))
             );
@@ -134,7 +136,7 @@ class MainSetup {
         formatSubmit: 'yyyy-mm-dd'
     }
 }
-
+MainSetup.currentUserLocalData;
 MainSetup.projectsRepositoryLocalData;
 
 MainSetup.entitiesRepositoryLocalData;
