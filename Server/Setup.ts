@@ -1,4 +1,4 @@
-function Setup(){
+function Setup() {
 }
 //-----------------------Baza Danych ------------------------------
 var DB_ADDRESS = 'envi.com.pl:3306';
@@ -24,15 +24,15 @@ var SPREADSHEET = SpreadsheetApp.openById('1qrG63qtdKlycxTyH0TqArSwwuCBX_12gR8Hn
  * ----------------------------------------------------------------- 
  */
 
-Setup.getSystemRole = function(initParamObject) {
-  var systemEmail;
-  if(!initParamObject) 
-    initParamObject = {systemEmail: Session.getEffectiveUser().getEmail()};
-  
-  var person = new Person(initParamObject);
-  var systemRole = person.getSystemRole();
-  Logger.log('systemRole: ' + JSON.stringify(systemRole));
-  return systemRole;
+Setup.getSystemRole = function (initParamObject) {
+    var systemEmail;
+    if (!initParamObject)
+        initParamObject = { systemEmail: Session.getEffectiveUser().getEmail() };
+
+    var person = new Person(initParamObject);
+    var systemRole = person.getSystemRole();
+    Logger.log('systemRole: ' + JSON.stringify(systemRole));
+    return systemRole;
 }
 /* -----------------------------------------------------------------
  * -------------------------- Roles --------------------------------
@@ -80,7 +80,7 @@ var SCRUM_COL_FRI = SCRUM_DATA_VALUES[1].indexOf("PT.");
 
 var SCRUM_COL_SPRINT_SUM = SCRUM_DATA_VALUES[1].indexOf("Razem");
 var SCRUM_COL_SPRINT_DIFF = SCRUM_DATA_VALUES[1].indexOf("Różnica");
-var SCRUM_COL_MODE = SCRUM_DATA_VALUES[0].indexOf('tryb')+1;
+var SCRUM_COL_MODE = SCRUM_DATA_VALUES[0].indexOf('tryb') + 1;
 
 var SCRUM_COL_TIMES_SUMMARY = SCRUM_DATA_VALUES[0].indexOf("#TimesSummary");
 var SCRUM_COL_TIMES = SCRUM_DATA_VALUES[0].indexOf("#Times");
@@ -101,7 +101,7 @@ var SCRUM_DATA_COL_CASE_NAME = SCRUM_DATA_DATA_VALUES[0].indexOf("CaseName");
  * ----------------------------------------------------------------- 
  */
 namespace MainSetup {
-  export var INVOICES_FOLDER_ID = '1WsNoU0m9BoeVHeb_leAFwtRa94k0CD71';
+    export var INVOICES_FOLDER_ID = '1WsNoU0m9BoeVHeb_leAFwtRa94k0CD71';
 }
 
 var GD_ROOT_FOLDER_ID = '1C_wMgQJtzsFmgsmHp7Dr_F1VJx4v1mjo';
