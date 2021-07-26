@@ -637,8 +637,7 @@ class DatePicker {
 
         // Use the picker object directly.
         var picker = $generatedInput.pickadate('picker')
-        //picker.set('select', date, { format: 'yyyy-mm-dd' })
-        picker.set('select', date)
+        picker.set('select', date, { format: 'yyyy-mm-dd' })
     }
     getValue() {
         return this.$input.val();

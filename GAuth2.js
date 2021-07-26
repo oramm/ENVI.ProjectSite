@@ -60,7 +60,7 @@ class GAuth2 {
     async updateSigninStatus(isSignedIn) {
         var _this = this;
         if (isSignedIn) {
-            await _this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile())
+            await _this.onSignIn(gapi.auth2.getAuthInstance().currentUser.get())
             var mainController = new MainController();
             mainController.main();
             //personRolesController = new PersonRolesController();
@@ -80,15 +80,29 @@ class GAuth2 {
      * @param {type} googleUser - gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile()
      */
     async onSignIn(googleUser) {
+        const profile = googleUser.getBasicProfile();
         MainSetup.currentUser = {
-            name: googleUser.getName(),
-            systemEmail: googleUser.getEmail(),
-            googleImage: googleUser.getImageUrl(),
-            googleId: googleUser.getId() // Do not send to your backend! Use an ID token instead.
+            name: profile.getName(),
+            systemEmail: profile.getEmail(),
+            googleImage: profile.getImageUrl(),
+            googleId: profile.getId() // Do not send to your backend! Use an ID token instead.
         }
+        let id_token = googleUser.getAuthResponse().id_token;
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        let result = await fetch(MainSetup.serverUrl + 'login', {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify({ id_token: id_token })
+        });
+        result = await result.text();
+        console.log(result)
+
+
         console.log('ID: ' + MainSetup.currentUser.googleId); // Do not send to your backend! Use an ID token instead.
         console.log('Name: ' + MainSetup.currentUser.name);
-        console.log('Image URL: ' + MainSetup.currentUserGoogleImage);
+        console.log('Image URL: ' + MainSetup.currentUser.googleImage);
         console.log('Email: ' + MainSetup.currentUser.systemEmail); // This is null if the 'email' scope is not present.
     }
 
