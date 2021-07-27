@@ -1,6 +1,5 @@
 class GAuth2 {
     constructor() {
-        this.userEmail;
         this.initParams = {
             discoveryDocs: DISCOVERY_DOCS,
             clientId: CLIENT_ID,
@@ -46,7 +45,6 @@ class GAuth2 {
         (_this == undefined) ? _this = this : true;
         gapi.client.init(_this.initParams).then(
             () => {
-                //user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
                 windowController.main();
             }
         );
@@ -82,7 +80,8 @@ class GAuth2 {
     async onSignIn(googleUser) {
         const profile = googleUser.getBasicProfile();
         MainSetup.currentUser = {
-            name: profile.getName(),
+            name: profile.getGivenName(),
+            surname: profile.getFamilyName(),
             systemEmail: profile.getEmail(),
             googleImage: profile.getImageUrl(),
             googleId: profile.getId() // Do not send to your backend! Use an ID token instead.

@@ -21,14 +21,13 @@ SCOPES = 'https://www.google.com/calendar/feeds ' +
 
 
 var mainWindowView;
-
 class MainSetup {
     static get currentUser() {
-        return MainSetup.currentUserLocalData;//JSON.parse(sessionStorage.getItem('Current User'));
+        return JSON.parse(sessionStorage.getItem('Current User'));
     }
 
     static set currentUser(data) {
-        MainSetup.currentUserLocalData = data;
+        sessionStorage.setItem('Current User', JSON.stringify(data));;
     }
 
     static get currentProject() {
@@ -136,7 +135,6 @@ class MainSetup {
         formatSubmit: 'yyyy-mm-dd'
     }
 }
-MainSetup.currentUserLocalData;
 MainSetup.projectsRepositoryLocalData;
 
 MainSetup.entitiesRepositoryLocalData;
