@@ -6,15 +6,15 @@ class CasesController {
         casesListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        CasesSetup.casesRepository = new SimpleRepository('Cases repository',
-            'addNewCase',
-            'editCase',
-            'deleteCase');
+        CasesSetup.casesRepository = new SimpleRepository({
+            name: 'Cases repository',
+            actionsNodeJSSetup: { addNewRoute: 'Case', editRoute: 'Case', deleteRoute: 'Case' },
+        });
 
-        tasksRepository = new SimpleRepository('Tasks repository',
-            'addNewTask',
-            'editTask',
-            'deleteTask');
+        tasksRepository = new SimpleRepository({
+            name: 'Tasks repository',
+            actionsNodeJSSetup: { addNewRoute: 'Task', editRoute: 'Task', deleteRoute: 'Task' },
+        });
 
         caseTypesRepository = new SimpleRepository('CaseTypes repository');
 
@@ -59,6 +59,5 @@ class CasesController {
                     err
                 );
             });
-
     }
 }

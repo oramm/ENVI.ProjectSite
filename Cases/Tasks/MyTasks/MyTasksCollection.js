@@ -37,8 +37,8 @@ class MyTasksCollection extends SimpleCollection {
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        var label = '<strong>' + dataItem._parent._parent._parent.ourId + '</strong> ' 
-        label += dataItem._parent._typeFolderNumber_TypeName_Number_Name + ', ' +  dataItem.name;
+        var label = '<strong>' + dataItem._parent._parent._parent.ourId + '</strong> '
+        label += dataItem._parent._typeFolderNumber_TypeName_Number_Name + ', ' + dataItem.name;
         return label
     }
     /*
@@ -79,7 +79,7 @@ class MyTasksCollection extends SimpleCollection {
     }
 
     makeList() {
-        return super.makeList().filter((item) => item.dataItem._owner._nameSurnameEmail && item.dataItem._owner._nameSurnameEmail.includes(user.getEmail()));
+        return super.makeList().filter((item) => item.dataItem._owner._nameSurnameEmail && item.dataItem._owner._nameSurnameEmail.includes(MainSetup.currentUser.systemEmail));
     }
 
     selectTrigger(itemId) {

@@ -11,7 +11,7 @@ class GAuth2 {
     /**
      *  On load, called to load the auth2 library and API client library on the main window.
      */
-    handleClientLoadMainWindow() {
+    async handleClientLoadMainWindow() {
         gapi.load('client:auth2', () => this.initClientMainWindow(this));
     }
 
@@ -20,7 +20,7 @@ class GAuth2 {
      *  Wywoływana na końcu sekcji body właściwego pliku index.html
      *  @param {object} windowControler zawiera funkcję main() z logiką inijcjowania repozytoriów
      */
-    handleClientLoad(windowController) {
+    async handleClientLoad(windowController) {
         gapi.load('client:auth2', () => this.initClient(this, windowController));
     }
 
@@ -28,26 +28,22 @@ class GAuth2 {
      *  Initializes the API client library and sets up sign-in state
      *  listeners.
      */
-    initClientMainWindow(_this) {
+    async initClientMainWindow(_this) {
         (_this == undefined) ? _this = this : true;
-        gapi.client.init(_this.initParams).then(() => {
-            // Listen for sign-in state changes.
-            gapi.auth2.getAuthInstance().isSignedIn.listen(_this.updateSigninStatus);
+        await gapi.client.init(_this.initParams)
+        // Listen for sign-in state changes.
+        gapi.auth2.getAuthInstance().isSignedIn.listen(_this.updateSigninStatus);
 
-            // Handle the initial sign-in state.
-            _this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-            //authorizeButton.onclick = handleAuthClick;
-            // signoutButton.onclick = handleSignoutClick;
-        });
+        // Handle the initial sign-in state.
+        _this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        //authorizeButton.onclick = handleAuthClick;
+        // signoutButton.onclick = handleSignoutClick;
     }
 
-    initClient(_this, windowController) {
+    async initClient(_this, windowController) {
         (_this == undefined) ? _this = this : true;
-        gapi.client.init(_this.initParams).then(
-            () => {
-                windowController.main();
-            }
-        );
+        await gapi.client.init(_this.initParams);
+        windowController.main();
     }
 
     /**
@@ -93,6 +89,7 @@ class GAuth2 {
         let result = await fetch(MainSetup.serverUrl + 'login', {
             method: 'POST',
             headers: myHeaders,
+            credentials: 'include',
             body: JSON.stringify({ id_token: id_token })
         });
         result = await result.text();

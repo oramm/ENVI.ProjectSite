@@ -23,7 +23,7 @@ class Repository {
         //Repository może mieć wiele bieżących elementów (multiselect)
         this.currentItemsLocalData = [];
         this.currentItemLocalData = (initParameter.currentItemLocalData) ? initParameter.currentItemLocalData : {};
-                
+
         if (typeof initParameter === 'string') {
             //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
             this.name = initParameter;
@@ -375,11 +375,12 @@ class Repository {
         viewObject.editHandler.apply(viewObject, ["DONE", newItemFromServer]);
         return (newItemFromServer);
     }
-
+    //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async addNewItemResponseHandlerNodeJS(item, route) {
         let result = await fetch(MainSetup.serverUrl + route, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
+            credentials: 'include',
             body: JSON.stringify(item)
         });
         result = await result.text();
@@ -387,11 +388,12 @@ class Repository {
             window.open(result.authorizeUrl);
         return JSON.parse(result);
     }
-
+    //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async editItemResponseHandlerNodeJS(item, route) {
         let result = await fetch(MainSetup.serverUrl + route + '/' + item.id, {
             method: 'PUT',
             headers: this.makeRequestHeaders(),
+            credentials: 'include',
             body: JSON.stringify(item)
         });
         result = await result.text();
@@ -401,11 +403,12 @@ class Repository {
     }
 
 
-
+    //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async deleteItemResponseHandlerNodeJS(oldItem, route) {
         let result = await fetch(MainSetup.serverUrl + route + '/' + oldItem.id, {
             method: 'DELETE',
             headers: this.makeRequestHeaders(),
+            credentials: 'include',
             body: JSON.stringify(oldItem)
         });
         if (result.authorizeUrl)
