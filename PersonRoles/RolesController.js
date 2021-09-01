@@ -11,30 +11,28 @@ class RolesController {
             items: RolesSetup.groups
         });
 
-        RolesSetup.rolesRepository = new SimpleRepository('Roles repository',
-            'getRolesPerProjectList',
-            'addNewRole',
-            'editRole',
-            'deleteRole'
-        );
+        RolesSetup.rolesRepository = new SimpleRepository({
+            name: 'Roles repository',
+            actionsNodeJSSetup: { addNewRoute: 'Role', editRoute: 'Role', deleteRoute: 'Role' },
+        });
 
-        var promises = [
-            RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + RolesSetup.rolesRepository.parentItemId )
+        const promises = [
+            RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + RolesSetup.rolesRepository.parentItemId)
         ];
-    Promise.all(promises)
+        Promise.all(promises)
             .then(() => {
-    console.log("Repositories initialised");
-})
+                console.log("Repositories initialised");
+            })
             .then((res) => {
-    console.log(res);
-    rolesView.initialise();
-})
-    .then(() => {
-        ReachTextArea.reachTextAreaInit();
-        $('.modal').modal();
-    })
-    .catch(err => {
-        console.error(err);
-    });
+                console.log(res);
+                rolesView.initialise();
+            })
+            .then(() => {
+                ReachTextArea.reachTextAreaInit();
+                $('.modal').modal();
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 }
