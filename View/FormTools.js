@@ -904,36 +904,35 @@ class Form {
      * @param {repositoryData} dataObject
      */
     async submitHandler(dataObject) {
-        var i = 0;
-        for (var i = 0; i < this.elements.length; i++) {
-
-            switch (this.elements[i].input.constructor.name) {
+        //var i = 0;
+        for (const element of this.elements) {
+            switch (element.input.constructor.name) {
                 case 'InputTextField':
                 case 'ReachTextArea':
                 case 'TextArea':
                     //TODO: trzeba przenieść TextArea do odrębnej klasy, żeby to zadziałało
                     //$('#' + this.id + 'employerTextArea').val()
-                    dataObject[this.elements[i].dataItemKeyName] = $('#' + this.elements[i].input.id).val();
+                    dataObject[element.dataItemKeyName] = $('#' + element.input.id).val();
                     break;
                 case 'DatePicker':
-                    dataObject[this.elements[i].dataItemKeyName] = Tools.dateDMYtoYMD($('#' + this.elements[i].input.id).val());
+                    dataObject[element.dataItemKeyName] = Tools.dateDMYtoYMD($('#' + element.input.id).val());
                     break;
                 case 'SelectField':
                 case 'SelectFieldBrowserDefault':
-                    this.elements[i].input.getValue();
-                    if (this.elements[i].input.chosenItem) {
-                        if (typeof this.elements[i].input.chosenItem === 'object') {
+                    element.input.getValue();
+                    if (element.input.chosenItem) {
+                        if (typeof element.input.chosenItem === 'object') {
 
-                            dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.chosenItem;
+                            dataObject[element.dataItemKeyName] = element.input.chosenItem;
                         }
                         else
-                            dataObject[this.elements[i].dataItemKeyName] = this.elements[i].input.$dom.find('input').val();
+                            dataObject[element.dataItemKeyName] = element.input.$dom.find('input').val();
                     }
                     break;
                 case 'AutoCompleteTextField':
-                    if (this.elements[i].input.chosenItem)
+                    if (element.input.chosenItem)
                         //jeżęli nic nie wybrano (pole puste przypisz pusty obiekt)
-                        dataObject[this.elements[i].dataItemKeyName] = (this.elements[i].input.$dom.children('input').val()) ? this.elements[i].input.chosenItem : {};
+                        dataObject[element.dataItemKeyName] = (element.input.$dom.children('input').val()) ? element.input.chosenItem : {};
                     break;
                 case 'SwitchInput':
                 case 'Chips':
@@ -941,7 +940,7 @@ class Form {
                 case 'FileInput':
                 case 'CollapsibleSelect':
                 case 'CollapsibleMultiSelect':
-                    dataObject[this.elements[i].dataItemKeyName] = await this.elements[i].input.getValue();
+                    dataObject[element.dataItemKeyName] = await element.input.getValue();
                     break;
 
             }

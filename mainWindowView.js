@@ -19,10 +19,25 @@ class MainWindowView extends Popup {
 
     onProjectChosen(inputValue) {
         this.autocomplete.chosenItem = Tools.search(inputValue, "_ourId_Alias", MainSetup.projectsRepository.items);
-        MainSetup.projectsRepository.currentItem = this.autocomplete.chosenItem;
+        $.ajax({
+            type: 'GET',
+            url: MainSetup.serverUrl + `project/${this.autocomplete.chosenItem.id}/systemEmail/${MainSetup.currentUser.systemEmail}`,
+            success: (response) => {
+                MainSetup.projectsRepository.currentItem = response;
+                this.navigationBar.initialiseMenuItems();
+                this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link);
+
+                console.log('łąduję iframe z danymi projektu')
+                console.log('Current project NodeJS: %o', response);
+                return (" initialised");
+            },
+            error: (xhr, status, err) => {
+                console.log(xhr.responseText);
+            }
+        });
+
         MainSetup.personsPerProjectRepositoryLocalData.initialiseNodeJS('persons/?projectId=' + this.autocomplete.chosenItem.ourId);
-        this.navigationBar.initialiseMenuItems();
-        this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link);
-        console.log('łąduję iframe z danymi projektu')
+
+
     }
 }
