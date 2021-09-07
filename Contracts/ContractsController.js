@@ -6,11 +6,11 @@ class ContractsController {
         contractsListView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        MilestonesSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'addNewMilestone',
-            'editMilestone',
-            'deleteMilestone'
-        );
+        MilestonesSetup.milestonesRepository = new SimpleRepository({
+            name: 'Milestones repository',
+            actionsNodeJSSetup: { addNewRoute: 'Milestone', editRoute: 'Milestone', deleteRoute: 'Milestone' },
+        });
+
 
         ContractsSetup.contractsRepository = new SimpleRepository('Contracts repository',
             'addNewContract',
