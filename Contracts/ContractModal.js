@@ -10,7 +10,7 @@ class ContractModal extends Modal {
         this.commentReachTextArea = new ReachTextArea(this.id + '_commentReachTextArea', 'Opis', false, 1000);
 
         this.ourIdRelatedSelectField = new SelectField(this.id + '_ourIdRelated_SelectField', 'Powiązana usługa IK lub PT', undefined, true);
-        this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdName');
+        this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdOrNumber_Name');
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
 
