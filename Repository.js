@@ -386,7 +386,10 @@ class Repository {
         result = await result.text();
         if (result.authorizeUrl)
             window.open(result.authorizeUrl);
-        return JSON.parse(result);
+        else if (typeof result === "string")
+            return result;
+        else
+            return JSON.parse(result);
     }
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async editItemResponseHandlerNodeJS(item, route) {

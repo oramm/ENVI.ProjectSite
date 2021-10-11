@@ -80,6 +80,7 @@ class OurContractModal extends Modal {
      */
     initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem = {
+            _parent: MainSetup.currentProject,
             projectId: this.connectedResultsetComponent.connectedRepository.parentItemId
         };
     }

@@ -28,7 +28,6 @@ class Contract {
     _contractors?: any[];
     _engineers?: any[];
     _employers?: any[];
-    contractUrl?: string;
     gdUrl?: string;
     status?: string;
     scrumSheet?: any;
@@ -105,7 +104,6 @@ class Contract {
             this._engineers = (initParamObject._engineers) ? initParamObject._engineers : [];
             this._employers = (initParamObject._employers) ? initParamObject._employers : [];
 
-            this.contractUrl = initParamObject.contractUrl;
             this.gdUrl = initParamObject.gdUrl;
 
             this.status = initParamObject.status;
@@ -229,13 +227,12 @@ class Contract {
 
     addOurContractInDb(stmt) {
         try {
-            var sql = 'INSERT INTO OurContractsData (Id, OurId, ManagerId, AdminId, ContractURL) \n' +
+            var sql = 'INSERT INTO OurContractsData (Id, OurId, ManagerId, AdminId) \n' +
                 'VALUES (' +
                 this.id + ', \n \t' +
                 prepareValueToSql(this.ourId) + ', \n \t' +
                 '(SELECT Id FROM Persons WHERE Id=' + prepareValueToSql(this._manager.id) + '), \n \t' +
                 '(SELECT Id FROM Persons WHERE Id=' + prepareValueToSql(this._admin.id) + '), \n \t' +
-                prepareValueToSql(this.contractUrl) + ' \n' +
                 ')';
 
             //Logger.log(sql);
@@ -431,13 +428,12 @@ class Contract {
 
     editOurContractInDb(conn: GoogleAppsScript.JDBC.JdbcConnection) {
         var stmt = conn.prepareStatement('UPDATE OurContractsData SET ' +
-            'OurId = ?, ManagerId = ?, AdminId = ?, ContractURL = ? ' +
+            'OurId = ?, ManagerId = ?, AdminId = ? ' +
             'WHERE Id = ?;');
         stmt.setString(1, prepareValueToPreparedStmtSql(this.ourId));
         stmt.setString(2, prepareValueToPreparedStmtSql(this._manager.id));
         stmt.setString(3, prepareValueToPreparedStmtSql(this._admin.id));
-        stmt.setString(4, prepareValueToPreparedStmtSql(this.contractUrl));
-        stmt.setLong(5, this.id);
+        stmt.setLong(4, this.id);
 
         stmt.addBatch();
         stmt.executeBatch();

@@ -30,7 +30,7 @@ class AutoCompleteTextField {
     buildDom(id, icon, isRequired) {
         this.$dom = $('<div class="input-field">');
         var $icon = $('<i class="material-icons prefix">' + icon + '</i>');
-        var $input = $('<input name="' + id + '" type="text" class="autocomplete" autocomplete="off">')
+        var $input = $('<input name="' + id + '" type="search" autocomplete="off" class="autocomplete">')
             .attr('id', id);
 
         this.$label = $('<label>');

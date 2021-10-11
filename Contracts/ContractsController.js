@@ -12,11 +12,10 @@ class ContractsController {
         });
 
 
-        ContractsSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'addNewContract',
-            'editContract',
-            'deleteContract'
-        );
+        ContractsSetup.contractsRepository = new SimpleRepository({
+            name: 'Contracts repository',
+            actionsNodeJSSetup: { addNewRoute: 'Contract', editRoute: 'Contract', deleteRoute: 'Contract' },
+        });
 
         MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
         );

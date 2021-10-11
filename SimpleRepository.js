@@ -48,6 +48,7 @@ class SimpleRepository extends Repository {
                 },
                 error: (xhr, status, err) => {
                     console.log(xhr.responseText);
+                    alert(xhr.responseText);
                 }
             });
 
