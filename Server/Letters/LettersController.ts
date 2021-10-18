@@ -287,7 +287,7 @@ function getLetterCaseAssociationsPerProjectList(initParamObject, externalConn?)
         'JOIN Milestones ON Cases.MilestoneId=Milestones.Id \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'WHERE ' + projectConditon + ' \n' +
         'ORDER BY Letters_Cases.LetterId, Cases.Name';

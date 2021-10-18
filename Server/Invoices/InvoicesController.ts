@@ -43,7 +43,7 @@ function getInvoicesList(initParamObject?: any) {
         'JOIN Entities ON Entities.Id=Invoices.EntityId \n' +
         'JOIN Contracts ON Contracts.Id=Invoices.ContractId \n' +
         'JOIN ContractTypes ON ContractTypes.Id = Contracts.TypeId \n' +
-        'JOIN OurContractsData ON OurContractsData.ContractId = Contracts.Id \n' +
+        'JOIN OurContractsData ON OurContractsData.Id = Contracts.Id \n' +
         'JOIN Projects ON Projects.OurId=Contracts.ProjectOurId \n' +
         'LEFT JOIN Persons AS Editors ON Editors.Id=Invoices.EditorId \n' +
         'LEFT JOIN Persons AS Owners ON Owners.Id=Invoices.OwnerId \n' +

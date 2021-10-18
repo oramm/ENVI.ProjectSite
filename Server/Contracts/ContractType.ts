@@ -1,6 +1,6 @@
 /*
 UPDATE Contracts 
-JOIN OurContractsData ON Contracts.Id=OurContractsData.ContractId
+JOIN OurContractsData ON Contracts.Id=OurContractsData.Id
 SET `TypeId` = 5
 WHERE OurContractsData.OurId LIKE '%SIWZ%'
 */

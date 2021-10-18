@@ -31,7 +31,7 @@ function getMilestonesList(initParamObject) {
             'JOIN Contracts ON Milestones.ContractId = Contracts.Id \n' +
             'LEFT JOIN ContractTypes ON ContractTypes.Id = Contracts.TypeId \n' +
             'LEFT JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
-            'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Milestones.ContractId \n' +
+            'LEFT JOIN OurContractsData ON OurContractsData.Id=Milestones.ContractId \n' +
             'WHERE ' + projectCondition + ' AND ' + contractCondition + '\n' +
             //'GROUP BY Milestones.Id \n' +
             'ORDER BY MilestoneTypes_ContractTypes.FolderNumber';
@@ -136,7 +136,7 @@ function getCurrentMilestonesList() {
             'LEFT JOIN ContractTypes ON ContractTypes.Id = Contracts.TypeId \n' +
             'LEFT JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
 
-            'JOIN OurContractsData ON OurContractsData.ContractId = Contracts.Id \n' +
+            'JOIN OurContractsData ON OurContractsData.Id = Contracts.Id \n' +
             'JOIN Projects ON Contracts.ProjectOurId=Projects.Id \n' +
             'LEFT JOIN Persons AS Admins ON Admins.Id=OurContractsData.AdminId \n' +
             'LEFT JOIN Persons AS Managers ON Managers.Id=OurContractsData.ManagerId \n' +

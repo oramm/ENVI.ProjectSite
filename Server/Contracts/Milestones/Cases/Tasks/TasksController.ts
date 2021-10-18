@@ -39,7 +39,7 @@ function getTasksList(initParamObject, externalConn?: GoogleAppsScript.JDBC.Jdbc
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'LEFT JOIN Persons AS Owners ON Owners.Id = Tasks.OwnerId \n' +
         'WHERE ' + contractCondition + ' AND ' + milestoneCondition + ' AND ' + contractStatusCondition + ' AND ' + ownerCondition;

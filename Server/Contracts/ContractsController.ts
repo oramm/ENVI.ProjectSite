@@ -48,8 +48,8 @@ function getContractsList(initParamObject, conn?: GoogleAppsScript.JDBC.JdbcConn
         'ContractTypes.IsOur AS TypeIsOur, \n \t' +
         'ContractTypes.Description AS TypeDescription \n' +
         'FROM Contracts AS mainContracts \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=mainContracts.id \n' +
-        'LEFT JOIN Contracts AS relatedContracts ON relatedContracts.Id=(SELECT OurContractsData.ContractId FROM OurContractsData WHERE OurId=mainContracts.OurIdRelated) \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=mainContracts.id \n' +
+        'LEFT JOIN Contracts AS relatedContracts ON relatedContracts.Id=(SELECT OurContractsData.Id FROM OurContractsData WHERE OurId=mainContracts.OurIdRelated) \n' +
         'LEFT JOIN ContractTypes ON ContractTypes.Id = mainContracts.TypeId \n' +
         'LEFT JOIN Persons AS Admins ON OurContractsData.AdminId = Admins.Id \n' +
         'LEFT JOIN Persons AS Managers ON OurContractsData.ManagerId = Managers.Id \n' +
@@ -400,7 +400,7 @@ function getContractEntityAssociationsList(initParamObject, externalConn) {
         'FROM Contracts_Entities \n' +
         'JOIN Contracts ON Contracts_Entities.ContractId = Contracts.Id \n' +
         'JOIN Entities ON Contracts_Entities.EntityId=Entities.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'WHERE ' + projectConditon + ' \n' +
         'ORDER BY Contracts_Entities.ContractRole, Entities.Name';
 

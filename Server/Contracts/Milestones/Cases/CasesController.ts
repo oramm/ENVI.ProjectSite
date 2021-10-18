@@ -33,7 +33,7 @@ function getCasesListPerMilestone(milestoneId) {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'WHERE MilestoneId=' + milestoneId + '\n' +
@@ -73,7 +73,7 @@ function getCasesListPerContract(contractId) {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'WHERE Milestones.ContractId=' + contractId + '\n' +
@@ -115,7 +115,7 @@ function getCasesListPerProject(initParamObject) {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'WHERE ' + projectCondition + ' \n' +
@@ -159,7 +159,7 @@ function getCasesListPerIdsList(initParamObject) {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n' +
         'WHERE Id IN (' + initParamObject.idsList + ') \n' +
@@ -199,7 +199,7 @@ function getCasesList() {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
         'JOIN Contracts ON Milestones.ContractId=Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON OurContractsData.ContractId=Contracts.Id \n' +
+        'LEFT JOIN OurContractsData ON OurContractsData.Id=Contracts.Id \n' +
         'LEFT JOIN Risks ON Risks.CaseId=Cases.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=Milestones.TypeId AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId \n';
 

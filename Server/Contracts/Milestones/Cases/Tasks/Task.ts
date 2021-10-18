@@ -157,7 +157,7 @@ class Task {
             'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
             'LEFT JOIN MilestoneTypes ON Milestones.TypeId=MilestoneTypes.Id \n' +
             'JOIN Contracts AS ParentContracts ON Milestones.ContractId = ParentContracts.Id \n' +
-            'LEFT JOIN OurContractsData ON Milestones.ContractId = OurContractsData.ContractId \n' +
+            'LEFT JOIN OurContractsData ON Milestones.ContractId = OurContractsData.Id \n' +
             'JOIN ContractTypes ON ContractTypes.Id = ParentContracts.TypeId \n' +
             'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.ContractTypeId=ContractTypes.Id AND MilestoneTypes_ContractTypes.MilestoneTypeId=MilestoneTypes.Id \n' +
             'WHERE Cases.Id =' + this.caseId + '';

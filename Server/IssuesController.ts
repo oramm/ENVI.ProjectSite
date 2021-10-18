@@ -23,7 +23,7 @@ function getIssuesListPerContract(contractId) {
             '(SELECT Surname FROM Persons WHERE Persons.Id=Issues.OwnerId) AS OwnerSurname \n' +
             'FROM Issues \n' +
             'JOIN Contracts ON Issues.ContractId = Contracts.Id AND Issues.ContractId="' + contractId + '" \n' +
-            'LEFT JOIN OurContractsData ON Issues.ContractId = OurContractsData.ContractId \n' +
+            'LEFT JOIN OurContractsData ON Issues.ContractId = OurContractsData.Id \n' +
             'JOIN Projects ON Contracts.ProjectOurId=Projects.OurId \n';
         Logger.log(sql);
         var dbResults = stmt.executeQuery(sql);
@@ -112,7 +112,7 @@ function getCurrentIssuesList() {
             '(SELECT Surname FROM Persons WHERE Persons.Id=Issues.OwnerId) AS OwnerSurname \n' +
             'FROM Issues  \n' +
             'JOIN Contracts ON Issues.ContractId = Contracts.Id \n' +
-            'LEFT JOIN OurContractsData ON Issues.ContractId = OurContractsData.ContractId \n' +
+            'LEFT JOIN OurContractsData ON Issues.ContractId = OurContractsData.Id \n' +
             'JOIN Projects ON Contracts.ProjectOurId=Projects.Id \n' +
             'WHERE Issues.EndDate< DATE_ADD(CURRENT_DATE, INTERVAL 14 DAY) AND Issues.Status<>"Zrobione" AND ' + onlyMyIssuesCondition + '\n' +
             //'GROUP BY Issues.Id \n' +

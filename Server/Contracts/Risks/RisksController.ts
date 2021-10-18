@@ -33,7 +33,7 @@ function getRisksListPerProject(initParamObject) {
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN MilestoneTypes ON MilestoneTypes.Id=Milestones.TypeId \n' +
         'JOIN Contracts ON Milestones.ContractId = Contracts.Id \n' +
-        'LEFT JOIN OurContractsData ON Milestones.ContractId = OurContractsData.ContractId \n' +
+        'LEFT JOIN OurContractsData ON Milestones.ContractId = OurContractsData.Id \n' +
         'JOIN MilestoneTypes_ContractTypes ON MilestoneTypes_ContractTypes.MilestoneTypeId=MilestoneTypes.Id AND MilestoneTypes_ContractTypes.ContractTypeId=Contracts.TypeId\n' +
         //'LEFT JOIN Persons ON Persons.Id = Tasks.OwnerId';
         'WHERE ' + projectCondition;

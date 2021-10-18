@@ -184,7 +184,7 @@ class Milestone {
             var conn = connectToSql();
             var stmt = conn.createStatement();
             var results = stmt.executeQuery('SELECT Contracts.Id, OurContractsData.OurId FROM Contracts \n' +
-                'JOIN OurContractsData ON Contracts.Id = OurContractsData.ContractId  \n' +
+                'JOIN OurContractsData ON Contracts.Id = OurContractsData.Id  \n' +
                 'WHERE OurContractsData.OurId ="' + ourContractId + '"');
             var end = new Date();
             //pobierz do gsheet Id krotki z bazy - potrzebne przy edycji

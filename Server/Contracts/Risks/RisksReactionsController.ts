@@ -17,7 +17,7 @@ function getRisksReactionsListPerProject(projectId) {
         'JOIN Cases ON Cases.Id=Tasks.CaseId \n' +
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN Contracts ON Milestones.ContractId = Contracts.Id AND Contracts.ProjectOurId=' + prepareValueToSql(projectId) + '\n' +
-        'JOIN OurContractsData ON Milestones.ContractId = OurContractsData.ContractId \n' +
+        'JOIN OurContractsData ON Milestones.ContractId = OurContractsData.Id \n' +
         'LEFT JOIN Persons ON Persons.Id = Tasks.OwnerId';
     return getRisksReactions(sql);
 }
@@ -41,7 +41,7 @@ function getRisksReactionsListPerContract(contractId) {
         'JOIN Cases ON Cases.Id=Tasks.CaseId \n' +
         'JOIN Milestones ON Milestones.Id=Cases.MilestoneId \n' +
         'JOIN Contracts ON Milestones.ContractId = Contracts.Id \n' +
-        'JOIN OurContractsData ON Milestones.ContractId = OurContractsData.ContractId \n' +
+        'JOIN OurContractsData ON Milestones.ContractId = OurContractsData.Id \n' +
         'LEFT JOIN Persons ON Persons.Id = Tasks.OwnerId \n' +
         'WHERE Contracts.Id=' + prepareValueToSql(contractId);
     return getRisksReactions(sql);
