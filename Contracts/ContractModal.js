@@ -106,10 +106,13 @@ class ContractModal extends Modal {
         var ourPtIkContracts = ContractsSetup.otherContractsRepository.items.filter(item => item._ourType == 'PT' || item._ourType == 'IK');
         return ourPtIkContracts;
     }
-    /*
-     * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
-     */
+    /** Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId */
     initAddNewData() {
         this.controller.initAddNewDataHandler();
+    }
+    /** Używana w Modal.triggerAction(); po wyświelteniu modala */
+    initEditData() {
+        this.controller.initEditDataHandler();
+
     }
 };

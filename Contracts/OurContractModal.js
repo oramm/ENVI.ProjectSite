@@ -75,13 +75,18 @@ class OurContractModal extends Modal {
         ];
         this.initialise();
     }
-    /*
-     * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
+    /** Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
     initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem = {
             _parent: MainSetup.currentProject,
             projectId: this.connectedResultsetComponent.connectedRepository.parentItemId
         };
+    }
+
+    /** Używana w Modal.triggerAction(); po wyświelteniu modala */
+    initEditData() {
+        this.connectedResultsetComponent.connectedRepository.currentItem._parent = MainSetup.currentProject;
+        this.connectedResultsetComponent.connectedRepository.currentItem.projectId = this.connectedResultsetComponent.connectedRepository.parentItemId;
     }
 };

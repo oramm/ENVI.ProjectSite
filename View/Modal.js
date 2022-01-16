@@ -54,8 +54,7 @@ class Modal {
             .addClass('modal-trigger')
         return $triggerIcon;
     }
-    /*
-     * Akcja po włączeniu modala. 
+    /** Akcja po włączeniu modala. 
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
@@ -64,8 +63,10 @@ class Modal {
             $(connectedResultsetComponent.$dom.css('min-height', '300px'));
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
-        if (this.mode == 'EDIT')
+        if (this.mode == 'EDIT') {
+            if (typeof this.initEditData === 'function') this.initEditData();
             this.fillForm();
+        }
         else
             this.initAddNewData();
         Materialize.updateTextFields();

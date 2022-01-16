@@ -4,9 +4,7 @@ class ContractModalController {
         //this._this = this;
     }
 
-    /*
-     * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
-     */
+    /** Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId */
     initAddNewDataHandler() {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
             _parent: MainSetup.currentProject,
@@ -15,6 +13,12 @@ class ContractModalController {
         if (MainSetup.currentProject._employers[0])
             this.onEmployerChosen(MainSetup.currentProject._employers[0]);
     }
+
+    initEditDataHandler() {
+        this.modal.connectedResultsetComponent.connectedRepository.currentItem._parent = MainSetup.currentProject;
+        this.modal.connectedResultsetComponent.connectedRepository.currentItem.projectId = this.modal.connectedResultsetComponent.connectedRepository.parentItemId;
+    }
+
     //--------------------------------- Contractors HiddenInput ------------------------------------
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
     contractorsChipsRefreshDataSet() {
