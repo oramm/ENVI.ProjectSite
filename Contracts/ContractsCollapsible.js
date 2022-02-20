@@ -92,12 +92,12 @@ class ContractsCollapsible extends SimpleCollapsible {
      * 
      */
     selectTrigger(itemId) {
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        const isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        super.selectTrigger(itemId);
         if (itemId !== undefined &&
             this.connectedRepository.currentItem.id != itemId ||
             !isDashboardLoaded) {
 
-            super.selectTrigger(itemId);
             $('#contractDashboard').attr('src', 'ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
 
         }
