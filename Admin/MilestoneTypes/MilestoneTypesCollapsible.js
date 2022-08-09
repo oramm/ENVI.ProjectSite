@@ -28,8 +28,12 @@ class MilestoneTypesCollapsible extends SimpleCollapsible {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
+
     makeItem(dataItem) {
-        return super.makeItem(dataItem);
+        let item = super.makeItem(dataItem);
+        const isUniqueLabel = (dataItem.isUniquePerContract) ? '[Unikalny]' : '[*]'
+        item.name = `${dataItem.name} ${isUniqueLabel}`;
+        return item;
     }
 
     makeBody(dataItem) {

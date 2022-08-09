@@ -1,10 +1,12 @@
 // Your Client ID can be retrieved from your project in the Google
 // Developer Console, https://console.developers.google.com
-var CLIENT_ID = '386403657277-21tus25hgaoe7jdje73plc2qbgakht05.apps.googleusercontent.com'; //ENVI
-var SCRIPT_ID = 'M1jCQxOsMBQ_tbMmqjqqAx23ed1cy4zrK'; //ENVI
+//const CLIENT_ID = '386403657277-21tus25hgaoe7jdje73plc2qbgakht05.apps.googleusercontent.com'; //ENVI
+const CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
+
+const SCRIPT_ID = 'M1jCQxOsMBQ_tbMmqjqqAx23ed1cy4zrK'; //ENVI
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"];
+const DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
@@ -34,8 +36,8 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
-    //static serverUrl = 'http://localhost:3000/';
-    static serverUrl = 'https://erp-envi.herokuapp.com/';
+    static serverUrl = 'http://localhost:3000/';
+    //static serverUrl = 'https://erp-envi.herokuapp.com/';
 
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get projectsRepository() {
