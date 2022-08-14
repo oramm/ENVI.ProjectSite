@@ -36,8 +36,7 @@ class MainSetup {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
-    //static serverUrl = 'http://localhost:3000/';
-    static serverUrl = 'https://erp-envi.herokuapp.com/';
+    static serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
 
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get projectsRepository() {
