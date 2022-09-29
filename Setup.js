@@ -3,10 +3,15 @@
 //const CLIENT_ID = '386403657277-21tus25hgaoe7jdje73plc2qbgakht05.apps.googleusercontent.com'; //ENVI
 const CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 
+// Set to client ID and API key from the Developer Console
+const API_KEY = 'AIzaSyC4Arjx-IGEQ1Sj99P_Om4B_dg7D7p2kPg';
+
 const SCRIPT_ID = 'M1jCQxOsMBQ_tbMmqjqqAx23ed1cy4zrK'; //ENVI
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-const DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"];
+const DISCOVERY_DOCS = [
+    'https://script.googleapis.com/$discovery/rest?version=v1',
+    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
@@ -21,6 +26,9 @@ SCOPES = 'https://www.google.com/calendar/feeds ' +
 
 var mainWindowView;
 class MainSetup {
+    static GApi = {
+        tokenClient: null //klient dla skryptu Kontakty ENVI - Gsheet
+    };
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem('Current User'));
     }

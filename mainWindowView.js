@@ -8,8 +8,7 @@ class MainWindowView extends Popup {
     initialise() {
         this.navigationBar = new PsNavigationBar(this)
         this.autocomplete = new AutoCompleteTextField_1('projectsPickerAutoComplete', 'Wybierz projekt');
-        this.autocomplete.initialise(MainSetup.projectsRepository, "_ourId_Alias", this.onProjectChosen, this)
-
+        this.autocomplete.initialise(MainSetup.projectsRepository, "_ourId_Alias", this.onProjectChosen, this);
     }
 
     loadDashBoard() {
@@ -27,7 +26,7 @@ class MainWindowView extends Popup {
                 this.navigationBar.initialiseMenuItems();
                 this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link);
 
-                console.log('łąduję iframe z danymi projektu')
+                console.log('ładuję iframe z danymi projektu')
                 console.log('Current project NodeJS: %o', response);
                 return (" initialised");
             },
