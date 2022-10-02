@@ -1,5 +1,5 @@
 class LettersController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new LettersListView();
         $("#authorize-div").hide();

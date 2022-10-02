@@ -1,5 +1,5 @@
 class CasesController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var casesListView = new CasesListView();
         $("#authorize-div").hide();

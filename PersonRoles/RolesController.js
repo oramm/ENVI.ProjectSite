@@ -1,5 +1,5 @@
 class RolesController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var rolesView = new RolesView();
         $("#authorize-div").hide();

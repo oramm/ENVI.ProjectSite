@@ -1,5 +1,5 @@
 class MeetingsController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new MeetingsListView();
         $("#authorize-div").hide();

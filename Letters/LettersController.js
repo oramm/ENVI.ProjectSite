@@ -1,16 +1,20 @@
 class LettersController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new LettersListView();
         $("#authorize-div").hide();
         listView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-
-        LettersSetup.lettersRepository = new SimpleRepository({
-            name: 'Letters repository',
-            actionsNodeJSSetup: { addNewRoute: 'Letter', editRoute: 'Letter', deleteRoute: 'Letter' },
-        });
+        LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
+            //'getLettersList',
+            'addNewLetter',
+            'editLetter',
+            'deleteLetter');
+        //LettersSetup.lettersRepository = new SimpleRepository({
+        //    name: 'Letters repository',
+        //    actionsNodeJSSetup: { addNewRoute: 'Letter', editRoute: 'Letter', deleteRoute: 'Letter' },
+        //});
 
         LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
             'getContractsList'

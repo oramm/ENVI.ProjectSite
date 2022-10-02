@@ -1,5 +1,5 @@
 class DashboardController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         const dashboardView = new DashboardView();
         $("#authorize-div").hide();

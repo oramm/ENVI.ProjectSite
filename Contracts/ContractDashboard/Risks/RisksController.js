@@ -1,5 +1,5 @@
 class RisksController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var risksListView = new RisksListView();
 
