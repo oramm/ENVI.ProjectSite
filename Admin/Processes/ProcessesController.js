@@ -1,5 +1,5 @@
 class ProcessesController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new ProcessesListView();
         $("#authorize-div").hide();

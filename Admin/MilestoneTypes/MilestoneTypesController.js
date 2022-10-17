@@ -1,5 +1,5 @@
 class MilestoneTypesController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var milestoneTypesListView = new MilestoneTypesListView();
         $("#authorize-div").hide();

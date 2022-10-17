@@ -1,5 +1,5 @@
 class ContractTypesController {
-    main() {
+    static main() {
         // Hide auth UI, then load client library.
         var contractTypesListView = new ContractTypesListView();
         $("#authorize-div").hide();
