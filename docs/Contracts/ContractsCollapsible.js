@@ -1,4 +1,3 @@
-"use strict";
 class ContractsCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -17,8 +16,11 @@ class ContractsCollapsible extends SimpleCollapsible {
         this.editModal = new ContractModal(id + '_editContract', 'Edytuj kontrakt', this, 'EDIT');
         this.addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
         this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this, 'EDIT');
+
+
         this.addNewMilestoneModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
         this.editMilestoneModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
+
         this.initialise(this.makeCollapsibleItemsList());
         this.addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj umowę ENVI", this);
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
@@ -32,7 +34,9 @@ class ContractsCollapsible extends SimpleCollapsible {
      */
     makeItem(dataItem) {
         let item = super.makeItem(dataItem);
+
         let editModal = (dataItem.ourId) ? this.editOurModal : this.editModal;
+
         let valueLabel = '';
         if (dataItem.value)
             valueLabel = this.formatterPln.format(dataItem.value);
@@ -42,6 +46,7 @@ class ContractsCollapsible extends SimpleCollapsible {
         item.subitemsCount = undefined;
         return item;
     }
+
     makeBody(dataItem) {
         let subCollection = new MilestonesCollection({
             id: 'milestonesListCollection' + dataItem.id,
@@ -54,19 +59,19 @@ class ContractsCollapsible extends SimpleCollapsible {
             .attr('id', 'collapsibleBodyForContract' + dataItem.id)
             .attr('contractid', dataItem.id)
             .append(subCollection.$dom);
+
         return {
             collection: subCollection,
             $dom: $panel
         };
     }
     /*
-     * Ustawia pryciski edycji wierszy,
+     * Ustawia pryciski edycji wierszy, 
      * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
      */
     addRowCrudButtons(row) {
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-        if (row.dataItem._gdFolderUrl)
-            $crudMenu.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
+        if (row.dataItem._gdFolderUrl) $crudMenu.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
         if (this.isDeletable || this.isEditable) {
             var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
             if (row.dataItem.ourId) {
@@ -82,8 +87,9 @@ class ContractsCollapsible extends SimpleCollapsible {
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
         }
     }
+
     /*
-     *
+     * 
      */
     selectTrigger(itemId) {
         const isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
@@ -91,7 +97,9 @@ class ContractsCollapsible extends SimpleCollapsible {
         if (itemId !== undefined &&
             this.connectedRepository.currentItem.id != itemId ||
             !isDashboardLoaded) {
+
             $('#contractDashboard').attr('src', 'ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
+
         }
     }
 }

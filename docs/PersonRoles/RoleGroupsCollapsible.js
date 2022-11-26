@@ -1,4 +1,3 @@
-"use strict";
 class RoleGroupsCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -13,6 +12,7 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
         });
         this.addNewModal = new RoleModal(this.id + '_newRoleModal', 'Dodaj rolę', this, 'ADD_NEW');
         this.editModal = new RoleModal(this.id + '_editRoleModal', 'Edytuj rolę', this, 'EDIT');
+
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*
@@ -23,6 +23,7 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
     makeItem(dataItem) {
         return super.makeItem(dataItem);
     }
+
     makeBody(dataItem) {
         const subCollection = new RolesCollection({
             id: 'rolesCollection_' + dataItem.id,

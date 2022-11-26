@@ -1,14 +1,17 @@
-"use strict";
 class MaterialCardsListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Wnioski materiałowe");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new MaterialCardsCollapsible('materialCardsCollapsible').$dom);
+        
+        $('#actionsMenu').after(new MaterialCardsCollapsible('materialCardsCollapsible').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }

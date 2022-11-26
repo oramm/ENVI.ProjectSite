@@ -1,16 +1,16 @@
-"use strict";
 var taskTemplatesRepository;
-const statusNames = ['Backlog',
-    'Nie rozpoczęty',
-    'W trakcie',
-    'Do poprawy',
-    'Oczekiwanie na odpowiedź',
-    'Zrobione'
-];
+
+const statusNames = [   'Backlog',
+                        'Nie rozpoczęty',
+                        'W trakcie',
+                        'Do poprawy',
+                        'Oczekiwanie na odpowiedź',
+                        'Zrobione'
+                    ];
+
 class TaskTemplatesSetup {
     static get currentCaseTemplate() {
-        return JSON.parse(sessionStorage.getItem('CaseTemplates repository')).currentItemLocalData;
-        ;
+        return JSON.parse(sessionStorage.getItem('CaseTemplates repository')).currentItemLocalData;;
     }
     static get statusNames() {
         return statusNames;

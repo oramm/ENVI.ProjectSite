@@ -1,4 +1,3 @@
-"use strict";
 class ProcessStepsInstancesCollection extends SimpleCollection {
     /*
      * @param {type} id
@@ -18,11 +17,13 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
             isAddable: false,
             isDeletable: false,
             connectedRepository: ProcessesInstancesSetup.processesStepsInstancesRepository
-        });
+        })
         this.status = initParamObject.status;
+
         this.addNewOurLetterModal = initParamObject.addNewOurLetterModal;
         this.editOurLetterModal = initParamObject.editOurLetterModal;
         this.appendLetterAttachmentsModal = initParamObject.appendLetterAttachmentsModal;
+
         this.initialise(this.makeList());
     }
     /*
@@ -48,23 +49,50 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
      */
     makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
+
         var $collectionElementDescription = $('<span>');
-        var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem._processStep.description, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpEditDescription_TextField', 'Edytuj', undefined, true, 150), 'description', this);
-        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline, dataItem, new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField', 'Termin wykonania', true), 'deadline', this);
+        var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem._processStep.description,
+            dataItem,
+            new InputTextField(this.id + '_' + dataItem.id + '_tmpEditDescription_TextField', 'Edytuj', undefined, true, 150),
+            'description',
+            this);
+
+
+        var deadlineAtomicEditLabel = new AtomicEditLabel(dataItem.deadline,
+            dataItem,
+            new DatePicker(this.id + '_' + dataItem.id + '_deadLinePickerField', 'Termin wykonania', true),
+            'deadline',
+            this);
+
+
         (dataItem.status) ? true : dataItem.status = "";
-        var personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField', 'Imię i nazwisko', 'person', false, 'Wybierz imię i nazwisko');
+
+        var personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField',
+            'Imię i nazwisko',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
         personAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
-        var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail, dataItem, personAutoCompleteTextField, '_nameSurnameEmail', this);
+
+        var personAtomicEditLabel = new AtomicEditLabel(dataItem._nameSurnameEmail,
+            dataItem,
+            personAutoCompleteTextField,
+            '_nameSurnameEmail',
+            this);
+
         $collectionElementDescription
             .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom)
             .append(descriptionAtomicEditLabel.$dom)
             .append(deadlineAtomicEditLabel.$dom)
             .append(personAtomicEditLabel.$dom);
+
         return $collectionElementDescription;
     }
+
     makeList() {
         return super.makeList().filter((item) => item.dataItem._case.id == this.parentDataItem.id);
     }
+
     selectTrigger(itemId) {
         super.selectTrigger(itemId);
         //wybierz letter
@@ -73,18 +101,19 @@ class ProcessStepsInstancesCollection extends SimpleCollection {
             currentLetter = Tools.search(parseInt(this.connectedRepository.currentItem._ourLetter.id), 'id', LettersSetup.lettersRepository.items);
         LettersSetup.lettersRepository.currentItem = currentLetter;
     }
+
     addPlainRowCrudButtons(row) {
-        super.addPlainRowCrudButtons(row);
+        super.addPlainRowCrudButtons(row)
         if (row.dataItem._processStep._documentTemplate.gdId) {
             if (row.dataItem._ourLetter) {
                 this.appendLetterAttachmentsModal.preppendTriggerButtonTo(row.$crudButtons, 'Dodaj załączniki', this);
                 this.editOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Edytuj pismo', this);
                 row.$crudButtons.append(new RaisedButton('Usuń pismo', this.deleteOurLetterAction, this).$dom);
-            }
-            else
+            } else
                 this.addNewOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Generuj pismo', this);
         }
     }
+
     deleteOurLetterAction() {
         this.connectedRepository.currentItem._ourLetter = LettersSetup.lettersRepository.currentItem;
         this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository.currentItem, 'deleteProcessStepInstanceOurLetter', this);

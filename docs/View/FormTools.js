@@ -1,4 +1,3 @@
-"use strict";
 /*
  * @type AutoCompleteTextField
  * Używać tego następująco:
@@ -14,8 +13,10 @@ class AutoCompleteTextField {
         this.isRequired = isRequired;
         this.$dom;
         this.$label;
+
         this.buildDom(id, icon, isRequired);
     }
+
     initialise(repository, key, onCompleteCallBack, viewObject) {
         this.repository = repository;
         this.objectList = [];
@@ -25,32 +26,39 @@ class AutoCompleteTextField {
         this.chosenItem;
         this.pushData(this.key);
     }
+
     buildDom(id, icon, isRequired) {
         this.$dom = $('<div class="input-field">');
         var $icon = $('<i class="material-icons prefix">' + icon + '</i>');
         var $input = $('<input name="' + id + '" type="search" autocomplete="off" class="autocomplete">')
             .attr('id', id);
+
         this.$label = $('<label>');
         this.setLabel(this.label);
+
         if (isRequired) {
             $input
                 .attr('required', 'true')
                 .attr('pattern', '[]');
             this.isRequired = isRequired;
         }
+
         this.$dom
             .append($icon)
             .append($input)
             .append(this.$label);
         return this.$dom;
     }
+
     setLabel(label) {
         this.label = label;
         //this.$label = $('<label for="'+ id +'">'+ this.label +'</label>');
+
         this.$label
             .attr('for', this.id)
             .text(this.label);
     }
+
     pushData(key) {
         var autocompleteList = {};
         Object.keys(this.repository.items).forEach((id) => {
@@ -62,22 +70,22 @@ class AutoCompleteTextField {
         // Plugin initialization
         this.$dom.children('input.autocomplete').autocomplete({
             data: autocompleteList,
-            limit: 20,
+            limit: 20, // The max amount of results that can be shown at once. Default: Infinity.
             onAutocomplete: (inputValue) => {
                 this.setValue(inputValue);
             },
-            minLength: 1,
+            minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
             onChange: () => alert(inputValue)
         });
     }
+
     setValue(inputValue) {
         if (inputValue !== undefined) {
             //inputValue pochodzi z formularza
             if (typeof inputValue !== 'object') {
                 this.chosenItem = Tools.search(inputValue, this.key, this.repository.items);
                 this.repository.currentItem = this.chosenItem;
-                if (this.chosenItem)
-                    this.$dom.children('input').attr('pattern', '^' + inputValue + '$');
+                if (this.chosenItem) this.$dom.children('input').attr('pattern', '^' + inputValue + '$');
                 this.$dom.children('input').val(inputValue);
             }
             //inputValue pochodzi z repository i jest obiektem
@@ -95,10 +103,12 @@ class AutoCompleteTextField {
             }
         }
     }
+
     setDefaultValue() {
         if (this.objectList.length === 1)
-            this.setValue(this.objectList[0]);
+            this.setValue(this.objectList[0])
     }
+
     clearInput() {
         this.$dom.children('input').val('');
     }
@@ -106,12 +116,13 @@ class AutoCompleteTextField {
         this.chosenItem = undefined;
         this.repository.currentItem = {};
         this.repository.currentItems = [];
-        this.clearInput;
+        this.clearInput
     }
 }
+
 class SelectField {
     /*
-     *
+     * 
      * @param {type} id
      * @param {type} label
      * @param {type} icon
@@ -129,19 +140,21 @@ class SelectField {
         this.defaultDisabledOption = defaultDisabledOption;
         this.buildDom(id, label, icon, isRequired);
     }
+
     initialise(optionsData, key, onItemSelectedHandler, viewObject) {
         this.$select.empty();
         this.optionsData = optionsData;
         this.key = key;
         this.onItemSelectedHandler = onItemSelectedHandler;
         this.viewObject = viewObject;
+
         //this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
         var $emptyOption = $('<option>')
             .attr('value', '')
             .attr('selected', '')
             .text(this.defaultDisabledOption);
         if (this.isRequired)
-            $emptyOption.attr('disabled', '');
+            $emptyOption.attr('disabled', '')
         this.$select.append($emptyOption);
         if (typeof optionsData[0] !== 'object')
             this.pushDataFromStringList();
@@ -163,6 +176,7 @@ class SelectField {
             this.$select.append($option);
         }
     }
+
     pushDataFromStringList() {
         for (var i in this.optionsData) {
             var $option = $('<option>')
@@ -171,16 +185,19 @@ class SelectField {
             this.$select.append($option);
         }
     }
+
     buildDom(id, label) {
         this.$dom = $('<div class="input-field">');
         this.$select = $('<select>');
-        this.$select.attr('id', id);
+        this.$select.attr('id', id)
         var $label = $('<label>' + label + '</label>');
         this.$dom
             .append(this.$select)
             .append($label);
+
         return this.$dom;
     }
+
     setOnchangeAction() {
         var _this = this;
         //this.$dom.find('li').on("click",function(){_this.onItemChosen(this)});
@@ -192,6 +209,7 @@ class SelectField {
             });
         }
     }
+
     getValue() {
         var inputValue = this.$dom.find('input').val();
         if (!this.optionsData && !this.isRequired)
@@ -203,48 +221,51 @@ class SelectField {
             else {
                 this.chosenItem = this.optionsData.find(item => item[this.key] == inputValue);
             }
-        }
-        else
+        } else
             this.chosenItem = undefined;
         return this.chosenItem;
     }
+
     simulateChosenItem(inputValue) {
         if (inputValue !== undefined) {
             var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
             if (inputValue === this.defaultDisabledOption) {
                 this.chosenItem = undefined;
+
                 this.$select.val(inputValue).trigger('change');
-            }
-            else if (typeof this.optionsData[0] !== 'object') {
+            } else if (typeof this.optionsData[0] !== 'object') {
                 this.chosenItem = inputValue;
                 //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
                 //this.$dom.find('li:nth-child('+itemSelectedId+')').click();
             }
             else {
                 this.chosenItem = this.optionsData.find(item => item.id == inputValue.id ||
-                    item[this.key] == inputValue[this.key]);
+                    item[this.key] == inputValue[this.key]
+                );
                 if (this.chosenItem) {
                     var optionsString = this.optionsData.map(item => item[this.key]);
                     itemSelectedId = 2 + optionsString.indexOf(this.chosenItem[this.key]);
-                }
-                else
+                } else
                     itemSelectedId = 0;
             }
             this.$dom.find('li:nth-child(' + itemSelectedId + ')').click();
         }
     }
+
     clearChosenItem() {
         this.chosenItem = undefined;
         this.$dom.find('input').val('');
     }
+
     validate() {
         if (this.isRequired) {
             return this.chosenItem !== this.defaultDisabledOption && this.chosenItem !== undefined;
-        }
-        else
+        } else
             return true;
+
     }
 }
+
 class Chip {
     constructor(id, caption, dataItem, onDeleteCallBack, viewObject) {
         this.id = id;
@@ -256,23 +277,29 @@ class Chip {
         this.buidDom();
         this.setOnDeleteAction();
     }
+
     buidDom() {
         this.$dom = $('<div>');
         this.$dom
             .attr('id', 'chip_' + this.id)
             .addClass('chip')
             .html(this.caption);
+
         if (this.onDeleteCallBack)
             this.$dom.append('<i class="close material-icons">close</i>');
     }
+
     setOnDeleteAction() {
         this.$dom.children('i').off('change');
         var _this = this;
         this.$dom.children('i').on('click', function (e) {
             _this.onDeleteCallBack.apply(_this.viewObject, [_this.dataItem]);
+
         });
     }
 }
+
+
 /*
  * value to obiekt, który chcemy wysyłać do serwera np. tablica
  * @type type
@@ -286,6 +313,7 @@ class HiddenInput {
         this.$dom;
         this.buildDom();
     }
+
     buildDom() {
         this.$dom = $('<input>');
         this.$dom
@@ -293,23 +321,26 @@ class HiddenInput {
             .attr('id', this.id)
             .attr('name', this.name);
     }
+
     setValue(value) {
         this.value = value;
     }
+
     getValue() {
         return this.value;
     }
+
     validate() {
         var test = !this.isRequired || this.value !== undefined && this.value.length > 0 && this.value !== {};
         if (!test) {
             this.$dom.addClass('invalid');
-        }
-        else {
+        } else {
             this.$dom.removeClass('invalid');
         }
         return test;
     }
 }
+
 /*
  * value to obiekt, który chcemy wysyłać do serwera np. tablica
  * @type type
@@ -323,6 +354,7 @@ class FileInput {
         this.$dom;
         this.buildDom();
     }
+
     buildDom() {
         this.$dom = $('<form action="#">');
         this.$fileField = $('<div>');
@@ -332,22 +364,27 @@ class FileInput {
             .attr('id', this.id)
             .attr('multiple', '')
             .attr('name', this.name);
+
         this.$button = $('<div>');
         this.$button
             .addClass('btn')
             .append($('<span>Plik</span>'))
-            .append(this.$input);
+            .append(this.$input)
+
         this.$fileField
             .addClass('file-field')
             .addClass('input-field')
             .append(this.$button)
             .append('<div class="file-path-wrapper">').children('.file-path-wrapper')
-            .append('<input class="file-path validate" type="text" placeholder="Wybierz jeden lub kilka plików">');
+            .append('<input class="file-path validate" type="text" placeholder="Wybierz jeden lub kilka plików">')
+
         this.$dom.append(this.$fileField);
     }
+
     getFiles() {
         return this.$input[0].files;
     }
+
     readFile(blob) {
         return new Promise((resolve, reject) => {
             //pobierz plik z pickera
@@ -356,18 +393,20 @@ class FileInput {
             else {
                 var reader = new FileReader();
                 var base64data;
+
                 reader.onloadend = function () {
                     base64data = reader.result.replace(/^data:.+;base64,/, '');
                     resolve({
                         blobBase64String: base64data,
                         name: blob.name,
                         mimeType: blob.type
-                    });
-                };
+                    })
+                }
                 reader.readAsDataURL(blob);
             }
         });
     }
+
     getValue() {
         return new Promise((resolve, reject) => {
             if (this.getFiles().length == 0) {
@@ -384,6 +423,7 @@ class FileInput {
                 .then(() => resolve(blobs));
         });
     }
+
     validate() {
         var test = true;
         if (this.isRequired && !this.getFiles()[0])
@@ -391,6 +431,7 @@ class FileInput {
         return test;
     }
 }
+
 class ReachTextArea {
     constructor(id, label, isRequired, maxCharacters) {
         this.id = id;
@@ -409,18 +450,20 @@ class ReachTextArea {
             menubar: false,
             forced_root_block: false,
             statusbar: true,
+
             plugins: "autoresize link paste",
             paste_auto_cleanup_on_paste: true,
             paste_as_text: true,
+
             autoresize_bottom_margin: 20,
             autoresize_min_height: 30,
             //max_chars: 30,
             branding: false,
+
             setup: function (ed) {
                 var allowedKeys = [8, 37, 38, 39, 40, 46]; // backspace, delete and cursor keys
                 ed.on('keydown', function (e) {
-                    if (allowedKeys.indexOf(e.keyCode) != -1)
-                        return true;
+                    if (allowedKeys.indexOf(e.keyCode) != -1) return true;
                     var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
                     if ($(ed.getBody()).text().length + 1 > maxCharacters) {
                         //if (ReachTextArea.tinymce_getContentLength() + 1 > this.settings.max_chars) {
@@ -435,7 +478,7 @@ class ReachTextArea {
                     ReachTextArea.tinymce_updateCharCounter(this, ReachTextArea.tinymce_getContentLength(), maxCharacters);
                 });
             },
-            init_instance_callback: function () {
+            init_instance_callback: function () { // initialize counter div
                 var maxCharacters = $(tinyMCE.get(tinyMCE.activeEditor.id).getElement()).attr('max_chars');
                 $('#' + this.id).prev().append('<div class="char_count" style="text-align:right"></div>');
                 ReachTextArea.tinymce_updateCharCounter(this, ReachTextArea.tinymce_getContentLength(), maxCharacters);
@@ -449,19 +492,21 @@ class ReachTextArea {
                 if (len + text.length > editor.settings.max_chars) {
                     alert('Pasting this exceeds the maximum allowed number of ' + editor.settings.max_chars + ' characters.');
                     args.content = '';
-                }
-                else {
+                } else {
                     ReachTextArea.tinymce_updateCharCounter(editor, len + text.length, maxCharacters);
                 }
             }
         });
     }
+
     static tinymce_updateCharCounter(el, len, maxCharacters) {
         $('#' + el.id).prev().find('.char_count').text(len + '/' + maxCharacters);
     }
+
     static tinymce_getContentLength() {
         return tinymce.get(tinymce.activeEditor.id).contentDocument.body.innerHTML.length;
     }
+
     /*
      * w funkcji fillWithData() użyć:
      *      tinyMCE.get(this.id + 'descriptionTextField').setContent(rolesRepository.currentItem.description);
@@ -471,19 +516,23 @@ class ReachTextArea {
         this.$dom = $('<div>');
         this.$input = $('<textarea class="materialize-textarea validate" id="' + this.id + '" name="' + this.id + '" >');
         var $label = $('<label>' + this.label + '</label>');
-        $label.addClass('active');
+        $label.addClass('active')
+
         this.$dom
             .append($label)
             .append(this.$input);
+
         this.$input
             .attr('max_chars', this.maxCharacters)
-            .addClass('reachTextArea');
+            .addClass('reachTextArea')
     }
+
     setLabel(label) {
         this.label = label;
         this.$dom.find('label').text(label);
     }
 }
+
 class SelectFieldBrowserDefault {
     /*
      * Sposób użycia: tworzymy nowy obiekt >> initialise >> w kontrolerze po zbudowaniu DOM >> ()=>{$('select').material_select();
@@ -503,13 +552,15 @@ class SelectFieldBrowserDefault {
         this.$select;
         this.buildDom(id, label, icon, isRequired);
     }
+
     initialise(optionsData) {
         this.$select.empty();
         if (optionsData === undefined)
             optionsData = this.optionsData;
         else
             this.optionsData = optionsData;
-        this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>');
+
+        this.$select.append('<option value="" disabled selected>' + this.defaultDisabledOption + '</option>')
         for (var i in optionsData) {
             var $option = $('<option>')
                 .val(optionsData[i].name)
@@ -517,18 +568,24 @@ class SelectFieldBrowserDefault {
             this.$select.append($option);
         }
         this.setChangeAction();
+
     }
+
     buildDom(id, label, icon, isRequired, options) {
+
         this.$select = $('<select class="browser-default">');
         this.$dom = $('<div>');
         var $label = $('<label>' + label + '</label>');
+
         this.$dom
             .append($label)
             .append(this.$select);
+
         //if (isRequired)
         //    $select.attr('required','true')
         return this.$dom;
     }
+
     getValue() {
         return this.chosenItem;
     }
@@ -536,6 +593,7 @@ class SelectFieldBrowserDefault {
     setValue(inputValue) {
         this.chosenItem = Tools.search(inputValue, 'name', this.optionsData);
     }
+
     setChangeAction() {
         var _this = this;
         this.$select.change(function () {
@@ -547,8 +605,10 @@ class SelectFieldBrowserDefault {
         var itemSelectedId = this.optionsData.findIndex(x => x.hello === inputValue);
         //var itemSelectedId = 2 + this.optionsData.indexOf(inputValue);
         this.$dom.find('li:nth-child(' + itemSelectedId + ')').click();
+
     }
 }
+
 class DatePicker {
     constructor(id, label, icon, isRequired) {
         this.id = id;
@@ -560,6 +620,7 @@ class DatePicker {
         this.$input;
         this.createDatePickerField(id, label, icon, isRequired);
     }
+
     createDatePickerField(id, label, icon, isRequired) {
         this.$dom = $('<div class="input-field">');
         this.$input = $('<input type="text" class="datepicker" id="' + id + '" name="' + id + '">');
@@ -572,26 +633,28 @@ class DatePicker {
     }
     //https://stackoverflow.com/questions/30324552/how-to-set-the-date-in-materialize-datepicker
     setValue(date) {
-        var $generatedInput = this.$input.pickadate();
+        var $generatedInput = this.$input.pickadate()
+
         // Use the picker object directly.
-        var picker = $generatedInput.pickadate('picker');
-        picker.set('select', date, { format: 'yyyy-mm-dd' });
+        var picker = $generatedInput.pickadate('picker')
+        picker.set('select', date, { format: 'yyyy-mm-dd' })
     }
     getValue() {
         return this.$input.val();
     }
+
     validate() {
         if (!this.isRequired)
             return true;
         var test = $('#' + this.id).val() != '';
         if (test === false) {
             this.$input.addClass('invalid');
-        }
-        else {
+        } else {
             this.$input.removeClass('invalid');
         }
         return test;
     }
+
     setLabel(label) {
         this.label = label;
         this.$dom.find('label').text(label);
@@ -619,7 +682,9 @@ class InputTextField {
         this.$dom
             .append(this.$input)
             .append(this.$label);
+
         this.setIsRequired(this.isRequired);
+
         if (this.maxCharacters > 0) {
             this.$input
                 .attr('data-length', this.maxCharacters);
@@ -629,11 +694,13 @@ class InputTextField {
             this.$input
                 .attr('pattern', this.validateRegex);
         }
+
         if (this.dataError !== undefined)
             this.$label.attr('data-error', this.dataError);
         else
             this.$label.attr('data-error', 'Niewłaściwy format danych');
     }
+
     setIsRequired(isRequired) {
         this.isRequired = isRequired;
         if (this.isRequired)
@@ -641,9 +708,11 @@ class InputTextField {
         else
             this.$input.removeAttr('required');
     }
+
     getValue() {
         return this.$input.val();
     }
+
     setValue(inputvalue) {
         this.$input.val(inputvalue);
     }
@@ -665,7 +734,7 @@ class Tabs {
     //ikony do dodania
     buildDom() {
         this.$dom
-            .append('<div class="col s12"') //.children()
+            .append('<div class="col s12"')//.children()
             .append(this.$tabs);
         this.$dom.append(this.$panels);
         for (var i = 0; i < this.tabsData.length; i++) {
@@ -674,21 +743,28 @@ class Tabs {
             this.$tabs
                 .append('<li class="tab col s3">').children()
                 .append($link);
+
             (this.contentIFrameId) ? this.makeTabIframe($link, i) : this.makeTabDiv($link, i);
+
+
         }
         var _this = this;
         this.$tabs.tabs();
         this.$tabs.on('click', 'a', function (e) {
             _this.tabChosen($(this).closest('li'));
         });
+
         //this.$dom.tabs({onShow: function(){_this.tabChosen($(this).closest('li'))}});
+
     }
+
     makeTabIframe($link, i) {
         $link.attr('href', 'tab_' + this.tabsData[i].url);
     }
+
     makeTabDiv($link, i) {
         var divId = 'tab_' + this.tabsData[i].name.replace(/ /g, "-") + '-' + this.id;
-        var $tabPanel = $('<div id="' + divId + '" class="col s12">');
+        var $tabPanel = $('<div id="' + divId + '" class="col s12">')
         $tabPanel.append(this.tabsData[i].panel);
         $link.attr('href', '#' + divId);
         this.$dom.append($tabPanel);
@@ -696,14 +772,17 @@ class Tabs {
         //    this.$dom.find('.tabs').tabs('select_tab', divId);
         //}
     }
+
     tabChosen($tab) {
         if (this.contentIFrameId)
             $('#' + this.contentIFrameId)
                 .attr('src', this.tabsData[$tab.index()].url);
         else {
+
         }
     }
 }
+
 class Form {
     constructor(id, method, elements, noRows = false, submitCaption = 'Zapisz') {
         this.id = id;
@@ -713,15 +792,17 @@ class Form {
         this.submitCaption = submitCaption;
         this.$dom;
         this.buidDom();
-        this.dataObject; //do refactoringu w przyszłości przenieść tu obsługę SubmitRrigger() z modali
+        this.dataObject //do refactoringu w przyszłości przenieść tu obsługę SubmitRrigger() z modali
+
     }
+
     buidDom() {
         this.$dom = $('<form id="' + this.id + '" method="' + this.method + '">');
         for (const element of this.elements) {
             var $inputDescription = '';
             if (element.description)
-                $inputDescription = $('<span class="envi-input-description">' + element.description + '</span>');
-            var $inputContainer = $('<div>');
+                $inputDescription = $('<span class="envi-input-description">' + element.description + '</span>')
+            var $inputContainer = $('<div>')
             if (!this.noRows)
                 $inputContainer.addClass('row');
             this.$dom.append($inputContainer);
@@ -730,6 +811,7 @@ class Form {
                 .append(element.input.$dom);
         }
         this.$dom.append(FormTools.createSubmitButton(this.submitCaption));
+
         if (this.noRows) {
             let $tmpDom = this.$dom;
             this.$dom = $('<div class="row">');
@@ -743,7 +825,7 @@ class Form {
      * @returns {undefined}
      */
     setElementDescription(description, element) {
-        var $descriptionLabel = element.input.$dom.parent().find('.envi-input-description');
+        var $descriptionLabel = element.input.$dom.parent().find('.envi-input-description')
         if ($descriptionLabel.length == 0) {
             $descriptionLabel = $('<div class="envi-input-description">');
             element.input.$dom.parent().prepend($descriptionLabel);
@@ -758,6 +840,7 @@ class Form {
     fillWithData(currentItem) {
         //określ ile maksymalnie może być elementów do wypełnienia
         var inputElements = Math.min(this.elements.length, Object.keys(currentItem).length);
+
         for (var i = 0; i < inputElements; i++) {
             var inputvalue = currentItem[this.elements[i].dataItemKeyName];
             switch (this.elements[i].input.constructor.name) {
@@ -766,13 +849,12 @@ class Form {
                     this.elements[i].input.setValue(inputvalue);
                     break;
                 case 'ReachTextArea':
-                    if (!inputvalue)
-                        inputvalue = '';
+                    if (!inputvalue) inputvalue = '';
                     tinyMCE.get(this.elements[i].input.id).setContent(inputvalue);
                     tinyMCE.triggerSave();
                     break;
                 case 'DatePicker':
-                    this.elements[i].input.setValue(inputvalue);
+                    this.elements[i].input.setValue(inputvalue)
                     break;
                 case 'SelectField':
                     this.elements[i].input.simulateChosenItem(inputvalue);
@@ -840,6 +922,7 @@ class Form {
                     element.input.getValue();
                     if (element.input.chosenItem) {
                         if (typeof element.input.chosenItem === 'object') {
+
                             dataObject[element.dataItemKeyName] = element.input.chosenItem;
                         }
                         else
@@ -859,10 +942,12 @@ class Form {
                 case 'CollapsibleMultiSelect':
                     dataObject[element.dataItemKeyName] = await element.input.getValue();
                     break;
+
             }
         }
     }
 }
+
 class AtomicEditForm extends Form {
     constructor(id, method, elements, atomicEditLabel) {
         super(id, method, elements);
@@ -873,6 +958,7 @@ class AtomicEditForm extends Form {
         this.setSubmitAction();
         this.setCancelAction();
     }
+
     /*
      * Funkcja musi być przekazana joko argument, albo obsłużona w klasie pochodnej.
      * Klasa pochodna musi mieć metodę submitTrigger()
@@ -885,6 +971,7 @@ class AtomicEditForm extends Form {
             event.preventDefault();
         });
     }
+
     setCancelAction() {
         this.$dom.keyup((event) => {
             if (event.keyCode === 13) {
@@ -894,10 +981,12 @@ class AtomicEditForm extends Form {
                 this.atomicEditLabel.switchOffEditMode();
             }
         });
+
         this.$dom.find('input').focusout((event) => {
             if (this.elements[0].constructor.name !== 'DatePicker')
                 this.atomicEditLabel.switchOffEditMode();
         });
+
     }
     /*
      * Uruchamiana po kliknięciu przesłaniu formularza
@@ -907,10 +996,13 @@ class AtomicEditForm extends Form {
         if (this.validate(this.dataObject)) {
             this.atomicEditLabel.caption = this.dataObject.editedParameter;
             this.atomicEditLabel.connectedResultsetComponent.connectedRepository.currentItem[this.atomicEditLabel.editedPropertyName] = this.dataObject.editedParameter;
-            this.atomicEditLabel.connectedResultsetComponent.connectedRepository.editItem(this.atomicEditLabel.connectedResultsetComponent.connectedRepository.currentItem, this.atomicEditLabel.connectedResultsetComponent);
+
+            this.atomicEditLabel.connectedResultsetComponent.connectedRepository.editItem(this.atomicEditLabel.connectedResultsetComponent.connectedRepository.currentItem,
+                this.atomicEditLabel.connectedResultsetComponent);
         }
     }
 }
+
 class AtomicEditLabel {
     /*
      * @param {String} caption
@@ -929,22 +1021,25 @@ class AtomicEditLabel {
         this.buildStaticDom();
         this.$parent;
     }
+
     buildStaticDom() {
         if (this.caption) {
             this.$dom = $('<span>');
             this.$dom
                 .html(this.caption + '<br>');
             this.setEditLabelAction();
-        }
-        else
+        } else
             this.$dom = '';
     }
+
     buildEditModeDom() {
         this.$parent = this.$dom.parent();
         this.$parent.children('form').remove();
         this.$dom.remove();
-        this.form = new AtomicEditForm("tmpEditForm_" + this.dataObject.id, "GET", [this.input], this);
+        this.form = new AtomicEditForm("tmpEditForm_" + this.dataObject.id, "GET",
+            [this.input], this);
         this.$dom = this.form.$dom;
+
         this.$dom.addClass('atomicEditForm');
     }
     /*
@@ -957,26 +1052,30 @@ class AtomicEditLabel {
             //$(this).parent().parent().parent().parent().trigger('click');                                 
             _this.switchOnEditMode();
             _this.$dom.find('.datepicker').pickadate({
-                selectMonths: true,
-                selectYears: 15,
+                selectMonths: true, // Creates a dropdown to control month
+                selectYears: 15, // Creates a dropdown of 15 years to control year,
                 today: 'Dzisiaj',
                 clear: 'Wyszyść',
                 close: 'Ok11',
-                closeOnSelect: false,
-                container: undefined,
+                closeOnSelect: false, // Close upon selecting a date,
+                container: undefined, // ex. 'body' will append picker to body
                 format: 'dd-mm-yyyy'
             });
             ReachTextArea.reachTextAreaInit();
             _this.form.fillWithData([_this.dataObject[_this.editedPropertyName]]);
             _this.$dom.find('input').focus();
         });
+
     }
     switchOnEditMode() {
         this.buildEditModeDom();
         this.$parent.append(this.$dom);
         $('select').material_select();
         Materialize.updateTextFields();
+
+
     }
+
     switchOffEditMode() {
         this.$dom.remove();
         this.buildStaticDom();
@@ -984,6 +1083,7 @@ class AtomicEditLabel {
             .append(this.$dom);
     }
 }
+
 class SwitchInput {
     constructor(onLabel, offLabel, changeAction, viewObject) {
         this.onLabel = onLabel;
@@ -995,6 +1095,7 @@ class SwitchInput {
         this.setChangeAction();
         this.value;
     }
+
     buildDom() {
         this.$dom
             .append('<label>').children()
@@ -1003,6 +1104,7 @@ class SwitchInput {
             .append('<span class="lever">')
             .append(this.onLabel);
     }
+
     setChangeAction() {
         var _this = this;
         this.$dom.find("input[type=checkbox]").on("change", function () {
@@ -1010,11 +1112,13 @@ class SwitchInput {
             if (_this.changeAction)
                 _this.changeAction.apply(_this.viewObject, [_this.value]);
         });
+
     }
     setValue(value) {
         this.value = value;
         this.$dom.find("input[type=checkbox]").prop('checked', value);
     }
+
     getValue() {
         return (this.value) ? true : false;
     }
@@ -1032,6 +1136,7 @@ class FilterSwitchInput extends SwitchInput {
         this.$dom.find('input').attr('checked', (this.connectedFilterObject.showActiveRows) ? 'true' : 'false');
         this.value = (this.connectedFilterObject.showActiveRows) ? true : false;
     }
+
     setChangeAction() {
         var _this = this;
         this.$dom.find("input[type=checkbox]").on("change", function () {
@@ -1048,6 +1153,7 @@ class Badge {
         this.$dom = $('<span>');
         this.buidDom();
     }
+
     buidDom() {
         this.$dom
             .attr('id', 'badge_' + this.id)
@@ -1071,9 +1177,11 @@ class RaisedButton {
         this.$dom
             .attr('type', 'button')
             .attr('value', this.caption)
-            .addClass('waves-effect waves-teal btn');
+            .addClass('waves-effect waves-teal btn')
+
         this.$dom.click(() => this.onClickFunction.apply(this.viewObject, []));
     }
+
     setEnabled(enable) {
         let onClassName = (enable) ? 'enabled' : 'disabled';
         let offClassName = (enable) ? 'disabled' : 'enabled';
@@ -1082,9 +1190,10 @@ class RaisedButton {
             .removeClass(offClassName);
     }
 }
+
 class FlatButton extends RaisedButton {
     constructor(caption, onClickFunction, viewObject) {
-        super(caption, onClickFunction, viewObject);
+        super(caption, onClickFunction, viewObject)
     }
     buidDom() {
         super.buidDom();
@@ -1093,6 +1202,7 @@ class FlatButton extends RaisedButton {
             .addClass('btn-flat');
     }
 }
+
 //kopatybilny z FormTools_mcss1.0
 class IconButton {
     constructor(icon, onClickFunction, viewObject) {
@@ -1123,24 +1233,27 @@ class IconButton {
                 this.icon = 'https://ps.envi.com.pl/Resources/View/attach-file-icon.png';
                 break;
         }
+
         this.$dom = $('<a  target="_blank">');
-        if (this.url)
-            this.$dom.attr('href', this.url);
+        if (this.url) this.$dom.attr('href', this.url);
         var $img = $('<img height=21px>');
         $img.attr('src', this.icon);
+
         this.$dom.append($img);
+
         this.$dom.click(() => this.onClickFunction.apply(this.viewObject, []));
     }
 }
+
 class ExternalResourcesIconLink {
     constructor(icon, url) {
-        if (!icon)
-            throw new SyntaxError('Icon must be defined!');
+        if (!icon) throw new SyntaxError('Icon must be defined!');
         this.icon = icon;
         this.url = url;
         this.buidDom();
         this.$dom;
     }
+
     buidDom() {
         switch (this.icon) {
             case 'GD_ICON':
@@ -1162,41 +1275,50 @@ class ExternalResourcesIconLink {
                 this.icon = 'https://ps.envi.com.pl/Resources/View/attach-file-icon.png';
                 break;
         }
+
         this.$dom = $('<a  target="_blank">');
-        if (this.url)
-            this.$dom.attr('href', this.url);
+        if (this.url) this.$dom.attr('href', this.url);
         var $img = $('<img height=21px>');
         $img.attr('src', this.icon);
+
         this.$dom.append($img);
     }
 }
+
 class FormTools {
-    /*
+    /* 
      * initiates a radio input
      * it must be wrapped in a HTML element named as #name argument
      * @repository {object} must have .id and .name attribute
      */
+
     static createRadioButtons(name, repository) {
         var options = repository.items;
+
         var radioButtons = $('<div></div>');
+
         for (var i = 0; i < options.length; i++) {
             var id = name + 'Option' + i + 1;
             var radioBtn = $('<p>' +
                 '<input type="radio" name="' + name + '1" value="' + options[i].id + '" id="' + id + '" />' +
                 '<label for="' + id + '">' + options[i].name + '</label>' +
-                '</p>');
+                '</p>'
+            );
             radioBtn.appendTo(radioButtons);
         }
+
         radioButtons.click = function () {
             alert($(this).val() + "ssssss");
             repository.currentItemId = $(this).val();
         };
+
         $("[name^=" + name + "]").click(function () {
             alert($(this).val());
             repository.currentItemId = $(this).val();
         });
         return radioButtons;
     }
+
     static createSubmitButton(caption) {
         var button = $('<Button class="btn waves-effect waves-light" name="action"></button>');
         button.append(caption);
@@ -1204,10 +1326,11 @@ class FormTools {
         return button;
     }
     static createEmailInputField(id, label, isRequired, maxCharacters, validateRegex, dataError) {
-        var $emailInputField = FormTools.createInputField(id, label, isRequired, maxCharacters);
+        var $emailInputField = FormTools.createInputField(id, label, isRequired, maxCharacters)
         $emailInputField.children('input').attr('type', 'email');
         return $emailInputField;
     }
+
     static createInputField(id, label, isRequired, maxCharacters, validateRegex, dataError) {
         var $textField = $('<div class="input-field">');
         var $input = $('<input type="text" class="validate" id="' + id + '" name="' + id + '">');
@@ -1216,7 +1339,8 @@ class FormTools {
             .append($input)
             .append($label);
         if (isRequired)
-            $input.attr('required', 'true');
+            $input.attr('required', 'true')
+
         if (maxCharacters > 0) {
             $input
                 .attr('data-length', maxCharacters);
@@ -1226,12 +1350,15 @@ class FormTools {
             $input
                 .attr('pattern', validateRegex);
         }
+
         if (dataError !== undefined)
             $label.attr('data-error', dataError);
         else
             $label.attr('data-error', 'Niewłaściwy format danych');
+
         return $textField;
     }
+
     static createTextArea(id, label, isRequired, maxCharacters, dataError) {
         var $textArea = $('<div class="input-field">');
         var $input = $('<textarea class="materialize-textarea validate" id="' + id + '" name="' + id + '">');
@@ -1240,16 +1367,19 @@ class FormTools {
             .append($input)
             .append($label);
         if (isRequired)
-            $input.attr('required', 'true');
+            $input.attr('required', 'true')
+
         if (maxCharacters > 0) {
             $input
                 .attr('data-length', maxCharacters);
             $input.characterCounter();
         }
+
         if (dataError !== undefined)
-            $label.attr('data-error', dataError);
+            $label.attr('data-error', dataError)
         else
-            $label.attr('data-error', 'Wpisany tekst jest za długi');
+            $label.attr('data-error', 'Wpisany tekst jest za długi')
+
         return $textArea;
     }
     //kopatybilny z FormTools_mcss1.0 
@@ -1258,7 +1388,7 @@ class FormTools {
             'value="' + caption + '" ' +
             'class="waves-effect waves-teal btn-flat"' +
             '/>');
-        $button.click(function () { onClickFunction.apply(viewObject, []); });
+        $button.click(function () { onClickFunction.apply(viewObject, []) });
         return $button;
     }
     static createModalTriggerIcon(id, icon) {

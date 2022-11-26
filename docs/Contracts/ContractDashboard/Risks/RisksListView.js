@@ -1,14 +1,17 @@
-"use strict";
 class RisksListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Rejestr Ryzyk");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new RisksCollapsible('risksCollapsible').$dom);
+        
+        $('#actionsMenu').after(new RisksCollapsible('risksCollapsible').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }

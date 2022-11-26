@@ -1,14 +1,20 @@
-"use strict";
 class ProcessOurLetterModal extends ModalExternalRepository {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode, LettersSetup.lettersRepository);
         this.controller = new ProcessOurLetterModalController(this);
         this.doChangeFunctionOnItemName = 'editProcessStepInstanceOurLetter';
         this.doAddNewFunctionOnItemName = 'addNewProcessStepInstanceOurLetter';
-        this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id + '_entityMainAutoCompleteTextField', '', 'business', false, 'Wybierz nazwę');
+
+        this.entityMainAutoCompleteTextField = new AutoCompleteTextField(this.id + '_entityMainAutoCompleteTextField',
+            '',
+            'business',
+            false,
+            'Wybierz nazwę')
         this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEntityMainChosen, this.controller);
         this.selectedEntitiesMainHiddenInput = new HiddenInput(this.id + '_currentEntitiesMainHiddenInput', undefined, true);
+
         this.letterFileInput = new FileInput(this.id + '_letter_FileInput', 'Wybierz plik', this, false);
+
         var _this = this;
         this.creationDateFormElement = {
             input: new DatePicker(this.id + '_creationDatePickerField', 'Data sporządzenia', undefined, true),
@@ -18,11 +24,13 @@ class ProcessOurLetterModal extends ModalExternalRepository {
             input: new DatePicker(this.id + '_registrationDatePickerField', 'Data nadania', undefined, true),
             dataItemKeyName: 'registrationDate'
         };
+
         this.entityMainFormElement = {
             input: this.entityMainAutoCompleteTextField,
             description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnego podmiotu, możesz to pole zignorować' : 'Dodaj odbiorcę',
             dataItemKeyName: '_entityMain'
         };
+
         this.selectedEntitiesMainFormElement = {
             input: this.selectedEntitiesMainHiddenInput,
             dataItemKeyName: '_entitiesMain',
@@ -43,6 +51,7 @@ class ProcessOurLetterModal extends ModalExternalRepository {
                 _this.controller.initFileInput();
             }
         };
+
         this.formElements = [
             this.creationDateFormElement,
             this.registrationDateFormElement,
@@ -51,13 +60,14 @@ class ProcessOurLetterModal extends ModalExternalRepository {
             this.descriptionFormElement,
             this.fileFormElement
         ];
+
         this.initialise();
     }
+
     /*
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
     initAddNewData() {
         this.controller.initAddNewDataHandler();
     }
-}
-;
+};

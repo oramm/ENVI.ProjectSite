@@ -1,11 +1,11 @@
-"use strict";
 var risksRepository;
 var reactionsRepository;
 var contractsRepository;
 var milestonesRepository;
 var casesRepository;
-const probabilityRates = [1, 2, 3, 4];
+const probabilityRates = [1,2,3,4];
 const overallImpactRates = probabilityRates;
+
 class RisksSetup {
     static get risksRepository() {
         return risksRepository;
@@ -19,6 +19,7 @@ class RisksSetup {
     static set reactionsRepository(data) {
         reactionsRepository = data;
     }
+
     static get contractsRepository() {
         return contractsRepository;
     }

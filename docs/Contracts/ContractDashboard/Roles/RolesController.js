@@ -1,4 +1,3 @@
-"use strict";
 class RolesController {
     static main() {
         // Hide auth UI, then load client library.
@@ -6,28 +5,36 @@ class RolesController {
         $("#authorize-div").hide();
         rolesView.dataLoaded(false);
         //signoutButton.style.display = 'block';
+
         RolesSetup.roleGroupsRepository = new StaticRepository({
             name: 'RoleGroups repository',
             items: RolesSetup.groups
         });
-        RolesSetup.rolesRepository = new SimpleRepository('Roles repository', 'getRolesPerProjectList', 'addNewRole', 'editRole', 'deleteRole');
+
+        RolesSetup.rolesRepository = new SimpleRepository('Roles repository',
+            'getRolesPerProjectList',
+            'addNewRole',
+            'editRole',
+            'deleteRole'
+        );
+
         var promises = [
             RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + MainSetup.currentProject.ourId)
         ];
         Promise.all(promises)
             .then(() => {
-            console.log("Repositories initialised");
-        })
+                console.log("Repositories initialised");
+            })
             .then((res) => {
-            console.log(res);
-            rolesView.initialise();
-        })
+                console.log(res);
+                rolesView.initialise();
+            })
             .then(() => {
-            ReachTextArea.reachTextAreaInit();
-            $('.modal').modal();
-        })
+                ReachTextArea.reachTextAreaInit();
+                $('.modal').modal();
+            })
             .catch(err => {
-            console.error(err);
-        });
+                console.error(err);
+            });
     }
 }

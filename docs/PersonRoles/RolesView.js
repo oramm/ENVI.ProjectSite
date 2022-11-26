@@ -1,4 +1,3 @@
-"use strict";
 class RolesView extends Popup {
     constructor() {
         super();
@@ -12,6 +11,7 @@ class RolesView extends Popup {
                 connectedRepository: MainSetup.entitiesRepository
             });
             entityRawPanel.initialise(new EntityModal('newEntityModal', 'Dodaj podmiot', entityRawPanel, 'ADD_NEW'), 'FLAT');
+
             var personRawPanel = new RawPanel({
                 id: 'newPersonRawPanel',
                 connectedRepository: MainSetup.personsRepository
@@ -22,8 +22,9 @@ class RolesView extends Popup {
             $('#actionsMenu')
                 .append(entityRawPanel.$dom)
                 .append(personRawPanel.$dom)
-                .after(new RoleGroupsCollapsible('roleGroupsCollapsible').$dom);
+                .after(new RoleGroupsCollapsible('roleGroupsCollapsible').$dom)
             //.after($orgChart)
+
             //var orgchart = new OrgChart({
             //    parentNode: $orgChart[0],
             //    connectedRepository: RolesSetup.rolesRepository
@@ -32,6 +33,7 @@ class RolesView extends Popup {
             resolve('rolesCollection ok');
         });
     }
+
     actionsMenuInitialise() {
     }
 }

@@ -1,7 +1,8 @@
-"use strict";
 var issuesRepository;
 var reactionsRepository;
-var statusNames = ['Nowe', 'W trakcie', 'Do akceptacji', 'Zakończone', 'Duplikat'];
+
+var statusNames = ['Nowe','W trakcie','Do akceptacji','Zakończone','Duplikat'];
+
 class IssuesSetup {
     static get currentContract() {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
@@ -18,6 +19,7 @@ class IssuesSetup {
     static set reactionsRepository(data) {
         reactionsRepository = data;
     }
+    
     static get statusNames() {
         return statusNames;
     }

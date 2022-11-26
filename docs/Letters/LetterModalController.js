@@ -1,8 +1,8 @@
-"use strict";
 class LetterModalController {
     constructor(modal) {
         this.modal = modal;
     }
+
     /*
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
@@ -26,6 +26,7 @@ class LetterModalController {
         this.modal.creationDateFormElement.input.setValue(new Date());
         this.modal.registrationDateFormElement.input.setValue(new Date());
     }
+
     /*
      * ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
      */
@@ -40,32 +41,43 @@ class LetterModalController {
             }
         }
     }
+
     onContractChosen(chosenItem) {
         LettersSetup.contractsRepository.currentItem = chosenItem;
         if (chosenItem) {
             this.caseSelectFieldInitialize();
             this.modal.caseCollapsibleMultiSelect.showCollapsibleButton.setEnabled(true);
-        }
-        else
+        } else
             this.modal.caseCollapsibleMultiSelect.showCollapsibleButton.setEnabled(false);
     }
-    /*
+    /* 
      * wywoływane przy wyborze kontraktu i przy edycji
      */
     caseSelectFieldInitialize() {
-        this.modal.caseCollapsibleMultiSelect.initialise(LettersSetup.contractsRepository.currentItem, '_parent', LettersSetup.milestonesRepository, (dataItem) => dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name, LettersSetup.casesRepository, (dataItem) => {
-            var title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
-            title += (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]' + ' | ';
-            title += (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '' + ' ';
-            title += (dataItem.name) ? dataItem.name : ' ';
-            return title;
-        }, () => this.onCaseChosen(), () => this.onCaseUnchosen());
+        this.modal.caseCollapsibleMultiSelect.initialise(
+            LettersSetup.contractsRepository.currentItem,
+            '_parent',
+            LettersSetup.milestonesRepository,
+            (dataItem) => dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name,
+            LettersSetup.casesRepository,
+            (dataItem) => {
+                var title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
+                title += (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]' + ' | ';
+                title += (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '' + ' ';
+                title += (dataItem.name) ? dataItem.name : ' ';
+                return title;
+            },
+            () => this.onCaseChosen(),
+            () => this.onCaseUnchosen()
+        );
     }
+
     onCaseChosen(chosenItem) {
         if (chosenItem) {
             this.caseSelectFieldInitialize();
         }
     }
+
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
     entitiesChipsMainRefreshDataSet() {
         this.modal.selectedEntitiesMainHiddenInput.$dom.parent().children('.chip').remove();
@@ -78,9 +90,11 @@ class LetterModalController {
             }
         }
     }
+
     entitySelectFieldInitialize() {
         this.modal.entityMainAutoCompleteTextField.clearChosenItem();
     }
+
     checkEntity(entityItem) {
         //wyklucz sprawy wybrane już wcześniej
         var allowType = true;
@@ -88,30 +102,37 @@ class LetterModalController {
             if (existingEntityItem.id == entityItem.id)
                 allowType = false;
         });
-        return allowType; //entityTypeItem.milestoneTypeId==EntitiesSetup.currentMilestone._type.id;
+        return allowType;//entityTypeItem.milestoneTypeId==EntitiesSetup.currentMilestone._type.id;
     }
     onEntityMainChosen(chosenItem) {
         this.modal.entityMainAutoCompleteTextField.clearInput();
         this.addEntityMainItem(chosenItem);
     }
+
     addEntityMainItem(entityDataItem) {
         this.modal.selectedEntitiesMainHiddenInput.value.push(entityDataItem);
         this.appendEntityMainChip(entityDataItem);
     }
+
     appendEntityMainChip(entityDataItem) {
         var chipLabel = entityDataItem.name;
         this.modal.selectedEntitiesMainHiddenInput.$dom.parent()
-            .prepend(new Chip('entity_', chipLabel, entityDataItem, this.onEntityUnchosen, this).$dom);
+            .prepend(new Chip('entity_',
+                chipLabel,
+                entityDataItem,
+                this.onEntityUnchosen,
+                this).$dom);
+
     }
     onEntityUnchosen(unchosenItem) {
         //MainSetup.entitiesRepository.deleteFromCurrentItems(unchosenItem);
         this.removeEntityItem(unchosenItem);
     }
+
     //usuwa entityItem z listy HiddenInput.value[]
     removeEntityItem(entityDataItem) {
         var index = Tools.arrGetIndexOf(this.modal.selectedEntitiesMainHiddenInput.value, 'id', entityDataItem.id);
         this.modal.selectedEntitiesMainHiddenInput.value.splice(index, 1);
         this.modal.entityMainAutoCompleteTextField.repository.deleteFromCurrentItems(entityDataItem);
     }
-}
-;
+};

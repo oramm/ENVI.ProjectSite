@@ -1,4 +1,3 @@
-"use strict";
 class IncomingLetterModal extends LetterModal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
@@ -6,6 +5,7 @@ class IncomingLetterModal extends LetterModal {
         this.doChangeFunctionOnItemName = undefined;
         this.doAddNewFunctionOnItemName = undefined;
         this.initFormElements();
+
         this.formElements = [
             this.numberFormElement,
             this.contractFormElement,
@@ -19,6 +19,7 @@ class IncomingLetterModal extends LetterModal {
         ];
         this.initialise();
     }
+
     initFormElements() {
         super.initFormElements();
         var _this = this;

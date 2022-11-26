@@ -1,4 +1,3 @@
-"use strict";
 class RoleGroupsCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -23,6 +22,7 @@ class RoleGroupsCollapsible extends SimpleCollapsible {
     makeItem(dataItem) {
         return super.makeItem(dataItem);
     }
+
     makeBody(dataItem) {
         let subCollection = new RolesCollection({
             id: 'rolesCollection_' + dataItem.id,

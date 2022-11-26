@@ -1,23 +1,37 @@
-"use strict";
 class ContractModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
         this.controller = new ContractModalController(this);
-        var notOurTypes = MainSetup.contractTypesRepository.items.filter(item => !item.isOur);
+
+        var notOurTypes = MainSetup.contractTypesRepository.items.filter(item => !item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(notOurTypes, 'name');
+
         this.commentReachTextArea = new ReachTextArea(this.id + '_commentReachTextArea', 'Opis', false, 1000);
+
         this.ourIdRelatedSelectField = new SelectField(this.id + '_ourIdRelated_SelectField', 'Powiązana usługa IK lub PT', undefined, true);
         this.ourIdRelatedSelectField.initialise(this.makeOurPtIds(), '_ourIdOrNumber_Name');
         this.statusSelectField = new SelectField(this.id + '_status_SelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
-        this.contractorAutoCompleteTextField = new AutoCompleteTextField(this.id + '_contractorAutoCompleteTextField', 'Dodaj wykonawcę', 'business', false, 'Wybierz nazwę');
+
+        this.contractorAutoCompleteTextField = new AutoCompleteTextField(this.id + '_contractorAutoCompleteTextField',
+            'Dodaj wykonawcę',
+            'business',
+            false,
+            'Wybierz nazwę')
         this.contractorAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onContractorChosen, this.controller);
         this.selectedContractorsHiddenInput = new HiddenInput(this.id + '_currentContractorsHiddenInput', undefined, false);
-        this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_employerAutoCompleteTextField', 'Dodaj zamawiającego', 'business', false, 'Wybierz nazwę');
+
+        this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_employerAutoCompleteTextField',
+            'Dodaj zamawiającego',
+            'business',
+            false,
+            'Wybierz nazwę')
         this.employerAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEmployerChosen, this.controller);
         this.selectedEmployersHiddenInput = new HiddenInput(this.id + '_currentEmployersHiddenInput', undefined, false);
+
         var _this = this;
+
         this.formElements = [
             {
                 input: this.typeSelectField,
@@ -99,6 +113,6 @@ class ContractModal extends Modal {
     /** Używana w Modal.triggerAction(); po wyświelteniu modala */
     initEditData() {
         this.controller.initEditDataHandler();
+
     }
-}
-;
+};

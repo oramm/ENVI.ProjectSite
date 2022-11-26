@@ -1,11 +1,11 @@
-"use strict";
 class NavigationBar {
     constructor(title, parentViewObject) {
         this.parentViewObject = parentViewObject;
         this.title = title;
     }
+
     /*
-     * Musi być wywołana w klasie pochodnej
+     * Musi być wywołana w klasie pochodnej 
      */
     initialise() {
         this.$mainNavDom = $('<nav class="green darken-1">');
@@ -21,8 +21,11 @@ class NavigationBar {
         this.setShowMainPageAction();
         $(".sidenav").sidenav(); //funkcja z css Materialise
     }
+
     setShowMainPageAction() {
         this.$mainNavDom.find('.brand-logo').click(() => this.menuItemClickHandler('Dashboard/dashboard.html'));
+
+
     }
     addMenuItems($element) {
         $element.empty();
@@ -34,6 +37,7 @@ class NavigationBar {
         }
         this.menuItemSetClickAction();
     }
+
     menuItemSetClickAction() {
         this.$mainNavDom.find("li > a").off('click');
         this.$sideNavDom.find("li > a").off('click');
@@ -60,6 +64,7 @@ class NavigationBar {
         return $button;
     }
 }
+
 class MenuItem {
     constructor(caption, link) {
         this.caption = caption;

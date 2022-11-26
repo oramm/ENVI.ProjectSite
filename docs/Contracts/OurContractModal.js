@@ -1,17 +1,27 @@
-"use strict";
 class OurContractModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
-        var ourTypes = MainSetup.contractTypesRepository.items.filter(item => item.isOur);
+        var ourTypes = MainSetup.contractTypesRepository.items.filter(item => item.isOur)
         this.typeSelectField = new SelectField(this.id + '_type_SelectField', 'Typ kontraktu', undefined, true);
         this.typeSelectField.initialise(ourTypes, 'name');
+
         this.commentReachTextArea = new ReachTextArea(this.id + '_commentReachTextArea', 'Opis', false, 1000);
+
         this.statusSelectField = new SelectField(this.id + '_statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(ContractsSetup.statusNames);
-        this.managerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_managerAutoCompleteTextField', 'Koordynator', 'person', false, 'Wybierz imię i nazwisko');
+        this.managerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_managerAutoCompleteTextField',
+            'Koordynator',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
         this.managerAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onManagerChosen, this);
-        this.adminAutoCompleteTextField = new AutoCompleteTextField(this.id + '_adminAutoCompleteTextField', 'Administrator', 'person', false, 'Wybierz imię i nazwisko');
+        this.adminAutoCompleteTextField = new AutoCompleteTextField(this.id + '_adminAutoCompleteTextField',
+            'Administrator',
+            'person',
+            false,
+            'Wybierz imię i nazwisko')
         this.adminAutoCompleteTextField.initialise(MainSetup.personsPerProjectRepository, "_nameSurnameEmail", this.onAdminChosen, this);
+
         this.formElements = [
             {
                 input: this.typeSelectField,
@@ -73,10 +83,10 @@ class OurContractModal extends Modal {
             projectId: this.connectedResultsetComponent.connectedRepository.parentItemId
         };
     }
+
     /** Używana w Modal.triggerAction(); po wyświelteniu modala */
     initEditData() {
         this.connectedResultsetComponent.connectedRepository.currentItem._parent = MainSetup.currentProject;
         this.connectedResultsetComponent.connectedRepository.currentItem.projectId = this.connectedResultsetComponent.connectedRepository.parentItemId;
     }
-}
-;
+};

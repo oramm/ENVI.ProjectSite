@@ -1,5 +1,4 @@
-"use strict";
-/*
+/* 
  * http://materializecss.com/modals.html#!
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
  * externalrepository - jeżeli edytujemy obiekt spoza listy - inne repo niż connectedResultsetComponent.connectedRepository
@@ -11,17 +10,18 @@ class Modal {
         this.connectedResultsetComponent = connectedResultsetComponent;
         this.mode = mode;
         this.formElements = [];
-        if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT')
-            throw new SyntaxError('Zła wartość mode');
+        if (!mode && mode !== 'ADD_NEW' && mode !== 'EDIT') throw new SyntaxError('Zła wartość mode');
         this.dataObject;
         this.form;
         this.$dom;
         this.$title = $('<h4 class="modalTitle">');
     }
+
     initialise() {
         this.buildDom();
         Tools.hasFunction(this.submitTrigger);
     }
+
     buildDom() {
         this.form = new Form("form_" + this.id, "GET", this.formElements);
         this.$dom = $('<div id="' + this.id + '" class="modal modal-fixed-footer">');
@@ -36,6 +36,7 @@ class Modal {
         this.setTitle(this.title);
         this.setSubmitAction();
     }
+
     setTitle(title) {
         this.$title.text(title);
     }
@@ -50,10 +51,10 @@ class Modal {
         //var _this = this;
         $triggerIcon
             .addClass((this.mode === 'ADD_NEW') ? 'addNewItemIcon' : 'collectionItemEdit')
-            .addClass('modal-trigger');
+            .addClass('modal-trigger')
         return $triggerIcon;
     }
-    /** Akcja po włączeniu modala.
+    /** Akcja po włączeniu modala. 
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
     triggerAction(connectedResultsetComponent) {
@@ -63,8 +64,7 @@ class Modal {
         this.connectWithResultsetComponent(connectedResultsetComponent);
         this.refreshDataSets();
         if (this.mode == 'EDIT') {
-            if (typeof this.initEditData === 'function')
-                this.initEditData();
+            if (typeof this.initEditData === 'function') this.initEditData();
             this.fillForm();
         }
         else
@@ -93,10 +93,11 @@ class Modal {
             .addClass('modal-trigger');
         var _this = this;
         $button.click(function () {
-            _this.triggerAction(connectedResultsetComponent);
+            _this.triggerAction(connectedResultsetComponent)
         });
         $uiElelment.prepend($button);
     }
+
     /*
      * wywoływana przed pokazaniem modala
      * @param {Collection | Collapsible} component
@@ -125,6 +126,7 @@ class Modal {
         var duplicate = this.connectedResultsetComponent.connectedRepository.items.find(item => _.isEqual(item, currentEditedItem));
         return (duplicate) ? true : false;
     }
+
     /*
      * Krok 1 - po kliknięciu 'Submit' formularza dodawania
      * Proces: this.submitTrigger >> this.connectedResultsetComponent.connectedRepository.addNewPerson
@@ -134,26 +136,25 @@ class Modal {
     submitTrigger() {
         try {
             tinyMCE.triggerSave();
-        }
-        catch (e) {
-            console.log('Modal.submitTrigger():: TinyMCE not defined');
-        }
+        } catch (e) { console.log('Modal.submitTrigger():: TinyMCE not defined') }
+
         //obiekt z bieżącej pozycji na liście connectedResultsetComponent do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(this.connectedResultsetComponent.connectedRepository.currentItem);
+
         this.form.submitHandler(tmpDataObject)
             .then(() => {
-            if (this.form.validate(tmpDataObject)) {
-                if (this.mode === 'EDIT')
-                    this.editSubmitTrigger(tmpDataObject);
-                else
-                    this.addNewSubmitTrigger(tmpDataObject);
-                this.connectedResultsetComponent.connectedRepository.currentItem = tmpDataObject;
-            }
-            else
-                alert('Formularz źle wypełniony');
-            this.$dom.modal('close');
-        });
+                if (this.form.validate(tmpDataObject)) {
+                    if (this.mode === 'EDIT')
+                        this.editSubmitTrigger(tmpDataObject);
+                    else
+                        this.addNewSubmitTrigger(tmpDataObject)
+                    this.connectedResultsetComponent.connectedRepository.currentItem = tmpDataObject;
+                } else
+                    alert('Formularz źle wypełniony')
+                this.$dom.modal('close');
+            })
     }
+
     editSubmitTrigger(dataObject) {
         if (!this.doChangeFunctionOnItemName && !this.doChangeOnItemRoute)
             this.connectedResultsetComponent.connectedRepository.editItem(dataObject, this.connectedResultsetComponent);
@@ -162,6 +163,7 @@ class Modal {
             this.connectedResultsetComponent.connectedRepository.doChangeFunctionOnItem(dataObject, argument, this.connectedResultsetComponent);
         }
     }
+
     addNewSubmitTrigger(dataObject) {
         if (!this.doAddNewFunctionOnItemName && !this.doAddNewItemRoute)
             this.connectedResultsetComponent.connectedRepository.addNewItem(dataObject, this.connectedResultsetComponent);

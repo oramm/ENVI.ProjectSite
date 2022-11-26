@@ -1,4 +1,3 @@
-"use strict";
 class IssuesCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -9,10 +8,13 @@ class IssuesCollapsible extends SimpleCollapsible {
             isDeletable: true,
             hasArchiveSwitch: true,
             connectedRepository: IssuesSetup.issuesRepository,
+            //subitemsCount: 12
         });
+
         this.addNewModal = new IssueModalEngineer(id + '_newIssue', 'Zgłoś problem', this, 'ADD_NEW');
         this.editModal = new IssueModalEngineer(id + '_editIssue', 'Edytuj problem', this, 'EDIT');
         this.editModalContractor = new IssueModalContractor(id + '_editIssueIssueContractor', 'Edytuj problem W', this, 'EDIT');
+
         this.initialise(this.makeCollapsibleItemsList());
     }
     /*
@@ -25,6 +27,7 @@ class IssuesCollapsible extends SimpleCollapsible {
         item.name = collapsibleItemName = dataItem.name + '<br>Załatwić do: ' + dataItem.deadline;
         return item;
     }
+
     makeBody(dataItem) {
         var $panel = $('<div>')
             .attr('id', 'collapsibleBodyForIssue' + dataItem.id)
@@ -38,14 +41,14 @@ class IssuesCollapsible extends SimpleCollapsible {
             $dom: $panel
         };
     }
+
     /*
-     * Ustawia pryciski edycji wierszy,
+     * Ustawia pryciski edycji wierszy, 
      * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
      */
     addRowCrudButtons(row) {
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
-        if (row.dataItem._gdFolderUrl)
-            $crudMenu.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
+        if (row.dataItem._gdFolderUrl) $crudMenu.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
         if (this.isDeletable || this.isEditable) {
             var $currentRowEditIcon = this.$rowEditIcon();
             $crudMenu
@@ -53,12 +56,14 @@ class IssuesCollapsible extends SimpleCollapsible {
             //przepnij do właściwego modala
             if (row.dataItem.status.match(/W trakcie/i)) {
                 row.$dom.attr('editModal', 'editModalContractor');
+
                 $currentRowEditIcon.attr('data-target', this.editModalContractor.id);
             }
             if (this.isDeletable)
                 $crudMenu.append(this.$rowDeleteIcon());
         }
     }
+
     /*
      * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
      */
@@ -71,6 +76,7 @@ class IssuesCollapsible extends SimpleCollapsible {
             _this.getProperModal(condition).triggerAction(_this);
         });
     }
+
     getProperModal(condition) {
         switch (condition) {
             case 'editModalContractor':
@@ -78,5 +84,6 @@ class IssuesCollapsible extends SimpleCollapsible {
             default:
                 return this.editModal;
         }
+
     }
 }

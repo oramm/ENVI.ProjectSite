@@ -1,9 +1,9 @@
-"use strict";
 class MilestoneTypeContractTypeAssociationModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
         //this.milestoneTypeSelectField = new SelectFieldBrowserDefault(this.id + 'contractTypeSelectField', 'Typ kamienia milowego', true);
         //this.milestoneTypeSelectField.initialise(ContractTypesSetup.milestonesTypesRepository);
+
         this.milestoneTypeSelectField = new SelectField(this.id + '_milestoneTypeSelectField', 'Typ kamienia milowego', true);
         var _this = this;
         this.formElements = [
@@ -15,8 +15,10 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
                 input: this.milestoneTypeSelectField,
                 dataItemKeyName: '_milestoneType',
                 refreshDataSet: function () {
-                    _this.setTitle(_this.title + ' ' + ContractTypesSetup.contractTypesRepository.currentItem.name);
-                    var currentMilestoneTypes = ContractTypesSetup.milestoneTypesRepository.items.filter(item => this.excludeAssociatedType(item));
+                    _this.setTitle(_this.title + ' ' + ContractTypesSetup.contractTypesRepository.currentItem.name)
+                    var currentMilestoneTypes = ContractTypesSetup.milestoneTypesRepository.items.filter(
+                        item => this.excludeAssociatedType(item)
+                    );
                     this.input.initialise(currentMilestoneTypes, 'name');
                     //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
                 },
@@ -30,6 +32,7 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
                             if (_this.mode == 'EDIT' &&
                                 ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.currentItem._milestoneType.id != associatedTypeItem._milestoneType.id ||
                                 _this.mode != 'EDIT')
+
                                 test = false;
                         }
                     });
@@ -40,9 +43,12 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
                 input: new SwitchInput('', 'Ustaw jako domyślny'),
                 dataItemKeyName: 'isDefault'
             },
+
         ];
+
         this.initialise();
     }
+
     /*
      * Używana przy włączaniu Modala do edycji
      * @returns {undefined}
@@ -52,5 +58,4 @@ class MilestoneTypeContractTypeAssociationModal extends Modal {
             _contractType: ContractTypesSetup.contractTypesRepository.currentItem
         };
     }
-}
-;
+};

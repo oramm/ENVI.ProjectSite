@@ -1,4 +1,3 @@
-"use strict";
 class ProjectDetailsController {
     static main() {
         // Hide auth UI, then load client library.
@@ -6,11 +5,24 @@ class ProjectDetailsController {
         $("#authorize-div").hide();
         projectDetailsView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        ProcessesInstancesSetup.processesInstancesRepository = new SimpleRepository('ProcessesInstantces repository');
-        ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository', '', 'editProcessStepInstance');
+
+        ProcessesInstancesSetup.processesInstancesRepository = new SimpleRepository(
+            'ProcessesInstantces repository');
+
+        ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
+            '',
+            'editProcessStepInstance');
+
+
         CasesSetup.casesRepository = new SimpleRepository('Cases repository');
-        LettersSetup.lettersRepository = new SimpleRepository('Letters repository', 'addNewLetter', 'editLetter', 'deleteLetter');
+
+        LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
+            'addNewLetter',
+            'editLetter',
+            'deleteLetter');
+
         LettersSetup.casesRepository = CasesSetup.casesRepository;
+
         var promises = [
             ProcessesInstancesSetup.processesInstancesRepository.initialiseNodeJS('processInstances/?projectId=' + MainSetup.currentProject.ourId),
             ProcessesInstancesSetup.processesStepsInstancesRepository.initialiseNodeJS(`processStepInstances/?projectId=${MainSetup.currentProject.ourId}`),
@@ -19,15 +31,15 @@ class ProjectDetailsController {
         ];
         Promise.all(promises)
             .then(() => {
-            console.log("Repositories initialised");
-            projectDetailsView.initialise();
-        })
+                console.log("Repositories initialised");
+                projectDetailsView.initialise();
+            })
             .then(() => {
-            $('select').material_select();
-            $('.modal').modal();
-            $('.datepicker').pickadate(MainSetup.datePickerSettings);
-            ReachTextArea.reachTextAreaInit();
-            Materialize.updateTextFields();
-        });
+                $('select').material_select();
+                $('.modal').modal();
+                $('.datepicker').pickadate(MainSetup.datePickerSettings);
+                ReachTextArea.reachTextAreaInit();
+                Materialize.updateTextFields();
+            });
     }
 }

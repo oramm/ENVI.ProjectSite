@@ -1,4 +1,3 @@
-"use strict";
 class LettersCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -11,12 +10,16 @@ class LettersCollapsible extends SimpleCollapsible {
             connectedRepository: LettersSetup.lettersRepository
             //subitemsCount: 12
         });
+
         this.addNewIncomingLetterModal = new IncomingLetterModal(id + '_newIncomingLetterModal', 'Rejestruj pismo przychodzące', this, 'ADD_NEW');
         this.editIncomingLetterModal = new IncomingLetterModal(id + '_editIncomingLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
+
         this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
         this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
+
         this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj email', this, 'ADD_NEW');
         this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
+
         this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj przychodzące", this);
         this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące", this);
         this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj email", this, 'FLAT');
@@ -28,6 +31,7 @@ class LettersCollapsible extends SimpleCollapsible {
         this.$actionsMenu.append(entityRawPanel.$dom);
         this.appendLetterAttachmentsModal = new AppendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
+
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -42,36 +46,41 @@ class LettersCollapsible extends SimpleCollapsible {
                 editModal = this.editOurLetterModal;
             else
                 editModal = this.editOurOldTypeLetterModal;
-        }
-        else
+        } else
             editModal = this.editIncomingLetterModal;
+
         var name = '';
         name += '<strong>' + dataItem.creationDate + '</strong> ' + dataItem.description + '<Br>';
+
         name += 'Numer&nbsp;<strong>' + dataItem.number + '</strong>, ';
         name += (dataItem.isOur) ? 'Nadano:&nbsp;' : 'Otrzymano:&nbsp;';
         name += '<strong>' + dataItem.registrationDate + '</strong>, ';
         name += (dataItem.isOur) ? 'Odbiorca:&nbsp;' : 'Nadawca:&nbsp;';
-        name += this.makeEntitiesLabel(dataItem._entitiesMain);
+        name += this.makeEntitiesLabel(dataItem._entitiesMain)
+
         item.name = name;
         item.editModal = editModal;
         return item;
     }
+
     makeEntitiesLabel(entities) {
         var label = '';
         for (var i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + ', ';
+            label += entities[i].name + ', '
         }
         if (entities[i])
             label += entities[i].name;
         return label;
     }
+
     makeBody(dataItem) {
-        var $actionButtons = $('<div class="row">');
+        var $actionButtons = $('<div class="row">')
         //if (dataItem._canUserChangeFileOrFolder)
         this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
+
         var $casesUl = $('<ul class="collection">');
         this.createCasesList(dataItem, $casesUl);
-        var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświetli po odświeżeniu]';
+        var timestamp = (dataItem._lastUpdated) ? Tools.timestampToString(dataItem._lastUpdated) : '[czas wyświetli po odświeżeniu]'
         var $panel = $('<div>')
             .attr('id', 'collapsibleBody' + dataItem.id)
             .attr('letterId', dataItem.id)
@@ -79,12 +88,14 @@ class LettersCollapsible extends SimpleCollapsible {
             .append($('<strong>Dotyczy spraw:</stron>'))
             .append($casesUl)
             .append($('<span class="comment">Ostania zmiana: ' + timestamp + ' ' +
-            'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
+                'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
+
         return {
             collection: undefined,
             $dom: $panel
         };
     }
+
     createCasesList(dataItem, $casesUl) {
         for (var i = 0; i < dataItem._cases.length; i++) {
             var $caseLi = $('<li class="collection-item">');

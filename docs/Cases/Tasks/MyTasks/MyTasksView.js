@@ -1,14 +1,17 @@
-"use strict";
 class MyTasksView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Moje zadania");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new MyTasksCollection('myTasksCollection').$dom);
+        
+        $('#actionsMenu').after(new MyTasksCollection('myTasksCollection').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }

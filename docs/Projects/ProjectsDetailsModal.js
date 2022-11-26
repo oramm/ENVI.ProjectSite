@@ -1,16 +1,22 @@
-"use strict";
 class ProjectsDetailsModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
         this.controller = new ProjectModalController(this);
         this.commentReachTextArea = new ReachTextArea(this.id + '_commentReachTextArea', 'Opis techniczny', false, 500);
         this.financialCommentReachTextArea = new ReachTextArea(this.id + '_financialCommentReachTextArea', 'Opis finansowy', false, 500);
+
         this.statusSelectField = new SelectField(this.id + '_statusSelectField', 'Status', true);
         this.statusSelectField.initialise(['Nie rozpoczęty', 'W trakcie', 'Zakończony']);
-        this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_employerAutoCompleteTextField', 'Dodaj zamawiającego', 'business', false, 'Wybierz nazwę');
+
+        this.employerAutoCompleteTextField = new AutoCompleteTextField(this.id + '_employerAutoCompleteTextField',
+            'Dodaj zamawiającego',
+            'business',
+            false,
+            'Wybierz nazwę')
         this.employerAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', this.controller.onEmployerChosen, this.controller);
         this.selectedEmployersHiddenInput = new HiddenInput(this.id + '_currentEmployersHiddenInput', undefined, false);
         var _this = this;
+
         this.formElements = [
             {
                 input: new InputTextField(this.id + '_idTextField', 'Oznaczenie projektu', undefined, true, 150),
@@ -74,5 +80,4 @@ class ProjectsDetailsModal extends Modal {
         ];
         this.initialise();
     }
-}
-;
+};

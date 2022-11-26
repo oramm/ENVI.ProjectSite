@@ -1,4 +1,3 @@
-"use strict";
 class CaseModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
@@ -13,7 +12,9 @@ class CaseModal extends Modal {
                 input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function () {
-                    var currentCaseTypes = CasesSetup.caseTypesRepository.items.filter(item => this.checkCaseType(item));
+                    var currentCaseTypes = CasesSetup.caseTypesRepository.items.filter(
+                        item => this.checkCaseType(item)
+                    );
                     this.input.initialise(currentCaseTypes, 'name');
                     //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
                 },
@@ -22,6 +23,7 @@ class CaseModal extends Modal {
                     var allowType = true;
                     if (caseTypeItem.isUniquePerMilestone)
                         CasesSetup.casesRepository.items.map(existingCaseItem => {
+
                             if (existingCaseItem._type.id == caseTypeItem.id)
                                 //jeśli edytujesz dopuść typ istniejący taki jak ten edytowany
                                 if (_this.mode == 'EDIT' &&
@@ -30,7 +32,7 @@ class CaseModal extends Modal {
                                     allowType = false;
                                 }
                         });
-                    return allowType; //caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
+                    return allowType;//caseTypeItem.milestoneTypeId==CasesSetup.currentMilestone._type.id;
                 }
             },
             {
@@ -40,8 +42,7 @@ class CaseModal extends Modal {
                     //użytkownik edytuje 
                     if (_this.typeSelectField.getValue() && _this.typeSelectField.getValue().isUniquePerMilestone) {
                         this.input.$dom.hide();
-                    }
-                    else
+                    } else
                         this.input.$dom.show();
                 },
             },
@@ -62,8 +63,8 @@ class CaseModal extends Modal {
             _risk: {}
         };
     }
+
     onTypeChosen(chosenItem) {
         this.formElements[1].refreshDataSet();
     }
-}
-;
+};

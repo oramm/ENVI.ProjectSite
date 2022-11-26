@@ -15,7 +15,7 @@ const DISCOVERY_DOCS = [
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-SCOPES = 'https://www.google.com/calendar/feeds ' +
+const SCOPES = 'https://www.google.com/calendar/feeds ' +
     'https://www.googleapis.com/auth/documents ' +
     'https://www.googleapis.com/auth/drive ' +
     'https://www.googleapis.com/auth/script.external_request ' +
@@ -26,11 +26,23 @@ SCOPES = 'https://www.google.com/calendar/feeds ' +
 
 var mainWindowView;
 class MainSetup {
+    static projectsRepositoryLocalData: any;
+
+    static entitiesRepositoryLocalData: any;
+    static documentTemplatesRepositoryLocalData: any;
+
+    static personsRepositoryLocalData: any;
+    static personsPerProjectRepositoryLocalData: any;
+    static personsEnviRepositoryLocalData: any;
+    static contractTypesRepositoryLocalData: any;
+    static caseTypesRepositoryLocalData: any;
+
     static GApi = {
         tokenClient: null //klient dla skryptu Kontakty ENVI - Gsheet
     };
+
     static get currentUser() {
-        return JSON.parse(sessionStorage.getItem('Current User'));
+        return JSON.parse(<string>sessionStorage.getItem('Current User'));
     }
 
     static set currentUser(data) {
@@ -38,10 +50,10 @@ class MainSetup {
     }
 
     static get currentProject() {
-        return JSON.parse(sessionStorage.getItem('Projects repository')).currentItemLocalData;
+        return JSON.parse(<string>sessionStorage.getItem('Projects repository')).currentItemLocalData;
     }
     static get currentContract() {
-        return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItemLocalData;
+        return JSON.parse(<string>sessionStorage.getItem('Contracts repository')).currentItemLocalData;
     }
 
     static serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
@@ -50,8 +62,9 @@ class MainSetup {
     static get projectsRepository() {
         if (MainSetup.projectsRepositoryLocalData) console.log('### true: MainSetup.projectsRepositoryLocalData: ')
         if (!MainSetup.projectsRepositoryLocalData) {
+            // @ts-ignore
             MainSetup.projectsRepositoryLocalData = new SimpleRepository(
-                JSON.parse(sessionStorage.getItem('Projects repository'))
+                JSON.parse(<string>sessionStorage.getItem('Projects repository'))
             );
         }
         return MainSetup.projectsRepositoryLocalData;
@@ -60,13 +73,15 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get entitiesRepository() {
         if (!MainSetup.entitiesRepositoryLocalData)
-            MainSetup.entitiesRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('Entities repository')));
+            // @ts-ignore
+            MainSetup.entitiesRepositoryLocalData = new SimpleRepository(JSON.parse(<string>sessionStorage.getItem('Entities repository')));
         return MainSetup.entitiesRepositoryLocalData;
     }
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get personsRepository() {
         if (!MainSetup.personsRepositoryLocalData)
-            MainSetup.personsRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('Persons repository')));
+            // @ts-ignore
+            MainSetup.personsRepositoryLocalData = new SimpleRepository(JSON.parse(<string>sessionStorage.getItem('Persons repository')));
         return MainSetup.personsRepositoryLocalData;
     }
     static set personsRepository(data) {
@@ -75,7 +90,8 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get personsPerProjectRepository() {
         if (!MainSetup.personsPerProjectRepositoryLocalData)
-            MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerProject repository')))
+            // @ts-ignore
+            MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository(JSON.parse(<string>sessionStorage.getItem('PersonsPerProject repository')))
         return MainSetup.personsPerProjectRepositoryLocalData;
     }
     static set personsPerProjectRepository(data) {
@@ -84,7 +100,8 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get personsEnviRepository() {
         if (!MainSetup.personsEnviRepositoryLocalData)
-            MainSetup.personsEnviRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsEnvi repository')));
+            // @ts-ignore
+            MainSetup.personsEnviRepositoryLocalData = new SimpleRepository(JSON.parse(<string>sessionStorage.getItem('PersonsEnvi repository')));
         return MainSetup.personsEnviRepositoryLocalData;
     }
     static set personsEnviRepository(data) {
@@ -93,8 +110,9 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get documentTemplatesRepository() {
         if (!MainSetup.documentTemplatesRepositoryLocalData)
+            // @ts-ignore
             MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository(
-                JSON.parse(sessionStorage.getItem('DocumentTemplates repository'))
+                JSON.parse(<string>sessionStorage.getItem('DocumentTemplates repository'))
             );
         return MainSetup.documentTemplatesRepositoryLocalData;
     }
@@ -104,8 +122,9 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get contractTypesRepository() {
         if (!MainSetup.contractTypesRepositoryLocalData)
+            // @ts-ignore
             MainSetup.contractTypesRepositoryLocalData = new SimpleRepository(
-                JSON.parse(sessionStorage.getItem('ContractTypes repository'))
+                JSON.parse(<string>sessionStorage.getItem('ContractTypes repository'))
             );
         return MainSetup.contractTypesRepositoryLocalData;
     }
@@ -115,8 +134,9 @@ class MainSetup {
     //getterów nie używać w klasie inicjującej ten MainSetup z bazy
     static get caseTypesRepository() {
         if (!MainSetup.caseTypesRepositoryLocalData)
+            // @ts-ignore
             MainSetup.caseTypesRepositoryLocalData = new SimpleRepository(
-                JSON.parse(sessionStorage.getItem('CaseTypes repository'))
+                JSON.parse(<string>sessionStorage.getItem('CaseTypes repository'))
             );
         return MainSetup.caseTypesRepositoryLocalData;
     }
@@ -140,6 +160,8 @@ class MainSetup {
         format: 'dd-mm-yyyy',
         formatSubmit: 'yyyy-mm-dd'
     }
+
+
 }
 MainSetup.projectsRepositoryLocalData;
 

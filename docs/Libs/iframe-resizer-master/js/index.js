@@ -1,3 +1,2 @@
-"use strict";
-exports.iframeResizer = require('./iframeResizer');
-exports.iframeResizerContentWindow = require('./iframeResizer.contentWindow');
+exports.iframeResizer = require('./iframeResizer')
+exports.iframeResizerContentWindow = require('./iframeResizer.contentWindow')

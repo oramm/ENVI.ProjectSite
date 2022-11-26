@@ -1,11 +1,11 @@
-"use strict";
 class LettersListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Pisma");
         $("#title").after(new LettersCollapsible('lettersCollapsible').$dom);
-        this.dataLoaded(true);
+        this.dataLoaded(true); 
     }
 }

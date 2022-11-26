@@ -1,4 +1,3 @@
-"use strict";
 class MeetingArrangementsCollection extends SimpleCollection {
     constructor(initParamObject) {
         super({
@@ -32,11 +31,16 @@ class MeetingArrangementsCollection extends SimpleCollection {
             dataItem: dataItem
         };
     }
+
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        var titleAtomicEditLabel = new AtomicEditLabel(dataItem._case._parent._parent.number + ' ' + dataItem._case._type.folderNumber + ' ' + dataItem._case._type.name + ' ' + dataItem.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
+        var titleAtomicEditLabel = new AtomicEditLabel(dataItem._case._parent._parent.number + ' ' + dataItem._case._type.folderNumber + ' ' + dataItem._case._type.name + ' ' + dataItem.name,
+            dataItem,
+            new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
+            'name',
+            this);
         return titleAtomicEditLabel.$dom;
     }
     /*
@@ -45,29 +49,35 @@ class MeetingArrangementsCollection extends SimpleCollection {
     makeDescription(dataItem) {
         if (!dataItem.description)
             dataItem.description = '';
+
         var $collectionElementDescription = $('<span>');
         var $footer = $('<span class="comment">');
         if (dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br><span>');
+
         var deadlineLabel = '';
         if (dataItem.deadline) {
             deadlineLabel = 'Wykonać do: ' + dataItem.deadline + '&#9889;';
             $footer.append(deadlineLabel);
         }
+
         var ownerLabel = '';
         if (dataItem._owner) {
             ownerLabel = 'Przypisane do:&nbsp;' + dataItem._owner.name + '&nbsp;' + dataItem._owner.surname;
             $footer.append(' ' + ownerLabel);
         }
+
         $collectionElementDescription
             .append($footer);
         return $collectionElementDescription;
     }
+
     makeList() {
         return super.makeList().filter((item) => {
             return item.dataItem._parent.id == this.parentDataItem.id;
         });
     }
+
     selectTrigger(itemId) {
         super.selectTrigger(itemId);
     }

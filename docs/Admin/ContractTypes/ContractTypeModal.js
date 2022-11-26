@@ -1,28 +1,29 @@
-"use strict";
 class ContractTypeModal extends Modal {
-    constructor(id, title, connectedResultsetComponent, mode) {
+    constructor(id, title, connectedResultsetComponent, mode){
         super(id, title, connectedResultsetComponent, mode);
-        this.descriptionReachTextArea = new ReachTextArea(this.id + '_descriptonReachTextArea', 'Opis', false, 300);
+        
+        this.descriptionReachTextArea = new ReachTextArea (this.id + '_descriptonReachTextArea','Opis', false, 300);
+
         this.formElements = [
-            { input: new InputTextField(this.id + 'nameTextField', 'Nazwa typu kontraktu', undefined, true, 10),
+            {   input: new InputTextField (this.id + 'nameTextField','Nazwa typu kontraktu', undefined, true, 10),
                 dataItemKeyName: 'name'
             },
-            { input: this.descriptionReachTextArea,
+            {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             },
-            { input: new SwitchInput('', 'Umowa ENVI'),
+            {   input: new SwitchInput('','Umowa ENVI'),
                 dataItemKeyName: 'isOur'
             }
         ];
         this.initialise();
     }
+
     /*
      * Przed dodaniem nowego kontraktu trzeba wyczyścić currentItem np. z ourId
      */
-    initAddNewData() {
+    initAddNewData(){
         this.connectedResultsetComponent.connectedRepository.currentItem = {
-        //Ustaw tu parametry kontekstowe jeśli konieczne
+            //Ustaw tu parametry kontekstowe jeśli konieczne
         };
     }
-}
-;
+};

@@ -1,50 +1,57 @@
-"use strict";
 class CurrentMilestoneModal extends Modal {
-    constructor(id, title, connectedResultsetComponent, mode) {
+    constructor(id, title, connectedResultsetComponent, mode){
         super(id, title, connectedResultsetComponent, mode);
+   
+        
         this.typeSelectField = new SelectField(this.id + 'typeSelectField', 'Typ kamienia milowego', undefined, false);
-        this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', false, 500);
-        this.startDatePicker = new DatePicker(this.id + 'startDatePickerField', 'Początek', true);
-        this.endDatePicker = new DatePicker(this.id + 'endDatePickerField', 'Koniec', true);
+        this.descriptionReachTextArea = new ReachTextArea (this.id + 'descriptionReachTextArea','Opis', false, 500);
+        this.startDatePicker = new DatePicker(this.id + 'startDatePickerField','Początek', true);
+        this.endDatePicker = new DatePicker(this.id + 'endDatePickerField','Koniec', true);     
+        
         this.statusSelectField = new SelectField(this.id + 'statusSelectField', 'Status', undefined, true);
         this.statusSelectField.initialise(MilestonesSetup.statusNames);
+        
         this.formElements = [
-            { input: this.typeSelectField,
+            {   input: this.typeSelectField,
                 dataItemKeyName: '_type',
-                refreshDataSet: function () {
-                    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(item => this.checkContractType(item.contractType));
-                    this.input.initialise(currentMilestoneTypes, 'name');
-                },
-                checkContractType: function (type) {
+                refreshDataSet: function (){    var currentMilestoneTypes = MilestonesSetup.milestoneTypesRepository.items.filter(
+                                                    item=> this.checkContractType(item.contractType)
+                                                );
+                                                this.input.initialise(currentMilestoneTypes, 'name');
+                                            },
+                checkContractType: function(type){
                     var regExpr;
-                    if (MilestonesSetup.milestonesRepository.currentItem._contractType.name !== 'Żółty')
-                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType + '|^$' + '|' + MilestonesSetup.milestonesRepository.currentItem._contractType.name);
+                    if(MilestonesSetup.milestonesRepository.currentItem._contractType.name!=='Żółty')
+                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType+'|^$' + '|' + MilestonesSetup.milestonesRepository.currentItem._contractType.name);
                     else
-                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType + '|^$' + '|Żółty|Czerwony');
+                        regExpr = new RegExp(MilestonesSetup.milestonesRepository.currentItem._parent._ourType+'|^$' + '|Żółty|Czerwony');
+                    
                     return Array.isArray(type.match(regExpr));
                 }
+                                            
             },
-            { input: new InputTextField(this.id + 'nameTextField', 'Dopisek', undefined, false, 50),
+            {   input: new InputTextField(this.id + 'nameTextField','Dopisek', undefined, false, 50),
                 dataItemKeyName: 'name'
             },
-            { input: this.descriptionReachTextArea,
+            {   input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             },
-            { input: this.startDatePicker,
+            {   input: this.startDatePicker,
                 dataItemKeyName: 'startDate'
             },
-            { input: this.endDatePicker,
+            {   input: this.endDatePicker,
                 dataItemKeyName: 'endDate'
             },
-            { input: this.statusSelectField,
+            {   input: this.statusSelectField,
                 dataItemKeyName: 'status'
             }
         ];
         this.initialise();
     }
+    
     /*
      * inicjuje dane przed dodaniem nowego elementu - czyści CurrentItem i ew. ustawia zmienne kontekstowe niewyświetlane w modalu
      */
-    initAddNewData() { }
-}
-;
+    initAddNewData(){}
+   
+};

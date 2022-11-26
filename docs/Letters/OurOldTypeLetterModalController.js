@@ -1,4 +1,3 @@
-"use strict";
 class OurOldTypeLetterModalController extends IncomingLetterModalController {
     constructor(modal) {
         super(modal);
@@ -10,5 +9,4 @@ class OurOldTypeLetterModalController extends IncomingLetterModalController {
         super.initAddNewDataHandler();
         this.modal.connectedResultsetComponent.connectedRepository.currentItem.isOur = true;
     }
-}
-;
+};

@@ -1,9 +1,13 @@
-"use strict";
 class RoleModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
+
         this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', true, 500);
-        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField', 'Imię i nazwisko', 'person', true, 'Wybierz imię i nazwisko');
+        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField',
+            'Imię i nazwisko',
+            'person',
+            true,
+            'Wybierz imię i nazwisko');
         var _this = this;
         this.formElements = [
             {
@@ -15,6 +19,7 @@ class RoleModal extends Modal {
                 dataItemKeyName: '_person',
                 refreshDataSet() {
                     _this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
+
                 }
             },
             {
@@ -30,13 +35,12 @@ class RoleModal extends Modal {
      */
     initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem =
-            {
-                projectOurId: MainSetup.currentProject.ourId,
-                _contract: MainSetup.currentContract,
-                _group: this.connectedResultsetComponent.parentDataItem
-            };
-        this.personAutoCompleteTextField.setValue(MainSetup.personsRepository.currentItem);
+        {
+            projectOurId: MainSetup.currentProject.ourId,
+            _contract: MainSetup.currentContract,
+            _group: this.connectedResultsetComponent.parentDataItem
+        };
+        this.personAutoCompleteTextField.setValue(MainSetup.personsRepository.currentItem)
         this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
     }
-}
-;
+};

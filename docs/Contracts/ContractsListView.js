@@ -1,11 +1,16 @@
-"use strict";
 class ContractsListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Lista kontraktów");
-        $("#title").after(new ContractsCollapsible('contractsCollapsible').$dom);
+        
+        $("#title").after(new ContractsCollapsible('contractsCollapsible').$dom);  
         this.dataLoaded(true);
+        
     }
+
+    
+    
 }

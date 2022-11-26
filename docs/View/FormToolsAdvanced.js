@@ -1,4 +1,3 @@
-"use strict";
 class CollapsibleSelectCollection extends SimpleCollection {
     constructor(initParamObject) {
         super({
@@ -30,11 +29,16 @@ class CollapsibleSelectCollection extends SimpleCollection {
             dataItem: dataItem
         };
     }
+
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        var titleAtomicEditLabel = new AtomicEditLabel(this.parentCollapsibleSelect.makeCollectionItemNameFunction(dataItem), dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
+        var titleAtomicEditLabel = new AtomicEditLabel(this.parentCollapsibleSelect.makeCollectionItemNameFunction(dataItem),
+            dataItem,
+            new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
+            'name',
+            this);
         return titleAtomicEditLabel.$dom;
     }
     /*
@@ -42,16 +46,20 @@ class CollapsibleSelectCollection extends SimpleCollection {
      */
     makeDescription(dataItem) {
         var $collectionElementDescription = $('<span>');
+
         if (dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
+
         return $collectionElementDescription;
     }
+
     makeList() {
         return super.makeList().filter((item) => {
             //console.log('this.parentDataItem.id: %s ==? %s', this.parentDataItem.id, item.dataItem._parent.id)
-            return item.dataItem._parent.id == this.parentDataItem.id;
+            return item.dataItem._parent.id == this.parentDataItem.id
         });
     }
+
     selectTrigger(itemId) {
         if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId) {
             super.selectTrigger(itemId);
@@ -60,6 +68,7 @@ class CollapsibleSelectCollection extends SimpleCollection {
         }
     }
 }
+
 class CollapsibleSelect {
     constructor(id, label, isRequired, parentForm) {
         this.id = id;
@@ -71,8 +80,9 @@ class CollapsibleSelect {
         this.$dom;
         this.$label = $('<label>' + this.label + '</label>');
         this.showCollapsibleButton = new RaisedButton('Wybierz opcję', this.showCollapsible, this);
-        this.hideCollapsibleButton = new RaisedButton('Nie wybieraj', this.hideCollapsible, this);
+        this.hideCollapsibleButton = new RaisedButton('Nie wybieraj', this.hideCollapsible, this)
         this.buildDom();
+
         var _this = this;
         //obiekt tworzonony dopiero w this.initialise()
         this.Collapsible = class extends SimpleCollapsible {
@@ -86,6 +96,7 @@ class CollapsibleSelect {
                     hasArchiveSwitch: false,
                     connectedRepository: _this.collapsibleRepository,
                     parentDataItem: initParamObject.parentDataItem,
+                    //subitemsCount: 12
                 });
                 this.initialise(this.makeCollapsibleItemsList());
             }
@@ -99,9 +110,13 @@ class CollapsibleSelect {
                 item.name = _this.makeCollapsibleItemNameFunction(dataItem);
                 return item;
             }
+
             makeCollapsibleItemsList() {
-                return super.makeCollapsibleItemsList().filter((item) => item.dataItem[_this.parentObjectName]['id'] == this.parentDataItem.id);
+                return super.makeCollapsibleItemsList().filter(
+                    (item) => item.dataItem[_this.parentObjectName]['id'] == this.parentDataItem.id
+                );
             }
+
             makeBody(dataItem) {
                 const subCollection = new CollapsibleSelectCollection({
                     id: _this.id + '_CollapsibleSelect_itemsListCollection_' + dataItem.id,
@@ -113,13 +128,15 @@ class CollapsibleSelect {
                 const $panel = $('<div>')
                     .attr('id', 'collapsibleBody' + dataItem.id)
                     .append(subCollection.$dom);
+
                 return {
                     collection: subCollection,
                     $dom: $panel
                 };
             }
-        };
+        }
     }
+
     buildDom() {
         this.$dom = $('<div>');
         this.$selectedOptionsPanel = $('<div>');
@@ -146,47 +163,59 @@ class CollapsibleSelect {
         this.makeCollectionItemNameFunction = makeCollectionItemNameFunction;
         this.itemChosenHandler = itemChosenHandler;
         this.itemUnchosenHandler = itemUnchosenHandler;
+
         this.collapsible = new this.Collapsible({ parentDataItem: parenDataItem });
         this.$dom.append(this.collapsible.$dom);
         this.hideCollapsible();
     }
+
     onItemChosen() {
         this.value = this.connectedRepository.currentItem;
         this.lastSelectedItem = this.connectedRepository.currentItem;
         this.$dom.find('.chip').remove();
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler)
-            this.itemChosenHandler();
+        if (this.itemChosenHandler) this.itemChosenHandler();
     }
+
     showCollapsible() {
         this.showCollapsibleButton.$dom.hide();
         this.hideCollapsibleButton.$dom.show();
         this.collapsible.$dom.show();
     }
+
     hideCollapsible() {
         this.collapsible.$dom.hide();
         this.showCollapsibleButton.$dom.show();
         this.hideCollapsibleButton.$dom.hide();
     }
+
     addChip(dataItem) {
         this.$selectedOptionsPanel
-            .append(new Chip('CollapsibleSelect_itemsListCollection_case_' + dataItem.id, this.makeCollectionItemNameFunction(this.lastSelectedItem), dataItem, this.onItemUnchosen, this).$dom);
+            .append(new Chip('CollapsibleSelect_itemsListCollection_case_' + dataItem.id,
+                this.makeCollectionItemNameFunction(this.lastSelectedItem),
+                dataItem,
+                this.onItemUnchosen,
+                this).$dom);
     }
+
     clear() {
         this.$selectedOptionsPanel.children().remove();
         this.connectedRepository.currentItem = undefined;
         this.connectedRepository.currentItems = undefined;
         this.value = undefined;
     }
+
     initValue() {
+
     }
+
     validate() {
         if (this.isRequired) {
             return this.value !== this.defaultDisabledOption && this.value !== undefined;
-        }
-        else
+        } else
             return true;
+
     }
     simulateChosenItem(inputvalue) {
         this.value = inputvalue;
@@ -194,25 +223,26 @@ class CollapsibleSelect {
         if (!Tools.search(inputvalue.id, 'id', this.value))
             this.addChip(this.lastSelectedItem);
         this.hideCollapsible();
-        if (this.itemChosenHandler)
-            this.itemChosenHandler();
+        if (this.itemChosenHandler) this.itemChosenHandler();
     }
+
     getValue() {
         return this.value;
     }
 }
+
 class CollapsibleMultiSelect extends CollapsibleSelect {
     constructor(id, label, isRequired, parentForm) {
-        super(id, label, isRequired, parentForm);
+        super(id, label, isRequired, parentForm)
     }
     onItemChosen() {
         this.value = Array.from(this.collectionRepository.currentItems);
         this.lastSelectedItem = this.collectionRepository.currentItem;
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler)
-            this.itemChosenHandler();
+        if (this.itemChosenHandler) this.itemChosenHandler();
     }
+
     simulateChosenItem(inputvalue) {
         this.value = inputvalue;
         for (const item of inputvalue) {
@@ -223,11 +253,11 @@ class CollapsibleMultiSelect extends CollapsibleSelect {
         this.hideCollapsible();
         this.itemChosenHandler();
     }
+
     onItemUnchosen(unchosenItem) {
         this.collectionRepository.deleteFromCurrentItems(unchosenItem);
         this.value = Array.from(this.collectionRepository.currentItems);
-        if (this.itemUnchosenHandler)
-            this.itemUnchosenHandler();
+        if (this.itemUnchosenHandler) this.itemUnchosenHandler();
         this.$dom.find('.collection-item#' + unchosenItem.id).show();
     }
 }

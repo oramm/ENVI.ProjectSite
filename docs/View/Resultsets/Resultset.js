@@ -1,4 +1,3 @@
-"use strict";
 class Resultset {
     constructor(initParamObject) {
         this.id = initParamObject.id;
@@ -12,14 +11,16 @@ class Resultset {
         this.isDeletable = (initParamObject.isDeletable === undefined) ? true : initParamObject.isDeletable;
         this.isEditable = initParamObject.isEditable;
         this.isCopyable = (initParamObject.isCopyable === undefined) ? false : initParamObject.isCopyable;
-        this.hasArchiveSwitch = false; //initParamObject.hasArchiveSwitch;
+        this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
         this.editModal = initParamObject.editModal;
         this.addNewModal = initParamObject.addNewModal;
         this.connectedRepository = initParamObject.connectedRepository;
         this.connectedRepositoryGetRoute = initParamObject.connectedRepositoryGetRoute;
+
         this.$dom;
         this.$actionsMenu;
     }
+
     makePreloader(id) {
         var $preloader = $('<div class="progress">');
         $preloader

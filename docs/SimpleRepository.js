@@ -1,21 +1,26 @@
-"use strict";
 class SimpleRepository extends Repository {
     /*
-     *
+     * 
      * @param {String || Object} initParameter może to być nazwa repozytorim, albo obiekt z session Strorage
      * @param {String} addNewServerFunctionName
      * @param {String} editServerFunctionName
      * @param {String} deleteServerFunctionName
      * @returns {SimpleRepository}
      */
-    constructor(initParameter, addNewServerFunctionName, editServerFunctionName, deleteServerFunctionName, copyServerFunctionName = addNewServerFunctionName) {
+    constructor(initParameter,
+        addNewServerFunctionName,
+        editServerFunctionName,
+        deleteServerFunctionName,
+        copyServerFunctionName = addNewServerFunctionName) {
         super(initParameter);
         if (initParameter.parentItemId)
-            this.parentItemId = initParameter.parentItemId;
+            this.parentItemId = initParameter.parentItemId
         else
             this.parentItemIdFromURL();
+
         //stary typ repozytium
         if (typeof initParameter === 'string' && !initParameter.actionsNodeJSSetup) {
+
             this.addNewServerFunctionName = addNewServerFunctionName;
             this.editServerFunctionName = editServerFunctionName;
             this.deleteServerFunctionName = deleteServerFunctionName;
@@ -29,6 +34,7 @@ class SimpleRepository extends Repository {
             this.deleteServerFunctionName = initParameter.deleteServerFunctionName;
         }
     }
+
     initialiseNodeJS(requestParams) {
         return new Promise((resolve, reject) => {
             $.ajax({
@@ -45,22 +51,27 @@ class SimpleRepository extends Repository {
                     alert(xhr.responseText);
                 }
             });
+
         });
+
     }
     //najczęściej jest to projectId
     parentItemIdFromURL() {
         this.parentItemId = Tools.getUrlVars()['parentItemId'];
     }
+
     //Krok 2 - wywoływana przy SUBMIT
     addNewItem(dataItem, viewObject) {
-        return this.doAddNewFunctionOnItem(dataItem, this.addNewServerFunctionName, viewObject);
+        return this.doAddNewFunctionOnItem(dataItem, this.addNewServerFunctionName, viewObject)
         //super.addNewItem(dataItem, this.addNewServerFunctionName, viewObject);
     }
+
     //Krok 2 - wywoływana przy SUBMIT
     editItem(dataItem, viewObject) {
         let argument = (this.actionsNodeJSSetup.editRoute) ? this.actionsNodeJSSetup.editRoute : this.editServerFunctionName;
         return this.doChangeFunctionOnItem(dataItem, argument, viewObject);
     }
+
     /*
      * Krok 2 - Wywoływane przez trigger w klasie pochodnej po Resultset
      */
@@ -68,12 +79,15 @@ class SimpleRepository extends Repository {
         if (this.actionsNodeJSSetup.deleteRoute)
             await super.deleteItemNodeJS(dataItem, this.actionsNodeJSSetup.deleteRoute, viewObject);
         else
-            await super.deleteItem(dataItem, this.deleteServerFunctionName, viewObject);
+            await super.deleteItem(dataItem, this.deleteServerFunctionName, viewObject)
         return this.name + ': item deleted';
+
     }
+
     async copyCurrentItem(viewObject) {
         return await this.copyItem(this.currentItem, viewObject);
     }
+
     async copyItem(dataItem, viewObject) {
         let tmpDataObject = Tools.cloneOfObject(dataItem);
         tmpDataObject.id = undefined;
@@ -84,6 +98,7 @@ class SimpleRepository extends Repository {
             result = await super.addNewItem(tmpDataObject, this.copyServerFunctionName, viewObject);
         return result;
     }
+
     /*
      * wykonuje dowolną funkcję z serwera dotyczącą danej pozycji na liście viewObject
      */
@@ -98,6 +113,7 @@ class SimpleRepository extends Repository {
         console.log('%s:: wykonano funkcję: %s', this.name, serverFunctionNameOrRoute, result);
         return (result);
     }
+
     /*
      * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
      */
@@ -110,5 +126,4 @@ class SimpleRepository extends Repository {
         console.log('%s:: wykonano funkcję: %s, %o', this.name, serverFunctionName, result);
         return result;
     }
-}
-;
+};

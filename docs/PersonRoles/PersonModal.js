@@ -1,8 +1,13 @@
-"use strict";
 class PersonModal extends Modal {
     constructor(id, title, connectedResultsetComponent) {
         super(id, title, connectedResultsetComponent, 'ADD_NEW');
-        this.entityAutocompleteTextField = new AutoCompleteTextField(this.id + 'entityAutoCompleteTextField', 'Firma', 'business_center', true, 'Wybierz nazwę podmiotu z listy');
+
+        this.entityAutocompleteTextField = new AutoCompleteTextField(this.id + 'entityAutoCompleteTextField',
+            'Firma',
+            'business_center',
+            true,
+            'Wybierz nazwę podmiotu z listy')
+        
         var _this = this;
         this.formElements = [
             {
@@ -37,7 +42,7 @@ class PersonModal extends Modal {
                 dataItemKeyName: 'phone'
             },
             {
-                input: new ReachTextArea(this.id + 'commentReachTextArea', 'Uwagi', false, 300),
+                input: new ReachTextArea (this.id + 'commentReachTextArea','Uwagi', false, 300),
                 dataItemKeyName: 'comment'
             }
         ];
@@ -48,9 +53,10 @@ class PersonModal extends Modal {
      * @returns {undefined}
      */
     initAddNewData() {
-        this.connectedResultsetComponent.connectedRepository.currentItem = {};
+        this.connectedResultsetComponent.connectedRepository.currentItem = {
+         
+        }
         this.entityAutocompleteTextField.initialise(MainSetup.entitiesRepository, "name", this.onEntityChosen, this);
         this.entityAutocompleteTextField.setValue(MainSetup.entitiesRepository.currentItem);
     }
-}
-;
+};

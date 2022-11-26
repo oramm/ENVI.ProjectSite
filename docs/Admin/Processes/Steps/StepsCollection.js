@@ -1,4 +1,3 @@
-"use strict";
 class StepsCollection extends SimpleCollection {
     constructor(initParamObject) {
         super({
@@ -16,7 +15,9 @@ class StepsCollection extends SimpleCollection {
             connectedRepository: ProcessesSetup.processStepsRepository
         });
         this.initialise(this.makeList());
+
         //this.addNewModal.preppendTriggerButtonTo(this.$actionsMenu,"Przypisz kamień",this);
+
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -33,11 +34,16 @@ class StepsCollection extends SimpleCollection {
             dataItem: dataItem
         };
     }
+
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        var titleAtomicEditLabel = new AtomicEditLabel(dataItem.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
+        var titleAtomicEditLabel = new AtomicEditLabel(dataItem.name,
+            dataItem,
+            new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
+            'name',
+            this);
         return titleAtomicEditLabel.$dom;
     }
     /*
@@ -45,11 +51,14 @@ class StepsCollection extends SimpleCollection {
      */
     makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
+
         var $collectionElementDescription = $('<span>');
         if (dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
+
         return $collectionElementDescription;
     }
+
     makeList() {
         return super.makeList().filter((item) => {
             return item.dataItem._parent.id == this.parentDataItem.id;

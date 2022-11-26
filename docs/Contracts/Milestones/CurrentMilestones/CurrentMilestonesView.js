@@ -1,14 +1,17 @@
-"use strict";
 class CurrentMilestonesView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Bieżące kamienie milowe");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new CurrentMilestonesCollection('currentMilestonesViewCollection').$dom);
+        
+        $('#actionsMenu').after(new CurrentMilestonesCollection('currentMilestonesViewCollection').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }

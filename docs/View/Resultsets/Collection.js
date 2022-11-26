@@ -1,5 +1,4 @@
-"use strict";
-/*
+/* 
  * http://materializecss.com/collections.html
  */
 class Collection extends Resultset {
@@ -19,17 +18,20 @@ class Collection extends Resultset {
     constructor(initParamObject) {
         super(initParamObject);
         this.isPlain = initParamObject.isPlain;
-        this.hasArchiveSwitch = false; //initParamObject.hasArchiveSwitch;
+        this.hasArchiveSwitch = false;//initParamObject.hasArchiveSwitch;
         this.$addNewTriggerIcon;
         this.title = initParamObject.title;
         this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
+
+
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
         this.$dom = $('<div>')
             .attr('id', 'container' + '_' + this.id)
             .addClass('collection-container');
-        this.$title = $('<div class="resultset-title">');
+        this.$title = $('<div class="resultset-title">')
         this.$title.text(this.title);
+
         this.$actionsMenu = $('<div>')
             .attr('id', 'actionsMenu' + '_' + this.id)
             .addClass('cyan lighten-5')
@@ -37,23 +39,25 @@ class Collection extends Resultset {
         this.filter = new Filter(this);
     }
     /*
-     *
+     * 
      * @param {connectedRepository.items} items
      * @param {type} parentViewObject - nie używane
      * @param {function} parentViewObjectSelectHandler - nie używane
      */
     initialise(items, filterElements = []) {
         this.items = items;
+
         this.buildDom();
         if (this.items.length === 0) {
-            this.$dom;
+            this.$dom
             //.append(this.$emptyList);    
         }
         this.actionsMenuInitialise(filterElements);
-        if (this.isAddable)
-            Tools.hasFunction(this.addNewHandler);
+
+        if (this.isAddable) Tools.hasFunction(this.addNewHandler);
         Tools.hasFunction(this.makeItem);
     }
+
     buildDom() {
         this.$collection = $('<ul class="collection">');
         if (this.title)
@@ -63,21 +67,22 @@ class Collection extends Resultset {
             .append(this.$collection);
         this.buildCollectionDom();
     }
+
     buildCollectionDom() {
         for (var i = 0; i < this.items.length; i++) {
             var $row = (this.isPlain) ? this.buildPlainRow(this.items[i]).$dom : this.buildRow(this.items[i]);
             this.$collection.append($row);
         }
-        if (this.isEditable)
-            this.setEditAction();
-        if (this.isDeletable)
-            this.setDeleteAction();
-        if (this.isSelectable)
-            this.setSelectAction();
+
+        if (this.isEditable) this.setEditAction();
+        if (this.isDeletable) this.setDeleteAction();
+        if (this.isSelectable) this.setSelectAction();
     }
+
     showRow(id) {
         this.$dom.find('.collection-item#' + id).show();
     }
+
     hideRow(id) {
         this.$dom.find('.collection-item#' + id).hide();
     }
@@ -95,16 +100,12 @@ class Collection extends Resultset {
                 this.$dom.find('#' + item._tmpId).remove();
                 var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
                 this.$collection.prepend($newRow);
-                if (this.editModal)
-                    this.setEditAction();
-                if (this.isDeletable)
-                    this.setDeleteAction();
-                if (this.isSelectable)
-                    this.setSelectAction();
+                if (this.editModal) this.setEditAction();
+                if (this.isDeletable) this.setDeleteAction();
+                if (this.isSelectable) this.setSelectAction();
                 this.items.push(item);
                 //czasami ilość pozycji na liście jest limotowana i trzeba wyłaczyć dodawanie kolejnych
-                if (typeof this.setAddableMode === 'function')
-                    this.setAddableMode();
+                if (typeof this.setAddableMode === 'function') this.setAddableMode();
                 return status;
                 break;
             case "PENDING":
@@ -114,9 +115,8 @@ class Collection extends Resultset {
                 item.id = item._tmpId;
                 var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
                 this.$collection.prepend($newRow);
-                this.$dom.find('#' + item.id).append(this.makePreloader('preloader' + item.id));
-                if (typeof this.setAddableMode === 'function')
-                    this.setAddableMode();
+                this.$dom.find('#' + item.id).append(this.makePreloader('preloader' + item.id))
+                if (typeof this.setAddableMode === 'function') this.setAddableMode();
                 //return item.id;
                 break;
             case "ERROR":
@@ -129,8 +129,10 @@ class Collection extends Resultset {
                 return status;
                 break;
         }
+
         //});
     }
+
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
@@ -142,26 +144,24 @@ class Collection extends Resultset {
         return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
-                    this.items = this.items.filter(function (searchItem) { return searchItem.id !== item.id; });
+                    this.items = this.items.filter(function (searchItem) { return searchItem.id !== item.id });
                     this.items.push(item);
                     var $oldRow = this.$collection.find('#' + item.id);
                     var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
                     $oldRow.after($newRow);
                     $oldRow.remove();
-                    if (this.isDeletable)
-                        this.setDeleteAction();
-                    if (this.isSelectable)
-                        this.setSelectAction();
-                    if (this.isEditable)
-                        this.setEditAction();
+                    if (this.isDeletable) this.setDeleteAction();
+                    if (this.isSelectable) this.setSelectAction();
+                    if (this.isEditable) this.setEditAction();
                     break;
                 case "PENDING":
                     var $oldRow = this.$collection.find('#' + item.id);
                     $oldRow.attr('id', item.id + '_toDelete');
                     var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
-                    $newRow.append(this.makePreloader('preloader' + item.id));
+                    $newRow.append(this.makePreloader('preloader' + item.id))
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);
+
                     break;
                 case "ERROR":
                     alert(errorMessage);
@@ -172,9 +172,10 @@ class Collection extends Resultset {
                     if (this.items.length == 0) {
                         //this.$dom.prepend(this.$emptyList);
                     }
+
                     break;
             }
-            resolve(status);
+            resolve(status)
         });
     }
     /*
@@ -185,23 +186,21 @@ class Collection extends Resultset {
             switch (status) {
                 case "DONE":
                     this.$dom.find('#' + itemId).remove();
-                    this.items = this.items.filter(function (item) { return item.id !== itemId; });
+                    this.items = this.items.filter(function (item) { return item.id !== itemId });
                     if (this.items.length == 0) {
                         this.$actionsMenu.after(this.$emptyList);
                     }
-                    if (typeof this.setAddableMode === 'function')
-                        this.setAddableMode();
+                    if (typeof this.setAddableMode === 'function') this.setAddableMode();
                     break;
                 case "PENDING":
-                    var $deleteBadge = $('<span>');
+                    var $deleteBadge = $('<span>')
                     $deleteBadge
                         .attr('id', 'deleteBadge_' + this.id + '_' + itemId)
                         .attr('data-badge-caption', '')
                         .addClass('new badge red')
-                        .html('kasuję...');
+                        .html('kasuję...')
                     this.$dom.find('#' + itemId).append($deleteBadge);
-                    if (typeof this.setAddableMode === 'function')
-                        this.setAddableMode();
+                    if (typeof this.setAddableMode === 'function') this.setAddableMode();
                     break;
                 case "ERROR":
                     alert(errorMessage);
@@ -211,6 +210,7 @@ class Collection extends Resultset {
             resolve(status);
         });
     }
+
     setSelectAction() {
         this.$dom.find("li").off('click');
         this.$dom.find("li").off('mousedown');
@@ -246,19 +246,24 @@ class Collection extends Resultset {
                 _this.removeTrigger($(this).closest('.collection-item').attr("id"));
         });
     }
+
     setCopyAction() {
         this.$dom.find(".itemCopy").off('click');
         var _this = this;
         this.$collapsible.find(".itemCopy").click(function () {
             var originalItemId = connectedRepository.copyCurrentItem.id;
             _this.connectedRepository.copyCurrentItem(_this)
-                .then((copiedDataItem) => { if (_this.copyHandler)
-                _this.copyHandler(originalItemId); });
+                .then((copiedDataItem) => { if (_this.copyHandler) _this.copyHandler(originalItemId) })
+
         });
     }
+
     setAddNewAction() {
-        this.$dom.find(".addNewItemIcon").click(() => this.addNewModal.triggerAction(this));
+        this.$dom.find(".addNewItemIcon").click(
+            () => this.addNewModal.triggerAction(this)
+        );
     }
+
     setEditAction() {
         //this.$dom.find(".collectionItemEdit").off('click');
         var _this = this;
@@ -277,13 +282,16 @@ class Collection extends Resultset {
      */
     buildRow(item) {
         var $row = $('<li class="collection-item avatar" id="' + item.id + '">');
-        var $titleContainer = $('<span class="title">'), $descriptionContainer = $('<p>');
+        var $titleContainer = $('<span class="title">'),
+            $descriptionContainer = $('<p>');
+
         if (item.$title instanceof jQuery)
             $titleContainer.
                 append(item.$title);
         else if (typeof item.title === 'string')
             $titleContainer
                 .html(item.title);
+
         if (item.$description instanceof jQuery)
             $descriptionContainer.
                 append(item.$description);
@@ -295,7 +303,9 @@ class Collection extends Resultset {
             .append($titleContainer)
             .append($descriptionContainer)
             .append('<div class="secondary-content fixed-action-btn horizontal"></div>');
+
         this.addRowCrudButtons($row, item);
+
         return $row;
     }
     /*
@@ -310,36 +320,48 @@ class Collection extends Resultset {
             $crudButtons: $('<span class="crudButtons">'),
             dataItem: item.dataItem
         };
+
         row.$crudButtons
             .css('display', 'none');
-        var $titleContainer = $('<span class="title">'), $descriptionContainer = $('<p>');
+        var $titleContainer = $('<span class="title">'),
+            $descriptionContainer = $('<p>');
+
         $titleContainer.
             append(item.$title);
         $descriptionContainer.
             append(item.$description);
+
         row.$dom
             .append($titleContainer)
             .append($descriptionContainer)
             .append(row.$crudButtons);
+
         this.addPlainRowCrudButtons(row);
         //do uspójnienia z Collapsible - tam zwracany jest obiekt typu row
         return row;
     }
+
     /*
      * Ustawia pryciski edycji wierszy
      */
+
     addPlainRowCrudButtons(row) {
         if (this.isEditable)
             row.$crudButtons.append(this.editModal.createTriggerIcon());
+
         if (row.dataItem._gdFolderUrl)
             row.$crudButtons.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
+
         if (row.dataItem._documentOpenUrl)
             row.$crudButtons.append(new ExternalResourcesIconLink('GD_DOCUMENT_ICON', row.dataItem._documentOpenUrl).$dom);
+
         if (row.dataItem._documentEditUrl)
             row.$crudButtons.append(new ExternalResourcesIconLink('GD_DOCUMENT_ICON', row.dataItem._documentEditUrl).$dom);
+
         if (this.isDeletable)
             row.$crudButtons.append('<span class="itemDelete"><i class="material-icons">delete</i></span>');
     }
+
     addRowCrudButtons($row, item) {
         if (this.isDeletable || this.isEditable) {
             var button = $row.find('.secondary-content:last-child');
@@ -352,17 +374,21 @@ class Collection extends Resultset {
             if (this.isCopyable)
                 button.children('ul')
                     .append('<li><span class="itemCopy"><i class="material-icons">content_copy</i></span></li>');
+
             if (this.isDeletable)
                 button.children('ul')
                     .append('<li><a class="btn-floating red itemDelete"><i class="material-icons">delete</i></a></li>');
         }
     }
+
+
     filterInitialise(filterElements) {
         if (this.items.length >= this.minimumItemsToFilter) {
             this.filter.initialise(filterElements);
             this.$actionsMenu.append(this.filter.$dom);
         }
     }
+
     actionsMenuInitialise(filterElements) {
         if (this.isAddable) {
             this.$addNewTriggerIcon = this.addNewModal.createTriggerIcon();
@@ -372,7 +398,9 @@ class Collection extends Resultset {
         //this.addNewModal.preppendTriggerIconTo(this.$actionsMenu,this);
         if (this.hasFilter)
             this.filterInitialise(filterElements);
+
     }
+
     refreshAddableMode() {
         if (this.isAddable)
             this.$addNewTriggerIcon.show();
@@ -380,6 +408,7 @@ class Collection extends Resultset {
             this.$addNewTriggerIcon.hide();
     }
 }
+
 class CollectionItem {
     constructor(id, icon, title, description, editUrl) {
         this.id = id;
@@ -388,6 +417,7 @@ class CollectionItem {
         this.description = description;
         this.editUrl = editUrl;
     }
+
     initialise(paramObject) {
         this.id = paramObject.id;
         this.icon = paramObject.icon;
@@ -395,5 +425,4 @@ class CollectionItem {
         this.description = paramObject.description;
         this.editUrl = paramObject.editUrl;
     }
-}
-;
+};

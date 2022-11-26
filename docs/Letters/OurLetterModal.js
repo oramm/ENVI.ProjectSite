@@ -1,4 +1,3 @@
-"use strict";
 class OurLetterModal extends LetterModal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
@@ -6,6 +5,7 @@ class OurLetterModal extends LetterModal {
         this.doChangeFunctionOnItemName = '';
         this.doAddNewFunctionOnItemName = '';
         this.initFormElements();
+
         this.formElements.push(this.contractFormElement);
         this.formElements.push(this.caseNEWFormElement);
         if (this.mode === 'ADD_NEW')
@@ -17,6 +17,7 @@ class OurLetterModal extends LetterModal {
         this.formElements.push(this.descriptionFormElement);
         if (this.mode === 'ADD_NEW')
             this.formElements.push(this.fileFormElement);
+
         this.initialise();
     }
     initFormElements() {
@@ -37,5 +38,4 @@ class OurLetterModal extends LetterModal {
     initAddNewData() {
         this.controller.initAddNewDataHandler();
     }
-}
-;
+};

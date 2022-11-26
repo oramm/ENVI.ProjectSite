@@ -1,14 +1,17 @@
-"use strict";
 class IssuesListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Zgłoszone problemy");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new IssuesCollapsible('issuesCollapsible').$dom);
+        
+        $('#actionsMenu').after(new IssuesCollapsible('issuesCollapsible').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }

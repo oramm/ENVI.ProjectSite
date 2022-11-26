@@ -1,11 +1,11 @@
-"use strict";
 class OurOldTypeLetterModal extends LetterModal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
         this.controller = new OurOldTypeLetterModalController(this);
         this.doChangeFunctionOnItemName = '';
-        this.doAddNewFunctionOnItemName = '';
+        this.doAddNewFunctionOnItemName ='';
         this.initFormElements();
+
         this.formElements = [
             this.numberFormElement,
             this.contractFormElement,
@@ -19,11 +19,13 @@ class OurOldTypeLetterModal extends LetterModal {
         ];
         this.initialise();
     }
+
     initFormElements() {
         super.initFormElements();
         this.entityMainFormElement.input.setLabel('Dodaj odbiorcę');
         this.registrationDateFormElement.input.setLabel('Data nadania');
         var _this = this;
+        
         this.numberFormElement = {
             input: new InputTextField(this.id + 'numberTextField', 'Numer pisma', undefined, true, 40),
             description: 'Nadaj ręcznie numer pisma',

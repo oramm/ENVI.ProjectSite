@@ -1,9 +1,10 @@
-"use strict";
 class Popup {
     constructor() {
         this.preloaderBar = '<div class="progress">' +
             'zapisuję...<div class="indeterminate"></div>' +
             '</div>';
+
+
         this.loadingWheel = '<article>Ładuję dane...</article>' +
             '<div class="preloader-wrapper big active">' +
             '<div class="spinner-layer spinner-green-only">' +
@@ -17,26 +18,35 @@ class Popup {
             '</div>' +
             '</div>';
     }
+
     showLoadingWheel(HTMLElement) {
         $(HTMLElement).append(this.loadingWheel);
     }
+
     showPreloader(HTMLElement) {
         $(HTMLElement).append(this.preloaderBar);
     }
+
     hidePreloader(HTMLElement) {
         $(HTMLElement).remove();
     }
+
     setTittle(title) {
         $("#title").html("<H4>" + title + "</h4>");
     }
+
     makeSubTittle(title) {
         return $("<H5>" + title + "</h5>");
     }
+
     setStatus(message) {
         $("#status").append("<p>" + message + "</p>");
     }
+
     setForm() {
+
     }
+
     dataLoaded(loaded) {
         if (loaded) {
             $("#loading").hide();
@@ -48,6 +58,7 @@ class Popup {
             $("#loading").show();
         }
     }
+
     loadIframe(iframeName, url) {
         var $iframe = $('#' + iframeName);
         if ($iframe.length) {
@@ -57,3 +68,4 @@ class Popup {
         return true;
     }
 }
+

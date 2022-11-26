@@ -1,4 +1,3 @@
-"use strict";
 class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
     constructor(initParamObject) {
         super({
@@ -19,6 +18,7 @@ class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
         //podłącz do nadrzędnego collapsibla, żeby dostać się do dodatkowych modali
         this.connectedResultsetComponent = initParamObject.connectedResultsetComponent;
         this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(this.$actionsMenu, "Dodaj typ kamienia", this);
+
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
@@ -35,11 +35,16 @@ class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
             dataItem: dataItem
         };
     }
+
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
     makeTitle(dataItem) {
-        const titleAtomicEditLabel = new AtomicEditLabel(`${dataItem.folderNumber}  ${dataItem._milestoneType.name}`, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
+        const titleAtomicEditLabel = new AtomicEditLabel(`${dataItem.folderNumber}  ${dataItem._milestoneType.name}`,
+            dataItem,
+            new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
+            'name',
+            this);
         return titleAtomicEditLabel.$dom;
     }
     /*
@@ -47,25 +52,31 @@ class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
      */
     makeDescription(dataItem) {
         const $collectionElementDescription = $('<span>');
+
         if (dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
+
         if (dataItem._milestoneType.isUniquePerContract)
             $collectionElementDescription.append(new Badge(dataItem.id + '_un', 'Unikalny', 'light-blue').$dom);
         if (dataItem.isDefault)
             $collectionElementDescription.append(new Badge(dataItem.id + '_def', 'Domyślny', 'lime darken-4').$dom);
         return $collectionElementDescription;
     }
+
     makeList() {
         return super.makeList().filter((item) => {
             return item.dataItem._contractType.id == this.parentDataItem.id;
         });
     }
+
     selectTrigger(itemId) {
         //var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
         //if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
         //    isDashboardLoaded){
+
         super.selectTrigger(itemId);
         //$('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
+
         //}
     }
 }

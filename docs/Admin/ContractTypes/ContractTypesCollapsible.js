@@ -1,4 +1,3 @@
-"use strict";
 class ContractTypesCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -11,14 +10,20 @@ class ContractTypesCollapsible extends SimpleCollapsible {
             connectedRepository: ContractTypesSetup.contractTypesRepository
             //subitemsCount: 12
         });
+
         this.addNewModal = new ContractTypeModal(id + '_newContractType', 'Dodaj typ kontraktu', this, 'ADD_NEW');
         this.editModal = new ContractTypeModal(id + '_editContractType', 'Edytuj typ kontraktu', this, 'EDIT');
+
+
         this.addNewMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(this.id + '_newMilestoneTypeContractTypeAssociation', 'Przypisz typ kamienia do kontraktu typu ', this, 'ADD_NEW');
         this.editMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(this.id + '_editMilestoneTypeContractTypeAssociation', 'Edytuj numer folderu', this, 'EDIT');
+
         this.addNewMilestoneType = new MilestoneTypeModal(this.id + '_newMilestoneType', 'Dodaj nowy typ kamienia', this, 'ADD_NEW');
+
         this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
+
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -28,6 +33,7 @@ class ContractTypesCollapsible extends SimpleCollapsible {
     makeItem(dataItem) {
         return super.makeItem(dataItem);
     }
+
     makeBody(dataItem) {
         var $descriptionLabel = $((dataItem.description) ? '<BR>' + dataItem.description : '');
         let subCollection = new MilestoneTypeContractTypeAssociationsCollection({
@@ -49,4 +55,5 @@ class ContractTypesCollapsible extends SimpleCollapsible {
             $dom: $panel
         };
     }
+
 }

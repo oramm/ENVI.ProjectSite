@@ -1,11 +1,10 @@
-"use strict";
-/*
+/* 
  * http://materializecss.com/collapsible.html
  * słuzy jako pojemnik na przyciski wykonujące akcję na serwerze bez rezultsetu
  */
 class RawPanel extends Resultset {
     constructor(initParamObject) {
-        super(initParamObject);
+        super(initParamObject)
         this.connectedRepository = initParamObject.connectedRepository;
         this.$dom = $('<div>')
             .attr('id', 'container' + '_' + this.id);
@@ -14,6 +13,7 @@ class RawPanel extends Resultset {
             .addClass('cyan lighten-5')
             .addClass('actionsMenu');
     }
+
     /*
      * @param {CollapsibleItems[]} items - generowane m. in. SompleCollapsible
      * @param {type} parentViewObject
@@ -24,13 +24,16 @@ class RawPanel extends Resultset {
         this.modal = modal;
         this.buildDom(buttonStyle);
     }
+
     buildDom(buttonStyle) {
+
         this.$dom
             .append(this.$actionsMenu);
         this.modal.preppendTriggerButtonTo(this.$actionsMenu, this.modal.title, this, buttonStyle);
         if (this.title)
-            this.$dom.prepend(this.$title);
+            this.$dom.prepend(this.$title)
     }
+
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
@@ -46,7 +49,7 @@ class RawPanel extends Resultset {
                 break;
             case "PENDING":
                 item.id = item._tmpId;
-                this.$dom.append(this.makePreloader('preloader' + item.id));
+                this.$dom.append(this.makePreloader('preloader' + item.id))
                 return item.id;
                 break;
             case "ERROR":

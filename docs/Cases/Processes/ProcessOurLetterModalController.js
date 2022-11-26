@@ -1,4 +1,3 @@
-"use strict";
 class ProcessOurLetterModalController extends OurLetterModalController {
     constructor(modal) {
         super(modal);
@@ -23,10 +22,10 @@ class ProcessOurLetterModalController extends OurLetterModalController {
             _lastUpdated: '',
             isOur: true
         };
+        
         this.modal.form.fillWithData({
             creationDate: Tools.dateJStoDMY(new Date()),
             registrationDate: Tools.dateJStoDMY(new Date())
         });
     }
-}
-;
+};

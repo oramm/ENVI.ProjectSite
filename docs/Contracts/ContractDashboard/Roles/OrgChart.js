@@ -1,4 +1,3 @@
-"use strict";
 class OrgChart {
     constructor(initParamObject) {
         this.parentNode = initParamObject.parentNode;
@@ -6,12 +5,15 @@ class OrgChart {
         this.dataTable = this.makeDataTable();
         google.charts.load('current', { packages: ["orgchart"] });
         google.charts.setOnLoadCallback(() => this.drawChart());
+
     }
+
     drawChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Name');
         data.addColumn('string', 'Manager');
         data.addColumn('string', 'ToolTip');
+
         //this.makeHeaderDataTable();
         // For each orgchart box, provide the name, manager, and tooltip to show.
         data.addRows(this.dataTable);
@@ -20,6 +22,7 @@ class OrgChart {
         // Draw the chart, setting the allowHtml option to true for the tooltips.
         chart.draw(data, { 'allowHtml': true });
     }
+
     makeDataTable() {
         var dataTable = [];
         for (const item of this.connectedRepository.items) {
@@ -31,6 +34,7 @@ class OrgChart {
         }
         return dataTable;
     }
+
     makeHeaderDataTable(items) {
         var dataTable = [];
         this.dataTable.push(item.name);

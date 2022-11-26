@@ -1,10 +1,11 @@
-"use strict";
 var materialCardsRepository;
 var reactionsRepository;
 var contractsRepository;
 var milestonesRepository;
 var casesRepository;
+
 var statusNames = ['Robocze', 'Do poprawy', 'Do akceptacji', 'Zatwierdzone'];
+
 class MaterialCardsSetup {
     static get materialCardsRepository() {
         return materialCardsRepository;
@@ -18,6 +19,7 @@ class MaterialCardsSetup {
     static set reactionsRepository(data) {
         reactionsRepository = data;
     }
+
     static get statusNames() {
         return statusNames;
     }

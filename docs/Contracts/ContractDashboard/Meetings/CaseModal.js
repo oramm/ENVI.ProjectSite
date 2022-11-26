@@ -1,4 +1,3 @@
-"use strict";
 class CaseModal extends Modal {
     constructor(id, title, connectedResultsetComponent, mode) {
         super(id, title, connectedResultsetComponent, mode);
@@ -13,7 +12,9 @@ class CaseModal extends Modal {
                 input: this.typeSelectField,
                 dataItemKeyName: '_type',
                 refreshDataSet: function () {
-                    var currentCaseTypes = MainSetup.caseTypesRepository.items.filter(item => this.checkCaseType(item));
+                    var currentCaseTypes = MainSetup.caseTypesRepository.items.filter(
+                        item => this.checkCaseType(item)
+                    );
                     this.input.initialise(currentCaseTypes, 'name');
                     //console.log('ContractsSetup.contractsRepository.currentItem.ourType:: ' + ContractsSetup.contractsRepository.currentItem._ourType);
                 },
@@ -40,8 +41,7 @@ class CaseModal extends Modal {
                     //użytkownik edytuje 
                     if (_this.typeSelectField.getValue() && _this.typeSelectField.getValue().isUniquePerMilestone) {
                         this.input.$dom.hide();
-                    }
-                    else
+                    } else
                         this.input.$dom.show();
                 },
             },
@@ -61,5 +61,4 @@ class CaseModal extends Modal {
             _processesInstances: []
         };
     }
-}
-;
+};

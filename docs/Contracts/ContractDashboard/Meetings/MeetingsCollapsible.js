@@ -1,4 +1,3 @@
-"use strict";
 class MeetingsCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -11,13 +10,18 @@ class MeetingsCollapsible extends SimpleCollapsible {
             connectedRepository: MeetingsSetup.meetingsRepository
             //subitemsCount: 12
         });
+
         this.addNewModal = new MeetingModal(id + '_newMeetingModal', 'Zaplanuj spotkanie', this, 'ADD_NEW');
         this.editModal = new MeetingModal(id + '_editMeetingModal', 'Edytuj spotkanie', this, 'EDIT');
+
+
         this.addNewMeetingArrangementModal = new MeetingArrangementModal(this.id + '_newMeetingArrangementModal', 'Dodaj ustalenie', this, 'ADD_NEW');
         this.editMeetingArrangementModal = new MeetingArrangementModal(this.id + '_editMeetingArrangementModal', 'Edytuj ustalenie', this, 'EDIT');
+
         this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
+
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
@@ -29,19 +33,19 @@ class MeetingsCollapsible extends SimpleCollapsible {
         item.name = dataItem.name + ' ' + dataItem.date;
         return item;
     }
+
     makeBody(dataItem) {
         var descriptionLabel = (dataItem.description) ? '<div class="row">' + dataItem.description + '</div>' : '';
         var title;
-        var $meetingProtocolButton = $('<div class="row">');
+        var $meetingProtocolButton = $('<div class="row">')
         if (!dataItem._documentEditUrl) {
             title = 'Agenda';
             $meetingProtocolButton
                 .append(new RaisedButton('Generuj notatkę', this.createProtocolAction, this).$dom);
-        }
-        else {
+        } else {
             title = 'Ustalenia';
             $meetingProtocolButton
-                .append(new RaisedButton('Popraw notatkę', this.createProtocolAction, this).$dom);
+                .append(new RaisedButton('Popraw notatkę', this.createProtocolAction, this).$dom)
         }
         let subCollection = new MeetingArrangementsCollection({
             id: 'meetingArrangementsCollection_' + dataItem.id,
@@ -57,18 +61,21 @@ class MeetingsCollapsible extends SimpleCollapsible {
             .append($meetingProtocolButton)
             .append(descriptionLabel)
             .append(subCollection.$dom);
+
         return {
             collection: subCollection,
             $dom: $panel
         };
     }
+
     /*
-     *
+     * 
      */
     selectTrigger(itemId) {
         super.selectTrigger(itemId);
         //$('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
     }
+
     createProtocolAction() {
         MeetingsSetup.meetingsRepository.currentItem._contract = MeetingsSetup.currentContract;
         MeetingsSetup.meetingsRepository.currentItem._contract._parent = MainSetup.currentProject;

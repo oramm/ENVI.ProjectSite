@@ -1,4 +1,3 @@
-"use strict";
 class LettersController {
     static main() {
         // Hide auth UI, then load client library.
@@ -6,38 +5,53 @@ class LettersController {
         $("#authorize-div").hide();
         listView.dataLoaded(false);
         //signoutButton.style.display = 'block';
-        LettersSetup.lettersRepository = new SimpleRepository('Letters repository', 
-        //'getLettersList',
-        'addNewLetter', 'editLetter', 'deleteLetter');
+
+        LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
+            //'getLettersList',
+            'addNewLetter',
+            'editLetter',
+            'deleteLetter');
         //LettersSetup.lettersRepository = new SimpleRepository({
         //    name: 'Letters repository',
         //    actionsNodeJSSetup: { addNewRoute: 'Letter', editRoute: 'Letter', deleteRoute: 'Letter' },
         //});
-        LettersSetup.contractsRepository = new SimpleRepository('Contracts repository', 'getContractsList');
-        LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository', 'getMilestonesList');
-        LettersSetup.casesRepository = new SimpleRepository('Cases repository', 'getCasesListPerProject');
+
+        LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
+            'getContractsList'
+        );
+
+        LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository',
+            'getMilestonesList'
+        );
+
+        LettersSetup.casesRepository = new SimpleRepository('Cases repository',
+            'getCasesListPerProject'
+        );
+
         const promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.contractsRepository.initialiseNodeJS('contracts/?projectId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + LettersSetup.lettersRepository.parentItemId)
         ];
+
         Promise.all(promises)
             .then(() => {
-            console.log("Repositories initialised");
-            return listView.initialise();
-        })
+                console.log("Repositories initialised");
+                return listView.initialise();
+            })
             .then(() => {
-            $('select').material_select();
-            $('.modal').modal();
-            $('.datepicker').pickadate(MainSetup.datePickerSettings);
-            ReachTextArea.reachTextAreaInit();
-            Materialize.updateTextFields();
-            $('ul.tabs').tabs();
-            iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
-        })
+                $('select').material_select();
+                $('.modal').modal();
+                $('.datepicker').pickadate(MainSetup.datePickerSettings);
+                ReachTextArea.reachTextAreaInit();
+                Materialize.updateTextFields();
+                $('ul.tabs').tabs();
+                iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
+            }
+            )
             .catch(err => {
-            console.error(err);
-        });
+                console.error(err);
+            });
     }
 }

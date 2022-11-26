@@ -1,8 +1,9 @@
-"use strict";
 class AdminDashboardView extends Popup {
+
     constructor() {
         super();
     }
+
     initialise() {
         var parentItemId = Tools.getUrlVars()['parentItemId'];
         var tabsData = [];
@@ -18,6 +19,8 @@ class AdminDashboardView extends Popup {
             name: 'Procesy',
             url: 'Processes/ProcessesList.html'
         });
+
+
         $('#content').prepend(new Tabs({
             id: 'contratTabs',
             parentId: parentItemId,

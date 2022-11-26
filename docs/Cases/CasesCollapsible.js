@@ -1,4 +1,3 @@
-"use strict";
 class CasesCollapsible extends SimpleCollapsible {
     constructor(id) {
         super({
@@ -11,16 +10,19 @@ class CasesCollapsible extends SimpleCollapsible {
             connectedRepository: CasesSetup.casesRepository
             //subitemsCount: 12
         });
+
         this.addNewModal = new CaseModal(id + '_newCase', 'Dodaj sprawę', this, 'ADD_NEW');
         this.editModal = new CaseModal(id + '_editCase', 'Edytuj sprawę', this, 'EDIT');
         //modale dla TasksCollection:
         this.addNewTaskModal = new TaskModal(this.id + '_newTask', 'Dodaj zadanie', this, 'ADD_NEW');
         this.editTaskModal = new TaskModal(this.id + '_editTask', 'Edytuj zadanie', this, 'EDIT');
         this.editProcessStepInstanceModal = new ProcessStepsInstancesModal(this.id + '_editProcessStepInstance', 'Edytuj krok w procesie', this, 'EDIT');
+
         this.addNewOurLetterModal = new ProcessOurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
         this.editOurLetterModal = new ProcessOurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
         this.appendLetterAttachmentsModal = new ProcessAppendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
         this.initialise(this.makeCollapsibleItemsList());
+
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
         this.connectedRepository.currentItem.milestoneId = this.connectedRepository.parentItemId;
@@ -41,41 +43,44 @@ class CasesCollapsible extends SimpleCollapsible {
         item.subitemsCount = TasksSetup.tasksRepository.items.filter(item => item.caseId == dataItem.id).length;
         return item;
     }
+
     makeBody(dataItem) {
         var $body = this.makeTabs(dataItem).$dom;
         var $panel = $('<div>')
             .attr('id', 'tasksActionsMenuForCase' + dataItem.id)
             .attr('caseid', dataItem.id)
             //.append('<div class="row">Zarządzaj zadaniami</div>')
-            .append($body);
+            .append($body)
         return {
             collection: undefined,
             $dom: $panel
         };
     }
+
     makeTabs(dataItem) {
         var parentItemId = Tools.getUrlVars()['parentItemId'];
         var tabsData = [{
-                name: 'Zadania - Scrumboard',
-                panel: this.makeScrumBoardTab(dataItem).$dom
-            },
-            {
-                name: 'Wydarzenia',
-                panel: this.makeEventsTab(dataItem)
-            }
+            name: 'Zadania - Scrumboard',
+            panel: this.makeScrumBoardTab(dataItem).$dom
+        },
+        {
+            name: 'Wydarzenia',
+            panel: this.makeEventsTab(dataItem)
+        }
         ];
         if (dataItem._processesInstances.length > 0)
             tabsData.push({
                 name: 'Proces',
                 panel: this.makeProcessTab(dataItem)
-            });
+            })
         return new Tabs({
             id: 'caseTabs-' + dataItem.id,
             parentId: parentItemId,
             tabsData: tabsData,
             swipeable: true
-        });
+        })
     }
+
     makeScrumBoardTab(dataItem) {
         var statusesCollections = [];
         var backlogCollection = new TasksCollection({
@@ -89,6 +94,7 @@ class CasesCollapsible extends SimpleCollapsible {
         });
         backlogCollection.$dom.children('.collection').attr("status", TasksSetup.statusNames[0]);
         statusesCollections.push(backlogCollection);
+
         for (var i = 1; i < TasksSetup.statusNames.length; i++) {
             var tasksCollection = new TasksCollection({
                 id: 'tasksListCollection_' + dataItem.id + '_status' + i,
@@ -103,9 +109,9 @@ class CasesCollapsible extends SimpleCollapsible {
         }
         return new ScrumBoard(statusesCollections);
     }
+
     makeProcessTab(dataItem) {
-        if (dataItem._processesInstances.length > 1)
-            throw new Error('Ten widok nie  obsługuje jeszcze wielu procesów dla jednej sprawy!');
+        if (dataItem._processesInstances.length > 1) throw new Error('Ten widok nie  obsługuje jeszcze wielu procesów dla jednej sprawy!');
         var $processDataPanel = $('<div>');
         var stepsCollection = new ProcessStepsInstancesCollection({
             id: 'processStepsCollection_' + dataItem.id,
@@ -122,6 +128,7 @@ class CasesCollapsible extends SimpleCollapsible {
             .append(stepsCollection.$dom);
         return $processDataPanel;
     }
+
     makeEventsTab(dataItem) {
         var $processDataPanel = $('<div>');
         var eventsCollection = new EventsCollection({
@@ -133,6 +140,7 @@ class CasesCollapsible extends SimpleCollapsible {
             .append(eventsCollection.$dom);
         return $processDataPanel;
     }
+
     /*
      * Przeciążenie konieczne bo przy dodawaniu nowych elementów Collection muszą być ustawione
      * dane bieżącego kontraktu i projektu

@@ -1,4 +1,3 @@
-"use strict";
 class ProjectDetailsView extends Popup {
     constructor() {
         super();
@@ -8,6 +7,7 @@ class ProjectDetailsView extends Popup {
         this.projectDetailsCollection = new ProjectDetailsCollection('projectDetailsCollection');
         $('#projectDetails').append(this.projectDetailsCollection.$dom);
         $("#processes").append(new ProcessesCollapsible('processCollapsible').$dom);
+
         this.actionsMenuInitialise();
         this.dataLoaded(true);
     }

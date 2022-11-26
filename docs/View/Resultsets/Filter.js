@@ -1,4 +1,3 @@
-"use strict";
 class Filter {
     constructor(connectedResultsetComponent, showActiveRows) {
         this.id = connectedResultsetComponent.id + "-filter";
@@ -8,15 +7,17 @@ class Filter {
         if (this.connectedResultsetComponent.hasArchiveSwitch === undefined)
             this.connectedResultsetComponent.hasArchiveSwitch = false;
         this.$dom = $('<div class="row">');
+
     }
     initialise(filterElements = []) {
         this.addDefaultFilter();
         for (const element of filterElements)
-            this.addInput(element);
+            this.addInput(element)
         if (this.connectedResultsetComponent.hasArchiveSwitch) {
             this.addArchiveSwitch();
         }
     }
+
     addDefaultFilter() {
         var filterElement = {
             inputType: 'InputTextField',
@@ -25,6 +26,7 @@ class Filter {
         };
         this.addInput(filterElement);
     }
+
     addArchiveSwitch() {
         var filterElement = {
             serverSideReload: true,
@@ -53,7 +55,7 @@ class Filter {
             $filteredListObject = this.connectedResultsetComponent.$collection;
         $filteredListObject.children("li").map(function () {
             if (!_this.checkIfRowMatchesFilters($(this)))
-                $(this).hide();
+                $(this).hide()
             else
                 $(this).show();
         });
@@ -65,7 +67,7 @@ class Filter {
         let paramsString = '';
         for (const filterElement of this.filterElements) {
             if (filterElement.serverSideReload)
-                paramsString += `&${filterElement.attributeToCheck}=${filterElement.input.getValue()}`;
+                paramsString += `&${filterElement.attributeToCheck}=${filterElement.input.getValue()}`
         }
         return paramsString;
     }
@@ -73,7 +75,7 @@ class Filter {
      * Sprawdza czy wiersz connectedResultsetComponent pasuje do kreyteriów wyszukiwania
      * @param {type} $row
      * @returns {Filter@call;isRowArchived|Boolean}
-     *
+     * 
      * //TODO: obsłużyć dodatkowe pola
      * https://www.w3schools.com/bootstrap/bootstrap_filters.asp
      */
@@ -97,10 +99,11 @@ class Filter {
                     case 'SelectField':
                         if (filterElement.input.getValue() && $row.attr(filterElement.attributeToCheck) != filterElement.input.getValue())
                             return false;
-                        break;
+                        break
                 }
         return true;
     }
+
     /*
      * dodaje niestandardowy element do filtra (lista i $dom)
      */
@@ -116,7 +119,7 @@ class Filter {
                 filterElement.input = this.createSelectField(filterElement);
                 break;
             default:
-                throw new Error(filterElement.inputType + " to niewłaściwy typ pola filtrującego!");
+                throw new Error(filterElement.inputType + " to niewłaściwy typ pola filtrującego!")
         }
         var $col = $('<div>');
         this.filterElements.push(filterElement);
@@ -125,7 +128,7 @@ class Filter {
             .append(filterElement.input.$dom);
         this.setElementSpan(filterElement, filterElement.colSpan);
         //skoryguj szerokość gównego pola filtrowania
-        var newDefaultElementColspan = 12 - this.totalElementsColsPan();
+        var newDefaultElementColspan = 12 - this.totalElementsColsPan()
         this.filterElements[0].input.$dom.removeClass('col s' + this.filterElements[0].colSpan);
         this.setElementSpan(this.filterElements[0], newDefaultElementColspan);
     }
@@ -152,6 +155,7 @@ class Filter {
         selectField.initialise(filterElement.selectItems, filterElement, this.changeFilterCriteriaHandler, this);
         return selectField;
     }
+
     totalElementsColsPan() {
         var colSpan = 0;
         for (const element of this.filterElements) {

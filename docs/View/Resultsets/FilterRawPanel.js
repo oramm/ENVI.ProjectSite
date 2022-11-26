@@ -1,5 +1,4 @@
-"use strict";
-/*
+/* 
  * http://materializecss.com/collapsible.html
  */
 class FilterRawPanel extends Resultset {
@@ -7,8 +6,10 @@ class FilterRawPanel extends Resultset {
         super(initParamObject);
         this.formElements = initParamObject.formElements;
         this.createResultset = initParamObject.createResultset;
+
         this.form = new Form("form_" + this.id, "GET", this.formElements, true, 'Filtruj');
         this.resultset = { $dom: $('<div>') };
+
         this.$dom = $('<div>')
             .attr('id', 'container' + '_' + this.id);
         this.$actionsMenu = $('<div>')
@@ -17,6 +18,7 @@ class FilterRawPanel extends Resultset {
             .addClass('actionsMenu');
         this.buildDom();
     }
+
     /*
      * @param {CollapsibleItems[]} items - generowane m. in. SompleCollapsible
      * @param {type} parentViewObject
@@ -24,15 +26,19 @@ class FilterRawPanel extends Resultset {
      * @returns {undefined}
      */
     buildDom() {
-        this.$actionsMenu.append(this.form.$dom);
+        this.$actionsMenu.append(this.form.$dom)
         this.$dom
             .append(this.$actionsMenu)
             .append(this.resultset.$dom);
+
         this.setSubmitAction();
         this.formElements.map((element) => element.input.$dom.addClass('col s' + element.colSpan));
     }
+
     refreshResultset() {
+
     }
+
     /*
      * Funkcja musi być obsłużona w klasie pochodnej.
      * Klasa pochodna musi mieć metodę submitTrigger()
@@ -44,38 +50,39 @@ class FilterRawPanel extends Resultset {
             event.preventDefault();
         });
     }
+
     submitTrigger() {
         this.resultset.$dom.hide();
-        this.$dom.append(this.makePreloader('preloader_' + this.parentViewObject.id));
+        this.$dom.append(this.makePreloader('preloader_' + this.parentViewObject.id))
         var criteriaParameters = {};
         var _this = this;
         this.form.submitHandler(criteriaParameters)
             .then(() => {
-            if (this.form.validate(criteriaParameters)) {
-                var promises = [
-                    InvoicesSetup.invoicesRepository.initialiseNodeJS('invoices/?startDate=' + criteriaParameters.startDate + '&endDate=' + criteriaParameters.endDate),
-                    InvoicesSetup.invoiceitemsRepository.initialiseNodeJS('invoiceItems/?startDate=' + criteriaParameters.startDate + '&endDate=' + criteriaParameters.endDate)
-                ];
-                Promise.all(promises)
-                    .then((res) => {
-                    var oldResultset = _this.resultset;
-                    _this.resultset = this.createResultset();
-                    oldResultset.$dom.replaceWith(_this.resultset.$dom);
-                    return ('collapsible made');
-                })
-                    .then((res) => {
-                    $('select').material_select();
-                    $('.modal').modal();
-                    $('.datepicker').pickadate(MainSetup.datePickerSettings);
-                    Materialize.updateTextFields();
-                    $('ul.tabs').tabs();
-                    iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
-                    this.$dom.find('.progress').remove();
-                    ReachTextArea.reachTextAreaInit();
-                });
-            }
-            else
-                alert('Podaj prawidłowe kryteria');
-        });
+                if (this.form.validate(criteriaParameters)) {
+                    var promises = [
+                        InvoicesSetup.invoicesRepository.initialiseNodeJS('invoices/?startDate=' + criteriaParameters.startDate + '&endDate=' + criteriaParameters.endDate),
+                        InvoicesSetup.invoiceitemsRepository.initialiseNodeJS('invoiceItems/?startDate=' + criteriaParameters.startDate + '&endDate=' + criteriaParameters.endDate)
+                    ];
+                    Promise.all(promises)
+                        .then((res) => {
+                            var oldResultset = _this.resultset;
+                            _this.resultset = this.createResultset();
+                            oldResultset.$dom.replaceWith(_this.resultset.$dom);
+                            return ('collapsible made')
+                        })
+                        .then((res) => {
+                            $('select').material_select();
+                            $('.modal').modal();
+                            $('.datepicker').pickadate(MainSetup.datePickerSettings);
+
+                            Materialize.updateTextFields();
+                            $('ul.tabs').tabs();
+                            iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
+                            this.$dom.find('.progress').remove();
+                            ReachTextArea.reachTextAreaInit();
+                        });
+                } else
+                    alert('Podaj prawidłowe kryteria');
+            })
     }
 }

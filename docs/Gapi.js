@@ -1,4 +1,3 @@
-"use strict";
 class GApi {
     /**
      * Callback after api.js is loaded.
@@ -6,6 +5,7 @@ class GApi {
     static gapiLoadedHandler() {
         gapi.load('client', this.initialise);
     }
+
     /**
      * Callback after the API client is loaded. Loads the
      * discovery doc to initialize the API.
@@ -16,13 +16,14 @@ class GApi {
                 apiKey: API_KEY,
                 discoveryDocs: DISCOVERY_DOCS,
             });
+
             console.log('discovery document loaded');
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
             throw error;
         }
     }
+
     /**
      * Callback after Google Identity Services are loaded.
      * @gapiFunction - co wykonać po inicjalizacji
@@ -32,26 +33,31 @@ class GApi {
             client_id: CLIENT_ID,
             scope: SCOPES,
             prompt: '',
-            callback: '' //zdefiniowny w this.#tokenCallback(gapiFunction) 
+            callback: ''//zdefiniowny w this.#tokenCallback(gapiFunction) 
         });
-        MainSetup.GApi.tokenClient.requestAccessToken({ prompt: '' });
+
+        MainSetup.GApi.tokenClient.requestAccessToken({ prompt: '' })
     }
+
     static isAccesTokenValid() {
         if (!MainSetup.GApi.tokenClient)
             throw new Error('gapi not loaded');
+
         if (gapi === undefined)
             return false;
         const token = gapi.client.getToken();
-        if (!token)
-            return false;
+        if (!token) return false;
+
         return true;
     }
+
     static refreshAccesToken() {
         console.log('refreshing acces token');
         // Re-entrant function to request user consent.
         // Returns an access token to the callback specified in google.accounts.oauth2.initTokenClient
         MainSetup.GApi.tokenClient.requestAccessToken({ prompt: '' });
     }
+
     /**
      *  Sign out the user upon button click.
      */

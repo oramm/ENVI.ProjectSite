@@ -1,8 +1,9 @@
-"use strict";
 class ContractDashboardView extends Popup {
+
     constructor() {
         super();
     }
+
     initialise() {
         var parentItemId = Tools.getUrlVars()['parentItemId'];
         var tabsData = [];
@@ -17,6 +18,7 @@ class ContractDashboardView extends Popup {
             name: "Spotkania",
             url: 'Meetings/MeetingsList.html?parentItemId=' + parentItemId
         });
+
         if (!ContractsSetup.contractsRepository.currentItem._type.isOur)
             tabsData.push({
                 name: 'Materiały',
@@ -26,6 +28,7 @@ class ContractDashboardView extends Popup {
             name: 'Ryzyka',
             url: 'Risks/RisksList.html?parentItemId=' + parentItemId
         });
+
         if (!ContractsSetup.contractsRepository.currentItem._type.isOur) {
             tabsData.push({
                 name: 'Zgłoszenia',
@@ -35,7 +38,7 @@ class ContractDashboardView extends Popup {
         tabsData.push({
             name: 'Osoby',
             url: 'Roles/Roles.html?parentItemId=' + parentItemId
-        });
+        })
         $('#content').prepend(new Tabs({
             id: 'contratTabs',
             parentId: parentItemId,

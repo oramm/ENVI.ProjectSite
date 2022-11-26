@@ -1,11 +1,16 @@
-"use strict";
 class ProcessesListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Procesy");
-        $("#title").after(new ProcessesCollapsible('processesCollapsible').$dom);
+        
+        $("#title").after(new ProcessesCollapsible('processesCollapsible').$dom);  
         this.dataLoaded(true);
+        
     }
+
+    
+    
 }

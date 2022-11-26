@@ -1,14 +1,17 @@
-"use strict";
 class CasesListView extends Popup {
-    constructor() {
-        super();
+    constructor(){
+        super();       
     }
-    initialise() {
+    
+    initialise(){
         this.setTittle("Lista spraw");
         this.actionsMenuInitialise();
-        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);
+        
+        $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);  
         this.dataLoaded(true);
     }
-    actionsMenuInitialise() {
+
+
+    actionsMenuInitialise(){
     }
 }
