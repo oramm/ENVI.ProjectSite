@@ -1,25 +1,25 @@
 "use strict";
-var ContractModalController = /** @class */ (function () {
-    function ContractModalController(modal) {
+class ContractModalController {
+    constructor(modal) {
         this.modal = modal;
         //this._this = this;
     }
     /** Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId */
-    ContractModalController.prototype.initAddNewDataHandler = function () {
+    initAddNewDataHandler() {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
             _parent: MainSetup.currentProject,
             projectId: this.modal.connectedResultsetComponent.connectedRepository.parentItemId
         };
         if (MainSetup.currentProject._employers[0])
             this.onEmployerChosen(MainSetup.currentProject._employers[0]);
-    };
-    ContractModalController.prototype.initEditDataHandler = function () {
+    }
+    initEditDataHandler() {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem._parent = MainSetup.currentProject;
         this.modal.connectedResultsetComponent.connectedRepository.currentItem.projectId = this.modal.connectedResultsetComponent.connectedRepository.parentItemId;
-    };
+    }
     //--------------------------------- Contractors HiddenInput ------------------------------------
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-    ContractModalController.prototype.contractorsChipsRefreshDataSet = function () {
+    contractorsChipsRefreshDataSet() {
         this.modal.selectedContractorsHiddenInput.$dom.parent().children('.chip').remove();
         if (this.modal.mode == 'ADD_NEW')
             this.modal.selectedContractorsHiddenInput.value = [];
@@ -29,43 +29,43 @@ var ContractModalController = /** @class */ (function () {
                 this.appendContractorChip(this.modal.selectedContractorsHiddenInput.value[i]);
             }
         }
-    };
-    ContractModalController.prototype.contractorSelectFieldInitialize = function () {
+    }
+    contractorSelectFieldInitialize() {
         this.modal.contractorAutoCompleteTextField.clearChosenItem();
-    };
-    ContractModalController.prototype.checkContractor = function (contractorItem) {
+    }
+    checkContractor(contractorItem) {
         //wyklucz sprawy wybrane już wcześniej
         var allowType = true;
-        this.modal.selectedContractorsHiddenInput.value.map(function (existingContractorItem) {
+        this.modal.selectedContractorsHiddenInput.value.map(existingContractorItem => {
             if (existingContractorItem.id == contractorItem.id)
                 allowType = false;
         });
         return allowType; //contractorTypeItem.milestoneTypeId==ContractorsSetup.currentMilestone._type.id;
-    };
-    ContractModalController.prototype.onContractorChosen = function (chosenItem) {
+    }
+    onContractorChosen(chosenItem) {
         this.addContractorItem(chosenItem);
         this.contractorSelectFieldInitialize(chosenItem);
-    };
-    ContractModalController.prototype.addContractorItem = function (contractorDataItem) {
+    }
+    addContractorItem(contractorDataItem) {
         this.modal.selectedContractorsHiddenInput.value.push(contractorDataItem);
         this.appendContractorChip(contractorDataItem);
-    };
-    ContractModalController.prototype.appendContractorChip = function (contractorDataItem) {
+    }
+    appendContractorChip(contractorDataItem) {
         var chipLabel = contractorDataItem.name;
         this.modal.selectedContractorsHiddenInput.$dom.parent()
             .prepend(new Chip('contractor_', chipLabel, contractorDataItem, this.onContractorUnchosen, this).$dom);
-    };
-    ContractModalController.prototype.onContractorUnchosen = function (unchosenItem) {
+    }
+    onContractorUnchosen(unchosenItem) {
         this.removeContractorItem(unchosenItem);
-    };
+    }
     //usuwa contractorItem z listy HiddenInput.value[]
-    ContractModalController.prototype.removeContractorItem = function (contractorDataItem) {
+    removeContractorItem(contractorDataItem) {
         var index = Tools.arrGetIndexOf(this.modal.selectedContractorsHiddenInput.value, 'id', contractorDataItem.id);
         this.modal.selectedContractorsHiddenInput.value.splice(index, 1);
-    };
+    }
     //--------------------------------- Employers HiddenInput ------------------------------------
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-    ContractModalController.prototype.employersChipsRefreshDataSet = function () {
+    employersChipsRefreshDataSet() {
         this.modal.selectedEmployersHiddenInput.$dom.parent().children('.chip').remove();
         if (this.modal.mode == 'ADD_NEW')
             this.modal.selectedEmployersHiddenInput.value = [];
@@ -75,40 +75,39 @@ var ContractModalController = /** @class */ (function () {
                 this.appendEmployerChip(this.modal.selectedEmployersHiddenInput.value[i]);
             }
         }
-    };
-    ContractModalController.prototype.employerSelectFieldInitialize = function () {
+    }
+    employerSelectFieldInitialize() {
         this.modal.employerAutoCompleteTextField.clearChosenItem();
-    };
-    ContractModalController.prototype.checkEmployer = function (employerItem) {
+    }
+    checkEmployer(employerItem) {
         //wyklucz sprawy wybrane już wcześniej
         var allowType = true;
-        this.modal.selectedEmployersHiddenInput.value.map(function (existingEmployerItem) {
+        this.modal.selectedEmployersHiddenInput.value.map(existingEmployerItem => {
             if (existingEmployerItem.id == employerItem.id)
                 allowType = false;
         });
         return allowType; //employerTypeItem.milestoneTypeId==EmployersSetup.currentMilestone._type.id;
-    };
-    ContractModalController.prototype.onEmployerChosen = function (chosenItem) {
+    }
+    onEmployerChosen(chosenItem) {
         this.addEmployerItem(chosenItem);
         this.employerSelectFieldInitialize(chosenItem);
-    };
-    ContractModalController.prototype.addEmployerItem = function (employerDataItem) {
+    }
+    addEmployerItem(employerDataItem) {
         this.modal.selectedEmployersHiddenInput.value.push(employerDataItem);
         this.appendEmployerChip(employerDataItem);
-    };
-    ContractModalController.prototype.appendEmployerChip = function (employerDataItem) {
+    }
+    appendEmployerChip(employerDataItem) {
         var chipLabel = employerDataItem.name;
         this.modal.selectedEmployersHiddenInput.$dom.parent()
             .prepend(new Chip('employer_', chipLabel, employerDataItem, this.onEmployerUnchosen, this).$dom);
-    };
-    ContractModalController.prototype.onEmployerUnchosen = function (unchosenItem) {
+    }
+    onEmployerUnchosen(unchosenItem) {
         this.removeEmployerItem(unchosenItem);
-    };
+    }
     //usuwa employerItem z listy HiddenInput.value[]
-    ContractModalController.prototype.removeEmployerItem = function (employerDataItem) {
+    removeEmployerItem(employerDataItem) {
         var index = Tools.arrGetIndexOf(this.modal.selectedEmployersHiddenInput.value, 'id', employerDataItem.id);
         this.modal.selectedEmployersHiddenInput.value.splice(index, 1);
-    };
-    return ContractModalController;
-}());
+    }
+}
 ;

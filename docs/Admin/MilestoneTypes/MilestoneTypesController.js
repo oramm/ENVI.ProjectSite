@@ -1,8 +1,6 @@
 "use strict";
-var MilestoneTypesController = /** @class */ (function () {
-    function MilestoneTypesController() {
-    }
-    MilestoneTypesController.main = function () {
+class MilestoneTypesController {
+    static main() {
         // Hide auth UI, then load client library.
         var milestoneTypesListView = new MilestoneTypesListView();
         $("#authorize-div").hide();
@@ -26,16 +24,16 @@ var MilestoneTypesController = /** @class */ (function () {
         });
         var promises = [
             ContractTypesSetup.contractTypesRepository.initialiseNodeJS('contractTypes/?status=ACTIVE'),
-            ContractTypesSetup.milestoneTypesRepository.initialiseNodeJS("milestoneTypes"),
+            ContractTypesSetup.milestoneTypesRepository.initialiseNodeJS(`milestoneTypes`),
             ContractTypesSetup.milestoneTemplatesRepository.initialiseNodeJS('milestoneTemplates'),
-            ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.initialiseNodeJS("milestoneTypeContractTypeAssociations"),
+            ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.initialiseNodeJS(`milestoneTypeContractTypeAssociations`),
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             milestoneTypesListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -44,9 +42,8 @@ var MilestoneTypesController = /** @class */ (function () {
             $('ul.tabs').tabs();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return MilestoneTypesController;
-}());
+    }
+}

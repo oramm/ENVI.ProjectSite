@@ -1,14 +1,13 @@
 "use strict";
-var OrgChart = /** @class */ (function () {
-    function OrgChart(initParamObject) {
-        var _this = this;
+class OrgChart {
+    constructor(initParamObject) {
         this.parentNode = initParamObject.parentNode;
         this.connectedRepository = initParamObject.connectedRepository;
         this.dataTable = this.makeDataTable();
         google.charts.load('current', { packages: ["orgchart"] });
-        google.charts.setOnLoadCallback(function () { return _this.drawChart(); });
+        google.charts.setOnLoadCallback(() => this.drawChart());
     }
-    OrgChart.prototype.drawChart = function () {
+    drawChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Name');
         data.addColumn('string', 'Manager');
@@ -20,11 +19,10 @@ var OrgChart = /** @class */ (function () {
         var chart = new google.visualization.OrgChart(this.parentNode);
         // Draw the chart, setting the allowHtml option to true for the tooltips.
         chart.draw(data, { 'allowHtml': true });
-    };
-    OrgChart.prototype.makeDataTable = function () {
+    }
+    makeDataTable() {
         var dataTable = [];
-        for (var _i = 0, _a = this.connectedRepository.items; _i < _a.length; _i++) {
-            var item = _a[_i];
+        for (const item of this.connectedRepository.items) {
             dataTable.push([
                 item.name,
                 item.managerId ? item.managerId : '',
@@ -32,13 +30,12 @@ var OrgChart = /** @class */ (function () {
             ]);
         }
         return dataTable;
-    };
-    OrgChart.prototype.makeHeaderDataTable = function (items) {
+    }
+    makeHeaderDataTable(items) {
         var dataTable = [];
         this.dataTable.push(item.name);
         this.dataTable[0].push(item.managerId ? item.managerId : '');
         this.dataTable[0].push(item.description ? item.description : '');
         return dataTable;
-    };
-    return OrgChart;
-}());
+    }
+}

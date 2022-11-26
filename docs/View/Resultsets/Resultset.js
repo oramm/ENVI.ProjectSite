@@ -1,6 +1,6 @@
 "use strict";
-var Resultset = /** @class */ (function () {
-    function Resultset(initParamObject) {
+class Resultset {
+    constructor(initParamObject) {
         this.id = initParamObject.id;
         this.parentDataItem = initParamObject.parentDataItem;
         this.parentViewObject = initParamObject.parentViewObject;
@@ -20,12 +20,11 @@ var Resultset = /** @class */ (function () {
         this.$dom;
         this.$actionsMenu;
     }
-    Resultset.prototype.makePreloader = function (id) {
+    makePreloader(id) {
         var $preloader = $('<div class="progress">');
         $preloader
             .attr('id', id)
             .append('<div class="indeterminate">');
         return $preloader;
-    };
-    return Resultset;
-}());
+    }
+}

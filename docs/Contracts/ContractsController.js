@@ -1,8 +1,6 @@
 "use strict";
-var ContractsController = /** @class */ (function () {
-    function ContractsController() {
-    }
-    ContractsController.main = function () {
+class ContractsController {
+    static main() {
         // Hide auth UI, then load client library.
         var contractsListView = new ContractsListView();
         $("#authorize-div").hide();
@@ -18,18 +16,18 @@ var ContractsController = /** @class */ (function () {
         });
         MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository');
         ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
-        var promises = [
+        const promises = [
             MilestonesSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
-            ContractsSetup.contractsRepository.initialiseNodeJS("contracts/?projectId=" + contractsRepository.parentItemId + "&isArchived=true"),
+            ContractsSetup.contractsRepository.initialiseNodeJS(`contracts/?projectId=${contractsRepository.parentItemId}&isArchived=true`),
             MilestonesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes/?projectId=' + contractsRepository.parentItemId),
         ];
         Promise.all(promises)
-            .then(function () { return ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items); })
-            .then(function () {
+            .then(() => ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items))
+            .then(() => {
             console.log("Repositories initialised");
             contractsListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -37,9 +35,8 @@ var ContractsController = /** @class */ (function () {
             Materialize.updateTextFields();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return ContractsController;
-}());
+    }
+}

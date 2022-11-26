@@ -1,36 +1,21 @@
 "use strict";
-var RolesSetup = /** @class */ (function () {
-    function RolesSetup() {
+class RolesSetup {
+    static get rolesRepository() {
+        return RolesSetup._rolesRepository;
     }
-    Object.defineProperty(RolesSetup, "rolesRepository", {
-        get: function () {
-            return RolesSetup._rolesRepository;
-        },
-        set: function (value) {
-            RolesSetup._rolesRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RolesSetup, "roleGroupsRepository", {
-        get: function () {
-            return RolesSetup._roleGroupsRepository;
-        },
-        set: function (value) {
-            RolesSetup._roleGroupsRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RolesSetup, "groups", {
-        get: function () {
-            return RolesSetup._groups;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return RolesSetup;
-}());
+    static set rolesRepository(value) {
+        RolesSetup._rolesRepository = value;
+    }
+    static get roleGroupsRepository() {
+        return RolesSetup._roleGroupsRepository;
+    }
+    static set roleGroupsRepository(value) {
+        RolesSetup._roleGroupsRepository = value;
+    }
+    static get groups() {
+        return RolesSetup._groups;
+    }
+}
 RolesSetup._rolesRepository;
 RolesSetup._roleGroupsRepository;
 RolesSetup._groups = [

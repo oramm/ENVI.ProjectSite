@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var LettersCollapsible = /** @class */ (function (_super) {
-    __extends(LettersCollapsible, _super);
-    function LettersCollapsible(id) {
-        var _this = _super.call(this, {
+class LettersCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -24,34 +10,33 @@ var LettersCollapsible = /** @class */ (function (_super) {
             hasArchiveSwitch: false,
             connectedRepository: LettersSetup.lettersRepository
             //subitemsCount: 12
-        }) || this;
-        _this.addNewIncomingLetterModal = new IncomingLetterModal(id + '_newIncomingLetterModal', 'Rejestruj pismo przychodzące', _this, 'ADD_NEW');
-        _this.editIncomingLetterModal = new IncomingLetterModal(id + '_editIncomingLetterModal', 'Edytuj dane pisma przychodzącego', _this, 'EDIT');
-        _this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', _this, 'ADD_NEW');
-        _this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', _this, 'EDIT');
-        _this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj email', _this, 'ADD_NEW');
-        _this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', _this, 'EDIT');
-        _this.addNewIncomingLetterModal.preppendTriggerButtonTo(_this.$actionsMenu, "Rejestruj przychodzące", _this);
-        _this.addNewOurLetterModal.preppendTriggerButtonTo(_this.$actionsMenu, "Rejestruj wychodzące", _this);
-        _this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(_this.$actionsMenu, "Rejestruj email", _this, 'FLAT');
+        });
+        this.addNewIncomingLetterModal = new IncomingLetterModal(id + '_newIncomingLetterModal', 'Rejestruj pismo przychodzące', this, 'ADD_NEW');
+        this.editIncomingLetterModal = new IncomingLetterModal(id + '_editIncomingLetterModal', 'Edytuj dane pisma przychodzącego', this, 'EDIT');
+        this.addNewOurLetterModal = new OurLetterModal(id + '_newOurLetterModal', 'Rejestruj pismo wychodzące', this, 'ADD_NEW');
+        this.editOurLetterModal = new OurLetterModal(id + '_editOurLetterModal', 'Edytuj dane pisma wychodzącego', this, 'EDIT');
+        this.addNewOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_OurOldTypeLetterModal', 'Rejestruj email', this, 'ADD_NEW');
+        this.editOurOldTypeLetterModal = new OurOldTypeLetterModal(id + '_editOurOldTypeLetterModal', 'Edytuj dane pisma wychodzącego po staremu', this, 'EDIT');
+        this.addNewIncomingLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj przychodzące", this);
+        this.addNewOurLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj wychodzące", this);
+        this.addNewOurOldTypeLetterModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj email", this, 'FLAT');
         var entityRawPanel = new RawPanel({
             id: 'newEntityRawPanel',
             connectedRepository: MainSetup.entitiesRepository
         });
         entityRawPanel.initialise(new EntityModal('newEntityModal', 'Dodaj podmiot', entityRawPanel, 'ADD_NEW'), 'FLAT');
-        _this.$actionsMenu.append(entityRawPanel.$dom);
-        _this.appendLetterAttachmentsModal = new AppendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', _this, 'EDIT');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        return _this;
+        this.$actionsMenu.append(entityRawPanel.$dom);
+        this.appendLetterAttachmentsModal = new AppendLetterAttachmentsModal(id + '_appendLetterAttachmentsModal', 'Dodaj załączniki', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    LettersCollapsible.prototype.makeItem = function (dataItem) {
-        var item = _super.prototype.makeItem.call(this, dataItem);
-        var editModal;
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        let editModal;
         if (dataItem.isOur) {
             if (dataItem.number == dataItem.id)
                 editModal = this.editOurLetterModal;
@@ -70,8 +55,8 @@ var LettersCollapsible = /** @class */ (function (_super) {
         item.name = name;
         item.editModal = editModal;
         return item;
-    };
-    LettersCollapsible.prototype.makeEntitiesLabel = function (entities) {
+    }
+    makeEntitiesLabel(entities) {
         var label = '';
         for (var i = 0; i < entities.length - 1; i++) {
             label += entities[i].name + ', ';
@@ -79,8 +64,8 @@ var LettersCollapsible = /** @class */ (function (_super) {
         if (entities[i])
             label += entities[i].name;
         return label;
-    };
-    LettersCollapsible.prototype.makeBody = function (dataItem) {
+    }
+    makeBody(dataItem) {
         var $actionButtons = $('<div class="row">');
         //if (dataItem._canUserChangeFileOrFolder)
         this.appendLetterAttachmentsModal.preppendTriggerButtonTo($actionButtons, 'Dodaj załączniki', this);
@@ -99,8 +84,8 @@ var LettersCollapsible = /** @class */ (function (_super) {
             collection: undefined,
             $dom: $panel
         };
-    };
-    LettersCollapsible.prototype.createCasesList = function (dataItem, $casesUl) {
+    }
+    createCasesList(dataItem, $casesUl) {
         for (var i = 0; i < dataItem._cases.length; i++) {
             var $caseLi = $('<li class="collection-item">');
             var caseLabel;
@@ -115,6 +100,5 @@ var LettersCollapsible = /** @class */ (function (_super) {
             $caseLi.html(caseLabel);
             $casesUl.append($caseLi);
         }
-    };
-    return LettersCollapsible;
-}(SimpleCollapsible));
+    }
+}

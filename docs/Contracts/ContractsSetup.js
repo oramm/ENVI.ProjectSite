@@ -1,64 +1,41 @@
 "use strict";
 var contractsRepository;
 var otherContractsRepository;
-var statusNames = ['Nie rozpoczęty',
+const statusNames = ['Nie rozpoczęty',
     'W trakcie',
     'Zakończony',
     'Archiwalny'
 ];
-var ContractsSetup = /** @class */ (function () {
-    function ContractsSetup() {
+class ContractsSetup {
+    //getterów nie używać w klasie inicjującej ten MainSetup z bazy
+    static get personsPerContractRepository() {
+        if (!ContractsSetup.personsRepositoryLocalData)
+            ContractsSetup.personsPerContractRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerContract repository')));
+        return ContractsSetup.personsPerContractRepositoryLocalData;
     }
-    Object.defineProperty(ContractsSetup, "personsPerContractRepository", {
-        //getterów nie używać w klasie inicjującej ten MainSetup z bazy
-        get: function () {
-            if (!ContractsSetup.personsRepositoryLocalData)
-                ContractsSetup.personsPerContractRepositoryLocalData = new SimpleRepository(JSON.parse(sessionStorage.getItem('PersonsPerContract repository')));
-            return ContractsSetup.personsPerContractRepositoryLocalData;
-        },
-        set: function (data) {
-            ContractsSetup.personsPerContractRepositoryLocalData = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ContractsSetup, "statusNames", {
-        get: function () {
-            return statusNames;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ContractsSetup, "contractsRepository", {
-        get: function () {
-            return contractsRepository;
-        },
-        set: function (data) {
-            contractsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ContractsSetup, "otherContractsRepository", {
-        get: function () {
-            return otherContractsRepository;
-        },
-        set: function (data) {
-            otherContractsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ContractsSetup, "personsRepository", {
-        get: function () {
-            return ContractsSetuppersonsRepository;
-        },
-        set: function (data) {
-            personsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return ContractsSetup;
-}());
+    static set personsPerContractRepository(data) {
+        ContractsSetup.personsPerContractRepositoryLocalData = data;
+    }
+    static get statusNames() {
+        return statusNames;
+    }
+    static get contractsRepository() {
+        return contractsRepository;
+    }
+    static set contractsRepository(data) {
+        contractsRepository = data;
+    }
+    static get otherContractsRepository() {
+        return otherContractsRepository;
+    }
+    static set otherContractsRepository(data) {
+        otherContractsRepository = data;
+    }
+    static get personsRepository() {
+        return ContractsSetuppersonsRepository;
+    }
+    static set personsRepository(data) {
+        personsRepository = data;
+    }
+}
 ContractsSetup.personsPerContractRepositoryLocalData;

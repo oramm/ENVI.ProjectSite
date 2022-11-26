@@ -1,13 +1,13 @@
 "use strict";
-var NavigationBar = /** @class */ (function () {
-    function NavigationBar(title, parentViewObject) {
+class NavigationBar {
+    constructor(title, parentViewObject) {
         this.parentViewObject = parentViewObject;
         this.title = title;
     }
     /*
      * Musi być wywołana w klasie pochodnej
      */
-    NavigationBar.prototype.initialise = function () {
+    initialise() {
         this.$mainNavDom = $('<nav class="green darken-1">');
         this.$sideNavDom = $('<ul class="sidenav" id="mobile-demo">');
         $('header')
@@ -20,12 +20,11 @@ var NavigationBar = /** @class */ (function () {
             .append('<ul class="right hide-on-med-and-down">');
         this.setShowMainPageAction();
         $(".sidenav").sidenav(); //funkcja z css Materialise
-    };
-    NavigationBar.prototype.setShowMainPageAction = function () {
-        var _this_1 = this;
-        this.$mainNavDom.find('.brand-logo').click(function () { return _this_1.menuItemClickHandler('Dashboard/dashboard.html'); });
-    };
-    NavigationBar.prototype.addMenuItems = function ($element) {
+    }
+    setShowMainPageAction() {
+        this.$mainNavDom.find('.brand-logo').click(() => this.menuItemClickHandler('Dashboard/dashboard.html'));
+    }
+    addMenuItems($element) {
         $element.empty();
         for (var i = 0; i < this.menuItems.length; i++) {
             $element.append('<li>').children(':last')
@@ -34,8 +33,8 @@ var NavigationBar = /** @class */ (function () {
                 .html(this.menuItems[i].caption);
         }
         this.menuItemSetClickAction();
-    };
-    NavigationBar.prototype.menuItemSetClickAction = function () {
+    }
+    menuItemSetClickAction() {
         this.$mainNavDom.find("li > a").off('click');
         this.$sideNavDom.find("li > a").off('click');
         var _this = this;
@@ -49,23 +48,21 @@ var NavigationBar = /** @class */ (function () {
             //$(this).attr("class", "collection-item avatar active");
             _this.menuItemClickHandler($(this).attr("link"));
         });
-    };
+    }
     /*
      * @this.addNewHref musi być zaimplenetowana w klasie pochodnej
      */
-    NavigationBar.prototype.halfwayButton = function () {
+    halfwayButton() {
         var $button = $('<a class="btn-floating btn-large halfway-fab waves-effect waves-light teal">')
             .attr('href', this.addNewHref)
             .attr('target', '_blank')
             .append('<i class="material-icons">add</i>');
         return $button;
-    };
-    return NavigationBar;
-}());
-var MenuItem = /** @class */ (function () {
-    function MenuItem(caption, link) {
+    }
+}
+class MenuItem {
+    constructor(caption, link) {
         this.caption = caption;
         this.link = link;
     }
-    return MenuItem;
-}());
+}

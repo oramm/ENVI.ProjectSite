@@ -1,8 +1,6 @@
 "use strict";
-var GantController = /** @class */ (function () {
-    function GantController() {
-    }
-    GantController.prototype.main = function () {
+class GantController {
+    main() {
         // Hide auth UI, then load client library.
         var gantView = new GantView();
         $("#authorize-div").hide();
@@ -14,13 +12,12 @@ var GantController = /** @class */ (function () {
         promises[0] = milestonesRepository.initialise({ projectId: milestonesRepository.parentItemId });
         promises[1] = contractsRepository.initialise({ projectId: contractsRepository.parentItemId });
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             gantView.initialise();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return GantController;
-}());
+    }
+}

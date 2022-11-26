@@ -1,6 +1,6 @@
 "use strict";
-var Popup = /** @class */ (function () {
-    function Popup() {
+class Popup {
+    constructor() {
         this.preloaderBar = '<div class="progress">' +
             'zapisuję...<div class="indeterminate"></div>' +
             '</div>';
@@ -17,27 +17,27 @@ var Popup = /** @class */ (function () {
             '</div>' +
             '</div>';
     }
-    Popup.prototype.showLoadingWheel = function (HTMLElement) {
+    showLoadingWheel(HTMLElement) {
         $(HTMLElement).append(this.loadingWheel);
-    };
-    Popup.prototype.showPreloader = function (HTMLElement) {
+    }
+    showPreloader(HTMLElement) {
         $(HTMLElement).append(this.preloaderBar);
-    };
-    Popup.prototype.hidePreloader = function (HTMLElement) {
+    }
+    hidePreloader(HTMLElement) {
         $(HTMLElement).remove();
-    };
-    Popup.prototype.setTittle = function (title) {
+    }
+    setTittle(title) {
         $("#title").html("<H4>" + title + "</h4>");
-    };
-    Popup.prototype.makeSubTittle = function (title) {
+    }
+    makeSubTittle(title) {
         return $("<H5>" + title + "</h5>");
-    };
-    Popup.prototype.setStatus = function (message) {
+    }
+    setStatus(message) {
         $("#status").append("<p>" + message + "</p>");
-    };
-    Popup.prototype.setForm = function () {
-    };
-    Popup.prototype.dataLoaded = function (loaded) {
+    }
+    setForm() {
+    }
+    dataLoaded(loaded) {
         if (loaded) {
             $("#loading").hide();
             $("#content").show();
@@ -47,14 +47,13 @@ var Popup = /** @class */ (function () {
             $("#loading").append(this.loadingWheel);
             $("#loading").show();
         }
-    };
-    Popup.prototype.loadIframe = function (iframeName, url) {
+    }
+    loadIframe(iframeName, url) {
         var $iframe = $('#' + iframeName);
         if ($iframe.length) {
             $iframe.attr('src', url);
             return false;
         }
         return true;
-    };
-    return Popup;
-}());
+    }
+}

@@ -1,8 +1,6 @@
 "use strict";
-var IssuesController = /** @class */ (function () {
-    function IssuesController() {
-    }
-    IssuesController.main = function () {
+class IssuesController {
+    static main() {
         // Hide auth UI, then load client library.
         var issuesListView = new IssuesListView();
         $("#authorize-div").hide();
@@ -18,20 +16,19 @@ var IssuesController = /** @class */ (function () {
             IssuesSetup.issuesRepository.initialise(IssuesSetup.issuesRepository.parentItemId)
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             issuesListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
             ReachTextArea.reachTextAreaInit();
             Materialize.updateTextFields();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return IssuesController;
-}());
+    }
+}

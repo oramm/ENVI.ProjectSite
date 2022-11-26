@@ -2,46 +2,27 @@
 var casesRepository;
 var caseTypesRepository;
 var eventsRepository;
-var CasesSetup = /** @class */ (function () {
-    function CasesSetup() {
+class CasesSetup {
+    //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
+    static get currentMilestone() {
+        return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
     }
-    Object.defineProperty(CasesSetup, "currentMilestone", {
-        //static currentMilestone = JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
-        get: function () {
-            return JSON.parse(sessionStorage.getItem('Milestones repository')).currentItemLocalData;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(CasesSetup, "casesRepository", {
-        get: function () {
-            return casesRepository;
-        },
-        set: function (data) {
-            casesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(CasesSetup, "caseTypesRepository", {
-        get: function () {
-            return caseTypesRepository;
-        },
-        set: function (data) {
-            caseTypesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(CasesSetup, "eventsRepository", {
-        get: function () {
-            return eventsRepository;
-        },
-        set: function (data) {
-            eventsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return CasesSetup;
-}());
+    static get casesRepository() {
+        return casesRepository;
+    }
+    static set casesRepository(data) {
+        casesRepository = data;
+    }
+    static get caseTypesRepository() {
+        return caseTypesRepository;
+    }
+    static set caseTypesRepository(data) {
+        caseTypesRepository = data;
+    }
+    static set eventsRepository(data) {
+        eventsRepository = data;
+    }
+    static get eventsRepository() {
+        return eventsRepository;
+    }
+}

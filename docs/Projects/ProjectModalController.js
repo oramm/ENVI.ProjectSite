@@ -1,19 +1,19 @@
 "use strict";
-var ProjectModalController = /** @class */ (function () {
-    function ProjectModalController(modal) {
+class ProjectModalController {
+    constructor(modal) {
         this.modal = modal;
         this._this = this;
     }
     /*
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
-    ProjectModalController.prototype.initAddNewDataHandler = function () {
+    initAddNewDataHandler() {
         this.modal.connectedResultsetComponent.connectedRepository.currentItem = {
             projectId: this.modal.connectedResultsetComponent.connectedRepository.parentItemId
         };
-    };
+    }
     //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-    ProjectModalController.prototype.employersChipsRefreshDataSet = function () {
+    employersChipsRefreshDataSet() {
         this.modal.selectedEmployersHiddenInput.$dom.parent().children('.chip').remove();
         if (this.modal.mode == 'ADD_NEW')
             this.modal.selectedEmployersHiddenInput.value = [];
@@ -23,41 +23,40 @@ var ProjectModalController = /** @class */ (function () {
                 this.appendEmployerChip(this.modal.selectedEmployersHiddenInput.value[i]);
             }
         }
-    };
-    ProjectModalController.prototype.employerSelectFieldInitialize = function () {
+    }
+    employerSelectFieldInitialize() {
         this.modal.employerAutoCompleteTextField.clearChosenItem();
-    };
-    ProjectModalController.prototype.checkEmployer = function (employerItem) {
+    }
+    checkEmployer(employerItem) {
         //wyklucz pozycje wybrane już wcześniej
         var allowType = true;
-        this.modal.selectedEmployersHiddenInput.value.map(function (existingEmployerItem) {
+        this.modal.selectedEmployersHiddenInput.value.map(existingEmployerItem => {
             if (existingEmployerItem.id == employerItem.id)
                 allowType = false;
         });
         return allowType; //employerTypeItem.milestoneTypeId==EmployersSetup.currentMilestone._type.id;
-    };
-    ProjectModalController.prototype.onEmployerChosen = function (chosenItem) {
+    }
+    onEmployerChosen(chosenItem) {
         this.addEmployerItem(chosenItem);
         this.employerSelectFieldInitialize(chosenItem);
-    };
-    ProjectModalController.prototype.addEmployerItem = function (employerDataItem) {
+    }
+    addEmployerItem(employerDataItem) {
         this.modal.selectedEmployersHiddenInput.value.push(employerDataItem);
         this.appendEmployerChip(employerDataItem);
-    };
-    ProjectModalController.prototype.appendEmployerChip = function (employerDataItem) {
-        var chipLabel = employerDataItem.name;
+    }
+    appendEmployerChip(employerDataItem) {
+        const chipLabel = employerDataItem.name;
         this.modal.selectedEmployersHiddenInput.$dom.parent()
             .prepend(new Chip('employer_', chipLabel, employerDataItem, this.onEmployerUnchosen, this).$dom);
-    };
-    ProjectModalController.prototype.onEmployerUnchosen = function (unchosenItem) {
+    }
+    onEmployerUnchosen(unchosenItem) {
         //LettersSetup.employersRepository.deleteFromCurrentItems(unchosenItem);
         this.removeEmployerItem(unchosenItem);
-    };
+    }
     //usuwa employerItem z listy HiddenInput.value[]
-    ProjectModalController.prototype.removeEmployerItem = function (employerDataItem) {
+    removeEmployerItem(employerDataItem) {
         var index = Tools.arrGetIndexOf(this.modal.selectedEmployersHiddenInput.value, 'id', employerDataItem.id);
         this.modal.selectedEmployersHiddenInput.value.splice(index, 1);
-    };
-    return ProjectModalController;
-}());
+    }
+}
 ;

@@ -1,29 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var OurOldTypeLetterModalController = /** @class */ (function (_super) {
-    __extends(OurOldTypeLetterModalController, _super);
-    function OurOldTypeLetterModalController(modal) {
-        return _super.call(this, modal) || this;
+class OurOldTypeLetterModalController extends IncomingLetterModalController {
+    constructor(modal) {
+        super(modal);
     }
     /*
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
-    OurOldTypeLetterModalController.prototype.initAddNewDataHandler = function () {
-        _super.prototype.initAddNewDataHandler.call(this);
+    initAddNewDataHandler() {
+        super.initAddNewDataHandler();
         this.modal.connectedResultsetComponent.connectedRepository.currentItem.isOur = true;
-    };
-    return OurOldTypeLetterModalController;
-}(IncomingLetterModalController));
+    }
+}
 ;

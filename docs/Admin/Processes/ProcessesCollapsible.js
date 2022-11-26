@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ProcessesCollapsible = /** @class */ (function (_super) {
-    __extends(ProcessesCollapsible, _super);
-    function ProcessesCollapsible(id) {
-        var _this = _super.call(this, {
+class ProcessesCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -24,13 +10,12 @@ var ProcessesCollapsible = /** @class */ (function (_super) {
             hasArchiveSwitch: true,
             connectedRepository: ProcessesSetup.processesRepository
             //subitemsCount: 12
-        }) || this;
-        _this.addNewModal = new ProcessModal(id + '_newProcessModal', 'Dodaj proces', _this, 'ADD_NEW');
-        _this.editModal = new ProcessModal(id + '_editProcessModal', 'Edytuj proces', _this, 'EDIT');
-        _this.addNewStepModal = new StepModal(_this.id + '_newStepModal', 'Dodaj krok do procesu', _this, 'ADD_NEW');
-        _this.editStepModal = new StepModal(_this.id + '_editStepModal', 'Edytuj krok w procesie', _this, 'EDIT');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        return _this;
+        });
+        this.addNewModal = new ProcessModal(id + '_newProcessModal', 'Dodaj proces', this, 'ADD_NEW');
+        this.editModal = new ProcessModal(id + '_editProcessModal', 'Edytuj proces', this, 'EDIT');
+        this.addNewStepModal = new StepModal(this.id + '_newStepModal', 'Dodaj krok do procesu', this, 'ADD_NEW');
+        this.editStepModal = new StepModal(this.id + '_editStepModal', 'Edytuj krok w procesie', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
     }
@@ -39,14 +24,14 @@ var ProcessesCollapsible = /** @class */ (function (_super) {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    ProcessesCollapsible.prototype.makeItem = function (dataItem) {
-        var item = _super.prototype.makeItem.call(this, dataItem);
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
         item.name = dataItem.name + ' >> typ sprawy: ' + dataItem._caseType.name;
         return item;
-    };
-    ProcessesCollapsible.prototype.makeBody = function (dataItem) {
+    }
+    makeBody(dataItem) {
         var $descriptionLabel = $((dataItem.description) ? '<BR>' + dataItem.description : '');
-        var subCollection = new StepsCollection({
+        let subCollection = new StepsCollection({
             id: 'stepssCollection_' + dataItem.id,
             title: "",
             addNewModal: this.addNewStepModal,
@@ -64,13 +49,12 @@ var ProcessesCollapsible = /** @class */ (function (_super) {
             collection: subCollection,
             $dom: $panel
         };
-    };
+    }
     /*
      *
      */
-    ProcessesCollapsible.prototype.selectTrigger = function (itemId) {
-        _super.prototype.selectTrigger.call(this, itemId);
+    selectTrigger(itemId) {
+        super.selectTrigger(itemId);
         //$('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-    };
-    return ProcessesCollapsible;
-}(SimpleCollapsible));
+    }
+}

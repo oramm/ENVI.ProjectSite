@@ -1,25 +1,25 @@
 "use strict";
-var ScrumBoard = /** @class */ (function () {
-    function ScrumBoard(statusesCollections) {
+class ScrumBoard {
+    constructor(statusesCollections) {
         this.statusesCollections = statusesCollections;
         //this.caseId = caseId;
         this.buildDom();
     }
-    ScrumBoard.prototype.buildDom = function () {
+    buildDom() {
         this.$dom = $('<div class="row scrumBoard">');
         this.$actionsMenu = $('<div >');
         this.$dom
             .append(this.$actionsMenu);
         this.buildStatuses();
         this.filterInitialise();
-    };
+    }
     /*
      * Ustawia pole filtra dla wszystkich statusów danego scrumborda
      */
-    ScrumBoard.prototype.filterInitialise = function () {
+    filterInitialise() {
         this.filter = new Filter([], this);
-    };
-    ScrumBoard.prototype.buildStatuses = function () {
+    }
+    buildStatuses() {
         for (var i = 0; i < this.statusesCollections.length; i++) {
             var $col = $('<div class="col">');
             $col
@@ -46,22 +46,21 @@ var ScrumBoard = /** @class */ (function () {
             },
         });
         //this.$dom.find('.collection').disableSelection();
-    };
-    ScrumBoard.prototype.dragStart = function (e, ui) {
+    }
+    dragStart(e, ui) {
         this.$dom.find('.collection')
             .addClass('attractToDrop');
         ui.item.addClass('z-depth-1');
-    };
-    ScrumBoard.prototype.dragStop = function (e, ui) {
+    }
+    dragStop(e, ui) {
         this.$dom.find('.collection')
             .removeClass('attractToDrop');
         ui.item.removeClass('z-depth-1');
-    };
-    ScrumBoard.prototype.changeStatus = function (e, ui) {
+    }
+    changeStatus(e, ui) {
         var newStatus = ui.item.parent().attr("status");
         var receiverCollection = Tools.search(newStatus, "status", this.statusesCollections);
         TasksSetup.tasksRepository.currentItem.status = newStatus;
         TasksSetup.tasksRepository.editItem(TasksSetup.tasksRepository.currentItem, receiverCollection);
-    };
-    return ScrumBoard;
-}());
+    }
+}

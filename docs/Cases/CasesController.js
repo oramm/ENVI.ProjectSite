@@ -1,8 +1,6 @@
 "use strict";
-var CasesController = /** @class */ (function () {
-    function CasesController() {
-    }
-    CasesController.main = function () {
+class CasesController {
+    static main() {
         // Hide auth UI, then load client library.
         var casesListView = new CasesListView();
         $("#authorize-div").hide();
@@ -31,22 +29,21 @@ var CasesController = /** @class */ (function () {
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?milestoneId=' + LettersSetup.lettersRepository.parentItemId)
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             casesListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
             ReachTextArea.reachTextAreaInit();
             Materialize.updateTextFields();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
             alert('Wystąpił bład. Zgłoś go administratorowi systemu: \n' +
                 err);
         });
-    };
-    return CasesController;
-}());
+    }
+}

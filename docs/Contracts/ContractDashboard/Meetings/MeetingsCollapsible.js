@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MeetingsCollapsible = /** @class */ (function (_super) {
-    __extends(MeetingsCollapsible, _super);
-    function MeetingsCollapsible(id) {
-        var _this = _super.call(this, {
+class MeetingsCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -24,13 +10,12 @@ var MeetingsCollapsible = /** @class */ (function (_super) {
             hasArchiveSwitch: true,
             connectedRepository: MeetingsSetup.meetingsRepository
             //subitemsCount: 12
-        }) || this;
-        _this.addNewModal = new MeetingModal(id + '_newMeetingModal', 'Zaplanuj spotkanie', _this, 'ADD_NEW');
-        _this.editModal = new MeetingModal(id + '_editMeetingModal', 'Edytuj spotkanie', _this, 'EDIT');
-        _this.addNewMeetingArrangementModal = new MeetingArrangementModal(_this.id + '_newMeetingArrangementModal', 'Dodaj ustalenie', _this, 'ADD_NEW');
-        _this.editMeetingArrangementModal = new MeetingArrangementModal(_this.id + '_editMeetingArrangementModal', 'Edytuj ustalenie', _this, 'EDIT');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        return _this;
+        });
+        this.addNewModal = new MeetingModal(id + '_newMeetingModal', 'Zaplanuj spotkanie', this, 'ADD_NEW');
+        this.editModal = new MeetingModal(id + '_editMeetingModal', 'Edytuj spotkanie', this, 'EDIT');
+        this.addNewMeetingArrangementModal = new MeetingArrangementModal(this.id + '_newMeetingArrangementModal', 'Dodaj ustalenie', this, 'ADD_NEW');
+        this.editMeetingArrangementModal = new MeetingArrangementModal(this.id + '_editMeetingArrangementModal', 'Edytuj ustalenie', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
     }
@@ -39,12 +24,12 @@ var MeetingsCollapsible = /** @class */ (function (_super) {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    MeetingsCollapsible.prototype.makeItem = function (dataItem) {
-        var item = _super.prototype.makeItem.call(this, dataItem);
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
         item.name = dataItem.name + ' ' + dataItem.date;
         return item;
-    };
-    MeetingsCollapsible.prototype.makeBody = function (dataItem) {
+    }
+    makeBody(dataItem) {
         var descriptionLabel = (dataItem.description) ? '<div class="row">' + dataItem.description + '</div>' : '';
         var title;
         var $meetingProtocolButton = $('<div class="row">');
@@ -58,7 +43,7 @@ var MeetingsCollapsible = /** @class */ (function (_super) {
             $meetingProtocolButton
                 .append(new RaisedButton('Popraw notatkę', this.createProtocolAction, this).$dom);
         }
-        var subCollection = new MeetingArrangementsCollection({
+        let subCollection = new MeetingArrangementsCollection({
             id: 'meetingArrangementsCollection_' + dataItem.id,
             title: title,
             addNewModal: this.addNewMeetingArrangementModal,
@@ -76,18 +61,17 @@ var MeetingsCollapsible = /** @class */ (function (_super) {
             collection: subCollection,
             $dom: $panel
         };
-    };
+    }
     /*
      *
      */
-    MeetingsCollapsible.prototype.selectTrigger = function (itemId) {
-        _super.prototype.selectTrigger.call(this, itemId);
+    selectTrigger(itemId) {
+        super.selectTrigger(itemId);
         //$('#contractDashboard').attr('src','ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
-    };
-    MeetingsCollapsible.prototype.createProtocolAction = function () {
+    }
+    createProtocolAction() {
         MeetingsSetup.meetingsRepository.currentItem._contract = MeetingsSetup.currentContract;
         MeetingsSetup.meetingsRepository.currentItem._contract._parent = MainSetup.currentProject;
         MeetingsSetup.meetingsRepository.doChangeFunctionOnItem(MeetingsSetup.meetingsRepository.currentItem, 'createMeetingProtocol', this);
-    };
-    return MeetingsCollapsible;
-}(SimpleCollapsible));
+    }
+}

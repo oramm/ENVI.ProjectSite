@@ -1,8 +1,6 @@
 "use strict";
-var MyTasksController = /** @class */ (function () {
-    function MyTasksController() {
-    }
-    MyTasksController.prototype.main = function () {
+class MyTasksController {
+    main() {
         // Hide auth UI, then load client library.
         var myTasksView = new MyTasksView();
         $("#authorize-div").hide();
@@ -13,20 +11,19 @@ var MyTasksController = /** @class */ (function () {
             tasksRepository.initialise({ contractStatusCondition: 'Nie rozpoczęty|W trakcie' })
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             myTasksView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
             ReachTextArea.reachTextAreaInit();
             Materialize.updateTextFields();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return MyTasksController;
-}());
+    }
+}

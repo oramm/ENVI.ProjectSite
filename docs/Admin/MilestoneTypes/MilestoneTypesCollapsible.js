@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MilestoneTypesCollapsible = /** @class */ (function (_super) {
-    __extends(MilestoneTypesCollapsible, _super);
-    function MilestoneTypesCollapsible(id) {
-        var _this = _super.call(this, {
+class MilestoneTypesCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -24,13 +10,12 @@ var MilestoneTypesCollapsible = /** @class */ (function (_super) {
             hasArchiveSwitch: false,
             connectedRepository: ContractTypesSetup.milestoneTypesRepository
             //subitemsCount: 12
-        }) || this;
-        _this.addNewModal = new MilestoneTypeModal(id + '_newMilestoneType', 'Dodaj typ kamienia', _this, 'ADD_NEW');
-        _this.editModal = new MilestoneTypeModal(id + '_editMilestoneType', 'Edytuj typ kamienia', _this, 'EDIT');
-        _this.addNewMilestoneTemplateModal = new MilestoneTemplateModal(_this.id + '_newMilestoneTemplate', 'Dodaj szablon kamienia milowego', _this, 'ADD_NEW');
-        _this.editMilestoneTemplateModal = new MilestoneTemplateModal(_this.id + '_editMilestoneTemplate', 'Edytuj szablon kamienia milowego', _this, 'EDIT');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        return _this;
+        });
+        this.addNewModal = new MilestoneTypeModal(id + '_newMilestoneType', 'Dodaj typ kamienia', this, 'ADD_NEW');
+        this.editModal = new MilestoneTypeModal(id + '_editMilestoneType', 'Edytuj typ kamienia', this, 'EDIT');
+        this.addNewMilestoneTemplateModal = new MilestoneTemplateModal(this.id + '_newMilestoneTemplate', 'Dodaj szablon kamienia milowego', this, 'ADD_NEW');
+        this.editMilestoneTemplateModal = new MilestoneTemplateModal(this.id + '_editMilestoneTemplate', 'Edytuj szablon kamienia milowego', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
     }
@@ -39,15 +24,15 @@ var MilestoneTypesCollapsible = /** @class */ (function (_super) {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    MilestoneTypesCollapsible.prototype.makeItem = function (dataItem) {
-        var item = _super.prototype.makeItem.call(this, dataItem);
-        var isUniqueLabel = (dataItem.isUniquePerContract) ? '[Unikalny]' : '[*]';
-        item.name = dataItem.name + " " + isUniqueLabel;
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        const isUniqueLabel = (dataItem.isUniquePerContract) ? '[Unikalny]' : '[*]';
+        item.name = `${dataItem.name} ${isUniqueLabel}`;
         return item;
-    };
-    MilestoneTypesCollapsible.prototype.makeBody = function (dataItem) {
+    }
+    makeBody(dataItem) {
         var $descriptionLabel = $((dataItem.description) ? '<BR>' + dataItem.description : '');
-        var subCollection = new MilestoneTemplatesCollection({
+        let subCollection = new MilestoneTemplatesCollection({
             id: 'milestoneTemplatesCollection_' + dataItem.id,
             title: "",
             addNewModal: this.addNewMilestoneTemplateModal,
@@ -64,19 +49,18 @@ var MilestoneTypesCollapsible = /** @class */ (function (_super) {
             collection: subCollection,
             $dom: $panel
         };
-    };
+    }
     /*
      *
      */
-    MilestoneTypesCollapsible.prototype.selectTrigger = function (itemId) {
+    selectTrigger(itemId) {
         var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
         if (itemId !== undefined &&
             this.connectedRepository.currentItem.id != itemId ||
             !isDashboardLoaded) {
-            _super.prototype.selectTrigger.call(this, itemId);
+            super.selectTrigger(itemId);
             $('#milestoneTypeDashboard').attr('src', 'CaseTypes/CaseTypesList.html?parentItemId=' + this.connectedRepository.currentItem.id);
             $('#taskTemplatesDashboard').attr('src', 'about:blank');
         }
-    };
-    return MilestoneTypesCollapsible;
-}(SimpleCollapsible));
+    }
+}

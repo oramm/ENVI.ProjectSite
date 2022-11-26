@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MilestonesCollection = /** @class */ (function (_super) {
-    __extends(MilestonesCollection, _super);
-    function MilestonesCollection(initParamObject) {
-        var _this = _super.call(this, { id: initParamObject.id,
+class MilestonesCollection extends SimpleCollection {
+    constructor(initParamObject) {
+        super({ id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
             addNewModal: initParamObject.addNewModal,
@@ -27,15 +13,14 @@ var MilestonesCollection = /** @class */ (function (_super) {
             isDeletable: true,
             isSelectable: true,
             connectedRepository: MilestonesSetup.milestonesRepository
-        }) || this;
-        _this.initialise(_this.makeList());
-        return _this;
+        });
+        this.initialise(this.makeList());
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
      * @dataItem connectedRepository.items[i]
      */
-    MilestonesCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         return { id: dataItem.id,
             //icon:   'info',
@@ -44,18 +29,18 @@ var MilestonesCollection = /** @class */ (function (_super) {
             editUrl: dataItem.editUrl,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    MilestonesCollection.prototype.makeTitle = function (dataItem) {
+    makeTitle(dataItem) {
         var titleAtomicEditLabel = new AtomicEditLabel(dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
         return titleAtomicEditLabel.$dom;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    MilestonesCollection.prototype.makeDescription = function (dataItem) {
+    makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         var $collectionElementDescription = $('<span>');
         //TODO: kiedyś dodać edyzcję dat
@@ -68,21 +53,19 @@ var MilestonesCollection = /** @class */ (function (_super) {
             //.append(deadlineAtomicEditLabel.$dom)
             .append(new Badge(dataItem.id, dataItem.status, 'light-blue').$dom);
         return $collectionElementDescription;
-    };
-    MilestonesCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) {
+    }
+    makeList() {
+        return super.makeList().filter((item) => {
             //console.log('this.parentDataItem.id: %s ==? %s', this.parentDataItem.id, item.dataItem._parent.id)
-            return item.dataItem._parent.id == _this.parentDataItem.id;
+            return item.dataItem._parent.id == this.parentDataItem.id;
         });
-    };
-    MilestonesCollection.prototype.selectTrigger = function (itemId) {
+    }
+    selectTrigger(itemId) {
         var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
         if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
             isDashboardLoaded) {
-            _super.prototype.selectTrigger.call(this, itemId);
+            super.selectTrigger(itemId);
             $('#contractDashboard').attr('src', '../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id + '&contractId=' + this.connectedRepository.currentItem.contractId);
         }
-    };
-    return MilestonesCollection;
-}(SimpleCollection));
+    }
+}

@@ -1,8 +1,6 @@
 "use strict";
-var LettersController = /** @class */ (function () {
-    function LettersController() {
-    }
-    LettersController.main = function () {
+class LettersController {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new LettersListView();
         $("#authorize-div").hide();
@@ -14,18 +12,18 @@ var LettersController = /** @class */ (function () {
         LettersSetup.contractsRepository = new SimpleRepository('Contracts repository', 'getContractsList');
         LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository', 'getMilestonesList');
         LettersSetup.casesRepository = new SimpleRepository('Cases repository', 'getCasesListPerProject');
-        var promises = [
+        let promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?contractId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.contractsRepository.initialiseNodeJS('contracts/?contractId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?contractId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.casesRepository.initialiseNodeJS('cases/?contractId=' + LettersSetup.lettersRepository.parentItemId)
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             return listView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -34,9 +32,8 @@ var LettersController = /** @class */ (function () {
             $('ul.tabs').tabs();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return LettersController;
-}());
+    }
+}

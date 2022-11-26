@@ -1,8 +1,6 @@
 "use strict";
-var ContractTypesController = /** @class */ (function () {
-    function ContractTypesController() {
-    }
-    ContractTypesController.main = function () {
+class ContractTypesController {
+    static main() {
         // Hide auth UI, then load client library.
         var contractTypesListView = new ContractTypesListView();
         $("#authorize-div").hide();
@@ -24,18 +22,18 @@ var ContractTypesController = /** @class */ (function () {
             name: 'MilestoneTypeContractTypeAssociations repository',
             actionsNodeJSSetup: { addNewRoute: 'milestoneTypeContractTypeAssociation', editRoute: 'milestoneTypeContractTypeAssociation', deleteRoute: 'milestoneTypeContractTypeAssociation' },
         });
-        var promises = [
+        const promises = [
             ContractTypesSetup.contractTypesRepository.initialiseNodeJS('contractTypes/?status=ACTIVE'),
             ContractTypesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes'),
             ContractTypesSetup.milestoneTemplatesRepository.initialiseNodeJS('milestoneTemplates'),
             ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository.initialiseNodeJS('milestoneTypeContractTypeAssociations'),
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             contractTypesListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -44,9 +42,8 @@ var ContractTypesController = /** @class */ (function () {
             $('ul.tabs').tabs();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return ContractTypesController;
-}());
+    }
+}

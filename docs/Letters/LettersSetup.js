@@ -1,69 +1,42 @@
 "use strict";
-var LettersSetup = /** @class */ (function () {
-    function LettersSetup() {
+class LettersSetup {
+    static get lettersRepository() {
+        return LettersSetup._lettersRepository;
     }
-    Object.defineProperty(LettersSetup, "lettersRepository", {
-        get: function () {
-            return LettersSetup._lettersRepository;
-        },
-        set: function (value) {
-            LettersSetup._lettersRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(LettersSetup, "letterCasesRepository", {
-        get: function () {
-            return LettersSetup._letterCasesRepository;
-        },
-        set: function (value) {
-            LettersSetup._letterCasesRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(LettersSetup, "letterEntitiesRepository", {
-        get: function () {
-            return LettersSetup._letterEntitiesRepository;
-        },
-        set: function (value) {
-            LettersSetup._letterEntitiesRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(LettersSetup, "contractsRepository", {
-        get: function () {
-            return LettersSetup._contractsRepository;
-        },
-        set: function (value) {
-            LettersSetup._contractsRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(LettersSetup, "milestonesRepository", {
-        get: function () {
-            return LettersSetup._milestonesRepository;
-        },
-        set: function (value) {
-            LettersSetup._milestonesRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(LettersSetup, "casesRepository", {
-        get: function () {
-            return LettersSetup._casesRepository;
-        },
-        set: function (value) {
-            LettersSetup._casesRepository = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return LettersSetup;
-}());
+    static set lettersRepository(value) {
+        LettersSetup._lettersRepository = value;
+    }
+    static get letterCasesRepository() {
+        return LettersSetup._letterCasesRepository;
+    }
+    static set letterCasesRepository(value) {
+        LettersSetup._letterCasesRepository = value;
+    }
+    static get letterEntitiesRepository() {
+        return LettersSetup._letterEntitiesRepository;
+    }
+    static set letterEntitiesRepository(value) {
+        LettersSetup._letterEntitiesRepository = value;
+    }
+    static get contractsRepository() {
+        return LettersSetup._contractsRepository;
+    }
+    static set contractsRepository(value) {
+        LettersSetup._contractsRepository = value;
+    }
+    static get milestonesRepository() {
+        return LettersSetup._milestonesRepository;
+    }
+    static set milestonesRepository(value) {
+        LettersSetup._milestonesRepository = value;
+    }
+    static get casesRepository() {
+        return LettersSetup._casesRepository;
+    }
+    static set casesRepository(value) {
+        LettersSetup._casesRepository = value;
+    }
+}
 LettersSetup._lettersRepository;
 LettersSetup._letterCasesRepository;
 LettersSetup._letterEntitiesRepository;

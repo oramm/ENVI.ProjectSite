@@ -1,49 +1,34 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var RoleModal = /** @class */ (function (_super) {
-    __extends(RoleModal, _super);
-    function RoleModal(id, title, connectedResultsetComponent, mode) {
-        var _this_1 = _super.call(this, id, title, connectedResultsetComponent, mode) || this;
-        _this_1.descriptionReachTextArea = new ReachTextArea(_this_1.id + 'descriptionReachTextArea', 'Opis', true, 500);
-        _this_1.personAutoCompleteTextField = new AutoCompleteTextField(_this_1.id + 'personAutoCompleteTextField', 'Imię i nazwisko', 'person', true, 'Wybierz imię i nazwisko');
-        var _this = _this_1;
-        _this_1.formElements = [
+class RoleModal extends Modal {
+    constructor(id, title, connectedResultsetComponent, mode) {
+        super(id, title, connectedResultsetComponent, mode);
+        this.descriptionReachTextArea = new ReachTextArea(this.id + 'descriptionReachTextArea', 'Opis', true, 500);
+        this.personAutoCompleteTextField = new AutoCompleteTextField(this.id + 'personAutoCompleteTextField', 'Imię i nazwisko', 'person', true, 'Wybierz imię i nazwisko');
+        var _this = this;
+        this.formElements = [
             {
-                input: new InputTextField(_this_1.id + 'nameTextField', 'Nazwa roli', undefined, true, 100),
+                input: new InputTextField(this.id + 'nameTextField', 'Nazwa roli', undefined, true, 100),
                 dataItemKeyName: 'name'
             },
             {
-                input: _this_1.personAutoCompleteTextField,
+                input: this.personAutoCompleteTextField,
                 dataItemKeyName: '_person',
-                refreshDataSet: function () {
+                refreshDataSet() {
                     _this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
                 }
             },
             {
-                input: _this_1.descriptionReachTextArea,
+                input: this.descriptionReachTextArea,
                 dataItemKeyName: 'description'
             }
         ];
-        _this_1.initialise();
-        return _this_1;
+        this.initialise();
     }
     /*
      * Używana przy włączaniu Modala w celu dodania nowego rekordu
      * @returns {undefined}
      */
-    RoleModal.prototype.initAddNewData = function () {
+    initAddNewData() {
         this.connectedResultsetComponent.connectedRepository.currentItem =
             {
                 projectOurId: MainSetup.currentProject.ourId,
@@ -52,7 +37,6 @@ var RoleModal = /** @class */ (function (_super) {
             };
         this.personAutoCompleteTextField.setValue(MainSetup.personsRepository.currentItem);
         this.personAutoCompleteTextField.initialise(MainSetup.personsRepository, "_nameSurnameEmail", this.onOwnerChosen, this);
-    };
-    return RoleModal;
-}(Modal));
+    }
+}
 ;

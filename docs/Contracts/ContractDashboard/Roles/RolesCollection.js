@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var RolesCollection = /** @class */ (function (_super) {
-    __extends(RolesCollection, _super);
-    function RolesCollection(initParamObject) {
-        var _this = _super.call(this, {
+class RolesCollection extends SimpleCollection {
+    constructor(initParamObject) {
+        super({
             id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: "Role",
@@ -27,11 +13,10 @@ var RolesCollection = /** @class */ (function (_super) {
             isAddable: initParamObject.parentDataItem.name.match(/Wykonaw/i),
             isDeletable: true,
             connectedRepository: RolesSetup.rolesRepository
-        }) || this;
-        _this.initialise(_this.makeList());
-        return _this;
+        });
+        this.initialise(this.makeList());
     }
-    RolesCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         var phoneLabel = (dataItem._person.phone) ? 'tel.: <a href="tel:' + dataItem._person.phone + '">' + dataItem._person.phone + '</a> ' : '';
         var cellphoneLabel = (dataItem._person.cellphone) ? 'kom.: <a href="tel:' + dataItem._person.cellphone + '">' + dataItem._person.cellphone + '</a> ' : '';
         var mailLabel = (dataItem._person.email) ? 'mail: <a href="mailto:' + dataItem._person.email + '">' + dataItem._person.email + '</a>' : '';
@@ -49,33 +34,31 @@ var RolesCollection = /** @class */ (function (_super) {
                 description,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    RolesCollection.prototype.makeTitle = function (dataItem) {
+    makeTitle(dataItem) {
         var titleAtomicEditLabel = new AtomicEditLabel(dataItem.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
         return titleAtomicEditLabel.$dom;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    RolesCollection.prototype.makeDescription = function (dataItem) {
+    makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         var $collectionElementDescription = $('<span>');
         var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem.description, dataItem, new ReachTextArea(this.id + '_' + dataItem.id + '_tmpDescriptionReachTextArea', 'Opis', true, 500), 'description', this);
         $collectionElementDescription
             .append(descriptionAtomicEditLabel.$dom);
         return $collectionElementDescription;
-    };
-    RolesCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) {
-            var test = item.dataItem.groupName == _this.parentDataItem.name;
-            if (test && _this.parentDataItem.name == 'Wykonawca/Podwykonawcy')
+    }
+    makeList() {
+        return super.makeList().filter((item) => {
+            var test = item.dataItem.groupName == this.parentDataItem.name;
+            if (test && this.parentDataItem.name == 'Wykonawca/Podwykonawcy')
                 test = item.dataItem.contractId == MainSetup.currentContract.id;
             return test;
         });
-    };
-    return RolesCollection;
-}(SimpleCollection));
+    }
+}

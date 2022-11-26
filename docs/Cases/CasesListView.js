@@ -1,29 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var CasesListView = /** @class */ (function (_super) {
-    __extends(CasesListView, _super);
-    function CasesListView() {
-        return _super.call(this) || this;
+class CasesListView extends Popup {
+    constructor() {
+        super();
     }
-    CasesListView.prototype.initialise = function () {
+    initialise() {
         this.setTittle("Lista spraw");
         this.actionsMenuInitialise();
         $('#actionsMenu').after(new CasesCollapsible('contratsCollapsible').$dom);
         this.dataLoaded(true);
-    };
-    CasesListView.prototype.actionsMenuInitialise = function () {
-    };
-    return CasesListView;
-}(Popup));
+    }
+    actionsMenuInitialise() {
+    }
+}

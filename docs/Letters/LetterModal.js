@@ -1,26 +1,12 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var LetterModal = /** @class */ (function (_super) {
-    __extends(LetterModal, _super);
-    function LetterModal(id, title, connectedResultsetComponent, mode, externalRepository) {
-        return _super.call(this, id, title, connectedResultsetComponent, mode, externalRepository) || this;
+class LetterModal extends Modal {
+    constructor(id, title, connectedResultsetComponent, mode, externalRepository) {
+        super(id, title, connectedResultsetComponent, mode, externalRepository);
     }
     /*
      * uruchamiana po konstruktorze, przed jej wywołąniem musi być ustawiony controller
      */
-    LetterModal.prototype.initFormElements = function () {
+    initFormElements() {
         this.contractSelectField = new SelectField(this.id + '_contractSelectField', 'Kontrakt', undefined, this.mode === 'ADD_NEW');
         if (LettersSetup.contractsRepository)
             this.contractSelectField.initialise(LettersSetup.contractsRepository.items, '_ourIdOrNumber_Name', this.controller.onContractChosen, this.controller);
@@ -39,7 +25,7 @@ var LetterModal = /** @class */ (function (_super) {
             input: this.caseCollapsibleMultiSelect,
             description: (this.mode == 'EDIT') ? 'Przypisz pismo do jednej lub kilku spraw' : '',
             dataItemKeyName: '_cases',
-            refreshDataSet: function () {
+            refreshDataSet() {
                 _this.controller.caseSelectFieldInitialize();
             }
         };
@@ -55,7 +41,7 @@ var LetterModal = /** @class */ (function (_super) {
             input: this.entityMainAutoCompleteTextField,
             description: (this.mode == 'EDIT') ? 'Jeżeli nie chcesz przypisywać kolejnego podmiotu, możesz to pole zignorować' : '',
             dataItemKeyName: '_entityMain',
-            refreshDataSet: function () {
+            refreshDataSet() {
                 _this.entityMainAutoCompleteTextField.initialise(MainSetup.entitiesRepository, 'name', _this.controller.onEntityMainChosen, _this.controller);
             }
         };
@@ -63,7 +49,7 @@ var LetterModal = /** @class */ (function (_super) {
             input: this.selectedEntitiesMainHiddenInput,
             dataItemKeyName: '_entitiesMain',
             //ustawia wartość HiddenInput.value[] i chipsy, używana przy otwieraniu okna
-            refreshDataSet: function () {
+            refreshDataSet() {
                 _this.controller.initEntitiesMainChips();
             }
         };
@@ -75,17 +61,16 @@ var LetterModal = /** @class */ (function (_super) {
             input: this.letterFileInput,
             description: '',
             dataItemKeyName: '_blobEnviObjects',
-            refreshDataSet: function () {
+            refreshDataSet() {
                 _this.controller.initFileInput();
             }
         };
-    };
+    }
     /*
      * Przed dodaniem nowego obiektu trzeba wyczyścić currentItem np. z ourId
      */
-    LetterModal.prototype.initAddNewData = function () {
+    initAddNewData() {
         this.controller.initAddNewDataHandler();
-    };
-    return LetterModal;
-}(Modal));
+    }
+}
 ;

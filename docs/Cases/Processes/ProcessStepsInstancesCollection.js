@@ -1,27 +1,13 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ProcessStepsInstancesCollection = /** @class */ (function (_super) {
-    __extends(ProcessStepsInstancesCollection, _super);
+class ProcessStepsInstancesCollection extends SimpleCollection {
     /*
      * @param {type} id
      * @param {boolean} isPlane - czy lista ma być prosta czy z Avatarem
      * @param {boolean} hasFilter - czy ma być filtr
      * @param {boolean} isAddable - czy można dodować nowe elementy
      */
-    function ProcessStepsInstancesCollection(initParamObject) {
-        var _this = _super.call(this, {
+    constructor(initParamObject) {
+        super({
             id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
@@ -32,18 +18,17 @@ var ProcessStepsInstancesCollection = /** @class */ (function (_super) {
             isAddable: false,
             isDeletable: false,
             connectedRepository: ProcessesInstancesSetup.processesStepsInstancesRepository
-        }) || this;
-        _this.status = initParamObject.status;
-        _this.addNewOurLetterModal = initParamObject.addNewOurLetterModal;
-        _this.editOurLetterModal = initParamObject.editOurLetterModal;
-        _this.appendLetterAttachmentsModal = initParamObject.appendLetterAttachmentsModal;
-        _this.initialise(_this.makeList());
-        return _this;
+        });
+        this.status = initParamObject.status;
+        this.addNewOurLetterModal = initParamObject.addNewOurLetterModal;
+        this.editOurLetterModal = initParamObject.editOurLetterModal;
+        this.appendLetterAttachmentsModal = initParamObject.appendLetterAttachmentsModal;
+        this.initialise(this.makeList());
     }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    ProcessStepsInstancesCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         return {
             id: dataItem.id,
             icon: undefined,
@@ -51,17 +36,17 @@ var ProcessStepsInstancesCollection = /** @class */ (function (_super) {
             $description: this.makeDescription(dataItem),
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    ProcessStepsInstancesCollection.prototype.makeTitle = function (dataItem) {
+    makeTitle(dataItem) {
         return dataItem._processStep.name;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    ProcessStepsInstancesCollection.prototype.makeDescription = function (dataItem) {
+    makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         var $collectionElementDescription = $('<span>');
         var descriptionAtomicEditLabel = new AtomicEditLabel(dataItem._processStep.description, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpEditDescription_TextField', 'Edytuj', undefined, true, 150), 'description', this);
@@ -76,21 +61,20 @@ var ProcessStepsInstancesCollection = /** @class */ (function (_super) {
             .append(deadlineAtomicEditLabel.$dom)
             .append(personAtomicEditLabel.$dom);
         return $collectionElementDescription;
-    };
-    ProcessStepsInstancesCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) { return item.dataItem._case.id == _this.parentDataItem.id; });
-    };
-    ProcessStepsInstancesCollection.prototype.selectTrigger = function (itemId) {
-        _super.prototype.selectTrigger.call(this, itemId);
+    }
+    makeList() {
+        return super.makeList().filter((item) => item.dataItem._case.id == this.parentDataItem.id);
+    }
+    selectTrigger(itemId) {
+        super.selectTrigger(itemId);
         //wybierz letter
         var currentLetter = {};
         if (this.connectedRepository.currentItem._ourLetter)
             currentLetter = Tools.search(parseInt(this.connectedRepository.currentItem._ourLetter.id), 'id', LettersSetup.lettersRepository.items);
         LettersSetup.lettersRepository.currentItem = currentLetter;
-    };
-    ProcessStepsInstancesCollection.prototype.addPlainRowCrudButtons = function (row) {
-        _super.prototype.addPlainRowCrudButtons.call(this, row);
+    }
+    addPlainRowCrudButtons(row) {
+        super.addPlainRowCrudButtons(row);
         if (row.dataItem._processStep._documentTemplate.gdId) {
             if (row.dataItem._ourLetter) {
                 this.appendLetterAttachmentsModal.preppendTriggerButtonTo(row.$crudButtons, 'Dodaj załączniki', this);
@@ -100,10 +84,9 @@ var ProcessStepsInstancesCollection = /** @class */ (function (_super) {
             else
                 this.addNewOurLetterModal.preppendTriggerButtonTo(row.$crudButtons, 'Generuj pismo', this);
         }
-    };
-    ProcessStepsInstancesCollection.prototype.deleteOurLetterAction = function () {
+    }
+    deleteOurLetterAction() {
         this.connectedRepository.currentItem._ourLetter = LettersSetup.lettersRepository.currentItem;
         this.connectedRepository.doChangeFunctionOnItem(this.connectedRepository.currentItem, 'deleteProcessStepInstanceOurLetter', this);
-    };
-    return ProcessStepsInstancesCollection;
-}(SimpleCollection));
+    }
+}

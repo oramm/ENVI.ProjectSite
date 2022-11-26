@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var CurrentMilestonesCollection = /** @class */ (function (_super) {
-    __extends(CurrentMilestonesCollection, _super);
-    function CurrentMilestonesCollection(initParamObject) {
-        var _this = _super.call(this, { id: initParamObject.id,
+class CurrentMilestonesCollection extends SimpleCollection {
+    constructor(initParamObject) {
+        super({ id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
             isPlain: true,
@@ -24,17 +10,16 @@ var CurrentMilestonesCollection = /** @class */ (function (_super) {
             isAddable: false,
             isDeletable: true,
             connectedRepository: milestonesRepository
-        }) || this;
+        });
         //this.addNewModal = new NewMilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this);
-        _this.editModal = new CurrentMilestoneModal(_this.id + '_editMilestone', 'Edytuj kamień milowy', _this, 'EDIT');
-        _this.initialise(_this.makeList());
-        return _this;
+        this.editModal = new CurrentMilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
+        this.initialise(this.makeList());
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
      * @dataItem connectedRepository.items[i]
      */
-    CurrentMilestonesCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         return { id: dataItem.id,
             //icon:   'info',
@@ -44,21 +29,21 @@ var CurrentMilestonesCollection = /** @class */ (function (_super) {
             contractId_Hidden: dataItem.contractId,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    CurrentMilestonesCollection.prototype.makeTitle = function (dataItem) {
+    makeTitle(dataItem) {
         var typeName = (dataItem._type.name) ? dataItem._type.name + ' ' : '';
         var titleAtomicEditLabel = new AtomicEditLabel(typeName + dataItem.name, dataItem, { input: new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150),
             dataItemKeyName: 'name'
         }, 'name', this);
         return titleAtomicEditLabel.$dom;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    CurrentMilestonesCollection.prototype.makeDescription = function (dataItem) {
+    makeDescription(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         var $collectionElementDescription = $('<span>');
         //TODO: kiedyś dodać edyzcję dat
@@ -73,15 +58,14 @@ var CurrentMilestonesCollection = /** @class */ (function (_super) {
             //.append(deadlineAtomicEditLabel.$dom)
             .append('<span>' + dataItem.status + '<br></span>');
         return $collectionElementDescription;
-    };
-    CurrentMilestonesCollection.prototype.makeList = function () {
-        return _super.prototype.makeList.call(this);
-    };
-    CurrentMilestonesCollection.prototype.selectTrigger = function (itemId) {
+    }
+    makeList() {
+        return super.makeList();
+    }
+    selectTrigger(itemId) {
         if (itemId !== undefined) {
-            _super.prototype.selectTrigger.call(this, itemId);
+            super.selectTrigger(itemId);
             //$('#contractDashboard').attr('src','../Cases/CasesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
         }
-    };
-    return CurrentMilestonesCollection;
-}(SimpleCollection));
+    }
+}

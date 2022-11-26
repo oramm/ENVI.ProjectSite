@@ -1,8 +1,6 @@
 "use strict";
-var CurrentMilestonesController = /** @class */ (function () {
-    function CurrentMilestonesController() {
-    }
-    CurrentMilestonesController.prototype.main = function () {
+class CurrentMilestonesController {
+    main() {
         // Hide auth UI, then load client library.
         var currentMilestonesView = new CurrentMilestonesView();
         $("#authorize-div").hide();
@@ -15,20 +13,19 @@ var CurrentMilestonesController = /** @class */ (function () {
             MilestonesSetup.milestoneTypesRepository.initialise(),
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             currentMilestonesView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
             ReachTextArea.reachTextAreaInit();
             Materialize.updateTextFields();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return CurrentMilestonesController;
-}());
+    }
+}

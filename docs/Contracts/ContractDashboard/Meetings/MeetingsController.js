@@ -1,8 +1,6 @@
 "use strict";
-var MeetingsController = /** @class */ (function () {
-    function MeetingsController() {
-    }
-    MeetingsController.main = function () {
+class MeetingsController {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new MeetingsListView();
         $("#authorize-div").hide();
@@ -18,11 +16,11 @@ var MeetingsController = /** @class */ (function () {
             MeetingsSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + MainSetup.currentProject.ourId),
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             listView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -31,9 +29,8 @@ var MeetingsController = /** @class */ (function () {
             $('ul.tabs').tabs();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return MeetingsController;
-}());
+    }
+}

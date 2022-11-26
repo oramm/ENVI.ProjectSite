@@ -1,22 +1,8 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 /*
  * http://materializecss.com/collections.html
  */
-var Collection = /** @class */ (function (_super) {
-    __extends(Collection, _super);
+class Collection extends Resultset {
     /*
      * @param {Object} initParamObject {
      *      @param {String} id
@@ -30,26 +16,25 @@ var Collection = /** @class */ (function (_super) {
      * }
      * @returns {Collection}
      */
-    function Collection(initParamObject) {
-        var _this_1 = _super.call(this, initParamObject) || this;
-        _this_1.isPlain = initParamObject.isPlain;
-        _this_1.hasArchiveSwitch = false; //initParamObject.hasArchiveSwitch;
-        _this_1.$addNewTriggerIcon;
-        _this_1.title = initParamObject.title;
-        _this_1.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
+    constructor(initParamObject) {
+        super(initParamObject);
+        this.isPlain = initParamObject.isPlain;
+        this.hasArchiveSwitch = false; //initParamObject.hasArchiveSwitch;
+        this.$addNewTriggerIcon;
+        this.title = initParamObject.title;
+        this.$emptyList = $('<div class="emptyList">Lista jest pusta</div>');
         //buduję szkielet, żeby podpiąć modale do $dom, 
         //na założeniu, że dom powstaje w konstruktorze bazuje Modal.buildDom()
-        _this_1.$dom = $('<div>')
-            .attr('id', 'container' + '_' + _this_1.id)
+        this.$dom = $('<div>')
+            .attr('id', 'container' + '_' + this.id)
             .addClass('collection-container');
-        _this_1.$title = $('<div class="resultset-title">');
-        _this_1.$title.text(_this_1.title);
-        _this_1.$actionsMenu = $('<div>')
-            .attr('id', 'actionsMenu' + '_' + _this_1.id)
+        this.$title = $('<div class="resultset-title">');
+        this.$title.text(this.title);
+        this.$actionsMenu = $('<div>')
+            .attr('id', 'actionsMenu' + '_' + this.id)
             .addClass('cyan lighten-5')
             .addClass('actionsMenu');
-        _this_1.filter = new Filter(_this_1);
-        return _this_1;
+        this.filter = new Filter(this);
     }
     /*
      *
@@ -57,8 +42,7 @@ var Collection = /** @class */ (function (_super) {
      * @param {type} parentViewObject - nie używane
      * @param {function} parentViewObjectSelectHandler - nie używane
      */
-    Collection.prototype.initialise = function (items, filterElements) {
-        if (filterElements === void 0) { filterElements = []; }
+    initialise(items, filterElements = []) {
         this.items = items;
         this.buildDom();
         if (this.items.length === 0) {
@@ -69,8 +53,8 @@ var Collection = /** @class */ (function (_super) {
         if (this.isAddable)
             Tools.hasFunction(this.addNewHandler);
         Tools.hasFunction(this.makeItem);
-    };
-    Collection.prototype.buildDom = function () {
+    }
+    buildDom() {
         this.$collection = $('<ul class="collection">');
         if (this.title)
             this.$dom.prepend(this.$title);
@@ -78,8 +62,8 @@ var Collection = /** @class */ (function (_super) {
             .append(this.$actionsMenu)
             .append(this.$collection);
         this.buildCollectionDom();
-    };
-    Collection.prototype.buildCollectionDom = function () {
+    }
+    buildCollectionDom() {
         for (var i = 0; i < this.items.length; i++) {
             var $row = (this.isPlain) ? this.buildPlainRow(this.items[i]).$dom : this.buildRow(this.items[i]);
             this.$collection.append($row);
@@ -90,13 +74,13 @@ var Collection = /** @class */ (function (_super) {
             this.setDeleteAction();
         if (this.isSelectable)
             this.setSelectAction();
-    };
-    Collection.prototype.showRow = function (id) {
+    }
+    showRow(id) {
         this.$dom.find('.collection-item#' + id).show();
-    };
-    Collection.prototype.hideRow = function (id) {
+    }
+    hideRow(id) {
         this.$dom.find('.collection-item#' + id).hide();
-    };
+    }
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
@@ -104,7 +88,7 @@ var Collection = /** @class */ (function (_super) {
      * @param {String} errorMessage
      * @returns {Promise}
      */
-    Collection.prototype.addNewHandler = function (status, item, errorMessage) {
+    addNewHandler(status, item, errorMessage) {
         //return new Promise((resolve, reject) => {
         switch (status) {
             case "DONE":
@@ -146,7 +130,7 @@ var Collection = /** @class */ (function (_super) {
                 break;
         }
         //});
-    };
+    }
     /*
      * funkcja wywoływana w repository, potrzebny trik z appply dla callbacka
      * @param {String} status
@@ -154,82 +138,80 @@ var Collection = /** @class */ (function (_super) {
      * @param {String} errorMessage
      * @returns {Promise}
      */
-    Collection.prototype.editHandler = function (status, item, errorMessage) {
-        var _this_1 = this;
-        return new Promise(function (resolve, reject) {
+    editHandler(status, item, errorMessage) {
+        return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
-                    _this_1.items = _this_1.items.filter(function (searchItem) { return searchItem.id !== item.id; });
-                    _this_1.items.push(item);
-                    var $oldRow = _this_1.$collection.find('#' + item.id);
-                    var $newRow = (_this_1.isPlain) ? _this_1.buildPlainRow(item).$dom : _this_1.buildRow(item);
+                    this.items = this.items.filter(function (searchItem) { return searchItem.id !== item.id; });
+                    this.items.push(item);
+                    var $oldRow = this.$collection.find('#' + item.id);
+                    var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
                     $oldRow.after($newRow);
                     $oldRow.remove();
-                    if (_this_1.isDeletable)
-                        _this_1.setDeleteAction();
-                    if (_this_1.isSelectable)
-                        _this_1.setSelectAction();
-                    if (_this_1.isEditable)
-                        _this_1.setEditAction();
+                    if (this.isDeletable)
+                        this.setDeleteAction();
+                    if (this.isSelectable)
+                        this.setSelectAction();
+                    if (this.isEditable)
+                        this.setEditAction();
                     break;
                 case "PENDING":
-                    var $oldRow = _this_1.$collection.find('#' + item.id);
+                    var $oldRow = this.$collection.find('#' + item.id);
                     $oldRow.attr('id', item.id + '_toDelete');
-                    var $newRow = (_this_1.isPlain) ? _this_1.buildPlainRow(item).$dom : _this_1.buildRow(item);
-                    $newRow.append(_this_1.makePreloader('preloader' + item.id));
+                    var $newRow = (this.isPlain) ? this.buildPlainRow(item).$dom : this.buildRow(item);
+                    $newRow.append(this.makePreloader('preloader' + item.id));
                     $oldRow.after($newRow);
                     $oldRow.hide(1000);
                     break;
                 case "ERROR":
                     alert(errorMessage);
-                    _this_1.$dom.find('#' + item.id).remove();
-                    var $oldRow = _this_1.$collection.find('#' + item.id + '_toDelete');
+                    this.$dom.find('#' + item.id).remove();
+                    var $oldRow = this.$collection.find('#' + item.id + '_toDelete');
                     $oldRow.show(1000);
                     $oldRow.attr('id', item.id);
-                    if (_this_1.items.length == 0) {
+                    if (this.items.length == 0) {
                         //this.$dom.prepend(this.$emptyList);
                     }
                     break;
             }
             resolve(status);
         });
-    };
+    }
     /*
      * Krok 3 - funkcja wywoływana w rolesRepository.unasoosciatePersonRole potrzebny trik z appply dla callbacka
      */
-    Collection.prototype.removeHandler = function (status, itemId, errorMessage) {
-        var _this_1 = this;
-        return new Promise(function (resolve, reject) {
+    removeHandler(status, itemId, errorMessage) {
+        return new Promise((resolve, reject) => {
             switch (status) {
                 case "DONE":
-                    _this_1.$dom.find('#' + itemId).remove();
-                    _this_1.items = _this_1.items.filter(function (item) { return item.id !== itemId; });
-                    if (_this_1.items.length == 0) {
-                        _this_1.$actionsMenu.after(_this_1.$emptyList);
+                    this.$dom.find('#' + itemId).remove();
+                    this.items = this.items.filter(function (item) { return item.id !== itemId; });
+                    if (this.items.length == 0) {
+                        this.$actionsMenu.after(this.$emptyList);
                     }
-                    if (typeof _this_1.setAddableMode === 'function')
-                        _this_1.setAddableMode();
+                    if (typeof this.setAddableMode === 'function')
+                        this.setAddableMode();
                     break;
                 case "PENDING":
                     var $deleteBadge = $('<span>');
                     $deleteBadge
-                        .attr('id', 'deleteBadge_' + _this_1.id + '_' + itemId)
+                        .attr('id', 'deleteBadge_' + this.id + '_' + itemId)
                         .attr('data-badge-caption', '')
                         .addClass('new badge red')
                         .html('kasuję...');
-                    _this_1.$dom.find('#' + itemId).append($deleteBadge);
-                    if (typeof _this_1.setAddableMode === 'function')
-                        _this_1.setAddableMode();
+                    this.$dom.find('#' + itemId).append($deleteBadge);
+                    if (typeof this.setAddableMode === 'function')
+                        this.setAddableMode();
                     break;
                 case "ERROR":
                     alert(errorMessage);
-                    $('#deleteBadge_' + _this_1.id + '_' + itemId).remove();
+                    $('#deleteBadge_' + this.id + '_' + itemId).remove();
                     break;
             }
             resolve(status);
         });
-    };
-    Collection.prototype.setSelectAction = function () {
+    }
+    setSelectAction() {
         this.$dom.find("li").off('click');
         this.$dom.find("li").off('mousedown');
         var _this = this;
@@ -252,33 +234,32 @@ var Collection = /** @class */ (function (_super) {
             //_this.parentViewObjectSelectHandler.apply(_this.parentViewObject,[$(this).attr("id")]);
             _this.selectTrigger($(this).attr("id"));
         });
-    };
+    }
     /*
      * Klasa pochodna musi mieć zadeklarowaną metodę removeTrigger()
      */
-    Collection.prototype.setDeleteAction = function () {
+    setDeleteAction() {
         this.$dom.find(".itemDelete").off('click');
         var _this = this;
         this.$dom.find(".itemDelete").click(function () {
             if (confirm("Czy na pewno chcesz usunąć ten element?"))
                 _this.removeTrigger($(this).closest('.collection-item').attr("id"));
         });
-    };
-    Collection.prototype.setCopyAction = function () {
+    }
+    setCopyAction() {
         this.$dom.find(".itemCopy").off('click');
         var _this = this;
         this.$collapsible.find(".itemCopy").click(function () {
             var originalItemId = connectedRepository.copyCurrentItem.id;
             _this.connectedRepository.copyCurrentItem(_this)
-                .then(function (copiedDataItem) { if (_this.copyHandler)
+                .then((copiedDataItem) => { if (_this.copyHandler)
                 _this.copyHandler(originalItemId); });
         });
-    };
-    Collection.prototype.setAddNewAction = function () {
-        var _this_1 = this;
-        this.$dom.find(".addNewItemIcon").click(function () { return _this_1.addNewModal.triggerAction(_this_1); });
-    };
-    Collection.prototype.setEditAction = function () {
+    }
+    setAddNewAction() {
+        this.$dom.find(".addNewItemIcon").click(() => this.addNewModal.triggerAction(this));
+    }
+    setEditAction() {
         //this.$dom.find(".collectionItemEdit").off('click');
         var _this = this;
         this.$dom.find(".collectionItemEdit").click(function (e) {
@@ -287,14 +268,14 @@ var Collection = /** @class */ (function (_super) {
             //e.stopPropagation();
             //e.preventDefault();
         });
-    };
+    }
     //-------------------------------------- funkcje prywatne -----------------------------------------------------
     /*
      * Tworzy element listy
      * @param {type} item - to gotowy item dla Collapsible (na podstawie surowych danych w repozytorium)
      * @returns {Collection.buildRow.$row}
      */
-    Collection.prototype.buildRow = function (item) {
+    buildRow(item) {
         var $row = $('<li class="collection-item avatar" id="' + item.id + '">');
         var $titleContainer = $('<span class="title">'), $descriptionContainer = $('<p>');
         if (item.$title instanceof jQuery)
@@ -316,14 +297,14 @@ var Collection = /** @class */ (function (_super) {
             .append('<div class="secondary-content fixed-action-btn horizontal"></div>');
         this.addRowCrudButtons($row, item);
         return $row;
-    };
+    }
     /*
      * TODO: bezpieczniej jest używać parametru 'itemId zamiast ID w css bo nr id mogąsię powtarzać przy kilku kolecjach na jednej stronie
      *       to jest już zaimplenentowane w Collapsible
      * @param {type} item - to gotowy item dla Collapsible (na podstawie surowych danych w repozytorium)
      * @returns {Collection.buildPlainRow.row.$dom|row.$dom}
      */
-    Collection.prototype.buildPlainRow = function (item) {
+    buildPlainRow(item) {
         var row = {
             $dom: $('<li class="collection-item" id="' + item.id + '">'),
             $crudButtons: $('<span class="crudButtons">'),
@@ -343,11 +324,11 @@ var Collection = /** @class */ (function (_super) {
         this.addPlainRowCrudButtons(row);
         //do uspójnienia z Collapsible - tam zwracany jest obiekt typu row
         return row;
-    };
+    }
     /*
      * Ustawia pryciski edycji wierszy
      */
-    Collection.prototype.addPlainRowCrudButtons = function (row) {
+    addPlainRowCrudButtons(row) {
         if (this.isEditable)
             row.$crudButtons.append(this.editModal.createTriggerIcon());
         if (row.dataItem._gdFolderUrl)
@@ -358,8 +339,8 @@ var Collection = /** @class */ (function (_super) {
             row.$crudButtons.append(new ExternalResourcesIconLink('GD_DOCUMENT_ICON', row.dataItem._documentEditUrl).$dom);
         if (this.isDeletable)
             row.$crudButtons.append('<span class="itemDelete"><i class="material-icons">delete</i></span>');
-    };
-    Collection.prototype.addRowCrudButtons = function ($row, item) {
+    }
+    addRowCrudButtons($row, item) {
         if (this.isDeletable || this.isEditable) {
             var button = $row.find('.secondary-content:last-child');
             button
@@ -375,14 +356,14 @@ var Collection = /** @class */ (function (_super) {
                 button.children('ul')
                     .append('<li><a class="btn-floating red itemDelete"><i class="material-icons">delete</i></a></li>');
         }
-    };
-    Collection.prototype.filterInitialise = function (filterElements) {
+    }
+    filterInitialise(filterElements) {
         if (this.items.length >= this.minimumItemsToFilter) {
             this.filter.initialise(filterElements);
             this.$actionsMenu.append(this.filter.$dom);
         }
-    };
-    Collection.prototype.actionsMenuInitialise = function (filterElements) {
+    }
+    actionsMenuInitialise(filterElements) {
         if (this.isAddable) {
             this.$addNewTriggerIcon = this.addNewModal.createTriggerIcon();
             this.$actionsMenu.prepend(this.$addNewTriggerIcon);
@@ -391,30 +372,28 @@ var Collection = /** @class */ (function (_super) {
         //this.addNewModal.preppendTriggerIconTo(this.$actionsMenu,this);
         if (this.hasFilter)
             this.filterInitialise(filterElements);
-    };
-    Collection.prototype.refreshAddableMode = function () {
+    }
+    refreshAddableMode() {
         if (this.isAddable)
             this.$addNewTriggerIcon.show();
         else
             this.$addNewTriggerIcon.hide();
-    };
-    return Collection;
-}(Resultset));
-var CollectionItem = /** @class */ (function () {
-    function CollectionItem(id, icon, title, description, editUrl) {
+    }
+}
+class CollectionItem {
+    constructor(id, icon, title, description, editUrl) {
         this.id = id;
         this.icon = icon;
         this.title = title;
         this.description = description;
         this.editUrl = editUrl;
     }
-    CollectionItem.prototype.initialise = function (paramObject) {
+    initialise(paramObject) {
         this.id = paramObject.id;
         this.icon = paramObject.icon;
         this.title = paramObject.title;
         this.description = paramObject.description;
         this.editUrl = paramObject.editUrl;
-    };
-    return CollectionItem;
-}());
+    }
+}
 ;

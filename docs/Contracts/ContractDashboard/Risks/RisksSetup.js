@@ -4,74 +4,49 @@ var reactionsRepository;
 var contractsRepository;
 var milestonesRepository;
 var casesRepository;
-var probabilityRates = [1, 2, 3, 4];
-var overallImpactRates = probabilityRates;
-var RisksSetup = /** @class */ (function () {
-    function RisksSetup() {
+const probabilityRates = [1, 2, 3, 4];
+const overallImpactRates = probabilityRates;
+class RisksSetup {
+    static get risksRepository() {
+        return risksRepository;
     }
-    Object.defineProperty(RisksSetup, "risksRepository", {
-        get: function () {
-            return risksRepository;
-        },
-        set: function (data) {
-            risksRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "reactionsRepository", {
-        get: function () {
-            return reactionsRepository;
-        },
-        set: function (data) {
-            reactionsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "contractsRepository", {
-        get: function () {
-            return contractsRepository;
-        },
-        set: function (data) {
-            contractsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "milestonesRepository", {
-        get: function () {
-            return milestonesRepository;
-        },
-        set: function (data) {
-            milestonesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "probabilityRates", {
-        get: function () {
-            return probabilityRates;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "overallImpactRates", {
-        get: function () {
-            return overallImpactRates;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(RisksSetup, "casesRepository", {
-        get: function () {
-            return casesRepository;
-        },
-        set: function (data) {
-            casesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return RisksSetup;
-}());
+    static set risksRepository(data) {
+        risksRepository = data;
+    }
+    static get reactionsRepository() {
+        return reactionsRepository;
+    }
+    static set reactionsRepository(data) {
+        reactionsRepository = data;
+    }
+    static get contractsRepository() {
+        return contractsRepository;
+    }
+    static set contractsRepository(data) {
+        contractsRepository = data;
+    }
+    static get milestonesRepository() {
+        return milestonesRepository;
+    }
+    static set milestonesRepository(data) {
+        milestonesRepository = data;
+    }
+    static get probabilityRates() {
+        return probabilityRates;
+    }
+    static get overallImpactRates() {
+        return overallImpactRates;
+    }
+    static set milestonesRepository(data) {
+        milestonesRepository = data;
+    }
+    static get milestonesRepository() {
+        return milestonesRepository;
+    }
+    static set casesRepository(data) {
+        casesRepository = data;
+    }
+    static get casesRepository() {
+        return casesRepository;
+    }
+}

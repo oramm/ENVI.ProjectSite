@@ -1,27 +1,13 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var EventsCollection = /** @class */ (function (_super) {
-    __extends(EventsCollection, _super);
+class EventsCollection extends SimpleCollection {
     /*
      * @param {type} id
      * @param {boolean} isPlane - czy lista ma być prosta czy z Avatarem
      * @param {boolean} hasFilter - czy ma być filtr
      * @param {boolean} isAddable - czy można dodować nowe elementy
      */
-    function EventsCollection(initParamObject) {
-        var _this = _super.call(this, { id: initParamObject.id,
+    constructor(initParamObject) {
+        super({ id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
             editModal: initParamObject.editModal,
@@ -31,15 +17,14 @@ var EventsCollection = /** @class */ (function (_super) {
             isAddable: false,
             isDeletable: false,
             connectedRepository: CasesSetup.eventsRepository
-        }) || this;
-        _this.status = initParamObject.status;
-        _this.initialise(_this.makeList());
-        return _this;
+        });
+        this.status = initParamObject.status;
+        this.initialise(this.makeList());
     }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    EventsCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         var title, $description;
         switch (dataItem._eventType) {
             case 'LETTER':
@@ -57,31 +42,31 @@ var EventsCollection = /** @class */ (function (_super) {
             $description: $description,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    EventsCollection.prototype.makeLetterTitle = function (dataItem) {
+    makeLetterTitle(dataItem) {
         if (!dataItem.description)
             dataItem.description = "";
         var name = '';
         name += '<strong>' + dataItem.creationDate + '</strong> Pismo: ' + dataItem.description + ' ';
         return name;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    EventsCollection.prototype.makeMeetingArrangementTitle = function (dataItem) {
+    makeMeetingArrangementTitle(dataItem) {
         if (!dataItem.description)
             dataItem.description = "";
         var name = '';
         name += '<strong>' + dataItem._parent.date + '</strong> Ustalenie ze spotkania: ' + dataItem.name + ' ';
         return name;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    EventsCollection.prototype.makeLetterDescription = function (dataItem) {
+    makeLetterDescription(dataItem) {
         var description = '';
         description += (dataItem.isOur) ? 'Do:&nbsp;' : 'Od:&nbsp;';
         description += this.makeEntitiesLabel(dataItem._entitiesMain) + '<br>';
@@ -94,8 +79,8 @@ var EventsCollection = /** @class */ (function (_super) {
             .append($('<span class="comment">Ostania zmiana danych pisma: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
             'przez&nbsp;' + dataItem._editor.name + '&nbsp;' + dataItem._editor.surname + '</span>'));
         return $collectionElementDescription;
-    };
-    EventsCollection.prototype.makeEntitiesLabel = function (entities) {
+    }
+    makeEntitiesLabel(entities) {
         var label = '';
         for (var i = 0; i < entities.length - 1; i++) {
             label += entities[i].name + ', ';
@@ -103,11 +88,11 @@ var EventsCollection = /** @class */ (function (_super) {
         if (entities[i])
             label += entities[i].name;
         return label;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    EventsCollection.prototype.makeMeetingArrangementDescription = function (dataItem) {
+    makeMeetingArrangementDescription(dataItem) {
         var description = '';
         description += dataItem.description + '<br>';
         description += 'Termin wykonania <strong>' + dataItem._parent.date + '</strong>, ';
@@ -117,13 +102,11 @@ var EventsCollection = /** @class */ (function (_super) {
             .append($('<span class="comment">Ostania zmiana danych: ' + Tools.timestampToString(dataItem._lastUpdated) + ' ' +
             'przez&nbsp;' + dataItem._owner.name + '&nbsp;' + dataItem._owner.surname + '</span>'));
         return $collectionElementDescription;
-    };
-    EventsCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) { return item.dataItem._case.id == _this.parentDataItem.id; });
-    };
-    EventsCollection.prototype.selectTrigger = function (itemId) {
-        _super.prototype.selectTrigger.call(this, itemId);
-    };
-    return EventsCollection;
-}(SimpleCollection));
+    }
+    makeList() {
+        return super.makeList().filter((item) => item.dataItem._case.id == this.parentDataItem.id);
+    }
+    selectTrigger(itemId) {
+        super.selectTrigger(itemId);
+    }
+}

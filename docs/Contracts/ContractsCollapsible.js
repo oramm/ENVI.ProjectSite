@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ContractsCollapsible = /** @class */ (function (_super) {
-    __extends(ContractsCollapsible, _super);
-    function ContractsCollapsible(id) {
-        var _this = _super.call(this, {
+class ContractsCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -23,42 +9,41 @@ var ContractsCollapsible = /** @class */ (function (_super) {
             isDeletable: true,
             hasArchiveSwitch: true,
             connectedRepository: ContractsSetup.contractsRepository,
-            connectedRepositoryGetRoute: "contracts/?projectId=" + contractsRepository.parentItemId,
+            connectedRepositoryGetRoute: `contracts/?projectId=${contractsRepository.parentItemId}`,
             minimumItemsToFilter: 1
-        }) || this;
-        _this.formatterPln = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
-        _this.addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', _this, 'ADD_NEW');
-        _this.editModal = new ContractModal(id + '_editContract', 'Edytuj kontrakt', _this, 'EDIT');
-        _this.addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', _this, 'ADD_NEW');
-        _this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', _this, 'EDIT');
-        _this.addNewMilestoneModal = new MilestoneModal(_this.id + '_newMilestone', 'Dodaj kamień', _this, 'ADD_NEW');
-        _this.editMilestoneModal = new MilestoneModal(_this.id + '_editMilestone', 'Edytuj kamień milowy', _this, 'EDIT');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        _this.addNewOurModal.preppendTriggerButtonTo(_this.$actionsMenu, "Rejestruj umowę ENVI", _this);
+        });
+        this.formatterPln = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
+        this.addNewModal = new ContractModal(id + '_newContract', 'Dodaj kontrakt', this, 'ADD_NEW');
+        this.editModal = new ContractModal(id + '_editContract', 'Edytuj kontrakt', this, 'EDIT');
+        this.addNewOurModal = new OurContractModal(id + '_newOurContract', 'Rejestruj umowę ENVI', this, 'ADD_NEW');
+        this.editOurModal = new OurContractModal(id + '_editOurContract', 'Edytuj umowę ENVI', this, 'EDIT');
+        this.addNewMilestoneModal = new MilestoneModal(this.id + '_newMilestone', 'Dodaj kamień', this, 'ADD_NEW');
+        this.editMilestoneModal = new MilestoneModal(this.id + '_editMilestone', 'Edytuj kamień milowy', this, 'EDIT');
+        this.initialise(this.makeCollapsibleItemsList());
+        this.addNewOurModal.preppendTriggerButtonTo(this.$actionsMenu, "Rejestruj umowę ENVI", this);
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
-        _this.connectedRepository.currentItem.projectId = _this.connectedRepository.parentItemId;
-        return _this;
+        this.connectedRepository.currentItem.projectId = this.connectedRepository.parentItemId;
     }
     /*
      * Przetwarza surowe dane z repozytorium na item gotowy dla Collapsible.buildRow()
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    ContractsCollapsible.prototype.makeItem = function (dataItem) {
-        var item = _super.prototype.makeItem.call(this, dataItem);
-        var editModal = (dataItem.ourId) ? this.editOurModal : this.editModal;
-        var valueLabel = '';
+    makeItem(dataItem) {
+        let item = super.makeItem(dataItem);
+        let editModal = (dataItem.ourId) ? this.editOurModal : this.editModal;
+        let valueLabel = '';
         if (dataItem.value)
             valueLabel = this.formatterPln.format(dataItem.value);
-        var ourId = (dataItem.ourId) ? '<strong>' + dataItem.ourId + '</strong>; ' : '';
+        const ourId = (dataItem.ourId) ? '<strong>' + dataItem.ourId + '</strong>; ' : '';
         item.name = dataItem.number + '; ' + ourId + dataItem.name + '; ' + valueLabel;
         item.editModal = editModal;
         item.subitemsCount = undefined;
         return item;
-    };
-    ContractsCollapsible.prototype.makeBody = function (dataItem) {
-        var subCollection = new MilestonesCollection({
+    }
+    makeBody(dataItem) {
+        let subCollection = new MilestonesCollection({
             id: 'milestonesListCollection' + dataItem.id,
             title: "Kamienie milowe",
             addNewModal: this.addNewMilestoneModal,
@@ -73,12 +58,12 @@ var ContractsCollapsible = /** @class */ (function (_super) {
             collection: subCollection,
             $dom: $panel
         };
-    };
+    }
     /*
      * Ustawia pryciski edycji wierszy,
      * musi być przeciążona bo mamy dwa różne modale edycji przypisane co Collapsilbe
      */
-    ContractsCollapsible.prototype.addRowCrudButtons = function (row) {
+    addRowCrudButtons(row) {
         var $crudMenu = row.$dom.find('.collapsible-header > .crudButtons');
         if (row.dataItem._gdFolderUrl)
             $crudMenu.append(new ExternalResourcesIconLink('GD_ICON', row.dataItem._gdFolderUrl).$dom);
@@ -96,18 +81,17 @@ var ContractsCollapsible = /** @class */ (function (_super) {
                 $crudMenu
                     .append('<span class="collapsibleItemDelete"><i class="material-icons">delete</i></span>');
         }
-    };
+    }
     /*
      *
      */
-    ContractsCollapsible.prototype.selectTrigger = function (itemId) {
-        var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
-        _super.prototype.selectTrigger.call(this, itemId);
+    selectTrigger(itemId) {
+        const isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
+        super.selectTrigger(itemId);
         if (itemId !== undefined &&
             this.connectedRepository.currentItem.id != itemId ||
             !isDashboardLoaded) {
             $('#contractDashboard').attr('src', 'ContractDashboard/ContractDashboard.html?parentItemId=' + this.connectedRepository.currentItem.id);
         }
-    };
-    return ContractsCollapsible;
-}(SimpleCollapsible));
+    }
+}

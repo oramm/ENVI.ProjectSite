@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MeetingArrangementsCollection = /** @class */ (function (_super) {
-    __extends(MeetingArrangementsCollection, _super);
-    function MeetingArrangementsCollection(initParamObject) {
-        var _this = _super.call(this, {
+class MeetingArrangementsCollection extends SimpleCollection {
+    constructor(initParamObject) {
+        super({
             id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
@@ -28,15 +14,14 @@ var MeetingArrangementsCollection = /** @class */ (function (_super) {
             isDeletable: true,
             isSelectable: true,
             connectedRepository: MeetingsSetup.meetingArrangementsRepository
-        }) || this;
-        _this.initialise(_this.makeList());
-        return _this;
+        });
+        this.initialise(this.makeList());
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
      * @dataItem connectedRepository.items[i]
      */
-    MeetingArrangementsCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         return {
             id: dataItem.id,
@@ -46,18 +31,18 @@ var MeetingArrangementsCollection = /** @class */ (function (_super) {
             editUrl: dataItem.editUrl,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    MeetingArrangementsCollection.prototype.makeTitle = function (dataItem) {
+    makeTitle(dataItem) {
         var titleAtomicEditLabel = new AtomicEditLabel(dataItem._case._parent._parent.number + ' ' + dataItem._case._type.folderNumber + ' ' + dataItem._case._type.name + ' ' + dataItem.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
         return titleAtomicEditLabel.$dom;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    MeetingArrangementsCollection.prototype.makeDescription = function (dataItem) {
+    makeDescription(dataItem) {
         if (!dataItem.description)
             dataItem.description = '';
         var $collectionElementDescription = $('<span>');
@@ -77,15 +62,13 @@ var MeetingArrangementsCollection = /** @class */ (function (_super) {
         $collectionElementDescription
             .append($footer);
         return $collectionElementDescription;
-    };
-    MeetingArrangementsCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) {
-            return item.dataItem._parent.id == _this.parentDataItem.id;
+    }
+    makeList() {
+        return super.makeList().filter((item) => {
+            return item.dataItem._parent.id == this.parentDataItem.id;
         });
-    };
-    MeetingArrangementsCollection.prototype.selectTrigger = function (itemId) {
-        _super.prototype.selectTrigger.call(this, itemId);
-    };
-    return MeetingArrangementsCollection;
-}(SimpleCollection));
+    }
+    selectTrigger(itemId) {
+        super.selectTrigger(itemId);
+    }
+}

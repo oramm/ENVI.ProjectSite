@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ContractTypesCollapsible = /** @class */ (function (_super) {
-    __extends(ContractTypesCollapsible, _super);
-    function ContractTypesCollapsible(id) {
-        var _this = _super.call(this, {
+class ContractTypesCollapsible extends SimpleCollapsible {
+    constructor(id) {
+        super({
             id: id,
             hasFilter: true,
             isEditable: true,
@@ -24,14 +10,13 @@ var ContractTypesCollapsible = /** @class */ (function (_super) {
             hasArchiveSwitch: true,
             connectedRepository: ContractTypesSetup.contractTypesRepository
             //subitemsCount: 12
-        }) || this;
-        _this.addNewModal = new ContractTypeModal(id + '_newContractType', 'Dodaj typ kontraktu', _this, 'ADD_NEW');
-        _this.editModal = new ContractTypeModal(id + '_editContractType', 'Edytuj typ kontraktu', _this, 'EDIT');
-        _this.addNewMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(_this.id + '_newMilestoneTypeContractTypeAssociation', 'Przypisz typ kamienia do kontraktu typu ', _this, 'ADD_NEW');
-        _this.editMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(_this.id + '_editMilestoneTypeContractTypeAssociation', 'Edytuj numer folderu', _this, 'EDIT');
-        _this.addNewMilestoneType = new MilestoneTypeModal(_this.id + '_newMilestoneType', 'Dodaj nowy typ kamienia', _this, 'ADD_NEW');
-        _this.initialise(_this.makeCollapsibleItemsList());
-        return _this;
+        });
+        this.addNewModal = new ContractTypeModal(id + '_newContractType', 'Dodaj typ kontraktu', this, 'ADD_NEW');
+        this.editModal = new ContractTypeModal(id + '_editContractType', 'Edytuj typ kontraktu', this, 'EDIT');
+        this.addNewMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(this.id + '_newMilestoneTypeContractTypeAssociation', 'Przypisz typ kamienia do kontraktu typu ', this, 'ADD_NEW');
+        this.editMilestoneTypeContractTypeAssociationModal = new MilestoneTypeContractTypeAssociationModal(this.id + '_editMilestoneTypeContractTypeAssociation', 'Edytuj numer folderu', this, 'EDIT');
+        this.addNewMilestoneType = new MilestoneTypeModal(this.id + '_newMilestoneType', 'Dodaj nowy typ kamienia', this, 'ADD_NEW');
+        this.initialise(this.makeCollapsibleItemsList());
         //trzeba zainicjować dane parentów na wypadek dodania nowego obiektu
         //funkcja Modal.submitTrigger() bazuje na danych w this.connectedRepository.currentItem
     }
@@ -40,12 +25,12 @@ var ContractTypesCollapsible = /** @class */ (function (_super) {
      * @param {type} connectedRepository.items[i]
      * @returns {Collapsible.Item}
      */
-    ContractTypesCollapsible.prototype.makeItem = function (dataItem) {
-        return _super.prototype.makeItem.call(this, dataItem);
-    };
-    ContractTypesCollapsible.prototype.makeBody = function (dataItem) {
+    makeItem(dataItem) {
+        return super.makeItem(dataItem);
+    }
+    makeBody(dataItem) {
         var $descriptionLabel = $((dataItem.description) ? '<BR>' + dataItem.description : '');
-        var subCollection = new MilestoneTypeContractTypeAssociationsCollection({
+        let subCollection = new MilestoneTypeContractTypeAssociationsCollection({
             id: 'milestoneTypeContractTypeAssociationsCollection_' + dataItem.id,
             title: "",
             addNewModal: this.addNewMilestoneTypeContractTypeAssociationModal,
@@ -63,6 +48,5 @@ var ContractTypesCollapsible = /** @class */ (function (_super) {
             collection: subCollection,
             $dom: $panel
         };
-    };
-    return ContractTypesCollapsible;
-}(SimpleCollapsible));
+    }
+}

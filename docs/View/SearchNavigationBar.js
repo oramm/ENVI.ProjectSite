@@ -1,6 +1,6 @@
 "use strict";
-var SearchNavigationBar = /** @class */ (function () {
-    function SearchNavigationBar(id) {
+class SearchNavigationBar {
+    constructor(id) {
         this.id = id;
         var $nav = $('<nav class="green lighten-3">');
         $nav
@@ -14,5 +14,4 @@ var SearchNavigationBar = /** @class */ (function () {
             .append('<i class="material-icons">close</i>');
         return $nav;
     }
-    return SearchNavigationBar;
-}());
+}

@@ -2,38 +2,23 @@
 var processesInstancesRepository;
 var processesInstancesStepsRepository;
 var processesStepsInstancesRepository;
-var ProcessesInstancesSetup = /** @class */ (function () {
-    function ProcessesInstancesSetup() {
+class ProcessesInstancesSetup {
+    static get processesInstancesRepository() {
+        return processesInstancesRepository;
     }
-    Object.defineProperty(ProcessesInstancesSetup, "processesInstancesRepository", {
-        get: function () {
-            return processesInstancesRepository;
-        },
-        set: function (data) {
-            processesInstancesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ProcessesInstancesSetup, "processesStepsInstancesRepository", {
-        get: function () {
-            return processesStepsInstancesRepository;
-        },
-        set: function (data) {
-            processesStepsInstancesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ProcessesInstancesSetup, "processesStepsInstancesStatusNames", {
-        get: function () {
-            return ['Nie rozpoczęte',
-                'W trakcie',
-                'Zrobione'
-            ];
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return ProcessesInstancesSetup;
-}());
+    static set processesInstancesRepository(data) {
+        processesInstancesRepository = data;
+    }
+    static get processesStepsInstancesRepository() {
+        return processesStepsInstancesRepository;
+    }
+    static set processesStepsInstancesRepository(data) {
+        processesStepsInstancesRepository = data;
+    }
+    static get processesStepsInstancesStatusNames() {
+        return ['Nie rozpoczęte',
+            'W trakcie',
+            'Zrobione'
+        ];
+    }
+}

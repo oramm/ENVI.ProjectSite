@@ -1,21 +1,7 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MilestoneTypeContractTypeAssociationsCollection = /** @class */ (function (_super) {
-    __extends(MilestoneTypeContractTypeAssociationsCollection, _super);
-    function MilestoneTypeContractTypeAssociationsCollection(initParamObject) {
-        var _this = _super.call(this, {
+class MilestoneTypeContractTypeAssociationsCollection extends SimpleCollection {
+    constructor(initParamObject) {
+        super({
             id: initParamObject.id,
             parentDataItem: initParamObject.parentDataItem,
             title: initParamObject.title,
@@ -28,18 +14,17 @@ var MilestoneTypeContractTypeAssociationsCollection = /** @class */ (function (_
             isDeletable: true,
             isSelectable: true,
             connectedRepository: ContractTypesSetup.milestoneTypeContractTypeAssociationsRepository,
-        }) || this;
-        _this.initialise(_this.makeList());
+        });
+        this.initialise(this.makeList());
         //podłącz do nadrzędnego collapsibla, żeby dostać się do dodatkowych modali
-        _this.connectedResultsetComponent = initParamObject.connectedResultsetComponent;
-        _this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(_this.$actionsMenu, "Dodaj typ kamienia", _this);
-        return _this;
+        this.connectedResultsetComponent = initParamObject.connectedResultsetComponent;
+        this.connectedResultsetComponent.addNewMilestoneType.preppendTriggerButtonTo(this.$actionsMenu, "Dodaj typ kamienia", this);
     }
     /*
      * Dodano atrybut z ContractId, żeby szybciej filtorwac widok po stronie klienta zamiast przez SELECT z db
      * @dataItem connectedRepository.items[i]
      */
-    MilestoneTypeContractTypeAssociationsCollection.prototype.makeItem = function (dataItem) {
+    makeItem(dataItem) {
         (dataItem.description) ? true : dataItem.description = "";
         return {
             id: dataItem.id,
@@ -49,19 +34,19 @@ var MilestoneTypeContractTypeAssociationsCollection = /** @class */ (function (_
             editUrl: dataItem.editUrl,
             dataItem: dataItem
         };
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.items[i])
      */
-    MilestoneTypeContractTypeAssociationsCollection.prototype.makeTitle = function (dataItem) {
-        var titleAtomicEditLabel = new AtomicEditLabel(dataItem.folderNumber + "  " + dataItem._milestoneType.name, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
+    makeTitle(dataItem) {
+        const titleAtomicEditLabel = new AtomicEditLabel(`${dataItem.folderNumber}  ${dataItem._milestoneType.name}`, dataItem, new InputTextField(this.id + '_' + dataItem.id + '_tmpNameEdit_TextField', 'Edytuj', undefined, true, 150), 'name', this);
         return titleAtomicEditLabel.$dom;
-    };
+    }
     /*
      * @param {dataItem} this.connectedRepository.currentItem
      */
-    MilestoneTypeContractTypeAssociationsCollection.prototype.makeDescription = function (dataItem) {
-        var $collectionElementDescription = $('<span>');
+    makeDescription(dataItem) {
+        const $collectionElementDescription = $('<span>');
         if (dataItem.description)
             $collectionElementDescription.append('<span>' + dataItem.description + '<br></span>');
         if (dataItem._milestoneType.isUniquePerContract)
@@ -69,20 +54,18 @@ var MilestoneTypeContractTypeAssociationsCollection = /** @class */ (function (_
         if (dataItem.isDefault)
             $collectionElementDescription.append(new Badge(dataItem.id + '_def', 'Domyślny', 'lime darken-4').$dom);
         return $collectionElementDescription;
-    };
-    MilestoneTypeContractTypeAssociationsCollection.prototype.makeList = function () {
-        var _this = this;
-        return _super.prototype.makeList.call(this).filter(function (item) {
-            return item.dataItem._contractType.id == _this.parentDataItem.id;
+    }
+    makeList() {
+        return super.makeList().filter((item) => {
+            return item.dataItem._contractType.id == this.parentDataItem.id;
         });
-    };
-    MilestoneTypeContractTypeAssociationsCollection.prototype.selectTrigger = function (itemId) {
+    }
+    selectTrigger(itemId) {
         //var isDashboardLoaded = $('#contractDashboard').attr('src') && $('#contractDashboard').attr('src').includes('ContractDashboard');
         //if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId ||
         //    isDashboardLoaded){
-        _super.prototype.selectTrigger.call(this, itemId);
+        super.selectTrigger(itemId);
         //$('#contractTypeDashboard').attr('src','CasesTemplates/CasesTemplatesList.html?parentItemId=' + this.connectedRepository.currentItem.id  + '&contractId=' + this.connectedRepository.currentItem.contractId);
         //}
-    };
-    return MilestoneTypeContractTypeAssociationsCollection;
-}(SimpleCollection));
+    }
+}

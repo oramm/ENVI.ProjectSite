@@ -1,8 +1,6 @@
 "use strict";
-var ProcessesController = /** @class */ (function () {
-    function ProcessesController() {
-    }
-    ProcessesController.main = function () {
+class ProcessesController {
+    static main() {
         // Hide auth UI, then load client library.
         var listView = new ProcessesListView();
         $("#authorize-div").hide();
@@ -25,17 +23,17 @@ var ProcessesController = /** @class */ (function () {
             actionsNodeJSSetup: { addNewRoute: 'DocumentTemplate', editRoute: 'DocumentTemplate', deleteRoute: 'DocumentTemplate' },
         });
         var promises = [
-            ProcessesSetup.processesRepository.initialiseNodeJS("Processes/?status=ACTIVE"),
+            ProcessesSetup.processesRepository.initialiseNodeJS(`Processes/?status=ACTIVE`),
             ProcessesSetup.processStepsRepository.initialiseNodeJS('ProcessSteps/'),
-            ProcessesSetup.caseTypesRepository.initialiseNodeJS("caseTypes/"),
+            ProcessesSetup.caseTypesRepository.initialiseNodeJS(`caseTypes/`),
             ProcessesSetup.documentTemplatesRepository.initialiseNodeJS('documentTemplates/')
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             listView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
@@ -44,9 +42,8 @@ var ProcessesController = /** @class */ (function () {
             $('ul.tabs').tabs();
             iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return ProcessesController;
-}());
+    }
+}

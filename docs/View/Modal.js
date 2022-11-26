@@ -4,8 +4,8 @@
  * na końcu ww. strony jedt przykład jak obsłużyć zamykanie okna
  * externalrepository - jeżeli edytujemy obiekt spoza listy - inne repo niż connectedResultsetComponent.connectedRepository
  */
-var Modal = /** @class */ (function () {
-    function Modal(id, title, connectedResultsetComponent, mode) {
+class Modal {
+    constructor(id, title, connectedResultsetComponent, mode) {
         this.id = id;
         this.title = title;
         this.connectedResultsetComponent = connectedResultsetComponent;
@@ -18,11 +18,11 @@ var Modal = /** @class */ (function () {
         this.$dom;
         this.$title = $('<h4 class="modalTitle">');
     }
-    Modal.prototype.initialise = function () {
+    initialise() {
         this.buildDom();
         Tools.hasFunction(this.submitTrigger);
-    };
-    Modal.prototype.buildDom = function () {
+    }
+    buildDom() {
         this.form = new Form("form_" + this.id, "GET", this.formElements);
         this.$dom = $('<div id="' + this.id + '" class="modal modal-fixed-footer">');
         this.connectedResultsetComponent.$dom
@@ -35,16 +35,16 @@ var Modal = /** @class */ (function () {
         this.$dom.children('.modal-content').prepend(this.$title);
         this.setTitle(this.title);
         this.setSubmitAction();
-    };
-    Modal.prototype.setTitle = function (title) {
+    }
+    setTitle(title) {
         this.$title.text(title);
-    };
+    }
     /*
      * Tworzy ikonę edycji lub dodania rekordu do listy
      * @param {Collection | Collapsible} resultsetComponent
      * @returns {Modal.createTriggerIcon.$icon}
      */
-    Modal.prototype.createTriggerIcon = function () {
+    createTriggerIcon() {
         var iconType = (this.mode === 'ADD_NEW') ? 'add' : 'edit';
         var $triggerIcon = $('<SPAN data-target="' + this.id + '" ><i class="material-icons">' + iconType + '</i></SPAN>');
         //var _this = this;
@@ -52,11 +52,11 @@ var Modal = /** @class */ (function () {
             .addClass((this.mode === 'ADD_NEW') ? 'addNewItemIcon' : 'collectionItemEdit')
             .addClass('modal-trigger');
         return $triggerIcon;
-    };
+    }
     /** Akcja po włączeniu modala.
      * Funkcja używana w connectedResultsetComponent.setEditAction() oraz connectedResultsetComponent.addNewAction()
      */
-    Modal.prototype.triggerAction = function (connectedResultsetComponent) {
+    triggerAction(connectedResultsetComponent) {
         //ReachTextArea.reachTextAreaInit();
         if (Object.getPrototypeOf(connectedResultsetComponent).constructor.name !== 'RawPanel')
             $(connectedResultsetComponent.$dom.css('min-height', '300px'));
@@ -70,24 +70,23 @@ var Modal = /** @class */ (function () {
         else
             this.initAddNewData();
         Materialize.updateTextFields();
-    };
-    Modal.prototype.fillForm = function () {
+    }
+    fillForm() {
         this.form.fillWithData(this.connectedResultsetComponent.connectedRepository.currentItem);
-    };
+    }
     /*
      * Aktualizuje dane np. w selectach. Jest uruchamiana w this.triggerAction();
      */
-    Modal.prototype.refreshDataSets = function () {
-        for (var _i = 0, _a = this.formElements; _i < _a.length; _i++) {
-            var element = _a[_i];
+    refreshDataSets() {
+        for (var element of this.formElements) {
             if (typeof element.refreshDataSet === 'function')
                 element.refreshDataSet();
         }
-    };
+    }
     /*
      * TODO do przeobienia anlogicznie jak z Icon. Do użycia tylko w Collapsible
      */
-    Modal.prototype.preppendTriggerButtonTo = function ($uiElelment, caption, connectedResultsetComponent, buttonStyle) {
+    preppendTriggerButtonTo($uiElelment, caption, connectedResultsetComponent, buttonStyle) {
         var $button = $('<button data-target="' + this.id + '">' + caption + '</button>');
         $button
             .addClass((buttonStyle === 'FLAT') ? 'btn-flat' : 'btn')
@@ -97,44 +96,42 @@ var Modal = /** @class */ (function () {
             _this.triggerAction(connectedResultsetComponent);
         });
         $uiElelment.prepend($button);
-    };
+    }
     /*
      * wywoływana przed pokazaniem modala
      * @param {Collection | Collapsible} component
      * @returns {undefined}
      */
-    Modal.prototype.connectWithResultsetComponent = function (component) {
+    connectWithResultsetComponent(component) {
         this.connectedResultsetComponent = component;
-    };
+    }
     /*
      * Funkcja musi być obsłużona w klasie pochodnej.
      * Klasa pochodna musi mieć metodę submitTrigger()
      */
-    Modal.prototype.setSubmitAction = function () {
-        var _this_1 = this;
-        this.form.$dom.submit(function (event) {
-            _this_1.submitTrigger();
+    setSubmitAction() {
+        this.form.$dom.submit((event) => {
+            this.submitTrigger();
             // prevent default posting of form
             event.preventDefault();
         });
-    };
+    }
     /*
      * Używana przy Submit
      * @param {repositoryItem} currentEditedItem
      * @returns {undefined}
      */
-    Modal.prototype.isDuplicate = function (currentEditedItem) {
-        var duplicate = this.connectedResultsetComponent.connectedRepository.items.find(function (item) { return _.isEqual(item, currentEditedItem); });
+    isDuplicate(currentEditedItem) {
+        var duplicate = this.connectedResultsetComponent.connectedRepository.items.find(item => _.isEqual(item, currentEditedItem));
         return (duplicate) ? true : false;
-    };
+    }
     /*
      * Krok 1 - po kliknięciu 'Submit' formularza dodawania
      * Proces: this.submitTrigger >> this.connectedResultsetComponent.connectedRepository.addNewPerson
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[PENDING]
      *                                  >> repository. addNewHandler >> personsRolesCollection.addNewHandler[DONE]
     */
-    Modal.prototype.submitTrigger = function () {
-        var _this_1 = this;
+    submitTrigger() {
         try {
             tinyMCE.triggerSave();
         }
@@ -144,34 +141,33 @@ var Modal = /** @class */ (function () {
         //obiekt z bieżącej pozycji na liście connectedResultsetComponent do zapisania danych z formularza
         var tmpDataObject = Tools.cloneOfObject(this.connectedResultsetComponent.connectedRepository.currentItem);
         this.form.submitHandler(tmpDataObject)
-            .then(function () {
-            if (_this_1.form.validate(tmpDataObject)) {
-                if (_this_1.mode === 'EDIT')
-                    _this_1.editSubmitTrigger(tmpDataObject);
+            .then(() => {
+            if (this.form.validate(tmpDataObject)) {
+                if (this.mode === 'EDIT')
+                    this.editSubmitTrigger(tmpDataObject);
                 else
-                    _this_1.addNewSubmitTrigger(tmpDataObject);
-                _this_1.connectedResultsetComponent.connectedRepository.currentItem = tmpDataObject;
+                    this.addNewSubmitTrigger(tmpDataObject);
+                this.connectedResultsetComponent.connectedRepository.currentItem = tmpDataObject;
             }
             else
                 alert('Formularz źle wypełniony');
-            _this_1.$dom.modal('close');
+            this.$dom.modal('close');
         });
-    };
-    Modal.prototype.editSubmitTrigger = function (dataObject) {
+    }
+    editSubmitTrigger(dataObject) {
         if (!this.doChangeFunctionOnItemName && !this.doChangeOnItemRoute)
             this.connectedResultsetComponent.connectedRepository.editItem(dataObject, this.connectedResultsetComponent);
         else {
-            var argument = (this.doChangeFunctionOnItemName) ? this.doChangeFunctionOnItemName : this.doChangeOnItemRoute;
+            let argument = (this.doChangeFunctionOnItemName) ? this.doChangeFunctionOnItemName : this.doChangeOnItemRoute;
             this.connectedResultsetComponent.connectedRepository.doChangeFunctionOnItem(dataObject, argument, this.connectedResultsetComponent);
         }
-    };
-    Modal.prototype.addNewSubmitTrigger = function (dataObject) {
+    }
+    addNewSubmitTrigger(dataObject) {
         if (!this.doAddNewFunctionOnItemName && !this.doAddNewItemRoute)
             this.connectedResultsetComponent.connectedRepository.addNewItem(dataObject, this.connectedResultsetComponent);
         else {
-            var argument = (this.doAddNewFunctionOnItemName) ? this.doAddNewFunctionOnItemName : this.doAddNewItemRoute;
+            let argument = (this.doAddNewFunctionOnItemName) ? this.doAddNewFunctionOnItemName : this.doAddNewItemRoute;
             this.connectedResultsetComponent.connectedRepository.doAddNewFunctionOnItem(dataObject, argument, this.connectedResultsetComponent);
         }
-    };
-    return Modal;
-}());
+    }
+}

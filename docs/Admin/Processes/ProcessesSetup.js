@@ -2,38 +2,23 @@
 var processesRepository;
 var processStepsRepository;
 var caseTypesRepository;
-var ProcessesSetup = /** @class */ (function () {
-    function ProcessesSetup() {
+class ProcessesSetup {
+    static get processesRepository() {
+        return processesRepository;
     }
-    Object.defineProperty(ProcessesSetup, "processesRepository", {
-        get: function () {
-            return processesRepository;
-        },
-        set: function (data) {
-            processesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ProcessesSetup, "processStepsRepository", {
-        get: function () {
-            return processStepsRepository;
-        },
-        set: function (data) {
-            processStepsRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(ProcessesSetup, "caseTypesRepository", {
-        get: function () {
-            return caseTypesRepository;
-        },
-        set: function (data) {
-            caseTypesRepository = data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return ProcessesSetup;
-}());
+    static set processesRepository(data) {
+        processesRepository = data;
+    }
+    static get processStepsRepository() {
+        return processStepsRepository;
+    }
+    static set processStepsRepository(data) {
+        processStepsRepository = data;
+    }
+    static get caseTypesRepository() {
+        return caseTypesRepository;
+    }
+    static set caseTypesRepository(data) {
+        caseTypesRepository = data;
+    }
+}

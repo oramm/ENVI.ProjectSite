@@ -1,8 +1,6 @@
 "use strict";
-var MaterialCardsController = /** @class */ (function () {
-    function MaterialCardsController() {
-    }
-    MaterialCardsController.prototype.main = function () {
+class MaterialCardsController {
+    main() {
         // Hide auth UI, then load client library.
         var materialCardsListView = new MaterialCardsListView();
         $("#authorize-div").hide();
@@ -15,20 +13,19 @@ var MaterialCardsController = /** @class */ (function () {
             MaterialCardsSetup.materialCardsRepository.initialiseNodeJS('materialCards/?contractId=' + MaterialCardsSetup.materialCardsRepository.parentItemId)
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
             materialCardsListView.initialise();
         })
-            .then(function () {
+            .then(() => {
             $('select').material_select();
             $('.modal').modal();
             $('.datepicker').pickadate(MainSetup.datePickerSettings);
             ReachTextArea.reachTextAreaInit();
             Materialize.updateTextFields();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return MaterialCardsController;
-}());
+    }
+}

@@ -1,8 +1,6 @@
 "use strict";
-var RolesController = /** @class */ (function () {
-    function RolesController() {
-    }
-    RolesController.main = function () {
+class RolesController {
+    static main() {
         // Hide auth UI, then load client library.
         var rolesView = new RolesView();
         $("#authorize-div").hide();
@@ -17,20 +15,19 @@ var RolesController = /** @class */ (function () {
             RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + MainSetup.currentProject.ourId)
         ];
         Promise.all(promises)
-            .then(function () {
+            .then(() => {
             console.log("Repositories initialised");
         })
-            .then(function (res) {
+            .then((res) => {
             console.log(res);
             rolesView.initialise();
         })
-            .then(function () {
+            .then(() => {
             ReachTextArea.reachTextAreaInit();
             $('.modal').modal();
         })
-            .catch(function (err) {
+            .catch(err => {
             console.error(err);
         });
-    };
-    return RolesController;
-}());
+    }
+}
