@@ -1,0 +1,45 @@
+"use strict";
+var ContractsController = /** @class */ (function () {
+    function ContractsController() {
+    }
+    ContractsController.main = function () {
+        // Hide auth UI, then load client library.
+        var contractsListView = new ContractsListView();
+        $("#authorize-div").hide();
+        contractsListView.dataLoaded(false);
+        //signoutButton.style.display = 'block';
+        MilestonesSetup.milestonesRepository = new SimpleRepository({
+            name: 'Milestones repository',
+            actionsNodeJSSetup: { addNewRoute: 'Milestone', editRoute: 'Milestone', deleteRoute: 'Milestone' },
+        });
+        ContractsSetup.contractsRepository = new SimpleRepository({
+            name: 'Contracts repository',
+            actionsNodeJSSetup: { addNewRoute: 'Contract', editRoute: 'Contract', deleteRoute: 'Contract' },
+        });
+        MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository');
+        ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
+        var promises = [
+            MilestonesSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),
+            ContractsSetup.contractsRepository.initialiseNodeJS("contracts/?projectId=" + contractsRepository.parentItemId + "&isArchived=true"),
+            MilestonesSetup.milestoneTypesRepository.initialiseNodeJS('milestoneTypes/?projectId=' + contractsRepository.parentItemId),
+        ];
+        Promise.all(promises)
+            .then(function () { return ContractsSetup.otherContractsRepository.items = Array.from(contractsRepository.items); })
+            .then(function () {
+            console.log("Repositories initialised");
+            contractsListView.initialise();
+        })
+            .then(function () {
+            $('select').material_select();
+            $('.modal').modal();
+            $('.datepicker').pickadate(MainSetup.datePickerSettings);
+            ReachTextArea.reachTextAreaInit();
+            Materialize.updateTextFields();
+            iFrameResize({ log: false, heightCalculationMethod: 'taggedElement', checkOrigin: false });
+        })
+            .catch(function (err) {
+            console.error(err);
+        });
+    };
+    return ContractsController;
+}());

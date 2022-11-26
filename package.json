@@ -1,0 +1,15 @@
+{
+    "name": "PS",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css docs/",
+        "clean": "rm -rf ./docs",
+        "build": "yarn clean && tsc && yarn copy-files"
+    },
+    "devDependencies": {
+        "@types/jquery": "^3.5.14",
+        "copyfiles": "^2.4.1"
+    }
+}
