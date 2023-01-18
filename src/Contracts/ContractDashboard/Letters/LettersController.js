@@ -25,7 +25,7 @@ class LettersController {
             name: 'Cases repository'
         });
 
-        let promises = [
+        const promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?contractId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.contractsRepository.initialiseNodeJS('contracts/?contractId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?contractId=' + LettersSetup.lettersRepository.parentItemId),
