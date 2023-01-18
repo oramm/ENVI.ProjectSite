@@ -13,17 +13,17 @@ class LettersController {
             'editLetter',
             'deleteLetter');
 
-        LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsList'
-        );
+        LettersSetup.contractsRepository = new SimpleRepository({
+            name: 'Contracts repository'
+        });
 
-        LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesList'
-        );
+        LettersSetup.milestonesRepository = new SimpleRepository({
+            name: 'Milestones repository'
+        });
 
-        LettersSetup.casesRepository = new SimpleRepository('Cases repository',
-            'getCasesListPerProject'
-        );
+        LettersSetup.casesRepository = new SimpleRepository({
+            name: 'Cases repository'
+        });
 
         let promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?contractId=' + LettersSetup.lettersRepository.parentItemId),

@@ -1,4 +1,8 @@
 class SimpleRepository extends Repository {
+    parentItemId?: string | number;
+    addNewServerFunctionName?: string;
+    editServerFunctionName?: string;
+    copyServerFunctionName?: string;
     /*
      * 
      * @param {String || Object} initParameter może to być nazwa repozytorim, albo obiekt z session Strorage
@@ -7,20 +11,20 @@ class SimpleRepository extends Repository {
      * @param {String} deleteServerFunctionName
      * @returns {SimpleRepository}
      */
-    constructor(initParameter,
-        addNewServerFunctionName,
-        editServerFunctionName,
-        deleteServerFunctionName,
+    constructor(initParameter: any | undefined,
+        name?: string,
+        addNewServerFunctionName?: string,
+        editServerFunctionName?: string,
+        deleteServerFunctionName?: string,
         copyServerFunctionName = addNewServerFunctionName) {
-        super(initParameter);
-        if (initParameter.parentItemId)
+        super(initParameter, name);
+
+        if (initParameter?.parentItemId)
             this.parentItemId = initParameter.parentItemId
         else
             this.parentItemIdFromURL();
-
         //stary typ repozytium
-        if (typeof initParameter === 'string' && !initParameter.actionsNodeJSSetup) {
-
+        if (name) {
             this.addNewServerFunctionName = addNewServerFunctionName;
             this.editServerFunctionName = editServerFunctionName;
             this.deleteServerFunctionName = deleteServerFunctionName;
@@ -29,13 +33,14 @@ class SimpleRepository extends Repository {
         }
         //mamy obiekt z SessionStorage lub nowy obiekt z nodeJS
         else if (typeof initParameter === 'object') {
+
             this.addNewServerFunctionName = initParameter.addNewServerFunctionName;
             this.editServerFunctionName = initParameter.editServerFunctionName;
             this.deleteServerFunctionName = initParameter.deleteServerFunctionName;
         }
     }
 
-    initialiseNodeJS(requestParams) {
+    initialiseNodeJS(requestParams: string) {
         return new Promise((resolve, reject) => {
             $.ajax({
                 type: 'GET',
@@ -61,68 +66,84 @@ class SimpleRepository extends Repository {
     }
 
     //Krok 2 - wywoływana przy SUBMIT
-    addNewItem(dataItem, viewObject) {
+    addNewItem(dataItem: any, viewObject: any) {
         return this.doAddNewFunctionOnItem(dataItem, this.addNewServerFunctionName, viewObject)
         //super.addNewItem(dataItem, this.addNewServerFunctionName, viewObject);
     }
 
     //Krok 2 - wywoływana przy SUBMIT
-    editItem(dataItem, viewObject) {
-        let argument = (this.actionsNodeJSSetup.editRoute) ? this.actionsNodeJSSetup.editRoute : this.editServerFunctionName;
+    editItem(dataItem: any, viewObject: any) {
+        let argument: string;
+        if (this.actionsNodeJSSetup?.editRoute)
+            argument = this.actionsNodeJSSetup.editRoute
+        else {
+            if (!this.editServerFunctionName)
+                throw new Error('Repository does not have editServerFunctionName');
+            argument = this.editServerFunctionName;
+        }
         return this.doChangeFunctionOnItem(dataItem, argument, viewObject);
     }
 
-    /*
+    /**
      * Krok 2 - Wywoływane przez trigger w klasie pochodnej po Resultset
      */
-    async deleteItem(dataItem, viewObject) {
-        if (this.actionsNodeJSSetup.deleteRoute)
+    async deleteItem(dataItem: any, viewObject: any) {
+        if (this.actionsNodeJSSetup?.deleteRoute)
             await super.deleteItemNodeJS(dataItem, this.actionsNodeJSSetup.deleteRoute, viewObject);
-        else
+        else {
+            if (!this.deleteServerFunctionName)
+                throw new Error('Repository does not have deleteServerFunctionName');
             await super.deleteItem(dataItem, this.deleteServerFunctionName, viewObject)
+        }
         return this.name + ': item deleted';
 
     }
 
-    async copyCurrentItem(viewObject) {
+    async copyCurrentItem(viewObject: any) {
         return await this.copyItem(this.currentItem, viewObject);
     }
 
-    async copyItem(dataItem, viewObject) {
+    async copyItem(dataItem: any, viewObject: any) {
         let tmpDataObject = Tools.cloneOfObject(dataItem);
         tmpDataObject.id = undefined;
         let result;
-        if (this.actionsNodeJSSetup.copyRoute)
+        if (this.actionsNodeJSSetup?.copyRoute)
             result = await super.addNewItemNodeJS(dataItem, this.actionsNodeJSSetup.copyRoute, viewObject);
-        else
+        else {
+            if (!this.copyServerFunctionName)
+                throw new Error('Repository does not have copyServerFunctionName');
             result = await super.addNewItem(tmpDataObject, this.copyServerFunctionName, viewObject);
+        }
         return result;
     }
 
-    /*
+    /**
      * wykonuje dowolną funkcję z serwera dotyczącą danej pozycji na liście viewObject
      */
-    async doChangeFunctionOnItem(dataItem, serverFunctionNameOrRoute, viewObject) {
-        let result;
-        if (this.actionsNodeJSSetup.editRoute)
+    async doChangeFunctionOnItem(dataItem: any, serverFunctionNameOrRoute: string, viewObject: any) {
+        let result: any;
+        if (this.actionsNodeJSSetup?.editRoute)
             result = await super.editItemNodeJS(dataItem, serverFunctionNameOrRoute, viewObject);
         else
             result = await super.editItem(dataItem, serverFunctionNameOrRoute, viewObject);
-        let newIndex = this.items.findIndex(item => item.id == result.id);
+        let newIndex = this.items.findIndex((item: any) => item.id == result.id);
         this.items[newIndex] = result;
         console.log('%s:: wykonano funkcję: %s', this.name, serverFunctionNameOrRoute, result);
         return (result);
     }
 
-    /*
+    /**
      * wykonuje dowolną funkcję  z serwera polegającą na utworzeniu pozycji na liście viewObject
      */
-    async doAddNewFunctionOnItem(dataItem, serverFunctionName, viewObject) {
+    async doAddNewFunctionOnItem(dataItem: any, serverFunctionName: string | undefined, viewObject: any) {
         let result;
-        if (this.actionsNodeJSSetup.addNewRoute)
+        if (this.actionsNodeJSSetup?.addNewRoute)
             result = await super.addNewItemNodeJS(dataItem, this.actionsNodeJSSetup.addNewRoute, viewObject);
-        else
+        else {
+            if (!serverFunctionName)
+                throw new Error('serverFunctionName must be defined');
             result = await super.addNewItem(dataItem, serverFunctionName, viewObject);
+        }
         console.log('%s:: wykonano funkcję: %s, %o', this.name, serverFunctionName, result);
         return result;
     }

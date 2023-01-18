@@ -12,36 +12,33 @@ class MainController {
                 name: 'Projects repository',
                 actionsNodeJSSetup: { addNewRoute: 'project', editRoute: 'project', deleteRoute: 'project' },
             });
-            MainSetup.contractTypesRepositoryLocalData = new SimpleRepository('ContractTypes repository'
-            );
-            MainSetup.caseTypesRepositoryLocaData = new SimpleRepository('CaseTypes repository',
-                'addNewCaseType',
-                'editCaseType',
-                'deleteCaseType'
-            );
+            MainSetup.contractTypesRepositoryLocalData = new SimpleRepository({
+                name: 'ContractTypes repository'
+            });
+            MainSetup.caseTypesRepositoryLocaData = new SimpleRepository({
+                name: 'CaseTypes repository'
+            });
 
-            MainSetup.personsRepositoryLocalData = new SimpleRepository('Persons repository',
-                'addNewPersonInDb',
-                'editPersonInDb',
-                'deletePerson'
-            );
+            MainSetup.personsRepositoryLocalData = new SimpleRepository({
+                name: 'Persons repository'
+            });
 
             //inicjowana po wyborze projketu w MainWindowView.onProjectChosen
-            MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository('PersonsPerProject repository'
-            );
+            MainSetup.personsPerProjectRepositoryLocalData = new SimpleRepository({
+                name: 'PersonsPerProject repository'
+            });
 
-            MainSetup.personsEnviRepositoryLocalData = new SimpleRepository('PersonsEnvi repository'
-            );
+            MainSetup.personsEnviRepositoryLocalData = new SimpleRepository({
+                name: 'PersonsEnvi repository'
+            });
 
-            MainSetup.entitiesRepositoryLocalData = new SimpleRepository(
-                'Entities repository',
-                'addNewEntityInDb',
-                'editEntityInDb',
-                'deleteEntity'
-            );
+            MainSetup.entitiesRepositoryLocalData = new SimpleRepository({
+                name: 'Entities repository',
+            });
 
-            MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository('DocumentTemplates repository'
-            );
+            MainSetup.documentTemplatesRepositoryLocalData = new SimpleRepository({
+                name: 'DocumentTemplates repository'
+            });
 
 
             MainSetup.personsRepositoryLocalData.initialiseNodeJS('persons/');

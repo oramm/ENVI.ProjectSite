@@ -1,5 +1,8 @@
 class StaticRepository extends Repository {
-    constructor(initParamObject) {
+    constructor(initParamObject: {
+        name: string,
+        items: any[]
+    }) {
         super(initParamObject);
         this.items = initParamObject.items;
     }

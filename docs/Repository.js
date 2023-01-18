@@ -1,3 +1,4 @@
+"use strict";
 class Repository {
     /*
      * Może być inicjowane z danych z serwera, wtedy argumentem jest name jako string
@@ -5,53 +6,45 @@ class Repository {
      * @param {type} name
      * @returns {Repository}
      */
-    constructor(initParameter) {
-        if (initParameter === undefined) throw new SyntaxError("Repository must have a name!");
-        this.actionsGASSetup = {
-            addNew: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.addNew) ? true : false,
-            edit: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.edit) ? true : false,
-            delete: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.delete) ? true : false,
-        }
-        this.actionsNodeJSSetup = {
-            addNewRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.addNewRoute : undefined,
-            editRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.editRoute : undefined,
-            deleteRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.deleteRoute : undefined,
-            copyRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.copyRoute : undefined,
-        }
+    constructor(initParameter, name) {
+        if (!name && !initParameter?.name)
+            throw new SyntaxError("Repository must have a name!");
+        this.name = name || initParameter?.name || '';
         this.itemsLocalData;
-        this.result;
         //Repository może mieć wiele bieżących elementów (multiselect)
         this.currentItemsLocalData = [];
-        this.currentItemLocalData = (initParameter.currentItemLocalData) ? initParameter.currentItemLocalData : {};
-
-        if (typeof initParameter === 'string') {
-            //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
-            this.name = initParameter;
-            //sessionStorage.setItem(this.name, JSON.stringify(this));
-        }
         //mamy obiekt z SessionStorage lub z nodeJS
-        else if (typeof initParameter === 'object') {
-            this.name = initParameter.name;
+        if (initParameter) {
+            this.currentItemLocalData = (initParameter.currentItemLocalData) ? initParameter.currentItemLocalData : {};
             this.actionsGASSetup = initParameter.actionsGASSetup;
             this.actionsNodeJSSetup = initParameter.actionsNodeJSSetup;
-
             if (initParameter.itemsLocalData) {
                 this.itemsLocalData = initParameter.itemsLocalData;
                 console.log(this.name + ' items from SessionStorage: %o', this.itemsLocalData);
-            } else {
-
             }
+            else {
+            }
+            this.actionsGASSetup = {
+                addNew: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.addNew) ? true : false,
+                edit: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.edit) ? true : false,
+                delete: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.delete) ? true : false,
+            };
+            this.actionsNodeJSSetup = {
+                addNewRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.addNewRoute : undefined,
+                editRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.editRoute : undefined,
+                deleteRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.deleteRoute : undefined,
+                copyRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.copyRoute : undefined,
+            };
         }
     }
-
     get items() {
-        return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).itemsLocalData;
+        if (this.name)
+            return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).itemsLocalData;
     }
     set items(data) {
         this.itemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-
     get currentItem() {
         return (this.currentItemLocalData) ? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
     }
@@ -59,25 +52,25 @@ class Repository {
     get currentItems() {
         return (this.currentItemsLocalData) ? this.currentItemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItems;
     }
-
     set currentItems(data) {
         this.currentItemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-
     set currentItem(item) {
-        if (typeof item !== 'object' && item !== undefined) throw new Error("Selected repository item must be an object!");
+        if (typeof item !== 'object' && item !== undefined)
+            throw new Error("Selected repository item must be an object!");
         //nie przesyłamy do repozytorium blobów z FileInput
         if (item !== undefined) {
             delete item._blobEnviObjects;
             this.currentItemId = item.id;
-        } else
+        }
+        else
             this.currentItemId = undefined;
         this.currentItemLocalData = item;
-        if (item !== {}) this.addToCurrentItems(item);
+        if (!Tools.isObjectEmpty(item))
+            this.addToCurrentItems(item);
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     addToCurrentItems(newDataItem) {
         if (newDataItem) {
@@ -88,36 +81,33 @@ class Repository {
         }
         //sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     deleteFromCurrentItems(item) {
-        if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
-
+        if (!item || typeof item !== 'object')
+            throw new SyntaxError("Selected item must be an object!");
         var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item.id);
-        if (index !== undefined) this.currentItemsLocalData.splice(index, 1)
-
+        if (index !== undefined)
+            this.currentItemsLocalData.splice(index, 1);
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-
     setCurrentItemById(id) {
-        if (id === undefined) throw new SyntaxError("Selected item id must be specified!");
+        if (id === undefined)
+            throw new SyntaxError("Selected item id must be specified!");
         this.currentItemId = id;
-        this.currentItem = Tools.search(parseInt(id), "id", this.items);
+        this.currentItem = Tools.search(id, "id", this.items);
     }
-
     /*
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
     clientSideEditItemHandler(dataItem) {
         return new Promise((resolve, reject) => {
-            var newIndex = this.items.findIndex(item => item.id == dataItem.id);
+            var newIndex = this.items.findIndex((item) => item.id == dataItem.id);
             this.items[newIndex] = dataItem;
             console.log('%s:: wykonano funkcję: %s, %o', this.name, this, dataItem);
             resolve(dataItem);
         });
     }
-
     /*
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
@@ -125,101 +115,101 @@ class Repository {
     clientSideAddNewItemHandler(dataItem, serverFunctionName = '') {
         return new Promise((resolve, reject) => {
             this.items.push(dataItem);
-            console.log('dodaję obiekt docelowy, jego parent: ,%o', dataItem._parent)
+            console.log('dodaję obiekt docelowy, jego parent: ,%o', dataItem._parent);
             this.currentItem = dataItem;
             console.log('%s:: wykonano funkcję: %s, %o', this.name, serverFunctionName, dataItem);
             resolve(dataItem);
         });
     }
-
     /*
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
     async clientSideDeleteItemHandler(dataItem) {
-        var index = this.items.findIndex(item => item.id == dataItem.id);
+        var index = this.items.findIndex((item) => item.id == dataItem.id);
         this.items.splice(index, 1);
         this.currentItem = {};
         console.log('%s:: wykonano funkcję: %s, %o', this.name, this.deleteServerFunctionName, dataItem);
         return dataItem;
     }
-
     doServerFunction(serverFunctionName, serverFunctionParameters) {
         return new Promise((resolve, reject) => {
             // Create an execution request object.
             // Create execution request.
-            var request = {
+            const request = {
                 'function': serverFunctionName,
                 'parameters': serverFunctionParameters,
                 'devMode': true // Optional.
             };
             // Make the API request.
-            var op = gapi.client.request({
+            const op = gapi.client.request({
+                //@ts-ignore
                 'root': 'https://script.googleapis.com',
                 'path': 'v1/scripts/' + SCRIPT_ID + ':run',
                 'method': 'POST',
                 'body': request
             });
-
             op
                 .then((resp) => this.handleDoServerFunction(resp.result))
                 .then((result) => {
-                    console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
-                    resolve(result);
-                })
-                .catch(err => {
-                    console.error(serverFunctionName, err);
-                    window.alert('Wystąił Błąd! \n ' + err);
-                    throw err;
-                });
+                console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
+                resolve(result);
+            })
+                .catch((err) => {
+                console.error(serverFunctionName, err);
+                window.alert('Wystąił Błąd! \n ' + err);
+                throw err;
+            });
         });
     }
-
     //TODO: scalić funkcje handleDoServerFunction() z handleAddNewItem
     handleDoServerFunction(resp) {
         return new Promise((resolve, reject) => {
+            let result;
             if (resp.error && resp.error.status) {
                 // The API encountered a problem before the script
                 // started executing.
-                this.result = 'Error calling API:';
-                this.result += JSON.stringify(resp);
+                result = 'Error calling API:';
+                result += JSON.stringify(resp);
                 console.error(resp.error);
-                throw this.result;
+                throw result;
                 //throw resp.error;
-            } else if (resp.error) {
+            }
+            else if (resp.error) {
                 // The API executed, but the script returned an error.
                 // Extract the first (and only) set of error details.
                 // The values of this object are the script's 'errorMessage' and
                 // 'errorType', and an array of stack trace elements.
                 var error = resp.error.details[0];
-                this.result = 'Script error message: ' + error.errorMessage;
+                result = 'Script error message: ' + error.errorMessage;
                 console.error(resp.error);
                 if (error.scriptStackTraceElements) {
                     // There may not be a stacktrace if the script didn't start
                     // executing.
-                    this.result = 'Script error stacktrace:';
+                    result = 'Script error stacktrace:';
                     for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                         var trace = error.scriptStackTraceElements[i];
-                        this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                        result += ('\t' + trace.function + ':' + trace.lineNumber);
                     }
                     throw resp.error.details[0].errorMessage;
                 }
-            } else {
+            }
+            else {
                 // The structure of the result will depend upon what the Apps
                 // Script function returns. 
                 var serverResponse = resp.response.result;
                 if (!serverResponse || Object.keys(serverResponse).length == 0) {
-                    this.result = [];
-                    resolve(this.result);
-                } else {
+                    result = [];
+                    resolve(result);
+                }
+                else {
                     //itemsList = serverResponse;
-                    this.result = this.name + '  succes';
+                    result = this.name + '  succes';
                     resolve(serverResponse);
                 }
             }
         });
     }
-
     /*
      * wywoływana przy SUBMIT
      */
@@ -228,44 +218,48 @@ class Repository {
         newItem._tmpId = newItemTmpId;
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
         this.items.push(newItem);
-        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent)
+        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent);
         this.currentItem = Tools.cloneOfObject(newItem);
         viewObject.addNewHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let newItemFromServer = await this.editItemResponseHandlerGAS(newItem, serverFunctionName);
-            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName)
-        } catch (err) {
-            this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
-            throw (err);
-        };
+            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName);
+        }
+        catch (err) {
+            if (err instanceof Error) {
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                throw (err);
+            }
+        }
+        ;
     }
-
     async addNewItemNodeJS(newItem, route, viewObject) {
         var newItemTmpId = this.items.length + 1 + '_pending';
         newItem._tmpId = newItemTmpId;
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
         this.items.push(newItem);
-        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent)
+        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent);
         this.currentItem = Tools.cloneOfObject(newItem);
         viewObject.addNewHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let newItemFromServer = await this.addNewItemResponseHandlerNodeJS(newItem, route);
-            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject)
-        } catch (err) {
-            this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
-            throw (err);
-        };
+            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject);
+        }
+        catch (err) {
+            if (err instanceof Error) {
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                throw (err);
+            }
+        }
+        ;
     }
-
     addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName = '') {
         //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex(item => item._tmpId == newItemTmpId);
+        const index = this.items.findIndex((item) => item._tmpId == newItemTmpId);
         console.log('usuwam obiekt tymczasowy, jego _parent: %o', this.items[index]._parent);
         this.items.splice(index, 1);
-
         //wstaw do repozytorium nowy obiekt z serwera
         this.clientSideAddNewItemHandler(newItemFromServer, serverFunctionName);
-
         //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
         newItemFromServer._tmpId = newItemTmpId;
         viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
@@ -274,12 +268,13 @@ class Repository {
     addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err) {
         //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
         //usuń z repozytorium pechowy obiekt
-        var index = this.items.findIndex(item => item._tmpid == newItemTmpId);
+        var index = this.items.findIndex((item) => item._tmpid == newItemTmpId);
         this.items.splice(index, 1);
         this.currentItem = {};
         viewObject.addNewHandler.apply(viewObject, ["ERROR", newItem, err]);
     }
     async editItemResponseHandlerGAS(newItem, serverFunctionName) {
+        let result;
         // Create an execution request object.
         // Create execution request.
         let request = {
@@ -289,6 +284,7 @@ class Repository {
         };
         // Make the API request.
         let resp = (await gapi.client.request({
+            //@ts-ignore
             'root': 'https://script.googleapis.com',
             'path': 'v1/scripts/' + SCRIPT_ID + ':run',
             'method': 'POST',
@@ -297,40 +293,42 @@ class Repository {
         if (resp.error && resp.error.status) {
             // The API encountered a problem before the script
             // started executing.
-            this.result = 'Error calling API:';
-            this.result += JSON.stringify(resp, null, 2);
+            result = 'Error calling API:';
+            result += JSON.stringify(resp, null, 2);
             console.error(resp.error);
-            throw this.result;
+            throw result;
             //throw resp.error;
-        } else if (resp.error) {
+        }
+        else if (resp.error) {
             // The API executed, but the script returned an error.
             // Extract the first (and only) set of error details.
             // The values of this object are the script's 'errorMessage' and
             // 'errorType', and an array of stack trace elements.
             var error = resp.error.details[0];
-            this.result = 'Script error message: ' + error.errorMessage;
+            result = 'Script error message: ' + error.errorMessage;
             throw resp.error.details[0].errorMessage;
             if (error.scriptStackTraceElements) {
                 // There may not be a stacktrace if the script didn't start
                 // executing.
-                this.result = 'Script error stacktrace:';
+                result = 'Script error stacktrace:';
                 for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                     var trace = error.scriptStackTraceElements[i];
-                    this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                    result += ('\t' + trace.function + ':' + trace.lineNumber);
                 }
                 throw resp.error.details[0].errorMessage;
             }
-        } else {
+        }
+        else {
             // The structure of the result will depend upon what the Apps
             // Script function returns. 
             if (!resp.done) {
                 throw "Nic nie dodano";
-            } else {
-                this.result = 'Dodano element';
+            }
+            else {
+                result = 'Dodano element';
                 return (resp.response.result);
             }
         }
-
     }
     /*
      * wywoływana przy SUBMIT
@@ -343,31 +341,33 @@ class Repository {
         viewObject.editHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let result = await this.editItemResponseHandlerGAS(newItem, serverFunctionName);
-
             return this.editItemViewHandler(result, viewObject);
-        } catch (err) {
+        }
+        catch (err) {
             //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
             viewObject.editHandler.apply(viewObject, ["ERROR", newItem, err]);
             throw err;
-        };
+        }
+        ;
     }
     async editItemNodeJS(newItem, route, viewObject) {
         viewObject.editHandler.apply(viewObject, ["PENDING", newItem]);
         try {
-            let newItemFromServer = await this.editItemResponseHandlerNodeJS(newItem, route)
+            let newItemFromServer = await this.editItemResponseHandlerNodeJS(newItem, route);
             return this.editItemViewHandler(newItemFromServer, viewObject);
-        } catch (err) {
+        }
+        catch (err) {
             //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
             viewObject.editHandler.apply(viewObject, ["ERROR", newItem, err]);
             throw err;
-        };
+        }
+        ;
     }
-
     editItemViewHandler(newItemFromServer, viewObject) {
         if (!newItemFromServer)
             throw new Error('Serwer powinien zwrócić obiekt');
         //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex(item => item.id == newItemFromServer.id);
+        var index = this.items.findIndex((item) => item.id == newItemFromServer.id);
         this.items.splice(index, 1);
         //wstaw do repozytorium nowy obiekt z serwera
         this.items.push(newItemFromServer);
@@ -377,21 +377,21 @@ class Repository {
     }
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async addNewItemResponseHandlerNodeJS(item, route) {
-        let result = await fetch(MainSetup.serverUrl + route, {
+        const result = await fetch(MainSetup.serverUrl + route, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
             body: JSON.stringify(item)
         });
-        result = await result.text();
-        if (result.authorizeUrl)
-            window.open(result.authorizeUrl);
+        const resultText = await result.text();
+        if (resultText.authorizeUrl)
+            window.open(resultText.authorizeUrl);
         else {
-            const parsedResult = Tools.tryParseJSONObject(result);
+            const parsedResult = Tools.tryParseJSONObject(resultText);
             if (parsedResult)
                 return parsedResult;
             else
-                return result;
+                return resultText;
         }
     }
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
@@ -402,13 +402,11 @@ class Repository {
             credentials: 'include',
             body: JSON.stringify(item)
         });
-        result = await result.text();
-        if (result.authorizeUrl)
-            window.open(result.authorizeUrl);
-        return JSON.parse(result);
+        const resultText = await result.text();
+        if (resultText.authorizeUrl)
+            window.open(resultText.authorizeUrl);
+        return JSON.parse(resultText);
     }
-
-
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
     async deleteItemResponseHandlerNodeJS(oldItem, route) {
         let result = await fetch(MainSetup.serverUrl + route + '/' + oldItem.id, {
@@ -421,7 +419,6 @@ class Repository {
             window.open(result.authorizeUrl);
         return result;
     }
-
     makeRequestHeaders() {
         let myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -434,10 +431,11 @@ class Repository {
         this.clientSideDeleteItemHandler(oldItem);
         viewObject.removeHandler.apply(viewObject, ["PENDING", oldItem.id]);
         try {
-            let result = await this.deleteItemResponseHandlerGAS(oldItem, serverFunctionName)
+            let result = await this.deleteItemResponseHandlerGAS(oldItem, serverFunctionName);
             viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id, undefined, result]);
             return oldItem;
-        } catch (err) {
+        }
+        catch (err) {
             this.items.push(oldItem);
             this.currentItem = oldItem;
             viewObject.removeHandler.apply(viewObject, ["ERROR", oldItem.id, err]);
@@ -450,13 +448,15 @@ class Repository {
             let result = await this.deleteItemResponseHandlerNodeJS(oldItem, route);
             viewObject.removeHandler.apply(viewObject, ["DONE", oldItem.id, undefined, result]);
             return oldItem;
-        } catch (err) {
+        }
+        catch (err) {
             this.items.push(oldItem);
             this.currentItem = oldItem;
             viewObject.removeHandler.apply(viewObject, ["ERROR", oldItem.id, err]);
         }
     }
     async deleteItemResponseHandlerGAS(oldItem, serverFunctionName) {
+        let result;
         // Create an execution request object.
         // Create execution request.
         const request = {
@@ -466,44 +466,47 @@ class Repository {
         };
         // Make the API request.
         let resp = (await gapi.client.request({
-            'root': 'https://script.googleapis.com',
-            'path': 'v1/scripts/' + SCRIPT_ID + ':run',
-            'method': 'POST',
-            'body': request
+            //@ts-ignore
+            root: 'https://script.googleapis.com',
+            path: 'v1/scripts/' + SCRIPT_ID + ':run',
+            method: 'POST',
+            body: request
         })).result;
-
         if (resp.error && resp.error.status) {
             // The API encountered a problem before the script
             // started executing.
-            this.result = 'Error calling API:';
-            this.result += JSON.stringify(resp, null, 2);
+            result = 'Error calling API:';
+            result += JSON.stringify(resp, null, 2);
             console.error(resp.error);
-            throw this.result;
+            throw result;
             //throw resp.error;
-        } else if (resp.error) {
+        }
+        else if (resp.error) {
             // The API executed, but the script returned an error.
             // Extract the first (and only) set of error details.
             // The values of this object are the script's 'errorMessage' and
             // 'errorType', and an array of stack trace elements.
             var error = resp.error.details[0];
-            this.result = 'Script error message: ' + error.errorMessage;
+            result = 'Script error message: ' + error.errorMessage;
             console.error(resp.error);
             if (error.scriptStackTraceElements) {
                 // There may not be a stacktrace if the script didn't start
                 // executing.
-                this.result = 'Script error stacktrace:';
+                result = 'Script error stacktrace:';
                 for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                     var trace = error.scriptStackTraceElements[i];
-                    this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                    result += ('\t' + trace.function + ':' + trace.lineNumber);
                 }
                 throw resp.error.details[0].errorMessage;
             }
-        } else {
+        }
+        else {
             // The structure of the result will depend upon what the Apps
             // Script function returns. 
             if (!resp.done) {
                 throw this.name + ": nic nie usunięto";
-            } else {
+            }
+            else {
                 //this.result = resp.response.result;
                 return (resp.response.result);
             }

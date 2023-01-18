@@ -9,6 +9,7 @@
         "build": "yarn clean && tsc && yarn copy-files"
     },
     "devDependencies": {
+        "@types/gapi": "^0.0.43",
         "@types/jquery": "^3.5.14",
         "copyfiles": "^2.4.1"
     }

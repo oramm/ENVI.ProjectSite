@@ -1,22 +1,22 @@
 class Tools {
-    //finds an alament in Array by its value
-    static search(nameKey, property, myArray) {
-        for (var i = 0; i < myArray.length; i++) {
-            if (myArray[i][property] == nameKey) {
-                return myArray[i];
+    /** finds an elament in Array by its value */
+    static search(nameKey: string, property: string, myArray: any[]) {
+        for (const element of myArray) {
+            if (element[property] == nameKey) {
+                return element;
             }
         }
     }
-    static dateDMYtoYMD(inputDate) {
+    static dateDMYtoYMD(inputDate: string) {
         if (inputDate) {
-            var parts = inputDate.split("-");
+            const parts = inputDate.split("-");
             if (parts[2].length === 4)
                 return parts[2] + '-' + parts[1] + '-' + parts[0];
             else
                 return inputDate;
         }
     }
-    static timestampToString(timestamp) {
+    static timestampToString(timestamp: string | Date) {
         if (typeof timestamp === 'string')
             timestamp = new Date(timestamp);
         var day = this.addZero(timestamp.getDate());
@@ -28,39 +28,39 @@ class Tools {
             h + ':' + m
 
     }
-
-    static addZero(i) {
+    /**dodaje przedrostek "0" do liczb 0-9 */
+    static addZero(i: number) {
+        let label: string = i.toString();
         if (i < 10) {
-            i = "0" + i;
+            label = "0" + i;
         }
-        return i;
-    }
-    static dateJStoDMY(inputDate) {
-        if (inputDate) {
-            var dd = this.addZero(inputDate.getDate());
-            var mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
-            var yyyy = inputDate.getFullYear();
-
-            return dd + '-' + mm + '-' + yyyy;
-        }
+        return label;
     }
 
-    static dateJStoYMD(inputDate) {
+    static dateJStoDMY(inputDate: Date) {
+        const dd = this.addZero(inputDate.getDate());
+        const mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
+        const yyyy = inputDate.getFullYear();
+        return dd + '-' + mm + '-' + yyyy;
+    }
+
+    static dateJStoYMD(inputDate: Date) {
         return this.dateDMYtoYMD(this.dateJStoDMY(inputDate));
     }
 
-    static daysToMilliseconds(days) {
+    static daysToMilliseconds(days: number) {
         return days * 24 * 60 * 60 * 1000;
     }
 
-    static loadjscssfile(filename, filetype) {
+    static loadjscssfile(filename: string, filetype: string) {
+        let fileref: HTMLScriptElement | HTMLLinkElement | undefined
         if (filetype == "js") { //if filename is a external JavaScript file
-            var fileref = document.createElement('script')
-            fileref.setAttribute("type", "text/javascript")
-            fileref.setAttribute("src", filename)
+            fileref = document.createElement('script');
+            fileref.setAttribute("type", "text/javascript");
+            fileref.setAttribute("src", filename);
         }
         else if (filetype == "css") { //if filename is an external CSS file
-            var fileref = document.createElement("link")
+            fileref = document.createElement("link")
             fileref.setAttribute("rel", "stylesheet")
             fileref.setAttribute("type", "text/css")
             fileref.setAttribute("href", filename)
@@ -71,15 +71,16 @@ class Tools {
 
     //retrieves GET variables from URL
     static getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-            function (m, key, value) {
+        const vars: any = {};
+        const parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+            //@ts-ignore    
+            function (m, key: string, value: string) {
                 vars[key] = value;
             });
         return vars;
     }
 
-    static hasFunction(functionRef) {
+    static hasFunction(functionRef: Function) {
         if (typeof functionRef === 'undefined') {
             throw new SyntaxError('Derived object must implement function');
         } else if (typeof functionRef !== 'function') {
@@ -87,7 +88,7 @@ class Tools {
         }
     }
 
-    static stringToSql(string) {
+    static stringToSql(string: string) {
         var sqlString = string.replace(/\'/gi, "\\'");
         sqlString = sqlString.replace(/\"/gi, '\\"');
         sqlString = sqlString.replace(/\%/gi, '\\%');
@@ -95,34 +96,36 @@ class Tools {
         return sqlString;
     }
 
-    static cloneOfObject(object) {
+    static cloneOfObject(object: Object) {
         if (object) return JSON.parse(JSON.stringify(object));
     }
 
-    static areEqualObjects(obj1, obj2) {
+    static areEqualObjects(obj1: Object, obj2: Object) {
         //Loop through properties in object 1
-        for (var p in obj1) {
+        let p1: keyof typeof obj1;
+        for (p1 in obj1) {
             //Check property exists on both objects
-            if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) return false;
+            if (obj1.hasOwnProperty(p1) !== obj2.hasOwnProperty(p1)) return false;
 
-            switch (typeof (obj1[p])) {
+            switch (typeof (obj1[p1])) {
                 //Deep compare objects
                 case 'object':
-                    if (!areEqualObjects(obj1[p], obj2[p])) return false;
+                    if (!Tools.areEqualObjects(obj1[p1], obj2[p1])) return false;
                     break;
                 //Compare function code
                 case 'function':
-                    if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString())) return false;
+                    if (typeof (obj2[p1]) == 'undefined' || obj1[p1].toString() != obj2[p1].toString()) return false;
                     break;
                 //Compare values
                 default:
-                    if (obj1[p] != obj2[p]) return false;
+                    if (obj1[p1] != obj2[p1]) return false;
             }
         }
 
         //Check object 2 for any extra properties
-        for (var p in obj2) {
-            if (typeof (obj1[p]) == 'undefined') return false;
+        let p2: keyof typeof obj2;
+        for (p2 in obj2) {
+            if (typeof (obj1[p2]) == 'undefined') return false;
         }
         return true;
     }
@@ -132,8 +135,8 @@ class Tools {
      * @param {type} order
      * @returns {Function}
      */
-    static compareValues(key, order = 'asc') {
-        return function (a, b) {
+    static compareValues(key: string, order = 'asc') {
+        return function (a: any, b: any) {
             if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
             let comparison = a[key].localeCompare(b[key]);
             return (
@@ -143,7 +146,7 @@ class Tools {
     }
 
     //https://codeburst.io/javascript-array-distinct-5edc93501dc4
-    static ArrNoDuplicates(array) {
+    static ArrNoDuplicates(array: any[]) {
         const result = [];
         const map = new Map();
         for (const item of array) {
@@ -158,8 +161,8 @@ class Tools {
     /*
      * item {Object}
      */
-    static arrGetIndexOf(array, property, searchValue) {
-        for (var i = 0; i < array.length; i++) {
+    static arrGetIndexOf(array: any[], property: string, searchValue: string) {
+        for (let i = 0; i < array.length; i++) {
             if (array[i][property] === searchValue)
                 return i;
         }
@@ -174,9 +177,9 @@ class Tools {
      *     'null' -> false
      *     '"I'm a string"' -> false
      */
-    static tryParseJSONObject(jsonString) {
+    static tryParseJSONObject(jsonString: string) {
         try {
-            var o = JSON.parse(jsonString);
+            const o = JSON.parse(jsonString);
             // Handle non-exception-throwing cases:
             // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
             // but... JSON.parse(null) returns null, and typeof null === "object", 
@@ -189,7 +192,7 @@ class Tools {
     }
 
     //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-    static b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+    static b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
 
@@ -206,5 +209,10 @@ class Tools {
         }
         const blob = new Blob(byteArrays, { type: contentType });
         return blob;
+    }
+
+    static isObjectEmpty(object: Object) {
+        for (const element in object) return true;
+        return false;
     }
 }

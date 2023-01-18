@@ -17,10 +17,13 @@ class ContractsController {
             actionsNodeJSSetup: { addNewRoute: 'Contract', editRoute: 'Contract', deleteRoute: 'Contract' },
         });
 
-        MilestonesSetup.milestoneTypesRepository = new SimpleRepository('MilestoneTypes repository',
-        );
+        MilestonesSetup.milestoneTypesRepository = new SimpleRepository({
+            name: 'MilestoneTypes repository'
+        });
 
-        ContractsSetup.otherContractsRepository = new SimpleRepository('Other contracts repository');
+        ContractsSetup.otherContractsRepository = new SimpleRepository({
+            name: 'Other contracts repository'
+        });
 
         const promises = [
             MilestonesSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + milestonesRepository.parentItemId),

@@ -16,15 +16,19 @@ class CasesController {
             actionsNodeJSSetup: { addNewRoute: 'Task', editRoute: 'Task', deleteRoute: 'Task' },
         });
 
-        caseTypesRepository = new SimpleRepository('CaseTypes repository');
+        caseTypesRepository = new SimpleRepository({
+            name: 'CaseTypes repository'
+        });
 
-        ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository('ProcessesStepsInstances repository',
+        ProcessesInstancesSetup.processesStepsInstancesRepository = new SimpleRepository(undefined, 'ProcessesStepsInstances repository',
             '',
             'editProcessStepInstance');
 
-        CasesSetup.eventsRepository = new SimpleRepository('CaseEvents repository');
+        CasesSetup.eventsRepository = new SimpleRepository({
+            name: 'CaseEvents repository'
+        });
 
-        LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
+        LettersSetup.lettersRepository = new SimpleRepository(undefined, 'Letters repository',
             'addNewLetter',
             'editLetter',
             'deleteLetter');

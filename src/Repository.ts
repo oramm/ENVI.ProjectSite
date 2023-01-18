@@ -1,37 +1,37 @@
+
+
 class Repository {
+    actionsGASSetup?: { addNew: boolean; edit: boolean; delete: boolean };
+    actionsNodeJSSetup?: { addNewRoute: string; editRoute: string; deleteRoute: string; copyRoute: string; };
+    itemsLocalData?: any[];
+    currentItemsLocalData: any[];
+    currentItemLocalData: any;
+    name: string;
+    currentItemId: any;
+    deleteServerFunctionName?: string;
     /*
      * Może być inicjowane z danych z serwera, wtedy argumentem jest name jako string
      * Może być też inicjowane z obiektu SessionStorage, wtedy paremetrem jest ten obiekt
      * @param {type} name
      * @returns {Repository}
      */
-    constructor(initParameter) {
-        if (initParameter === undefined) throw new SyntaxError("Repository must have a name!");
-        this.actionsGASSetup = {
-            addNew: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.addNew) ? true : false,
-            edit: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.edit) ? true : false,
-            delete: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.delete) ? true : false,
-        }
-        this.actionsNodeJSSetup = {
-            addNewRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.addNewRoute : undefined,
-            editRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.editRoute : undefined,
-            deleteRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.deleteRoute : undefined,
-            copyRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.copyRoute : undefined,
-        }
+    constructor(initParameter?: {
+        currentItemLocalData?: any;
+        itemsLocalData?: any[];
+        name: string,
+        actionsGASSetup?: any,
+        actionsNodeJSSetup?: any
+    }, name?: string) {
+        if (!name && !initParameter?.name) throw new SyntaxError("Repository must have a name!");
+        this.name = name || initParameter?.name || '';
         this.itemsLocalData;
-        this.result;
         //Repository może mieć wiele bieżących elementów (multiselect)
         this.currentItemsLocalData = [];
-        this.currentItemLocalData = (initParameter.currentItemLocalData) ? initParameter.currentItemLocalData : {};
 
-        if (typeof initParameter === 'string') {
-            //przemyśleć i w przyszłości może scalić z currentItemsLocalData[]
-            this.name = initParameter;
-            //sessionStorage.setItem(this.name, JSON.stringify(this));
-        }
+
         //mamy obiekt z SessionStorage lub z nodeJS
-        else if (typeof initParameter === 'object') {
-            this.name = initParameter.name;
+        if (initParameter) {
+            this.currentItemLocalData = (initParameter.currentItemLocalData) ? initParameter.currentItemLocalData : {};
             this.actionsGASSetup = initParameter.actionsGASSetup;
             this.actionsNodeJSSetup = initParameter.actionsNodeJSSetup;
 
@@ -41,11 +41,23 @@ class Repository {
             } else {
 
             }
+            this.actionsGASSetup = {
+                addNew: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.addNew) ? true : false,
+                edit: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.edit) ? true : false,
+                delete: (initParameter.actionsGASSetup && initParameter.actionsGASSetup.delete) ? true : false,
+            }
+            this.actionsNodeJSSetup = {
+                addNewRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.addNewRoute : undefined,
+                editRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.editRoute : undefined,
+                deleteRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.deleteRoute : undefined,
+                copyRoute: (initParameter.actionsNodeJSSetup) ? initParameter.actionsNodeJSSetup.copyRoute : undefined,
+            }
         }
     }
 
     get items() {
-        return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).itemsLocalData;
+        if (this.name)
+            return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(<string>sessionStorage.getItem(this.name)).itemsLocalData;
     }
     set items(data) {
         this.itemsLocalData = data;
@@ -53,11 +65,11 @@ class Repository {
     }
 
     get currentItem() {
-        return (this.currentItemLocalData) ? this.currentItemLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItem;
+        return (this.currentItemLocalData) ? this.currentItemLocalData : JSON.parse(<string>sessionStorage.getItem(this.name)).currentItem;
     }
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
     get currentItems() {
-        return (this.currentItemsLocalData) ? this.currentItemsLocalData : JSON.parse(sessionStorage.getItem(this.name)).currentItems;
+        return (this.currentItemsLocalData) ? this.currentItemsLocalData : JSON.parse(<string>sessionStorage.getItem(this.name)).currentItems;
     }
 
     set currentItems(data) {
@@ -74,12 +86,12 @@ class Repository {
         } else
             this.currentItemId = undefined;
         this.currentItemLocalData = item;
-        if (item !== {}) this.addToCurrentItems(item);
+        if (!Tools.isObjectEmpty(item)) this.addToCurrentItems(item);
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
 
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
-    addToCurrentItems(newDataItem) {
+    addToCurrentItems(newDataItem: any) {
         if (newDataItem) {
             if (this.currentItemsLocalData && this.currentItemsLocalData[0])
                 var wasItemAlreadySelected = this.currentItemsLocalData.filter(existingDataItem => existingDataItem.id == newDataItem.id)[0];
@@ -90,7 +102,7 @@ class Repository {
     }
 
     //używać tylko gdy Repository ma wiele bieżących elementów (multiselect)
-    deleteFromCurrentItems(item) {
+    deleteFromCurrentItems(item: any) {
         if (!item || typeof item !== 'object') throw new SyntaxError("Selected item must be an object!");
 
         var index = Tools.arrGetIndexOf(this.currentItemsLocalData, 'id', item.id);
@@ -99,19 +111,19 @@ class Repository {
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
 
-    setCurrentItemById(id) {
+    setCurrentItemById(id: string) {
         if (id === undefined) throw new SyntaxError("Selected item id must be specified!");
         this.currentItemId = id;
-        this.currentItem = Tools.search(parseInt(id), "id", this.items);
+        this.currentItem = Tools.search(id, "id", this.items);
     }
 
     /*
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
-    clientSideEditItemHandler(dataItem) {
+    clientSideEditItemHandler(dataItem: any) {
         return new Promise((resolve, reject) => {
-            var newIndex = this.items.findIndex(item => item.id == dataItem.id);
+            var newIndex = this.items.findIndex((item: any) => item.id == dataItem.id);
             this.items[newIndex] = dataItem;
             console.log('%s:: wykonano funkcję: %s, %o', this.name, this, dataItem);
             resolve(dataItem);
@@ -122,7 +134,7 @@ class Repository {
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
-    clientSideAddNewItemHandler(dataItem, serverFunctionName = '') {
+    clientSideAddNewItemHandler(dataItem: any, serverFunctionName = '') {
         return new Promise((resolve, reject) => {
             this.items.push(dataItem);
             console.log('dodaję obiekt docelowy, jego parent: ,%o', dataItem._parent)
@@ -136,25 +148,26 @@ class Repository {
      * używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
-    async clientSideDeleteItemHandler(dataItem) {
-        var index = this.items.findIndex(item => item.id == dataItem.id);
+    async clientSideDeleteItemHandler(dataItem: any) {
+        var index = this.items.findIndex((item: any) => item.id == dataItem.id);
         this.items.splice(index, 1);
         this.currentItem = {};
         console.log('%s:: wykonano funkcję: %s, %o', this.name, this.deleteServerFunctionName, dataItem);
         return dataItem;
     }
 
-    doServerFunction(serverFunctionName, serverFunctionParameters) {
+    doServerFunction(serverFunctionName: string, serverFunctionParameters: string) {
         return new Promise((resolve, reject) => {
             // Create an execution request object.
             // Create execution request.
-            var request = {
+            const request = {
                 'function': serverFunctionName,
                 'parameters': serverFunctionParameters,
                 'devMode': true // Optional.
             };
             // Make the API request.
-            var op = gapi.client.request({
+            const op = gapi.client.request({
+                //@ts-ignore
                 'root': 'https://script.googleapis.com',
                 'path': 'v1/scripts/' + SCRIPT_ID + ':run',
                 'method': 'POST',
@@ -162,12 +175,12 @@ class Repository {
             });
 
             op
-                .then((resp) => this.handleDoServerFunction(resp.result))
-                .then((result) => {
+                .then((resp: any) => this.handleDoServerFunction(resp.result))
+                .then((result: any) => {
                     console.log(this.name + ' ' + serverFunctionName + '() items from db: %o ', result);
                     resolve(result);
                 })
-                .catch(err => {
+                .catch((err: Error) => {
                     console.error(serverFunctionName, err);
                     window.alert('Wystąił Błąd! \n ' + err);
                     throw err;
@@ -176,15 +189,16 @@ class Repository {
     }
 
     //TODO: scalić funkcje handleDoServerFunction() z handleAddNewItem
-    handleDoServerFunction(resp) {
+    handleDoServerFunction(resp: any) {
         return new Promise((resolve, reject) => {
+            let result: any
             if (resp.error && resp.error.status) {
                 // The API encountered a problem before the script
                 // started executing.
-                this.result = 'Error calling API:';
-                this.result += JSON.stringify(resp);
+                result = 'Error calling API:';
+                result += JSON.stringify(resp);
                 console.error(resp.error);
-                throw this.result;
+                throw result;
                 //throw resp.error;
             } else if (resp.error) {
                 // The API executed, but the script returned an error.
@@ -192,15 +206,15 @@ class Repository {
                 // The values of this object are the script's 'errorMessage' and
                 // 'errorType', and an array of stack trace elements.
                 var error = resp.error.details[0];
-                this.result = 'Script error message: ' + error.errorMessage;
+                result = 'Script error message: ' + error.errorMessage;
                 console.error(resp.error);
                 if (error.scriptStackTraceElements) {
                     // There may not be a stacktrace if the script didn't start
                     // executing.
-                    this.result = 'Script error stacktrace:';
+                    result = 'Script error stacktrace:';
                     for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                         var trace = error.scriptStackTraceElements[i];
-                        this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                        result += ('\t' + trace.function + ':' + trace.lineNumber);
                     }
                     throw resp.error.details[0].errorMessage;
                 }
@@ -209,11 +223,11 @@ class Repository {
                 // Script function returns. 
                 var serverResponse = resp.response.result;
                 if (!serverResponse || Object.keys(serverResponse).length == 0) {
-                    this.result = [];
-                    resolve(this.result);
+                    result = [];
+                    resolve(result);
                 } else {
                     //itemsList = serverResponse;
-                    this.result = this.name + '  succes';
+                    result = this.name + '  succes';
                     resolve(serverResponse);
                 }
             }
@@ -223,7 +237,7 @@ class Repository {
     /*
      * wywoływana przy SUBMIT
      */
-    async addNewItem(newItem, serverFunctionName, viewObject) {
+    async addNewItem(newItem: any, serverFunctionName: string, viewObject: any) {
         var newItemTmpId = this.items.length + 1 + '_pending';
         newItem._tmpId = newItemTmpId;
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
@@ -235,12 +249,14 @@ class Repository {
             let newItemFromServer = await this.editItemResponseHandlerGAS(newItem, serverFunctionName);
             return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName)
         } catch (err) {
-            this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
-            throw (err);
+            if (err instanceof Error) {
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                throw (err);
+            }
         };
     }
 
-    async addNewItemNodeJS(newItem, route, viewObject) {
+    async addNewItemNodeJS(newItem: any, route: string, viewObject: any) {
         var newItemTmpId = this.items.length + 1 + '_pending';
         newItem._tmpId = newItemTmpId;
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
@@ -252,14 +268,16 @@ class Repository {
             let newItemFromServer = await this.addNewItemResponseHandlerNodeJS(newItem, route);
             return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject)
         } catch (err) {
-            this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
-            throw (err);
+            if (err instanceof Error) {
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                throw (err);
+            }
         };
     }
 
-    addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName = '') {
+    addNewItemViewOnSuccesHandler(newItemTmpId: string, newItemFromServer: any, viewObject: any, serverFunctionName = '') {
         //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex(item => item._tmpId == newItemTmpId);
+        const index = this.items.findIndex((item: any) => item._tmpId == newItemTmpId);
         console.log('usuwam obiekt tymczasowy, jego _parent: %o', this.items[index]._parent);
         this.items.splice(index, 1);
 
@@ -271,15 +289,16 @@ class Repository {
         viewObject.addNewHandler.apply(viewObject, ["DONE", newItemFromServer]);
         return newItemFromServer;
     }
-    addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err) {
+    addNewItemViewOnErrorHandler(newItemTmpId: string, viewObject: any, newItem: any, err: Error) {
         //http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/
         //usuń z repozytorium pechowy obiekt
-        var index = this.items.findIndex(item => item._tmpid == newItemTmpId);
+        var index = this.items.findIndex((item: any) => item._tmpid == newItemTmpId);
         this.items.splice(index, 1);
         this.currentItem = {};
         viewObject.addNewHandler.apply(viewObject, ["ERROR", newItem, err]);
     }
-    async editItemResponseHandlerGAS(newItem, serverFunctionName) {
+    async editItemResponseHandlerGAS(newItem: any, serverFunctionName: string) {
+        let result
         // Create an execution request object.
         // Create execution request.
         let request = {
@@ -289,6 +308,7 @@ class Repository {
         };
         // Make the API request.
         let resp = (await gapi.client.request({
+            //@ts-ignore
             'root': 'https://script.googleapis.com',
             'path': 'v1/scripts/' + SCRIPT_ID + ':run',
             'method': 'POST',
@@ -297,10 +317,10 @@ class Repository {
         if (resp.error && resp.error.status) {
             // The API encountered a problem before the script
             // started executing.
-            this.result = 'Error calling API:';
-            this.result += JSON.stringify(resp, null, 2);
+            result = 'Error calling API:';
+            result += JSON.stringify(resp, null, 2);
             console.error(resp.error);
-            throw this.result;
+            throw result;
             //throw resp.error;
         } else if (resp.error) {
             // The API executed, but the script returned an error.
@@ -308,15 +328,15 @@ class Repository {
             // The values of this object are the script's 'errorMessage' and
             // 'errorType', and an array of stack trace elements.
             var error = resp.error.details[0];
-            this.result = 'Script error message: ' + error.errorMessage;
+            result = 'Script error message: ' + error.errorMessage;
             throw resp.error.details[0].errorMessage;
             if (error.scriptStackTraceElements) {
                 // There may not be a stacktrace if the script didn't start
                 // executing.
-                this.result = 'Script error stacktrace:';
+                result = 'Script error stacktrace:';
                 for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                     var trace = error.scriptStackTraceElements[i];
-                    this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                    result += ('\t' + trace.function + ':' + trace.lineNumber);
                 }
                 throw resp.error.details[0].errorMessage;
             }
@@ -326,7 +346,7 @@ class Repository {
             if (!resp.done) {
                 throw "Nic nie dodano";
             } else {
-                this.result = 'Dodano element';
+                result = 'Dodano element';
                 return (resp.response.result);
             }
         }
@@ -339,7 +359,7 @@ class Repository {
      * @param {Collection | Collapsible} viewObject
      * @returns {Promise}
      */
-    async editItem(newItem, serverFunctionName, viewObject) {
+    async editItem(newItem: any, serverFunctionName: string, viewObject: any) {
         viewObject.editHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let result = await this.editItemResponseHandlerGAS(newItem, serverFunctionName);
@@ -351,7 +371,7 @@ class Repository {
             throw err;
         };
     }
-    async editItemNodeJS(newItem, route, viewObject) {
+    async editItemNodeJS(newItem: any, route: string, viewObject: any) {
         viewObject.editHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let newItemFromServer = await this.editItemResponseHandlerNodeJS(newItem, route)
@@ -363,11 +383,11 @@ class Repository {
         };
     }
 
-    editItemViewHandler(newItemFromServer, viewObject) {
+    editItemViewHandler(newItemFromServer: any, viewObject: any) {
         if (!newItemFromServer)
             throw new Error('Serwer powinien zwrócić obiekt');
         //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex(item => item.id == newItemFromServer.id);
+        var index = this.items.findIndex((item: any) => item.id == newItemFromServer.id);
         this.items.splice(index, 1);
         //wstaw do repozytorium nowy obiekt z serwera
         this.items.push(newItemFromServer);
@@ -376,42 +396,42 @@ class Repository {
         return (newItemFromServer);
     }
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
-    async addNewItemResponseHandlerNodeJS(item, route) {
-        let result = await fetch(MainSetup.serverUrl + route, {
+    async addNewItemResponseHandlerNodeJS(item: any, route: string) {
+        const result = await fetch(MainSetup.serverUrl + route, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
             body: JSON.stringify(item)
         });
-        result = await result.text();
-        if (result.authorizeUrl)
-            window.open(result.authorizeUrl);
+        const resultText: any = await result.text();
+        if (resultText.authorizeUrl)
+            window.open(resultText.authorizeUrl);
         else {
-            const parsedResult = Tools.tryParseJSONObject(result);
+            const parsedResult = Tools.tryParseJSONObject(resultText);
             if (parsedResult)
                 return parsedResult;
             else
-                return result;
+                return <string>resultText;
         }
     }
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
-    async editItemResponseHandlerNodeJS(item, route) {
+    async editItemResponseHandlerNodeJS(item: any, route: string) {
         let result = await fetch(MainSetup.serverUrl + route + '/' + item.id, {
             method: 'PUT',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
             body: JSON.stringify(item)
         });
-        result = await result.text();
-        if (result.authorizeUrl)
-            window.open(result.authorizeUrl);
-        return JSON.parse(result);
+        const resultText: any = await result.text();
+        if (resultText.authorizeUrl)
+            window.open(resultText.authorizeUrl);
+        return JSON.parse(resultText);
     }
 
 
     //https://github.com/expressjs/session/issues/374#issuecomment-279653974
-    async deleteItemResponseHandlerNodeJS(oldItem, route) {
-        let result = await fetch(MainSetup.serverUrl + route + '/' + oldItem.id, {
+    async deleteItemResponseHandlerNodeJS(oldItem: any, route: string) {
+        let result: any = await fetch(MainSetup.serverUrl + route + '/' + oldItem.id, {
             method: 'DELETE',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
@@ -430,7 +450,7 @@ class Repository {
     /*
      * Do serwera idzie cały Item, do Kroku 3 idzie tylko item.id
      */
-    async deleteItem(oldItem, serverFunctionName, viewObject) {
+    async deleteItem(oldItem: any, serverFunctionName: string, viewObject: any) {
         this.clientSideDeleteItemHandler(oldItem);
         viewObject.removeHandler.apply(viewObject, ["PENDING", oldItem.id]);
         try {
@@ -443,7 +463,7 @@ class Repository {
             viewObject.removeHandler.apply(viewObject, ["ERROR", oldItem.id, err]);
         }
     }
-    async deleteItemNodeJS(oldItem, route, viewObject) {
+    async deleteItemNodeJS(oldItem: any, route: string, viewObject: any) {
         this.clientSideDeleteItemHandler(oldItem);
         viewObject.removeHandler.apply(viewObject, ["PENDING", oldItem.id]);
         try {
@@ -456,7 +476,8 @@ class Repository {
             viewObject.removeHandler.apply(viewObject, ["ERROR", oldItem.id, err]);
         }
     }
-    async deleteItemResponseHandlerGAS(oldItem, serverFunctionName) {
+    async deleteItemResponseHandlerGAS(oldItem: any, serverFunctionName: string) {
+        let result: any;
         // Create an execution request object.
         // Create execution request.
         const request = {
@@ -466,19 +487,21 @@ class Repository {
         };
         // Make the API request.
         let resp = (await gapi.client.request({
-            'root': 'https://script.googleapis.com',
-            'path': 'v1/scripts/' + SCRIPT_ID + ':run',
-            'method': 'POST',
-            'body': request
+            //@ts-ignore
+            root: 'https://script.googleapis.com',
+            path: 'v1/scripts/' + SCRIPT_ID + ':run',
+            method: 'POST',
+            body: request
         })).result;
 
         if (resp.error && resp.error.status) {
+
             // The API encountered a problem before the script
             // started executing.
-            this.result = 'Error calling API:';
-            this.result += JSON.stringify(resp, null, 2);
+            result = 'Error calling API:';
+            result += JSON.stringify(resp, null, 2);
             console.error(resp.error);
-            throw this.result;
+            throw result;
             //throw resp.error;
         } else if (resp.error) {
             // The API executed, but the script returned an error.
@@ -486,15 +509,15 @@ class Repository {
             // The values of this object are the script's 'errorMessage' and
             // 'errorType', and an array of stack trace elements.
             var error = resp.error.details[0];
-            this.result = 'Script error message: ' + error.errorMessage;
+            result = 'Script error message: ' + error.errorMessage;
             console.error(resp.error);
             if (error.scriptStackTraceElements) {
                 // There may not be a stacktrace if the script didn't start
                 // executing.
-                this.result = 'Script error stacktrace:';
+                result = 'Script error stacktrace:';
                 for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
                     var trace = error.scriptStackTraceElements[i];
-                    this.result += ('\t' + trace.function + ':' + trace.lineNumber);
+                    result += ('\t' + trace.function + ':' + trace.lineNumber);
                 }
                 throw resp.error.details[0].errorMessage;
             }

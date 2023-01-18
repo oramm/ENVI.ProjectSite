@@ -11,12 +11,10 @@ class RolesController {
             items: RolesSetup.groups
         });
 
-        RolesSetup.rolesRepository = new SimpleRepository('Roles repository',
-            'getRolesPerProjectList',
-            'addNewRole',
-            'editRole',
-            'deleteRole'
-        );
+        RolesSetup.rolesRepository = new SimpleRepository({
+            name: 'Roles repository',
+            actionsNodeJSSetup: { addNewRoute: 'Role', editRoute: 'Role', deleteRoute: 'Role' },
+        });
 
         var promises = [
             RolesSetup.rolesRepository.initialiseNodeJS('roles/?projectId=' + MainSetup.currentProject.ourId)

@@ -1,15 +1,16 @@
+"use strict";
 class Tools {
-    //finds an alament in Array by its value
+    /** finds an elament in Array by its value */
     static search(nameKey, property, myArray) {
-        for (var i = 0; i < myArray.length; i++) {
-            if (myArray[i][property] == nameKey) {
-                return myArray[i];
+        for (const element of myArray) {
+            if (element[property] == nameKey) {
+                return element;
             }
         }
     }
     static dateDMYtoYMD(inputDate) {
         if (inputDate) {
-            var parts = inputDate.split("-");
+            const parts = inputDate.split("-");
             if (parts[2].length === 4)
                 return parts[2] + '-' + parts[1] + '-' + parts[0];
             else
@@ -25,68 +26,62 @@ class Tools {
         var h = this.addZero(timestamp.getHours());
         var m = this.addZero(timestamp.getMinutes());
         return day + '&#8209;' + month + '&#8209;' + year + ' ' +
-            h + ':' + m
-
+            h + ':' + m;
     }
-
+    /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(i) {
+        let label = i.toString();
         if (i < 10) {
-            i = "0" + i;
+            label = "0" + i;
         }
-        return i;
+        return label;
     }
     static dateJStoDMY(inputDate) {
-        if (inputDate) {
-            var dd = this.addZero(inputDate.getDate());
-            var mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
-            var yyyy = inputDate.getFullYear();
-
-            return dd + '-' + mm + '-' + yyyy;
-        }
+        const dd = this.addZero(inputDate.getDate());
+        const mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
+        const yyyy = inputDate.getFullYear();
+        return dd + '-' + mm + '-' + yyyy;
     }
-
     static dateJStoYMD(inputDate) {
         return this.dateDMYtoYMD(this.dateJStoDMY(inputDate));
     }
-
     static daysToMilliseconds(days) {
         return days * 24 * 60 * 60 * 1000;
     }
-
     static loadjscssfile(filename, filetype) {
+        let fileref;
         if (filetype == "js") { //if filename is a external JavaScript file
-            var fileref = document.createElement('script')
-            fileref.setAttribute("type", "text/javascript")
-            fileref.setAttribute("src", filename)
+            fileref = document.createElement('script');
+            fileref.setAttribute("type", "text/javascript");
+            fileref.setAttribute("src", filename);
         }
         else if (filetype == "css") { //if filename is an external CSS file
-            var fileref = document.createElement("link")
-            fileref.setAttribute("rel", "stylesheet")
-            fileref.setAttribute("type", "text/css")
-            fileref.setAttribute("href", filename)
+            fileref = document.createElement("link");
+            fileref.setAttribute("rel", "stylesheet");
+            fileref.setAttribute("type", "text/css");
+            fileref.setAttribute("href", filename);
         }
         if (typeof fileref != "undefined")
-            document.getElementsByTagName("head")[0].appendChild(fileref)
+            document.getElementsByTagName("head")[0].appendChild(fileref);
     }
-
     //retrieves GET variables from URL
     static getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-            function (m, key, value) {
-                vars[key] = value;
-            });
+        const vars = {};
+        const parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, 
+        //@ts-ignore    
+        function (m, key, value) {
+            vars[key] = value;
+        });
         return vars;
     }
-
     static hasFunction(functionRef) {
         if (typeof functionRef === 'undefined') {
             throw new SyntaxError('Derived object must implement function');
-        } else if (typeof functionRef !== 'function') {
+        }
+        else if (typeof functionRef !== 'function') {
             throw new SyntaxError("It's neither undefined nor a function. It's a " + typeof functionRef);
         }
     }
-
     static stringToSql(string) {
         var sqlString = string.replace(/\'/gi, "\\'");
         sqlString = sqlString.replace(/\"/gi, '\\"');
@@ -94,35 +89,39 @@ class Tools {
         sqlString = sqlString.replace(/\_/gi, '\\_');
         return sqlString;
     }
-
     static cloneOfObject(object) {
-        if (object) return JSON.parse(JSON.stringify(object));
+        if (object)
+            return JSON.parse(JSON.stringify(object));
     }
-
     static areEqualObjects(obj1, obj2) {
         //Loop through properties in object 1
-        for (var p in obj1) {
+        let p1;
+        for (p1 in obj1) {
             //Check property exists on both objects
-            if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) return false;
-
-            switch (typeof (obj1[p])) {
+            if (obj1.hasOwnProperty(p1) !== obj2.hasOwnProperty(p1))
+                return false;
+            switch (typeof (obj1[p1])) {
                 //Deep compare objects
                 case 'object':
-                    if (!areEqualObjects(obj1[p], obj2[p])) return false;
+                    if (!Tools.areEqualObjects(obj1[p1], obj2[p1]))
+                        return false;
                     break;
                 //Compare function code
                 case 'function':
-                    if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString())) return false;
+                    if (typeof (obj2[p1]) == 'undefined' || obj1[p1].toString() != obj2[p1].toString())
+                        return false;
                     break;
                 //Compare values
                 default:
-                    if (obj1[p] != obj2[p]) return false;
+                    if (obj1[p1] != obj2[p1])
+                        return false;
             }
         }
-
         //Check object 2 for any extra properties
-        for (var p in obj2) {
-            if (typeof (obj1[p]) == 'undefined') return false;
+        let p2;
+        for (p2 in obj2) {
+            if (typeof (obj1[p2]) == 'undefined')
+                return false;
         }
         return true;
     }
@@ -134,21 +133,19 @@ class Tools {
      */
     static compareValues(key, order = 'asc') {
         return function (a, b) {
-            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
+            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key))
+                return 0;
             let comparison = a[key].localeCompare(b[key]);
-            return (
-                (order == 'desc') ? (comparison * -1) : comparison
-            );
+            return ((order == 'desc') ? (comparison * -1) : comparison);
         };
     }
-
     //https://codeburst.io/javascript-array-distinct-5edc93501dc4
     static ArrNoDuplicates(array) {
         const result = [];
         const map = new Map();
         for (const item of array) {
             if (!map.has(item.id)) {
-                map.set(item.id, true);    // set any value to Map
+                map.set(item.id, true); // set any value to Map
                 result.push(item);
             }
         }
@@ -159,12 +156,11 @@ class Tools {
      * item {Object}
      */
     static arrGetIndexOf(array, property, searchValue) {
-        for (var i = 0; i < array.length; i++) {
+        for (let i = 0; i < array.length; i++) {
             if (array[i][property] === searchValue)
                 return i;
         }
     }
-
     /**
      * If you don't care about primitives and only objects then this function
      * is for you, otherwise look elsewhere.
@@ -176,7 +172,7 @@ class Tools {
      */
     static tryParseJSONObject(jsonString) {
         try {
-            var o = JSON.parse(jsonString);
+            const o = JSON.parse(jsonString);
             // Handle non-exception-throwing cases:
             // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
             // but... JSON.parse(null) returns null, and typeof null === "object", 
@@ -187,24 +183,25 @@ class Tools {
         catch (e) { }
         return false;
     }
-
     //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
     static b64toBlob(b64Data, contentType = '', sliceSize = 512) {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
-
         for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
             const slice = byteCharacters.slice(offset, offset + sliceSize);
-
             const byteNumbers = new Array(slice.length);
             for (let i = 0; i < slice.length; i++) {
                 byteNumbers[i] = slice.charCodeAt(i);
             }
-
             const byteArray = new Uint8Array(byteNumbers);
             byteArrays.push(byteArray);
         }
         const blob = new Blob(byteArrays, { type: contentType });
         return blob;
+    }
+    static isObjectEmpty(object) {
+        for (const element in object)
+            return true;
+        return false;
     }
 }

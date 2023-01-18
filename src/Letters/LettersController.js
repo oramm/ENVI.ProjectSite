@@ -1,13 +1,12 @@
 class LettersController {
-    static main() {
+    static async main() {
         // Hide auth UI, then load client library.
         var listView = new LettersListView();
         $("#authorize-div").hide();
         listView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        LettersSetup.lettersRepository = new SimpleRepository('Letters repository',
-            //'getLettersList',
+        LettersSetup.lettersRepository = new SimpleRepository(undefined, 'Letters repository',
             'addNewLetter',
             'editLetter',
             'deleteLetter');
@@ -16,17 +15,11 @@ class LettersController {
         //    actionsNodeJSSetup: { addNewRoute: 'Letter', editRoute: 'Letter', deleteRoute: 'Letter' },
         //});
 
-        LettersSetup.contractsRepository = new SimpleRepository('Contracts repository',
-            'getContractsList'
-        );
+        LettersSetup.contractsRepository = new SimpleRepository({ name: 'Contracts repository' });
 
-        LettersSetup.milestonesRepository = new SimpleRepository('Milestones repository',
-            'getMilestonesList'
-        );
+        LettersSetup.milestonesRepository = new SimpleRepository({ name: 'Milestones repository' });
 
-        LettersSetup.casesRepository = new SimpleRepository('Cases repository',
-            'getCasesListPerProject'
-        );
+        LettersSetup.casesRepository = new SimpleRepository({ name: 'Cases repository' });
 
         const promises = [
             LettersSetup.lettersRepository.initialiseNodeJS('letters/?projectId=' + LettersSetup.lettersRepository.parentItemId),
