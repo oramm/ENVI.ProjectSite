@@ -62,7 +62,8 @@ class CollapsibleSelectCollection extends SimpleCollection {
 
     selectTrigger(itemId) {
         if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId) {
-            super.selectTrigger(itemId);
+            super.selectTrigger(itemId);//ustawia this.connectedRepository.currentItem
+            this.connectedRepository.addToCurrentItems(this.connectedRepository.currentItem);
             this.parentCollapsibleSelect.onItemChosen(this.connectedRepository.currentItems);
             this.hideRow(itemId);
         }
@@ -169,13 +170,13 @@ class CollapsibleSelect {
         this.hideCollapsible();
     }
 
-    onItemChosen() {
+    onItemChosen(item) {
         this.value = this.connectedRepository.currentItem;
         this.lastSelectedItem = this.connectedRepository.currentItem;
         this.$dom.find('.chip').remove();
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler) this.itemChosenHandler();
+        if (this.itemChosenHandler) this.itemChosenHandler(item);
     }
 
     showCollapsible() {
@@ -235,12 +236,12 @@ class CollapsibleMultiSelect extends CollapsibleSelect {
     constructor(id, label, isRequired, parentForm) {
         super(id, label, isRequired, parentForm)
     }
-    onItemChosen() {
+    onItemChosen(items) {
         this.value = Array.from(this.collectionRepository.currentItems);
         this.lastSelectedItem = this.collectionRepository.currentItem;
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler) this.itemChosenHandler();
+        if (this.itemChosenHandler) this.itemChosenHandler(items);
     }
 
     simulateChosenItem(inputvalue) {

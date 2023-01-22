@@ -22,7 +22,6 @@ class LettersController {
         LettersSetup.casesRepository = new SimpleRepository({ name: 'Cases repository' });
 
         const promises = [
-            //LettersSetup.lettersRepository.initialiseNodeJS(`letters/?projectId=${LettersSetup.lettersRepository.parentItemId}`),
             LettersSetup.contractsRepository.initialiseNodeJS('contracts/?projectId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.milestonesRepository.initialiseNodeJS('milestones/?projectId=' + LettersSetup.lettersRepository.parentItemId),
             LettersSetup.casesRepository.initialiseNodeJS('cases/?projectId=' + LettersSetup.lettersRepository.parentItemId)

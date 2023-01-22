@@ -61,13 +61,13 @@ class LetterModalController {
             (dataItem) => dataItem._type._folderNumber + ' ' + dataItem._type.name + ' | ' + dataItem.name,
             LettersSetup.casesRepository,
             (dataItem) => {
-                var title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
+                let title = (dataItem._type.folderNumber) ? dataItem._type.folderNumber : ' ' + ' ';
                 title += (dataItem._type.name) ? dataItem._type.name : '[Nie przypisano typu]' + ' | ';
                 title += (dataItem._displayNumber) ? ' ' + dataItem._displayNumber + ' ' : '' + ' ';
                 title += (dataItem.name) ? dataItem.name : ' ';
                 return title;
             },
-            () => this.onCaseChosen(),
+            (item) => this.onCaseChosen(item),
             () => this.onCaseUnchosen()
         );
     }

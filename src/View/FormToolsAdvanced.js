@@ -62,7 +62,8 @@ class CollapsibleSelectCollection extends SimpleCollection {
 
     selectTrigger(itemId) {
         if (itemId !== undefined && this.connectedRepository.currentItem.id != itemId) {
-            super.selectTrigger(itemId);
+            super.selectTrigger(itemId);//ustawia this.connectedRepository.currentItem
+            this.connectedRepository.addToCurrentItems(this.connectedRepository.currentItem);
             this.parentCollapsibleSelect.onItemChosen(this.connectedRepository.currentItems);
             this.hideRow(itemId);
         }
