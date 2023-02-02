@@ -58,8 +58,10 @@ class Repository {
     get items() {
         if (this.name)
             return (this.itemsLocalData) ? this.itemsLocalData : JSON.parse(<string>sessionStorage.getItem(this.name)).itemsLocalData;
+        return [];
     }
-    set items(data) {
+    set items(data: any[]) {
+        data.length && delete data[data.length - 1]._blobEnviObjects;
         this.itemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
@@ -72,7 +74,7 @@ class Repository {
         return (this.currentItemsLocalData) ? this.currentItemsLocalData : JSON.parse(<string>sessionStorage.getItem(this.name)).currentItems;
     }
 
-    set currentItems(data) {
+    set currentItems(data: any[]) {
         this.currentItemsLocalData = data;
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
@@ -238,44 +240,48 @@ class Repository {
      * wywoływana przy SUBMIT
      */
     async addNewItem(newItem: any, serverFunctionName: string, viewObject: any) {
-        var newItemTmpId = this.items.length + 1 + '_pending';
+        let newItemTmpId = `${this.items.length + 1}_pending`;
         newItem._tmpId = newItemTmpId;
+        const noBlobNewItem = Tools.cloneOfObject(newItem);
+        delete noBlobNewItem._blobEnviObjects;
+        this.currentItem = noBlobNewItem;
+
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
-        this.items.push(newItem);
-        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent)
-        this.currentItem = Tools.cloneOfObject(newItem);
-        viewObject.addNewHandler.apply(viewObject, ["PENDING", newItem]);
+        this.items.push(noBlobNewItem);
+
+        viewObject.addNewHandler.apply(viewObject, ["PENDING", noBlobNewItem]);
         try {
             let newItemFromServer = await this.editItemResponseHandlerGAS(newItem, serverFunctionName);
-            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName)
+            return this.addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer, viewObject, serverFunctionName)
         } catch (err) {
             if (err instanceof Error) {
-                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, noBlobNewItem, err);
                 throw (err);
             }
         };
     }
 
     async addNewItemNodeJS(newItem: any, route: string, viewObject: any) {
-        var newItemTmpId = this.items.length + 1 + '_pending';
+        const newItemTmpId = this.items.length + 1 + '_pending';
         newItem._tmpId = newItemTmpId;
+        const noBlobNewItem = Tools.cloneOfObject(newItem);
+        delete noBlobNewItem._blobEnviObjects;
+        this.currentItem = noBlobNewItem;
         //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
-        this.items.push(newItem);
-        console.log('tworzę obiekt tymczasowy, jego parent: %o', newItem._parent)
-        this.currentItem = Tools.cloneOfObject(newItem);
+        this.items.push(noBlobNewItem);
         viewObject.addNewHandler.apply(viewObject, ["PENDING", newItem]);
         try {
             let newItemFromServer = await this.addNewItemResponseHandlerNodeJS(newItem, route);
-            return this.addNewItemViewOnSuccesHandler(newItemTmpId, newItemFromServer, viewObject)
+            return this.addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer, viewObject)
         } catch (err) {
             if (err instanceof Error) {
-                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, newItem, err);
+                this.addNewItemViewOnErrorHandler(newItemTmpId, viewObject, noBlobNewItem, err);
                 throw (err);
             }
         };
     }
 
-    addNewItemViewOnSuccesHandler(newItemTmpId: string, newItemFromServer: any, viewObject: any, serverFunctionName = '') {
+    addNewItemViewOnSuccessHandler(newItemTmpId: string, newItemFromServer: any, viewObject: any, serverFunctionName = '') {
         //usuń z repozytorium tymczasowy obiekt
         const index = this.items.findIndex((item: any) => item._tmpId == newItemTmpId);
         console.log('usuwam obiekt tymczasowy, jego _parent: %o', this.items[index]._parent);
