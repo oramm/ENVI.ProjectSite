@@ -170,13 +170,13 @@ class CollapsibleSelect {
         this.hideCollapsible();
     }
 
-    onItemChosen(item) {
+    onItemChosen() {
         this.value = this.connectedRepository.currentItem;
         this.lastSelectedItem = this.connectedRepository.currentItem;
         this.$dom.find('.chip').remove();
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler) this.itemChosenHandler(item);
+        if (this.itemChosenHandler) this.itemChosenHandler();
     }
 
     showCollapsible() {
@@ -236,12 +236,12 @@ class CollapsibleMultiSelect extends CollapsibleSelect {
     constructor(id, label, isRequired, parentForm) {
         super(id, label, isRequired, parentForm)
     }
-    onItemChosen(items) {
+    onItemChosen() {
         this.value = Array.from(this.collectionRepository.currentItems);
         this.lastSelectedItem = this.collectionRepository.currentItem;
         this.hideCollapsible();
         this.addChip(this.lastSelectedItem);
-        if (this.itemChosenHandler) this.itemChosenHandler(items);
+        if (this.itemChosenHandler) this.itemChosenHandler();
     }
 
     simulateChosenItem(inputvalue) {

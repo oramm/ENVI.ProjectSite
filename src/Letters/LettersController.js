@@ -6,14 +6,14 @@ class LettersController {
         listView.dataLoaded(false);
         //signoutButton.style.display = 'block';
 
-        LettersSetup.lettersRepository = new SimpleRepository(undefined, 'Letters repository',
-            'addNewLetter',
-            'editLetter',
-            'deleteLetter');
-        //LettersSetup.lettersRepository = new SimpleRepository({
-        //    name: 'Letters repository',
-        //    actionsNodeJSSetup: { addNewRoute: 'Letter', editRoute: 'Letter', deleteRoute: 'Letter' },
-        //});
+        //LettersSetup.lettersRepository = new SimpleRepository(undefined, 'Letters repository',
+        //    'addNewLetter',
+        //    'editLetter',
+        //   'deleteLetter');
+        LettersSetup.lettersRepository = new SimpleRepository({
+            name: 'Letters repository',
+            actionsNodeJSSetup: { addNewRoute: 'letter', editRoute: 'letter', deleteRoute: 'letter' },
+        });
 
         LettersSetup.contractsRepository = new SimpleRepository({ name: 'Contracts repository' });
 
