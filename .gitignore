@@ -1,5 +1,6 @@
 *.driveupload
 tsconfig.json
-node_modules/
+node_modules/*
+!node_modules/bootstrap/dist
 Server/
 yarn-error.log
