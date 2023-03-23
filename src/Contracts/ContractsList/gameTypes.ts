@@ -1,1 +1,0 @@
-export type SquareValue = null | 'O' | 'X'

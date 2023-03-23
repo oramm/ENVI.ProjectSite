@@ -1,5 +1,3 @@
-
-
 class Repository {
     actionsGASSetup?: { addNew: boolean; edit: boolean; delete: boolean };
     actionsNodeJSSetup?: { addNewRoute: string; editRoute: string; deleteRoute: string; copyRoute: string; };
