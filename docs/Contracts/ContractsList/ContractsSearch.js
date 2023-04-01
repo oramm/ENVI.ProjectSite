@@ -31,9 +31,11 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTable_1 = __importStar(require("../../View/Resultsets/FilterableTable"));
 const ContractsController_1 = __importDefault(require("./ContractsController"));
-const ContractModal_1 = require("./ContractModal");
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const OurContractModalBody_1 = require("./OurContractModalBody");
+const OtherContractModalBody_1 = require("./OtherContractModalBody");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -42,11 +44,11 @@ function ContractsSearch({ title }) {
     const [searchText, setSearchText] = (0, react_1.useState)('');
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const [projectOurId, setProjectOurId] = (0, react_1.useState)('');
+    const [projects, setProjects] = (0, react_1.useState)([]);
     const filters = [
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", onKeyUp: handleTextKeyUp, name: "searchText", value: searchText, onChange: e => setSearchText(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", name: "searchText", value: searchText, onChange: e => setSearchText(e.target.value) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek od"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'startDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10) })),
@@ -55,18 +57,20 @@ function ContractsSearch({ title }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'endDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'OurId', repository: exports.projectsRepository, onChange: (currentSelectedItems) => setProjectOurId(currentSelectedItems[0].ourId) })),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
         react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { onChange: (e) => { } })
     ];
-    async function handleTextKeyUp(e) {
-        setIsReady(false);
-        const valueFromTextBox = e.target.value;
-        setIsReady(true);
-    }
     async function handleSubmitSearch(e) {
+        const additionalSearchCriteria = [];
+        if (projects.length > 0) {
+            additionalSearchCriteria.push({
+                name: 'projectId',
+                value: projects[0].ourId
+            });
+        }
         try {
             setIsReady(false);
-            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository);
+            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository, additionalSearchCriteria);
             setObjects(data);
             setIsReady(true);
         }
@@ -103,6 +107,7 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModal_1.EditContractButton, { onEdit: onEdit, initialData: dataObject, onIsReadyChange: onIsReadyChange })),
+            onEdit && dataObject.ourId && (react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
+            onEdit && !dataObject.ourId && (react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
             onDelete && (react_1.default.createElement(react_bootstrap_1.Button, { onClick: (e) => onDelete(dataObject.id), variant: "danger" }, "Delete")))));
 }

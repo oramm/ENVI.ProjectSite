@@ -7,6 +7,12 @@ const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact")
 class ContractsController {
 }
 exports.default = ContractsController;
+ContractsController.statusNames = [
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony',
+    'Archiwalny'
+];
 ContractsController.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',

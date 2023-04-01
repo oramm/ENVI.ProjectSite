@@ -34,6 +34,9 @@ class SimpleRepository extends Repository {
             $.ajax({
                 type: 'GET',
                 url: MainSetup.serverUrl + requestParams,
+                xhrFields: {
+                    withCredentials: true
+                },
                 success: (response) => {
                     this.items = response;
                     sessionStorage.setItem(this.name, JSON.stringify(this));

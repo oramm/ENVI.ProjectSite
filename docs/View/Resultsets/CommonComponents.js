@@ -26,12 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SpinnerBootstrap = exports.ProgressBar = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
 require("react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+/** Pole wyboru typu kontraktu */
 function ContractTypeSelectFormElement({ onChange, value }) {
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "typeId" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Typ Kontraktu"),
@@ -40,23 +41,48 @@ function ContractTypeSelectFormElement({ onChange, value }) {
             MainSetupReact_1.default.contractTypesRepository.items.map((contractType) => (react_1.default.createElement("option", { key: contractType.id, value: contractType.id }, contractType.name))))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
-function PersonSelectFormElement({ label, onChange, value, repository }) {
-    const options = repository.items.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }) {
+    function makeoptions(repositoryDataItems) {
+        console.log('makeoptions:: ', repositoryDataItems);
+        return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+    }
+    function handleOnChange(selectedItems) {
+        const selectedRepositoryItems = selectedItems
+            .map((item) => {
+            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
+            return foundItem;
+        })
+            .filter((item) => item !== undefined);
+        console.log('onChange(selectedRepositoryItems):: ', selectedItems);
+        onChange(selectedRepositoryItems);
+    }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: options, onChange: onChange, 
-            //selected={options.filter(option => { return value ? value.id == option.value : false })}
-            placeholder: "-- Wybierz opcj\u0119 --" })));
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple })));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey }) {
+/**
+ * @param repository repozytorium z którego pobierane są dane
+ * @param onChange zaktualizuj setstate projects komponentu nadrzędnego
+ * @param selectedRepositoryItems aktualnie wybrane elementy
+ * @param labelKey nazwa pola w repozytorium które ma być wyświetlane w polu wyboru
+ * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
+ * @param additionalFieldsKeysValues dodatkowe pola które mają być wyszukiwane na serwerze
+ * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
+ * @param multiple czy pole wyboru ma być wielokrotnego wyboru
+ * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
+*/
+function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
         const formData = new FormData();
-        formData.append(labelKey, query);
-        repository.loadItemsfromServer(formData)
+        formData.append(searchKey, query);
+        additionalFieldsKeysValues.forEach((field) => {
+            formData.append(field.key, field.value);
+        });
+        repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
             // Filter out object that are present in selectedRepositoryItems 
             const filteredItems = items.filter(item => {
@@ -69,12 +95,11 @@ function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, label
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: true, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: (option) => (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, option[labelKey]))) }));
+    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
-function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSelectedItems, setState) {
+function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSelectedItems, setSuperiorElementState) {
     const currentAndPreviousSelections = previousSelectedItems.concat(currentSelectedDataItems);
     const allUniqueDataItems = currentAndPreviousSelections.reduce((uniqueItems, dataItem) => {
         const isDuplicate = uniqueItems.some(item => item.id === dataItem.id);
@@ -84,9 +109,37 @@ function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSel
         return uniqueItems;
     }, []);
     const finalItemsSelected = (currentSelectedDataItems.length < allUniqueDataItems.length) ? currentSelectedDataItems : allUniqueDataItems;
-    setState(finalItemsSelected);
+    setSuperiorElementState(finalItemsSelected);
+    console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
 exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
+function ValueInPLNInput({ value, onChange }) {
+    const inputRef = (0, react_1.useRef)(null);
+    function formatValue(value) {
+        return new Intl.NumberFormat('pl-PL', {
+            style: 'decimal',
+            minimumFractionDigits: 2,
+        }).format(parseFloat(value) || 0);
+    }
+    ;
+    function handleInputChange(e) {
+        const newValue = e.target.value.replace(/\s/g, '');
+        const cursorPosition = e.target.selectionStart;
+        onChange(newValue);
+        if (inputRef.current && cursorPosition) {
+            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+        }
+    }
+    ;
+    function handleInputBlur() {
+        onChange(formatValue(value));
+    }
+    ;
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 w PLN"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef })));
+}
+exports.ValueInPLNInput = ValueInPLNInput;
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }

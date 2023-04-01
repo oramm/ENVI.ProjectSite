@@ -7,15 +7,18 @@ interface Props {
 }
 
 export default function GoogleButton({ onServerResponse }: Props) {
-    const handleSuccess = async (credentialResponse: any) => {
+
+    async function handleSuccess(credentialResponse: any) {
         const id_token = credentialResponse.credential;
 
         const response = await fetch(MainSetup.serverUrl + 'login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ id_token }),
         });
         const responseData = await response.json();
+        MainSetup.currentUser = responseData.userData;
         onServerResponse(responseData);
     };
 

@@ -1,13 +1,14 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom";
 import ContractsSearch from "../Contracts/ContractsList/ContractsSearch";
-import { ProgressBar, SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
+import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
 import ErrorPage from "./ErrorPage";
+import GoogleButton from "./GoogleLoginButton";
 import MainController from "./MainControllerReact";
-
-
+import MainSetup from "./MainSetupReact";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,6 +32,15 @@ function App() {
         }
         fetchData();
     }, []);
+    // Handle the server's response
+    const handleServerResponse = (response: any) => {
+        if (response.userData) {
+            MainSetup.currentUser = response.userData;
+            setIsLoggedIn(true);
+        } else {
+            console.log('Authentication failed:', response.error);
+        }
+    };
 
     const router = createBrowserRouter([
         {
@@ -52,7 +62,15 @@ function App() {
             </div>
         )
     else if (isReady)
-        return <RouterProvider router={router} />
+        return (
+            <>
+                {isLoggedIn ? (
+                    <RouterProvider router={router} />
+                ) : (
+                    <GoogleButton onServerResponse={handleServerResponse} />
+                )}
+            </>
+        )
     else return <SpinnerBootstrap />
 }
 
@@ -61,9 +79,11 @@ export async function renderApp() {
 
     if (root) {
         ReactDOM.createRoot(root).render(
-            <StrictMode>
-                <App />
-            </StrictMode>
+            <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
+                <StrictMode>
+                    <App />
+                </StrictMode>
+            </GoogleOAuthProvider>
         );
     }
 }

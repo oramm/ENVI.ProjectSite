@@ -57,13 +57,21 @@ class RepositoryReact {
         }
         console.log(this.name + ' items from SessionStorage: %o', this.items);
     }
-    async loadItemsfromServer(formData) {
-        const url = new URL(MainSetupReact_1.default.serverUrl + this.actionRoutes.getRoute);
+    /**
+     * Ładuje items z serwera i resetuje currentitems
+     * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
+     */
+    async loadItemsfromServer(formData, specialActionRoute) {
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         if (formData)
             for (const [key, value] of formData)
                 url.searchParams.append(key, value);
         const response = await fetch(url, {
             method: 'GET',
+            headers: this.makeRequestHeaders(),
+            credentials: 'include',
         });
         if (!response.ok)
             throw new Error(response.statusText);

@@ -21,12 +21,15 @@ class MainWindowView extends Popup {
         $.ajax({
             type: 'GET',
             url: MainSetup.serverUrl + `project/${this.autocomplete.chosenItem.id}/systemEmail/${MainSetup.currentUser.systemEmail}`,
+            xhrFields: {
+                withCredentials: true
+            },
             success: (response) => {
                 MainSetup.projectsRepository.currentItem = response;
                 this.navigationBar.initialiseMenuItems();
                 this.navigationBar.menuItemClickHandler(this.navigationBar.menuItems[0].link);
 
-                console.log('ładuję iframe z danymi projektu')
+                console.log('ładuję iframe z danymi projektu');
                 console.log('Current project NodeJS: %o', response);
                 return (" initialised");
             },

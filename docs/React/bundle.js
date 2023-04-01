@@ -3284,6 +3284,268 @@ function $704cf1d3b684cc5c$export$535bd6ca7f90a273() {
 
 /***/ }),
 
+/***/ "./node_modules/@react-oauth/google/dist/index.esm.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@react-oauth/google/dist/index.esm.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "GoogleLogin": () => (/* binding */ GoogleLogin),
+/* harmony export */   "GoogleOAuthProvider": () => (/* binding */ GoogleOAuthProvider),
+/* harmony export */   "googleLogout": () => (/* binding */ googleLogout),
+/* harmony export */   "hasGrantedAllScopesGoogle": () => (/* binding */ hasGrantedAllScopesGoogle),
+/* harmony export */   "hasGrantedAnyScopeGoogle": () => (/* binding */ hasGrantedAnyScopeGoogle),
+/* harmony export */   "useGoogleLogin": () => (/* binding */ useGoogleLogin),
+/* harmony export */   "useGoogleOneTapLogin": () => (/* binding */ useGoogleOneTapLogin)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function useLoadGsiScript(options = {}) {
+    const { nonce, onScriptLoadSuccess, onScriptLoadError } = options;
+    const [scriptLoadedSuccessfully, setScriptLoadedSuccessfully] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+    const onScriptLoadSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onScriptLoadSuccess);
+    onScriptLoadSuccessRef.current = onScriptLoadSuccess;
+    const onScriptLoadErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onScriptLoadError);
+    onScriptLoadErrorRef.current = onScriptLoadError;
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+        const scriptTag = document.createElement('script');
+        scriptTag.src = 'https://accounts.google.com/gsi/client';
+        scriptTag.async = true;
+        scriptTag.defer = true;
+        scriptTag.nonce = nonce;
+        scriptTag.onload = () => {
+            var _a;
+            setScriptLoadedSuccessfully(true);
+            (_a = onScriptLoadSuccessRef.current) === null || _a === void 0 ? void 0 : _a.call(onScriptLoadSuccessRef);
+        };
+        scriptTag.onerror = () => {
+            var _a;
+            setScriptLoadedSuccessfully(false);
+            (_a = onScriptLoadErrorRef.current) === null || _a === void 0 ? void 0 : _a.call(onScriptLoadErrorRef);
+        };
+        document.body.appendChild(scriptTag);
+        return () => {
+            document.body.removeChild(scriptTag);
+        };
+    }, [nonce]);
+    return scriptLoadedSuccessfully;
+}
+
+const GoogleOAuthContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
+function GoogleOAuthProvider({ clientId, nonce, onScriptLoadSuccess, onScriptLoadError, children, }) {
+    const scriptLoadedSuccessfully = useLoadGsiScript({
+        nonce,
+        onScriptLoadSuccess,
+        onScriptLoadError,
+    });
+    const contextValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({
+        clientId,
+        scriptLoadedSuccessfully,
+    }), [clientId, scriptLoadedSuccessfully]);
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement(GoogleOAuthContext.Provider, { value: contextValue }, children));
+}
+function useGoogleOAuth() {
+    const context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(GoogleOAuthContext);
+    if (!context) {
+        throw new Error('Google OAuth components must be used within GoogleOAuthProvider');
+    }
+    return context;
+}
+
+function extractClientId(credentialResponse) {
+    var _a;
+    const clientId = (_a = credentialResponse === null || credentialResponse === void 0 ? void 0 : credentialResponse.clientId) !== null && _a !== void 0 ? _a : credentialResponse === null || credentialResponse === void 0 ? void 0 : credentialResponse.client_id;
+    return clientId;
+}
+
+const containerHeightMap = { large: 40, medium: 32, small: 20 };
+function GoogleLogin({ onSuccess, onError, useOneTap, promptMomentNotification, type = 'standard', theme = 'outline', size = 'large', text, shape, logo_alignment, width, locale, click_listener, containerProps, ...props }) {
+    const btnContainerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+    const { clientId, scriptLoadedSuccessfully } = useGoogleOAuth();
+    const onSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onSuccess);
+    onSuccessRef.current = onSuccess;
+    const onErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onError);
+    onErrorRef.current = onError;
+    const promptMomentNotificationRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(promptMomentNotification);
+    promptMomentNotificationRef.current = promptMomentNotification;
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        if (!scriptLoadedSuccessfully)
+            return;
+        (_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.initialize({
+            client_id: clientId,
+            callback: (credentialResponse) => {
+                var _a;
+                if (!(credentialResponse === null || credentialResponse === void 0 ? void 0 : credentialResponse.credential)) {
+                    return (_a = onErrorRef.current) === null || _a === void 0 ? void 0 : _a.call(onErrorRef);
+                }
+                const { credential, select_by } = credentialResponse;
+                onSuccessRef.current({
+                    credential,
+                    clientId: extractClientId(credentialResponse),
+                    select_by,
+                });
+            },
+            ...props,
+        });
+        (_f = (_e = (_d = window === null || window === void 0 ? void 0 : window.google) === null || _d === void 0 ? void 0 : _d.accounts) === null || _e === void 0 ? void 0 : _e.id) === null || _f === void 0 ? void 0 : _f.renderButton(btnContainerRef.current, {
+            type,
+            theme,
+            size,
+            text,
+            shape,
+            logo_alignment,
+            width,
+            locale,
+            click_listener,
+        });
+        if (useOneTap)
+            (_j = (_h = (_g = window === null || window === void 0 ? void 0 : window.google) === null || _g === void 0 ? void 0 : _g.accounts) === null || _h === void 0 ? void 0 : _h.id) === null || _j === void 0 ? void 0 : _j.prompt(promptMomentNotificationRef.current);
+        return () => {
+            var _a, _b, _c;
+            if (useOneTap)
+                (_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.cancel();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        clientId,
+        scriptLoadedSuccessfully,
+        useOneTap,
+        type,
+        theme,
+        size,
+        text,
+        shape,
+        logo_alignment,
+        width,
+        locale,
+    ]);
+    return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { ...containerProps, ref: btnContainerRef, style: { height: containerHeightMap[size], ...containerProps === null || containerProps === void 0 ? void 0 : containerProps.style } }));
+}
+
+function googleLogout() {
+    var _a, _b, _c;
+    (_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.disableAutoSelect();
+}
+
+/* eslint-disable import/export */
+function useGoogleLogin({ flow = 'implicit', scope = '', onSuccess, onError, onNonOAuthError, overrideScope, state, ...props }) {
+    const { clientId, scriptLoadedSuccessfully } = useGoogleOAuth();
+    const clientRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+    const onSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onSuccess);
+    onSuccessRef.current = onSuccess;
+    const onErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onError);
+    onErrorRef.current = onError;
+    const onNonOAuthErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onNonOAuthError);
+    onNonOAuthErrorRef.current = onNonOAuthError;
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+        var _a;
+        if (!scriptLoadedSuccessfully)
+            return;
+        const clientMethod = flow === 'implicit' ? 'initTokenClient' : 'initCodeClient';
+        const client = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts.oauth2[clientMethod]({
+            client_id: clientId,
+            scope: overrideScope ? scope : `openid profile email ${scope}`,
+            callback: (response) => {
+                var _a, _b;
+                if (response.error)
+                    return (_a = onErrorRef.current) === null || _a === void 0 ? void 0 : _a.call(onErrorRef, response);
+                (_b = onSuccessRef.current) === null || _b === void 0 ? void 0 : _b.call(onSuccessRef, response);
+            },
+            error_callback: (nonOAuthError) => {
+                var _a;
+                (_a = onNonOAuthErrorRef.current) === null || _a === void 0 ? void 0 : _a.call(onNonOAuthErrorRef, nonOAuthError);
+            },
+            state,
+            ...props,
+        });
+        clientRef.current = client;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [clientId, scriptLoadedSuccessfully, flow, scope, state]);
+    const loginImplicitFlow = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((overrideConfig) => { var _a; return (_a = clientRef.current) === null || _a === void 0 ? void 0 : _a.requestAccessToken(overrideConfig); }, []);
+    const loginAuthCodeFlow = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => { var _a; return (_a = clientRef.current) === null || _a === void 0 ? void 0 : _a.requestCode(); }, []);
+    return flow === 'implicit' ? loginImplicitFlow : loginAuthCodeFlow;
+}
+
+function useGoogleOneTapLogin({ onSuccess, onError, promptMomentNotification, cancel_on_tap_outside, hosted_domain, disabled, }) {
+    const { clientId, scriptLoadedSuccessfully } = useGoogleOAuth();
+    const onSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onSuccess);
+    onSuccessRef.current = onSuccess;
+    const onErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onError);
+    onErrorRef.current = onError;
+    const promptMomentNotificationRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(promptMomentNotification);
+    promptMomentNotificationRef.current = promptMomentNotification;
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        if (!scriptLoadedSuccessfully)
+            return;
+        if (disabled) {
+            (_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.cancel();
+            return;
+        }
+        (_f = (_e = (_d = window === null || window === void 0 ? void 0 : window.google) === null || _d === void 0 ? void 0 : _d.accounts) === null || _e === void 0 ? void 0 : _e.id) === null || _f === void 0 ? void 0 : _f.initialize({
+            client_id: clientId,
+            callback: (credentialResponse) => {
+                var _a;
+                if (!(credentialResponse === null || credentialResponse === void 0 ? void 0 : credentialResponse.credential)) {
+                    return (_a = onErrorRef.current) === null || _a === void 0 ? void 0 : _a.call(onErrorRef);
+                }
+                const { credential, select_by } = credentialResponse;
+                onSuccessRef.current({
+                    credential,
+                    clientId: extractClientId(credentialResponse),
+                    select_by,
+                });
+            },
+            hosted_domain,
+            cancel_on_tap_outside,
+        });
+        (_j = (_h = (_g = window === null || window === void 0 ? void 0 : window.google) === null || _g === void 0 ? void 0 : _g.accounts) === null || _h === void 0 ? void 0 : _h.id) === null || _j === void 0 ? void 0 : _j.prompt(promptMomentNotificationRef.current);
+        return () => {
+            var _a, _b, _c;
+            (_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.cancel();
+        };
+    }, [
+        clientId,
+        scriptLoadedSuccessfully,
+        cancel_on_tap_outside,
+        hosted_domain,
+        disabled,
+    ]);
+}
+
+/**
+ * Checks if the user granted all the specified scope or scopes
+ * @returns True if all the scopes are granted
+ */
+function hasGrantedAllScopesGoogle(tokenResponse, firstScope, ...restScopes) {
+    var _a, _b, _c;
+    if (!(window === null || window === void 0 ? void 0 : window.google))
+        return false;
+    return (((_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.oauth2) === null || _c === void 0 ? void 0 : _c.hasGrantedAllScopes(tokenResponse, firstScope, ...restScopes)) || false);
+}
+
+/**
+ * Checks if the user granted any of the specified scope or scopes.
+ * @returns True if any of the scopes are granted
+ */
+function hasGrantedAnyScopeGoogle(tokenResponse, firstScope, ...restScopes) {
+    var _a, _b, _c;
+    if (!(window === null || window === void 0 ? void 0 : window.google))
+        return false;
+    return (((_c = (_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.accounts) === null || _b === void 0 ? void 0 : _b.oauth2) === null || _c === void 0 ? void 0 : _c.hasGrantedAnyScope(tokenResponse, firstScope, ...restScopes)) || false);
+}
+
+
+
+
+/***/ }),
+
 /***/ "./node_modules/@remix-run/router/dist/router.js":
 /*!*******************************************************!*\
   !*** ./node_modules/@remix-run/router/dist/router.js ***!
@@ -65726,10 +65988,10 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/ContractModal.tsx":
-/*!*******************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractModal.tsx ***!
-  \*******************************************************/
+/***/ "./src/Contracts/ContractsList/ContractModalBody.tsx":
+/*!***********************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractModalBody.tsx ***!
+  \***********************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -65761,103 +66023,71 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EditContractButton = exports.AddNewContractButton = exports.ContractModal = void 0;
+exports.ContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
+const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
+const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
-function ContractModal({ show, isEditng, onClose: handleClose, initialData, onIsReadyChange, onAddNew, onEdit }) {
+function ContractModalBody({ isEditing, initialData }) {
     const [typeId, setTypeId] = (0, react_1.useState)(initialData?.typeId || 0);
     const [name, setName] = (0, react_1.useState)(initialData?.name || '');
     const [alias, setAlias] = (0, react_1.useState)(initialData?.alias || '');
     const [comment, setComment] = (0, react_1.useState)(initialData?.comment || '');
-    const [status, setStatus] = (0, react_1.useState)(initialData?.status || 0);
+    const [valueInPLN, setValueInPLN] = (0, react_1.useState)(initialData?.value || '');
+    const [status, setStatus] = (0, react_1.useState)(initialData?.status || '');
     const [startDate, setStartDate] = (0, react_1.useState)(initialData?.startDate || new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = (0, react_1.useState)(initialData?.endDate || new Date().toISOString().slice(0, 10));
-    const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors || []);
-    const [selectedAdmin, setSelectedAdmin] = (0, react_1.useState)(initialData?._admin || undefined);
-    const [selectedManager, setSelectedManager] = (0, react_1.useState)(initialData?._manager || undefined);
-    async function handleSubmit(e) {
-        e.preventDefault();
-        onIsReadyChange(false);
-        e.stopPropagation();
-        const formData = new FormData(e.target);
-        formData.append("_contractors", JSON.stringify(selectedContractors));
-        (isEditng) ? await handleEdit(formData) : await handleAdd(formData);
-        handleClose();
-        onIsReadyChange(true);
-    }
-    ;
-    async function handleEdit(formData) {
-        const currentContract = { ...ContractsSearch_1.contractsRepository.currentItems[0] };
-        const editedObject = Tools_1.default.updateObject(formData, currentContract);
-        await ContractsSearch_1.contractsRepository.editItemNodeJS(editedObject);
-        if (onEdit)
-            onEdit(editedObject);
-    }
-    ;
-    async function handleAdd(formData) {
-    }
-    ;
-    return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: handleClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
-            react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-                react_1.default.createElement(react_bootstrap_1.Modal.Title, null, isEditng ? 'Edytuj kontrakt' : 'Dodaj nowy kontrakt')),
-            react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                (isEditng) ?
-                    react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { value: typeId, onChange: (e) => {
-                            setTypeId(parseInt(e.target.value));
-                            console.log(e.target.value);
-                        } })
-                    : null,
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "name", placeholder: "Podaj nazw\u0119", value: name, onChange: (e) => setName(e.target.value) })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: alias, onChange: (e) => setAlias(e.target.value) })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: comment, onChange: (e) => setComment(e.target.value) })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: (e) => setStartDate(e.target.value) })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: (e) => setEndDate(e.target.value) })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
-                    react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', value: selectedAdmin, onChange: (e) => {
-                            console.log();
-                            setSelectedAdmin(MainSetupReact_1.default.personsEnviRepository.items.filter((person) => e.id == person.id)[0]);
-                        }, repository: MainSetupReact_1.default.personsEnviRepository })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-                    react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedContractors, setSelectedContractors), selectedRepositoryItems: selectedContractors }))),
-            react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: handleClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, isEditng ? 'Edytuj' : 'Dodaj')))));
-}
-exports.ContractModal = ContractModal;
-function AddNewContractButton({ onAddNew, onIsReadyChange }) {
-    const [showForm, setShowForm] = (0, react_1.useState)(false);
-    const handleOpen = () => setShowForm(true);
-    const handleClose = () => setShowForm(false);
+    if (!isEditing && !initialData)
+        initialData = {
+            id: 0,
+            _parent: ContractsSearch_1.contractsRepository.currentItems[0]._parent,
+            startDate: new Date().toISOString().slice(0, 10),
+            endDate: new Date().toISOString().slice(0, 10)
+        };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleOpen }, "Dodaj nowy"),
-        react_1.default.createElement(ContractModal, { isEditng: false, show: showForm, onClose: handleClose, onAddNew: onAddNew, onIsReadyChange: onIsReadyChange })));
+        (isEditing) ?
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { value: typeId, onChange: (e) => {
+                    setTypeId(parseInt(e.target.value));
+                    console.log(e.target.value);
+                } })
+            : null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "name", placeholder: "Podaj nazw\u0119", value: name, onChange: (e) => setName(e.target.value) })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: alias, onChange: (e) => setAlias(e.target.value) })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: comment, onChange: (e) => setComment(e.target.value) })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
+            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: setValueInPLN, value: valueInPLN })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: (e) => setStartDate(e.target.value) })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: (e) => setEndDate(e.target.value) })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "status", onChange: (e) => setStatus(e.target.value), value: status },
+                react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
+                ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))))));
 }
-exports.AddNewContractButton = AddNewContractButton;
-function EditContractButton({ initialData, onEdit, onIsReadyChange }) {
-    const [showForm, setShowForm] = (0, react_1.useState)(false);
-    const handleOpen = () => setShowForm(true);
-    const handleClose = () => setShowForm(false);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleOpen }, "Edytuj"),
-        react_1.default.createElement(ContractModal, { isEditng: true, show: showForm, onClose: handleClose, onIsReadyChange: onIsReadyChange, initialData: initialData, onEdit: onEdit })));
+exports.ContractModalBody = ContractModalBody;
+function ContractEditModalButton({ contractType, onEdit, onIsReadyChange, initialData, }) {
+    const modalBodyComponent = contractType === "our"
+        ? OurContractModalBody_1.OurContractModalBody
+        : OtherContractModalBody_1.OtherContractModalBody;
+    const editModalButton = contractType === "our"
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: modalBodyComponent, onIsReadyChange: onIsReadyChange, initialData: initialData })
+        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: modalBodyComponent, onIsReadyChange: onIsReadyChange, initialData: initialData });
+    return editModalButton;
 }
-exports.EditContractButton = EditContractButton;
 
 
 /***/ }),
@@ -65878,6 +66108,12 @@ const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/Re
 class ContractsController {
 }
 exports["default"] = ContractsController;
+ContractsController.statusNames = [
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony',
+    'Archiwalny'
+];
 ContractsController.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
@@ -65949,9 +66185,11 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTable_1 = __importStar(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
-const ContractModal_1 = __webpack_require__(/*! ./ContractModal */ "./src/Contracts/ContractsList/ContractModal.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
+const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -65960,11 +66198,11 @@ function ContractsSearch({ title }) {
     const [searchText, setSearchText] = (0, react_1.useState)('');
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const [projectOurId, setProjectOurId] = (0, react_1.useState)('');
+    const [projects, setProjects] = (0, react_1.useState)([]);
     const filters = [
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", onKeyUp: handleTextKeyUp, name: "searchText", value: searchText, onChange: e => setSearchText(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", name: "searchText", value: searchText, onChange: e => setSearchText(e.target.value) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek od"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'startDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10) })),
@@ -65973,18 +66211,20 @@ function ContractsSearch({ title }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'endDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'OurId', repository: exports.projectsRepository, onChange: (currentSelectedItems) => setProjectOurId(currentSelectedItems[0].ourId) })),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
         react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { onChange: (e) => { } })
     ];
-    async function handleTextKeyUp(e) {
-        setIsReady(false);
-        const valueFromTextBox = e.target.value;
-        setIsReady(true);
-    }
     async function handleSubmitSearch(e) {
+        const additionalSearchCriteria = [];
+        if (projects.length > 0) {
+            additionalSearchCriteria.push({
+                name: 'projectId',
+                value: projects[0].ourId
+            });
+        }
         try {
             setIsReady(false);
-            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository);
+            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository, additionalSearchCriteria);
             setObjects(data);
             setIsReady(true);
         }
@@ -66021,9 +66261,166 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModal_1.EditContractButton, { onEdit: onEdit, initialData: dataObject, onIsReadyChange: onIsReadyChange })),
+            onEdit && dataObject.ourId && (react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
+            onEdit && !dataObject.ourId && (react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
             onDelete && (react_1.default.createElement(react_bootstrap_1.Button, { onClick: (e) => onDelete(dataObject.id), variant: "danger" }, "Delete")))));
 }
+
+
+/***/ }),
+
+/***/ "./src/Contracts/ContractsList/OtherContractModalBody.tsx":
+/*!****************************************************************!*\
+  !*** ./src/Contracts/ContractsList/OtherContractModalBody.tsx ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OtherContractEditModalButton = exports.OtherContractModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
+const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+function OtherContractModalBody(props) {
+    const initialData = props.initialData;
+    const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
+    const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
+    const ourRelatedContractsRepository = new RepositoryReact_1.default({
+        name: 'OurRelatedContractsRepository',
+        actionRoutes: { addNewRoute: '', editRoute: '', deleteRoute: '', getRoute: 'contracts' },
+    });
+    (0, react_1.useEffect)(() => {
+        const additionalFieldsKeysValues = [
+            { name: '_contractors', value: JSON.stringify(selectedContractors) }
+        ];
+        if (!props.onAdditionalFieldsKeysValuesChange)
+            throw new Error('onAdditionalFieldsKeysValuesChange is not defined');
+        props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
+    }, [selectedContractors, props]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedContractors, setSelectedContractors), selectedRepositoryItems: selectedContractors, multiple: true })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', searchKey: 'contractOurId', additionalFieldsKeysValues: [
+                    { key: 'projectId', value: props.initialData?.projectOurId }
+                ], repository: ourRelatedContractsRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedOurContracts, setSelectedOurContracts), selectedRepositoryItems: selectedOurContracts, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+                    option.ourId,
+                    " ",
+                    option.name)) }))));
+}
+exports.OtherContractModalBody = OtherContractModalBody;
+function OtherContractEditModalButton({ onEdit, onIsReadyChange, initialData }) {
+    return (react_1.default.createElement(GeneralModal_1.EditModalButton, { onEdit: onEdit, ModalBodyComponent: OtherContractModalBody, onIsReadyChange: onIsReadyChange, title: "Edycja umowy", repository: ContractsSearch_1.contractsRepository, initialData: initialData }));
+}
+exports.OtherContractEditModalButton = OtherContractEditModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/ContractsList/OurContractModalBody.tsx":
+/*!**************************************************************!*\
+  !*** ./src/Contracts/ContractsList/OurContractModalBody.tsx ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
+const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+function OurContractModalBody(props) {
+    const initialData = props.initialData;
+    const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
+    const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
+    (0, react_1.useEffect)(() => {
+        const additionalFieldsKeysValues = [
+            { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
+            { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
+        ];
+        if (!props.onAdditionalFieldsKeysValuesChange)
+            throw new Error('onAdditionalFieldsKeysValuesChange is not defined');
+        props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
+    }, [selectedAdmins, selectedManagers, props]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "manager" },
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: selectedManagers, onChange: (currentSelectedItems) => {
+                    setSelectedManagers(currentSelectedItems);
+                }, repository: MainSetupReact_1.default.personsEnviRepository })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository }))));
+}
+exports.OurContractModalBody = OurContractModalBody;
+function OurContractEditModalButton({ onEdit, onIsReadyChange, initialData }) {
+    return (react_1.default.createElement(GeneralModal_1.EditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody, onIsReadyChange: onIsReadyChange, title: "Edycja umowy", repository: ContractsSearch_1.contractsRepository, initialData: initialData }));
+}
+exports.OurContractEditModalButton = OurContractEditModalButton;
 
 
 /***/ }),
@@ -66052,6 +66449,42 @@ function ErrorPage() {
             react_1.default.createElement("i", null, error.message))));
 }
 exports["default"] = ErrorPage;
+
+
+/***/ }),
+
+/***/ "./src/React/GoogleLoginButton.tsx":
+/*!*****************************************!*\
+  !*** ./src/React/GoogleLoginButton.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
+function GoogleButton({ onServerResponse }) {
+    async function handleSuccess(credentialResponse) {
+        const id_token = credentialResponse.credential;
+        const response = await fetch(MainSetupReact_1.default.serverUrl + 'login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ id_token }),
+        });
+        const responseData = await response.json();
+        MainSetupReact_1.default.currentUser = responseData.userData;
+        onServerResponse(responseData);
+    }
+    ;
+    return (react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log('Login Failed') }));
+}
+exports["default"] = GoogleButton;
 
 
 /***/ }),
@@ -66147,6 +66580,7 @@ class MainSetup {
     }
 }
 exports["default"] = MainSetup;
+MainSetup.CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 MainSetup.serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
 
 
@@ -66218,13 +66652,21 @@ class RepositoryReact {
         }
         console.log(this.name + ' items from SessionStorage: %o', this.items);
     }
-    async loadItemsfromServer(formData) {
-        const url = new URL(MainSetupReact_1.default.serverUrl + this.actionRoutes.getRoute);
+    /**
+     * Ładuje items z serwera i resetuje currentitems
+     * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
+     */
+    async loadItemsfromServer(formData, specialActionRoute) {
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         if (formData)
             for (const [key, value] of formData)
                 url.searchParams.append(key, value);
         const response = await fetch(url, {
             method: 'GET',
+            headers: this.makeRequestHeaders(),
+            credentials: 'include',
         });
         if (!response.ok)
             throw new Error(response.statusText);
@@ -66672,6 +67114,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.renderApp = void 0;
+const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const client_1 = __importDefault(__webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js"));
@@ -66679,8 +67122,11 @@ const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_m
 const ContractsSearch_1 = __importDefault(__webpack_require__(/*! ../Contracts/ContractsList/ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ErrorPage_1 = __importDefault(__webpack_require__(/*! ./ErrorPage */ "./src/React/ErrorPage.tsx"));
+const GoogleLoginButton_1 = __importDefault(__webpack_require__(/*! ./GoogleLoginButton */ "./src/React/GoogleLoginButton.tsx"));
 const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ./MainControllerReact */ "./src/React/MainControllerReact.ts"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const rootPath = '/envi.projectsite/docs/React/';
@@ -66700,6 +67146,16 @@ function App() {
         }
         fetchData();
     }, []);
+    // Handle the server's response
+    const handleServerResponse = (response) => {
+        if (response.userData) {
+            MainSetupReact_1.default.currentUser = response.userData;
+            setIsLoggedIn(true);
+        }
+        else {
+            console.log('Authentication failed:', response.error);
+        }
+    };
     const router = (0, react_router_dom_1.createBrowserRouter)([
         {
             path: `/`,
@@ -66719,19 +67175,117 @@ function App() {
                 " ",
                 errorMessage)));
     else if (isReady)
-        return react_1.default.createElement(react_router_dom_1.RouterProvider, { router: router });
+        return (react_1.default.createElement(react_1.default.Fragment, null, isLoggedIn ? (react_1.default.createElement(react_router_dom_1.RouterProvider, { router: router })) : (react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }))));
     else
         return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
 }
 async function renderApp() {
     const root = document.getElementById("root");
     if (root) {
-        client_1.default.createRoot(root).render(react_1.default.createElement(react_1.StrictMode, null,
-            react_1.default.createElement(App, null)));
+        client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
+            react_1.default.createElement(react_1.StrictMode, null,
+                react_1.default.createElement(App, null))));
     }
 }
 exports.renderApp = renderApp;
 renderApp();
+
+
+/***/ }),
+
+/***/ "./src/View/GeneralModal.tsx":
+/*!***********************************!*\
+  !*** ./src/View/GeneralModal.tsx ***!
+  \***********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.EditModalButton = exports.GeneralModal = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src/React/Tools.ts"));
+function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
+    let additionalFieldsKeysValues = [];
+    async function handleSubmit(e) {
+        e.preventDefault();
+        onIsReadyChange(false);
+        e.stopPropagation();
+        const formData = new FormData(e.target);
+        if (additionalFieldsKeysValues)
+            for (const keyValue of additionalFieldsKeysValues)
+                formData.append(keyValue.name, keyValue.value);
+        (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
+        onClose();
+        onIsReadyChange(true);
+    }
+    ;
+    function handleAdditionalFieldsKeysValues(values) {
+        additionalFieldsKeysValues = values;
+        //if (modalBodyProps.onAdditionalFieldsKeysValuesChange)
+        //    modalBodyProps.onAdditionalFieldsKeysValuesChange(values);
+    }
+    async function handleEdit(formData) {
+        const currentContract = { ...repository.currentItems[0] };
+        const editedObject = Tools_1.default.updateObject(formData, currentContract);
+        await repository.editItemNodeJS(editedObject);
+        if (onEdit)
+            onEdit(editedObject);
+    }
+    ;
+    async function handleAdd(formData) {
+    }
+    ;
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
+        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
+            react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+                react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+            react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
+                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues })),
+            react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
+                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, "Zatwierd\u017A")))));
+}
+exports.GeneralModal = GeneralModal;
+function EditModalButton({ onEdit, onIsReadyChange, ModalBodyComponent, title, initialData, repository, }) {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    const handleOpen = () => setShowForm(true);
+    const handleClose = () => setShowForm(false);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleOpen }, "Edytuj"),
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: title, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+                isEditing: true,
+                initialData: initialData,
+            } })));
+}
+exports.EditModalButton = EditModalButton;
 
 
 /***/ }),
@@ -66771,12 +67325,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SpinnerBootstrap = exports.ProgressBar = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+/** Pole wyboru typu kontraktu */
 function ContractTypeSelectFormElement({ onChange, value }) {
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "typeId" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Typ Kontraktu"),
@@ -66785,23 +67340,48 @@ function ContractTypeSelectFormElement({ onChange, value }) {
             MainSetupReact_1.default.contractTypesRepository.items.map((contractType) => (react_1.default.createElement("option", { key: contractType.id, value: contractType.id }, contractType.name))))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
-function PersonSelectFormElement({ label, onChange, value, repository }) {
-    const options = repository.items.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }) {
+    function makeoptions(repositoryDataItems) {
+        console.log('makeoptions:: ', repositoryDataItems);
+        return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+    }
+    function handleOnChange(selectedItems) {
+        const selectedRepositoryItems = selectedItems
+            .map((item) => {
+            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
+            return foundItem;
+        })
+            .filter((item) => item !== undefined);
+        console.log('onChange(selectedRepositoryItems):: ', selectedItems);
+        onChange(selectedRepositoryItems);
+    }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: options, onChange: onChange, 
-            //selected={options.filter(option => { return value ? value.id == option.value : false })}
-            placeholder: "-- Wybierz opcj\u0119 --" })));
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple })));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey }) {
+/**
+ * @param repository repozytorium z którego pobierane są dane
+ * @param onChange zaktualizuj setstate projects komponentu nadrzędnego
+ * @param selectedRepositoryItems aktualnie wybrane elementy
+ * @param labelKey nazwa pola w repozytorium które ma być wyświetlane w polu wyboru
+ * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
+ * @param additionalFieldsKeysValues dodatkowe pola które mają być wyszukiwane na serwerze
+ * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
+ * @param multiple czy pole wyboru ma być wielokrotnego wyboru
+ * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
+*/
+function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
         const formData = new FormData();
-        formData.append(labelKey, query);
-        repository.loadItemsfromServer(formData)
+        formData.append(searchKey, query);
+        additionalFieldsKeysValues.forEach((field) => {
+            formData.append(field.key, field.value);
+        });
+        repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
             // Filter out object that are present in selectedRepositoryItems 
             const filteredItems = items.filter(item => {
@@ -66814,12 +67394,11 @@ function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, label
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: true, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: (option) => (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, option[labelKey]))) }));
+    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
-function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSelectedItems, setState) {
+function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSelectedItems, setSuperiorElementState) {
     const currentAndPreviousSelections = previousSelectedItems.concat(currentSelectedDataItems);
     const allUniqueDataItems = currentAndPreviousSelections.reduce((uniqueItems, dataItem) => {
         const isDuplicate = uniqueItems.some(item => item.id === dataItem.id);
@@ -66829,9 +67408,37 @@ function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSel
         return uniqueItems;
     }, []);
     const finalItemsSelected = (currentSelectedDataItems.length < allUniqueDataItems.length) ? currentSelectedDataItems : allUniqueDataItems;
-    setState(finalItemsSelected);
+    setSuperiorElementState(finalItemsSelected);
+    console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
 exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
+function ValueInPLNInput({ value, onChange }) {
+    const inputRef = (0, react_1.useRef)(null);
+    function formatValue(value) {
+        return new Intl.NumberFormat('pl-PL', {
+            style: 'decimal',
+            minimumFractionDigits: 2,
+        }).format(parseFloat(value) || 0);
+    }
+    ;
+    function handleInputChange(e) {
+        const newValue = e.target.value.replace(/\s/g, '');
+        const cursorPosition = e.target.selectionStart;
+        onChange(newValue);
+        if (inputRef.current && cursorPosition) {
+            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+        }
+    }
+    ;
+    function handleInputBlur() {
+        onChange(formatValue(value));
+    }
+    ;
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 w PLN"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef })));
+}
+exports.ValueInPLNInput = ValueInPLNInput;
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }

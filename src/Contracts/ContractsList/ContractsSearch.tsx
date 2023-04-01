@@ -3,10 +3,12 @@ import { Container, Accordion, Collapse, Button, Row, Col, Form, Alert } from 'r
 import FilteredTable, { FilterTableRowProps, handleSubmitFilterableTable } from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
 import MainSetup from '../../React/MainSetupReact';
-import { EditContractButton, AddNewContractButton } from './ContractModal';
 import { ContractTypeSelectFormElement, MyAsyncTypeahead } from '../../View/Resultsets/CommonComponents';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import ToolsDate from '../../React/ToolsDate';
+import { EditModalButton } from '../../View/GeneralModal';
+import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
+import { OtherContractEditModalButton } from './OtherContractModalBody';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;
@@ -17,7 +19,7 @@ export default function ContractsSearch({ title }: { title: string }) {
     const [searchText, setSearchText] = useState('');
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
-    const [projectOurId, setProjectOurId] = useState('');
+    const [projects, setProjects] = useState([] as RepositoryDataItem[]);
 
     const filters = [
         <Form.Group>
@@ -25,7 +27,6 @@ export default function ContractsSearch({ title }: { title: string }) {
             <Form.Control
                 type="text"
                 placeholder="Wpisz tekst"
-                onKeyUp={handleTextKeyUp}
                 name="searchText"
                 value={searchText} onChange={e => setSearchText(e.target.value)}
             />
@@ -47,27 +48,28 @@ export default function ContractsSearch({ title }: { title: string }) {
         <Form.Group>
             <Form.Label>Projekt</Form.Label>
             <MyAsyncTypeahead
-                labelKey='OurId'
+                labelKey='ourId'
                 repository={projectsRepository}
-                onChange={(currentSelectedItems) => setProjectOurId(currentSelectedItems[0].ourId)}
+                selectedRepositoryItems={projects}
+                onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
+                specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
             />
-
         </Form.Group>,
 
         <ContractTypeSelectFormElement onChange={(e) => { }} />
     ];
 
-    async function handleTextKeyUp(e: any) {
-        setIsReady(false);
-        const valueFromTextBox = (e.target as HTMLInputElement).value as string;
-
-        setIsReady(true);
-    }
-
     async function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {
+        const additionalSearchCriteria = []
+        if (projects.length > 0) {
+            additionalSearchCriteria.push({
+                name: 'projectId',
+                value: projects[0].ourId as string
+            });
+        }
         try {
             setIsReady(false);
-            const data = await handleSubmitFilterableTable(e, contractsRepository);
+            const data = await handleSubmitFilterableTable(e, contractsRepository, additionalSearchCriteria);
             setObjects(data);
             setIsReady(true);
         } catch (error) {
@@ -123,11 +125,20 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         <td>{dataObject.endDate}</td>
         {isActive && (
             <td>
-                {onEdit && (
-                    <EditContractButton
+                {onEdit && dataObject.ourId && (
+                    <OurContractEditModalButton
                         onEdit={onEdit}
-                        initialData={dataObject}
+                        ModalBodyComponent={OurContractModalBody}
                         onIsReadyChange={onIsReadyChange}
+                        initialData={dataObject}
+                    />
+                )}
+                {onEdit && !dataObject.ourId && (
+                    <OtherContractEditModalButton
+                        onEdit={onEdit}
+                        ModalBodyComponent={OurContractModalBody}
+                        onIsReadyChange={onIsReadyChange}
+                        initialData={dataObject}
                     />
                 )}
                 {onDelete && (

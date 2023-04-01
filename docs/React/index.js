@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.renderApp = void 0;
+const google_1 = require("@react-oauth/google");
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const client_1 = __importDefault(require("react-dom/client"));
@@ -34,8 +35,11 @@ const react_router_dom_1 = require("react-router-dom");
 const ContractsSearch_1 = __importDefault(require("../Contracts/ContractsList/ContractsSearch"));
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const ErrorPage_1 = __importDefault(require("./ErrorPage"));
+const GoogleLoginButton_1 = __importDefault(require("./GoogleLoginButton"));
 const MainControllerReact_1 = __importDefault(require("./MainControllerReact"));
+const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const rootPath = '/envi.projectsite/docs/React/';
@@ -55,6 +59,16 @@ function App() {
         }
         fetchData();
     }, []);
+    // Handle the server's response
+    const handleServerResponse = (response) => {
+        if (response.userData) {
+            MainSetupReact_1.default.currentUser = response.userData;
+            setIsLoggedIn(true);
+        }
+        else {
+            console.log('Authentication failed:', response.error);
+        }
+    };
     const router = (0, react_router_dom_1.createBrowserRouter)([
         {
             path: `/`,
@@ -74,15 +88,16 @@ function App() {
                 " ",
                 errorMessage)));
     else if (isReady)
-        return react_1.default.createElement(react_router_dom_1.RouterProvider, { router: router });
+        return (react_1.default.createElement(react_1.default.Fragment, null, isLoggedIn ? (react_1.default.createElement(react_router_dom_1.RouterProvider, { router: router })) : (react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }))));
     else
         return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
 }
 async function renderApp() {
     const root = document.getElementById("root");
     if (root) {
-        client_1.default.createRoot(root).render(react_1.default.createElement(react_1.StrictMode, null,
-            react_1.default.createElement(App, null)));
+        client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
+            react_1.default.createElement(react_1.StrictMode, null,
+                react_1.default.createElement(App, null))));
     }
 }
 exports.renderApp = renderApp;
