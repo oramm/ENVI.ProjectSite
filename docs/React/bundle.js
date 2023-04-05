@@ -66023,14 +66023,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractModalBody = void 0;
+exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function ContractModalBody({ isEditing, initialData }) {
     const [typeId, setTypeId] = (0, react_1.useState)(initialData?.typeId || 0);
     const [name, setName] = (0, react_1.useState)(initialData?.name || '');
@@ -66040,13 +66042,6 @@ function ContractModalBody({ isEditing, initialData }) {
     const [status, setStatus] = (0, react_1.useState)(initialData?.status || '');
     const [startDate, setStartDate] = (0, react_1.useState)(initialData?.startDate || new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = (0, react_1.useState)(initialData?.endDate || new Date().toISOString().slice(0, 10));
-    if (!isEditing && !initialData)
-        initialData = {
-            id: 0,
-            _parent: ContractsSearch_1.contractsRepository.currentItems[0]._parent,
-            startDate: new Date().toISOString().slice(0, 10),
-            endDate: new Date().toISOString().slice(0, 10)
-        };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (isEditing) ?
             react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { value: typeId, onChange: (e) => {
@@ -66079,15 +66074,48 @@ function ContractModalBody({ isEditing, initialData }) {
                 ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))))));
 }
 exports.ContractModalBody = ContractModalBody;
-function ContractEditModalButton({ contractType, onEdit, onIsReadyChange, initialData, }) {
-    const modalBodyComponent = contractType === "our"
-        ? OurContractModalBody_1.OurContractModalBody
-        : OtherContractModalBody_1.OtherContractModalBody;
-    const editModalButton = contractType === "our"
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: modalBodyComponent, onIsReadyChange: onIsReadyChange, initialData: initialData })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: modalBodyComponent, onIsReadyChange: onIsReadyChange, initialData: initialData });
-    return editModalButton;
+/** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
+ * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
+ * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ *
+ */
+function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps }) {
+    console.log('ProProjectSelectorModalBody props:: ', additionalProps);
+    const [projects, setProjects] = (0, react_1.useState)([]);
+    const [selected, setSelected] = (0, react_1.useState)(false);
+    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
+    const { SpecificContractModalBody } = additionalProps;
+    if (!SpecificContractModalBody)
+        throw new Error("SpecificContractModalBody is not defined");
+    const handleProjectSelection = (currentSelectedItems) => {
+        setProjects(currentSelectedItems);
+        setSelected(currentSelectedItems.length > 0);
+    };
+    return (react_1.default.createElement(react_1.default.Fragment, null, selected ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, projectOurId: projects[0].ourId })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
+        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, selectedRepositoryItems: projects, onChange: handleProjectSelection, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })))));
 }
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+;
+/** przycisk i modal edycji OurCOntract lub OtherContract */
+function ContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps, isOurContract, }) {
+    return (isOurContract
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps })
+        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps }));
+}
+exports.ContractEditModalButton = ContractEditModalButton;
+function ContractDeleteModalButton({ modalProps: { onDelete } }) {
+    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
+    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
+    return (react_1.default.createElement(GeneralModal_1.GeneralDeleteModalButton, { modalProps: {
+            onDelete,
+            modalTitle,
+            repository: ContractsSearch_1.contractsRepository,
+            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
+        } }));
+}
+exports.ContractDeleteModalButton = ContractDeleteModalButton;
 
 
 /***/ }),
@@ -66188,8 +66216,7 @@ const ContractsController_1 = __importDefault(__webpack_require__(/*! ./Contract
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
-const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
-const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -66239,8 +66266,7 @@ function ContractsSearch({ title }) {
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
-    async function handleDeleteObject(objectId) {
-        await exports.contractsRepository.deleteItemNodeJS(objectId);
+    function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
     }
     function handleRowClick(id) {
@@ -66248,7 +66274,7 @@ function ContractsSearch({ title }) {
         setActiveRowId(id);
         exports.contractsRepository.addToCurrentItems(id);
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAdd: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
+    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
 }
 exports["default"] = ContractsSearch;
 function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
@@ -66261,9 +66287,8 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && dataObject.ourId && (react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
-            onEdit && !dataObject.ourId && (react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
-            onDelete && (react_1.default.createElement(react_bootstrap_1.Button, { onClick: (e) => onDelete(dataObject.id), variant: "danger" }, "Delete")))));
+            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
+            onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
 }
 
 
@@ -66304,7 +66329,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OtherContractEditModalButton = exports.OtherContractModalBody = void 0;
+exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OtherContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
@@ -66312,8 +66337,12 @@ const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonC
 const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
 const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+/**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
+    const projectOurId = props.projectOurId || initialData?.projectOurId;
+    if (!projectOurId)
+        throw new Error('OtherContractModalBody:: project is not defined');
     const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
     const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
@@ -66324,8 +66353,9 @@ function OtherContractModalBody(props) {
         const additionalFieldsKeysValues = [
             { name: '_contractors', value: JSON.stringify(selectedContractors) }
         ];
+        //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
         if (!props.onAdditionalFieldsKeysValuesChange)
-            throw new Error('onAdditionalFieldsKeysValuesChange is not defined');
+            throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
     }, [selectedContractors, props]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -66336,17 +66366,37 @@ function OtherContractModalBody(props) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
             react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', searchKey: 'contractOurId', additionalFieldsKeysValues: [
-                    { key: 'projectId', value: props.initialData?.projectOurId }
+                    { key: 'projectId', value: projectOurId }
                 ], repository: ourRelatedContractsRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedOurContracts, setSelectedOurContracts), selectedRepositoryItems: selectedOurContracts, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",
                     option.name)) }))));
 }
 exports.OtherContractModalBody = OtherContractModalBody;
-function OtherContractEditModalButton({ onEdit, onIsReadyChange, initialData }) {
-    return (react_1.default.createElement(GeneralModal_1.EditModalButton, { onEdit: onEdit, ModalBodyComponent: OtherContractModalBody, onIsReadyChange: onIsReadyChange, title: "Edycja umowy", repository: ContractsSearch_1.contractsRepository, initialData: initialData }));
+function OtherContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: OtherContractModalBody,
+            onIsReadyChange: onIsReadyChange,
+            modalTitle: "Edycja umowy",
+            repository: ContractsSearch_1.contractsRepository,
+            initialData: initialData,
+        }, buttonProps: {} }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
+function OtherContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
+            additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },
+            onIsReadyChange: onIsReadyChange,
+            modalTitle: "Nowa umowa zewnętrzna",
+            repository: ContractsSearch_1.contractsRepository
+        }, buttonProps: {
+            buttonCaption: "Rejestruj umowę zewnętrzną",
+        } }));
+}
+exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
 
 
 /***/ }),
@@ -66386,7 +66436,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
+exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -66396,6 +66446,9 @@ const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
+    const projectOurId = props.projectOurId || initialData?.projectOurId;
+    if (!projectOurId)
+        throw new Error('OtherContractModalBody:: project is not defined');
     const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
     (0, react_1.useEffect)(() => {
@@ -66404,7 +66457,7 @@ function OurContractModalBody(props) {
             { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange)
-            throw new Error('onAdditionalFieldsKeysValuesChange is not defined');
+            throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
     }, [selectedAdmins, selectedManagers, props]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -66417,10 +66470,33 @@ function OurContractModalBody(props) {
             react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository }))));
 }
 exports.OurContractModalBody = OurContractModalBody;
-function OurContractEditModalButton({ onEdit, onIsReadyChange, initialData }) {
-    return (react_1.default.createElement(GeneralModal_1.EditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody, onIsReadyChange: onIsReadyChange, title: "Edycja umowy", repository: ContractsSearch_1.contractsRepository, initialData: initialData }));
+function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData, }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: OurContractModalBody,
+            onIsReadyChange: onIsReadyChange,
+            modalTitle: "Edycja umowy",
+            repository: ContractsSearch_1.contractsRepository,
+            initialData: initialData,
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
 }
 exports.OurContractEditModalButton = OurContractEditModalButton;
+function OurContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            onIsReadyChange: onIsReadyChange,
+            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
+            additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
+            modalTitle: "Nowa umowa ENVI",
+            repository: ContractsSearch_1.contractsRepository,
+        }, buttonProps: {
+            buttonCaption: "Rejestruj umowę ENVI",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
 
 
 /***/ }),
@@ -66599,7 +66675,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const Tools_1 = __importDefault(__webpack_require__(/*! ./Tools */ "./src/React/Tools.ts"));
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -66693,62 +66768,24 @@ class RepositoryReact {
         this.addToCurrentItems(dataItem.id);
         console.log('%s:: wykonano funkcję: %o', this.name, dataItem);
     }
+    /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem) {
-        const newItemTmpId = this.items.length + 1 + '_pending';
-        newItem._tmpId = newItemTmpId;
-        const noBlobNewItem = { ...newItem };
-        delete noBlobNewItem._blobEnviObjects;
-        //this.currentItem = noBlobNewItem;
-        //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
-        this.items.push(noBlobNewItem);
-        try {
-            let newItemFromServer = await this.addNewItemResponseHandlerNodeJS(newItem);
-            return this.addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer);
-        }
-        catch (err) {
-            if (err instanceof Error) {
-                this.addNewItemViewOnErrorHandler(newItemTmpId, noBlobNewItem, err);
-                throw (err);
-            }
-        }
-        ;
-    }
-    //https://github.com/expressjs/session/issues/374#issuecomment-279653974
-    async addNewItemResponseHandlerNodeJS(item) {
-        const result = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
+        const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
-            body: JSON.stringify(item)
+            body: JSON.stringify(newItem)
         });
-        const resultText = await result.json();
-        if (resultText.authorizeUrl)
-            window.open(resultText.authorizeUrl);
-        else {
-            const parsedResult = Tools_1.default.tryParseJSONObject(resultText);
-            if (parsedResult)
-                return parsedResult;
-            else
-                return resultText;
-        }
-    }
-    addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer) {
-        //usuń z repozytorium tymczasowy obiekt
-        const index = this.items.findIndex((item) => item._tmpId == newItemTmpId);
-        console.log('usuwam obiekt tymczasowy, jego _parent: %o', this.items[index]._parent);
-        this.items.splice(index, 1);
-        //wstaw do repozytorium nowy obiekt z serwera
-        this.clientSideAddNewItemHandler(newItemFromServer);
-        //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
-        newItemFromServer._tmpId = newItemTmpId;
+        const newItemFromServer = await rawResult.json();
+        if (newItemFromServer.authorizeUrl)
+            window.open(newItemFromServer.authorizeUrl);
+        const noBlobNewItem = { ...newItemFromServer };
+        delete noBlobNewItem._blobEnviObjects;
+        this.items.push(noBlobNewItem);
+        this.currentItems = [newItemFromServer];
         return newItemFromServer;
     }
-    addNewItemViewOnErrorHandler(newItemTmpId, newItem, err) {
-        //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex((item) => item._tmpid == newItemTmpId);
-        this.items.splice(index, 1);
-    }
-    /**edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
+    /**Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
      * @param item obiekt do edycji
     */
@@ -66760,8 +66797,11 @@ class RepositoryReact {
             body: JSON.stringify(item)
         });
         const resultObject = await resultRawResponse.json();
-        if (resultObject.authorizeUrl)
+        if (resultObject.authorizeUrl) {
             window.open(resultObject.authorizeUrl);
+            console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
+            return item;
+        }
         this.replaceItemById(resultObject.id, resultObject);
         this.replaceCurrentItemById(resultObject.id, resultObject);
         console.log('obiekt po edycji z serwera: %o', resultObject);
@@ -67228,12 +67268,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EditModalButton = exports.GeneralModal = void 0;
+exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = exports.GeneralModal = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src/React/Tools.ts"));
-function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
+const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
     let additionalFieldsKeysValues = [];
+    let newObject;
     async function handleSubmit(e) {
         e.preventDefault();
         onIsReadyChange(false);
@@ -67247,22 +67289,25 @@ function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange
         onIsReadyChange(true);
     }
     ;
+    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
     function handleAdditionalFieldsKeysValues(values) {
-        additionalFieldsKeysValues = values;
-        //if (modalBodyProps.onAdditionalFieldsKeysValuesChange)
-        //    modalBodyProps.onAdditionalFieldsKeysValuesChange(values);
+        additionalFieldsKeysValues = [...values];
     }
     async function handleEdit(formData) {
-        const currentContract = { ...repository.currentItems[0] };
-        const editedObject = Tools_1.default.updateObject(formData, currentContract);
+        const currentDataItem = { ...repository.currentItems[0] };
+        const editedObject = Tools_1.default.updateObject(formData, currentDataItem);
         await repository.editItemNodeJS(editedObject);
         if (onEdit)
             onEdit(editedObject);
     }
     ;
     async function handleAdd(formData) {
+        newObject = await repository.addNewItemNodeJS(newObject);
+        if (onAddNew)
+            onAddNew(newObject);
     }
     ;
+    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
             react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
@@ -67274,18 +67319,69 @@ function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange
                 react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
-function EditModalButton({ onEdit, onIsReadyChange, ModalBodyComponent, title, initialData, repository, }) {
+function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
+    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
-    const handleOpen = () => setShowForm(true);
-    const handleClose = () => setShowForm(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleOpen }, "Edytuj"),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: title, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
+                additionalProps: additionalModalBodyProps,
             } })));
 }
-exports.EditModalButton = EditModalButton;
+exports.GeneralEditModalButton = GeneralEditModalButton;
+/** Wyświetla przycisk i przypięty do niego modal
+ * @param modalProps - właściwości modalu
+ * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+ * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym
+ * - ModalBodyComponent - komponent wyświetlany w modalu
+ * - właściwości modalu
+ * @param buttonProps - właściwości przycisku
+ *
+ */
+function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+                isEditing: false,
+                additionalProps: additionalModalBodyProps,
+            } })));
+}
+exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
+function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps = {}, }) {
+    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    async function handleDelete() {
+        await repository.deleteItemNodeJS(initialData.id);
+        onDelete(initialData.id);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData.name}?` })));
+}
+exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
 
 
 /***/ }),
@@ -67325,7 +67421,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -67447,6 +67543,52 @@ function SpinnerBootstrap() {
     return (react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "success" }));
 }
 exports.SpinnerBootstrap = SpinnerBootstrap;
+const AlertComponent = ({ message, type, timeout = 3000 }) => {
+    const [show, setShow] = (0, react_1.useState)(true);
+    (0, react_1.useEffect)(() => {
+        const timer = setTimeout(() => {
+            setShow(false);
+        }, timeout);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [timeout]);
+    if (!show) {
+        return null;
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: type, onClose: () => setShow(false), dismissible: true }, message));
+};
+function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
+    const [isWaiting, setIsWaiting] = (0, react_1.useState)(false);
+    const [isError, setIsError] = (0, react_1.useState)(false);
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    async function handleConfirmAndClose() {
+        setIsWaiting(true);
+        try {
+            await onConfirm();
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                setIsError(true);
+                setErrorMessage(e.message);
+            }
+            console.log(e);
+        }
+        setIsWaiting(false);
+        onClose();
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose },
+        react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+        react_1.default.createElement(react_bootstrap_1.Modal.Body, null, prompt),
+        react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleConfirmAndClose },
+                "Ok",
+                isWaiting && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "grow", size: "sm", role: "status", "aria-hidden": "true" })),
+            isError && (react_1.default.createElement(AlertComponent, { message: errorMessage, type: 'danger', timeout: 5000 })))));
+}
+exports.ConfirmModal = ConfirmModal;
 
 
 /***/ }),
@@ -67467,19 +67609,25 @@ exports.TableTitle = exports.handleSubmitFilterableTable = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsReadyChange, onAdd, objects, isReady, activeRowId, onRowClick: onRowClick, tableHeaders, rowRenderer }) {
+const OtherContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
+const OurContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
+function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsReadyChange = () => { }, onAddNew, objects, isReady, activeRowId, onRowClick, tableHeaders, rowRenderer }) {
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(TableTitle, { title: title }))),
+                react_1.default.createElement(TableTitle, { title: title })),
+            onAddNew &&
+                react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                        react_1.default.createElement(OtherContractModalBody_1.OtherContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } }),
+                        ' ',
+                        react_1.default.createElement(OurContractModalBody_1.OurContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } })))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null,
-                " ",
-                react_1.default.createElement(FilterPanel, { filters: filters, onSubmit: onSubmitSearch }))),
+            react_1.default.createElement(FilterPanel, { filters: filters, onSubmit: onSubmitSearch })),
         !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement("progress", { style: { height: "5px" } })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAdd: onAdd }))))));
+            react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew }))))));
 }
 exports["default"] = FilteredTable;
 function FilterPanel({ filters, onSubmit }) {
@@ -67503,7 +67651,7 @@ async function handleSubmitFilterableTable(e, repository, additionalParameters) 
     return await repository.loadItemsfromServer(formData);
 }
 exports.handleSubmitFilterableTable = handleSubmitFilterableTable;
-function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRenderer, onIsReadyChange, onEdit, onDelete, onAdd }) {
+function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRenderer, onIsReadyChange, onEdit, onDelete, onAddNew }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
@@ -67516,7 +67664,7 @@ function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRen
                 onIsReadyChange,
                 onEdit,
                 onDelete,
-                onAdd
+                onAddNew
             })));
         }))));
 }

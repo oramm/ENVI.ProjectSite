@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, Form, FormControlProps, Row, Col } from 'react-bootstrap';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
 import { ContractTypeSelectFormElement, PersonSelectFormElement, MyAsyncTypeahead, handleEditMyAsyncTypeaheadElement, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
-import { ContractModalBody } from './ContractModalBody';
-import { EditModalButtonProps, EditModalButton, ModalBodyProps } from '../../View/GeneralModal';
-import { contractsRepository, entitiesRepository } from './ContractsSearch';
+import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
+import { GeneralEditModalButtonProps, GeneralEditModalButton, ModalBodyProps, GeneralAddNewModalButton, GeneralAddNewModalButtonProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps, additionalFieldsKeysValue as AdditionalFieldsKeysValue } from '../../View/GeneralModal';
+import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
 
-export function OtherContractModalBody(props: ModalBodyProps) {
+/**Wywoływana w ProjectsSelector jako props  */
+export function OtherContractModalBody(props: ModalBodyProps & { projectOurId?: string }) {
     const initialData = props.initialData;
+    const projectOurId = props.projectOurId || initialData?.projectOurId;
+    if (!projectOurId) throw new Error('OtherContractModalBody:: project is not defined');
+
     const [selectedContractors, setSelectedContractors] = useState<RepositoryDataItem[]>(initialData?._contractors ? initialData._contractors : []);
     const [selectedOurContracts, setSelectedOurContracts] = useState<RepositoryDataItem[]>(initialData?._ourContract ? [initialData._ourContract] : []);
 
@@ -20,7 +24,8 @@ export function OtherContractModalBody(props: ModalBodyProps) {
         const additionalFieldsKeysValues = [
             { name: '_contractors', value: JSON.stringify(selectedContractors) }
         ];
-        if (!props.onAdditionalFieldsKeysValuesChange) throw new Error('onAdditionalFieldsKeysValuesChange is not defined');
+        //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
+        if (!props.onAdditionalFieldsKeysValuesChange) throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
     }, [selectedContractors, props]);
 
@@ -46,7 +51,7 @@ export function OtherContractModalBody(props: ModalBodyProps) {
                     labelKey='ourId'
                     searchKey='contractOurId'
                     additionalFieldsKeysValues={[
-                        { key: 'projectId', value: props.initialData?.projectOurId }
+                        { key: 'projectId', value: projectOurId }
                     ]}
                     repository={ourRelatedContractsRepository}
                     onChange={(currentSelectedItems) => handleEditMyAsyncTypeaheadElement(currentSelectedItems, selectedOurContracts, setSelectedOurContracts)}
@@ -58,15 +63,40 @@ export function OtherContractModalBody(props: ModalBodyProps) {
     );
 }
 
-export function OtherContractEditModalButton({ onEdit, onIsReadyChange, initialData }: Omit<EditModalButtonProps, 'title' | 'repository'>) {
+export function OtherContractEditModalButton({
+    modalProps: { onEdit, onIsReadyChange, initialData },
+}: SpecificEditModalButtonProps) {
     return (
-        <EditModalButton
-            onEdit={onEdit}
-            ModalBodyComponent={OtherContractModalBody}
-            onIsReadyChange={onIsReadyChange}
-            title="Edycja umowy"
-            repository={contractsRepository}
-            initialData={initialData}
+        <GeneralEditModalButton
+            modalProps={{
+                onEdit: onEdit,
+                ModalBodyComponent: OtherContractModalBody,
+                onIsReadyChange: onIsReadyChange,
+                modalTitle: "Edycja umowy",
+                repository: contractsRepository,
+                initialData: initialData,
+            }}
+            buttonProps={{}}
+        />
+    );
+}
+
+export function OtherContractAddNewModalButton({
+    modalProps: { onAddNew, onIsReadyChange },
+}: SpecificAddNewModalButtonProps) {
+    return (
+        <GeneralAddNewModalButton
+            modalProps={{
+                onAddNew: onAddNew,
+                ModalBodyComponent: ProjectSelectorModalBody,
+                additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },// additional props for ProjectSelectorModalBody
+                onIsReadyChange: onIsReadyChange,
+                modalTitle: "Nowa umowa zewnętrzna",
+                repository: contractsRepository
+            }}
+            buttonProps={{
+                buttonCaption: "Rejestruj umowę zewnętrzną",
+            }}
         />
     );
 }

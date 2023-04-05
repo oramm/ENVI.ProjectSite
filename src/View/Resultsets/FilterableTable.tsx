@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Table, Container, Accordion, Collapse, Button, Row, Col, Form, ProgressBar } from 'react-bootstrap';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
+import { OtherContractAddNewModalButton } from '../../Contracts/ContractsList/OtherContractModalBody';
+import { OurContractAddNewModalButton } from '../../Contracts/ContractsList/OurContractModalBody';
 
 type FilteredTableProps = {
     title: string,
@@ -12,7 +14,7 @@ type FilteredTableProps = {
     onEdit?: (object: RepositoryDataItem) => void,
     onDelete?: (id: number) => void,
     onIsReadyChange?: (isReady: boolean) => void,
-    onAdd?: (object: RepositoryDataItem) => void,
+    onAddNew?: (object: RepositoryDataItem) => void,
     objects: any[],
     isReady: boolean,
     activeRowId: number,
@@ -27,12 +29,12 @@ export default function FilteredTable({
     onSubmitSearch,
     onEdit,
     onDelete,
-    onIsReadyChange,
-    onAdd,
+    onIsReadyChange = () => { },
+    onAddNew,
     objects,
     isReady,
     activeRowId,
-    onRowClick: onRowClick,
+    onRowClick,
     tableHeaders,
     rowRenderer
 }: FilteredTableProps) {
@@ -42,9 +44,22 @@ export default function FilteredTable({
                 <Col>
                     <TableTitle title={title} />
                 </Col>
+                {onAddNew &&
+                    <>
+                        <Col md="auto">
+                            <OtherContractAddNewModalButton
+                                modalProps={{ onAddNew, onIsReadyChange }}
+                            />
+                            {' '}
+                            <OurContractAddNewModalButton
+                                modalProps={{ onAddNew, onIsReadyChange }}
+                            />
+                        </Col>
+                    </>
+                }
             </Row>
             <Row>
-                <Col> <FilterPanel filters={filters} onSubmit={onSubmitSearch} /></Col>
+                <FilterPanel filters={filters} onSubmit={onSubmitSearch} />
             </Row>
             {!isReady && <Row><progress style={{ height: "5px" }} /></Row>}
             <Row>
@@ -59,7 +74,7 @@ export default function FilteredTable({
                             onIsReadyChange={onIsReadyChange}
                             onEdit={onEdit}
                             onDelete={onDelete}
-                            onAdd={onAdd}
+                            onAddNew={onAddNew}
                         />
                     )}
                 </Col>
@@ -108,7 +123,7 @@ type ResultSetTableProps = {
     onIsReadyChange?: (isReady: boolean) => void
     onEdit?: (object: RepositoryDataItem) => void
     onDelete?: (id: number) => void
-    onAdd?: (object: RepositoryDataItem) => void
+    onAddNew?: (object: RepositoryDataItem) => void
 }
 
 function ResultSetTable({ objects,
@@ -119,7 +134,7 @@ function ResultSetTable({ objects,
     onIsReadyChange,
     onEdit,
     onDelete,
-    onAdd
+    onAddNew
 }: ResultSetTableProps) {
     const navigate = useNavigate();
     return (
@@ -147,7 +162,7 @@ function ResultSetTable({ objects,
                                 onIsReadyChange,
                                 onEdit,
                                 onDelete,
-                                onAdd
+                                onAddNew
                             })}
                         </tr>)
                 })}
@@ -161,7 +176,7 @@ export type FilterTableRowProps = {
     isActive: boolean,
     onDelete?: (id: number) => void,
     onEdit?: (object: RepositoryDataItem) => void
-    onAdd?: (object: RepositoryDataItem) => void
+    onAddNew?: (object: RepositoryDataItem) => void
     onDoubleClick?: (object: RepositoryDataItem) => void
     onIsReadyChange?: (isReady: boolean) => void
 }

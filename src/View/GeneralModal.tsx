@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { Modal, Button, Form, FormControlProps } from 'react-bootstrap';
+import { Modal, Button, ButtonProps, Form, FormControlProps } from 'react-bootstrap';
+import { ButtonVariant } from 'react-bootstrap/esm/types';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
+import { ConfirmModal } from './Resultsets/CommonComponents';
 
 
 type GeneralModalProps = {
@@ -9,6 +11,7 @@ type GeneralModalProps = {
     title: string;
     isEditing: boolean;
     onEdit?: (object: RepositoryDataItem) => void;
+    onAddNew?: (object: RepositoryDataItem) => void;
     onClose: () => void;
     onIsReadyChange: (isReady: boolean) => void;
     repository: RepositoryReact;
@@ -21,15 +24,15 @@ export function GeneralModal({
     title,
     isEditing,
     onEdit,
+    onAddNew,
     onClose,
     onIsReadyChange,
     repository,
     ModalBodyComponent,
     modalBodyProps
 }: GeneralModalProps) {
-
     let additionalFieldsKeysValues: additionalFieldsKeysValue[] = [];
-
+    let newObject: RepositoryDataItem;
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -45,25 +48,25 @@ export function GeneralModal({
         onClose();
         onIsReadyChange(true);
     };
+    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
     function handleAdditionalFieldsKeysValues(values: additionalFieldsKeysValue[]) {
-        additionalFieldsKeysValues = values;
-        //if (modalBodyProps.onAdditionalFieldsKeysValuesChange)
-        //    modalBodyProps.onAdditionalFieldsKeysValuesChange(values);
+        additionalFieldsKeysValues = [...values];
     }
 
     async function handleEdit(formData: FormData) {
-        const currentContract = { ...repository.currentItems[0] }
-        const editedObject = Tools.updateObject(formData, currentContract);
+        const currentDataItem = { ...repository.currentItems[0] }
+        const editedObject = Tools.updateObject(formData, currentDataItem);
 
         await repository.editItemNodeJS(editedObject);
         if (onEdit) onEdit(editedObject);
     };
 
     async function handleAdd(formData: FormData) {
-
-
+        newObject = await repository.addNewItemNodeJS(newObject);
+        if (onAddNew) onAddNew(newObject);
     };
 
+    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (
         <Modal show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
             <Form onSubmit={handleSubmit}>
@@ -89,29 +92,31 @@ export function GeneralModal({
     );
 }
 
-export function EditModalButton({
-    onEdit,
-    onIsReadyChange,
-    ModalBodyComponent,
-    title,
-    initialData,
-    repository,
-}: EditModalButtonProps) {
+export function GeneralEditModalButton({
+    modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository },
+    buttonProps = {},
+}: GeneralEditModalButtonProps) {
+    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
     const [showForm, setShowForm] = useState(false);
-    const handleOpen = () => setShowForm(true);
-    const handleClose = () => setShowForm(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
 
     return (
         <>
-            <Button
-                variant="primary"
-                onClick={handleOpen}>Edytuj</Button>
+            <Button variant={buttonVariant} onClick={handleOpen}>
+                {buttonCaption}
+            </Button>
 
             <GeneralModal
                 onClose={handleClose}
                 show={showForm}
                 isEditing={true}
-                title={title}
+                title={modalTitle}
                 repository={repository}
                 onIsReadyChange={onIsReadyChange}
                 onEdit={onEdit}
@@ -119,35 +124,236 @@ export function EditModalButton({
                 modalBodyProps={{
                     isEditing: true,
                     initialData: initialData,
+                    additionalProps: additionalModalBodyProps,
                 }}
             />
         </>
     );
 }
 
+/** Wyświetla przycisk i przypięty do niego modal
+ * @param modalProps - właściwości modalu
+ * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+ * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym 
+ * - ModalBodyComponent - komponent wyświetlany w modalu 
+ * - właściwości modalu
+ * @param buttonProps - właściwości przycisku
+ * 
+ */
+export function GeneralAddNewModalButton({
+    modalProps: {
+        onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+        onIsReadyChange,
+        ModalBodyComponent,
+        additionalModalBodyProps,
+        modalTitle,
+        repository },
+    buttonProps: {
+        buttonCaption,
+        buttonVariant = "outline-primary",
+        buttonSize = "sm",
+        buttonIsActive = false,
+        buttonIsDisabled = false,
+    },
+}: GeneralAddNewModalButtonProps) {
+    const [showForm, setShowForm] = useState(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+
+    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
+    return (
+        <>
+            <Button
+                variant={buttonVariant}
+                size={buttonSize}
+                active={buttonIsActive}
+                disabled={buttonIsDisabled}
+                onClick={handleOpen}
+            >
+                {buttonCaption}
+            </Button>
+            <GeneralModal
+                onClose={handleClose}
+                show={showForm}
+                isEditing={false}
+                title={modalTitle}
+                repository={repository}
+                onIsReadyChange={onIsReadyChange}
+                onAddNew={onAddNew}
+                ModalBodyComponent={ModalBodyComponent}
+                modalBodyProps={{
+                    isEditing: false,
+                    additionalProps: additionalModalBodyProps,
+                }}
+            />
+        </>
+    );
+}
+
+export function GeneralDeleteModalButton({
+    modalProps: { onDelete, modalTitle, initialData, repository },
+    buttonProps = {},
+}: GeneralDeleteModalButtonProps) {
+    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+
+    const [showForm, setShowForm] = useState(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+
+    async function handleDelete() {
+        await repository.deleteItemNodeJS(initialData.id);
+        onDelete(initialData.id);
+    }
+
+    return (
+        <>
+            <Button variant={buttonVariant} onClick={handleOpen}>
+                {buttonCaption}
+            </Button>
+
+            <ConfirmModal
+                onClose={handleClose}
+                show={showForm}
+                title={modalTitle}
+                onConfirm={handleDelete}
+                prompt={`Czy na pewno chcesz usunąć ${initialData.name}?`}
+            />
+        </>
+    );
+}
+
+/**
+ * parametry body modalu z formularzem
+ * @param isEditing - czy modal jest w trybie edycji trzeba przekazać do do body bo część pól jest różna w trybie edycji i dodawania
+ * @param initialData - dane inicjalne do wyświetlenia w formularzu
+ * @param onAdditionalFieldsKeysValuesChange - funkcja wywoływana po zmianie wartości dodatkowych pól
+ * @param additionalProps - dodatkowe właściwości przekazywane do body - np. inne komponenty - patrz OurContractAddNewModalButton
+ */
 export type ModalBodyProps = {
     isEditing: boolean;
     initialData?: RepositoryDataItem;
     onAdditionalFieldsKeysValuesChange?: (additionalFieldsKeysValues: additionalFieldsKeysValue[]) => void;
+    additionalProps?: any;
+}
+
+type GeneralModalButtonModalProps = {
+    onIsReadyChange: (isReady: boolean) => void;
+    ModalBodyComponent: React.ComponentType<ModalBodyProps>;
+    additionalModalBodyProps?: any;
+    modalTitle: string;
+    repository: RepositoryReact;
 };
 
-export type AddNewModalButtonProps = ModalButtonProps & {
+type GeneralModalButtonButtonProps = {
+    buttonVariant?: ButtonVariant;
+    buttonSize?: ButtonProps["size"];
+    buttonIsActive?: boolean;
+    buttonIsDisabled?: boolean;
+};
+
+export type GeneralModalButtonProps = {
+    modalProps: GeneralModalButtonModalProps;
+    buttonProps: GeneralModalButtonButtonProps;
+};
+
+type GeneralAddNewModalButtonModalProps = GeneralModalButtonModalProps & {
     onAddNew: (object: RepositoryDataItem) => void;
 };
 
-export type EditModalButtonProps = ModalButtonProps & {
+type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    buttonCaption: string;
+};
+
+export type GeneralAddNewModalButtonProps = {
+    modalProps: GeneralAddNewModalButtonModalProps;
+    buttonProps: GeneralAddNewModalButtonButtonProps;
+};
+
+type GeneralEditModalButtonModalProps = GeneralModalButtonModalProps & {
     onEdit: (object: RepositoryDataItem) => void;
     initialData: RepositoryDataItem;
 };
 
-
-export type ModalButtonProps = {
-    onIsReadyChange: (isReady: boolean) => void;
-    ModalBodyComponent: React.ComponentType<ModalBodyProps>;
-    title: string;
-    repository: RepositoryReact;
-
+type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    buttonCaption?: string;
 };
+
+export type GeneralEditModalButtonProps = {
+    modalProps: GeneralEditModalButtonModalProps;
+    buttonProps?: GeneralEditModalButtonButtonProps;
+};
+
+type GeneralDeleteModalButtonModalProps = Omit<
+    GeneralModalButtonModalProps,
+    "onIsReadyChange" | "ModalBodyComponent"
+> & {
+    onDelete: (objectId: number) => void;
+    initialData: RepositoryDataItem;
+};
+
+type GeneralDeleteModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    buttonCaption?: string;
+};
+
+export type GeneralDeleteModalButtonProps = {
+    modalProps: GeneralDeleteModalButtonModalProps;
+    buttonProps?: GeneralDeleteModalButtonButtonProps;
+};
+
+type SpecificAddNewModalButtonModalProps = Omit<
+    GeneralAddNewModalButtonModalProps,
+    "ModalBodyComponent" | "modalTitle" | "repository"
+> & {
+    onAddNew: (object: RepositoryDataItem) => void;
+};
+
+type SpecificAddNewModalButtonButtonProps = GeneralAddNewModalButtonButtonProps;
+
+export type SpecificAddNewModalButtonProps = {
+    modalProps: SpecificAddNewModalButtonModalProps;
+    buttonProps?: SpecificAddNewModalButtonButtonProps;
+};
+
+type SpecificEditModalButtonModalProps = Omit<
+    GeneralEditModalButtonModalProps,
+    "ModalBodyComponent" | "modalTitle" | "repository"
+> & {
+    onEdit: (object: RepositoryDataItem) => void;
+    initialData: RepositoryDataItem;
+};
+
+type SpecificEditModalButtonButtonProps = GeneralEditModalButtonButtonProps;
+
+export type SpecificEditModalButtonProps = {
+    modalProps: SpecificEditModalButtonModalProps;
+    buttonProps?: SpecificEditModalButtonButtonProps;
+};
+
+type SpecificDeleteModalButtonModalProps = Omit<
+    GeneralDeleteModalButtonModalProps,
+    "onIsReadyChange" | "ModalBodyComponent" | "modalTitle" | "repository"
+> & {
+    onDelete: (objectId: number) => void;
+    initialData: RepositoryDataItem;
+};
+
+type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;
+
+export type SpecificDeleteModalButtonProps = {
+    modalProps: SpecificDeleteModalButtonModalProps;
+    buttonProps?: SpecificDeleteModalButtonButtonProps;
+};
+
 
 export type additionalFieldsKeysValue = {
     name: string;

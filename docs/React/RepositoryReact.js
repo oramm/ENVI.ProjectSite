@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
-const Tools_1 = __importDefault(require("./Tools"));
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -98,62 +97,24 @@ class RepositoryReact {
         this.addToCurrentItems(dataItem.id);
         console.log('%s:: wykonano funkcję: %o', this.name, dataItem);
     }
+    /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem) {
-        const newItemTmpId = this.items.length + 1 + '_pending';
-        newItem._tmpId = newItemTmpId;
-        const noBlobNewItem = { ...newItem };
-        delete noBlobNewItem._blobEnviObjects;
-        //this.currentItem = noBlobNewItem;
-        //wstaw roboczy obiekt do repozytorium, żeby obsłużyć widok
-        this.items.push(noBlobNewItem);
-        try {
-            let newItemFromServer = await this.addNewItemResponseHandlerNodeJS(newItem);
-            return this.addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer);
-        }
-        catch (err) {
-            if (err instanceof Error) {
-                this.addNewItemViewOnErrorHandler(newItemTmpId, noBlobNewItem, err);
-                throw (err);
-            }
-        }
-        ;
-    }
-    //https://github.com/expressjs/session/issues/374#issuecomment-279653974
-    async addNewItemResponseHandlerNodeJS(item) {
-        const result = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
+        const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
-            body: JSON.stringify(item)
+            body: JSON.stringify(newItem)
         });
-        const resultText = await result.json();
-        if (resultText.authorizeUrl)
-            window.open(resultText.authorizeUrl);
-        else {
-            const parsedResult = Tools_1.default.tryParseJSONObject(resultText);
-            if (parsedResult)
-                return parsedResult;
-            else
-                return resultText;
-        }
-    }
-    addNewItemViewOnSuccessHandler(newItemTmpId, newItemFromServer) {
-        //usuń z repozytorium tymczasowy obiekt
-        const index = this.items.findIndex((item) => item._tmpId == newItemTmpId);
-        console.log('usuwam obiekt tymczasowy, jego _parent: %o', this.items[index]._parent);
-        this.items.splice(index, 1);
-        //wstaw do repozytorium nowy obiekt z serwera
-        this.clientSideAddNewItemHandler(newItemFromServer);
-        //atrybut '_tmpId' jest potrzebny do obsłużenia viewObject
-        newItemFromServer._tmpId = newItemTmpId;
+        const newItemFromServer = await rawResult.json();
+        if (newItemFromServer.authorizeUrl)
+            window.open(newItemFromServer.authorizeUrl);
+        const noBlobNewItem = { ...newItemFromServer };
+        delete noBlobNewItem._blobEnviObjects;
+        this.items.push(noBlobNewItem);
+        this.currentItems = [newItemFromServer];
         return newItemFromServer;
     }
-    addNewItemViewOnErrorHandler(newItemTmpId, newItem, err) {
-        //usuń z repozytorium tymczasowy obiekt
-        var index = this.items.findIndex((item) => item._tmpid == newItemTmpId);
-        this.items.splice(index, 1);
-    }
-    /**edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
+    /**Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
      * @param item obiekt do edycji
     */
@@ -165,8 +126,11 @@ class RepositoryReact {
             body: JSON.stringify(item)
         });
         const resultObject = await resultRawResponse.json();
-        if (resultObject.authorizeUrl)
+        if (resultObject.authorizeUrl) {
             window.open(resultObject.authorizeUrl);
+            console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
+            return item;
+        }
         this.replaceItemById(resultObject.id, resultObject);
         this.replaceCurrentItemById(resultObject.id, resultObject);
         console.log('obiekt po edycji z serwera: %o', resultObject);

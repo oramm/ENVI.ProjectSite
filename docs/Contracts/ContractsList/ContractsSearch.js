@@ -34,8 +34,7 @@ const ContractsController_1 = __importDefault(require("./ContractsController"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
-const OurContractModalBody_1 = require("./OurContractModalBody");
-const OtherContractModalBody_1 = require("./OtherContractModalBody");
+const ContractModalBody_1 = require("./ContractModalBody");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -85,8 +84,7 @@ function ContractsSearch({ title }) {
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
-    async function handleDeleteObject(objectId) {
-        await exports.contractsRepository.deleteItemNodeJS(objectId);
+    function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
     }
     function handleRowClick(id) {
@@ -94,7 +92,7 @@ function ContractsSearch({ title }) {
         setActiveRowId(id);
         exports.contractsRepository.addToCurrentItems(id);
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAdd: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
+    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
 }
 exports.default = ContractsSearch;
 function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
@@ -107,7 +105,6 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && dataObject.ourId && (react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
-            onEdit && !dataObject.ourId && (react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { onEdit: onEdit, ModalBodyComponent: OurContractModalBody_1.OurContractModalBody, onIsReadyChange: onIsReadyChange, initialData: dataObject })),
-            onDelete && (react_1.default.createElement(react_bootstrap_1.Button, { onClick: (e) => onDelete(dataObject.id), variant: "danger" }, "Delete")))));
+            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
+            onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
 }

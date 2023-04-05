@@ -26,12 +26,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EditModalButton = exports.GeneralModal = void 0;
+exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = exports.GeneralModal = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const Tools_1 = __importDefault(require("../React/Tools"));
-function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
+const CommonComponents_1 = require("./Resultsets/CommonComponents");
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
     let additionalFieldsKeysValues = [];
+    let newObject;
     async function handleSubmit(e) {
         e.preventDefault();
         onIsReadyChange(false);
@@ -45,22 +47,25 @@ function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange
         onIsReadyChange(true);
     }
     ;
+    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
     function handleAdditionalFieldsKeysValues(values) {
-        additionalFieldsKeysValues = values;
-        //if (modalBodyProps.onAdditionalFieldsKeysValuesChange)
-        //    modalBodyProps.onAdditionalFieldsKeysValuesChange(values);
+        additionalFieldsKeysValues = [...values];
     }
     async function handleEdit(formData) {
-        const currentContract = { ...repository.currentItems[0] };
-        const editedObject = Tools_1.default.updateObject(formData, currentContract);
+        const currentDataItem = { ...repository.currentItems[0] };
+        const editedObject = Tools_1.default.updateObject(formData, currentDataItem);
         await repository.editItemNodeJS(editedObject);
         if (onEdit)
             onEdit(editedObject);
     }
     ;
     async function handleAdd(formData) {
+        newObject = await repository.addNewItemNodeJS(newObject);
+        if (onAddNew)
+            onAddNew(newObject);
     }
     ;
+    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
             react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
@@ -72,15 +77,66 @@ function GeneralModal({ show, title, isEditing, onEdit, onClose, onIsReadyChange
                 react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
-function EditModalButton({ onEdit, onIsReadyChange, ModalBodyComponent, title, initialData, repository, }) {
+function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
+    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
-    const handleOpen = () => setShowForm(true);
-    const handleClose = () => setShowForm(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleOpen }, "Edytuj"),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: title, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
+                additionalProps: additionalModalBodyProps,
             } })));
 }
-exports.EditModalButton = EditModalButton;
+exports.GeneralEditModalButton = GeneralEditModalButton;
+/** Wyświetla przycisk i przypięty do niego modal
+ * @param modalProps - właściwości modalu
+ * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+ * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym
+ * - ModalBodyComponent - komponent wyświetlany w modalu
+ * - właściwości modalu
+ * @param buttonProps - właściwości przycisku
+ *
+ */
+function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+                isEditing: false,
+                additionalProps: additionalModalBodyProps,
+            } })));
+}
+exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
+function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps = {}, }) {
+    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    async function handleDelete() {
+        await repository.deleteItemNodeJS(initialData.id);
+        onDelete(initialData.id);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData.name}?` })));
+}
+exports.GeneralDeleteModalButton = GeneralDeleteModalButton;

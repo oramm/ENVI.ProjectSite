@@ -6,9 +6,10 @@ import MainSetup from '../../React/MainSetupReact';
 import { ContractTypeSelectFormElement, MyAsyncTypeahead } from '../../View/Resultsets/CommonComponents';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import ToolsDate from '../../React/ToolsDate';
-import { EditModalButton } from '../../View/GeneralModal';
+import { GeneralDeleteModalButton, GeneralEditModalButton } from '../../View/GeneralModal';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton } from './OtherContractModalBody';
+import { ContractDeleteModalButton, ContractEditModalButton } from './ContractModalBody';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;
@@ -85,8 +86,7 @@ export default function ContractsSearch({ title }: { title: string }) {
         setObjects([...objects, object]);
     }
 
-    async function handleDeleteObject(objectId: number) {
-        await contractsRepository.deleteItemNodeJS(objectId);
+    function handleDeleteObject(objectId: number) {
         setObjects(objects.filter((o) => o.id !== objectId));
     }
 
@@ -100,7 +100,7 @@ export default function ContractsSearch({ title }: { title: string }) {
         <FilteredTable
             objects={objects}
             onSubmitSearch={handleSubmitSearch}
-            onAdd={handleAddObject}
+            onAddNew={handleAddObject}
             onEdit={handleEditObject}
             onDelete={handleDeleteObject}
             onIsReadyChange={setIsReady}
@@ -125,24 +125,17 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         <td>{dataObject.endDate}</td>
         {isActive && (
             <td>
-                {onEdit && dataObject.ourId && (
-                    <OurContractEditModalButton
-                        onEdit={onEdit}
-                        ModalBodyComponent={OurContractModalBody}
-                        onIsReadyChange={onIsReadyChange}
-                        initialData={dataObject}
-                    />
-                )}
-                {onEdit && !dataObject.ourId && (
-                    <OtherContractEditModalButton
-                        onEdit={onEdit}
-                        ModalBodyComponent={OurContractModalBody}
-                        onIsReadyChange={onIsReadyChange}
-                        initialData={dataObject}
+                {onEdit && (
+                    <ContractEditModalButton
+                        modalProps={{ onEdit, onIsReadyChange, initialData: dataObject, }}
+                        isOurContract={dataObject.ourId.length > 1}
                     />
                 )}
                 {onDelete && (
-                    <Button onClick={(e) => onDelete(dataObject.id)} variant="danger">Delete</Button>
+                    <ContractDeleteModalButton
+                        modalProps={{ onDelete, initialData: dataObject }}
+
+                    />
                 )}
             </td>
         )}

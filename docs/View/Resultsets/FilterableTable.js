@@ -7,19 +7,25 @@ exports.TableTitle = exports.handleSubmitFilterableTable = void 0;
 const react_1 = __importDefault(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const react_bootstrap_1 = require("react-bootstrap");
-function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsReadyChange, onAdd, objects, isReady, activeRowId, onRowClick: onRowClick, tableHeaders, rowRenderer }) {
+const OtherContractModalBody_1 = require("../../Contracts/ContractsList/OtherContractModalBody");
+const OurContractModalBody_1 = require("../../Contracts/ContractsList/OurContractModalBody");
+function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsReadyChange = () => { }, onAddNew, objects, isReady, activeRowId, onRowClick, tableHeaders, rowRenderer }) {
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(TableTitle, { title: title }))),
+                react_1.default.createElement(TableTitle, { title: title })),
+            onAddNew &&
+                react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                        react_1.default.createElement(OtherContractModalBody_1.OtherContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } }),
+                        ' ',
+                        react_1.default.createElement(OurContractModalBody_1.OurContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } })))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null,
-                " ",
-                react_1.default.createElement(FilterPanel, { filters: filters, onSubmit: onSubmitSearch }))),
+            react_1.default.createElement(FilterPanel, { filters: filters, onSubmit: onSubmitSearch })),
         !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement("progress", { style: { height: "5px" } })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAdd: onAdd }))))));
+            react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew }))))));
 }
 exports.default = FilteredTable;
 function FilterPanel({ filters, onSubmit }) {
@@ -43,7 +49,7 @@ async function handleSubmitFilterableTable(e, repository, additionalParameters) 
     return await repository.loadItemsfromServer(formData);
 }
 exports.handleSubmitFilterableTable = handleSubmitFilterableTable;
-function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRenderer, onIsReadyChange, onEdit, onDelete, onAdd }) {
+function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRenderer, onIsReadyChange, onEdit, onDelete, onAddNew }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
@@ -56,7 +62,7 @@ function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRen
                 onIsReadyChange,
                 onEdit,
                 onDelete,
-                onAdd
+                onAddNew
             })));
         }))));
 }

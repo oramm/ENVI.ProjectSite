@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -148,3 +148,49 @@ function SpinnerBootstrap() {
     return (react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "success" }));
 }
 exports.SpinnerBootstrap = SpinnerBootstrap;
+const AlertComponent = ({ message, type, timeout = 3000 }) => {
+    const [show, setShow] = (0, react_1.useState)(true);
+    (0, react_1.useEffect)(() => {
+        const timer = setTimeout(() => {
+            setShow(false);
+        }, timeout);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [timeout]);
+    if (!show) {
+        return null;
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: type, onClose: () => setShow(false), dismissible: true }, message));
+};
+function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
+    const [isWaiting, setIsWaiting] = (0, react_1.useState)(false);
+    const [isError, setIsError] = (0, react_1.useState)(false);
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    async function handleConfirmAndClose() {
+        setIsWaiting(true);
+        try {
+            await onConfirm();
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                setIsError(true);
+                setErrorMessage(e.message);
+            }
+            console.log(e);
+        }
+        setIsWaiting(false);
+        onClose();
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose },
+        react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+        react_1.default.createElement(react_bootstrap_1.Modal.Body, null, prompt),
+        react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleConfirmAndClose },
+                "Ok",
+                isWaiting && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "grow", size: "sm", role: "status", "aria-hidden": "true" })),
+            isError && (react_1.default.createElement(AlertComponent, { message: errorMessage, type: 'danger', timeout: 5000 })))));
+}
+exports.ConfirmModal = ConfirmModal;
