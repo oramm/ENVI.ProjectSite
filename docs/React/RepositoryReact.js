@@ -8,7 +8,7 @@ class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
         this.isMultiSelect = false;
-        console.log('tworzę repozytorium: %o', initParameter);
+        //console.log('tworzę repozytorium: %o', initParameter);
         this.name = initParameter.name;
         this.actionRoutes = initParameter.actionRoutes;
         this.items = [];
@@ -99,6 +99,32 @@ class RepositoryReact {
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem) {
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+        };
+        if (newItem instanceof FormData) {
+            requestOptions.body = newItem;
+        }
+        else {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                ['Content-Type']: 'application/json',
+            };
+            requestOptions.body = JSON.stringify(newItem);
+        }
+        const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
+        const newItemFromServer = await rawResult.json();
+        if (newItemFromServer.authorizeUrl)
+            window.open(newItemFromServer.authorizeUrl);
+        const noBlobNewItem = { ...newItemFromServer };
+        delete noBlobNewItem._blobEnviObjects;
+        this.items.push(noBlobNewItem);
+        this.currentItems = [newItemFromServer];
+        return newItemFromServer;
+    }
+    /** Dodaje obiekt do bazy danych i do repozytorium */
+    async addNewItemReact(newItem) {
         const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
             method: 'POST',
             headers: this.makeRequestHeaders(),

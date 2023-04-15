@@ -21,6 +21,7 @@ export default function ContractsSearch({ title }: { title: string }) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [projects, setProjects] = useState([] as RepositoryDataItem[]);
+    const [type, setType] = useState<RepositoryDataItem>();
 
     const filters = [
         <Form.Group>
@@ -57,7 +58,10 @@ export default function ContractsSearch({ title }: { title: string }) {
             />
         </Form.Group>,
 
-        <ContractTypeSelectFormElement onChange={(e) => { }} />
+        <ContractTypeSelectFormElement
+            selectedRepositoryItems={type ? [type] : []}
+            onChange={(selectedTypes) => { setType(selectedTypes[0]) }}
+        />
     ];
 
     async function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {

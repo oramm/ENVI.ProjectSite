@@ -32,24 +32,63 @@ const react_bootstrap_1 = require("react-bootstrap");
 const Tools_1 = __importDefault(require("../React/Tools"));
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
-    let additionalFieldsKeysValues = [];
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [validationArray, setValidationArray] = (0, react_1.useState)([]);
+    const [isSubmitEnabled, setIsSubmitEnabled] = (0, react_1.useState)(false);
+    const additionalFieldsKeysValues = (0, react_1.useRef)([]);
     let newObject;
+    function handleValidationChange(fieldName, isValid) {
+        // Aktualizuj tablicę walidacji
+        setValidationArray((prevState) => {
+            const newArray = [...prevState];
+            const existingIndex = newArray.findIndex((item) => item.name === fieldName);
+            if (existingIndex !== -1) {
+                newArray[existingIndex].isValid = isValid;
+            }
+            else {
+                newArray.push({ name: fieldName, isValid });
+            }
+            return newArray;
+        });
+        // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
+        setIsSubmitEnabled(validationArray.every((item) => item.isValid));
+    }
     async function handleSubmit(e) {
-        e.preventDefault();
-        onIsReadyChange(false);
-        e.stopPropagation();
-        const formData = new FormData(e.target);
-        if (additionalFieldsKeysValues)
-            for (const keyValue of additionalFieldsKeysValues)
-                formData.append(keyValue.name, keyValue.value);
-        (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
-        onClose();
-        onIsReadyChange(true);
+        try {
+            setErrorMessage('');
+            e.preventDefault();
+            onIsReadyChange(false);
+            e.stopPropagation();
+            const formData = new FormData(e.target);
+            if (additionalFieldsKeysValues)
+                for (const keyValue of additionalFieldsKeysValues.current)
+                    formData.append(keyValue.name, keyValue.value);
+            (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
+            onClose();
+            onIsReadyChange(true);
+        }
+        catch (error) {
+            if (error instanceof Error)
+                setErrorMessage(error.message);
+        }
     }
     ;
-    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
     function handleAdditionalFieldsKeysValues(values) {
-        additionalFieldsKeysValues = [...values];
+        console.log('In handleAdditionalFieldsKeysValues:', values);
+        const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
+        values.forEach((newValue) => {
+            // Sprawdź, czy istnieje element o takim samym atrybucie 'name' w tablicy
+            const existingIndex = newAdditionalFieldsKeysValues.findIndex((item) => item.name === newValue.name);
+            // Jeśli element istnieje, zaktualizuj wartość; w przeciwnym razie dodaj nowy element
+            if (existingIndex !== -1) {
+                newAdditionalFieldsKeysValues[existingIndex].value = newValue.value;
+            }
+            else {
+                newAdditionalFieldsKeysValues.push(newValue);
+            }
+        });
+        additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
+        console.log('handleAdditionalFieldsKeysValues', newAdditionalFieldsKeysValues);
     }
     async function handleEdit(formData) {
         const currentDataItem = { ...repository.currentItems[0] };
@@ -60,21 +99,21 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
     }
     ;
     async function handleAdd(formData) {
-        newObject = await repository.addNewItemNodeJS(newObject);
+        newObject = await repository.addNewItemNodeJS(formData);
         if (onAddNew)
             onAddNew(newObject);
     }
     ;
-    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
             react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
                 react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
             react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues })),
+                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
+                react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, "Zatwierd\u017A")))));
+                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isSubmitEnabled }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
 function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {

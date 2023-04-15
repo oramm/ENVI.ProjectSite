@@ -7,23 +7,62 @@ import { RenderMenuItemChildren } from 'react-bootstrap-typeahead/types/componen
 import MainSetup from '../../React/MainSetupReact';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
 
+type ContractTypeSelectFormElementProps = {
+    onChange: (selectedRepositoryItems: RepositoryDataItem[]) => void,
+    selectedRepositoryItems: RepositoryDataItem[],
+    typesToInclude?: 'our' | 'other' | 'all'
+    isValid?: boolean,
+    isInvalid?: boolean,
+}
+
 /** Pole wyboru typu kontraktu */
-export function ContractTypeSelectFormElement({ onChange, value }: { onChange: React.ChangeEventHandler<HTMLInputElement>, value?: number }) {
+export function ContractTypeSelectFormElement({
+    onChange,
+    selectedRepositoryItems,
+    typesToInclude = 'all',
+    isInvalid,
+    isValid
+}: ContractTypeSelectFormElementProps) {
+    const label = 'Typ Kontraktu';
+    const repository = MainSetup.contractTypesRepository;
+    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
+
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === 'all') return true;
+            if (typesToInclude === 'our' && item.isOur) return true;
+            if (typesToInclude === 'other' && !item.isOur) return true;
+            return false;
+        });
+
+        const options = filteredItems.map((item) => {
+            return { label: `${item.name}`, value: item.id }
+        });
+        return options;
+    }
+
+    function handleOnChange(selectedItems: unknown[]) {
+        const selectedRepositoryItems = (selectedItems as { label: string, value: number }[])
+            .map((item) => {
+                const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
+                return foundItem;
+            })
+            .filter((item): item is RepositoryDataItem => item !== undefined);
+        onChange(selectedRepositoryItems);
+    }
+
     return (
-        <Form.Group controlId="typeId">
-            <Form.Label>Typ Kontraktu</Form.Label>
-            <Form.Control
-                as="select"
-                name="typeId"
-                onChange={onChange}
-                value={value}
-            >
-                <option value="">-- Wybierz opcję --</option>
-                {MainSetup.contractTypesRepository.items.map((contractType: any) => (
-                    <option key={contractType.id} value={contractType.id}>{contractType.name}</option>
-                ))}
-            </Form.Control>
-        </Form.Group >
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <Typeahead
+                id={label}
+                options={makeoptions(repository.items)}
+                onChange={handleOnChange}
+                selected={makeoptions(selectedRepositoryItems)}
+                placeholder="-- Wybierz typ --"
+                isValid={isValid}
+                isInvalid={isInvalid}
+            />
+        </Form.Group>
     );
 }
 
@@ -37,7 +76,6 @@ type PersonsSelectFormElementProps = {
 
 export function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }: PersonsSelectFormElementProps) {
     function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
-        console.log('makeoptions:: ', repositoryDataItems);
         return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
     }
 
@@ -48,7 +86,6 @@ export function PersonSelectFormElement({ label, onChange, selectedRepositoryIte
                 return foundItem;
             })
             .filter((item): item is RepositoryDataItem => item !== undefined);
-        console.log('onChange(selectedRepositoryItems):: ', selectedItems);
         onChange(selectedRepositoryItems);
     }
 
@@ -75,7 +112,8 @@ type MyAsyncTypeaheadProps = {
     searchKey?: string,
     additionalFieldsKeysValues?: { key: string, value: string }[],
     specialSerwerSearchActionRoute?: string
-    multiple?: boolean
+    multiple?: boolean,
+    isRequired?: boolean;
     renderMenuItemChildren?: RenderMenuItemChildren
 }
 /**
@@ -98,7 +136,8 @@ export function MyAsyncTypeahead({
     additionalFieldsKeysValues = [],
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
-    multiple = false
+    multiple = false,
+    isRequired = false
 }: MyAsyncTypeaheadProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
@@ -140,6 +179,8 @@ export function MyAsyncTypeahead({
             newSelectionPrefix="Dodaj nowy: "
             placeholder="-- Wybierz opcję --"
             renderMenuItemChildren={renderMenuItemChildren}
+            isValid={isRequired && selectedRepositoryItems && selectedRepositoryItems.length > 0}
+            isInvalid={isRequired && (!selectedRepositoryItems || selectedRepositoryItems.length === 0)}
         />
     );
 };
@@ -193,15 +234,57 @@ export function ValueInPLNInput({ value, onChange }: ValueInPLNInputProps) {
     };
 
     return (
-        <Form.Group controlId="valueInPLN">
-            <Form.Label>Wartość w PLN</Form.Label>
+        <Form.Control
+            type="text"
+            name="value"
+            value={value}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            ref={inputRef}
+        />
+    );
+}
+
+type FileInputProps = {
+    fieldName: string;
+    isRequired?: boolean;
+    acceptedFileTypes?: string;
+}
+
+/**Pole dodawania plików
+ * @param fieldName nazwa pola w formularzu
+ * @param isRequired czy pole jest wymagane
+ * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
+ * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
+ */
+export function FileInput({
+    fieldName,
+    isRequired = false,
+    acceptedFileTypes = '',
+}: FileInputProps) {
+    const [file, setFile] = useState<File | null>(null);
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files && event.target.files[0];
+
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFile(selectedFile);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    };
+
+    return (
+        <Form.Group>
+            <Form.Label>Wybierz plik</Form.Label>
             <Form.Control
-                type="text"
-                name="value"
-                value={value}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                ref={inputRef}
+                type="file"
+                name={fieldName}
+                onChange={handleFileChange}
+                required={isRequired}
+                accept={acceptedFileTypes}
             />
         </Form.Group>
     );

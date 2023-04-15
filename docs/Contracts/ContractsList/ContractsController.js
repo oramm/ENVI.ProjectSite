@@ -16,7 +16,7 @@ ContractsController.statusNames = [
 ContractsController.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
-        addNewRoute: 'contract',
+        addNewRoute: 'contractReact',
         editRoute: 'contract',
         deleteRoute: 'contract'
     },

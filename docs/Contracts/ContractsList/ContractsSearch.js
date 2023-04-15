@@ -44,6 +44,7 @@ function ContractsSearch({ title }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [projects, setProjects] = (0, react_1.useState)([]);
+    const [type, setType] = (0, react_1.useState)();
     const filters = [
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
@@ -57,7 +58,7 @@ function ContractsSearch({ title }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
             react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
-        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { onChange: (e) => { } })
+        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => { setType(selectedTypes[0]); } })
     ];
     async function handleSubmitSearch(e) {
         const additionalSearchCriteria = [];

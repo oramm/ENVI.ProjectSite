@@ -26,24 +26,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
 require("react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 /** Pole wyboru typu kontraktu */
-function ContractTypeSelectFormElement({ onChange, value }) {
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "typeId" },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Typ Kontraktu"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "typeId", onChange: onChange, value: value },
-            react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-            MainSetupReact_1.default.contractTypesRepository.items.map((contractType) => (react_1.default.createElement("option", { key: contractType.id, value: contractType.id }, contractType.name))))));
+function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid }) {
+    const label = 'Typ Kontraktu';
+    const repository = MainSetupReact_1.default.contractTypesRepository;
+    function makeoptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === 'all')
+                return true;
+            if (typesToInclude === 'our' && item.isOur)
+                return true;
+            if (typesToInclude === 'other' && !item.isOur)
+                return true;
+            return false;
+        });
+        const options = filteredItems.map((item) => {
+            return { label: `${item.name}`, value: item.id };
+        });
+        return options;
+    }
+    function handleOnChange(selectedItems) {
+        const selectedRepositoryItems = selectedItems
+            .map((item) => {
+            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
+            return foundItem;
+        })
+            .filter((item) => item !== undefined);
+        onChange(selectedRepositoryItems);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
 function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }) {
     function makeoptions(repositoryDataItems) {
-        console.log('makeoptions:: ', repositoryDataItems);
         return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
     }
     function handleOnChange(selectedItems) {
@@ -53,7 +76,6 @@ function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, rep
             return foundItem;
         })
             .filter((item) => item !== undefined);
-        console.log('onChange(selectedRepositoryItems):: ', selectedItems);
         onChange(selectedRepositoryItems);
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
@@ -72,7 +94,7 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
 */
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false }) {
+function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
@@ -95,7 +117,7 @@ function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, label
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren }));
+    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && selectedRepositoryItems && selectedRepositoryItems.length > 0, isInvalid: isRequired && (!selectedRepositoryItems || selectedRepositoryItems.length === 0) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -135,11 +157,32 @@ function ValueInPLNInput({ value, onChange }) {
         onChange(formatValue(value));
     }
     ;
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 w PLN"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef })));
+    return (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef }));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
+/**Pole dodawania plików
+ * @param fieldName nazwa pola w formularzu
+ * @param isRequired czy pole jest wymagane
+ * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
+ * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
+ */
+function FileInput({ fieldName, isRequired = false, acceptedFileTypes = '', }) {
+    const [file, setFile] = (0, react_1.useState)(null);
+    const handleFileChange = (event) => {
+        const selectedFile = event.target.files && event.target.files[0];
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFile(selectedFile);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    };
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz plik"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", name: fieldName, onChange: handleFileChange, required: isRequired, accept: acceptedFileTypes })));
+}
+exports.FileInput = FileInput;
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }

@@ -66033,8 +66033,7 @@ const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-function ContractModalBody({ isEditing, initialData }) {
-    const [typeId, setTypeId] = (0, react_1.useState)(initialData?.typeId || 0);
+function ContractModalBody({ isEditing, initialData, onValidationChange }) {
     const [name, setName] = (0, react_1.useState)(initialData?.name || '');
     const [alias, setAlias] = (0, react_1.useState)(initialData?.alias || '');
     const [comment, setComment] = (0, react_1.useState)(initialData?.comment || '');
@@ -66042,34 +66041,108 @@ function ContractModalBody({ isEditing, initialData }) {
     const [status, setStatus] = (0, react_1.useState)(initialData?.status || '');
     const [startDate, setStartDate] = (0, react_1.useState)(initialData?.startDate || new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = (0, react_1.useState)(initialData?.endDate || new Date().toISOString().slice(0, 10));
+    const [isNameValid, setIsNameValid] = (0, react_1.useState)(initialData?.name ? true : false);
+    const [isAliasValid, setIsAliasValid] = (0, react_1.useState)(initialData?.alias ? true : false);
+    const [isCommentValid, setIsCommentValid] = (0, react_1.useState)(initialData?.comment ? true : false);
+    const [isValueInPLNValid, setIsValueInPLNValid] = (0, react_1.useState)(initialData?.value ? true : false);
+    const [isStatusValid, setIsStatusValid] = (0, react_1.useState)(initialData?.status ? true : false);
+    const [isStartDateValid, setIsStartDateValid] = (0, react_1.useState)(initialData?.startDate ? true : false);
+    const [isEndDateValid, setIsEndDateValid] = (0, react_1.useState)(initialData?.endDate ? true : false);
+    function handleNameChange(e) {
+        const value = e.target.value;
+        const validationFormula = value.length >= 3 && value.length <= 50;
+        setName(value);
+        setIsNameValid(validationFormula);
+        if (onValidationChange)
+            onValidationChange('name', validationFormula);
+    }
+    ;
+    function handleAliasChange(e) {
+        const value = e.target.value;
+        const validationFormula = value.length <= 30;
+        setAlias(value);
+        setIsAliasValid(validationFormula);
+        if (onValidationChange)
+            onValidationChange('alias', validationFormula);
+    }
+    ;
+    //dodaj hadnleCHange dla pozostałych pól:
+    function handleCommentChange(e) {
+        const value = e.target.value;
+        const validationFormula = value.length <= 100;
+        setComment(value);
+        setIsCommentValid(validationFormula);
+        if (onValidationChange)
+            onValidationChange('comment', validationFormula);
+    }
+    ;
+    function handleValueInPLNChange(value) {
+        const validationFormula = value.length <= 100;
+        setValueInPLN(value);
+        setIsValueInPLNValid(validationFormula);
+        if (onValidationChange)
+            onValidationChange('value', validationFormula);
+    }
+    ;
+    function handleStatusChange(e) {
+        const value = e.target.value;
+        const validationFormula = value.length > 0;
+        setStatus(value);
+        setIsStatusValid(validationFormula);
+        if (onValidationChange)
+            onValidationChange('status', validationFormula);
+    }
+    ;
+    function handleStartDateChange(e) {
+        const value = e.target.value;
+        const endDate = new Date(value);
+        const start = new Date(startDate);
+        const validationFormula = value.length > 0 && endDate >= start;
+        setStartDate(value);
+        setIsStartDateValid(validationFormula);
+        setIsEndDateValid(validationFormula);
+        if (onValidationChange) {
+            onValidationChange('startDate', validationFormula);
+            onValidationChange('endDate', validationFormula);
+        }
+    }
+    ;
+    function handleEndDateChange(e) {
+        const value = e.target.value;
+        const endDate = new Date(value);
+        const start = new Date(startDate);
+        const validationFormula = value.length > 0 && endDate >= start;
+        setEndDate(value);
+        setIsEndDateValid(validationFormula);
+        setIsStartDateValid(validationFormula);
+        if (onValidationChange) {
+            onValidationChange('endDate', validationFormula);
+            onValidationChange('startDate', validationFormula);
+        }
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        (isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { value: typeId, onChange: (e) => {
-                    setTypeId(parseInt(e.target.value));
-                    console.log(e.target.value);
-                } })
-            : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "name", placeholder: "Podaj nazw\u0119", value: name, onChange: (e) => setName(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "name", placeholder: "Podaj nazw\u0119", value: name, onChange: handleNameChange, isInvalid: !isNameValid, isValid: isNameValid }),
+            !isNameValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Nazwa musi zawiera\u0107 od 3 do 50 znak\u00F3w."))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: alias, onChange: (e) => setAlias(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: alias, onChange: handleAliasChange, isInvalid: !isAliasValid, isValid: isAliasValid })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: comment, onChange: (e) => setComment(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: comment, onChange: handleCommentChange, isInvalid: !isCommentValid, isValid: isCommentValid })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: setValueInPLN, value: valueInPLN })),
+            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: handleValueInPLNChange, value: valueInPLN })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: (e) => setStartDate(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: handleStartDateChange, isInvalid: !isStartDateValid, isValid: isStartDateValid })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: (e) => setEndDate(e.target.value) })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: handleEndDateChange, isInvalid: !isEndDateValid, isValid: isEndDateValid })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "status", onChange: (e) => setStatus(e.target.value), value: status },
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "status", onChange: handleStatusChange, value: status, isInvalid: !isStatusValid, isValid: isStatusValid },
                 react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
                 ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))))));
 }
@@ -66080,21 +66153,31 @@ exports.ContractModalBody = ContractModalBody;
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  *
  */
-function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps }) {
-    console.log('ProProjectSelectorModalBody props:: ', additionalProps);
+function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }) {
     const [projects, setProjects] = (0, react_1.useState)([]);
     const [selected, setSelected] = (0, react_1.useState)(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
+    (0, react_1.useEffect)(() => {
+        if (projects.length > 0) {
+            const additionalFieldsKeysValues = [
+                { name: '_parent', value: JSON.stringify(projects[0]) }
+            ];
+            if (!onAdditionalFieldsKeysValuesChange)
+                throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
+            onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
+        }
+    }, [projects, selected]);
     const handleProjectSelection = (currentSelectedItems) => {
+        //setProjects(prevProjects => currentSelectedItems);
         setProjects(currentSelectedItems);
         setSelected(currentSelectedItems.length > 0);
     };
-    return (react_1.default.createElement(react_1.default.Fragment, null, selected ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, projectOurId: projects[0].ourId })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+    return (react_1.default.createElement(react_1.default.Fragment, null, selected ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, projectOurId: projects[0].ourId, onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, selectedRepositoryItems: projects, onChange: handleProjectSelection, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })))));
+        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, selectedRepositoryItems: projects, onChange: handleProjectSelection, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -66145,7 +66228,7 @@ ContractsController.statusNames = [
 ContractsController.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
-        addNewRoute: 'contract',
+        addNewRoute: 'contractReact',
         editRoute: 'contract',
         deleteRoute: 'contract'
     },
@@ -66226,6 +66309,7 @@ function ContractsSearch({ title }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [projects, setProjects] = (0, react_1.useState)([]);
+    const [type, setType] = (0, react_1.useState)();
     const filters = [
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
@@ -66239,7 +66323,7 @@ function ContractsSearch({ title }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
             react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
-        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { onChange: (e) => { } })
+        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => { setType(selectedTypes[0]); } })
     ];
     async function handleSubmitSearch(e) {
         const additionalSearchCriteria = [];
@@ -66343,6 +66427,7 @@ function OtherContractModalBody(props) {
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId)
         throw new Error('OtherContractModalBody:: project is not defined');
+    const [type, setType] = (0, react_1.useState)(initialData?._type);
     const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
     const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
@@ -66351,14 +66436,23 @@ function OtherContractModalBody(props) {
     });
     (0, react_1.useEffect)(() => {
         const additionalFieldsKeysValues = [
-            { name: '_contractors', value: JSON.stringify(selectedContractors) }
+            { name: '_type', value: JSON.stringify(type) },
+            { name: '_contractors', value: JSON.stringify(selectedContractors) },
+            { name: '_ourContract', value: JSON.stringify(selectedOurContracts[0]) }
         ];
         //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
         if (!props.onAdditionalFieldsKeysValuesChange)
             throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedContractors, props]);
+    }, [selectedContractors, selectedOurContracts, props]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        " ",
+        (!props.isEditing) ?
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other', selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => {
+                    console.log('selectedTypes', selectedTypes);
+                    setType(selectedTypes[0]);
+                } })
+            : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
@@ -66449,25 +66543,44 @@ function OurContractModalBody(props) {
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId)
         throw new Error('OtherContractModalBody:: project is not defined');
+    const [type, setType] = (0, react_1.useState)(initialData?._type);
     const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
+    const [isTypeValid, setIsTypeValid] = (0, react_1.useState)(initialData?._type ? true : false);
+    const [isAdminsValid, setIsAdminValid] = (0, react_1.useState)(initialData?._admin ? true : false);
+    const [isManagersValid, setIsManagersValid] = (0, react_1.useState)(initialData?._manager ? true : false);
     (0, react_1.useEffect)(() => {
         const additionalFieldsKeysValues = [
+            { name: '_type', value: JSON.stringify(type) },
             { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
             { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange)
             throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, props]);
+    }, [selectedAdmins, selectedManagers, type, props.onAdditionalFieldsKeysValuesChange]);
+    //dodaj hadnleCHange dla pozostałych pól:
+    function handleTypeChange(selectedItems) {
+        const validationFormula = selectedItems.length > 0;
+        setType(selectedItems[0]);
+        setIsTypeValid(validationFormula);
+        console.log('selectedTypes', selectedItems);
+        if (props.onValidationChange)
+            props.onValidationChange('type', validationFormula);
+    }
+    ;
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        (!props.isEditing) ?
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', selectedRepositoryItems: type ? [type] : [], onChange: handleTypeChange, isInvalid: !isTypeValid, isValid: isTypeValid })
+            : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "manager" },
             react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: selectedManagers, onChange: (currentSelectedItems) => {
                     setSelectedManagers(currentSelectedItems);
                 }, repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository }))));
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository })),
+        react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
 function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData, }, }) {
@@ -66679,7 +66792,7 @@ class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
         this.isMultiSelect = false;
-        console.log('tworzę repozytorium: %o', initParameter);
+        //console.log('tworzę repozytorium: %o', initParameter);
         this.name = initParameter.name;
         this.actionRoutes = initParameter.actionRoutes;
         this.items = [];
@@ -66770,6 +66883,32 @@ class RepositoryReact {
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem) {
+        const requestOptions = {
+            method: 'POST',
+            credentials: 'include',
+        };
+        if (newItem instanceof FormData) {
+            requestOptions.body = newItem;
+        }
+        else {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                ['Content-Type']: 'application/json',
+            };
+            requestOptions.body = JSON.stringify(newItem);
+        }
+        const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
+        const newItemFromServer = await rawResult.json();
+        if (newItemFromServer.authorizeUrl)
+            window.open(newItemFromServer.authorizeUrl);
+        const noBlobNewItem = { ...newItemFromServer };
+        delete noBlobNewItem._blobEnviObjects;
+        this.items.push(noBlobNewItem);
+        this.currentItems = [newItemFromServer];
+        return newItemFromServer;
+    }
+    /** Dodaje obiekt do bazy danych i do repozytorium */
+    async addNewItemReact(newItem) {
         const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
@@ -67274,24 +67413,63 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src/React/Tools.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
-    let additionalFieldsKeysValues = [];
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [validationArray, setValidationArray] = (0, react_1.useState)([]);
+    const [isSubmitEnabled, setIsSubmitEnabled] = (0, react_1.useState)(false);
+    const additionalFieldsKeysValues = (0, react_1.useRef)([]);
     let newObject;
+    function handleValidationChange(fieldName, isValid) {
+        // Aktualizuj tablicę walidacji
+        setValidationArray((prevState) => {
+            const newArray = [...prevState];
+            const existingIndex = newArray.findIndex((item) => item.name === fieldName);
+            if (existingIndex !== -1) {
+                newArray[existingIndex].isValid = isValid;
+            }
+            else {
+                newArray.push({ name: fieldName, isValid });
+            }
+            return newArray;
+        });
+        // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
+        setIsSubmitEnabled(validationArray.every((item) => item.isValid));
+    }
     async function handleSubmit(e) {
-        e.preventDefault();
-        onIsReadyChange(false);
-        e.stopPropagation();
-        const formData = new FormData(e.target);
-        if (additionalFieldsKeysValues)
-            for (const keyValue of additionalFieldsKeysValues)
-                formData.append(keyValue.name, keyValue.value);
-        (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
-        onClose();
-        onIsReadyChange(true);
+        try {
+            setErrorMessage('');
+            e.preventDefault();
+            onIsReadyChange(false);
+            e.stopPropagation();
+            const formData = new FormData(e.target);
+            if (additionalFieldsKeysValues)
+                for (const keyValue of additionalFieldsKeysValues.current)
+                    formData.append(keyValue.name, keyValue.value);
+            (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
+            onClose();
+            onIsReadyChange(true);
+        }
+        catch (error) {
+            if (error instanceof Error)
+                setErrorMessage(error.message);
+        }
     }
     ;
-    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
     function handleAdditionalFieldsKeysValues(values) {
-        additionalFieldsKeysValues = [...values];
+        console.log('In handleAdditionalFieldsKeysValues:', values);
+        const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
+        values.forEach((newValue) => {
+            // Sprawdź, czy istnieje element o takim samym atrybucie 'name' w tablicy
+            const existingIndex = newAdditionalFieldsKeysValues.findIndex((item) => item.name === newValue.name);
+            // Jeśli element istnieje, zaktualizuj wartość; w przeciwnym razie dodaj nowy element
+            if (existingIndex !== -1) {
+                newAdditionalFieldsKeysValues[existingIndex].value = newValue.value;
+            }
+            else {
+                newAdditionalFieldsKeysValues.push(newValue);
+            }
+        });
+        additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
+        console.log('handleAdditionalFieldsKeysValues', newAdditionalFieldsKeysValues);
     }
     async function handleEdit(formData) {
         const currentDataItem = { ...repository.currentItems[0] };
@@ -67302,21 +67480,21 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
     }
     ;
     async function handleAdd(formData) {
-        newObject = await repository.addNewItemNodeJS(newObject);
+        newObject = await repository.addNewItemNodeJS(formData);
         if (onAddNew)
             onAddNew(newObject);
     }
     ;
-    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
             react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
                 react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
             react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues })),
+                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
+                react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary" }, "Zatwierd\u017A")))));
+                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isSubmitEnabled }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
 function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
@@ -67421,24 +67599,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 /** Pole wyboru typu kontraktu */
-function ContractTypeSelectFormElement({ onChange, value }) {
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "typeId" },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Typ Kontraktu"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "typeId", onChange: onChange, value: value },
-            react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-            MainSetupReact_1.default.contractTypesRepository.items.map((contractType) => (react_1.default.createElement("option", { key: contractType.id, value: contractType.id }, contractType.name))))));
+function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid }) {
+    const label = 'Typ Kontraktu';
+    const repository = MainSetupReact_1.default.contractTypesRepository;
+    function makeoptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === 'all')
+                return true;
+            if (typesToInclude === 'our' && item.isOur)
+                return true;
+            if (typesToInclude === 'other' && !item.isOur)
+                return true;
+            return false;
+        });
+        const options = filteredItems.map((item) => {
+            return { label: `${item.name}`, value: item.id };
+        });
+        return options;
+    }
+    function handleOnChange(selectedItems) {
+        const selectedRepositoryItems = selectedItems
+            .map((item) => {
+            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
+            return foundItem;
+        })
+            .filter((item) => item !== undefined);
+        onChange(selectedRepositoryItems);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
 function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }) {
     function makeoptions(repositoryDataItems) {
-        console.log('makeoptions:: ', repositoryDataItems);
         return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
     }
     function handleOnChange(selectedItems) {
@@ -67448,7 +67649,6 @@ function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, rep
             return foundItem;
         })
             .filter((item) => item !== undefined);
-        console.log('onChange(selectedRepositoryItems):: ', selectedItems);
         onChange(selectedRepositoryItems);
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
@@ -67467,7 +67667,7 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
 */
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false }) {
+function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
@@ -67490,7 +67690,7 @@ function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, label
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren }));
+    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && selectedRepositoryItems && selectedRepositoryItems.length > 0, isInvalid: isRequired && (!selectedRepositoryItems || selectedRepositoryItems.length === 0) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -67530,11 +67730,32 @@ function ValueInPLNInput({ value, onChange }) {
         onChange(formatValue(value));
     }
     ;
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 w PLN"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef })));
+    return (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef }));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
+/**Pole dodawania plików
+ * @param fieldName nazwa pola w formularzu
+ * @param isRequired czy pole jest wymagane
+ * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
+ * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
+ */
+function FileInput({ fieldName, isRequired = false, acceptedFileTypes = '', }) {
+    const [file, setFile] = (0, react_1.useState)(null);
+    const handleFileChange = (event) => {
+        const selectedFile = event.target.files && event.target.files[0];
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFile(selectedFile);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    };
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz plik"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", name: fieldName, onChange: handleFileChange, required: isRequired, accept: acceptedFileTypes })));
+}
+exports.FileInput = FileInput;
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }

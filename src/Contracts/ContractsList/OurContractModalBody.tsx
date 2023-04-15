@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, Form, FormControlProps, Row, Col } from 'react-bootstrap';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
-import { PersonSelectFormElement } from '../../View/Resultsets/CommonComponents';
+import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../View/Resultsets/CommonComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
 import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../View/GeneralModal';
 import { contractsRepository, projectsRepository } from './ContractsSearch';
@@ -12,21 +12,47 @@ export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: st
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId) throw new Error('OtherContractModalBody:: project is not defined');
 
+    const [type, setType] = useState<RepositoryDataItem>(initialData?._type);
     const [selectedAdmins, setSelectedAdmins] = useState<RepositoryDataItem[]>(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = useState<RepositoryDataItem[]>(initialData?._manager ? [initialData._manager] : []);
 
-
+    const [isTypeValid, setIsTypeValid] = useState(initialData?._type ? true : false);
+    const [isAdminsValid, setIsAdminValid] = useState(initialData?._admin ? true : false);
+    const [isManagersValid, setIsManagersValid] = useState(initialData?._manager ? true : false);
 
     useEffect(() => {
         const additionalFieldsKeysValues = [
+            { name: '_type', value: JSON.stringify(type) },
             { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
             { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange) throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, props]);
+    }, [selectedAdmins, selectedManagers, type, props.onAdditionalFieldsKeysValuesChange]);
+
+    //dodaj hadnleCHange dla pozostałych pól:
+    function handleTypeChange(selectedItems: RepositoryDataItem[]) {
+        const validationFormula = selectedItems.length > 0;
+        setType(selectedItems[0])
+        setIsTypeValid(validationFormula);
+        console.log('selectedTypes', selectedItems);
+        if (props.onValidationChange)
+            props.onValidationChange('type', validationFormula);
+    };
+
     return (
         <>
+            {
+                (!props.isEditing) ?
+                    <ContractTypeSelectFormElement
+                        typesToInclude='our'
+                        selectedRepositoryItems={type ? [type] : []}
+                        onChange={handleTypeChange}
+                        isInvalid={!isTypeValid}
+                        isValid={isTypeValid}
+                    />
+                    : null
+            }
             <ContractModalBody
                 {...props}
             />
@@ -49,6 +75,10 @@ export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: st
                     repository={MainSetup.personsEnviRepository}
                 />
             </Form.Group>
+            <FileInput
+                fieldName="exampleFile"
+                acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
+            />
         </>
     );
 }

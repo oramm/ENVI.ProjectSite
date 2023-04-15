@@ -12,6 +12,7 @@ export function OtherContractModalBody(props: ModalBodyProps & { projectOurId?: 
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId) throw new Error('OtherContractModalBody:: project is not defined');
 
+    const [type, setType] = useState<RepositoryDataItem>(initialData?._type);
     const [selectedContractors, setSelectedContractors] = useState<RepositoryDataItem[]>(initialData?._contractors ? initialData._contractors : []);
     const [selectedOurContracts, setSelectedOurContracts] = useState<RepositoryDataItem[]>(initialData?._ourContract ? [initialData._ourContract] : []);
 
@@ -22,16 +23,29 @@ export function OtherContractModalBody(props: ModalBodyProps & { projectOurId?: 
 
     useEffect(() => {
         const additionalFieldsKeysValues = [
-            { name: '_contractors', value: JSON.stringify(selectedContractors) }
+            { name: '_type', value: JSON.stringify(type) },
+            { name: '_contractors', value: JSON.stringify(selectedContractors) },
+            { name: '_ourContract', value: JSON.stringify(selectedOurContracts[0]) }
         ];
         //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
         if (!props.onAdditionalFieldsKeysValuesChange) throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedContractors, props]);
+    }, [selectedContractors, selectedOurContracts, props]);
 
 
     return (
-        <>
+        <> {
+            (!props.isEditing) ?
+                <ContractTypeSelectFormElement
+                    typesToInclude='other'
+                    selectedRepositoryItems={type ? [type] : []}
+                    onChange={(selectedTypes) => {
+                        console.log('selectedTypes', selectedTypes);
+                        setType(selectedTypes[0])
+                    }}
+                />
+                : null
+        }
             <ContractModalBody
                 {...props}
             />

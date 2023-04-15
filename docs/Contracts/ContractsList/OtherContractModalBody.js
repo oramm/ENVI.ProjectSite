@@ -40,6 +40,7 @@ function OtherContractModalBody(props) {
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId)
         throw new Error('OtherContractModalBody:: project is not defined');
+    const [type, setType] = (0, react_1.useState)(initialData?._type);
     const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
     const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
@@ -48,14 +49,23 @@ function OtherContractModalBody(props) {
     });
     (0, react_1.useEffect)(() => {
         const additionalFieldsKeysValues = [
-            { name: '_contractors', value: JSON.stringify(selectedContractors) }
+            { name: '_type', value: JSON.stringify(type) },
+            { name: '_contractors', value: JSON.stringify(selectedContractors) },
+            { name: '_ourContract', value: JSON.stringify(selectedOurContracts[0]) }
         ];
         //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
         if (!props.onAdditionalFieldsKeysValuesChange)
             throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedContractors, props]);
+    }, [selectedContractors, selectedOurContracts, props]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        " ",
+        (!props.isEditing) ?
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other', selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => {
+                    console.log('selectedTypes', selectedTypes);
+                    setType(selectedTypes[0]);
+                } })
+            : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),

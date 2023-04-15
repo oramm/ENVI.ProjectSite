@@ -10,7 +10,7 @@ export default class RepositoryReact {
     isMultiSelect: boolean = false;
 
     constructor(initParameter: { name: string, actionRoutes: ActionRoutes }) {
-        console.log('tworzę repozytorium: %o', initParameter);
+        //console.log('tworzę repozytorium: %o', initParameter);
         this.name = initParameter.name;
         this.actionRoutes = initParameter.actionRoutes;
         this.items = [];
@@ -107,14 +107,47 @@ export default class RepositoryReact {
     }
 
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem: RepositoryDataItem) {
+    async addNewItemNodeJS(newItem: RepositoryDataItem | FormData) {
+        const requestOptions: RequestInit = {
+            method: 'POST',
+            credentials: 'include',
+        };
+
+        if (newItem instanceof FormData) {
+            requestOptions.body = newItem;
+        } else {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                ['Content-Type']: 'application/json',
+            };
+            requestOptions.body = JSON.stringify(newItem);
+        }
+
+        const rawResult = await fetch(
+            MainSetup.serverUrl + this.actionRoutes.addNewRoute,
+            requestOptions
+        );
+        const newItemFromServer: RepositoryDataItem = await rawResult.json();
+        if (newItemFromServer.authorizeUrl)
+            window.open(newItemFromServer.authorizeUrl);
+
+        const noBlobNewItem = { ...newItemFromServer };
+        delete noBlobNewItem._blobEnviObjects;
+
+        this.items.push(noBlobNewItem);
+        this.currentItems = [newItemFromServer];
+        return newItemFromServer as RepositoryDataItem;
+    }
+
+    /** Dodaje obiekt do bazy danych i do repozytorium */
+    async addNewItemReact(newItem: RepositoryDataItem | FormData) {
         const rawResult = await fetch(MainSetup.serverUrl + this.actionRoutes.addNewRoute, {
             method: 'POST',
             headers: this.makeRequestHeaders(),
             credentials: 'include',
             body: JSON.stringify(newItem)
         });
-        const newItemFromServer: any = await rawResult.json();
+        const newItemFromServer: RepositoryDataItem = await rawResult.json();
         if (newItemFromServer.authorizeUrl)
             window.open(newItemFromServer.authorizeUrl);
 

@@ -12,7 +12,7 @@ export default class ContractsController {
     static contractsRepository = new RepositoryReact({
         actionRoutes: {
             getRoute: 'contracts',
-            addNewRoute: 'contract',
+            addNewRoute: 'contractReact',
             editRoute: 'contract',
             deleteRoute: 'contract'
         },

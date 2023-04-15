@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Modal, Button, ButtonProps, Form, FormControlProps } from 'react-bootstrap';
+import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
@@ -31,26 +31,74 @@ export function GeneralModal({
     ModalBodyComponent,
     modalBodyProps
 }: GeneralModalProps) {
-    let additionalFieldsKeysValues: additionalFieldsKeysValue[] = [];
+    const [errorMessage, setErrorMessage] = useState('');
+    const [validationArray, setValidationArray] = useState<{ name: string; isValid: boolean }[]>([]);
+    const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
+
+
+    const additionalFieldsKeysValues = useRef<additionalFieldsKeysValue[]>([]);
     let newObject: RepositoryDataItem;
 
+    function handleValidationChange(fieldName: string, isValid: boolean) {
+        // Aktualizuj tablicę walidacji
+        setValidationArray((prevState) => {
+            const newArray = [...prevState];
+            const existingIndex = newArray.findIndex((item) => item.name === fieldName);
+
+            if (existingIndex !== -1) {
+                newArray[existingIndex].isValid = isValid;
+            } else {
+                newArray.push({ name: fieldName, isValid });
+            }
+
+            return newArray;
+        });
+
+        // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
+        setIsSubmitEnabled(validationArray.every((item) => item.isValid));
+    }
+
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        onIsReadyChange(false);
-        e.stopPropagation();
-        const formData = new FormData(e.target as HTMLFormElement);
-        if (additionalFieldsKeysValues)
-            for (const keyValue of additionalFieldsKeysValues)
-                formData.append(keyValue.name, keyValue.value);
+        try {
+            setErrorMessage('');
+            e.preventDefault();
+            onIsReadyChange(false);
+            e.stopPropagation();
+            const formData = new FormData(e.target as HTMLFormElement);
+            if (additionalFieldsKeysValues)
+                for (const keyValue of additionalFieldsKeysValues.current)
+                    formData.append(keyValue.name, keyValue.value);
 
-        (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
-
-        onClose();
-        onIsReadyChange(true);
+            (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
+            onClose();
+            onIsReadyChange(true);
+        } catch (error) {
+            if (error instanceof Error)
+                setErrorMessage(error.message);
+        }
     };
-    /** aktualizuje pola formularza, niebędące częścią standardowego HTML, ktore trzeba ręcznie przepchnąć do FormData */
+
     function handleAdditionalFieldsKeysValues(values: additionalFieldsKeysValue[]) {
-        additionalFieldsKeysValues = [...values];
+        console.log('In handleAdditionalFieldsKeysValues:', values);
+        const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
+
+        values.forEach((newValue) => {
+            // Sprawdź, czy istnieje element o takim samym atrybucie 'name' w tablicy
+            const existingIndex = newAdditionalFieldsKeysValues.findIndex(
+                (item) => item.name === newValue.name
+            );
+
+            // Jeśli element istnieje, zaktualizuj wartość; w przeciwnym razie dodaj nowy element
+            if (existingIndex !== -1) {
+                newAdditionalFieldsKeysValues[existingIndex].value = newValue.value;
+            } else {
+                newAdditionalFieldsKeysValues.push(newValue);
+            }
+        });
+
+        additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
+        console.log('handleAdditionalFieldsKeysValues', newAdditionalFieldsKeysValues);
     }
 
     async function handleEdit(formData: FormData) {
@@ -62,11 +110,10 @@ export function GeneralModal({
     };
 
     async function handleAdd(formData: FormData) {
-        newObject = await repository.addNewItemNodeJS(newObject);
+        newObject = await repository.addNewItemNodeJS(formData);
         if (onAddNew) onAddNew(newObject);
     };
 
-    //console.log("GeneralModal modalBodyProps ", modalBodyProps);
     return (
         <Modal show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
             <Form onSubmit={handleSubmit}>
@@ -77,13 +124,21 @@ export function GeneralModal({
                     <ModalBodyComponent
                         {...modalBodyProps}
                         onAdditionalFieldsKeysValuesChange={handleAdditionalFieldsKeysValues}
+                        onValidationChange={handleValidationChange}
                     />
+                    <Row>
+                        {errorMessage && (
+                            <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                                {errorMessage}
+                            </Alert>
+                        )}
+                    </Row>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={onClose}>
                         Anuluj
                     </Button>
-                    <Button type="submit" variant="primary">
+                    <Button type="submit" variant="primary" disabled={!isSubmitEnabled}>
                         Zatwierdź
                     </Button>
                 </Modal.Footer>
@@ -244,6 +299,7 @@ export type ModalBodyProps = {
     initialData?: RepositoryDataItem;
     onAdditionalFieldsKeysValuesChange?: (additionalFieldsKeysValues: additionalFieldsKeysValue[]) => void;
     additionalProps?: any;
+    onValidationChange?: (fieldName: string, isValid: boolean) => void;
 }
 
 type GeneralModalButtonModalProps = {

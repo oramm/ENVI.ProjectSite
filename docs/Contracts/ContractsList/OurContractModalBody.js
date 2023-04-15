@@ -39,25 +39,44 @@ function OurContractModalBody(props) {
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId)
         throw new Error('OtherContractModalBody:: project is not defined');
+    const [type, setType] = (0, react_1.useState)(initialData?._type);
     const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
+    const [isTypeValid, setIsTypeValid] = (0, react_1.useState)(initialData?._type ? true : false);
+    const [isAdminsValid, setIsAdminValid] = (0, react_1.useState)(initialData?._admin ? true : false);
+    const [isManagersValid, setIsManagersValid] = (0, react_1.useState)(initialData?._manager ? true : false);
     (0, react_1.useEffect)(() => {
         const additionalFieldsKeysValues = [
+            { name: '_type', value: JSON.stringify(type) },
             { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
             { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange)
             throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, props]);
+    }, [selectedAdmins, selectedManagers, type, props.onAdditionalFieldsKeysValuesChange]);
+    //dodaj hadnleCHange dla pozostałych pól:
+    function handleTypeChange(selectedItems) {
+        const validationFormula = selectedItems.length > 0;
+        setType(selectedItems[0]);
+        setIsTypeValid(validationFormula);
+        console.log('selectedTypes', selectedItems);
+        if (props.onValidationChange)
+            props.onValidationChange('type', validationFormula);
+    }
+    ;
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        (!props.isEditing) ?
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', selectedRepositoryItems: type ? [type] : [], onChange: handleTypeChange, isInvalid: !isTypeValid, isValid: isTypeValid })
+            : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "manager" },
             react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: selectedManagers, onChange: (currentSelectedItems) => {
                     setSelectedManagers(currentSelectedItems);
                 }, repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository }))));
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository })),
+        react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
 function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData, }, }) {
