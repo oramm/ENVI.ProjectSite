@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react';
-
-interface ValidationOptions<T> {
-    initialValue: T;
-    validationFunction: (value: T) => boolean;
-    fieldName: string;
-    validationMessage: string;
-    onValidationChange?: (fieldName: string, isValid: boolean) => void;
-}
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useValidation = void 0;
+const react_1 = require("react");
 /** Główna funkcja hooka useValidation
  * @param initialValue - początkowa wartość pola
  * @param validationFunction - funkcja walidująca wartość pola
@@ -16,46 +10,37 @@ interface ValidationOptions<T> {
  * @param onValidationChange - funkcja wywoływana w GeneralModal przy zmianie wartości pola
  * @param afterChangeFunction - funkcja wywoływana po zmianie wartości pola
  */
-export function useValidation<T>(options: ValidationOptions<T>) {
-    const {
-        initialValue,
-        validationFunction,
-        fieldName,
-        validationMessage,
-        onValidationChange,
-    } = options;
-
-    const [isInitialUpdate, setIsInitialUpdate] = useState(true);
-    const [value, setValue] = useState<T>(initialValue);
-    const [isValid, setIsValid] = useState(validationFunction(initialValue));
-
-    const [previousIsValid, setPreviousIsValid] = useState(isValid);
-
-    useEffect(() => {
+function useValidation(options) {
+    const { initialValue, validationFunction, fieldName, validationMessage, onValidationChange, } = options;
+    const [isInitialUpdate, setIsInitialUpdate] = (0, react_1.useState)(true);
+    const [value, setValue] = (0, react_1.useState)(initialValue);
+    const [isValid, setIsValid] = (0, react_1.useState)(validationFunction(initialValue));
+    const [previousIsValid, setPreviousIsValid] = (0, react_1.useState)(isValid);
+    (0, react_1.useEffect)(() => {
         if (isInitialUpdate) {
             // Inicjujemy tablicę stanów dla pierwszego renderowania
             if (onValidationChange) {
                 onValidationChange(fieldName, isValid);
             }
             setIsInitialUpdate(false);
-        } else if (onValidationChange && isValid !== previousIsValid) {
+        }
+        else if (onValidationChange && isValid !== previousIsValid) {
             // Aktualizujemy tablicę stanów dla kolejnych zmian
             onValidationChange(fieldName, isValid);
             setPreviousIsValid(isValid);
         }
     }, [fieldName, isValid, onValidationChange, previousIsValid, isInitialUpdate]);
-
-
     // Funkcja obsługująca zmianę wartości pola
-    const handleChange = (e: any) => {
-        let newValue: T;
-        if (typeof e.target?.value === 'string') newValue = e.target.value as T;
-        else newValue = e;
+    const handleChange = (e) => {
+        let newValue;
+        if (typeof e.target?.value === 'string')
+            newValue = e.target.value;
+        else
+            newValue = e;
         const validationFormula = validationFunction(newValue);
         setValue(newValue);
         setIsValid(validationFormula);
     };
-
     return { value, isValid, handleChange, validationMessage };
 }
-
+exports.useValidation = useValidation;

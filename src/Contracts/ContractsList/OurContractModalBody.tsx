@@ -3,42 +3,54 @@ import { Modal, Button, Form, FormControlProps, Row, Col } from 'react-bootstrap
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
 import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../View/Resultsets/CommonComponents';
-import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
+import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody-TEST';
 import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../View/GeneralModal';
 import { contractsRepository, projectsRepository } from './ContractsSearch';
+import { useValidation } from '../../View/useValidation';
+import { useFormContext } from '../../View/FormContext';
 
 export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: string }) {
     const initialData = props.initialData;
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId) throw new Error('OtherContractModalBody:: project is not defined');
+    const { register, setValue, watch, formState, control } = useFormContext();
 
-    const [type, setType] = useState<RepositoryDataItem>(initialData?._type);
+    useEffect(() => {
+        setValue('contractType', initialData?.type || [], { shouldValidate: true });
+        // Ustaw inne wartości domyślne dla pozostałych pól formularza
+        setValue('admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
+        setValue('manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
+    }, [initialData, setValue]);
+
+
     const [selectedAdmins, setSelectedAdmins] = useState<RepositoryDataItem[]>(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = useState<RepositoryDataItem[]>(initialData?._manager ? [initialData._manager] : []);
 
-    const [isTypeValid, setIsTypeValid] = useState(initialData?._type ? true : false);
-    const [isAdminsValid, setIsAdminValid] = useState(initialData?._admin ? true : false);
-    const [isManagersValid, setIsManagersValid] = useState(initialData?._manager ? true : false);
+    //pozostałe pola admin i managaer
+    const managerValidation = useValidation<RepositoryDataItem[]>({
+        initialValue: initialData?._manager ? [initialData._manager] : [],
+        validationFunction: (value) => value?.length > 0,
+        fieldName: 'manager',
+        validationMessage: 'Musisz wybrać koordynatora',
+        onValidationChange: props.onValidationChange,
+    });
+
+    const adminValidation = useValidation<RepositoryDataItem[]>({
+        initialValue: initialData?._admin ? [initialData._admin] : [],
+        validationFunction: (value) => value?.length > 0,
+        fieldName: 'admin',
+        validationMessage: 'Musisz wybrać administratora',
+        onValidationChange: props.onValidationChange,
+    });
 
     useEffect(() => {
         const additionalFieldsKeysValues = [
-            { name: '_type', value: JSON.stringify(type) },
-            { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
-            { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
+            { name: '_manager', value: JSON.stringify(managerValidation.value[0]) },
+            { name: '_admin', value: JSON.stringify(adminValidation.value[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange) throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, type, props.onAdditionalFieldsKeysValuesChange]);
-
-    //dodaj hadnleCHange dla pozostałych pól:
-    function handleTypeChange(selectedItems: RepositoryDataItem[]) {
-        const validationFormula = selectedItems.length > 0;
-        setType(selectedItems[0])
-        setIsTypeValid(validationFormula);
-        console.log('selectedTypes', selectedItems);
-        if (props.onValidationChange)
-            props.onValidationChange('type', validationFormula);
-    };
+    }, [selectedAdmins, selectedManagers, props.onAdditionalFieldsKeysValuesChange]);
 
     return (
         <>
@@ -46,10 +58,7 @@ export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: st
                 (!props.isEditing) ?
                     <ContractTypeSelectFormElement
                         typesToInclude='our'
-                        selectedRepositoryItems={type ? [type] : []}
-                        onChange={handleTypeChange}
-                        isInvalid={!isTypeValid}
-                        isValid={isTypeValid}
+                        required={true}
                     />
                     : null
             }
@@ -59,21 +68,33 @@ export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: st
             <Form.Group controlId="manager">
                 <PersonSelectFormElement
                     label='Koordynator'
-                    selectedRepositoryItems={selectedManagers}
-                    onChange={(currentSelectedItems) => {
-                        setSelectedManagers(currentSelectedItems);
-                    }}
+                    selectedRepositoryItems={managerValidation.value ? managerValidation.value : []}
+                    onChange={managerValidation.handleChange}
                     repository={MainSetup.personsEnviRepository}
+                    isInvalid={!managerValidation.isValid}
+                    isValid={managerValidation.isValid}
                 />
+                {!managerValidation.isValid &&
+                    <Form.Text className="text-danger">
+                        {managerValidation.validationMessage}
+                    </Form.Text>
+                }
             </Form.Group>
 
             <Form.Group controlId="admin">
                 <PersonSelectFormElement
                     label='Administrator'
-                    selectedRepositoryItems={selectedAdmins}
-                    onChange={setSelectedAdmins}
+                    selectedRepositoryItems={adminValidation.value ? adminValidation.value : []}
+                    onChange={adminValidation.handleChange}
                     repository={MainSetup.personsEnviRepository}
+                    isInvalid={!adminValidation.isValid}
+                    isValid={adminValidation.isValid}
                 />
+                {!adminValidation.isValid &&
+                    <Form.Text className="text-danger">
+                        {adminValidation.validationMessage}
+                    </Form.Text>
+                }
             </Form.Group>
             <FileInput
                 fieldName="exampleFile"

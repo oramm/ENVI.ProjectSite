@@ -8,98 +8,100 @@ import { OtherContractEditModalButton, OtherContractModalBody } from './OtherCon
 import { contractsRepository, projectsRepository } from './ContractsSearch';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
+import { useValidation } from '../../View/useValidation';
+import { useFormContext } from '../../View/FormContext';
 
 export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
-    const [name, setName] = useState(initialData?.name as string || '');
-    const [alias, setAlias] = useState(initialData?.alias as string || '');
-    const [comment, setComment] = useState(initialData?.comment as string || '');
-    const [valueInPLN, setValueInPLN] = useState(initialData?.value as string || '');
-    const [status, setStatus] = useState(initialData?.status as string || '');
+    const { register, setValue, watch, formState } = useFormContext();
+
+
     const [startDate, setStartDate] = useState(initialData?.startDate as string || new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = useState(initialData?.endDate as string || new Date().toISOString().slice(0, 10));
 
-    const [isNameValid, setIsNameValid] = useState(initialData?.name ? true : false);
-    const [isAliasValid, setIsAliasValid] = useState(initialData?.alias ? true : false);
-    const [isCommentValid, setIsCommentValid] = useState(initialData?.comment ? true : false);
-    const [isValueInPLNValid, setIsValueInPLNValid] = useState(initialData?.value ? true : false);
-    const [isStatusValid, setIsStatusValid] = useState(initialData?.status ? true : false);
     const [isStartDateValid, setIsStartDateValid] = useState(initialData?.startDate ? true : false);
     const [isEndDateValid, setIsEndDateValid] = useState(initialData?.endDate ? true : false);
 
-    function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const validationFormula = value.length >= 3 && value.length <= 50;
-        setName(value);
-        setIsNameValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('name', validationFormula);
-    };
 
-    function handleAliasChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const validationFormula = value.length <= 30;
-        setAlias(value);
-        setIsAliasValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('alias', validationFormula);
-    };
+    useEffect(() => {
+        setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue('alias', initialData?.alias || '', { shouldValidate: true });
+        setValue('comment', initialData?.comment || '', { shouldValidate: true });
+        setValue('value', initialData?.value || '', { shouldValidate: true });
+        setValue('status', initialData?.satus || '', { shouldValidate: true });
+        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+    }, [initialData, setValue]);
 
-    //dodaj hadnleCHange dla pozostałych pól:
-    function handleCommentChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const validationFormula = value.length <= 100;
-        setComment(value);
-        setIsCommentValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('comment', validationFormula);
-    };
 
-    function handleValueInPLNChange(value: string) {
-        const validationFormula = value.length <= 100;
-        setValueInPLN(value);
-        setIsValueInPLNValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('value', validationFormula);
-    };
+    const aliasValidation = useValidation<string>({
+        initialValue: initialData?.alias || '',
+        validationFunction: (value) => value.length <= 30,
+        fieldName: 'alias',
+        validationMessage: 'Alias może zawierać maksymalnie 30 znaków.',
+        onValidationChange,
+    });
 
-    function handleStatusChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const validationFormula = value.length > 0;
-        setStatus(value);
-        setIsStatusValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('status', validationFormula);
-    };
+    const commentValidation = useValidation<string>({
+        initialValue: initialData?.comment || '',
+        validationFunction: (value) => value.length <= 100,
+        fieldName: 'comment',
+        validationMessage: 'Komentarz może zawierać maksymalnie 100 znaków.',
+        onValidationChange,
+    });
+
+    //pozostałe pola:
+    const valueInPLNValidation = useValidation<string>({
+        initialValue: initialData?.value || '',
+        validationFunction: (value) => value.length <= 100,
+        fieldName: 'value',
+        validationMessage: 'Wartość może zawierać maksymalnie 100 znaków.',
+        onValidationChange,
+    });
+
+    const statusValidation = useValidation<string>({
+        initialValue: initialData?.status || '',
+        validationFunction: (value) => value.length > 0,
+        fieldName: 'status',
+        validationMessage: 'Status jest wymagany.',
+        onValidationChange,
+    });
+
+    function datesValidationFunction(value: { start: string, end: string }) {
+        const { start, end } = { ...value };
+        const endDate = new Date(end);
+        const startDate = new Date(start);
+        return start.length > 0 && end.length > 0 && endDate > startDate;
+    }
+
+
+    const [updateCounter, setUpdateCounter] = useState(0);
+
+    useEffect(() => {
+        const validationResult = datesValidationFunction({ start: startDate, end: endDate });
+        setIsStartDateValid(validationResult);
+        setIsEndDateValid(validationResult);
+        if (onValidationChange) {
+            onValidationChange('startDate', validationResult);
+            onValidationChange('endDate', validationResult);
+        }
+        setUpdateCounter(updateCounter + 1);
+    }, [startDate, endDate, onValidationChange, datesValidationFunction, updateCounter, setIsStartDateValid, setIsEndDateValid]);
+
+    useEffect(() => {
+        if (updateCounter === 0) {
+            setStartDate(new Date().toISOString().slice(0, 10));
+            setEndDate(new Date().toISOString().slice(0, 10));
+        }
+    }, [updateCounter]);
 
     function handleStartDateChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const endDate = new Date(value);
-        const start = new Date(startDate);
-        const validationFormula = value.length > 0 && endDate >= start;
-
-        setStartDate(value);
-        setIsStartDateValid(validationFormula);
-        setIsEndDateValid(validationFormula);
-        if (onValidationChange) {
-            onValidationChange('startDate', validationFormula);
-            onValidationChange('endDate', validationFormula);
-        }
-
+        setStartDate(e.target.value);
     };
 
     function handleEndDateChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
-        const endDate = new Date(value);
-        const start = new Date(startDate);
-        const validationFormula = value.length > 0 && endDate >= start;
-        setEndDate(value);
-        setIsEndDateValid(validationFormula);
-        setIsStartDateValid(validationFormula);
-        if (onValidationChange) {
-            onValidationChange('endDate', validationFormula);
-            onValidationChange('startDate', validationFormula);
-        }
+        setEndDate(e.target.value);
     }
+
 
     return (
         <>
@@ -107,16 +109,18 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Nazwa kontraktu</Form.Label>
                 <Form.Control
                     type="text"
-                    name="name"
                     placeholder="Podaj nazwę"
-                    value={name}
-                    onChange={handleNameChange}
-                    isInvalid={!isNameValid}
-                    isValid={isNameValid}
-                />
-                {!isNameValid && (
+                    isInvalid={!!formState.errors?.name}
+                    isValid={!formState.errors?.name}
+                    {...register('name', {
+                        required: { value: true, message: 'Nazwa jest wymagana' },
+                        minLength: { value: 3, message: 'Nazwa musi mieć przynajmniej 3 znaki' },
+                        maxLength: { value: 50, message: 'Nazwa może mieć maksymalnie 50 znaków' }
+                    })
+                    } />
+                {formState.errors?.name && (
                     <Form.Text className="text-danger">
-                        Nazwa musi zawierać od 3 do 50 znaków.
+                        {formState.errors.name.message as string}
                     </Form.Text>
                 )}
             </Form.Group>
@@ -127,11 +131,16 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     type="text"
                     name='alias'
                     placeholder="Podaj alias"
-                    value={alias}
-                    onChange={handleAliasChange}
-                    isInvalid={!isAliasValid}
-                    isValid={isAliasValid}
+                    value={aliasValidation.value}
+                    onChange={aliasValidation.handleChange}
+                    isInvalid={!aliasValidation.isValid}
+                    isValid={aliasValidation.isValid}
                 />
+                {!aliasValidation.isValid && (
+                    <Form.Text className="text-danger">
+                        {aliasValidation.validationMessage}
+                    </Form.Text>
+                )}
             </Form.Group>
 
             <Form.Group controlId="comment">
@@ -141,18 +150,28 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     name="comment"
                     rows={3}
                     placeholder="Podaj opis"
-                    value={comment}
-                    onChange={handleCommentChange}
-                    isInvalid={!isCommentValid}
-                    isValid={isCommentValid}
+                    value={commentValidation.value}
+                    onChange={commentValidation.handleChange}
+                    isInvalid={!commentValidation.isValid}
+                    isValid={commentValidation.isValid}
                 />
+                {!commentValidation.isValid && (
+                    <Form.Text className="text-danger">
+                        {commentValidation.validationMessage}
+                    </Form.Text>
+                )}
             </Form.Group>
             <Form.Group controlId="valueInPLN">
                 <Form.Label>Wartość netto w PLN</Form.Label>
                 <ValueInPLNInput
-                    onChange={handleValueInPLNChange}
-                    value={valueInPLN}
+                    onChange={valueInPLNValidation.handleChange}
+                    value={valueInPLNValidation.value}
                 />
+                {!valueInPLNValidation.isValid && (
+                    <Form.Text className="text-danger">
+                        {valueInPLNValidation.validationMessage}
+                    </Form.Text>
+                )}
             </Form.Group>
             <Form.Group controlId="startDate">
                 <Form.Label>Początek</Form.Label>
@@ -164,6 +183,11 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     isInvalid={!isStartDateValid}
                     isValid={isStartDateValid}
                 />
+                {!isStartDateValid && (
+                    <Form.Text className="text-danger">
+                        Data zakończenia musi być późniejsza niż data rozpoczęcia.
+                    </Form.Text>
+                )}
             </Form.Group>
             <Form.Group controlId="endDate">
                 <Form.Label>Zakończenie</Form.Label>
@@ -175,22 +199,34 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     isInvalid={!isEndDateValid}
                     isValid={isEndDateValid}
                 />
+                {!isEndDateValid && (
+                    <Form.Text className="text-danger">
+                        Data zakończenia musi być późniejsza niż data rozpoczęcia.
+                    </Form.Text>
+                )}
             </Form.Group>
             <Form.Group controlId="status">
                 <Form.Label>Status</Form.Label>
                 <Form.Control
                     as="select"
-                    name="status"
-                    onChange={handleStatusChange}
-                    value={status}
-                    isInvalid={!isStatusValid}
-                    isValid={isStatusValid}
+                    isInvalid={!formState.isValid}
+                    isValid={formState.isValid}
+                    {...register('status', {
+                        required: { value: true, message: 'Pole jest wymagane' }
+                    })}
                 >
                     <option value="">-- Wybierz opcję --</option>
                     {ContractsController.statusNames.map((statusName, index) => (
                         <option key={index} value={statusName}>{statusName}</option>
                     ))}
                 </Form.Control>
+                {
+                    !formState.isValid && (
+                        <Form.Text className="text-danger">
+                            {formState.errors.status?.message as string}
+                        </Form.Text>
+                    )
+                }
             </Form.Group >
         </>
     );

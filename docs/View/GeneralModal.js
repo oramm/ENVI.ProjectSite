@@ -29,12 +29,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = exports.GeneralModal = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_hook_form_1 = require("react-hook-form");
 const Tools_1 = __importDefault(require("../React/Tools"));
+const FormContext_1 = require("./FormContext");
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
-    const [isSubmitEnabled, setIsSubmitEnabled] = (0, react_1.useState)(false);
+    const [isValidated, setIsValidated] = (0, react_1.useState)(false);
+    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    //const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
     const additionalFieldsKeysValues = (0, react_1.useRef)([]);
     let newObject;
     function handleValidationChange(fieldName, isValid) {
@@ -48,18 +52,33 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
             else {
                 newArray.push({ name: fieldName, isValid });
             }
+            console.log('handleValidationChange newArray', newArray);
             return newArray;
         });
         // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
-        setIsSubmitEnabled(validationArray.every((item) => item.isValid));
+        const isAllValid = validationArray.every((item) => item.isValid);
+        console.log('handleValidationChange isAllValid', isAllValid);
+        setIsValidated(isAllValid);
     }
-    async function handleSubmit(e) {
+    const isSubmitEnabled = isValidated;
+    async function handleSubmitRepository(data) {
         try {
             setErrorMessage('');
-            e.preventDefault();
             onIsReadyChange(false);
-            e.stopPropagation();
-            const formData = new FormData(e.target);
+            const formData = new FormData();
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const element = data[key];
+                    let parsedValue = '';
+                    if (typeof element === 'string')
+                        parsedValue = element;
+                    if (typeof element === 'object')
+                        parsedValue = JSON.stringify(element);
+                    if (typeof element === 'number')
+                        parsedValue = element.toString();
+                    formData.append(key, parsedValue);
+                }
+            }
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
@@ -74,7 +93,6 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
     }
     ;
     function handleAdditionalFieldsKeysValues(values) {
-        console.log('In handleAdditionalFieldsKeysValues:', values);
         const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
         values.forEach((newValue) => {
             // Sprawdź, czy istnieje element o takim samym atrybucie 'name' w tablicy
@@ -88,7 +106,6 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
             }
         });
         additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
-        console.log('handleAdditionalFieldsKeysValues', newAdditionalFieldsKeysValues);
     }
     async function handleEdit(formData) {
         const currentDataItem = { ...repository.currentItems[0] };
@@ -105,15 +122,16 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
     }
     ;
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit },
+        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitRepository) },
             react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
                 react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
             react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
-                react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))),
+                react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
+                    react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
+                    react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isSubmitEnabled }, "Zatwierd\u017A")))));
+                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isValid }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
 function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {

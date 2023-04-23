@@ -38,11 +38,11 @@ export function OtherContractModalBody(props: ModalBodyProps & { projectOurId?: 
             (!props.isEditing) ?
                 <ContractTypeSelectFormElement
                     typesToInclude='other'
-                    selectedRepositoryItems={type ? [type] : []}
-                    onChange={(selectedTypes) => {
-                        console.log('selectedTypes', selectedTypes);
-                        setType(selectedTypes[0])
-                    }}
+                //selectedRepositoryItems={type ? [type] : []}
+                //onChange={(selectedTypes) => {
+                //    console.log('selectedTypes', selectedTypes);
+                //    setType(selectedTypes[0])
+                //}}
                 />
                 : null
         }

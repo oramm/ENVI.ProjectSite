@@ -26,16 +26,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractTypeSelectFormElementOLD = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
 require("react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const FormContext_1 = require("../FormContext");
+const react_hook_form_1 = require("react-hook-form");
 /** Pole wyboru typu kontraktu */
-function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid }) {
+function ContractTypeSelectFormElementOLD({ 
+//onChange,
+//selectedRepositoryItems,
+typesToInclude = 'all', isInvalid, isValid }) {
     const label = 'Typ Kontraktu';
     const repository = MainSetupReact_1.default.contractTypesRepository;
+    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
         const filteredItems = repositoryDataItems.filter((item) => {
             if (typesToInclude === 'all')
@@ -58,14 +64,72 @@ function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, type
             return foundItem;
         })
             .filter((item) => item !== undefined);
-        onChange(selectedRepositoryItems);
+        //onChange(selectedRepositoryItems);
+        setValue('contractType', selectedRepositoryItems);
     }
+    isValid = watch('contractTypeIsValid', true);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, 
+            //selected={makeoptions(selectedRepositoryItems)}
+            placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
+}
+exports.ContractTypeSelectFormElementOLD = ContractTypeSelectFormElementOLD;
+function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid, required = false, }) {
+    const useFormContextOrEmpty = () => {
+        try {
+            const context = (0, FormContext_1.useFormContext)();
+            return context;
+        }
+        catch {
+            return null;
+        }
+    };
+    const formContext = useFormContextOrEmpty();
+    const { control = null, watch = null, setValue = null, formState = null } = formContext || {};
+    const label = 'Typ Kontraktu';
+    const repository = MainSetupReact_1.default.contractTypesRepository;
+    function makeoptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === 'all')
+                return true;
+            if (typesToInclude === 'our' && item.isOur)
+                return true;
+            if (typesToInclude === 'other' && !item.isOur)
+                return true;
+            return false;
+        });
+        return filteredItems;
+    }
+    function handleOnChange(selectedOptions, field) {
+        selectedOptions.filter((item) => item !== undefined);
+        if (setValue && field) {
+            setValue('contractType', selectedOptions);
+            field.onChange(selectedOptions);
+            console.log('selectedOptions', selectedOptions);
+        }
+        else if (onChange)
+            onChange(selectedOptions);
+    }
+    if (watch)
+        watch('contractTypeIsValid', true);
+    const MenuItemBody = (0, react_1.useCallback)((myOption) => {
+        return react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, myOption.name),
+            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description));
+    }, []);
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        control ? (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: "contractType", control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, defaultValue: makeoptions(selectedRepositoryItems || []), render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: !(formState && formState.errors?.contractType), isInvalid: !!(formState && formState.errors?.contractType), renderMenuItemChildren: (option, props, index) => {
+                        return MenuItemBody(option);
+                    } })) }),
+            formState && formState.errors?.contractType && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.contractType.message)))) : (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-uncontrolled`, labelKey: "name", options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid, renderMenuItemChildren: (option, props, index) => {
+                return MenuItemBody(option);
+            } }))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
-function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }) {
+function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple, isValid, isInvalid }) {
     function makeoptions(repositoryDataItems) {
         return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
     }
@@ -80,7 +144,7 @@ function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, rep
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple })));
+        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: isValid, isInvalid: isInvalid })));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
 /**
@@ -94,7 +158,7 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
 */
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, register, name, errors }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {

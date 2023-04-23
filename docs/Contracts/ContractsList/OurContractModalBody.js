@@ -31,51 +31,70 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
-const ContractModalBody_1 = require("./ContractModalBody");
+const ContractModalBody_TEST_1 = require("./ContractModalBody-TEST");
 const GeneralModal_1 = require("../../View/GeneralModal");
 const ContractsSearch_1 = require("./ContractsSearch");
+const useValidation_1 = require("../../View/useValidation");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
     const projectOurId = props.projectOurId || initialData?.projectOurId;
     if (!projectOurId)
         throw new Error('OtherContractModalBody:: project is not defined');
-    const [type, setType] = (0, react_1.useState)(initialData?._type);
     const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
     const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
-    const [isTypeValid, setIsTypeValid] = (0, react_1.useState)(initialData?._type ? true : false);
     const [isAdminsValid, setIsAdminValid] = (0, react_1.useState)(initialData?._admin ? true : false);
     const [isManagersValid, setIsManagersValid] = (0, react_1.useState)(initialData?._manager ? true : false);
+    const typeValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?.type,
+        validationFunction: (value) => value?.length > 0,
+        fieldName: 'type',
+        validationMessage: 'Musisz wybrać typ umowy',
+        onValidationChange: props.onValidationChange,
+    });
+    //pozostałe pola admin i managaer
+    const managerValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?._manager ? [initialData._manager] : [],
+        validationFunction: (value) => value?.length > 0,
+        fieldName: 'manager',
+        validationMessage: 'Musisz wybrać koordynatora',
+        onValidationChange: props.onValidationChange,
+    });
+    const adminValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?._admin ? [initialData._admin] : [],
+        validationFunction: (value) => value?.length > 0,
+        fieldName: 'admin',
+        validationMessage: 'Musisz wybrać administratora',
+        onValidationChange: props.onValidationChange,
+    });
     (0, react_1.useEffect)(() => {
         const additionalFieldsKeysValues = [
-            { name: '_type', value: JSON.stringify(type) },
-            { name: '_manager', value: JSON.stringify(selectedManagers[0]) },
-            { name: '_admin', value: JSON.stringify(selectedAdmins[0]) }
+            { name: '_type', value: JSON.stringify(typeValidation.value) },
+            { name: '_manager', value: JSON.stringify(managerValidation.value[0]) },
+            { name: '_admin', value: JSON.stringify(adminValidation.value[0]) }
         ];
         if (!props.onAdditionalFieldsKeysValuesChange)
             throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
         props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, type, props.onAdditionalFieldsKeysValuesChange]);
-    //dodaj hadnleCHange dla pozostałych pól:
-    function handleTypeChange(selectedItems) {
-        const validationFormula = selectedItems.length > 0;
-        setType(selectedItems[0]);
-        setIsTypeValid(validationFormula);
-        console.log('selectedTypes', selectedItems);
-        if (props.onValidationChange)
-            props.onValidationChange('type', validationFormula);
-    }
-    ;
+    }, [selectedAdmins, selectedManagers, typeValidation.value, props.onAdditionalFieldsKeysValuesChange]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', selectedRepositoryItems: type ? [type] : [], onChange: handleTypeChange, isInvalid: !isTypeValid, isValid: isTypeValid })
+            react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', 
+                    //selectedRepositoryItems={typeValidation.value ? typeValidation.value : []}
+                    //onChange={typeValidation.handleChange}
+                    isInvalid: !typeValidation.isValid, isValid: typeValidation.isValid }),
+                !typeValidation.isValid &&
+                    react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, typeValidation.validationMessage))
             : null,
-        react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
+        react_1.default.createElement(ContractModalBody_TEST_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "manager" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: selectedManagers, onChange: (currentSelectedItems) => {
-                    setSelectedManagers(currentSelectedItems);
-                }, repository: MainSetupReact_1.default.personsEnviRepository })),
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: managerValidation.value ? managerValidation.value : [], onChange: managerValidation.handleChange, repository: MainSetupReact_1.default.personsEnviRepository, isInvalid: !managerValidation.isValid, isValid: managerValidation.isValid }),
+            !managerValidation.isValid &&
+                react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, managerValidation.validationMessage)),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: selectedAdmins, onChange: setSelectedAdmins, repository: MainSetupReact_1.default.personsEnviRepository })),
+            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: adminValidation.value ? adminValidation.value : [], onChange: adminValidation.handleChange, repository: MainSetupReact_1.default.personsEnviRepository, isInvalid: !adminValidation.isValid, isValid: adminValidation.isValid }),
+            !adminValidation.isValid &&
+                react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, adminValidation.validationMessage)),
         react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
@@ -96,7 +115,7 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange 
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             onIsReadyChange: onIsReadyChange,
-            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
+            ModalBodyComponent: ContractModalBody_TEST_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
             repository: ContractsSearch_1.contractsRepository,

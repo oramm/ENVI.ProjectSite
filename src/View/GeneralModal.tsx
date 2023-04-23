@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
+import { useForm } from 'react-hook-form';
+import { FieldErrors, FieldValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form/dist/types';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
+import { FormProvider } from './FormContext';
 import { ConfirmModal } from './Resultsets/CommonComponents';
 
 
@@ -33,9 +36,18 @@ export function GeneralModal({
 }: GeneralModalProps) {
     const [errorMessage, setErrorMessage] = useState('');
     const [validationArray, setValidationArray] = useState<{ name: string; isValid: boolean }[]>([]);
-    const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
+    const [isValidated, setIsValidated] = useState(false);
 
+    const {
+        register,
+        setValue,
+        watch,
+        handleSubmit,
+        control,
+        formState: { errors, isValid },
+    } = useForm({ defaultValues: {}, mode: 'onChange' });
 
+    //const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
     const additionalFieldsKeysValues = useRef<additionalFieldsKeysValue[]>([]);
     let newObject: RepositoryDataItem;
 
@@ -50,22 +62,35 @@ export function GeneralModal({
             } else {
                 newArray.push({ name: fieldName, isValid });
             }
-
+            console.log('handleValidationChange newArray', newArray);
             return newArray;
         });
 
         // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
-        setIsSubmitEnabled(validationArray.every((item) => item.isValid));
+        const isAllValid = validationArray.every((item) => item.isValid);
+        console.log('handleValidationChange isAllValid', isAllValid);
+        setIsValidated(isAllValid);
     }
+    const isSubmitEnabled = isValidated;
 
-
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmitRepository(data: FieldValues) {
         try {
             setErrorMessage('');
-            e.preventDefault();
             onIsReadyChange(false);
-            e.stopPropagation();
-            const formData = new FormData(e.target as HTMLFormElement);
+            const formData = new FormData();
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const element = data[key];
+                    let parsedValue: string = '';
+                    if (typeof element === 'string')
+                        parsedValue = element;
+                    if (typeof element === 'object')
+                        parsedValue = JSON.stringify(element);
+                    if (typeof element === 'number')
+                        parsedValue = element.toString();
+                    formData.append(key, parsedValue);
+                }
+            }
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
@@ -80,7 +105,6 @@ export function GeneralModal({
     };
 
     function handleAdditionalFieldsKeysValues(values: additionalFieldsKeysValue[]) {
-        console.log('In handleAdditionalFieldsKeysValues:', values);
         const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
 
         values.forEach((newValue) => {
@@ -98,7 +122,6 @@ export function GeneralModal({
         });
 
         additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
-        console.log('handleAdditionalFieldsKeysValues', newAdditionalFieldsKeysValues);
     }
 
     async function handleEdit(formData: FormData) {
@@ -116,29 +139,31 @@ export function GeneralModal({
 
     return (
         <Modal show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit(handleSubmitRepository)}>
                 <Modal.Header closeButton={true}>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ModalBodyComponent
-                        {...modalBodyProps}
-                        onAdditionalFieldsKeysValuesChange={handleAdditionalFieldsKeysValues}
-                        onValidationChange={handleValidationChange}
-                    />
-                    <Row>
-                        {errorMessage && (
-                            <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
-                                {errorMessage}
-                            </Alert>
-                        )}
-                    </Row>
+                    <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid } }}>
+                        <ModalBodyComponent
+                            {...modalBodyProps}
+                            onAdditionalFieldsKeysValuesChange={handleAdditionalFieldsKeysValues}
+                            onValidationChange={handleValidationChange}
+                        />
+                        <Row>
+                            {errorMessage && (
+                                <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                                    {errorMessage}
+                                </Alert>
+                            )}
+                        </Row>
+                    </FormProvider>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={onClose}>
                         Anuluj
                     </Button>
-                    <Button type="submit" variant="primary" disabled={!isSubmitEnabled}>
+                    <Button type="submit" variant="primary" disabled={!isValid}>
                         Zatwierdź
                     </Button>
                 </Modal.Footer>

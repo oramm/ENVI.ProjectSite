@@ -1,32 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Form, Spinner, FormControlProps, Button, Modal, Alert } from "react-bootstrap";
 import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { RenderMenuItemChildren } from 'react-bootstrap-typeahead/types/components/TypeaheadMenu';
+import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form/dist/types';
 
 import MainSetup from '../../React/MainSetupReact';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
+import { useFormContext } from '../FormContext';
+import { Controller } from 'react-hook-form';
 
 type ContractTypeSelectFormElementProps = {
-    onChange: (selectedRepositoryItems: RepositoryDataItem[]) => void,
-    selectedRepositoryItems: RepositoryDataItem[],
+    onChange?: (selectedRepositoryItems: RepositoryDataItem[]) => void,
+    selectedRepositoryItems?: RepositoryDataItem[],
     typesToInclude?: 'our' | 'other' | 'all'
     isValid?: boolean,
     isInvalid?: boolean,
+    required?: boolean,
 }
 
 /** Pole wyboru typu kontraktu */
-export function ContractTypeSelectFormElement({
-    onChange,
-    selectedRepositoryItems,
+export function ContractTypeSelectFormElementOLD({
+    //onChange,
+    //selectedRepositoryItems,
     typesToInclude = 'all',
     isInvalid,
     isValid
 }: ContractTypeSelectFormElementProps) {
     const label = 'Typ Kontraktu';
     const repository = MainSetup.contractTypesRepository;
-    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
+    const { register, watch, setValue } = useFormContext();
 
+    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
         const filteredItems = repositoryDataItems.filter((item) => {
             if (typesToInclude === 'all') return true;
             if (typesToInclude === 'our' && item.isOur) return true;
@@ -47,9 +52,10 @@ export function ContractTypeSelectFormElement({
                 return foundItem;
             })
             .filter((item): item is RepositoryDataItem => item !== undefined);
-        onChange(selectedRepositoryItems);
+        //onChange(selectedRepositoryItems);
+        setValue('contractType', selectedRepositoryItems);
     }
-
+    isValid = watch('contractTypeIsValid', true);
     return (
         <Form.Group controlId={label}>
             <Form.Label>{label}</Form.Label>
@@ -57,11 +63,117 @@ export function ContractTypeSelectFormElement({
                 id={label}
                 options={makeoptions(repository.items)}
                 onChange={handleOnChange}
-                selected={makeoptions(selectedRepositoryItems)}
+                //selected={makeoptions(selectedRepositoryItems)}
                 placeholder="-- Wybierz typ --"
                 isValid={isValid}
                 isInvalid={isInvalid}
+            //{...register('contractType', { required: true })}
             />
+        </Form.Group>
+    );
+}
+
+export function ContractTypeSelectFormElement({
+    onChange,
+    selectedRepositoryItems,
+    typesToInclude = 'all',
+    isInvalid,
+    isValid,
+    required = false,
+}: ContractTypeSelectFormElementProps) {
+    const useFormContextOrEmpty = () => {
+        try {
+            const context = useFormContext();
+            return context;
+        } catch {
+            return null;
+        }
+    };
+    const formContext = useFormContextOrEmpty();
+    const { control = null, watch = null, setValue = null, formState = null } = formContext || {};
+
+    const label = 'Typ Kontraktu';
+    const repository = MainSetup.contractTypesRepository;
+
+    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === 'all') return true;
+            if (typesToInclude === 'our' && item.isOur) return true;
+            if (typesToInclude === 'other' && !item.isOur) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field?: ControllerRenderProps<any, "contractType">) {
+        selectedOptions.filter((item): item is RepositoryDataItem => item !== undefined);
+        if (setValue && field) {
+            setValue('contractType', selectedOptions);
+            field.onChange(selectedOptions);
+            console.log('selectedOptions', selectedOptions);
+        } else if (onChange)
+            onChange(selectedOptions as RepositoryDataItem[]);
+    }
+
+    if (watch)
+        watch('contractTypeIsValid', true);
+
+    const MenuItemBody = useCallback((myOption: RepositoryDataItem) => {
+        return <div>
+            <span>{myOption.name}</span>
+            <div className="text-muted small">{myOption.description}</div>
+        </div>;
+    }, [])
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            {control ? (
+                <>
+                    <Controller
+                        name="contractType"
+                        control={control}
+                        rules={{ required: { value: required, message: 'Wybierz typ kontraktu' } }}
+                        defaultValue={makeoptions(selectedRepositoryItems || [])}
+                        render={({ field }) => (
+                            <Typeahead
+                                id={`${label}-controlled`}
+                                labelKey="name"
+                                options={makeoptions(repository.items)}
+                                onChange={(items) => handleOnChange(items, field)}
+                                selected={field.value}
+                                placeholder="-- Wybierz typ --"
+                                isValid={!(formState && formState.errors?.contractType)}
+                                isInvalid={!!(formState && formState.errors?.contractType)}
+                                renderMenuItemChildren={(option, props, index) => {
+                                    return MenuItemBody(option as RepositoryDataItem);
+                                }}
+                            />
+                        )}
+                    />
+                    {formState && formState.errors?.contractType && (
+                        <Form.Text className="text-danger">
+                            {formState.errors.contractType.message as string}
+                        </Form.Text>
+
+                    )}
+                </>
+            ) : (
+                <Typeahead
+                    id={`${label}-uncontrolled`}
+                    labelKey="name"
+                    options={makeoptions(repository.items)}
+                    onChange={handleOnChange}
+                    selected={makeoptions(selectedRepositoryItems as RepositoryDataItem[])}
+                    placeholder="-- Wybierz typ --"
+                    isValid={isValid}
+                    isInvalid={isInvalid}
+                    renderMenuItemChildren={(option, props, index) => {
+                        return MenuItemBody(option as RepositoryDataItem);
+                    }}
+
+                />
+            )}
         </Form.Group>
     );
 }
@@ -72,9 +184,11 @@ type PersonsSelectFormElementProps = {
     repository: RepositoryReact,
     selectedRepositoryItems: RepositoryDataItem[],
     multiple?: boolean
+    isValid?: boolean,
+    isInvalid?: boolean,
 }
 
-export function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple }: PersonsSelectFormElementProps) {
+export function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple, isValid, isInvalid }: PersonsSelectFormElementProps) {
     function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
         return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
     }
@@ -99,6 +213,8 @@ export function PersonSelectFormElement({ label, onChange, selectedRepositoryIte
                 selected={makeoptions(selectedRepositoryItems)}
                 placeholder="-- Wybierz osobę --"
                 multiple={multiple}
+                isValid={isValid}
+                isInvalid={isInvalid}
             />
         </Form.Group>
     );
@@ -115,6 +231,9 @@ type MyAsyncTypeaheadProps = {
     multiple?: boolean,
     isRequired?: boolean;
     renderMenuItemChildren?: RenderMenuItemChildren
+    register?: UseFormRegister<FieldValues>
+    name?: string
+    errors?: FieldErrors<FieldValues>
 }
 /**
  * @param repository repozytorium z którego pobierane są dane
@@ -137,7 +256,10 @@ export function MyAsyncTypeahead({
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     multiple = false,
-    isRequired = false
+    isRequired = false,
+    register,
+    name,
+    errors
 }: MyAsyncTypeaheadProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<any[]>([]);

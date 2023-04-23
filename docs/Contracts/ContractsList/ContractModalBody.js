@@ -36,118 +36,121 @@ const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("./ContractsSearch");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const useValidation_1 = require("../../View/useValidation");
+const FormContext_1 = require("../../View/FormContext");
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
-    const [name, setName] = (0, react_1.useState)(initialData?.name || '');
-    const [alias, setAlias] = (0, react_1.useState)(initialData?.alias || '');
-    const [comment, setComment] = (0, react_1.useState)(initialData?.comment || '');
-    const [valueInPLN, setValueInPLN] = (0, react_1.useState)(initialData?.value || '');
-    const [status, setStatus] = (0, react_1.useState)(initialData?.status || '');
+    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
     const [startDate, setStartDate] = (0, react_1.useState)(initialData?.startDate || new Date().toISOString().slice(0, 10));
     const [endDate, setEndDate] = (0, react_1.useState)(initialData?.endDate || new Date().toISOString().slice(0, 10));
-    const [isNameValid, setIsNameValid] = (0, react_1.useState)(initialData?.name ? true : false);
-    const [isAliasValid, setIsAliasValid] = (0, react_1.useState)(initialData?.alias ? true : false);
-    const [isCommentValid, setIsCommentValid] = (0, react_1.useState)(initialData?.comment ? true : false);
-    const [isValueInPLNValid, setIsValueInPLNValid] = (0, react_1.useState)(initialData?.value ? true : false);
-    const [isStatusValid, setIsStatusValid] = (0, react_1.useState)(initialData?.status ? true : false);
     const [isStartDateValid, setIsStartDateValid] = (0, react_1.useState)(initialData?.startDate ? true : false);
     const [isEndDateValid, setIsEndDateValid] = (0, react_1.useState)(initialData?.endDate ? true : false);
-    function handleNameChange(e) {
-        const value = e.target.value;
-        const validationFormula = value.length >= 3 && value.length <= 50;
-        setName(value);
-        setIsNameValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('name', validationFormula);
+    (0, react_1.useEffect)(() => {
+        setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue('alias', initialData?.alias || '', { shouldValidate: true });
+        setValue('comment', initialData?.comment || '', { shouldValidate: true });
+        setValue('value', initialData?.value || '', { shouldValidate: true });
+        setValue('status', initialData?.satus || '', { shouldValidate: true });
+        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('type', initialData?.type || '', { shouldValidate: true });
+        // Ustaw inne wartości domyślne dla pozostałych pól formularza
+    }, [initialData, setValue]);
+    const aliasValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?.alias || '',
+        validationFunction: (value) => value.length <= 30,
+        fieldName: 'alias',
+        validationMessage: 'Alias może zawierać maksymalnie 30 znaków.',
+        onValidationChange,
+    });
+    const commentValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?.comment || '',
+        validationFunction: (value) => value.length <= 100,
+        fieldName: 'comment',
+        validationMessage: 'Komentarz może zawierać maksymalnie 100 znaków.',
+        onValidationChange,
+    });
+    //pozostałe pola:
+    const valueInPLNValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?.value || '',
+        validationFunction: (value) => value.length <= 100,
+        fieldName: 'value',
+        validationMessage: 'Wartość może zawierać maksymalnie 100 znaków.',
+        onValidationChange,
+    });
+    const statusValidation = (0, useValidation_1.useValidation)({
+        initialValue: initialData?.status || '',
+        validationFunction: (value) => value.length > 0,
+        fieldName: 'status',
+        validationMessage: 'Status jest wymagany.',
+        onValidationChange,
+    });
+    function datesValidationFunction(value) {
+        const { start, end } = { ...value };
+        const endDate = new Date(end);
+        const startDate = new Date(start);
+        return start.length > 0 && end.length > 0 && endDate > startDate;
     }
-    ;
-    function handleAliasChange(e) {
-        const value = e.target.value;
-        const validationFormula = value.length <= 30;
-        setAlias(value);
-        setIsAliasValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('alias', validationFormula);
-    }
-    ;
-    //dodaj hadnleCHange dla pozostałych pól:
-    function handleCommentChange(e) {
-        const value = e.target.value;
-        const validationFormula = value.length <= 100;
-        setComment(value);
-        setIsCommentValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('comment', validationFormula);
-    }
-    ;
-    function handleValueInPLNChange(value) {
-        const validationFormula = value.length <= 100;
-        setValueInPLN(value);
-        setIsValueInPLNValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('value', validationFormula);
-    }
-    ;
-    function handleStatusChange(e) {
-        const value = e.target.value;
-        const validationFormula = value.length > 0;
-        setStatus(value);
-        setIsStatusValid(validationFormula);
-        if (onValidationChange)
-            onValidationChange('status', validationFormula);
-    }
-    ;
-    function handleStartDateChange(e) {
-        const value = e.target.value;
-        const endDate = new Date(value);
-        const start = new Date(startDate);
-        const validationFormula = value.length > 0 && endDate >= start;
-        setStartDate(value);
-        setIsStartDateValid(validationFormula);
-        setIsEndDateValid(validationFormula);
+    const [updateCounter, setUpdateCounter] = (0, react_1.useState)(0);
+    (0, react_1.useEffect)(() => {
+        const validationResult = datesValidationFunction({ start: startDate, end: endDate });
+        setIsStartDateValid(validationResult);
+        setIsEndDateValid(validationResult);
         if (onValidationChange) {
-            onValidationChange('startDate', validationFormula);
-            onValidationChange('endDate', validationFormula);
+            onValidationChange('startDate', validationResult);
+            onValidationChange('endDate', validationResult);
         }
+        setUpdateCounter(updateCounter + 1);
+    }, [startDate, endDate, onValidationChange, datesValidationFunction, updateCounter, setIsStartDateValid, setIsEndDateValid]);
+    (0, react_1.useEffect)(() => {
+        if (updateCounter === 0) {
+            setStartDate(new Date().toISOString().slice(0, 10));
+            setEndDate(new Date().toISOString().slice(0, 10));
+        }
+    }, [updateCounter]);
+    function handleStartDateChange(e) {
+        setStartDate(e.target.value);
     }
     ;
     function handleEndDateChange(e) {
-        const value = e.target.value;
-        const endDate = new Date(value);
-        const start = new Date(startDate);
-        const validationFormula = value.length > 0 && endDate >= start;
-        setEndDate(value);
-        setIsEndDateValid(validationFormula);
-        setIsStartDateValid(validationFormula);
-        if (onValidationChange) {
-            onValidationChange('endDate', validationFormula);
-            onValidationChange('startDate', validationFormula);
-        }
+        setEndDate(e.target.value);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "name", placeholder: "Podaj nazw\u0119", value: name, onChange: handleNameChange, isInvalid: !isNameValid, isValid: isNameValid }),
-            !isNameValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Nazwa musi zawiera\u0107 od 3 do 50 znak\u00F3w."))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isInvalid: !!formState.errors?.name, isValid: !formState.errors?.name, ...register('name', {
+                    required: { value: true, message: 'Nazwa jest wymagana' },
+                    minLength: { value: 3, message: 'Nazwa musi mieć przynajmniej 3 znaki' },
+                    maxLength: { value: 50, message: 'Nazwa może mieć maksymalnie 50 znaków' }
+                }) }),
+            formState.errors?.name && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.name.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: alias, onChange: handleAliasChange, isInvalid: !isAliasValid, isValid: isAliasValid })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: aliasValidation.value, onChange: aliasValidation.handleChange, isInvalid: !aliasValidation.isValid, isValid: aliasValidation.isValid }),
+            !aliasValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, aliasValidation.validationMessage))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: comment, onChange: handleCommentChange, isInvalid: !isCommentValid, isValid: isCommentValid })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: commentValidation.value, onChange: commentValidation.handleChange, isInvalid: !commentValidation.isValid, isValid: commentValidation.isValid }),
+            !commentValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, commentValidation.validationMessage))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: handleValueInPLNChange, value: valueInPLN })),
+            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: valueInPLNValidation.handleChange, value: valueInPLNValidation.value }),
+            !valueInPLNValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, valueInPLNValidation.validationMessage))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: handleStartDateChange, isInvalid: !isStartDateValid, isValid: isStartDateValid })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: handleStartDateChange, isInvalid: !isStartDateValid, isValid: isStartDateValid }),
+            !isStartDateValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Data zako\u0144czenia musi by\u0107 p\u00F3\u017Aniejsza ni\u017C data rozpocz\u0119cia."))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: handleEndDateChange, isInvalid: !isEndDateValid, isValid: isEndDateValid })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: handleEndDateChange, isInvalid: !isEndDateValid, isValid: isEndDateValid }),
+            !isEndDateValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Data zako\u0144czenia musi by\u0107 p\u00F3\u017Aniejsza ni\u017C data rozpocz\u0119cia."))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", name: "status", onChange: handleStatusChange, value: status, isInvalid: !isStatusValid, isValid: isStatusValid },
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isInvalid: !formState.isValid, isValid: formState.isValid, ...register('status', {
+                    required: { value: true, message: 'Pole jest wymagane' }
+                }) },
                 react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-                ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))))));
+                ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            !formState.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.status?.message)))));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
