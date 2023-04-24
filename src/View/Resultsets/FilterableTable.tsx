@@ -6,6 +6,9 @@ import { Table, Container, Accordion, Collapse, Button, Row, Col, Form, Progress
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
 import { OtherContractAddNewModalButton } from '../../Contracts/ContractsList/OtherContractModalBody';
 import { OurContractAddNewModalButton } from '../../Contracts/ContractsList/OurContractModalBody';
+import { FormProvider } from '../FormContext';
+import { FieldValues, useForm } from 'react-hook-form';
+import { parseFieldValuestoFormData } from './CommonComponentsController';
 
 type FilteredTableProps = {
     title: string,
@@ -13,7 +16,7 @@ type FilteredTableProps = {
     onSubmitSearch: FormEventHandler,
     onEdit?: (object: RepositoryDataItem) => void,
     onDelete?: (id: number) => void,
-    onIsReadyChange?: (isReady: boolean) => void,
+    onIsReadyChange?: React.Dispatch<React.SetStateAction<boolean>>,
     onAddNew?: (object: RepositoryDataItem) => void,
     objects: any[],
     isReady: boolean,
@@ -21,11 +24,13 @@ type FilteredTableProps = {
     onRowClick: (id: number) => void,
     tableHeaders: string[],
     rowRenderer: (props: FilterTableRowProps) => JSX.Element
+    repository: RepositoryReact
 }
 
 export default function FilteredTable({
     title,
     filters,
+    repository,
     onSubmitSearch,
     onEdit,
     onDelete,
@@ -59,7 +64,7 @@ export default function FilteredTable({
                 }
             </Row>
             <Row>
-                <FilterPanel filters={filters} onSubmit={onSubmitSearch} />
+                <FilterPanel filters={filters} repository={repository} onIsReadyCHange={onIsReadyChange} />
             </Row>
             {!isReady && <Row><progress style={{ height: "5px" }} /></Row>}
             <Row>
@@ -83,22 +88,47 @@ export default function FilteredTable({
     );
 }
 
-function FilterPanel({ filters, onSubmit }: { filters: any[], onSubmit: FormEventHandler }) {
-    return (
-        <Form onSubmit={onSubmit}>
+type FilterPanelProps = {
+    repository: RepositoryReact,
+    filters: JSX.Element[],
+    onIsReadyCHange: React.Dispatch<React.SetStateAction<boolean>>,
+}
+function FilterPanel({ filters, repository, onIsReadyCHange: onIsReadyChange }: FilterPanelProps) {
+    const [errorMessage, setErrorMessage] = useState('');
 
-            {filters.map((filter, index) => (
-                <Col key={index}> {filter} </Col>
-            ))}
-            <Col>
-                <Button type="submit">Szukaj</Button>
-            </Col>
+    const {
+        register,
+        setValue,
+        watch,
+        handleSubmit,
+        control,
+        formState: { errors, isValid },
+    } = useForm({ defaultValues: {}, mode: 'onChange' });
+
+    async function handleSubmitSearch(data: FieldValues) {
+        onIsReadyChange(false);
+        const formData = parseFieldValuestoFormData(data);
+        await repository.loadItemsfromServer(formData);
+        onIsReadyChange(false);
+    };
+
+    return (
+        <Form onSubmit={handleSubmit(handleSubmitSearch)}>
+            <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid } }}>
+                {filters.map((filter, index) => (
+                    <Col key={index}> {filter} </Col>
+                ))}
+                <Col>
+                    <Button type="submit">Szukaj</Button>
+                </Col>
+            </FormProvider>
         </Form>
     );
 }
 
 /**
- *  Obsługuje wyszukiwanie w tabeli z filtrowaniem 
+ *  Obsługuje wyszukiwanie w tabeli z filtrowaniem
+ * @deprecated 
  */
 export async function handleSubmitFilterableTable(
     e: React.FormEvent<HTMLFormElement>,

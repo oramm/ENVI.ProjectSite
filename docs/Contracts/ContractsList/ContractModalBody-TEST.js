@@ -27,6 +27,7 @@ exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.Pr
 const react_1 = __importStar(require("react"));
 const GeneralModal_1 = require("../../View/GeneralModal");
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const react_bootstrap_1 = require("react-bootstrap");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("./ContractsSearch");
@@ -34,11 +35,14 @@ const FormContext_1 = require("../../View/FormContext");
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('status', initialData?.status || '', { shouldValidate: true });
-        setValue('contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
+        setValue('_manager', initialData?.status || '', { shouldValidate: true });
+        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
         // Ustaw inne wartości domyślne dla pozostałych pól formularza
     }, [initialData, setValue]);
-    return (react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', required: true }));
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
+        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, multiple: false, isRequired: true })));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

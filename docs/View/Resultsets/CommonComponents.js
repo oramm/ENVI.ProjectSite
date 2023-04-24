@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractTypeSelectFormElementOLD = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -34,60 +34,25 @@ require("react-bootstrap-typeahead/css/Typeahead.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
-/** Pole wyboru typu kontraktu */
-function ContractTypeSelectFormElementOLD({ 
-//onChange,
-//selectedRepositoryItems,
-typesToInclude = 'all', isInvalid, isValid }) {
-    const label = 'Typ Kontraktu';
-    const repository = MainSetupReact_1.default.contractTypesRepository;
-    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
-    function makeoptions(repositoryDataItems) {
-        const filteredItems = repositoryDataItems.filter((item) => {
-            if (typesToInclude === 'all')
-                return true;
-            if (typesToInclude === 'our' && item.isOur)
-                return true;
-            if (typesToInclude === 'other' && !item.isOur)
-                return true;
-            return false;
-        });
-        const options = filteredItems.map((item) => {
-            return { label: `${item.name}`, value: item.id };
-        });
-        return options;
-    }
-    function handleOnChange(selectedItems) {
-        const selectedRepositoryItems = selectedItems
-            .map((item) => {
-            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
-            return foundItem;
-        })
-            .filter((item) => item !== undefined);
-        //onChange(selectedRepositoryItems);
-        setValue('contractType', selectedRepositoryItems);
-    }
-    isValid = watch('contractTypeIsValid', true);
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, 
-            //selected={makeoptions(selectedRepositoryItems)}
-            placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
+const ContractsController_1 = __importDefault(require("../../Contracts/ContractsList/ContractsController"));
+const react_number_format_1 = require("react-number-format");
+function ContractStatus({ required = false, showValidationInfo = true }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors?.status : undefined, isInvalid: showValidationInfo ? !!errors?.status : undefined, ...register('status', {
+                required: { value: required, message: 'Pole jest wymagane' },
+            }) },
+            react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
+            ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+        errors?.status && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.status.message))));
 }
-exports.ContractTypeSelectFormElementOLD = ContractTypeSelectFormElementOLD;
-function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid, required = false, }) {
-    const useFormContextOrEmpty = () => {
-        try {
-            const context = (0, FormContext_1.useFormContext)();
-            return context;
-        }
-        catch {
-            return null;
-        }
-    };
-    const formContext = useFormContextOrEmpty();
-    const { control = null, watch = null, setValue = null, formState = null } = formContext || {};
+exports.ContractStatus = ContractStatus;
+;
+function ContractTypeSelectFormElement({ typesToInclude = 'all', required = false, showValidationInfo = true, }) {
+    const { control, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const label = 'Typ Kontraktu';
+    const name = '_contractType';
     const repository = MainSetupReact_1.default.contractTypesRepository;
     function makeoptions(repositoryDataItems) {
         const filteredItems = repositoryDataItems.filter((item) => {
@@ -102,86 +67,70 @@ function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, type
         return filteredItems;
     }
     function handleOnChange(selectedOptions, field) {
-        selectedOptions.filter((item) => item !== undefined);
-        if (setValue && field) {
-            setValue('contractType', selectedOptions);
-            field.onChange(selectedOptions);
-            console.log('selectedOptions', selectedOptions);
-        }
-        else if (onChange)
-            onChange(selectedOptions);
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
     }
-    if (watch)
-        watch('contractTypeIsValid', true);
-    const MenuItemBody = (0, react_1.useCallback)((myOption) => {
-        return react_1.default.createElement("div", null,
-            react_1.default.createElement("span", null, myOption.name),
-            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description));
-    }, []);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        control ? (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: "contractType", control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, defaultValue: makeoptions(selectedRepositoryItems || []), render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: !(formState && formState.errors?.contractType), isInvalid: !!(formState && formState.errors?.contractType), renderMenuItemChildren: (option, props, index) => {
-                        return MenuItemBody(option);
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, 
+                //defaultValue={makeoptions(selectedRepositoryItems || [])}
+                render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const myOption = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
                     } })) }),
-            formState && formState.errors?.contractType && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.contractType.message)))) : (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-uncontrolled`, labelKey: "name", options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid, renderMenuItemChildren: (option, props, index) => {
-                return MenuItemBody(option);
-            } }))));
+            errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors?.[name].message)))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
-function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple, isValid, isInvalid }) {
+function PersonSelectFormElement({ label, name, repository, multiple, showValidationInfo = true, required = false }) {
+    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
-        return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+        repositoryDataItems.map(item => item._nameSurname = `${item.name} ${item.surname}`);
+        return repositoryDataItems;
     }
-    function handleOnChange(selectedItems) {
-        const selectedRepositoryItems = selectedItems
-            .map((item) => {
-            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
-            return foundItem;
-        })
-            .filter((item) => item !== undefined);
-        onChange(selectedRepositoryItems);
+    function handleOnChange(selectedOptions, field) {
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: isValid, isInvalid: isInvalid })));
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
+        errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
 /**
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
- * @param onChange zaktualizuj setstate projects komponentu nadrzędnego
- * @param selectedRepositoryItems aktualnie wybrane elementy
  * @param labelKey nazwa pola w repozytorium które ma być wyświetlane w polu wyboru
  * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
- * @param additionalFieldsKeysValues dodatkowe pola które mają być wyszukiwane na serwerze
  * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
 */
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, register, name, errors }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
         const formData = new FormData();
         formData.append(searchKey, query);
-        additionalFieldsKeysValues.forEach((field) => {
-            formData.append(field.key, field.value);
-        });
         repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
-            // Filter out object that are present in selectedRepositoryItems 
-            const filteredItems = items.filter(item => {
-                return selectedRepositoryItems ? !selectedRepositoryItems.some((selectedItem) => selectedItem.id == item.id) : true;
-            });
-            setOptions(filteredItems);
+            setOptions(items);
             setIsLoading(false);
         });
     }
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && selectedRepositoryItems && selectedRepositoryItems.length > 0, isInvalid: isRequired && (!selectedRepositoryItems || selectedRepositoryItems.length === 0) }));
+    function handleOnChange(selectedOptions, field) {
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
+    }
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -199,29 +148,30 @@ function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSel
     console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
 exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
-function ValueInPLNInput({ value, onChange }) {
-    const inputRef = (0, react_1.useRef)(null);
-    function formatValue(value) {
-        return new Intl.NumberFormat('pl-PL', {
-            style: 'decimal',
-            minimumFractionDigits: 2,
-        }).format(parseFloat(value) || 0);
+function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel = 'value' }) {
+    const { register, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const watchedValue = watch(keyLabel);
+    function handleValueChange(values) {
+        //const valueWithComma = values.floatValue?.toString().replace('.', ',');
+        setValue(keyLabel, values.floatValue);
     }
-    ;
-    function handleInputChange(e) {
-        const newValue = e.target.value.replace(/\s/g, '');
-        const cursorPosition = e.target.selectionStart;
-        onChange(newValue);
-        if (inputRef.current && cursorPosition) {
-            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    const classNames = ['form-control'];
+    if (showValidationInfo) {
+        if (errors.value) {
+            classNames.push('is-invalid');
+        }
+        else {
+            classNames.push('is-valid');
         }
     }
-    ;
-    function handleInputBlur() {
-        onChange(formatValue(value));
-    }
-    ;
-    return (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef }));
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
+            react_1.default.createElement(react_number_format_1.NumericFormat, { value: watchedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: handleValueChange, className: classNames.join(' '), valueIsNumericString: true, ...register(keyLabel, {
+                    required: { value: required, message: 'Podaj wartość! Jeśli jej nie znasz to wpisz zero' },
+                    max: { value: 9999999999, message: 'Zbyt duża liczba' },
+                }) }),
+            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
+        errors?.value && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.value?.message))));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
 /**Pole dodawania plików

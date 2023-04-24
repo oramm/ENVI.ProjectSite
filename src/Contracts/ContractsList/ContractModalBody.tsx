@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
 import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
@@ -10,17 +10,13 @@ import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
 import { useValidation } from '../../View/useValidation';
 import { useFormContext } from '../../View/FormContext';
+//import { useFormContext } from 'react-hook-form';
 
 export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
     const { register, setValue, watch, formState } = useFormContext();
-
-
-    const [startDate, setStartDate] = useState(initialData?.startDate as string || new Date().toISOString().slice(0, 10));
-    const [endDate, setEndDate] = useState(initialData?.endDate as string || new Date().toISOString().slice(0, 10));
-
-    const [isStartDateValid, setIsStartDateValid] = useState(initialData?.startDate ? true : false);
-    const [isEndDateValid, setIsEndDateValid] = useState(initialData?.endDate ? true : false);
-
+    const startDate = watch('startDate');
+    const endDate = watch('endDate');
+    const [dateValidationResult, setDateValidationResult] = useState('');
 
     useEffect(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
@@ -32,76 +28,21 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
         setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
     }, [initialData, setValue]);
 
-
-    const aliasValidation = useValidation<string>({
-        initialValue: initialData?.alias || '',
-        validationFunction: (value) => value.length <= 30,
-        fieldName: 'alias',
-        validationMessage: 'Alias może zawierać maksymalnie 30 znaków.',
-        onValidationChange,
-    });
-
-    const commentValidation = useValidation<string>({
-        initialValue: initialData?.comment || '',
-        validationFunction: (value) => value.length <= 100,
-        fieldName: 'comment',
-        validationMessage: 'Komentarz może zawierać maksymalnie 100 znaków.',
-        onValidationChange,
-    });
-
-    //pozostałe pola:
-    const valueInPLNValidation = useValidation<string>({
-        initialValue: initialData?.value || '',
-        validationFunction: (value) => value.length <= 100,
-        fieldName: 'value',
-        validationMessage: 'Wartość może zawierać maksymalnie 100 znaków.',
-        onValidationChange,
-    });
-
-    const statusValidation = useValidation<string>({
-        initialValue: initialData?.status || '',
-        validationFunction: (value) => value.length > 0,
-        fieldName: 'status',
-        validationMessage: 'Status jest wymagany.',
-        onValidationChange,
-    });
-
-    function datesValidationFunction(value: { start: string, end: string }) {
-        const { start, end } = { ...value };
-        const endDate = new Date(end);
-        const startDate = new Date(start);
-        return start.length > 0 && end.length > 0 && endDate > startDate;
-    }
-
-
-    const [updateCounter, setUpdateCounter] = useState(0);
-
     useEffect(() => {
-        const validationResult = datesValidationFunction({ start: startDate, end: endDate });
-        setIsStartDateValid(validationResult);
-        setIsEndDateValid(validationResult);
-        if (onValidationChange) {
-            onValidationChange('startDate', validationResult);
-            onValidationChange('endDate', validationResult);
-        }
-        setUpdateCounter(updateCounter + 1);
-    }, [startDate, endDate, onValidationChange, datesValidationFunction, updateCounter, setIsStartDateValid, setIsEndDateValid]);
+        if (!startDate || !endDate) return;
+        const validationMessage = datesValidationFunction();
+        setDateValidationResult(validationMessage);
+    }, [startDate, endDate]);
 
-    useEffect(() => {
-        if (updateCounter === 0) {
-            setStartDate(new Date().toISOString().slice(0, 10));
-            setEndDate(new Date().toISOString().slice(0, 10));
-        }
-    }, [updateCounter]);
+    function datesValidationFunction() {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
 
-    function handleStartDateChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setStartDate(e.target.value);
-    };
+        if (start >= end)
+            return 'Początek musi być wcześniejszy niż zakończenie';
 
-    function handleEndDateChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setEndDate(e.target.value);
+        return '';
     }
-
 
     return (
         <>
@@ -129,16 +70,14 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Alias</Form.Label>
                 <Form.Control
                     type="text"
-                    name='alias'
                     placeholder="Podaj alias"
-                    value={aliasValidation.value}
-                    onChange={aliasValidation.handleChange}
-                    isInvalid={!aliasValidation.isValid}
-                    isValid={aliasValidation.isValid}
+                    isValid={!formState.errors?.alias}
+                    isInvalid={!!formState.errors?.alias}
+                    {...register('alias')}
                 />
-                {!aliasValidation.isValid && (
+                {formState.errors?.alias && (
                     <Form.Text className="text-danger">
-                        {aliasValidation.validationMessage}
+                        {formState.errors.alias.message as string}
                     </Form.Text>
                 )}
             </Form.Group>
@@ -147,45 +86,40 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
                     as="textarea"
-                    name="comment"
                     rows={3}
                     placeholder="Podaj opis"
-                    value={commentValidation.value}
-                    onChange={commentValidation.handleChange}
-                    isInvalid={!commentValidation.isValid}
-                    isValid={commentValidation.isValid}
+                    isValid={!formState.errors?.comment}
+                    isInvalid={!!formState.errors?.comment}
+                    {...register('comment', {
+                        required: false,
+                        maxLength: { value: 50, message: 'Opis może mieć maksymalnie 50 znaków' }
+                    })
+                    }
                 />
-                {!commentValidation.isValid && (
-                    <Form.Text className="text-danger">
-                        {commentValidation.validationMessage}
-                    </Form.Text>
-                )}
+                {
+                    formState.errors?.comment && (
+                        <Form.Text className="text-danger">
+                            {formState.errors.comment.message as string}
+                        </Form.Text>
+                    )
+                }
             </Form.Group>
             <Form.Group controlId="valueInPLN">
                 <Form.Label>Wartość netto w PLN</Form.Label>
-                <ValueInPLNInput
-                    onChange={valueInPLNValidation.handleChange}
-                    value={valueInPLNValidation.value}
-                />
-                {!valueInPLNValidation.isValid && (
-                    <Form.Text className="text-danger">
-                        {valueInPLNValidation.validationMessage}
-                    </Form.Text>
-                )}
+                <ValueInPLNInput required={true} />
             </Form.Group>
             <Form.Group controlId="startDate">
                 <Form.Label>Początek</Form.Label>
                 <Form.Control
                     type="date"
-                    name="startDate"
-                    value={startDate}
-                    onChange={handleStartDateChange}
-                    isInvalid={!isStartDateValid}
-                    isValid={isStartDateValid}
+                    isValid={dateValidationResult === ''}
+                    isInvalid={dateValidationResult !== ''}
+
+                    {...register('startDate')}
                 />
-                {!isStartDateValid && (
+                {dateValidationResult && (
                     <Form.Text className="text-danger">
-                        Data zakończenia musi być późniejsza niż data rozpoczęcia.
+                        {dateValidationResult}
                     </Form.Text>
                 )}
             </Form.Group>
@@ -193,41 +127,17 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Zakończenie</Form.Label>
                 <Form.Control
                     type="date"
-                    name="endDate"
-                    value={endDate}
-                    onChange={handleEndDateChange}
-                    isInvalid={!isEndDateValid}
-                    isValid={isEndDateValid}
+                    isValid={dateValidationResult === ''}
+                    isInvalid={dateValidationResult !== ''}
+                    {...register('endDate')}
                 />
-                {!isEndDateValid && (
+                {dateValidationResult && (
                     <Form.Text className="text-danger">
-                        Data zakończenia musi być późniejsza niż data rozpoczęcia.
+                        {dateValidationResult}
                     </Form.Text>
                 )}
             </Form.Group>
-            <Form.Group controlId="status">
-                <Form.Label>Status</Form.Label>
-                <Form.Control
-                    as="select"
-                    isInvalid={!formState.isValid}
-                    isValid={formState.isValid}
-                    {...register('status', {
-                        required: { value: true, message: 'Pole jest wymagane' }
-                    })}
-                >
-                    <option value="">-- Wybierz opcję --</option>
-                    {ContractsController.statusNames.map((statusName, index) => (
-                        <option key={index} value={statusName}>{statusName}</option>
-                    ))}
-                </Form.Control>
-                {
-                    !formState.isValid && (
-                        <Form.Text className="text-danger">
-                            {formState.errors.status?.message as string}
-                        </Form.Text>
-                    )
-                }
-            </Form.Group >
+            <ContractStatus required={true} />
         </>
     );
 }
@@ -242,49 +152,32 @@ type ProjectSelectorProps = ModalBodyProps & {
  * 
  */
 export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }: ProjectSelectorProps) {
+    const { register, setValue, watch, formState } = useFormContext();
+    const project = watch('_parent');
+
     const [projects, setProjects] = useState([] as RepositoryDataItem[]);
     const [selected, setSelected] = useState(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody) throw new Error("SpecificContractModalBody is not defined");
 
-
-    useEffect(() => {
-        if (projects.length > 0) {
-            const additionalFieldsKeysValues = [
-                { name: '_parent', value: JSON.stringify(projects[0]) }
-            ];
-
-            if (!onAdditionalFieldsKeysValuesChange) throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
-            onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-        }
-    }, [projects, selected]);
-
-
-    const handleProjectSelection = (currentSelectedItems: RepositoryDataItem[]) => {
-        //setProjects(prevProjects => currentSelectedItems);
-        setProjects(currentSelectedItems);
-        setSelected(currentSelectedItems.length > 0);
-    };
-
     return (
         <>
-            {selected ? (
+            {project ? (
                 <SpecificContractModalBody
                     isEditing={isEditing}
                     additionalProps={additionalProps}
                     onAdditionalFieldsKeysValuesChange={onAdditionalFieldsKeysValuesChange}
-                    projectOurId={projects[0].ourId}
                     onValidationChange={onValidationChange}
                 />
             ) : (
                 <Form.Group>
                     <Form.Label>Projekt</Form.Label>
                     <MyAsyncTypeahead
+                        name='_parent'
                         labelKey="ourId"
                         repository={projectsRepository}
-                        selectedRepositoryItems={projects}
-                        onChange={handleProjectSelection}
+                        //onChange={handleProjectSelection}
                         specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                         isRequired={true}
                     />

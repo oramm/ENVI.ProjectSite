@@ -36,6 +36,7 @@
         "react-bootstrap": "^2.7.0",
         "react-bootstrap-typeahead": "^6.0.2",
         "react-dom": "^18.2.0",
-        "react-hook-form": "^7.43.9"
+        "react-hook-form": "^7.43.9",
+        "react-number-format": "^5.1.4"
     }
 }

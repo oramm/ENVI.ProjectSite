@@ -7,6 +7,7 @@ import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
 import { FormProvider } from './FormContext';
 import { ConfirmModal } from './Resultsets/CommonComponents';
+import { parseFieldValuestoFormData } from './Resultsets/CommonComponentsController';
 
 
 type GeneralModalProps = {
@@ -77,20 +78,7 @@ export function GeneralModal({
         try {
             setErrorMessage('');
             onIsReadyChange(false);
-            const formData = new FormData();
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    const element = data[key];
-                    let parsedValue: string = '';
-                    if (typeof element === 'string')
-                        parsedValue = element;
-                    if (typeof element === 'object')
-                        parsedValue = JSON.stringify(element);
-                    if (typeof element === 'number')
-                        parsedValue = element.toString();
-                    formData.append(key, parsedValue);
-                }
-            }
+            const formData = parseFieldValuestoFormData(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);

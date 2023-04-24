@@ -57078,6 +57078,1285 @@ function polyfill(Component) {
 
 /***/ }),
 
+/***/ "./node_modules/react-number-format/dist/react-number-format.es.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/react-number-format/dist/react-number-format.es.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NumberFormatBase": () => (/* binding */ NumberFormatBase),
+/* harmony export */   "NumericFormat": () => (/* binding */ NumericFormat),
+/* harmony export */   "PatternFormat": () => (/* binding */ PatternFormat),
+/* harmony export */   "getNumericCaretBoundary": () => (/* binding */ getCaretBoundary),
+/* harmony export */   "getPatternCaretBoundary": () => (/* binding */ getCaretBoundary$1),
+/* harmony export */   "numericFormatter": () => (/* binding */ format),
+/* harmony export */   "patternFormatter": () => (/* binding */ format$1),
+/* harmony export */   "removeNumericFormat": () => (/* binding */ removeFormatting),
+/* harmony export */   "removePatternFormat": () => (/* binding */ removeFormatting$1),
+/* harmony export */   "useNumericFormat": () => (/* binding */ useNumericFormat),
+/* harmony export */   "usePatternFormat": () => (/* binding */ usePatternFormat)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/**
+ * react-number-format - 5.1.4
+ * Author : Sudhanshu Yadav
+ * Copyright (c) 2016, 2023 to Sudhanshu Yadav, released under the MIT license.
+ * https://github.com/s-yadav/react-number-format
+ */
+
+
+
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) { if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        { t[p] = s[p]; } }
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        { for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                { t[p[i]] = s[p[i]]; }
+        } }
+    return t;
+}
+
+var SourceType;
+(function (SourceType) {
+    SourceType["event"] = "event";
+    SourceType["props"] = "prop";
+})(SourceType || (SourceType = {}));
+
+// basic noop function
+function noop() { }
+function charIsNumber(char) {
+    return !!(char || '').match(/\d/);
+}
+function isNil(val) {
+    return val === null || val === undefined;
+}
+function isNanValue(val) {
+    return typeof val === 'number' && isNaN(val);
+}
+function escapeRegExp(str) {
+    return str.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
+}
+function getThousandsGroupRegex(thousandsGroupStyle) {
+    switch (thousandsGroupStyle) {
+        case 'lakh':
+            return /(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g;
+        case 'wan':
+            return /(\d)(?=(\d{4})+(?!\d))/g;
+        case 'thousand':
+        default:
+            return /(\d)(?=(\d{3})+(?!\d))/g;
+    }
+}
+function applyThousandSeparator(str, thousandSeparator, thousandsGroupStyle) {
+    var thousandsGroupRegex = getThousandsGroupRegex(thousandsGroupStyle);
+    var index = str.search(/[1-9]/);
+    index = index === -1 ? str.length : index;
+    return (str.substring(0, index) +
+        str.substring(index, str.length).replace(thousandsGroupRegex, '$1' + thousandSeparator));
+}
+function usePersistentCallback(cb) {
+    var callbackRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(cb);
+    // keep the callback ref upto date
+    callbackRef.current = cb;
+    /**
+     * initialize a persistent callback which never changes
+     * through out the component lifecycle
+     */
+    var persistentCbRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(function () {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        return callbackRef.current.apply(callbackRef, args);
+    });
+    return persistentCbRef.current;
+}
+//spilt a float number into different parts beforeDecimal, afterDecimal, and negation
+function splitDecimal(numStr, allowNegative) {
+    if ( allowNegative === void 0 ) allowNegative = true;
+
+    var hasNegation = numStr[0] === '-';
+    var addNegation = hasNegation && allowNegative;
+    numStr = numStr.replace('-', '');
+    var parts = numStr.split('.');
+    var beforeDecimal = parts[0];
+    var afterDecimal = parts[1] || '';
+    return {
+        beforeDecimal: beforeDecimal,
+        afterDecimal: afterDecimal,
+        hasNegation: hasNegation,
+        addNegation: addNegation,
+    };
+}
+function fixLeadingZero(numStr) {
+    if (!numStr)
+        { return numStr; }
+    var isNegative = numStr[0] === '-';
+    if (isNegative)
+        { numStr = numStr.substring(1, numStr.length); }
+    var parts = numStr.split('.');
+    var beforeDecimal = parts[0].replace(/^0+/, '') || '0';
+    var afterDecimal = parts[1] || '';
+    return ("" + (isNegative ? '-' : '') + beforeDecimal + (afterDecimal ? ("." + afterDecimal) : ''));
+}
+/**
+ * limit decimal numbers to given scale
+ * Not used .fixedTo because that will break with big numbers
+ */
+function limitToScale(numStr, scale, fixedDecimalScale) {
+    var str = '';
+    var filler = fixedDecimalScale ? '0' : '';
+    for (var i = 0; i <= scale - 1; i++) {
+        str += numStr[i] || filler;
+    }
+    return str;
+}
+function repeat(str, count) {
+    return Array(count + 1).join(str);
+}
+function toNumericString(num) {
+    var _num = num + ''; // typecast number to string
+    // store the sign and remove it from the number.
+    var sign = _num[0] === '-' ? '-' : '';
+    if (sign)
+        { _num = _num.substring(1); }
+    // split the number into cofficient and exponent
+    var ref = _num.split(/[eE]/g);
+    var coefficient = ref[0];
+    var exponent = ref[1];
+    // covert exponent to number;
+    exponent = Number(exponent);
+    // if there is no exponent part or its 0, return the coffiecient with sign
+    if (!exponent)
+        { return sign + coefficient; }
+    coefficient = coefficient.replace('.', '');
+    /**
+     * for scientific notation the current decimal index will be after first number (index 0)
+     * So effective decimal index will always be 1 + exponent value
+     */
+    var decimalIndex = 1 + exponent;
+    var coffiecientLn = coefficient.length;
+    if (decimalIndex < 0) {
+        // if decimal index is less then 0 add preceding 0s
+        // add 1 as join will have
+        coefficient = '0.' + repeat('0', Math.abs(decimalIndex)) + coefficient;
+    }
+    else if (decimalIndex >= coffiecientLn) {
+        // if decimal index is less then 0 add leading 0s
+        coefficient = coefficient + repeat('0', decimalIndex - coffiecientLn);
+    }
+    else {
+        // else add decimal point at proper index
+        coefficient =
+            (coefficient.substring(0, decimalIndex) || '0') + '.' + coefficient.substring(decimalIndex);
+    }
+    return sign + coefficient;
+}
+/**
+ * This method is required to round prop value to given scale.
+ * Not used .round or .fixedTo because that will break with big numbers
+ */
+function roundToPrecision(numStr, scale, fixedDecimalScale) {
+    //if number is empty don't do anything return empty string
+    if (['', '-'].indexOf(numStr) !== -1)
+        { return numStr; }
+    var shouldHaveDecimalSeparator = (numStr.indexOf('.') !== -1 || fixedDecimalScale) && scale;
+    var ref = splitDecimal(numStr);
+    var beforeDecimal = ref.beforeDecimal;
+    var afterDecimal = ref.afterDecimal;
+    var hasNegation = ref.hasNegation;
+    var floatValue = parseFloat(("0." + (afterDecimal || '0')));
+    var floatValueStr = afterDecimal.length <= scale ? ("0." + afterDecimal) : floatValue.toFixed(scale);
+    var roundedDecimalParts = floatValueStr.split('.');
+    var intPart = beforeDecimal
+        .split('')
+        .reverse()
+        .reduce(function (roundedStr, current, idx) {
+        if (roundedStr.length > idx) {
+            return ((Number(roundedStr[0]) + Number(current)).toString() +
+                roundedStr.substring(1, roundedStr.length));
+        }
+        return current + roundedStr;
+    }, roundedDecimalParts[0]);
+    var decimalPart = limitToScale(roundedDecimalParts[1] || '', scale, fixedDecimalScale);
+    var negation = hasNegation ? '-' : '';
+    var decimalSeparator = shouldHaveDecimalSeparator ? '.' : '';
+    return ("" + negation + intPart + decimalSeparator + decimalPart);
+}
+/** set the caret positon in an input field **/
+function setCaretPosition(el, caretPos) {
+    el.value = el.value;
+    // ^ this is used to not only get 'focus', but
+    // to make sure we don't have it everything -selected-
+    // (it causes an issue in chrome, and having it doesn't hurt any other browser)
+    if (el !== null) {
+        /* @ts-ignore */
+        if (el.createTextRange) {
+            /* @ts-ignore */
+            var range = el.createTextRange();
+            range.move('character', caretPos);
+            range.select();
+            return true;
+        }
+        // (el.selectionStart === 0 added for Firefox bug)
+        if (el.selectionStart || el.selectionStart === 0) {
+            el.focus();
+            el.setSelectionRange(caretPos, caretPos);
+            return true;
+        }
+        // fail city, fortunately this never happens (as far as I've tested) :)
+        el.focus();
+        return false;
+    }
+}
+function findChangeRange(prevValue, newValue) {
+    var i = 0, j = 0;
+    var prevLength = prevValue.length;
+    var newLength = newValue.length;
+    while (prevValue[i] === newValue[i] && i < prevLength)
+        { i++; }
+    //check what has been changed from last
+    while (prevValue[prevLength - 1 - j] === newValue[newLength - 1 - j] &&
+        newLength - j > i &&
+        prevLength - j > i) {
+        j++;
+    }
+    return {
+        from: { start: i, end: prevLength - j },
+        to: { start: i, end: newLength - j },
+    };
+}
+/*
+  Returns a number whose value is limited to the given range
+*/
+function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
+}
+function geInputCaretPosition(el) {
+    /*Max of selectionStart and selectionEnd is taken for the patch of pixel and other mobile device caret bug*/
+    return Math.max(el.selectionStart, el.selectionEnd);
+}
+function addInputMode() {
+    return (typeof navigator !== 'undefined' &&
+        !(navigator.platform && /iPhone|iPod/.test(navigator.platform)));
+}
+function getDefaultChangeMeta(value) {
+    return {
+        from: {
+            start: 0,
+            end: 0,
+        },
+        to: {
+            start: 0,
+            end: value.length,
+        },
+        lastValue: '',
+    };
+}
+function getMaskAtIndex(mask, index) {
+    if ( mask === void 0 ) mask = ' ';
+
+    if (typeof mask === 'string') {
+        return mask;
+    }
+    return mask[index] || ' ';
+}
+function getCaretPosition(newFormattedValue, lastFormattedValue, curValue, curCaretPos, boundary, isValidInputCharacter) {
+    /**
+     * if something got inserted on empty value, add the formatted character before the current value,
+     * This is to avoid the case where typed character is present on format characters
+     */
+    var firstAllowedPosition = boundary.findIndex(function (b) { return b; });
+    var prefixFormat = newFormattedValue.slice(0, firstAllowedPosition);
+    if (!lastFormattedValue && !curValue.startsWith(prefixFormat)) {
+        curValue = prefixFormat + curValue;
+        curCaretPos = curCaretPos + prefixFormat.length;
+    }
+    var curValLn = curValue.length;
+    var formattedValueLn = newFormattedValue.length;
+    // create index map
+    var addedIndexMap = {};
+    var indexMap = new Array(curValLn);
+    for (var i = 0; i < curValLn; i++) {
+        indexMap[i] = -1;
+        for (var j = 0, jLn = formattedValueLn; j < jLn; j++) {
+            if (curValue[i] === newFormattedValue[j] && addedIndexMap[j] !== true) {
+                indexMap[i] = j;
+                addedIndexMap[j] = true;
+                break;
+            }
+        }
+    }
+    /**
+     * For current caret position find closest characters (left and right side)
+     * which are properly mapped to formatted value.
+     * The idea is that the new caret position will exist always in the boundary of
+     * that mapped index
+     */
+    var pos = curCaretPos;
+    while (pos < curValLn && (indexMap[pos] === -1 || !isValidInputCharacter(curValue[pos]))) {
+        pos++;
+    }
+    // if the caret position is on last keep the endIndex as last for formatted value
+    var endIndex = pos === curValLn || indexMap[pos] === -1 ? formattedValueLn : indexMap[pos];
+    pos = curCaretPos - 1;
+    while (pos > 0 && indexMap[pos] === -1)
+        { pos--; }
+    var startIndex = pos === -1 || indexMap[pos] === -1 ? 0 : indexMap[pos] + 1;
+    /**
+     * case where a char is added on suffix and removed from middle, example 2sq345 becoming $2,345 sq
+     * there is still a mapping but the order of start index and end index is changed
+     */
+    if (startIndex > endIndex)
+        { return endIndex; }
+    /**
+     * given the current caret position if it closer to startIndex
+     * keep the new caret position on start index or keep it closer to endIndex
+     */
+    return curCaretPos - startIndex < endIndex - curCaretPos ? startIndex : endIndex;
+}
+/* This keeps the caret within typing area so people can't type in between prefix or suffix or format characters */
+function getCaretPosInBoundary(value, caretPos, boundary, direction) {
+    var valLn = value.length;
+    // clamp caret position to [0, value.length]
+    caretPos = clamp(caretPos, 0, valLn);
+    if (direction === 'left') {
+        while (caretPos >= 0 && !boundary[caretPos])
+            { caretPos--; }
+        // if we don't find any suitable caret position on left, set it on first allowed position
+        if (caretPos === -1)
+            { caretPos = boundary.indexOf(true); }
+    }
+    else {
+        while (caretPos <= valLn && !boundary[caretPos])
+            { caretPos++; }
+        // if we don't find any suitable caret position on right, set it on last allowed position
+        if (caretPos > valLn)
+            { caretPos = boundary.lastIndexOf(true); }
+    }
+    // if we still don't find caret position, set it at the end of value
+    if (caretPos === -1)
+        { caretPos = valLn; }
+    return caretPos;
+}
+function caretUnknownFormatBoundary(formattedValue) {
+    var boundaryAry = Array.from({ length: formattedValue.length + 1 }).map(function () { return true; });
+    for (var i = 0, ln = boundaryAry.length; i < ln; i++) {
+        // consider caret to be in boundary if it is before or after numeric value
+        boundaryAry[i] = Boolean(charIsNumber(formattedValue[i]) || charIsNumber(formattedValue[i - 1]));
+    }
+    return boundaryAry;
+}
+function useInternalValues(value, defaultValue, valueIsNumericString, format, removeFormatting, onValueChange) {
+    if ( onValueChange === void 0 ) onValueChange = noop;
+
+    var propValues = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+    var getValues = usePersistentCallback(function (value) {
+        var formattedValue, numAsString;
+        if (isNil(value) || isNanValue(value)) {
+            numAsString = '';
+            formattedValue = '';
+        }
+        else if (typeof value === 'number' || valueIsNumericString) {
+            numAsString = typeof value === 'number' ? toNumericString(value) : value;
+            formattedValue = format(numAsString);
+        }
+        else {
+            numAsString = removeFormatting(value, undefined);
+            formattedValue = value;
+        }
+        return { formattedValue: formattedValue, numAsString: numAsString };
+    });
+    var ref = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(function () {
+        return getValues(defaultValue);
+    });
+    var values = ref[0];
+    var setValues = ref[1];
+    var _onValueChange = function (values, sourceInfo) {
+        setValues({
+            formattedValue: values.formattedValue,
+            numAsString: values.value,
+        });
+        onValueChange(values, sourceInfo);
+    };
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+        //if element is moved to uncontrolled mode, don't reset the value
+        if (!isNil(value)) {
+            propValues.current = getValues(value);
+            setValues(propValues.current);
+        }
+        else {
+            propValues.current = undefined;
+        }
+    }, [value, getValues]);
+    return [values, _onValueChange];
+}
+
+function defaultRemoveFormatting(value) {
+    return value.replace(/[^0-9]/g, '');
+}
+function defaultFormat(value) {
+    return value;
+}
+function NumberFormatBase(props) {
+    var type = props.type; if ( type === void 0 ) type = 'text';
+    var displayType = props.displayType; if ( displayType === void 0 ) displayType = 'input';
+    var customInput = props.customInput;
+    var renderText = props.renderText;
+    var getInputRef = props.getInputRef;
+    var format = props.format; if ( format === void 0 ) format = defaultFormat;
+    var removeFormatting = props.removeFormatting; if ( removeFormatting === void 0 ) removeFormatting = defaultRemoveFormatting;
+    var defaultValue = props.defaultValue;
+    var valueIsNumericString = props.valueIsNumericString;
+    var onValueChange = props.onValueChange;
+    var isAllowed = props.isAllowed;
+    var onChange = props.onChange; if ( onChange === void 0 ) onChange = noop;
+    var onKeyDown = props.onKeyDown; if ( onKeyDown === void 0 ) onKeyDown = noop;
+    var onMouseUp = props.onMouseUp; if ( onMouseUp === void 0 ) onMouseUp = noop;
+    var onFocus = props.onFocus; if ( onFocus === void 0 ) onFocus = noop;
+    var onBlur = props.onBlur; if ( onBlur === void 0 ) onBlur = noop;
+    var propValue = props.value;
+    var getCaretBoundary = props.getCaretBoundary; if ( getCaretBoundary === void 0 ) getCaretBoundary = caretUnknownFormatBoundary;
+    var isValidInputCharacter = props.isValidInputCharacter; if ( isValidInputCharacter === void 0 ) isValidInputCharacter = charIsNumber;
+    var otherProps = __rest(props, ["type", "displayType", "customInput", "renderText", "getInputRef", "format", "removeFormatting", "defaultValue", "valueIsNumericString", "onValueChange", "isAllowed", "onChange", "onKeyDown", "onMouseUp", "onFocus", "onBlur", "value", "getCaretBoundary", "isValidInputCharacter"]);
+    var ref = useInternalValues(propValue, defaultValue, Boolean(valueIsNumericString), format, removeFormatting, onValueChange);
+    var ref_0 = ref[0];
+    var formattedValue = ref_0.formattedValue;
+    var numAsString = ref_0.numAsString;
+    var onFormattedValueChange = ref[1];
+    var lastUpdatedValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+    var _onValueChange = function (values, source) {
+        lastUpdatedValue.current = values.formattedValue;
+        onFormattedValueChange(values, source);
+    };
+    // check if there is any change in the value due to props change
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+        var newFormattedValue = format(numAsString);
+        // if the formatted value is not synced to parent, or if the formatted value is different
+        if (lastUpdatedValue.current === undefined || newFormattedValue !== lastUpdatedValue.current) {
+            var input = focusedElm.current;
+            // formatting can remove some of the number chars, so we need to fine number string again
+            var _numAsString = removeFormatting(newFormattedValue, undefined);
+            updateValue({
+                formattedValue: newFormattedValue,
+                numAsString: _numAsString,
+                input: input,
+                setCaretPosition: true,
+                source: SourceType.props,
+                event: undefined,
+            });
+        }
+    });
+    var ref$1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+    var mounted = ref$1[0];
+    var setMounted = ref$1[1];
+    var focusedElm = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+    var timeout = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)({
+        setCaretTimeout: null,
+        focusTimeout: null,
+    });
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+        setMounted(true);
+        return function () {
+            clearTimeout(timeout.current.setCaretTimeout);
+            clearTimeout(timeout.current.focusTimeout);
+        };
+    }, []);
+    var _format = format;
+    var getValueObject = function (formattedValue, numAsString) {
+        var floatValue = parseFloat(numAsString);
+        return {
+            formattedValue: formattedValue,
+            value: numAsString,
+            floatValue: isNaN(floatValue) ? undefined : floatValue,
+        };
+    };
+    var setPatchedCaretPosition = function (el, caretPos, currentValue) {
+        /* setting caret position within timeout of 0ms is required for mobile chrome,
+        otherwise browser resets the caret position after we set it
+        We are also setting it without timeout so that in normal browser we don't see the flickering */
+        setCaretPosition(el, caretPos);
+        timeout.current.setCaretTimeout = setTimeout(function () {
+            if (el.value === currentValue)
+                { setCaretPosition(el, caretPos); }
+        }, 0);
+    };
+    /* This keeps the caret within typing area so people can't type in between prefix or suffix */
+    var correctCaretPosition = function (value, caretPos, direction) {
+        return getCaretPosInBoundary(value, caretPos, getCaretBoundary(value), direction);
+    };
+    var getNewCaretPosition = function (inputValue, newFormattedValue, caretPos) {
+        var caretBoundary = getCaretBoundary(newFormattedValue);
+        var updatedCaretPos = getCaretPosition(newFormattedValue, formattedValue, inputValue, caretPos, caretBoundary, isValidInputCharacter);
+        //correct caret position if its outside of editable area
+        updatedCaretPos = getCaretPosInBoundary(newFormattedValue, updatedCaretPos, caretBoundary);
+        return updatedCaretPos;
+    };
+    var updateValue = function (params) {
+        var newFormattedValue = params.formattedValue; if ( newFormattedValue === void 0 ) newFormattedValue = '';
+        var input = params.input;
+        var setCaretPosition = params.setCaretPosition; if ( setCaretPosition === void 0 ) setCaretPosition = true;
+        var source = params.source;
+        var event = params.event;
+        var numAsString = params.numAsString;
+        var caretPos = params.caretPos;
+        if (input) {
+            //calculate caret position if not defined
+            if (caretPos === undefined && setCaretPosition) {
+                var inputValue = params.inputValue || input.value;
+                var currentCaretPosition = geInputCaretPosition(input);
+                /**
+                 * set the value imperatively, this is required for IE fix
+                 * This is also required as if new caret position is beyond the previous value.
+                 * Caret position will not be set correctly
+                 */
+                input.value = newFormattedValue;
+                //get the caret position
+                caretPos = getNewCaretPosition(inputValue, newFormattedValue, currentCaretPosition);
+            }
+            /**
+             * set the value imperatively, as we set the caret position as well imperatively.
+             * This is to keep value and caret position in sync
+             */
+            input.value = newFormattedValue;
+            //set caret position, and value imperatively when element is provided
+            if (setCaretPosition && caretPos !== undefined) {
+                //set caret position
+                setPatchedCaretPosition(input, caretPos, newFormattedValue);
+            }
+        }
+        if (newFormattedValue !== formattedValue) {
+            // trigger onValueChange synchronously, so parent is updated along with the number format. Fix for #277, #287
+            _onValueChange(getValueObject(newFormattedValue, numAsString), { event: event, source: source });
+        }
+    };
+    var formatInputValue = function (inputValue, event, source) {
+        var changeRange = findChangeRange(formattedValue, inputValue);
+        var changeMeta = Object.assign(Object.assign({}, changeRange), { lastValue: formattedValue });
+        var _numAsString = removeFormatting(inputValue, changeMeta);
+        var _formattedValue = _format(_numAsString);
+        // formatting can remove some of the number chars, so we need to fine number string again
+        _numAsString = removeFormatting(_formattedValue, undefined);
+        if (isAllowed && !isAllowed(getValueObject(_formattedValue, _numAsString))) {
+            //reset the caret position
+            var input = event.target;
+            var currentCaretPosition = geInputCaretPosition(input);
+            var caretPos = getNewCaretPosition(inputValue, formattedValue, currentCaretPosition);
+            setPatchedCaretPosition(input, caretPos, formattedValue);
+            return false;
+        }
+        updateValue({
+            formattedValue: _formattedValue,
+            numAsString: _numAsString,
+            inputValue: inputValue,
+            event: event,
+            source: source,
+            setCaretPosition: true,
+            input: event.target,
+        });
+        return true;
+    };
+    var _onChange = function (e) {
+        var el = e.target;
+        var inputValue = el.value;
+        var changed = formatInputValue(inputValue, e, SourceType.event);
+        if (changed)
+            { onChange(e); }
+    };
+    var _onKeyDown = function (e) {
+        var el = e.target;
+        var key = e.key;
+        var selectionStart = el.selectionStart;
+        var selectionEnd = el.selectionEnd;
+        var value = el.value; if ( value === void 0 ) value = '';
+        var expectedCaretPosition;
+        //Handle backspace and delete against non numerical/decimal characters or arrow keys
+        if (key === 'ArrowLeft' || key === 'Backspace') {
+            expectedCaretPosition = Math.max(selectionStart - 1, 0);
+        }
+        else if (key === 'ArrowRight') {
+            expectedCaretPosition = Math.min(selectionStart + 1, value.length);
+        }
+        else if (key === 'Delete') {
+            expectedCaretPosition = selectionStart;
+        }
+        //if expectedCaretPosition is not set it means we don't want to Handle keyDown
+        // also if multiple characters are selected don't handle
+        if (expectedCaretPosition === undefined || selectionStart !== selectionEnd) {
+            onKeyDown(e);
+            return;
+        }
+        var newCaretPosition = expectedCaretPosition;
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
+            var direction = key === 'ArrowLeft' ? 'left' : 'right';
+            newCaretPosition = correctCaretPosition(value, expectedCaretPosition, direction);
+        }
+        else if (key === 'Delete' && !isValidInputCharacter(value[expectedCaretPosition])) {
+            // in case of delete go to closest caret boundary on the right side
+            newCaretPosition = correctCaretPosition(value, expectedCaretPosition, 'right');
+        }
+        else if (key === 'Backspace' && !isValidInputCharacter(value[expectedCaretPosition])) {
+            // in case of backspace go to closest caret boundary on the left side
+            newCaretPosition = correctCaretPosition(value, expectedCaretPosition, 'left');
+        }
+        if (newCaretPosition !== expectedCaretPosition) {
+            setPatchedCaretPosition(el, newCaretPosition, value);
+        }
+        /* NOTE: this is just required for unit test as we need to get the newCaretPosition,
+                Remove this when you find different solution */
+        /* @ts-ignore */
+        if (e.isUnitTestRun) {
+            setPatchedCaretPosition(el, newCaretPosition, value);
+        }
+        onKeyDown(e);
+    };
+    /** required to handle the caret position when click anywhere within the input **/
+    var _onMouseUp = function (e) {
+        var el = e.target;
+        /**
+         * NOTE: we have to give default value for value as in case when custom input is provided
+         * value can come as undefined when nothing is provided on value prop.
+         */
+        var selectionStart = el.selectionStart;
+        var selectionEnd = el.selectionEnd;
+        var value = el.value; if ( value === void 0 ) value = '';
+        if (selectionStart === selectionEnd) {
+            var caretPosition = correctCaretPosition(value, selectionStart);
+            if (caretPosition !== selectionStart) {
+                setPatchedCaretPosition(el, caretPosition, value);
+            }
+        }
+        onMouseUp(e);
+    };
+    var _onFocus = function (e) {
+        // Workaround Chrome and Safari bug https://bugs.chromium.org/p/chromium/issues/detail?id=779328
+        // (onFocus event target selectionStart is always 0 before setTimeout)
+        if (e.persist)
+            { e.persist(); }
+        var el = e.target;
+        focusedElm.current = el;
+        timeout.current.focusTimeout = setTimeout(function () {
+            var selectionStart = el.selectionStart;
+            var selectionEnd = el.selectionEnd;
+            var value = el.value; if ( value === void 0 ) value = '';
+            var caretPosition = correctCaretPosition(value, selectionStart);
+            //setPatchedCaretPosition only when everything is not selected on focus (while tabbing into the field)
+            if (caretPosition !== selectionStart &&
+                !(selectionStart === 0 && selectionEnd === value.length)) {
+                setPatchedCaretPosition(el, caretPosition, value);
+            }
+            onFocus(e);
+        }, 0);
+    };
+    var _onBlur = function (e) {
+        focusedElm.current = null;
+        clearTimeout(timeout.current.focusTimeout);
+        clearTimeout(timeout.current.setCaretTimeout);
+        onBlur(e);
+    };
+    // add input mode on element based on format prop and device once the component is mounted
+    var inputMode = mounted && addInputMode() ? 'numeric' : undefined;
+    var inputProps = Object.assign({ inputMode: inputMode }, otherProps, {
+        type: type,
+        value: formattedValue,
+        onChange: _onChange,
+        onKeyDown: _onKeyDown,
+        onMouseUp: _onMouseUp,
+        onFocus: _onFocus,
+        onBlur: _onBlur,
+    });
+    if (displayType === 'text') {
+        return renderText ? (react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, renderText(formattedValue, otherProps) || null)) : (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", Object.assign({}, otherProps, { ref: getInputRef }), formattedValue));
+    }
+    else if (customInput) {
+        var CustomInput = customInput;
+        /* @ts-ignore */
+        return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(CustomInput, Object.assign({}, inputProps, { ref: getInputRef }));
+    }
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", Object.assign({}, inputProps, { ref: getInputRef }));
+}
+
+function format(numStr, props) {
+    var decimalScale = props.decimalScale;
+    var fixedDecimalScale = props.fixedDecimalScale;
+    var prefix = props.prefix; if ( prefix === void 0 ) prefix = '';
+    var suffix = props.suffix; if ( suffix === void 0 ) suffix = '';
+    var allowNegative = props.allowNegative;
+    var thousandsGroupStyle = props.thousandsGroupStyle; if ( thousandsGroupStyle === void 0 ) thousandsGroupStyle = 'thousand';
+    // don't apply formatting on empty string or '-'
+    if (numStr === '' || numStr === '-') {
+        return numStr;
+    }
+    var ref = getSeparators(props);
+    var thousandSeparator = ref.thousandSeparator;
+    var decimalSeparator = ref.decimalSeparator;
+    /**
+     * Keep the decimal separator
+     * when decimalScale is not defined or non zero and the numStr has decimal in it
+     * Or if decimalScale is > 0 and fixeDecimalScale is true (even if numStr has no decimal)
+     */
+    var hasDecimalSeparator = (decimalScale !== 0 && numStr.indexOf('.') !== -1) || (decimalScale && fixedDecimalScale);
+    var ref$1 = splitDecimal(numStr, allowNegative);
+    var beforeDecimal = ref$1.beforeDecimal;
+    var afterDecimal = ref$1.afterDecimal;
+    var addNegation = ref$1.addNegation; // eslint-disable-line prefer-const
+    //apply decimal precision if its defined
+    if (decimalScale !== undefined) {
+        afterDecimal = limitToScale(afterDecimal, decimalScale, !!fixedDecimalScale);
+    }
+    if (thousandSeparator) {
+        beforeDecimal = applyThousandSeparator(beforeDecimal, thousandSeparator, thousandsGroupStyle);
+    }
+    //add prefix and suffix when there is a number present
+    if (prefix)
+        { beforeDecimal = prefix + beforeDecimal; }
+    if (suffix)
+        { afterDecimal = afterDecimal + suffix; }
+    //restore negation sign
+    if (addNegation)
+        { beforeDecimal = '-' + beforeDecimal; }
+    numStr = beforeDecimal + ((hasDecimalSeparator && decimalSeparator) || '') + afterDecimal;
+    return numStr;
+}
+function getSeparators(props) {
+    var decimalSeparator = props.decimalSeparator; if ( decimalSeparator === void 0 ) decimalSeparator = '.';
+    var thousandSeparator = props.thousandSeparator;
+    var allowedDecimalSeparators = props.allowedDecimalSeparators;
+    if (thousandSeparator === true) {
+        thousandSeparator = ',';
+    }
+    if (!allowedDecimalSeparators) {
+        allowedDecimalSeparators = [decimalSeparator, '.'];
+    }
+    return {
+        decimalSeparator: decimalSeparator,
+        thousandSeparator: thousandSeparator,
+        allowedDecimalSeparators: allowedDecimalSeparators,
+    };
+}
+function handleNegation(value, allowNegative) {
+    if ( value === void 0 ) value = '';
+
+    var negationRegex = new RegExp('(-)');
+    var doubleNegationRegex = new RegExp('(-)(.)*(-)');
+    // Check number has '-' value
+    var hasNegation = negationRegex.test(value);
+    // Check number has 2 or more '-' values
+    var removeNegation = doubleNegationRegex.test(value);
+    //remove negation
+    value = value.replace(/-/g, '');
+    if (hasNegation && !removeNegation && allowNegative) {
+        value = '-' + value;
+    }
+    return value;
+}
+function getNumberRegex(decimalSeparator, global) {
+    return new RegExp(("(^-)|[0-9]|" + (escapeRegExp(decimalSeparator))), global ? 'g' : undefined);
+}
+function removeFormatting(value, changeMeta, props) {
+    var assign;
+
+    if ( changeMeta === void 0 ) changeMeta = getDefaultChangeMeta(value);
+    var allowNegative = props.allowNegative;
+    var prefix = props.prefix; if ( prefix === void 0 ) prefix = '';
+    var suffix = props.suffix; if ( suffix === void 0 ) suffix = '';
+    var decimalScale = props.decimalScale;
+    var from = changeMeta.from;
+    var to = changeMeta.to;
+    var start = to.start;
+    var end = to.end;
+    var ref = getSeparators(props);
+    var allowedDecimalSeparators = ref.allowedDecimalSeparators;
+    var decimalSeparator = ref.decimalSeparator;
+    var isBeforeDecimalSeparator = value[end] === decimalSeparator;
+    /**
+     * If only a number is added on empty input which matches with the prefix or suffix,
+     * then don't remove it, just return the same
+     */
+    if (charIsNumber(value) &&
+        (value === prefix || value === suffix) &&
+        changeMeta.lastValue === '') {
+        return value;
+    }
+    /** Check for any allowed decimal separator is added in the numeric format and replace it with decimal separator */
+    if (end - start === 1 && allowedDecimalSeparators.indexOf(value[start]) !== -1) {
+        var separator = decimalScale === 0 ? '' : decimalSeparator;
+        value = value.substring(0, start) + separator + value.substring(start + 1, value.length);
+    }
+    var stripNegation = function (value, start, end) {
+        /**
+         * if prefix starts with - we don't allow negative number to avoid confusion
+         * if suffix starts with - and the value length is same as suffix length, then the - sign is from the suffix
+         * In other cases, if the value starts with - then it is a negation
+         */
+        var hasNegation = false;
+        var hasDoubleNegation = false;
+        if (prefix.startsWith('-')) {
+            hasNegation = false;
+        }
+        else if (value.startsWith('--')) {
+            hasNegation = false;
+            hasDoubleNegation = true;
+        }
+        else if (suffix.startsWith('-') && value.length === suffix.length) {
+            hasNegation = false;
+        }
+        else if (value[0] === '-') {
+            hasNegation = true;
+        }
+        var charsToRemove = hasNegation ? 1 : 0;
+        if (hasDoubleNegation)
+            { charsToRemove = 2; }
+        // remove negation/double negation from start to simplify prefix logic as negation comes before prefix
+        if (charsToRemove) {
+            value = value.substring(charsToRemove);
+            // account for the removal of the negation for start and end index
+            start -= charsToRemove;
+            end -= charsToRemove;
+        }
+        return { value: value, start: start, end: end, hasNegation: hasNegation };
+    };
+    var toMetadata = stripNegation(value, start, end);
+    var hasNegation = toMetadata.hasNegation;
+    ((assign = toMetadata, value = assign.value, start = assign.start, end = assign.end));
+    var ref$1 = stripNegation(changeMeta.lastValue, from.start, from.end);
+    var fromStart = ref$1.start;
+    var fromEnd = ref$1.end;
+    var lastValue = ref$1.value;
+    // if only prefix and suffix part is updated reset the value to last value
+    // if the changed range is from suffix in the updated value, and the the suffix starts with the same characters, allow the change
+    var updatedSuffixPart = value.substring(start, end);
+    if (value.length &&
+        lastValue.length &&
+        (fromStart > lastValue.length - suffix.length || fromEnd < prefix.length) &&
+        !(updatedSuffixPart && suffix.startsWith(updatedSuffixPart))) {
+        value = lastValue;
+    }
+    /**
+     * remove prefix
+     * Remove whole prefix part if its present on the value
+     * If the prefix is partially deleted (in which case change start index will be less the prefix length)
+     * Remove only partial part of prefix.
+     */
+    var startIndex = 0;
+    if (value.startsWith(prefix))
+        { startIndex += prefix.length; }
+    else if (start < prefix.length)
+        { startIndex = start; }
+    value = value.substring(startIndex);
+    // account for deleted prefix for end
+    end -= startIndex;
+    /**
+     * Remove suffix
+     * Remove whole suffix part if its present on the value
+     * If the suffix is partially deleted (in which case change end index will be greater than the suffixStartIndex)
+     * remove the partial part of suffix
+     */
+    var endIndex = value.length;
+    var suffixStartIndex = value.length - suffix.length;
+    if (value.endsWith(suffix))
+        { endIndex = suffixStartIndex; }
+    // if the suffix is removed from the end
+    else if (end > suffixStartIndex)
+        { endIndex = end; }
+    // if the suffix is removed from start
+    else if (end > value.length - suffix.length)
+        { endIndex = end; }
+    value = value.substring(0, endIndex);
+    // add the negation back and handle for double negation
+    value = handleNegation(hasNegation ? ("-" + value) : value, allowNegative);
+    // remove non numeric characters
+    value = (value.match(getNumberRegex(decimalSeparator, true)) || []).join('');
+    // replace the decimalSeparator with ., and only keep the first separator, ignore following ones
+    var firstIndex = value.indexOf(decimalSeparator);
+    value = value.replace(new RegExp(escapeRegExp(decimalSeparator), 'g'), function (match, index) {
+        return index === firstIndex ? '.' : '';
+    });
+    //check if beforeDecimal got deleted and there is nothing after decimal,
+    //clear all numbers in such case while keeping the - sign
+    var ref$2 = splitDecimal(value, allowNegative);
+    var beforeDecimal = ref$2.beforeDecimal;
+    var afterDecimal = ref$2.afterDecimal;
+    var addNegation = ref$2.addNegation; // eslint-disable-line prefer-const
+    //clear only if something got deleted before decimal (cursor is before decimal)
+    if (to.end - to.start < from.end - from.start &&
+        beforeDecimal === '' &&
+        isBeforeDecimalSeparator &&
+        !parseFloat(afterDecimal)) {
+        value = addNegation ? '-' : '';
+    }
+    return value;
+}
+function getCaretBoundary(formattedValue, props) {
+    var prefix = props.prefix; if ( prefix === void 0 ) prefix = '';
+    var suffix = props.suffix; if ( suffix === void 0 ) suffix = '';
+    var boundaryAry = Array.from({ length: formattedValue.length + 1 }).map(function () { return true; });
+    var hasNegation = formattedValue[0] === '-';
+    // fill for prefix and negation
+    boundaryAry.fill(false, 0, prefix.length + (hasNegation ? 1 : 0));
+    // fill for suffix
+    var valLn = formattedValue.length;
+    boundaryAry.fill(false, valLn - suffix.length + 1, valLn + 1);
+    return boundaryAry;
+}
+function validateAndUpdateProps(props) {
+    var ref = getSeparators(props);
+    var thousandSeparator = ref.thousandSeparator;
+    var decimalSeparator = ref.decimalSeparator;
+    // eslint-disable-next-line prefer-const
+    var prefix = props.prefix; if ( prefix === void 0 ) prefix = '';
+    var allowNegative = props.allowNegative; if ( allowNegative === void 0 ) allowNegative = true;
+    if (thousandSeparator === decimalSeparator) {
+        throw new Error(("\n        Decimal separator can't be same as thousand separator.\n        thousandSeparator: " + thousandSeparator + " (thousandSeparator = {true} is same as thousandSeparator = \",\")\n        decimalSeparator: " + decimalSeparator + " (default value for decimalSeparator is .)\n     "));
+    }
+    if (prefix.startsWith('-') && allowNegative) {
+        // TODO: throw error in next major version
+        console.error(("\n      Prefix can't start with '-' when allowNegative is true.\n      prefix: " + prefix + "\n      allowNegative: " + allowNegative + "\n    "));
+        allowNegative = false;
+    }
+    return Object.assign(Object.assign({}, props), { allowNegative: allowNegative });
+}
+function useNumericFormat(props) {
+    // validate props
+    props = validateAndUpdateProps(props);
+    var decimalSeparator = props.decimalSeparator; if ( decimalSeparator === void 0 ) decimalSeparator = '.';
+    var allowedDecimalSeparators = props.allowedDecimalSeparators;
+    var thousandsGroupStyle = props.thousandsGroupStyle;
+    var suffix = props.suffix;
+    var allowNegative = props.allowNegative;
+    var allowLeadingZeros = props.allowLeadingZeros;
+    var onKeyDown = props.onKeyDown; if ( onKeyDown === void 0 ) onKeyDown = noop;
+    var onBlur = props.onBlur; if ( onBlur === void 0 ) onBlur = noop;
+    var thousandSeparator = props.thousandSeparator;
+    var decimalScale = props.decimalScale;
+    var fixedDecimalScale = props.fixedDecimalScale;
+    var prefix = props.prefix; if ( prefix === void 0 ) prefix = '';
+    var defaultValue = props.defaultValue;
+    var value = props.value;
+    var valueIsNumericString = props.valueIsNumericString;
+    var onValueChange = props.onValueChange;
+    var restProps = __rest(props, ["decimalSeparator", "allowedDecimalSeparators", "thousandsGroupStyle", "suffix", "allowNegative", "allowLeadingZeros", "onKeyDown", "onBlur", "thousandSeparator", "decimalScale", "fixedDecimalScale", "prefix", "defaultValue", "value", "valueIsNumericString", "onValueChange"]);
+    var _format = function (numStr) { return format(numStr, props); };
+    var _removeFormatting = function (inputValue, changeMeta) { return removeFormatting(inputValue, changeMeta, props); };
+    var _valueIsNumericString = valueIsNumericString;
+    if (!isNil(value)) {
+        _valueIsNumericString = valueIsNumericString !== null && valueIsNumericString !== void 0 ? valueIsNumericString : typeof value === 'number';
+    }
+    else if (!isNil(defaultValue)) {
+        _valueIsNumericString = valueIsNumericString !== null && valueIsNumericString !== void 0 ? valueIsNumericString : typeof defaultValue === 'number';
+    }
+    var roundIncomingValueToPrecision = function (value) {
+        if (isNil(value) || isNanValue(value))
+            { return value; }
+        if (typeof value === 'number') {
+            value = toNumericString(value);
+        }
+        /**
+         * only round numeric or float string values coming through props,
+         * we don't need to do it for onChange events, as we want to prevent typing there
+         */
+        if (_valueIsNumericString && typeof decimalScale === 'number') {
+            return roundToPrecision(value, decimalScale, Boolean(fixedDecimalScale));
+        }
+        return value;
+    };
+    var ref = useInternalValues(roundIncomingValueToPrecision(value), roundIncomingValueToPrecision(defaultValue), Boolean(_valueIsNumericString), _format, _removeFormatting, onValueChange);
+    var ref_0 = ref[0];
+    var numAsString = ref_0.numAsString;
+    var formattedValue = ref_0.formattedValue;
+    var _onValueChange = ref[1];
+    var _onKeyDown = function (e) {
+        var el = e.target;
+        var key = e.key;
+        var selectionStart = el.selectionStart;
+        var selectionEnd = el.selectionEnd;
+        var value = el.value; if ( value === void 0 ) value = '';
+        // if multiple characters are selected and user hits backspace, no need to handle anything manually
+        if (selectionStart !== selectionEnd) {
+            onKeyDown(e);
+            return;
+        }
+        // if user hits backspace, while the cursor is before prefix, and the input has negation, remove the negation
+        if (key === 'Backspace' &&
+            value[0] === '-' &&
+            selectionStart === prefix.length + 1 &&
+            allowNegative) {
+            // bring the cursor to after negation
+            setCaretPosition(el, 1);
+        }
+        // don't allow user to delete decimal separator when decimalScale and fixedDecimalScale is set
+        var ref = getSeparators(props);
+        var decimalSeparator = ref.decimalSeparator;
+        var allowedDecimalSeparators = ref.allowedDecimalSeparators;
+        if (key === 'Backspace' &&
+            value[selectionStart - 1] === decimalSeparator &&
+            decimalScale &&
+            fixedDecimalScale) {
+            setCaretPosition(el, selectionStart - 1);
+            e.preventDefault();
+        }
+        // if user presses the allowed decimal separator before the separator, move the cursor after the separator
+        if ((allowedDecimalSeparators === null || allowedDecimalSeparators === void 0 ? void 0 : allowedDecimalSeparators.includes(key)) && value[selectionStart] === decimalSeparator) {
+            setCaretPosition(el, selectionStart + 1);
+        }
+        var _thousandSeparator = thousandSeparator === true ? ',' : thousandSeparator;
+        // move cursor when delete or backspace is pressed before/after thousand separator
+        if (key === 'Backspace' && value[selectionStart - 1] === _thousandSeparator) {
+            setCaretPosition(el, selectionStart - 1);
+        }
+        if (key === 'Delete' && value[selectionStart] === _thousandSeparator) {
+            setCaretPosition(el, selectionStart + 1);
+        }
+        onKeyDown(e);
+    };
+    var _onBlur = function (e) {
+        var _value = numAsString;
+        // if there no no numeric value, clear the input
+        if (!_value.match(/\d/g)) {
+            _value = '';
+        }
+        // clear leading 0s
+        if (!allowLeadingZeros) {
+            _value = fixLeadingZero(_value);
+        }
+        // apply fixedDecimalScale on blur event
+        if (fixedDecimalScale && decimalScale) {
+            _value = roundToPrecision(_value, decimalScale, fixedDecimalScale);
+        }
+        if (_value !== numAsString) {
+            var formattedValue = format(_value, props);
+            _onValueChange({
+                formattedValue: formattedValue,
+                value: _value,
+                floatValue: parseFloat(_value),
+            }, {
+                event: e,
+                source: SourceType.event,
+            });
+        }
+        onBlur(e);
+    };
+    var isValidInputCharacter = function (inputChar) {
+        if (inputChar === decimalSeparator)
+            { return true; }
+        return charIsNumber(inputChar);
+    };
+    return Object.assign(Object.assign({}, restProps), { value: formattedValue, valueIsNumericString: false, isValidInputCharacter: isValidInputCharacter, onValueChange: _onValueChange, format: _format, removeFormatting: _removeFormatting, getCaretBoundary: function (formattedValue) { return getCaretBoundary(formattedValue, props); }, onKeyDown: _onKeyDown, onBlur: _onBlur });
+}
+function NumericFormat(props) {
+    var numericFormatProps = useNumericFormat(props);
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(NumberFormatBase, Object.assign({}, numericFormatProps));
+}
+
+function format$1(numStr, props) {
+    var format = props.format;
+    var allowEmptyFormatting = props.allowEmptyFormatting;
+    var mask = props.mask;
+    var patternChar = props.patternChar; if ( patternChar === void 0 ) patternChar = '#';
+    if (numStr === '' && !allowEmptyFormatting)
+        { return ''; }
+    var hashCount = 0;
+    var formattedNumberAry = format.split('');
+    for (var i = 0, ln = format.length; i < ln; i++) {
+        if (format[i] === patternChar) {
+            formattedNumberAry[i] = numStr[hashCount] || getMaskAtIndex(mask, hashCount);
+            hashCount += 1;
+        }
+    }
+    return formattedNumberAry.join('');
+}
+function removeFormatting$1(value, changeMeta, props) {
+    if ( changeMeta === void 0 ) changeMeta = getDefaultChangeMeta(value);
+
+    var format = props.format;
+    var patternChar = props.patternChar; if ( patternChar === void 0 ) patternChar = '#';
+    var from = changeMeta.from;
+    var to = changeMeta.to;
+    var lastValue = changeMeta.lastValue; if ( lastValue === void 0 ) lastValue = '';
+    var isNumericSlot = function (caretPos) { return format[caretPos] === patternChar; };
+    var removeFormatChar = function (string, startIndex) {
+        var str = '';
+        for (var i = 0; i < string.length; i++) {
+            if (isNumericSlot(startIndex + i) && charIsNumber(string[i])) {
+                str += string[i];
+            }
+        }
+        return str;
+    };
+    var extractNumbers = function (str) { return str.replace(/[^0-9]/g, ''); };
+    // if format doesn't have any number, remove all the non numeric characters
+    if (!format.match(/\d/)) {
+        return extractNumbers(value);
+    }
+    /**
+     * if user paste the whole formatted text in an empty input, check if matches to the pattern
+     * and remove the format characters, if there is a mismatch on the pattern, do plane number extract
+     */
+    if (lastValue === '' && value.length === format.length) {
+        var str = '';
+        for (var i = 0; i < value.length; i++) {
+            if (isNumericSlot(i)) {
+                if (charIsNumber(value[i])) {
+                    str += value[i];
+                }
+            }
+            else if (value[i] !== format[i]) {
+                // if there is a mismatch on the pattern, do plane number extract
+                return extractNumbers(value);
+            }
+        }
+        return str;
+    }
+    /**
+     * For partial change,
+     * where ever there is a change on the input, we can break the number in three parts
+     * 1st: left part which is unchanged
+     * 2nd: middle part which is changed
+     * 3rd: right part which is unchanged
+     *
+     * The first and third section will be same as last value, only the middle part will change
+     * We can consider on the change part all the new characters are non format characters.
+     * And on the first and last section it can have partial format characters.
+     *
+     * We pick first and last section from the lastValue (as that has 1-1 mapping with format)
+     * and middle one from the update value.
+     */
+    var firstSection = lastValue.substring(0, from.start);
+    var middleSection = value.substring(to.start, to.end);
+    var lastSection = lastValue.substring(from.end);
+    return ("" + (removeFormatChar(firstSection, 0)) + (extractNumbers(middleSection)) + (removeFormatChar(lastSection, from.end)));
+}
+function getCaretBoundary$1(formattedValue, props) {
+    var format = props.format;
+    var mask = props.mask;
+    var patternChar = props.patternChar; if ( patternChar === void 0 ) patternChar = '#';
+    var boundaryAry = Array.from({ length: formattedValue.length + 1 }).map(function () { return true; });
+    var hashCount = 0;
+    var firstEmptySlot = -1;
+    var maskAndIndexMap = {};
+    format.split('').forEach(function (char, index) {
+        var maskAtIndex = undefined;
+        if (char === patternChar) {
+            hashCount++;
+            maskAtIndex = getMaskAtIndex(mask, hashCount - 1);
+            if (firstEmptySlot === -1 && formattedValue[index] === maskAtIndex) {
+                firstEmptySlot = index;
+            }
+        }
+        maskAndIndexMap[index] = maskAtIndex;
+    });
+    var isPosAllowed = function (pos) {
+        // the position is allowed if the position is not masked and valid number area
+        return format[pos] === patternChar && formattedValue[pos] !== maskAndIndexMap[pos];
+    };
+    for (var i = 0, ln = boundaryAry.length; i < ln; i++) {
+        // consider caret to be in boundary if it is before or after numeric value
+        // Note: on pattern based format its denoted by patternCharacter
+        // we should also allow user to put cursor on first empty slot
+        boundaryAry[i] = i === firstEmptySlot || isPosAllowed(i) || isPosAllowed(i - 1);
+    }
+    // the first patternChar position is always allowed
+    boundaryAry[format.indexOf(patternChar)] = true;
+    return boundaryAry;
+}
+function validateProps(props) {
+    var mask = props.mask;
+    if (mask) {
+        var maskAsStr = mask === 'string' ? mask : mask.toString();
+        if (maskAsStr.match(/\d/g)) {
+            throw new Error(("Mask " + mask + " should not contain numeric character;"));
+        }
+    }
+}
+function usePatternFormat(props) {
+    var mask = props.mask;
+    var allowEmptyFormatting = props.allowEmptyFormatting;
+    var formatProp = props.format;
+    var inputMode = props.inputMode; if ( inputMode === void 0 ) inputMode = 'numeric';
+    var onKeyDown = props.onKeyDown; if ( onKeyDown === void 0 ) onKeyDown = noop;
+    var patternChar = props.patternChar; if ( patternChar === void 0 ) patternChar = '#';
+    var restProps = __rest(props, ["mask", "allowEmptyFormatting", "format", "inputMode", "onKeyDown", "patternChar"]);
+    // validate props
+    validateProps(props);
+    var _getCaretBoundary = function (formattedValue) {
+        return getCaretBoundary$1(formattedValue, props);
+    };
+    var _onKeyDown = function (e) {
+        var key = e.key;
+        var el = e.target;
+        var selectionStart = el.selectionStart;
+        var selectionEnd = el.selectionEnd;
+        var value = el.value;
+        // if multiple characters are selected and user hits backspace, no need to handle anything manually
+        if (selectionStart !== selectionEnd) {
+            onKeyDown(e);
+            return;
+        }
+        // bring the cursor to closest numeric section
+        var caretPos = selectionStart;
+        // if backspace is pressed after the format characters, bring it to numeric section
+        // if delete is pressed before the format characters, bring it to numeric section
+        if (key === 'Backspace' || key === 'Delete') {
+            var direction = 'right';
+            if (key === 'Backspace') {
+                while (caretPos > 0 && formatProp[caretPos - 1] !== patternChar) {
+                    caretPos--;
+                }
+                direction = 'left';
+            }
+            else {
+                var formatLn = formatProp.length;
+                while (caretPos < formatLn && formatProp[caretPos] !== patternChar) {
+                    caretPos++;
+                }
+                direction = 'right';
+            }
+            caretPos = getCaretPosInBoundary(value, caretPos, _getCaretBoundary(value), direction);
+        }
+        else if (formatProp[caretPos] !== patternChar &&
+            key !== 'ArrowLeft' &&
+            key !== 'ArrowRight') {
+            // if user is typing on format character position, bring user to next allowed caret position
+            caretPos = getCaretPosInBoundary(value, caretPos + 1, _getCaretBoundary(value), 'right');
+        }
+        // if we changing caret position, set the caret position
+        if (caretPos !== selectionStart) {
+            setCaretPosition(el, caretPos);
+        }
+        onKeyDown(e);
+    };
+    return Object.assign(Object.assign({}, restProps), { inputMode: inputMode, format: function (numStr) { return format$1(numStr, props); }, removeFormatting: function (inputValue, changeMeta) { return removeFormatting$1(inputValue, changeMeta, props); }, getCaretBoundary: _getCaretBoundary, onKeyDown: _onKeyDown });
+}
+function PatternFormat(props) {
+    var patternFormatProps = usePatternFormat(props);
+    return react__WEBPACK_IMPORTED_MODULE_0___default().createElement(NumberFormatBase, Object.assign({}, patternFormatProps));
+}
+
+
+
+
+/***/ }),
+
 /***/ "./node_modules/react-overlays/esm/ownerDocument.js":
 /*!**********************************************************!*\
   !*** ./node_modules/react-overlays/esm/ownerDocument.js ***!
@@ -66001,89 +67280,6 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/ContractModalBody-TEST.tsx":
-/*!****************************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractModalBody-TEST.tsx ***!
-  \****************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
-const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
-const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
-function ContractModalBody({ isEditing, initialData, onValidationChange }) {
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
-    (0, react_1.useEffect)(() => {
-        setValue('status', initialData?.status || '', { shouldValidate: true });
-        setValue('contractType', initialData?.type || [], { shouldValidate: true });
-        // Ustaw inne wartości domyślne dla pozostałych pól formularza
-    }, [initialData, setValue]);
-    return (react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', required: true }));
-}
-exports.ContractModalBody = ContractModalBody;
-/** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
- * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
- * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- *
- */
-function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }) {
-    return (react_1.default.createElement(ContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange }));
-}
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
-;
-/** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps, isOurContract, }) {
-    return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps }));
-}
-exports.ContractEditModalButton = ContractEditModalButton;
-function ContractDeleteModalButton({ modalProps: { onDelete } }) {
-    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-    return (react_1.default.createElement(GeneralModal_1.GeneralDeleteModalButton, { modalProps: {
-            onDelete,
-            modalTitle,
-            repository: ContractsSearch_1.contractsRepository,
-            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
-        } }));
-}
-exports.ContractDeleteModalButton = ContractDeleteModalButton;
-
-
-/***/ }),
-
 /***/ "./src/Contracts/ContractsList/ContractModalBody.tsx":
 /*!***********************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractModalBody.tsx ***!
@@ -66124,19 +67320,17 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const useValidation_1 = __webpack_require__(/*! ../../View/useValidation */ "./src/View/useValidation.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
+//import { useFormContext } from 'react-hook-form';
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const [startDate, setStartDate] = (0, react_1.useState)(initialData?.startDate || new Date().toISOString().slice(0, 10));
-    const [endDate, setEndDate] = (0, react_1.useState)(initialData?.endDate || new Date().toISOString().slice(0, 10));
-    const [isStartDateValid, setIsStartDateValid] = (0, react_1.useState)(initialData?.startDate ? true : false);
-    const [isEndDateValid, setIsEndDateValid] = (0, react_1.useState)(initialData?.endDate ? true : false);
+    const startDate = watch('startDate');
+    const endDate = watch('endDate');
+    const [dateValidationResult, setDateValidationResult] = (0, react_1.useState)('');
     (0, react_1.useEffect)(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
         setValue('alias', initialData?.alias || '', { shouldValidate: true });
@@ -66145,67 +67339,19 @@ function ContractModalBody({ isEditing, initialData, onValidationChange }) {
         setValue('status', initialData?.satus || '', { shouldValidate: true });
         setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
         setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('type', initialData?.type || '', { shouldValidate: true });
-        // Ustaw inne wartości domyślne dla pozostałych pól formularza
     }, [initialData, setValue]);
-    const aliasValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?.alias || '',
-        validationFunction: (value) => value.length <= 30,
-        fieldName: 'alias',
-        validationMessage: 'Alias może zawierać maksymalnie 30 znaków.',
-        onValidationChange,
-    });
-    const commentValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?.comment || '',
-        validationFunction: (value) => value.length <= 100,
-        fieldName: 'comment',
-        validationMessage: 'Komentarz może zawierać maksymalnie 100 znaków.',
-        onValidationChange,
-    });
-    //pozostałe pola:
-    const valueInPLNValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?.value || '',
-        validationFunction: (value) => value.length <= 100,
-        fieldName: 'value',
-        validationMessage: 'Wartość może zawierać maksymalnie 100 znaków.',
-        onValidationChange,
-    });
-    const statusValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?.status || '',
-        validationFunction: (value) => value.length > 0,
-        fieldName: 'status',
-        validationMessage: 'Status jest wymagany.',
-        onValidationChange,
-    });
-    function datesValidationFunction(value) {
-        const { start, end } = { ...value };
-        const endDate = new Date(end);
-        const startDate = new Date(start);
-        return start.length > 0 && end.length > 0 && endDate > startDate;
-    }
-    const [updateCounter, setUpdateCounter] = (0, react_1.useState)(0);
     (0, react_1.useEffect)(() => {
-        const validationResult = datesValidationFunction({ start: startDate, end: endDate });
-        setIsStartDateValid(validationResult);
-        setIsEndDateValid(validationResult);
-        if (onValidationChange) {
-            onValidationChange('startDate', validationResult);
-            onValidationChange('endDate', validationResult);
-        }
-        setUpdateCounter(updateCounter + 1);
-    }, [startDate, endDate, onValidationChange, datesValidationFunction, updateCounter, setIsStartDateValid, setIsEndDateValid]);
-    (0, react_1.useEffect)(() => {
-        if (updateCounter === 0) {
-            setStartDate(new Date().toISOString().slice(0, 10));
-            setEndDate(new Date().toISOString().slice(0, 10));
-        }
-    }, [updateCounter]);
-    function handleStartDateChange(e) {
-        setStartDate(e.target.value);
-    }
-    ;
-    function handleEndDateChange(e) {
-        setEndDate(e.target.value);
+        if (!startDate || !endDate)
+            return;
+        const validationMessage = datesValidationFunction();
+        setDateValidationResult(validationMessage);
+    }, [startDate, endDate]);
+    function datesValidationFunction() {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start >= end)
+            return 'Początek musi być wcześniejszy niż zakończenie';
+        return '';
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
@@ -66218,32 +67364,27 @@ function ContractModalBody({ isEditing, initialData, onValidationChange }) {
             formState.errors?.name && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.name.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: 'alias', placeholder: "Podaj alias", value: aliasValidation.value, onChange: aliasValidation.handleChange, isInvalid: !aliasValidation.isValid, isValid: aliasValidation.isValid }),
-            !aliasValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, aliasValidation.validationMessage))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !formState.errors?.alias, isInvalid: !!formState.errors?.alias, ...register('alias') }),
+            formState.errors?.alias && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.alias.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", name: "comment", rows: 3, placeholder: "Podaj opis", value: commentValidation.value, onChange: commentValidation.handleChange, isInvalid: !commentValidation.isValid, isValid: commentValidation.isValid }),
-            !commentValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, commentValidation.validationMessage))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.comment, isInvalid: !!formState.errors?.comment, ...register('comment', {
+                    required: false,
+                    maxLength: { value: 50, message: 'Opis może mieć maksymalnie 50 znaków' }
+                }) }),
+            formState.errors?.comment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.comment.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { onChange: valueInPLNValidation.handleChange, value: valueInPLNValidation.value }),
-            !valueInPLNValidation.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, valueInPLNValidation.validationMessage))),
+            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { required: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "startDate", value: startDate, onChange: handleStartDateChange, isInvalid: !isStartDateValid, isValid: isStartDateValid }),
-            !isStartDateValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Data zako\u0144czenia musi by\u0107 p\u00F3\u017Aniejsza ni\u017C data rozpocz\u0119cia."))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('startDate') }),
+            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", name: "endDate", value: endDate, onChange: handleEndDateChange, isInvalid: !isEndDateValid, isValid: isEndDateValid }),
-            !isEndDateValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, "Data zako\u0144czenia musi by\u0107 p\u00F3\u017Aniejsza ni\u017C data rozpocz\u0119cia."))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isInvalid: !formState.isValid, isValid: formState.isValid, ...register('status', {
-                    required: { value: true, message: 'Pole jest wymagane' }
-                }) },
-                react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-                ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
-            !formState.isValid && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.status?.message)))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('endDate') }),
+            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
+        react_1.default.createElement(CommonComponents_1.ContractStatus, { required: true })));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
@@ -66253,30 +67394,25 @@ exports.ContractModalBody = ContractModalBody;
  *
  */
 function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }) {
+    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
+    const project = watch('_parent');
     const [projects, setProjects] = (0, react_1.useState)([]);
     const [selected, setSelected] = (0, react_1.useState)(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    (0, react_1.useEffect)(() => {
-        if (projects.length > 0) {
-            const additionalFieldsKeysValues = [
-                { name: '_parent', value: JSON.stringify(projects[0]) }
-            ];
-            if (!onAdditionalFieldsKeysValuesChange)
-                throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
-            onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-        }
-    }, [projects, selected]);
     const handleProjectSelection = (currentSelectedItems) => {
-        //setProjects(prevProjects => currentSelectedItems);
-        setProjects(currentSelectedItems);
-        setSelected(currentSelectedItems.length > 0);
+        //setProjects(currentSelectedItems);
+        //setSelected(currentSelectedItems.length > 0);
     };
-    return (react_1.default.createElement(react_1.default.Fragment, null, selected ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, projectOurId: projects[0].ourId, onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, 
+        //projectOurId={projects[0].ourId}
+        onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, selectedRepositoryItems: projects, onChange: handleProjectSelection, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
+        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, 
+            //onChange={handleProjectSelection}
+            specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -66393,7 +67529,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.projectsRepository = exports.entitiesRepository = exports.contractsRepository = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FilterableTable_1 = __importStar(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -66421,28 +67557,16 @@ function ContractsSearch({ title }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'endDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
-        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => { setType(selectedTypes[0]); } })
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: 'ourId', repository: exports.projectsRepository, 
+                //selectedRepositoryItems={projects}
+                //onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
+                specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
+        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement
+        //selectedRepositoryItems={type ? [type] : []}
+        , { 
+            //selectedRepositoryItems={type ? [type] : []}
+            showValidationInfo: false })
     ];
-    async function handleSubmitSearch(e) {
-        const additionalSearchCriteria = [];
-        if (projects.length > 0) {
-            additionalSearchCriteria.push({
-                name: 'projectId',
-                value: projects[0].ourId
-            });
-        }
-        try {
-            setIsReady(false);
-            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository, additionalSearchCriteria);
-            setObjects(data);
-            setIsReady(true);
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    ;
     function handleEditObject(object) {
         setObjects(objects.map((o) => o.id === object.id ? object : o));
     }
@@ -66457,7 +67581,7 @@ function ContractsSearch({ title }) {
         setActiveRowId(id);
         exports.contractsRepository.addToCurrentItems(id);
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
+    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: () => undefined, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }), repository: exports.contractsRepository }));
 }
 exports["default"] = ContractsSearch;
 function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
@@ -66520,30 +67644,19 @@ const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonC
 const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
 const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
-    const projectOurId = props.projectOurId || initialData?.projectOurId;
-    if (!projectOurId)
-        throw new Error('OtherContractModalBody:: project is not defined');
-    const [type, setType] = (0, react_1.useState)(initialData?._type);
-    const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
-    const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
         name: 'OurRelatedContractsRepository',
         actionRoutes: { addNewRoute: '', editRoute: '', deleteRoute: '', getRoute: 'contracts' },
     });
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const additionalFieldsKeysValues = [
-            { name: '_type', value: JSON.stringify(type) },
-            { name: '_contractors', value: JSON.stringify(selectedContractors) },
-            { name: '_ourContract', value: JSON.stringify(selectedOurContracts[0]) }
-        ];
-        //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
-        if (!props.onAdditionalFieldsKeysValuesChange)
-            throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
-        props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedContractors, selectedOurContracts, props]);
+        setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
+        setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
         (!props.isEditing) ?
@@ -66552,12 +67665,10 @@ function OtherContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedContractors, setSelectedContractors), selectedRepositoryItems: selectedContractors, multiple: true })),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', searchKey: 'contractOurId', additionalFieldsKeysValues: [
-                    { key: 'projectId', value: projectOurId }
-                ], repository: ourRelatedContractsRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedOurContracts, setSelectedOurContracts), selectedRepositoryItems: selectedOurContracts, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",
                     option.name)) }))));
@@ -66628,73 +67739,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const ContractModalBody_TEST_1 = __webpack_require__(/*! ./ContractModalBody-TEST */ "./src/Contracts/ContractsList/ContractModalBody-TEST.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
 const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const useValidation_1 = __webpack_require__(/*! ../../View/useValidation */ "./src/View/useValidation.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
-    const projectOurId = props.projectOurId || initialData?.projectOurId;
-    if (!projectOurId)
-        throw new Error('OtherContractModalBody:: project is not defined');
-    const [selectedAdmins, setSelectedAdmins] = (0, react_1.useState)(initialData?._admin ? [initialData._admin] : []);
-    const [selectedManagers, setSelectedManagers] = (0, react_1.useState)(initialData?._manager ? [initialData._manager] : []);
-    const [isAdminsValid, setIsAdminValid] = (0, react_1.useState)(initialData?._admin ? true : false);
-    const [isManagersValid, setIsManagersValid] = (0, react_1.useState)(initialData?._manager ? true : false);
-    const typeValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?.type,
-        validationFunction: (value) => value?.length > 0,
-        fieldName: 'type',
-        validationMessage: 'Musisz wybrać typ umowy',
-        onValidationChange: props.onValidationChange,
-    });
-    //pozostałe pola admin i managaer
-    const managerValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?._manager ? [initialData._manager] : [],
-        validationFunction: (value) => value?.length > 0,
-        fieldName: 'manager',
-        validationMessage: 'Musisz wybrać koordynatora',
-        onValidationChange: props.onValidationChange,
-    });
-    const adminValidation = (0, useValidation_1.useValidation)({
-        initialValue: initialData?._admin ? [initialData._admin] : [],
-        validationFunction: (value) => value?.length > 0,
-        fieldName: 'admin',
-        validationMessage: 'Musisz wybrać administratora',
-        onValidationChange: props.onValidationChange,
-    });
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const additionalFieldsKeysValues = [
-            { name: '_type', value: JSON.stringify(typeValidation.value) },
-            { name: '_manager', value: JSON.stringify(managerValidation.value[0]) },
-            { name: '_admin', value: JSON.stringify(adminValidation.value[0]) }
-        ];
-        if (!props.onAdditionalFieldsKeysValuesChange)
-            throw new Error('OurContractModalBody: onAdditionalFieldsKeysValuesChange is not defined');
-        props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedAdmins, selectedManagers, typeValidation.value, props.onAdditionalFieldsKeysValuesChange]);
+        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
+        setValue('_manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (!props.isEditing) ?
-            react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', 
-                    //selectedRepositoryItems={typeValidation.value ? typeValidation.value : []}
-                    //onChange={typeValidation.handleChange}
-                    isInvalid: !typeValidation.isValid, isValid: typeValidation.isValid }),
-                !typeValidation.isValid &&
-                    react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, typeValidation.validationMessage))
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', required: true })
             : null,
-        react_1.default.createElement(ContractModalBody_TEST_1.ContractModalBody, { ...props }),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "manager" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', selectedRepositoryItems: managerValidation.value ? managerValidation.value : [], onChange: managerValidation.handleChange, repository: MainSetupReact_1.default.personsEnviRepository, isInvalid: !managerValidation.isValid, isValid: managerValidation.isValid }),
-            !managerValidation.isValid &&
-                react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, managerValidation.validationMessage)),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "admin" },
-            react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', selectedRepositoryItems: adminValidation.value ? adminValidation.value : [], onChange: adminValidation.handleChange, repository: MainSetupReact_1.default.personsEnviRepository, isInvalid: !adminValidation.isValid, isValid: adminValidation.isValid }),
-            !adminValidation.isValid &&
-                react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, adminValidation.validationMessage)),
+        react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
+        react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true }),
+        react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true }),
         react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
@@ -66715,7 +67780,7 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange 
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             onIsReadyChange: onIsReadyChange,
-            ModalBodyComponent: ContractModalBody_TEST_1.ProjectSelectorModalBody,
+            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
             repository: ContractsSearch_1.contractsRepository,
@@ -67554,6 +68619,7 @@ const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_mod
 const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src/React/Tools.ts"));
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/FormContext.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const CommonComponentsController_1 = __webpack_require__(/*! ./Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
@@ -67586,20 +68652,7 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
         try {
             setErrorMessage('');
             onIsReadyChange(false);
-            const formData = new FormData();
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    const element = data[key];
-                    let parsedValue = '';
-                    if (typeof element === 'string')
-                        parsedValue = element;
-                    if (typeof element === 'object')
-                        parsedValue = JSON.stringify(element);
-                    if (typeof element === 'number')
-                        parsedValue = element.toString();
-                    formData.append(key, parsedValue);
-                }
-            }
+            const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
@@ -67757,7 +68810,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractTypeSelectFormElementOLD = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -67765,60 +68818,25 @@ __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_m
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/FormContext.tsx");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
-/** Pole wyboru typu kontraktu */
-function ContractTypeSelectFormElementOLD({ 
-//onChange,
-//selectedRepositoryItems,
-typesToInclude = 'all', isInvalid, isValid }) {
-    const label = 'Typ Kontraktu';
-    const repository = MainSetupReact_1.default.contractTypesRepository;
-    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
-    function makeoptions(repositoryDataItems) {
-        const filteredItems = repositoryDataItems.filter((item) => {
-            if (typesToInclude === 'all')
-                return true;
-            if (typesToInclude === 'our' && item.isOur)
-                return true;
-            if (typesToInclude === 'other' && !item.isOur)
-                return true;
-            return false;
-        });
-        const options = filteredItems.map((item) => {
-            return { label: `${item.name}`, value: item.id };
-        });
-        return options;
-    }
-    function handleOnChange(selectedItems) {
-        const selectedRepositoryItems = selectedItems
-            .map((item) => {
-            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
-            return foundItem;
-        })
-            .filter((item) => item !== undefined);
-        //onChange(selectedRepositoryItems);
-        setValue('contractType', selectedRepositoryItems);
-    }
-    isValid = watch('contractTypeIsValid', true);
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, 
-            //selected={makeoptions(selectedRepositoryItems)}
-            placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid })));
+const ContractsController_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
+const react_number_format_1 = __webpack_require__(/*! react-number-format */ "./node_modules/react-number-format/dist/react-number-format.es.js");
+function ContractStatus({ required = false, showValidationInfo = true }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors?.status : undefined, isInvalid: showValidationInfo ? !!errors?.status : undefined, ...register('status', {
+                required: { value: required, message: 'Pole jest wymagane' },
+            }) },
+            react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
+            ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+        errors?.status && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.status.message))));
 }
-exports.ContractTypeSelectFormElementOLD = ContractTypeSelectFormElementOLD;
-function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, typesToInclude = 'all', isInvalid, isValid, required = false, }) {
-    const useFormContextOrEmpty = () => {
-        try {
-            const context = (0, FormContext_1.useFormContext)();
-            return context;
-        }
-        catch {
-            return null;
-        }
-    };
-    const formContext = useFormContextOrEmpty();
-    const { control = null, watch = null, setValue = null, formState = null } = formContext || {};
+exports.ContractStatus = ContractStatus;
+;
+function ContractTypeSelectFormElement({ typesToInclude = 'all', required = false, showValidationInfo = true, }) {
+    const { control, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const label = 'Typ Kontraktu';
+    const name = '_contractType';
     const repository = MainSetupReact_1.default.contractTypesRepository;
     function makeoptions(repositoryDataItems) {
         const filteredItems = repositoryDataItems.filter((item) => {
@@ -67833,86 +68851,70 @@ function ContractTypeSelectFormElement({ onChange, selectedRepositoryItems, type
         return filteredItems;
     }
     function handleOnChange(selectedOptions, field) {
-        selectedOptions.filter((item) => item !== undefined);
-        if (setValue && field) {
-            setValue('contractType', selectedOptions);
-            field.onChange(selectedOptions);
-            console.log('selectedOptions', selectedOptions);
-        }
-        else if (onChange)
-            onChange(selectedOptions);
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
     }
-    if (watch)
-        watch('contractTypeIsValid', true);
-    const MenuItemBody = (0, react_1.useCallback)((myOption) => {
-        return react_1.default.createElement("div", null,
-            react_1.default.createElement("span", null, myOption.name),
-            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description));
-    }, []);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        control ? (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: "contractType", control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, defaultValue: makeoptions(selectedRepositoryItems || []), render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: !(formState && formState.errors?.contractType), isInvalid: !!(formState && formState.errors?.contractType), renderMenuItemChildren: (option, props, index) => {
-                        return MenuItemBody(option);
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, 
+                //defaultValue={makeoptions(selectedRepositoryItems || [])}
+                render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const myOption = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
                     } })) }),
-            formState && formState.errors?.contractType && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.contractType.message)))) : (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-uncontrolled`, labelKey: "name", options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz typ --", isValid: isValid, isInvalid: isInvalid, renderMenuItemChildren: (option, props, index) => {
-                return MenuItemBody(option);
-            } }))));
+            errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors?.[name].message)))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
-function PersonSelectFormElement({ label, onChange, selectedRepositoryItems, repository, multiple, isValid, isInvalid }) {
+function PersonSelectFormElement({ label, name, repository, multiple, showValidationInfo = true, required = false }) {
+    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
-        return repositoryDataItems.map((item) => ({ label: `${item.name} ${item.surname}`, value: item.id }));
+        repositoryDataItems.map(item => item._nameSurname = `${item.name} ${item.surname}`);
+        return repositoryDataItems;
     }
-    function handleOnChange(selectedItems) {
-        const selectedRepositoryItems = selectedItems
-            .map((item) => {
-            const foundItem = repository.items.find((repoItem) => repoItem.id === item.value);
-            return foundItem;
-        })
-            .filter((item) => item !== undefined);
-        onChange(selectedRepositoryItems);
+    function handleOnChange(selectedOptions, field) {
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: label, options: makeoptions(repository.items), onChange: handleOnChange, selected: makeoptions(selectedRepositoryItems), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: isValid, isInvalid: isInvalid })));
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
+        errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
 /**
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
- * @param onChange zaktualizuj setstate projects komponentu nadrzędnego
- * @param selectedRepositoryItems aktualnie wybrane elementy
  * @param labelKey nazwa pola w repozytorium które ma być wyświetlane w polu wyboru
  * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
- * @param additionalFieldsKeysValues dodatkowe pola które mają być wyszukiwane na serwerze
  * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
 */
-function MyAsyncTypeahead({ repository, onChange, selectedRepositoryItems, labelKey, searchKey = labelKey, additionalFieldsKeysValues = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, register, name, errors }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
         const formData = new FormData();
         formData.append(searchKey, query);
-        additionalFieldsKeysValues.forEach((field) => {
-            formData.append(field.key, field.value);
-        });
         repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
-            // Filter out object that are present in selectedRepositoryItems 
-            const filteredItems = items.filter(item => {
-                return selectedRepositoryItems ? !selectedRepositoryItems.some((selectedItem) => selectedItem.id == item.id) : true;
-            });
-            setOptions(filteredItems);
+            setOptions(items);
             setIsLoading(false);
         });
     }
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
-    return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: onChange, selected: selectedRepositoryItems, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && selectedRepositoryItems && selectedRepositoryItems.length > 0, isInvalid: isRequired && (!selectedRepositoryItems || selectedRepositoryItems.length === 0) }));
+    function handleOnChange(selectedOptions, field) {
+        setValue(name, selectedOptions);
+        field.onChange(selectedOptions);
+    }
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -67930,29 +68932,30 @@ function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSel
     console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
 exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
-function ValueInPLNInput({ value, onChange }) {
-    const inputRef = (0, react_1.useRef)(null);
-    function formatValue(value) {
-        return new Intl.NumberFormat('pl-PL', {
-            style: 'decimal',
-            minimumFractionDigits: 2,
-        }).format(parseFloat(value) || 0);
+function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel = 'value' }) {
+    const { register, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const watchedValue = watch(keyLabel);
+    function handleValueChange(values) {
+        //const valueWithComma = values.floatValue?.toString().replace('.', ',');
+        setValue(keyLabel, values.floatValue);
     }
-    ;
-    function handleInputChange(e) {
-        const newValue = e.target.value.replace(/\s/g, '');
-        const cursorPosition = e.target.selectionStart;
-        onChange(newValue);
-        if (inputRef.current && cursorPosition) {
-            inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    const classNames = ['form-control'];
+    if (showValidationInfo) {
+        if (errors.value) {
+            classNames.push('is-invalid');
+        }
+        else {
+            classNames.push('is-valid');
         }
     }
-    ;
-    function handleInputBlur() {
-        onChange(formatValue(value));
-    }
-    ;
-    return (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", name: "value", value: value, onChange: handleInputChange, onBlur: handleInputBlur, ref: inputRef }));
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
+            react_1.default.createElement(react_number_format_1.NumericFormat, { value: watchedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: handleValueChange, className: classNames.join(' '), valueIsNumericString: true, ...register(keyLabel, {
+                    required: { value: required, message: 'Podaj wartość! Jeśli jej nie znasz to wpisz zero' },
+                    max: { value: 9999999999, message: 'Zbyt duża liczba' },
+                }) }),
+            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
+        errors?.value && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.value?.message))));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
 /**Pole dodawania plików
@@ -68036,6 +69039,38 @@ exports.ConfirmModal = ConfirmModal;
 
 /***/ }),
 
+/***/ "./src/View/Resultsets/CommonComponentsController.tsx":
+/*!************************************************************!*\
+  !*** ./src/View/Resultsets/CommonComponentsController.tsx ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseFieldValuestoFormData = void 0;
+function parseFieldValuestoFormData(data) {
+    const formData = new FormData();
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            const element = data[key];
+            let parsedValue = '';
+            if (typeof element === 'string')
+                parsedValue = element;
+            if (typeof element === 'object')
+                parsedValue = JSON.stringify(element);
+            if (typeof element === 'number')
+                parsedValue = element.toString();
+            formData.append(key, parsedValue);
+        }
+    }
+    return formData;
+}
+exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
+
+
+/***/ }),
+
 /***/ "./src/View/Resultsets/FilterableTable.tsx":
 /*!*************************************************!*\
   !*** ./src/View/Resultsets/FilterableTable.tsx ***!
@@ -68044,17 +69079,40 @@ exports.ConfirmModal = ConfirmModal;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TableTitle = exports.handleSubmitFilterableTable = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const OtherContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const OurContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
-function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsReadyChange = () => { }, onAddNew, objects, isReady, activeRowId, onRowClick, tableHeaders, rowRenderer }) {
+const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/FormContext.tsx");
+const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
+const CommonComponentsController_1 = __webpack_require__(/*! ./CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
+function FilteredTable({ title, filters, repository, onSubmitSearch, onEdit, onDelete, onIsReadyChange = () => { }, onAddNew, objects, isReady, activeRowId, onRowClick, tableHeaders, rowRenderer }) {
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -68066,24 +69124,35 @@ function FilteredTable({ title, filters, onSubmitSearch, onEdit, onDelete, onIsR
                         ' ',
                         react_1.default.createElement(OurContractModalBody_1.OurContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } })))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(FilterPanel, { filters: filters, onSubmit: onSubmitSearch })),
+            react_1.default.createElement(FilterPanel, { filters: filters, repository: repository, onIsReadyCHange: onIsReadyChange })),
         !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement("progress", { style: { height: "5px" } })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew }))))));
 }
 exports["default"] = FilteredTable;
-function FilterPanel({ filters, onSubmit }) {
-    return (react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: onSubmit },
-        filters.map((filter, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: index },
-            " ",
-            filter,
-            " "))),
-        react_1.default.createElement(react_bootstrap_1.Col, null,
-            react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))));
+function FilterPanel({ filters, repository, onIsReadyCHange: onIsReadyChange }) {
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    async function handleSubmitSearch(data) {
+        onIsReadyChange(false);
+        const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
+        await repository.loadItemsfromServer(formData);
+        onIsReadyChange(false);
+    }
+    ;
+    return (react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
+        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
+            filters.map((filter, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: index },
+                " ",
+                filter,
+                " "))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj")))));
 }
 /**
  *  Obsługuje wyszukiwanie w tabeli z filtrowaniem
+ * @deprecated
  */
 async function handleSubmitFilterableTable(e, repository, additionalParameters) {
     e.preventDefault();
@@ -68115,63 +69184,6 @@ function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
-
-
-/***/ }),
-
-/***/ "./src/View/useValidation.tsx":
-/*!************************************!*\
-  !*** ./src/View/useValidation.tsx ***!
-  \************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useValidation = void 0;
-const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/** Główna funkcja hooka useValidation
- * @param initialValue - początkowa wartość pola
- * @param validationFunction - funkcja walidująca wartość pola
- * @param fieldName - nazwa pola
- * @param validationMessage - komunikat walidacji
- * @param onValidationChange - funkcja wywoływana w GeneralModal przy zmianie wartości pola
- * @param afterChangeFunction - funkcja wywoływana po zmianie wartości pola
- */
-function useValidation(options) {
-    const { initialValue, validationFunction, fieldName, validationMessage, onValidationChange, } = options;
-    const [isInitialUpdate, setIsInitialUpdate] = (0, react_1.useState)(true);
-    const [value, setValue] = (0, react_1.useState)(initialValue);
-    const [isValid, setIsValid] = (0, react_1.useState)(validationFunction(initialValue));
-    const [previousIsValid, setPreviousIsValid] = (0, react_1.useState)(isValid);
-    (0, react_1.useEffect)(() => {
-        if (isInitialUpdate) {
-            // Inicjujemy tablicę stanów dla pierwszego renderowania
-            if (onValidationChange) {
-                onValidationChange(fieldName, isValid);
-            }
-            setIsInitialUpdate(false);
-        }
-        else if (onValidationChange && isValid !== previousIsValid) {
-            // Aktualizujemy tablicę stanów dla kolejnych zmian
-            onValidationChange(fieldName, isValid);
-            setPreviousIsValid(isValid);
-        }
-    }, [fieldName, isValid, onValidationChange, previousIsValid, isInitialUpdate]);
-    // Funkcja obsługująca zmianę wartości pola
-    const handleChange = (e) => {
-        let newValue;
-        if (typeof e.target?.value === 'string')
-            newValue = e.target.value;
-        else
-            newValue = e;
-        const validationFormula = validationFunction(newValue);
-        setValue(newValue);
-        setIsValid(validationFormula);
-    };
-    return { value, isValid, handleChange, validationMessage };
-}
-exports.useValidation = useValidation;
 
 
 /***/ }),

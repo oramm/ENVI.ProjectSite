@@ -50,37 +50,21 @@ export default function ContractsSearch({ title }: { title: string }) {
         <Form.Group>
             <Form.Label>Projekt</Form.Label>
             <MyAsyncTypeahead
+                name='_parent'
                 labelKey='ourId'
                 repository={projectsRepository}
-                selectedRepositoryItems={projects}
-                onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
+                //selectedRepositoryItems={projects}
+                //onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
                 specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
             />
         </Form.Group>,
 
         <ContractTypeSelectFormElement
-            selectedRepositoryItems={type ? [type] : []}
-            onChange={(selectedTypes) => { setType(selectedTypes[0]) }}
+            //selectedRepositoryItems={type ? [type] : []}
+            showValidationInfo={false}
         />
     ];
 
-    async function handleSubmitSearch(e: React.FormEvent<HTMLFormElement>) {
-        const additionalSearchCriteria = []
-        if (projects.length > 0) {
-            additionalSearchCriteria.push({
-                name: 'projectId',
-                value: projects[0].ourId as string
-            });
-        }
-        try {
-            setIsReady(false);
-            const data = await handleSubmitFilterableTable(e, contractsRepository, additionalSearchCriteria);
-            setObjects(data);
-            setIsReady(true);
-        } catch (error) {
-            throw error;
-        }
-    };
 
     function handleEditObject(object: RepositoryDataItem) {
         setObjects(objects.map((o) => o.id === object.id ? object : o));
@@ -103,7 +87,7 @@ export default function ContractsSearch({ title }: { title: string }) {
     return (
         <FilteredTable
             objects={objects}
-            onSubmitSearch={handleSubmitSearch}
+            onSubmitSearch={() => undefined}
             onAddNew={handleAddObject}
             onEdit={handleEditObject}
             onDelete={handleDeleteObject}
@@ -115,6 +99,7 @@ export default function ContractsSearch({ title }: { title: string }) {
             onRowClick={handleRowClick}
             tableHeaders={['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca']}
             rowRenderer={(props) => <ContractSearchTableRow {...props} />}
+            repository={contractsRepository}
         />
     );
 }

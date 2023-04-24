@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectsRepository = exports.entitiesRepository = exports.contractsRepository = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const FilterableTable_1 = __importStar(require("../../View/Resultsets/FilterableTable"));
+const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable"));
 const ContractsController_1 = __importDefault(require("./ContractsController"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
@@ -57,28 +57,16 @@ function ContractsSearch({ title }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'endDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10) })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', repository: exports.projectsRepository, selectedRepositoryItems: projects, onChange: (currentSelectedItems) => setProjects(currentSelectedItems), specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
-        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { selectedRepositoryItems: type ? [type] : [], onChange: (selectedTypes) => { setType(selectedTypes[0]); } })
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: 'ourId', repository: exports.projectsRepository, 
+                //selectedRepositoryItems={projects}
+                //onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
+                specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
+        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement
+        //selectedRepositoryItems={type ? [type] : []}
+        , { 
+            //selectedRepositoryItems={type ? [type] : []}
+            showValidationInfo: false })
     ];
-    async function handleSubmitSearch(e) {
-        const additionalSearchCriteria = [];
-        if (projects.length > 0) {
-            additionalSearchCriteria.push({
-                name: 'projectId',
-                value: projects[0].ourId
-            });
-        }
-        try {
-            setIsReady(false);
-            const data = await (0, FilterableTable_1.handleSubmitFilterableTable)(e, exports.contractsRepository, additionalSearchCriteria);
-            setObjects(data);
-            setIsReady(true);
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    ;
     function handleEditObject(object) {
         setObjects(objects.map((o) => o.id === object.id ? object : o));
     }
@@ -93,7 +81,7 @@ function ContractsSearch({ title }) {
         setActiveRowId(id);
         exports.contractsRepository.addToCurrentItems(id);
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: handleSubmitSearch, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }) }));
+    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: () => undefined, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }), repository: exports.contractsRepository }));
 }
 exports.default = ContractsSearch;
 function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {

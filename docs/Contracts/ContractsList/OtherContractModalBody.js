@@ -34,30 +34,19 @@ const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const ContractModalBody_1 = require("./ContractModalBody");
 const GeneralModal_1 = require("../../View/GeneralModal");
 const ContractsSearch_1 = require("./ContractsSearch");
+const FormContext_1 = require("../../View/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
-    const projectOurId = props.projectOurId || initialData?.projectOurId;
-    if (!projectOurId)
-        throw new Error('OtherContractModalBody:: project is not defined');
-    const [type, setType] = (0, react_1.useState)(initialData?._type);
-    const [selectedContractors, setSelectedContractors] = (0, react_1.useState)(initialData?._contractors ? initialData._contractors : []);
-    const [selectedOurContracts, setSelectedOurContracts] = (0, react_1.useState)(initialData?._ourContract ? [initialData._ourContract] : []);
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
         name: 'OurRelatedContractsRepository',
         actionRoutes: { addNewRoute: '', editRoute: '', deleteRoute: '', getRoute: 'contracts' },
     });
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const additionalFieldsKeysValues = [
-            { name: '_type', value: JSON.stringify(type) },
-            { name: '_contractors', value: JSON.stringify(selectedContractors) },
-            { name: '_ourContract', value: JSON.stringify(selectedOurContracts[0]) }
-        ];
-        //onAdditionalFieldsKeysValuesChange is defined in ContractModalBody
-        if (!props.onAdditionalFieldsKeysValuesChange)
-            throw new Error('OtherContractModalBody:: onAdditionalFieldsKeysValuesChange is not defined');
-        props.onAdditionalFieldsKeysValuesChange(additionalFieldsKeysValues);
-    }, [selectedContractors, selectedOurContracts, props]);
+        setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
+        setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
         (!props.isEditing) ?
@@ -66,12 +55,10 @@ function OtherContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedContractors, setSelectedContractors), selectedRepositoryItems: selectedContractors, multiple: true })),
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { labelKey: 'ourId', searchKey: 'contractOurId', additionalFieldsKeysValues: [
-                    { key: 'projectId', value: projectOurId }
-                ], repository: ourRelatedContractsRepository, onChange: (currentSelectedItems) => (0, CommonComponents_1.handleEditMyAsyncTypeaheadElement)(currentSelectedItems, selectedOurContracts, setSelectedOurContracts), selectedRepositoryItems: selectedOurContracts, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",
                     option.name)) }))));

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { ContractTypeSelectFormElement, MyAsyncTypeahead, PersonSelectFormElement, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
 import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
-import { contractsRepository, projectsRepository } from './ContractsSearch';
+import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
 import { useValidation } from '../../View/useValidation';
@@ -16,18 +16,26 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
     const { register, setValue, watch, formState, control } = useFormContext();
 
     useEffect(() => {
-        setValue('status', initialData?.status || '', { shouldValidate: true });
-        setValue('contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
+
+        setValue('_manager', initialData?.status || '', { shouldValidate: true });
+        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
 
         // Ustaw inne wartości domyślne dla pozostałych pól formularza
     }, [initialData, setValue]);
 
 
     return (
-        <ContractTypeSelectFormElement
-            typesToInclude='our'
-            required={true}
-        />
+        <Form.Group>
+            <Form.Label>Wykonawcy</Form.Label>
+            <MyAsyncTypeahead
+                name='_contractors'
+                labelKey='name'
+                repository={entitiesRepository}
+                multiple={false}
+                isRequired={true}
+            />
+        </Form.Group>
     );
 }
 

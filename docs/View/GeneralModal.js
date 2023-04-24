@@ -33,6 +33,7 @@ const react_hook_form_1 = require("react-hook-form");
 const Tools_1 = __importDefault(require("../React/Tools"));
 const FormContext_1 = require("./FormContext");
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
+const CommonComponentsController_1 = require("./Resultsets/CommonComponentsController");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
@@ -65,20 +66,7 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
         try {
             setErrorMessage('');
             onIsReadyChange(false);
-            const formData = new FormData();
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    const element = data[key];
-                    let parsedValue = '';
-                    if (typeof element === 'string')
-                        parsedValue = element;
-                    if (typeof element === 'object')
-                        parsedValue = JSON.stringify(element);
-                    if (typeof element === 'number')
-                        parsedValue = element.toString();
-                    formData.append(key, parsedValue);
-                }
-            }
+            const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
