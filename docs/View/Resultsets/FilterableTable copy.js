@@ -33,14 +33,14 @@ const CommonComponentsController_1 = require("./CommonComponentsController");
 function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewButtons = [], FilterBodyComponent }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
+    const { handleAddObject, handleEditObject, handleDeleteObject, objects } = (0, exports.useFilteredTableState)();
     //const filteredTableState = useFilteredTableState();
     function handleRowClick(id) {
         console.log('handleRowClick', id);
         setActiveRowId(id);
         repository.addToCurrentItems(id);
     }
-    return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } },
+    return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects } },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -64,14 +64,12 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
 exports.default = FilteredTable;
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const { setObjects } = (0, exports.useFilteredTableContext)();
     const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
-        const result = await repository.loadItemsfromServer(formData);
-        setObjects(result);
-        onIsReadyChange(true);
+        await repository.loadItemsfromServer(formData);
+        onIsReadyChange(false);
     }
     ;
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
@@ -87,7 +85,7 @@ function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, RowCom
             react_1.default.createElement("tr", null, tableHeaders.map((header, index) => (react_1.default.createElement("th", { key: index }, header))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
-            return (react_1.default.createElement("tr", { key: dataObject.id, onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => { navigate('/contract/' + dataObject.id); }, className: isActive ? 'active' : '' },
+            return (react_1.default.createElement("tr", { key: dataObject.id, onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => { console.log('dblClick'); navigate('/contract/' + dataObject.id); }, className: isActive ? 'active' : '' },
                 react_1.default.createElement(RowComponent, { dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew })));
         }))));
 }
@@ -95,13 +93,7 @@ function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
-const FilteredTableContext = (0, react_1.createContext)({
-    objects: [],
-    handleAddObject: () => { },
-    handleEditObject: () => { },
-    handleDeleteObject: () => { },
-    setObjects: () => { },
-});
+const FilteredTableContext = (0, react_1.createContext)({});
 const useFilteredTableContext = () => {
     return (0, react_1.useContext)(FilteredTableContext);
 };
@@ -119,7 +111,6 @@ const useFilteredTableState = () => {
     }
     return {
         objects,
-        setObjects,
         handleAddObject,
         handleEditObject,
         handleDeleteObject,

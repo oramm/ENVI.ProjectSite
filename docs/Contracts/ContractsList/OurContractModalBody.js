@@ -38,7 +38,7 @@ function OurContractModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
         setValue('_manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
     }, [initialData, setValue]);

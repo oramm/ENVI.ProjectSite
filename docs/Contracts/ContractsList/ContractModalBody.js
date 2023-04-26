@@ -22,9 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
@@ -34,7 +31,6 @@ const react_bootstrap_1 = require("react-bootstrap");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("./ContractsSearch");
-const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const FormContext_1 = require("../../View/FormContext");
 //import { useFormContext } from 'react-hook-form';
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
@@ -107,15 +103,11 @@ exports.ContractModalBody = ContractModalBody;
 function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
     const project = watch('_parent');
-    const [projects, setProjects] = (0, react_1.useState)([]);
-    const [selected, setSelected] = (0, react_1.useState)(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange })) : (react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

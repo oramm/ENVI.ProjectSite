@@ -12,6 +12,29 @@ import { Controller } from 'react-hook-form';
 import ContractsController from '../../Contracts/ContractsList/ContractsController';
 import { NumericFormat } from 'react-number-format';
 
+
+type ProjectSelectorProps = {
+    repository: RepositoryReact,
+    required?: boolean,
+    showValidationInfo?: boolean,
+}
+export function ProjectSelector({ repository, required = false, showValidationInfo = true }: ProjectSelectorProps) {
+    const { register, formState: { errors } } = useFormContext();
+    return (
+        <Form.Group>
+            <Form.Label>Projekt</Form.Label>
+            <MyAsyncTypeahead
+                name='_parent'
+                labelKey="ourId"
+                repository={repository}
+                specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
+                isRequired={required}
+                showValidationInfo={showValidationInfo}
+            />
+        </Form.Group>
+    )
+}
+
 type ContractStatusProps = {
     required?: boolean,
     showValidationInfo?: boolean,
@@ -44,7 +67,6 @@ export function ContractStatus({ required = false, showValidationInfo = true }: 
         </Form.Group>
     );
 };
-
 
 type ContractTypeSelectFormElementProps = {
     typesToInclude?: 'our' | 'other' | 'all'
@@ -86,7 +108,6 @@ export function ContractTypeSelectFormElement({
                     name={name}
                     control={control}
                     rules={{ required: { value: required, message: 'Wybierz typ kontraktu' } }}
-                    //defaultValue={makeoptions(selectedRepositoryItems || [])}
                     render={({ field }) => (
                         <Typeahead
                             id={`${label}-controlled`}
@@ -187,6 +208,7 @@ type MyAsyncTypeaheadProps = {
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
     isRequired?: boolean;
+    showValidationInfo?: boolean,
     renderMenuItemChildren?: RenderMenuItemChildren
 }
 /**
@@ -207,7 +229,8 @@ export function MyAsyncTypeahead({
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     multiple = false,
-    isRequired = false
+    isRequired = false,
+    showValidationInfo = true,
 }: MyAsyncTypeaheadProps) {
     const { control, setValue, formState: { errors } } = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
@@ -254,8 +277,8 @@ export function MyAsyncTypeahead({
                     newSelectionPrefix="Dodaj nowy: "
                     placeholder="-- Wybierz opcję --"
                     renderMenuItemChildren={renderMenuItemChildren}
-                    isValid={isRequired && field.value && field.value.length > 0}
-                    isInvalid={isRequired && (!field.value || field.value.length === 0)}
+                    isValid={showValidationInfo ? isRequired && field.value && field.value.length > 0 : undefined}
+                    isInvalid={showValidationInfo ? isRequired && (!field.value || field.value.length === 0) : undefined}
                 />
             )}
         />

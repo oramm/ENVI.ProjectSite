@@ -19,6 +19,7 @@ export function OtherContractModalBody(props: ModalBodyProps) {
     const { register, setValue, watch, formState, control } = useFormContext();
     const _parent = watch('_parent')[0];
     useEffect(() => {
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
         setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
     }, [initialData, setValue]);
@@ -28,6 +29,7 @@ export function OtherContractModalBody(props: ModalBodyProps) {
             (!props.isEditing) ?
                 <ContractTypeSelectFormElement
                     typesToInclude='other'
+                    required={true}
                 />
                 : null
         }

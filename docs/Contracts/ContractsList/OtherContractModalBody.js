@@ -45,13 +45,14 @@ function OtherContractModalBody(props) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _parent = watch('_parent')[0];
     (0, react_1.useEffect)(() => {
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
         setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other' })
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other', required: true })
             : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,

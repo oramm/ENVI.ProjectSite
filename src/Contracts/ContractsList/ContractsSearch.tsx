@@ -1,104 +1,23 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
-import { Container, Accordion, Collapse, Button, Row, Col, Form, Alert } from 'react-bootstrap';
-import FilteredTable, { FilterTableRowProps, handleSubmitFilterableTable } from '../../View/Resultsets/FilterableTable';
+import FilteredTable, { FilterTableRowProps } from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
-import MainSetup from '../../React/MainSetupReact';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead } from '../../View/Resultsets/CommonComponents';
-import { RepositoryDataItem } from '../../React/RepositoryReact';
-import ToolsDate from '../../React/ToolsDate';
-import { GeneralDeleteModalButton, GeneralEditModalButton } from '../../View/GeneralModal';
-import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
-import { OtherContractEditModalButton } from './OtherContractModalBody';
 import { ContractDeleteModalButton, ContractEditModalButton } from './ContractModalBody';
+import { ContractsFilterBody } from './ContractsFilterBody';
+import { OurContractAddNewModalButton } from './OurContractModalBody';
+import { OtherContractAddNewModalButton } from './OtherContractModalBody';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;
 export const projectsRepository = ContractsController.projectsRepository;
 
 export default function ContractsSearch({ title }: { title: string }) {
-    const [objects, setObjects] = useState([] as any[]);
-    const [searchText, setSearchText] = useState('');
-    const [isReady, setIsReady] = useState(true);
-    const [activeRowId, setActiveRowId] = useState(0);
-    const [projects, setProjects] = useState([] as RepositoryDataItem[]);
-    const [type, setType] = useState<RepositoryDataItem>();
-
-    const filters = [
-        <Form.Group>
-            <Form.Label>Szukana fraza</Form.Label>
-            <Form.Control
-                type="text"
-                placeholder="Wpisz tekst"
-                name="searchText"
-                value={searchText} onChange={e => setSearchText(e.target.value)}
-            />
-        </Form.Group>,
-        <Form.Group>
-            <Form.Label>Początek od</Form.Label>
-            <Form.Control
-                name='startDate'
-                type="date"
-                defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)} />
-        </Form.Group>,
-        <Form.Group>
-            <Form.Label>Początek do</Form.Label>
-            <Form.Control
-                name='endDate'
-                type="date"
-                defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)} />
-        </Form.Group>,
-        <Form.Group>
-            <Form.Label>Projekt</Form.Label>
-            <MyAsyncTypeahead
-                name='_parent'
-                labelKey='ourId'
-                repository={projectsRepository}
-                //selectedRepositoryItems={projects}
-                //onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
-                specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
-            />
-        </Form.Group>,
-
-        <ContractTypeSelectFormElement
-            //selectedRepositoryItems={type ? [type] : []}
-            showValidationInfo={false}
-        />
-    ];
-
-
-    function handleEditObject(object: RepositoryDataItem) {
-        setObjects(objects.map((o) => o.id === object.id ? object : o));
-    }
-
-    function handleAddObject(object: RepositoryDataItem) {
-        setObjects([...objects, object]);
-    }
-
-    function handleDeleteObject(objectId: number) {
-        setObjects(objects.filter((o) => o.id !== objectId));
-    }
-
-    function handleRowClick(id: number) {
-        console.log('handleRowClick', id);
-        setActiveRowId(id);
-        contractsRepository.addToCurrentItems(id);
-    }
-
     return (
         <FilteredTable
-            objects={objects}
-            onSubmitSearch={() => undefined}
-            onAddNew={handleAddObject}
-            onEdit={handleEditObject}
-            onDelete={handleDeleteObject}
-            onIsReadyChange={setIsReady}
-            filters={filters}
             title={title}
-            isReady={isReady}
-            activeRowId={activeRowId}
-            onRowClick={handleRowClick}
+            FilterBodyComponent={ContractsFilterBody}
             tableHeaders={['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca']}
-            rowRenderer={(props) => <ContractSearchTableRow {...props} />}
+            RowComponent={ContractSearchTableRow}
+            AddNewButtons={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             repository={contractsRepository}
         />
     );

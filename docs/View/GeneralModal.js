@@ -158,9 +158,8 @@ onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repos
     function handleClose() {
         setShowForm(false);
     }
-    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
         react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: false,
                 additionalProps: additionalModalBodyProps,

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
 import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
@@ -8,7 +8,6 @@ import { OtherContractEditModalButton, OtherContractModalBody } from './OtherCon
 import { contractsRepository, projectsRepository } from './ContractsSearch';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
-import { useValidation } from '../../View/useValidation';
 import { useFormContext } from '../../View/FormContext';
 //import { useFormContext } from 'react-hook-form';
 
@@ -155,8 +154,6 @@ export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValu
     const { register, setValue, watch, formState } = useFormContext();
     const project = (watch('_parent') as RepositoryDataItem[] | undefined);
 
-    const [projects, setProjects] = useState([] as RepositoryDataItem[]);
-    const [selected, setSelected] = useState(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody) throw new Error("SpecificContractModalBody is not defined");
@@ -171,16 +168,10 @@ export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValu
                     onValidationChange={onValidationChange}
                 />
             ) : (
-                <Form.Group>
-                    <Form.Label>Projekt</Form.Label>
-                    <MyAsyncTypeahead
-                        name='_parent'
-                        labelKey="ourId"
-                        repository={projectsRepository}
-                        specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
-                        isRequired={true}
-                    />
-                </Form.Group>
+                <ProjectSelector
+                    repository={projectsRepository}
+                    required={true}
+                />
             )}
         </>
     );

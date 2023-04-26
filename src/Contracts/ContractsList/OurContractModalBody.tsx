@@ -6,7 +6,6 @@ import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } fro
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
 import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../View/GeneralModal';
 import { contractsRepository, projectsRepository } from './ContractsSearch';
-import { useValidation } from '../../View/useValidation';
 import { useFormContext } from '../../View/FormContext';
 
 export function OurContractModalBody(props: ModalBodyProps) {
@@ -14,7 +13,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
     const { register, setValue, watch, formState, control } = useFormContext();
 
     useEffect(() => {
-        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
         setValue('_manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
     }, [initialData, setValue]);

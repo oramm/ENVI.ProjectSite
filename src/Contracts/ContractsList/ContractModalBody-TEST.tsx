@@ -8,7 +8,6 @@ import { OtherContractEditModalButton, OtherContractModalBody } from './OtherCon
 import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
 import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
-import { useValidation } from '../../View/useValidation';
 import { useFormContext } from '../../View/FormContext';
 
 export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {

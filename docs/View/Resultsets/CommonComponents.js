@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -36,6 +36,13 @@ const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const ContractsController_1 = __importDefault(require("../../Contracts/ContractsList/ContractsController"));
 const react_number_format_1 = require("react-number-format");
+function ProjectSelector({ repository, required = false, showValidationInfo = true }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
+        react_1.default.createElement(MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: required, showValidationInfo: showValidationInfo })));
+}
+exports.ProjectSelector = ProjectSelector;
 function ContractStatus({ required = false, showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
@@ -73,9 +80,7 @@ function ContractTypeSelectFormElement({ typesToInclude = 'all', required = fals
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, 
-                //defaultValue={makeoptions(selectedRepositoryItems || [])}
-                render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption.name),
@@ -109,7 +114,7 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, showValidationInfo = true, }) {
     const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -131,7 +136,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         setValue(name, selectedOptions);
         field.onChange(selectedOptions);
     }
-    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? field.value : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? field.value : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? isRequired && field.value && field.value.length > 0 : undefined, isInvalid: showValidationInfo ? isRequired && (!field.value || field.value.length === 0) : undefined })) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;

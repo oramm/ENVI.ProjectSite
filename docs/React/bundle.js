@@ -67311,9 +67311,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -67323,7 +67320,6 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
 //import { useFormContext } from 'react-hook-form';
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
@@ -67396,15 +67392,11 @@ exports.ContractModalBody = ContractModalBody;
 function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
     const project = watch('_parent');
-    const [projects, setProjects] = (0, react_1.useState)([]);
-    const [selected, setSelected] = (0, react_1.useState)(false);
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange })) : (react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -67483,6 +67475,45 @@ ContractsController.projectsRepository = new RepositoryReact_1.default({
 
 /***/ }),
 
+/***/ "./src/Contracts/ContractsList/ContractsFilterBody.tsx":
+/*!*************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractsFilterBody.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContractsFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+function ContractsFilterBody({}) {
+    const { register } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek od"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10), ...register('startDate') })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek do"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register('endDate') })),
+        react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: false, showValidationInfo: false }),
+        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { showValidationInfo: false })));
+}
+exports.ContractsFilterBody = ContractsFilterBody;
+
+
+/***/ }),
+
 /***/ "./src/Contracts/ContractsList/ContractsSearch.tsx":
 /*!*********************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractsSearch.tsx ***!
@@ -67491,89 +67522,23 @@ ContractsController.projectsRepository = new RepositoryReact_1.default({
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.projectsRepository = exports.entitiesRepository = exports.contractsRepository = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
 const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
+const ContractsFilterBody_1 = __webpack_require__(/*! ./ContractsFilterBody */ "./src/Contracts/ContractsList/ContractsFilterBody.tsx");
+const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
+const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
 function ContractsSearch({ title }) {
-    const [objects, setObjects] = (0, react_1.useState)([]);
-    const [searchText, setSearchText] = (0, react_1.useState)('');
-    const [isReady, setIsReady] = (0, react_1.useState)(true);
-    const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const [projects, setProjects] = (0, react_1.useState)([]);
-    const [type, setType] = (0, react_1.useState)();
-    const filters = [
-        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", name: "searchText", value: searchText, onChange: e => setSearchText(e.target.value) })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek od"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'startDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10) })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek do"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { name: 'endDate', type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10) })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: 'ourId', repository: exports.projectsRepository, 
-                //selectedRepositoryItems={projects}
-                //onChange={(currentSelectedItems) => setProjects(currentSelectedItems)}
-                specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail })),
-        react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement
-        //selectedRepositoryItems={type ? [type] : []}
-        , { 
-            //selectedRepositoryItems={type ? [type] : []}
-            showValidationInfo: false })
-    ];
-    function handleEditObject(object) {
-        setObjects(objects.map((o) => o.id === object.id ? object : o));
-    }
-    function handleAddObject(object) {
-        setObjects([...objects, object]);
-    }
-    function handleDeleteObject(objectId) {
-        setObjects(objects.filter((o) => o.id !== objectId));
-    }
-    function handleRowClick(id) {
-        console.log('handleRowClick', id);
-        setActiveRowId(id);
-        exports.contractsRepository.addToCurrentItems(id);
-    }
-    return (react_1.default.createElement(FilterableTable_1.default, { objects: objects, onSubmitSearch: () => undefined, onAddNew: handleAddObject, onEdit: handleEditObject, onDelete: handleDeleteObject, onIsReadyChange: setIsReady, filters: filters, title: title, isReady: isReady, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], rowRenderer: (props) => react_1.default.createElement(ContractSearchTableRow, { ...props }), repository: exports.contractsRepository }));
+    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], RowComponent: ContractSearchTableRow, AddNewButtons: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], repository: exports.contractsRepository }));
 }
 exports["default"] = ContractsSearch;
 function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
@@ -67647,13 +67612,14 @@ function OtherContractModalBody(props) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _parent = watch('_parent')[0];
     (0, react_1.useEffect)(() => {
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
         setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other' })
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other', required: true })
             : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
@@ -67742,7 +67708,7 @@ function OurContractModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('_contractType', initialData?.type || [], { shouldValidate: true });
+        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
         setValue('_admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
         setValue('_manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
     }, [initialData, setValue]);
@@ -68737,9 +68703,8 @@ onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repos
     function handleClose() {
         setShowForm(false);
     }
-    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
         react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: false,
                 additionalProps: additionalModalBodyProps,
@@ -68803,7 +68768,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -68813,6 +68778,13 @@ const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/Form
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const react_number_format_1 = __webpack_require__(/*! react-number-format */ "./node_modules/react-number-format/dist/react-number-format.es.js");
+function ProjectSelector({ repository, required = false, showValidationInfo = true }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
+        react_1.default.createElement(MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: required, showValidationInfo: showValidationInfo })));
+}
+exports.ProjectSelector = ProjectSelector;
 function ContractStatus({ required = false, showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
@@ -68850,9 +68822,7 @@ function ContractTypeSelectFormElement({ typesToInclude = 'all', required = fals
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, 
-                //defaultValue={makeoptions(selectedRepositoryItems || [])}
-                render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ kontraktu' } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value, placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption.name),
@@ -68886,7 +68856,7 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, showValidationInfo = true, }) {
     const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -68908,7 +68878,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         setValue(name, selectedOptions);
         field.onChange(selectedOptions);
     }
-    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? field.value : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? field.value : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? isRequired && field.value && field.value.length > 0 : undefined, isInvalid: showValidationInfo ? isRequired && (!field.value || field.value.length === 0) : undefined })) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -69106,87 +69076,109 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TableTitle = exports.handleSubmitFilterableTable = void 0;
+exports.useFilteredTableState = exports.useFilteredTableContext = exports.TableTitle = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const OtherContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
-const OurContractModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/FormContext.tsx");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const CommonComponentsController_1 = __webpack_require__(/*! ./CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
-function FilteredTable({ title, filters, repository, onSubmitSearch, onEdit, onDelete, onIsReadyChange = () => { }, onAddNew, objects, isReady, activeRowId, onRowClick, tableHeaders, rowRenderer }) {
-    return (react_1.default.createElement(react_bootstrap_1.Container, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(TableTitle, { title: title })),
-            onAddNew &&
-                react_1.default.createElement(react_1.default.Fragment, null,
-                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
-                        react_1.default.createElement(OtherContractModalBody_1.OtherContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } }),
-                        ' ',
-                        react_1.default.createElement(OurContractModalBody_1.OurContractAddNewModalButton, { modalProps: { onAddNew, onIsReadyChange } })))),
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(FilterPanel, { filters: filters, repository: repository, onIsReadyCHange: onIsReadyChange })),
-        !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement("progress", { style: { height: "5px" } })),
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: onRowClick, tableHeaders: tableHeaders, rowRenderer: rowRenderer, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew }))))));
+function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewButtons = [], FilterBodyComponent }) {
+    const [isReady, setIsReady] = (0, react_1.useState)(true);
+    const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
+    const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
+    //const filteredTableState = useFilteredTableState();
+    function handleRowClick(id) {
+        console.log('handleRowClick', id);
+        setActiveRowId(id);
+        repository.addToCurrentItems(id);
+    }
+    return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } },
+        react_1.default.createElement(react_bootstrap_1.Container, null,
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(TableTitle, { title: title })),
+                AddNewButtons &&
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtons.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
+                        react_1.default.createElement(ButtonComponent, { modalProps: {
+                                onAddNew: handleAddObject,
+                                onIsReadyChange(isReady) { setIsReady(isReady); }
+                            } }),
+                        index < AddNewButtons.length - 1 && ' '))))),
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyCHange: (isReady) => {
+                        setIsReady(isReady);
+                    } })),
+            !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement("progress", { style: { height: "5px" } })),
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: tableHeaders, RowComponent: RowComponent, onIsReadyChange: (isReady) => { setIsReady(isReady); }, onEdit: handleEditObject, onDelete: handleDeleteObject, onAddNew: handleAddObject })))))));
 }
 exports["default"] = FilteredTable;
-function FilterPanel({ filters, repository, onIsReadyCHange: onIsReadyChange }) {
+function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const { setObjects } = (0, exports.useFilteredTableContext)();
     const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
-        await repository.loadItemsfromServer(formData);
-        onIsReadyChange(false);
+        const result = await repository.loadItemsfromServer(formData);
+        setObjects(result);
+        onIsReadyChange(true);
     }
     ;
-    return (react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
-        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
-            filters.map((filter, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: index },
-                " ",
-                filter,
-                " "))),
+    return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
+        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
+            react_1.default.createElement(FilterBodyComponent, null),
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj")))));
 }
-/**
- *  Obsługuje wyszukiwanie w tabeli z filtrowaniem
- * @deprecated
- */
-async function handleSubmitFilterableTable(e, repository, additionalParameters) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    if (additionalParameters?.length)
-        for (const param of additionalParameters)
-            formData.append(param.name, param.value);
-    return await repository.loadItemsfromServer(formData);
-}
-exports.handleSubmitFilterableTable = handleSubmitFilterableTable;
-function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, rowRenderer, onIsReadyChange, onEdit, onDelete, onAddNew }) {
+function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, RowComponent, onIsReadyChange, onEdit, onDelete, onAddNew }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
             react_1.default.createElement("tr", null, tableHeaders.map((header, index) => (react_1.default.createElement("th", { key: index }, header))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
-            return (react_1.default.createElement("tr", { key: dataObject.id, onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => { console.log('dblClick'); navigate('/contract/' + dataObject.id); }, className: isActive ? 'active' : '' }, rowRenderer({
-                dataObject,
-                isActive,
-                onIsReadyChange,
-                onEdit,
-                onDelete,
-                onAddNew
-            })));
+            return (react_1.default.createElement("tr", { key: dataObject.id, onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => { navigate('/contract/' + dataObject.id); }, className: isActive ? 'active' : '' },
+                react_1.default.createElement(RowComponent, { dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew })));
         }))));
 }
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
+const FilteredTableContext = (0, react_1.createContext)({
+    objects: [],
+    handleAddObject: () => { },
+    handleEditObject: () => { },
+    handleDeleteObject: () => { },
+    setObjects: () => { },
+});
+const useFilteredTableContext = () => {
+    return (0, react_1.useContext)(FilteredTableContext);
+};
+exports.useFilteredTableContext = useFilteredTableContext;
+const useFilteredTableState = () => {
+    const [objects, setObjects] = (0, react_1.useState)([]);
+    function handleAddObject(object) {
+        setObjects([...objects, object]);
+    }
+    function handleEditObject(object) {
+        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+    }
+    function handleDeleteObject(objectId) {
+        setObjects(objects.filter((o) => o.id !== objectId));
+    }
+    return {
+        objects,
+        setObjects,
+        handleAddObject,
+        handleEditObject,
+        handleDeleteObject,
+    };
+};
+exports.useFilteredTableState = useFilteredTableState;
 
 
 /***/ }),

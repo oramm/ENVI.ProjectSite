@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
-import { useForm } from 'react-hook-form';
-import { FieldErrors, FieldValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form/dist/types';
+import { useForm, FieldValues } from 'react-hook-form';
+//import { FieldErrors, FieldValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form/dist/types';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
 import { FormProvider } from './FormContext';
@@ -233,10 +233,10 @@ export function GeneralAddNewModalButton({
         setShowForm(false);
     }
 
-    //console.log("GeneralAddNewModalButton additionalModalBodyProps ", additionalModalBodyProps);
     return (
         <>
             <Button
+                key={buttonCaption}
                 variant={buttonVariant}
                 size={buttonSize}
                 active={buttonIsActive}

@@ -30,7 +30,9 @@ export default function FilteredTable({
 }: FilteredTableProps) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
-    const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = useFilteredTableState();
+    const { handleAddObject, handleEditObject, handleDeleteObject, objects } = useFilteredTableState();
+
+    //const filteredTableState = useFilteredTableState();
 
     function handleRowClick(id: number) {
         console.log('handleRowClick', id);
@@ -39,7 +41,7 @@ export default function FilteredTable({
     }
 
     return (
-        <FilteredTableContext.Provider value={{ handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects }}>
+        <FilteredTableContext.Provider value={{ handleAddObject, handleEditObject, handleDeleteObject, objects }}>
             <Container>
                 <Row>
                     <Col>
@@ -59,6 +61,7 @@ export default function FilteredTable({
                                 </React.Fragment>
                             ))}
                         </Col>
+
                     }
                 </Row>
                 <Row>
@@ -101,7 +104,7 @@ type FilterPanelProps = {
 }
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }: FilterPanelProps) {
     const [errorMessage, setErrorMessage] = useState('');
-    const { setObjects } = useFilteredTableContext();
+
     const {
         register,
         setValue,
@@ -114,9 +117,8 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
     async function handleSubmitSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuestoFormData(data);
-        const result = await repository.loadItemsfromServer(formData);
-        setObjects(result);
-        onIsReadyChange(true);
+        await repository.loadItemsfromServer(formData);
+        onIsReadyChange(false);
     };
 
     return (
@@ -172,7 +174,7 @@ function ResultSetTable({
                         < tr
                             key={dataObject.id}
                             onClick={(e) => (onRowClick(dataObject.id))}
-                            onDoubleClick={() => { navigate('/contract/' + dataObject.id) }}
+                            onDoubleClick={() => { console.log('dblClick'); navigate('/contract/' + dataObject.id) }}
                             className={isActive ? 'active' : ''}
                         >
                             <RowComponent
@@ -204,21 +206,7 @@ export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
 }
 
-interface FilteredTableContextType {
-    objects: RepositoryDataItem[];
-    handleAddObject: (object: RepositoryDataItem) => void;
-    handleEditObject: (object: RepositoryDataItem) => void;
-    handleDeleteObject: (objectId: number) => void;
-    setObjects: React.Dispatch<React.SetStateAction<RepositoryDataItem[]>>;
-}
-
-const FilteredTableContext = createContext<FilteredTableContextType>({
-    objects: [],
-    handleAddObject: () => { },
-    handleEditObject: () => { },
-    handleDeleteObject: () => { },
-    setObjects: () => { },
-});
+const FilteredTableContext = createContext({});
 
 export const useFilteredTableContext = () => {
     return useContext(FilteredTableContext);
@@ -242,7 +230,6 @@ export const useFilteredTableState = () => {
 
     return {
         objects,
-        setObjects,
         handleAddObject,
         handleEditObject,
         handleDeleteObject,
