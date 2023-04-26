@@ -113,17 +113,9 @@ function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChang
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    const handleProjectSelection = (currentSelectedItems) => {
-        //setProjects(currentSelectedItems);
-        //setSelected(currentSelectedItems.length > 0);
-    };
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, 
-        //projectOurId={projects[0].ourId}
-        onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onAdditionalFieldsKeysValuesChange: onAdditionalFieldsKeysValuesChange, onValidationChange: onValidationChange })) : (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, 
-            //onChange={handleProjectSelection}
-            specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
+        react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: ContractsSearch_1.projectsRepository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: true })))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

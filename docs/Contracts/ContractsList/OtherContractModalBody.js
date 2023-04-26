@@ -43,6 +43,7 @@ function OtherContractModalBody(props) {
         actionRoutes: { addNewRoute: '', editRoute: '', deleteRoute: '', getRoute: 'contracts' },
     });
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const _parent = watch('_parent')[0];
     (0, react_1.useEffect)(() => {
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
         setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
@@ -58,7 +59,7 @@ function OtherContractModalBody(props) {
             react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
-            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+            react_1.default.createElement(CommonComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', contextSearchParams: [{ key: 'projectId', value: _parent?.ourId }], repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",
                     option.name)) }))));

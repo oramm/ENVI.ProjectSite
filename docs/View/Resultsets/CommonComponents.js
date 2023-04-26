@@ -107,9 +107,9 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
  * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
- * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru
+ * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false }) {
     const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -117,6 +117,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, sp
         setIsLoading(true);
         const formData = new FormData();
         formData.append(searchKey, query);
+        contextSearchParams.forEach(param => formData.append(param.key, param.value));
         repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
             setOptions(items);
@@ -130,7 +131,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, sp
         setValue(name, selectedOptions);
         field.onChange(selectedOptions);
     }
-    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value, multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? field.value : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: isRequired && field.value && field.value.length > 0, isInvalid: isRequired && (!field.value || field.value.length === 0) })) }));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
@@ -148,11 +149,17 @@ function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSel
     console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
 exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
-function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel = 'value' }) {
-    const { register, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
+/**
+ * Wyświetla pole do wprowadzania wartości w PLN
+ * @param required czy pole jest wymagane
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
+ * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
+function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel = 'value', }) {
+    const { register, control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
+    let ref = (0, react_1.useRef)();
     function handleValueChange(values) {
-        //const valueWithComma = values.floatValue?.toString().replace('.', ',');
         setValue(keyLabel, values.floatValue);
     }
     const classNames = ['form-control'];
@@ -166,10 +173,13 @@ function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_number_format_1.NumericFormat, { value: watchedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: handleValueChange, className: classNames.join(' '), valueIsNumericString: true, ...register(keyLabel, {
-                    required: { value: required, message: 'Podaj wartość! Jeśli jej nie znasz to wpisz zero' },
-                    max: { value: 9999999999, message: 'Zbyt duża liczba' },
-                }) }),
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, rules: {
+                    required: {
+                        value: required,
+                        message: "Podaj wartość! Jeśli jej nie znasz to wpisz zero",
+                    },
+                    max: { value: 9999999999, message: "Zbyt duża liczba" },
+                }, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, getInputRef: ref, value: watchedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: handleValueChange, className: classNames.join(" "), valueIsNumericString: true })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
         errors?.value && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.value?.message))));
 }

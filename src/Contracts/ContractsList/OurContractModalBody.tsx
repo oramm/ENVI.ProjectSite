@@ -9,7 +9,7 @@ import { contractsRepository, projectsRepository } from './ContractsSearch';
 import { useValidation } from '../../View/useValidation';
 import { useFormContext } from '../../View/FormContext';
 
-export function OurContractModalBody(props: ModalBodyProps & { projectOurId?: string }) {
+export function OurContractModalBody(props: ModalBodyProps) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = useFormContext();
 

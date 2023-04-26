@@ -153,7 +153,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
-    const project = watch('_parent');
+    const project = (watch('_parent') as RepositoryDataItem[] | undefined);
 
     const [projects, setProjects] = useState([] as RepositoryDataItem[]);
     const [selected, setSelected] = useState(false);
@@ -177,7 +177,6 @@ export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValu
                         name='_parent'
                         labelKey="ourId"
                         repository={projectsRepository}
-                        //onChange={handleProjectSelection}
                         specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                         isRequired={true}
                     />

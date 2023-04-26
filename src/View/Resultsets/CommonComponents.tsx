@@ -183,6 +183,7 @@ type MyAsyncTypeaheadProps = {
     repository: RepositoryReact,
     labelKey: string
     searchKey?: string,
+    contextSearchParams?: { key: string, value: string }[],
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
     isRequired?: boolean;
@@ -195,13 +196,14 @@ type MyAsyncTypeaheadProps = {
  * @param searchKey nazwa pola w repozytorium które ma być wyszukiwane po stronie serwera (sprawdź odpowiedni controller) domyślnie jest równe labelKey
  * @param specialSerwerSearchActionRoute nazwa nietypowego route na serwerze która ma być wywołana zamiast standardowego z RepositoryReact
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru 
- * @param menuItemChildren dodatkowe elementy wyświetlane w liście wyboru  
+ * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)  
 */
 export function MyAsyncTypeahead({
     name,
     repository,
     labelKey,
     searchKey = labelKey,
+    contextSearchParams = [],
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     multiple = false,
@@ -215,7 +217,7 @@ export function MyAsyncTypeahead({
         setIsLoading(true);
         const formData = new FormData();
         formData.append(searchKey, query);
-
+        contextSearchParams.forEach(param => formData.append(param.key, param.value));
         repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
                 setOptions(items);
@@ -247,7 +249,7 @@ export function MyAsyncTypeahead({
                     options={options}
                     onChange={(items) => handleOnChange(items, field)}
                     onBlur={field.onBlur}
-                    selected={field.value}
+                    selected={field.value ? field.value : []}
                     multiple={multiple}
                     newSelectionPrefix="Dodaj nowy: "
                     placeholder="-- Wybierz opcję --"
@@ -278,22 +280,29 @@ export function handleEditMyAsyncTypeaheadElement(
     setSuperiorElementState(finalItemsSelected);
     console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
 }
+
 type ValueInPLNInputProps = {
     required?: boolean;
     showValidationInfo?: boolean;
     keyLabel?: string;
 }
 
+/**
+ * Wyświetla pole do wprowadzania wartości w PLN
+ * @param required czy pole jest wymagane
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
+ * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
 export function ValueInPLNInput({
     required = false,
     showValidationInfo = true,
-    keyLabel = 'value'
+    keyLabel = 'value',
 }: ValueInPLNInputProps) {
-    const { register, setValue, watch, formState: { errors } } = useFormContext();
+    const { register, control, setValue, watch, formState: { errors } } = useFormContext();
     const watchedValue = watch(keyLabel);
+    let ref = useRef();
 
     function handleValueChange(values: { floatValue: number | undefined }) {
-        //const valueWithComma = values.floatValue?.toString().replace('.', ',');
         setValue(keyLabel, values.floatValue);
     }
     const classNames = ['form-control'];
@@ -308,31 +317,40 @@ export function ValueInPLNInput({
     return (
         <>
             <InputGroup className="mb-3">
-                <NumericFormat
-                    value={watchedValue}
-                    thousandSeparator=" "
-                    decimalSeparator=","
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                    displayType="input"
-                    allowNegative={false}
-                    onValueChange={handleValueChange}
-                    className={classNames.join(' ')}
-                    valueIsNumericString={true}
-                    {...register(keyLabel, {
-                        required: { value: required, message: 'Podaj wartość! Jeśli jej nie znasz to wpisz zero' },
-                        max: { value: 9999999999, message: 'Zbyt duża liczba' },
-                    })}
+                <Controller
+                    control={control}
+                    name={keyLabel}
+                    rules={{
+                        required: {
+                            value: required,
+                            message: "Podaj wartość! Jeśli jej nie znasz to wpisz zero",
+                        },
+                        max: { value: 9999999999, message: "Zbyt duża liczba" },
+                    }}
+                    render={({ field }) => (
+                        <NumericFormat
+                            {...field}
+                            getInputRef={ref}
+                            value={watchedValue}
+                            thousandSeparator=" "
+                            decimalSeparator=","
+                            decimalScale={2}
+                            fixedDecimalScale={true}
+                            displayType="input"
+                            allowNegative={false}
+                            onValueChange={handleValueChange}
+                            className={classNames.join(" ")}
+                            valueIsNumericString={true}
+                        />
+                    )}
                 />
                 <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
             </InputGroup>
-            {
-                errors?.value && (
-                    <Form.Text className="text-danger">
-                        {errors.value?.message as string}
-                    </Form.Text>
-                )
-            }
+            {errors?.value && (
+                <Form.Text className="text-danger">
+                    {errors.value?.message as string}
+                </Form.Text>
+            )}
         </>
     );
 }
