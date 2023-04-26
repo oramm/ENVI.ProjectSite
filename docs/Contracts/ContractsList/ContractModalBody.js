@@ -112,10 +112,10 @@ function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChang
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps, isOurContract, }) {
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
     return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps }));
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
 function ContractDeleteModalButton({ modalProps: { onDelete } }) {

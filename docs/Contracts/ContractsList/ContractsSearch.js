@@ -28,6 +28,6 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
+            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
             onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
 }

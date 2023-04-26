@@ -52,11 +52,10 @@ function OurContractModalBody(props) {
         react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
-function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData, }, }) {
+function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurContractModalBody,
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
@@ -65,10 +64,9 @@ function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, ini
         } }));
 }
 exports.OurContractEditModalButton = OurContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            onIsReadyChange: onIsReadyChange,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",

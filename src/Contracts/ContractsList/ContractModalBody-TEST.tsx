@@ -65,7 +65,7 @@ export function ProjectSelectorModalBody({
 
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 export function ContractEditModalButton({
-    modalProps: { onEdit, onIsReadyChange, initialData },
+    modalProps: { onEdit, initialData },
     buttonProps,
     isOurContract,
 }: SpecificEditModalButtonProps & { isOurContract: boolean }) {
@@ -73,11 +73,11 @@ export function ContractEditModalButton({
     return (
         isOurContract
             ? <OurContractEditModalButton
-                modalProps={{ onEdit, onIsReadyChange, initialData }}
+                modalProps={{ onEdit, initialData }}
                 buttonProps={buttonProps}
             />
             : <OtherContractEditModalButton
-                modalProps={{ onEdit, onIsReadyChange, initialData }}
+                modalProps={{ onEdit, initialData }}
                 buttonProps={buttonProps}
             />
     );

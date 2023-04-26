@@ -66,23 +66,21 @@ function OtherContractModalBody(props) {
                     option.name)) }))));
 }
 exports.OtherContractModalBody = OtherContractModalBody;
-function OtherContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, }) {
+function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OtherContractModalBody,
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
         }, buttonProps: {} }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
-function OtherContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Nowa umowa zewnętrzna",
             repository: ContractsSearch_1.contractsRepository
         }, buttonProps: {

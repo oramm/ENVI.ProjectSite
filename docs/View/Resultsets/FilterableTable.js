@@ -34,7 +34,6 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
-    //const filteredTableState = useFilteredTableState();
     function handleRowClick(id) {
         console.log('handleRowClick', id);
         setActiveRowId(id);
@@ -47,10 +46,7 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
                     react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtons &&
                     react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtons.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
-                        react_1.default.createElement(ButtonComponent, { modalProps: {
-                                onAddNew: handleAddObject,
-                                onIsReadyChange(isReady) { setIsReady(isReady); }
-                            } }),
+                        react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
                         index < AddNewButtons.length - 1 && ' '))))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyCHange: (isReady) => {

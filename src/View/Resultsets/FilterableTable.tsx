@@ -50,10 +50,7 @@ export default function FilteredTable({
                             {AddNewButtons.map((ButtonComponent, index) => (
                                 <React.Fragment key={index}>
                                     <ButtonComponent
-                                        modalProps={{
-                                            onAddNew: handleAddObject,
-                                            onIsReadyChange(isReady) { setIsReady(isReady); }
-                                        }}
+                                        modalProps={{ onAddNew: handleAddObject }}
                                     />
                                     {index < AddNewButtons.length - 1 && ' '}
                                 </React.Fragment>

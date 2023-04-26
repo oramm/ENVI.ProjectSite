@@ -52,14 +52,13 @@ export function OurContractModalBody(props: ModalBodyProps) {
 }
 
 export function OurContractEditModalButton({
-    modalProps: { onEdit, onIsReadyChange, initialData, },
+    modalProps: { onEdit, initialData, },
 }: SpecificEditModalButtonProps) {
     return (
         <GeneralEditModalButton
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurContractModalBody,
-                onIsReadyChange: onIsReadyChange,
                 modalTitle: "Edycja umowy",
                 repository: contractsRepository,
                 initialData: initialData,
@@ -72,13 +71,12 @@ export function OurContractEditModalButton({
 }
 
 export function OurContractAddNewModalButton({
-    modalProps: { onAddNew, onIsReadyChange },
+    modalProps: { onAddNew },
 }: SpecificAddNewModalButtonProps) {
     return (
         <GeneralAddNewModalButton
             modalProps={{
                 onAddNew: onAddNew,
-                onIsReadyChange: onIsReadyChange,
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
                 modalTitle: "Nowa umowa ENVI",

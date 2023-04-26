@@ -35,7 +35,7 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
             <td>
                 {onEdit && (
                     <ContractEditModalButton
-                        modalProps={{ onEdit, onIsReadyChange, initialData: dataObject, }}
+                        modalProps={{ onEdit, initialData: dataObject, }}
                         isOurContract={dataObject.ourId.length > 1}
                     />
                 )}

@@ -34,10 +34,11 @@ const Tools_1 = __importDefault(require("../React/Tools"));
 const FormContext_1 = require("./FormContext");
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
 const CommonComponentsController_1 = require("./Resultsets/CommonComponentsController");
-function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
     const [isValidated, setIsValidated] = (0, react_1.useState)(false);
+    const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     //const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
     const additionalFieldsKeysValues = (0, react_1.useRef)([]);
@@ -61,22 +62,22 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
         console.log('handleValidationChange isAllValid', isAllValid);
         setIsValidated(isAllValid);
     }
-    const isSubmitEnabled = isValidated;
     async function handleSubmitRepository(data) {
         try {
             setErrorMessage('');
-            onIsReadyChange(false);
+            setRequestPending(true);
             const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
             (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
             onClose();
-            onIsReadyChange(true);
+            setRequestPending(false);
         }
         catch (error) {
             if (error instanceof Error)
                 setErrorMessage(error.message);
+            setRequestPending(false);
         }
     }
     ;
@@ -118,11 +119,12 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
                     react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
                     react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
                 react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isValid }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
-function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
+function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
     const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -133,7 +135,7 @@ function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBo
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
@@ -143,14 +145,13 @@ exports.GeneralEditModalButton = GeneralEditModalButton;
 /** Wyświetla przycisk i przypięty do niego modal
  * @param modalProps - właściwości modalu
  * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
- * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym
  * - ModalBodyComponent - komponent wyświetlany w modalu
  * - właściwości modalu
  * @param buttonProps - właściwości przycisku
  *
  */
 function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -160,7 +161,7 @@ onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repos
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: false,
                 additionalProps: additionalModalBodyProps,
             } })));

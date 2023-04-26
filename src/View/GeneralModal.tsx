@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row } from 'react-bootstrap';
+import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row, Spinner } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
 import { useForm, FieldValues } from 'react-hook-form';
-//import { FieldErrors, FieldValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form/dist/types';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
 import Tools from '../React/Tools';
 import { FormProvider } from './FormContext';
@@ -17,7 +16,6 @@ type GeneralModalProps = {
     onEdit?: (object: RepositoryDataItem) => void;
     onAddNew?: (object: RepositoryDataItem) => void;
     onClose: () => void;
-    onIsReadyChange: (isReady: boolean) => void;
     repository: RepositoryReact;
     ModalBodyComponent: React.ComponentType<ModalBodyProps>;
     modalBodyProps: ModalBodyProps;
@@ -30,7 +28,6 @@ export function GeneralModal({
     onEdit,
     onAddNew,
     onClose,
-    onIsReadyChange,
     repository,
     ModalBodyComponent,
     modalBodyProps
@@ -38,6 +35,7 @@ export function GeneralModal({
     const [errorMessage, setErrorMessage] = useState('');
     const [validationArray, setValidationArray] = useState<{ name: string; isValid: boolean }[]>([]);
     const [isValidated, setIsValidated] = useState(false);
+    const [requestPending, setRequestPending] = useState(false);
 
     const {
         register,
@@ -72,12 +70,11 @@ export function GeneralModal({
         console.log('handleValidationChange isAllValid', isAllValid);
         setIsValidated(isAllValid);
     }
-    const isSubmitEnabled = isValidated;
 
     async function handleSubmitRepository(data: FieldValues) {
         try {
             setErrorMessage('');
-            onIsReadyChange(false);
+            setRequestPending(true);
             const formData = parseFieldValuestoFormData(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
@@ -85,10 +82,11 @@ export function GeneralModal({
 
             (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
             onClose();
-            onIsReadyChange(true);
+            setRequestPending(false);
         } catch (error) {
             if (error instanceof Error)
                 setErrorMessage(error.message);
+            setRequestPending(false);
         }
     };
 
@@ -148,6 +146,7 @@ export function GeneralModal({
                     </FormProvider>
                 </Modal.Body>
                 <Modal.Footer>
+                    {requestPending && <Spinner animation="border" variant="primary" />}
                     <Button variant="secondary" onClick={onClose}>
                         Anuluj
                     </Button>
@@ -161,7 +160,7 @@ export function GeneralModal({
 }
 
 export function GeneralEditModalButton({
-    modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository },
+    modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository },
     buttonProps = {},
 }: GeneralEditModalButtonProps) {
     const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
@@ -186,7 +185,6 @@ export function GeneralEditModalButton({
                 isEditing={true}
                 title={modalTitle}
                 repository={repository}
-                onIsReadyChange={onIsReadyChange}
                 onEdit={onEdit}
                 ModalBodyComponent={ModalBodyComponent}
                 modalBodyProps={{
@@ -202,7 +200,6 @@ export function GeneralEditModalButton({
 /** Wyświetla przycisk i przypięty do niego modal
  * @param modalProps - właściwości modalu
  * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
- * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym 
  * - ModalBodyComponent - komponent wyświetlany w modalu 
  * - właściwości modalu
  * @param buttonProps - właściwości przycisku
@@ -211,7 +208,6 @@ export function GeneralEditModalButton({
 export function GeneralAddNewModalButton({
     modalProps: {
         onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-        onIsReadyChange,
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
@@ -251,7 +247,6 @@ export function GeneralAddNewModalButton({
                 isEditing={false}
                 title={modalTitle}
                 repository={repository}
-                onIsReadyChange={onIsReadyChange}
                 onAddNew={onAddNew}
                 ModalBodyComponent={ModalBodyComponent}
                 modalBodyProps={{
@@ -316,7 +311,6 @@ export type ModalBodyProps = {
 }
 
 type GeneralModalButtonModalProps = {
-    onIsReadyChange: (isReady: boolean) => void;
     ModalBodyComponent: React.ComponentType<ModalBodyProps>;
     additionalModalBodyProps?: any;
     modalTitle: string;
@@ -364,7 +358,7 @@ export type GeneralEditModalButtonProps = {
 
 type GeneralDeleteModalButtonModalProps = Omit<
     GeneralModalButtonModalProps,
-    "onIsReadyChange" | "ModalBodyComponent"
+    "ModalBodyComponent"
 > & {
     onDelete: (objectId: number) => void;
     initialData: RepositoryDataItem;
@@ -410,7 +404,7 @@ export type SpecificEditModalButtonProps = {
 
 type SpecificDeleteModalButtonModalProps = Omit<
     GeneralDeleteModalButtonModalProps,
-    "onIsReadyChange" | "ModalBodyComponent" | "modalTitle" | "repository"
+    "ModalBodyComponent" | "modalTitle" | "repository"
 > & {
     onDelete: (objectId: number) => void;
     initialData: RepositoryDataItem;

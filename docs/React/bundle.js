@@ -67401,10 +67401,10 @@ function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChang
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps, isOurContract, }) {
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
     return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData }, buttonProps: buttonProps }));
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
 function ContractDeleteModalButton({ modalProps: { onDelete } }) {
@@ -67551,7 +67551,7 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, onIsReadyChange, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
+            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
             onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
 }
 
@@ -67633,23 +67633,21 @@ function OtherContractModalBody(props) {
                     option.name)) }))));
 }
 exports.OtherContractModalBody = OtherContractModalBody;
-function OtherContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData }, }) {
+function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OtherContractModalBody,
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
         }, buttonProps: {} }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
-function OtherContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Nowa umowa zewnętrzna",
             repository: ContractsSearch_1.contractsRepository
         }, buttonProps: {
@@ -67722,11 +67720,10 @@ function OurContractModalBody(props) {
         react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
-function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, initialData, }, }) {
+function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurContractModalBody,
-            onIsReadyChange: onIsReadyChange,
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
@@ -67735,10 +67732,9 @@ function OurContractEditModalButton({ modalProps: { onEdit, onIsReadyChange, ini
         } }));
 }
 exports.OurContractEditModalButton = OurContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew, onIsReadyChange }, }) {
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            onIsReadyChange: onIsReadyChange,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
@@ -68579,10 +68575,11 @@ const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/FormContext.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const CommonComponentsController_1 = __webpack_require__(/*! ./Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
-function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsReadyChange, repository, ModalBodyComponent, modalBodyProps }) {
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
     const [isValidated, setIsValidated] = (0, react_1.useState)(false);
+    const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     //const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
     const additionalFieldsKeysValues = (0, react_1.useRef)([]);
@@ -68606,22 +68603,22 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
         console.log('handleValidationChange isAllValid', isAllValid);
         setIsValidated(isAllValid);
     }
-    const isSubmitEnabled = isValidated;
     async function handleSubmitRepository(data) {
         try {
             setErrorMessage('');
-            onIsReadyChange(false);
+            setRequestPending(true);
             const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
             if (additionalFieldsKeysValues)
                 for (const keyValue of additionalFieldsKeysValues.current)
                     formData.append(keyValue.name, keyValue.value);
             (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
             onClose();
-            onIsReadyChange(true);
+            setRequestPending(false);
         }
         catch (error) {
             if (error instanceof Error)
                 setErrorMessage(error.message);
+            setRequestPending(false);
         }
     }
     ;
@@ -68663,11 +68660,12 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, onIsR
                     react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, onAdditionalFieldsKeysValuesChange: handleAdditionalFieldsKeysValues, onValidationChange: handleValidationChange }),
                     react_1.default.createElement(react_bootstrap_1.Row, null, errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
                 react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isValid }, "Zatwierd\u017A")))));
 }
 exports.GeneralModal = GeneralModal;
-function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
+function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository }, buttonProps = {}, }) {
     const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -68678,7 +68676,7 @@ function GeneralEditModalButton({ modalProps: { onEdit, onIsReadyChange, ModalBo
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
@@ -68688,14 +68686,13 @@ exports.GeneralEditModalButton = GeneralEditModalButton;
 /** Wyświetla przycisk i przypięty do niego modal
  * @param modalProps - właściwości modalu
  * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
- * - onIsReadyChange - funkcja wywoływana w obiekcie nadrzędnym
  * - ModalBodyComponent - komponent wyświetlany w modalu
  * - właściwości modalu
  * @param buttonProps - właściwości przycisku
  *
  */
 function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+ModalBodyComponent, additionalModalBodyProps, modalTitle, repository }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -68705,7 +68702,7 @@ onIsReadyChange, ModalBodyComponent, additionalModalBodyProps, modalTitle, repos
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onIsReadyChange: onIsReadyChange, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
+        react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, modalBodyProps: {
                 isEditing: false,
                 additionalProps: additionalModalBodyProps,
             } })));
@@ -69087,7 +69084,6 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
-    //const filteredTableState = useFilteredTableState();
     function handleRowClick(id) {
         console.log('handleRowClick', id);
         setActiveRowId(id);
@@ -69100,10 +69096,7 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
                     react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtons &&
                     react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtons.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
-                        react_1.default.createElement(ButtonComponent, { modalProps: {
-                                onAddNew: handleAddObject,
-                                onIsReadyChange(isReady) { setIsReady(isReady); }
-                            } }),
+                        react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
                         index < AddNewButtons.length - 1 && ' '))))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyCHange: (isReady) => {
