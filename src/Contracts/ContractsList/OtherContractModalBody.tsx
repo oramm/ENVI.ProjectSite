@@ -17,11 +17,11 @@ export function OtherContractModalBody(props: ModalBodyProps) {
     })
 
     const { register, setValue, watch, formState, control } = useFormContext();
-    const _parent = watch('_parent')[0];
+    const _parent = watch('_parent');
     useEffect(() => {
-        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
+        setValue('_contractType', initialData?._type, { shouldValidate: true });
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
-        setValue('_ourContract', initialData?._ourContract ? [initialData._ourContract] : [], { shouldValidate: true });
+        setValue('_ourContract', initialData?._ourContract, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -51,7 +51,10 @@ export function OtherContractModalBody(props: ModalBodyProps) {
                     name='_ourContract'
                     labelKey='ourId'
                     searchKey='contractOurId'
-                    contextSearchParams={[{ key: 'projectId', value: _parent?.ourId }]}
+                    contextSearchParams={[
+                        { key: 'projectId', value: _parent?.ourId },
+                        { key: 'onlyOurs', value: 'true' }
+                    ]}
                     repository={ourRelatedContractsRepository}
                     renderMenuItemChildren={(option: any) => (<div>{option.ourId} {option.name}</div>)}
                 />

@@ -152,7 +152,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
-    const project = (watch('_parent') as RepositoryDataItem[] | undefined);
+    const project = (watch('_parent') as RepositoryDataItem | undefined);
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;

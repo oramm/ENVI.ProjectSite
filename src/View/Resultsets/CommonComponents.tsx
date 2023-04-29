@@ -30,6 +30,7 @@ export function ProjectSelector({ repository, required = false, showValidationIn
                 specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                 isRequired={required}
                 showValidationInfo={showValidationInfo}
+                multiple={false}
             />
         </Form.Group>
     )
@@ -72,12 +73,14 @@ type ContractTypeSelectFormElementProps = {
     typesToInclude?: 'our' | 'other' | 'all'
     showValidationInfo?: boolean,
     required?: boolean,
+    multiple?: boolean,
 }
 
 export function ContractTypeSelectFormElement({
     typesToInclude = 'all',
     required = false,
     showValidationInfo = true,
+    multiple = false,
 }: ContractTypeSelectFormElementProps) {
     const { control, watch, setValue, formState: { errors } } = useFormContext();
 
@@ -96,8 +99,9 @@ export function ContractTypeSelectFormElement({
     }
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, "_contractType">) {
-        setValue(name, selectedOptions);
-        field.onChange(selectedOptions);
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
     }
 
     return (
@@ -112,9 +116,10 @@ export function ContractTypeSelectFormElement({
                         <Typeahead
                             id={`${label}-controlled`}
                             labelKey="name"
+                            multiple={multiple}
                             options={makeoptions(repository.items)}
                             onChange={(items) => handleOnChange(items, field)}
-                            selected={field.value}
+                            selected={field.value ? multiple ? field.value : [field.value] : []}
                             placeholder="-- Wybierz typ --"
                             isValid={showValidationInfo ? !(errors?.[name]) : undefined}
                             isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
@@ -153,7 +158,7 @@ export function PersonSelectFormElement({
     label,
     name,
     repository,
-    multiple,
+    multiple = false,
     showValidationInfo = true,
     required = false
 }: PersonsSelectFormElementProps) {
@@ -165,8 +170,9 @@ export function PersonSelectFormElement({
     }
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        setValue(name, selectedOptions);
-        field.onChange(selectedOptions);
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
     }
 
     return (
@@ -182,7 +188,7 @@ export function PersonSelectFormElement({
                         labelKey="_nameSurname"
                         options={makeoptions(repository.items)}
                         onChange={(items) => handleOnChange(items, field)}
-                        selected={field.value}
+                        selected={field.value ? multiple ? field.value : [field.value] : []}
                         placeholder="-- Wybierz osobę --"
                         multiple={multiple}
                         isValid={showValidationInfo ? !(errors?.[name]) : undefined}
@@ -211,7 +217,7 @@ type MyAsyncTypeaheadProps = {
     showValidationInfo?: boolean,
     renderMenuItemChildren?: RenderMenuItemChildren
 }
-/**
+/** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
  * @param labelKey nazwa pola w repozytorium które ma być wyświetlane w polu wyboru
@@ -253,8 +259,9 @@ export function MyAsyncTypeahead({
     const filterBy = () => true;
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        setValue(name, selectedOptions);
-        field.onChange(selectedOptions);
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
     }
     return (
         <Controller
@@ -272,7 +279,7 @@ export function MyAsyncTypeahead({
                     options={options}
                     onChange={(items) => handleOnChange(items, field)}
                     onBlur={field.onBlur}
-                    selected={field.value ? field.value : []}
+                    selected={field.value ? multiple ? field.value : [field.value] : []}
                     multiple={multiple}
                     newSelectionPrefix="Dodaj nowy: "
                     placeholder="-- Wybierz opcję --"

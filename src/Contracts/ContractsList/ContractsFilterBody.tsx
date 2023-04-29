@@ -26,7 +26,7 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
                 <Form.Control
                     type="date"
                     defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)}
-                    {...register('startDate')}
+                    {...register('startDateFrom')}
                 />
 
             </Form.Group>
@@ -35,7 +35,7 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
                 <Form.Control
                     type="date"
                     defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)}
-                    {...register('endDate')}
+                    {...register('startDateTo')}
                 />
             </Form.Group>
             <ProjectSelector

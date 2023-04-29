@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, Button, Form, FormControlProps, Row, Col } from 'react-bootstrap';
-import { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
 import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../View/Resultsets/CommonComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
@@ -13,9 +11,9 @@ export function OurContractModalBody(props: ModalBodyProps) {
     const { register, setValue, watch, formState, control } = useFormContext();
 
     useEffect(() => {
-        setValue('_contractType', initialData?._type || [], { shouldValidate: true });
-        setValue('_admin', initialData?._admin ? [initialData._admin] : [], { shouldValidate: true });
-        setValue('_manager', initialData?._manager ? [initialData._manager] : [], { shouldValidate: true });
+        setValue('_contractType', initialData?._type, { shouldValidate: true });
+        setValue('_admin', initialData?._admin, { shouldValidate: true });
+        setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (

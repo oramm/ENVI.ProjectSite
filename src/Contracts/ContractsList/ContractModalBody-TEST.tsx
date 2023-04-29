@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead, PersonSelectFormElement, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { ContractTypeSelectFormElement, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
 import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
 import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
-import { RepositoryDataItem } from '../../React/RepositoryReact';
+import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
 import MainSetup from '../../React/MainSetupReact';
 import { useFormContext } from '../../View/FormContext';
 
@@ -47,19 +47,34 @@ type ProjectSelectorProps = ModalBodyProps & {
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * 
  */
+let initialData: any = null;
 export function ProjectSelectorModalBody({
     isEditing,
     onAdditionalFieldsKeysValuesChange,
     additionalProps,
     onValidationChange
 }: ProjectSelectorProps) {
+    const { register, setValue, watch, formState, control } = useFormContext();
+
+    useEffect(() => {
+        setValue('_contractType', initialData?._type, { shouldValidate: true });
+        setValue('_admin', initialData?._admin, { shouldValidate: true });
+        setValue('_manager', initialData?._manager, { shouldValidate: true });
+    }, [initialData, setValue]);
     return (
-        <ContractModalBody
-            isEditing={isEditing}
-            additionalProps={additionalProps}
-            onAdditionalFieldsKeysValuesChange={onAdditionalFieldsKeysValuesChange}
-            onValidationChange={onValidationChange}
-        />
+        <>
+            <ProjectSelector
+                repository={projectsRepository}
+                required={true}
+            />
+            <PersonSelectFormElement
+                label='Koordynator'
+                name='_manager'
+                repository={MainSetup.personsEnviRepository}
+                required={true}
+            />
+        </>
+
     );
 };
 
