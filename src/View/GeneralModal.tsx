@@ -46,8 +46,6 @@ export function GeneralModal({
         formState: { errors, isValid },
     } = useForm({ defaultValues: {}, mode: 'onChange' });
 
-    //const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
-    const additionalFieldsKeysValues = useRef<additionalFieldsKeysValue[]>([]);
     let newObject: RepositoryDataItem;
 
     function handleValidationChange(fieldName: string, isValid: boolean) {
@@ -75,12 +73,14 @@ export function GeneralModal({
         try {
             setErrorMessage('');
             setRequestPending(true);
-            const formData = parseFieldValuestoFormData(data);
-            if (additionalFieldsKeysValues)
-                for (const keyValue of additionalFieldsKeysValues.current)
-                    formData.append(keyValue.name, keyValue.value);
 
-            (isEditing) ? await handleEdit(formData) : await handleAdd(formData);
+            // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
+            const hasFiles = Object.values(data).some(value => value instanceof File);
+
+            // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
+            const requestData = hasFiles ? parseFieldValuestoFormData(data) : data;
+
+            (isEditing) ? await handleEdit(requestData) : await handleAdd(requestData);
             onClose();
             setRequestPending(false);
         } catch (error) {
@@ -90,35 +90,15 @@ export function GeneralModal({
         }
     };
 
-    function handleAdditionalFieldsKeysValues(values: additionalFieldsKeysValue[]) {
-        const newAdditionalFieldsKeysValues = [...additionalFieldsKeysValues.current];
-
-        values.forEach((newValue) => {
-            // Sprawdź, czy istnieje element o takim samym atrybucie 'name' w tablicy
-            const existingIndex = newAdditionalFieldsKeysValues.findIndex(
-                (item) => item.name === newValue.name
-            );
-
-            // Jeśli element istnieje, zaktualizuj wartość; w przeciwnym razie dodaj nowy element
-            if (existingIndex !== -1) {
-                newAdditionalFieldsKeysValues[existingIndex].value = newValue.value;
-            } else {
-                newAdditionalFieldsKeysValues.push(newValue);
-            }
-        });
-
-        additionalFieldsKeysValues.current = newAdditionalFieldsKeysValues;
-    }
-
-    async function handleEdit(formData: FormData) {
+    async function handleEdit(data: FormData | FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
-        const editedObject = Tools.updateObject(formData, currentDataItem);
+        const editedObject = data instanceof FormData ? Tools.updateObject(data, currentDataItem) : data as RepositoryDataItem;
 
         await repository.editItemNodeJS(editedObject);
         if (onEdit) onEdit(editedObject);
     };
 
-    async function handleAdd(formData: FormData) {
+    async function handleAdd(formData: FormData | FieldValues) {
         newObject = await repository.addNewItemNodeJS(formData);
         if (onAddNew) onAddNew(newObject);
     };
@@ -133,7 +113,6 @@ export function GeneralModal({
                     <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid } }}>
                         <ModalBodyComponent
                             {...modalBodyProps}
-                            onAdditionalFieldsKeysValuesChange={handleAdditionalFieldsKeysValues}
                             onValidationChange={handleValidationChange}
                         />
                         <Row>
@@ -299,13 +278,11 @@ export function GeneralDeleteModalButton({
  * parametry body modalu z formularzem
  * @param isEditing - czy modal jest w trybie edycji trzeba przekazać do do body bo część pól jest różna w trybie edycji i dodawania
  * @param initialData - dane inicjalne do wyświetlenia w formularzu
- * @param onAdditionalFieldsKeysValuesChange - funkcja wywoływana po zmianie wartości dodatkowych pól
  * @param additionalProps - dodatkowe właściwości przekazywane do body - np. inne komponenty - patrz OurContractAddNewModalButton
  */
 export type ModalBodyProps = {
     isEditing: boolean;
     initialData?: RepositoryDataItem;
-    onAdditionalFieldsKeysValuesChange?: (additionalFieldsKeysValues: additionalFieldsKeysValue[]) => void;
     additionalProps?: any;
     onValidationChange?: (fieldName: string, isValid: boolean) => void;
 }

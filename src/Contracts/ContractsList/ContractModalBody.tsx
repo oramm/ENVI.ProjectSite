@@ -150,7 +150,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * 
  */
-export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValuesChange, additionalProps, onValidationChange }: ProjectSelectorProps) {
+export function ProjectSelectorModalBody({ isEditing, additionalProps, onValidationChange }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
     const project = (watch('_parent') as RepositoryDataItem | undefined);
 
@@ -164,7 +164,6 @@ export function ProjectSelectorModalBody({ isEditing, onAdditionalFieldsKeysValu
                 <SpecificContractModalBody
                     isEditing={isEditing}
                     additionalProps={additionalProps}
-                    onAdditionalFieldsKeysValuesChange={onAdditionalFieldsKeysValuesChange}
                     onValidationChange={onValidationChange}
                 />
             ) : (

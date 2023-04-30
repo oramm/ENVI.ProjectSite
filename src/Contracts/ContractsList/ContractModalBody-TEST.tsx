@@ -50,7 +50,6 @@ type ProjectSelectorProps = ModalBodyProps & {
 let initialData: any = null;
 export function ProjectSelectorModalBody({
     isEditing,
-    onAdditionalFieldsKeysValuesChange,
     additionalProps,
     onValidationChange
 }: ProjectSelectorProps) {

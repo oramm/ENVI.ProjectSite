@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /envi.projectsite/docs/React/
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /envi.projectsite/docs/React/index.html [L]

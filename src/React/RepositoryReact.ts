@@ -107,7 +107,7 @@ export default class RepositoryReact {
     }
 
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem: RepositoryDataItem | FormData) {
+    async addNewItemNodeJS(newItem: any | FormData) {
         const requestOptions: RequestInit = {
             method: 'POST',
             credentials: 'include',
@@ -127,26 +127,6 @@ export default class RepositoryReact {
             MainSetup.serverUrl + this.actionRoutes.addNewRoute,
             requestOptions
         );
-        const newItemFromServer: RepositoryDataItem = await rawResult.json();
-        if (newItemFromServer.authorizeUrl)
-            window.open(newItemFromServer.authorizeUrl);
-
-        const noBlobNewItem = { ...newItemFromServer };
-        delete noBlobNewItem._blobEnviObjects;
-
-        this.items.push(noBlobNewItem);
-        this.currentItems = [newItemFromServer];
-        return newItemFromServer as RepositoryDataItem;
-    }
-
-    /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemReact(newItem: RepositoryDataItem | FormData) {
-        const rawResult = await fetch(MainSetup.serverUrl + this.actionRoutes.addNewRoute, {
-            method: 'POST',
-            headers: this.makeRequestHeaders(),
-            credentials: 'include',
-            body: JSON.stringify(newItem)
-        });
         const newItemFromServer: RepositoryDataItem = await rawResult.json();
         if (newItemFromServer.authorizeUrl)
             window.open(newItemFromServer.authorizeUrl);

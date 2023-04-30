@@ -1,7 +1,7 @@
 import { RepositoryDataItem } from "./RepositoryReact";
 
 export default class Tools {
-    /**Aktualizuje dane obiektu na podstawie danych z formularza 
+    /** Aktualizuje dane obiektu na podstawie danych z formularza 
       * działa na kopii obiektu, nie zmienia obiektu w repozytorium
       */
     static updateObject(formData: FormData, obj: RepositoryDataItem): RepositoryDataItem {

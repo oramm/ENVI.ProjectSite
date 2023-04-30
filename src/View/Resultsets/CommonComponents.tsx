@@ -74,18 +74,25 @@ type ContractTypeSelectFormElementProps = {
     showValidationInfo?: boolean,
     required?: boolean,
     multiple?: boolean,
+    name?: '_type' | '_contractType',
 }
 
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
 export function ContractTypeSelectFormElement({
     typesToInclude = 'all',
     required = false,
     showValidationInfo = true,
     multiple = false,
+    name = '_type',
 }: ContractTypeSelectFormElementProps) {
     const { control, watch, setValue, formState: { errors } } = useFormContext();
-
     const label = 'Typ Kontraktu';
-    const name = '_contractType';
     const repository = MainSetup.contractTypesRepository;
 
     function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
@@ -98,7 +105,7 @@ export function ContractTypeSelectFormElement({
         return filteredItems;
     }
 
-    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, "_contractType">) {
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, '_type' | '_contractType'>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
@@ -136,7 +143,7 @@ export function ContractTypeSelectFormElement({
                 />
                 {errors?.[name] && (
                     <Form.Text className="text-danger">
-                        {errors?.[name].message as string}
+                        {errors?.[name]?.message as string}
                     </Form.Text>
 
                 )}
@@ -153,7 +160,11 @@ type PersonsSelectFormElementProps = {
     showValidationInfo?: boolean,
     required?: boolean,
 }
-
+/**
+ * Komponent formularza wyboru osoby
+ * @param label oznaczenie pola formularza
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
 export function PersonSelectFormElement({
     label,
     name,
@@ -181,7 +192,7 @@ export function PersonSelectFormElement({
             <Controller
                 name={name}
                 control={control}
-                rules={{ required: { value: required, message: `${name} musi być wybrany` } }}
+                rules={{ required: { value: required, message: `${label} musi być wybrany` } }}
                 render={({ field }) => (
                     <Typeahead
                         id={`${label}-controlled`}

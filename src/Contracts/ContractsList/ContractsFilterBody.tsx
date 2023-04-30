@@ -45,6 +45,7 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
             />
 
             <ContractTypeSelectFormElement
+                name='_contractType'
                 showValidationInfo={false}
             />
         </>
