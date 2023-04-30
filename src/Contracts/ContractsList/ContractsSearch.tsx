@@ -1,10 +1,10 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import FilteredTable, { FilterTableRowProps } from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
-import { ContractDeleteModalButton, ContractEditModalButton } from './ContractModalBody';
+import { ContractDeleteModalButton, ContractEditModalButton } from './Modals/ContractModalBody';
 import { ContractsFilterBody } from './ContractsFilterBody';
-import { OurContractAddNewModalButton } from './OurContractModalBody';
-import { OtherContractAddNewModalButton } from './OtherContractModalBody';
+import { OurContractAddNewModalButton } from './Modals/OurContractModalBody';
+import { OtherContractAddNewModalButton } from './Modals/OtherContractModalBody';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;

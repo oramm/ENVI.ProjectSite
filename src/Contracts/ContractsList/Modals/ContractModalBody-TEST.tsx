@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../../View/GeneralModal';
+import { ContractTypeSelectFormElement, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
-import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
-import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
-import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
-import MainSetup from '../../React/MainSetupReact';
-import { useFormContext } from '../../View/FormContext';
+import { contractsRepository, entitiesRepository, projectsRepository } from '../ContractsSearch';
+import MainSetup from '../../../React/MainSetupReact';
+import { useFormContext } from '../../../View/FormContext';
+import * as yup from 'yup';
+
+const validationSchema: yup.ObjectSchema<any> = yup.object().shape({
+    // definicja schematu walidacji
+});
 
 export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
 

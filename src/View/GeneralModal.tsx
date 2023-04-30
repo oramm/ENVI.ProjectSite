@@ -7,7 +7,8 @@ import Tools from '../React/Tools';
 import { FormProvider } from './FormContext';
 import { ConfirmModal } from './Resultsets/CommonComponents';
 import { parseFieldValuestoFormData } from './Resultsets/CommonComponentsController';
-
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 type GeneralModalProps = {
     show: boolean;
@@ -19,6 +20,7 @@ type GeneralModalProps = {
     repository: RepositoryReact;
     ModalBodyComponent: React.ComponentType<ModalBodyProps>;
     modalBodyProps: ModalBodyProps;
+    validationSchema?: yup.ObjectSchema<any>;
 };
 
 export function GeneralModal({
@@ -30,7 +32,8 @@ export function GeneralModal({
     onClose,
     repository,
     ModalBodyComponent,
-    modalBodyProps
+    modalBodyProps,
+    validationSchema,
 }: GeneralModalProps) {
     const [errorMessage, setErrorMessage] = useState('');
     const [validationArray, setValidationArray] = useState<{ name: string; isValid: boolean }[]>([]);
@@ -44,7 +47,11 @@ export function GeneralModal({
         handleSubmit,
         control,
         formState: { errors, isValid },
-    } = useForm({ defaultValues: {}, mode: 'onChange' });
+    } = useForm({
+        defaultValues: {},
+        mode: 'onChange',
+        resolver: validationSchema ? yupResolver(validationSchema) : undefined
+    });
 
     let newObject: RepositoryDataItem;
 
@@ -292,6 +299,7 @@ type GeneralModalButtonModalProps = {
     additionalModalBodyProps?: any;
     modalTitle: string;
     repository: RepositoryReact;
+    schema?: yup.ObjectSchema<any>;
 };
 
 type GeneralModalButtonButtonProps = {

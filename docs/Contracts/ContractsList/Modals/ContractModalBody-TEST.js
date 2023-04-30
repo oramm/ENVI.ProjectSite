@@ -28,14 +28,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const GeneralModal_1 = require("../../View/GeneralModal");
-const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const GeneralModal_1 = require("../../../View/GeneralModal");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
-const ContractsSearch_1 = require("./ContractsSearch");
-const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
-const FormContext_1 = require("../../View/FormContext");
+const ContractsSearch_1 = require("../ContractsSearch");
+const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const FormContext_1 = require("../../../View/FormContext");
+const yup = __importStar(require("yup"));
+const validationSchema = yup.object().shape({
+// definicja schematu walidacji
+});
 function ContractModalBody({ isEditing, initialData, onValidationChange }) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {

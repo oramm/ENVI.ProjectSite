@@ -7,10 +7,10 @@ exports.projectsRepository = exports.entitiesRepository = exports.contractsRepos
 const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable"));
 const ContractsController_1 = __importDefault(require("./ContractsController"));
-const ContractModalBody_1 = require("./ContractModalBody");
+const ContractModalBody_1 = require("./Modals/ContractModalBody");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
-const OurContractModalBody_1 = require("./OurContractModalBody");
-const OtherContractModalBody_1 = require("./OtherContractModalBody");
+const OurContractModalBody_1 = require("./Modals/OurContractModalBody");
+const OtherContractModalBody_1 = require("./Modals/OtherContractModalBody");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;

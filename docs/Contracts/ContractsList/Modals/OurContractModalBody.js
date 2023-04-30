@@ -28,12 +28,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
-const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const ContractModalBody_1 = require("./ContractModalBody");
-const GeneralModal_1 = require("../../View/GeneralModal");
-const ContractsSearch_1 = require("./ContractsSearch");
-const FormContext_1 = require("../../View/FormContext");
+const GeneralModal_1 = require("../../../View/GeneralModal");
+const ContractsSearch_1 = require("../ContractsSearch");
+const FormContext_1 = require("../../../View/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
@@ -48,10 +48,12 @@ function OurContractModalBody(props) {
     const ourIdValidation = (value) => {
         const parts = value.split('.');
         const typePart = parts[1];
-        if (parts.length !== 3)
-            return 'Oznaczenie musi zawierać dwie kropki';
+        if (parts[0].length !== 3)
+            return 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką';
         if (typePart !== _type.name)
             return 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu';
+        if (parts.length !== 3)
+            return 'Oznaczenie musi zawierać dwie kropki';
         return true;
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -62,9 +64,9 @@ function OurContractModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!formState.errors?.ourId, isValid: !formState.errors?.ourId, ...register('ourId', {
                     required: { value: true, message: 'Oznaczenie jest wymagane' },
+                    validate: ourIdValidation,
                     minLength: { value: 9, message: 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami' },
                     maxLength: { value: 11, message: 'Oznacznie może mieć maksymalnie 11 znaków' },
-                    validate: ourIdValidation
                 }), disabled: _type === undefined }),
             formState.errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.ourId.message))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),

@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, Form, FormControlProps, Row, Col } from 'react-bootstrap';
-import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
-import { ContractTypeSelectFormElement, PersonSelectFormElement, MyAsyncTypeahead, handleEditMyAsyncTypeaheadElement, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import RepositoryReact, { RepositoryDataItem } from '../../../React/RepositoryReact';
+import { ContractTypeSelectFormElement, PersonSelectFormElement, MyAsyncTypeahead, handleEditMyAsyncTypeaheadElement, ValueInPLNInput } from '../../../View/Resultsets/CommonComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
-import { GeneralEditModalButtonProps, GeneralEditModalButton, ModalBodyProps, GeneralAddNewModalButton, GeneralAddNewModalButtonProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps, additionalFieldsKeysValue as AdditionalFieldsKeysValue } from '../../View/GeneralModal';
-import { contractsRepository, entitiesRepository, projectsRepository } from './ContractsSearch';
-import { useFormContext } from '../../View/FormContext';
+import { GeneralEditModalButtonProps, GeneralEditModalButton, ModalBodyProps, GeneralAddNewModalButton, GeneralAddNewModalButtonProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps, additionalFieldsKeysValue as AdditionalFieldsKeysValue } from '../../../View/GeneralModal';
+import { contractsRepository, entitiesRepository, projectsRepository } from '../ContractsSearch';
+import { useFormContext } from '../../../View/FormContext';
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function OtherContractModalBody(props: ModalBodyProps) {

@@ -1,6 +1,30 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/@hookform/resolvers/dist/resolvers.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@hookform/resolvers/dist/resolvers.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+var r=__webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js"),e=function(e,i,t){if(e&&"reportValidity"in e){var a=r.get(t,i);e.setCustomValidity(a&&a.message||""),e.reportValidity()}},i=function(r,i){var t=function(t){var a=i.fields[t];a&&a.ref&&"reportValidity"in a.ref?e(a.ref,t,r):a.refs&&a.refs.forEach(function(i){return e(i,t,r)})};for(var a in i.fields)t(a)};exports.toNestError=function(e,t){t.shouldUseNativeValidation&&i(e,t);var a={};for(var o in e){var f=r.get(t.fields,o);r.set(a,o,Object.assign(e[o]||{},{ref:f&&f.ref}))}return a},exports.validateFieldsNatively=i;
+//# sourceMappingURL=resolvers.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/@hookform/resolvers/yup/dist/yup.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@hookform/resolvers/yup/dist/yup.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+var e=__webpack_require__(/*! @hookform/resolvers */ "./node_modules/@hookform/resolvers/dist/resolvers.js"),t=__webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");exports.yupResolver=function(r,o,n){return void 0===o&&(o={}),void 0===n&&(n={}),function(a,s,i){try{return Promise.resolve(function(t,u){try{var c=(o.context&&"development"==="development"&&console.warn("You should not used the yup options context. Please, use the 'useForm' context object instead"),Promise.resolve(r["sync"===n.mode?"validateSync":"validate"](a,Object.assign({abortEarly:!1},o,{context:s}))).then(function(t){return i.shouldUseNativeValidation&&e.validateFieldsNatively({},i),{values:n.raw?a:t,errors:{}}}))}catch(e){return u(e)}return c&&c.then?c.then(void 0,u):c}(0,function(r){if(!r.inner)throw r;return{values:{},errors:e.toNestError((o=r,n=!i.shouldUseNativeValidation&&"all"===i.criteriaMode,(o.inner||[]).reduce(function(e,r){if(e[r.path]||(e[r.path]={message:r.message,type:r.type}),n){var o=e[r.path].types,a=o&&o[r.type];e[r.path]=t.appendErrors(r.path,n,e,r.type,a?[].concat(a,r.message):r.message)}return e},{})),i)};var o,n}))}catch(e){return Promise.reject(e)}}};
+//# sourceMappingURL=yup.js.map
+
+
+/***/ }),
+
 /***/ "./node_modules/@popperjs/core/lib/createPopper.js":
 /*!*********************************************************!*\
   !*** ./node_modules/@popperjs/core/lib/createPopper.js ***!
@@ -67280,148 +67304,6 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/ContractModalBody.tsx":
-/*!***********************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractModalBody.tsx ***!
-  \***********************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
-const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
-const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
-//import { useFormContext } from 'react-hook-form';
-function ContractModalBody({ isEditing, initialData, onValidationChange }) {
-    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const startDate = watch('startDate');
-    const endDate = watch('endDate');
-    const [dateValidationResult, setDateValidationResult] = (0, react_1.useState)('');
-    (0, react_1.useEffect)(() => {
-        setValue('name', initialData?.name || '', { shouldValidate: true });
-        setValue('alias', initialData?.alias || '', { shouldValidate: true });
-        setValue('comment', initialData?.comment || '', { shouldValidate: true });
-        setValue('value', initialData?.value || '', { shouldValidate: true });
-        setValue('status', initialData?.satus || '', { shouldValidate: true });
-        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-    }, [initialData, setValue]);
-    (0, react_1.useEffect)(() => {
-        if (!startDate || !endDate)
-            return;
-        const validationMessage = datesValidationFunction();
-        setDateValidationResult(validationMessage);
-    }, [startDate, endDate]);
-    function datesValidationFunction() {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start >= end)
-            return 'Początek musi być wcześniejszy niż zakończenie';
-        return '';
-    }
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isInvalid: !!formState.errors?.name, isValid: !formState.errors?.name, ...register('name', {
-                    required: { value: true, message: 'Nazwa jest wymagana' },
-                    minLength: { value: 3, message: 'Nazwa musi mieć przynajmniej 3 znaki' },
-                    maxLength: { value: 50, message: 'Nazwa może mieć maksymalnie 50 znaków' }
-                }) }),
-            formState.errors?.name && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.name.message))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !formState.errors?.alias, isInvalid: !!formState.errors?.alias, ...register('alias') }),
-            formState.errors?.alias && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.alias.message))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.comment, isInvalid: !!formState.errors?.comment, ...register('comment', {
-                    required: false,
-                    maxLength: { value: 50, message: 'Opis może mieć maksymalnie 50 znaków' }
-                }) }),
-            formState.errors?.comment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.comment.message))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { required: true })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('startDate') }),
-            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('endDate') }),
-            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
-        react_1.default.createElement(CommonComponents_1.ContractStatus, { required: true })));
-}
-exports.ContractModalBody = ContractModalBody;
-/** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
- * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
- * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- *
- */
-function ProjectSelectorModalBody({ isEditing, additionalProps, onValidationChange }) {
-    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const project = watch('_parent');
-    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
-    const { SpecificContractModalBody } = additionalProps;
-    if (!SpecificContractModalBody)
-        throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onValidationChange: onValidationChange })) : (react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
-}
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
-;
-/** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
-    return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
-}
-exports.ContractEditModalButton = ContractEditModalButton;
-function ContractDeleteModalButton({ modalProps: { onDelete } }) {
-    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-    return (react_1.default.createElement(GeneralModal_1.GeneralDeleteModalButton, { modalProps: {
-            onDelete,
-            modalTitle,
-            repository: ContractsSearch_1.contractsRepository,
-            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
-        } }));
-}
-exports.ContractDeleteModalButton = ContractDeleteModalButton;
-
-
-/***/ }),
-
 /***/ "./src/Contracts/ContractsList/ContractsController.ts":
 /*!************************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractsController.ts ***!
@@ -67530,10 +67412,10 @@ exports.projectsRepository = exports.entitiesRepository = exports.contractsRepos
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ./ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
-const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./Modals/ContractModalBody */ "./src/Contracts/ContractsList/Modals/ContractModalBody.tsx");
 const ContractsFilterBody_1 = __webpack_require__(/*! ./ContractsFilterBody */ "./src/Contracts/ContractsList/ContractsFilterBody.tsx");
-const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/OurContractModalBody.tsx");
-const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/OtherContractModalBody.tsx");
+const OurContractModalBody_1 = __webpack_require__(/*! ./Modals/OurContractModalBody */ "./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx");
+const OtherContractModalBody_1 = __webpack_require__(/*! ./Modals/OtherContractModalBody */ "./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -67558,10 +67440,151 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/OtherContractModalBody.tsx":
-/*!****************************************************************!*\
-  !*** ./src/Contracts/ContractsList/OtherContractModalBody.tsx ***!
-  \****************************************************************/
+/***/ "./src/Contracts/ContractsList/Modals/ContractModalBody.tsx":
+/*!******************************************************************!*\
+  !*** ./src/Contracts/ContractsList/Modals/ContractModalBody.tsx ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModal_1 = __webpack_require__(/*! ../../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx");
+const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ../ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/FormContext */ "./src/View/FormContext.tsx");
+function ContractModalBody({ isEditing, initialData, onValidationChange }) {
+    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
+    const startDate = watch('startDate');
+    const endDate = watch('endDate');
+    const [dateValidationResult, setDateValidationResult] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue('alias', initialData?.alias || '', { shouldValidate: true });
+        setValue('comment', initialData?.comment || '', { shouldValidate: true });
+        setValue('value', initialData?.value || '', { shouldValidate: true });
+        setValue('status', initialData?.satus || '', { shouldValidate: true });
+        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+    }, [initialData, setValue]);
+    (0, react_1.useEffect)(() => {
+        if (!startDate || !endDate)
+            return;
+        const validationMessage = datesValidationFunction();
+        setDateValidationResult(validationMessage);
+    }, [startDate, endDate]);
+    function datesValidationFunction() {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start >= end)
+            return 'Początek musi być wcześniejszy niż zakończenie';
+        return '';
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isInvalid: !!formState.errors?.name, isValid: !formState.errors?.name, ...register('name', {
+                    required: { value: true, message: 'Nazwa jest wymagana' },
+                    minLength: { value: 3, message: 'Nazwa musi mieć przynajmniej 3 znaki' },
+                    maxLength: { value: 50, message: 'Nazwa może mieć maksymalnie 50 znaków' }
+                }) }),
+            formState.errors?.name && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.name.message))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !formState.errors?.alias, isInvalid: !!formState.errors?.alias, ...register('alias') }),
+            formState.errors?.alias && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.alias.message))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.comment, isInvalid: !!formState.errors?.comment, ...register('comment', {
+                    required: false,
+                    maxLength: { value: 50, message: 'Opis może mieć maksymalnie 50 znaków' }
+                }) }),
+            formState.errors?.comment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.comment.message))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
+            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { required: true })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('startDate') }),
+            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: dateValidationResult === '', isInvalid: dateValidationResult !== '', ...register('endDate') }),
+            dateValidationResult && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, dateValidationResult))),
+        react_1.default.createElement(CommonComponents_1.ContractStatus, { required: true })));
+}
+exports.ContractModalBody = ContractModalBody;
+/** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
+ * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
+ * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ *
+ */
+function ProjectSelectorModalBody({ isEditing, additionalProps, onValidationChange }) {
+    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
+    const project = watch('_parent');
+    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
+    const { SpecificContractModalBody } = additionalProps;
+    if (!SpecificContractModalBody)
+        throw new Error("SpecificContractModalBody is not defined");
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps, onValidationChange: onValidationChange })) : (react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
+}
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+;
+/** przycisk i modal edycji OurCOntract lub OtherContract */
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
+    return (isOurContract
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+}
+exports.ContractEditModalButton = ContractEditModalButton;
+function ContractDeleteModalButton({ modalProps: { onDelete } }) {
+    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
+    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
+    return (react_1.default.createElement(GeneralModal_1.GeneralDeleteModalButton, { modalProps: {
+            onDelete,
+            modalTitle,
+            repository: ContractsSearch_1.contractsRepository,
+            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
+        } }));
+}
+exports.ContractDeleteModalButton = ContractDeleteModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx":
+/*!***********************************************************************!*\
+  !*** ./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx ***!
+  \***********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -67596,12 +67619,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OtherContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
-const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
-const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/Modals/ContractModalBody.tsx");
+const GeneralModal_1 = __webpack_require__(/*! ../../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ../ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/FormContext */ "./src/View/FormContext.tsx");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
@@ -67662,10 +67685,10 @@ exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/OurContractModalBody.tsx":
-/*!**************************************************************!*\
-  !*** ./src/Contracts/ContractsList/OurContractModalBody.tsx ***!
-  \**************************************************************/
+/***/ "./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx":
+/*!*********************************************************************!*\
+  !*** ./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx ***!
+  \*********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -67699,12 +67722,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/ContractModalBody.tsx");
-const GeneralModal_1 = __webpack_require__(/*! ../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
-const ContractsSearch_1 = __webpack_require__(/*! ./ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
-const FormContext_1 = __webpack_require__(/*! ../../View/FormContext */ "./src/View/FormContext.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/Modals/ContractModalBody.tsx");
+const GeneralModal_1 = __webpack_require__(/*! ../../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ../ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/FormContext */ "./src/View/FormContext.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
@@ -67719,10 +67742,12 @@ function OurContractModalBody(props) {
     const ourIdValidation = (value) => {
         const parts = value.split('.');
         const typePart = parts[1];
-        if (parts.length !== 3)
-            return 'Oznaczenie musi zawierać dwie kropki';
+        if (parts[0].length !== 3)
+            return 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką';
         if (typePart !== _type.name)
             return 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu';
+        if (parts.length !== 3)
+            return 'Oznaczenie musi zawierać dwie kropki';
         return true;
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -67733,9 +67758,9 @@ function OurContractModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!formState.errors?.ourId, isValid: !formState.errors?.ourId, ...register('ourId', {
                     required: { value: true, message: 'Oznaczenie jest wymagane' },
+                    validate: ourIdValidation,
                     minLength: { value: 9, message: 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami' },
                     maxLength: { value: 11, message: 'Oznacznie może mieć maksymalnie 11 znaków' },
-                    validate: ourIdValidation
                 }), disabled: _type === undefined }),
             formState.errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.ourId.message))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
@@ -68582,12 +68607,17 @@ const Tools_1 = __importDefault(__webpack_require__(/*! ../React/Tools */ "./src
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/FormContext.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const CommonComponentsController_1 = __webpack_require__(/*! ./Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
-function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps }) {
+const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
     const [isValidated, setIsValidated] = (0, react_1.useState)(false);
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({
+        defaultValues: {},
+        mode: 'onChange',
+        resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined
+    });
     let newObject;
     function handleValidationChange(fieldName, isValid) {
         // Aktualizuj tablicę walidacji

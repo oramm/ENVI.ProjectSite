@@ -34,12 +34,17 @@ const Tools_1 = __importDefault(require("../React/Tools"));
 const FormContext_1 = require("./FormContext");
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
 const CommonComponentsController_1 = require("./Resultsets/CommonComponentsController");
-function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps }) {
+const yup_1 = require("@hookform/resolvers/yup");
+function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [validationArray, setValidationArray] = (0, react_1.useState)([]);
     const [isValidated, setIsValidated] = (0, react_1.useState)(false);
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({
+        defaultValues: {},
+        mode: 'onChange',
+        resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined
+    });
     let newObject;
     function handleValidationChange(fieldName, isValid) {
         // Aktualizuj tablicę walidacji

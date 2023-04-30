@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MainSetup from '../../React/MainSetupReact';
-import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../View/Resultsets/CommonComponents';
+import MainSetup from '../../../React/MainSetupReact';
+import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../../View/Resultsets/CommonComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
-import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../View/GeneralModal';
-import { contractsRepository, projectsRepository } from './ContractsSearch';
-import { useFormContext } from '../../View/FormContext';
+import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../../View/GeneralModal';
+import { contractsRepository, projectsRepository } from '../ContractsSearch';
+import { useFormContext } from '../../../View/FormContext';
 import { Form } from 'react-bootstrap';
 
 export function OurContractModalBody(props: ModalBodyProps) {
@@ -23,10 +23,13 @@ export function OurContractModalBody(props: ModalBodyProps) {
     const ourIdValidation = (value: string) => {
         const parts = value.split('.');
         const typePart = parts[1];
-        if (parts.length !== 3)
-            return 'Oznaczenie musi zawierać dwie kropki'
+        if (parts[0].length !== 3)
+            return 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką';
         if (typePart !== _type.name)
             return 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu';
+        if (parts.length !== 3)
+            return 'Oznaczenie musi zawierać dwie kropki'
+
         return true;
     };
 
@@ -51,7 +54,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
                         required: { value: true, message: 'Oznaczenie jest wymagane' },
                         minLength: { value: 9, message: 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami' },
                         maxLength: { value: 11, message: 'Oznacznie może mieć maksymalnie 11 znaków' },
-                        validate: ourIdValidation
+                        validate: ourIdValidation,
                     })
                     }
                     disabled={_type === undefined} />

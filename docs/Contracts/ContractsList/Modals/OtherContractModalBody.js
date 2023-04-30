@@ -29,12 +29,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OtherContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
-const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const RepositoryReact_1 = __importDefault(require("../../../React/RepositoryReact"));
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const ContractModalBody_1 = require("./ContractModalBody");
-const GeneralModal_1 = require("../../View/GeneralModal");
-const ContractsSearch_1 = require("./ContractsSearch");
-const FormContext_1 = require("../../View/FormContext");
+const GeneralModal_1 = require("../../../View/GeneralModal");
+const ContractsSearch_1 = require("../ContractsSearch");
+const FormContext_1 = require("../../../View/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;

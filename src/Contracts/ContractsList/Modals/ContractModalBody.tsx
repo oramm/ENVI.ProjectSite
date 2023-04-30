@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../View/GeneralModal';
-import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../../View/GeneralModal';
+import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../../View/Resultsets/CommonComponents';
 import { Form } from 'react-bootstrap';
-import ContractsController from './ContractsController';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
-import { contractsRepository, projectsRepository } from './ContractsSearch';
-import { RepositoryDataItem } from '../../React/RepositoryReact';
-import MainSetup from '../../React/MainSetupReact';
-import { useFormContext } from '../../View/FormContext';
-//import { useFormContext } from 'react-hook-form';
+import { contractsRepository, projectsRepository } from '../ContractsSearch';
+import { RepositoryDataItem } from '../../../React/RepositoryReact';
+import { useFormContext } from '../../../View/FormContext';
 
 export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
     const { register, setValue, watch, formState } = useFormContext();
