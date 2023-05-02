@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
-import { FieldErrors, UseFormHandleSubmit, Control, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { FieldErrors, UseFormHandleSubmit, Control, UseFormRegister, UseFormSetValue, UseFormWatch, UseFormTrigger } from 'react-hook-form';
 
 interface FormContextValues {
     register: UseFormRegister<any>;
     setValue: UseFormSetValue<any>;
     watch: UseFormWatch<any>;
     handleSubmit: UseFormHandleSubmit<any>;
+    trigger: UseFormTrigger<any>;
     control: Control<any>;
     formState: {
         errors: FieldErrors<any>,

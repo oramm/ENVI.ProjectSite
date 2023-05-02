@@ -13,7 +13,7 @@ const validationSchema: yup.ObjectSchema<any> = yup.object().shape({
     // definicja schematu walidacji
 });
 
-export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
+export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
 
     const { register, setValue, watch, formState, control } = useFormContext();
 
@@ -54,27 +54,16 @@ let initialData: any = null;
 export function ProjectSelectorModalBody({
     isEditing,
     additionalProps,
-    onValidationChange
 }: ProjectSelectorProps) {
     const { register, setValue, watch, formState, control } = useFormContext();
 
     useEffect(() => {
-        setValue('_contractType', initialData?._type, { shouldValidate: true });
-        setValue('_admin', initialData?._admin, { shouldValidate: true });
-        setValue('_manager', initialData?._manager, { shouldValidate: true });
+        setValue('value', initialData?.value || 0, { shouldValidate: true });
+
     }, [initialData, setValue]);
     return (
         <>
-            <ProjectSelector
-                repository={projectsRepository}
-                required={true}
-            />
-            <PersonSelectFormElement
-                label='Koordynator'
-                name='_manager'
-                repository={MainSetup.personsEnviRepository}
-                required={true}
-            />
+            <ValueInPLNInput />
         </>
 
     );

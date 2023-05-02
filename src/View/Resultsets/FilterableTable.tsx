@@ -106,6 +106,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
         handleSubmit,
         control,
         formState: { errors, isValid },
+        trigger
     } = useForm({ defaultValues: {}, mode: 'onChange' });
 
     async function handleSubmitSearch(data: FieldValues) {
@@ -117,7 +118,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
     };
 
     return (
-        <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid } }}>
+        <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
             <Form onSubmit={handleSubmit(handleSubmitSearch)}>
                 <FilterBodyComponent />
                 <Col>

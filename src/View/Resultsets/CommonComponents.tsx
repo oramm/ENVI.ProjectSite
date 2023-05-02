@@ -10,8 +10,8 @@ import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact
 import { useFormContext } from '../FormContext';
 import { Controller } from 'react-hook-form';
 import ContractsController from '../../Contracts/ContractsList/ContractsController';
-import { NumericFormat } from 'react-number-format';
-
+import { NumberFormatValues, NumericFormat } from 'react-number-format';
+import * as Yup from 'yup';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -335,24 +335,21 @@ type ValueInPLNInputProps = {
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 export function ValueInPLNInput({
-    required = false,
     showValidationInfo = true,
     keyLabel = 'value',
 }: ValueInPLNInputProps) {
     const { register, control, setValue, watch, formState: { errors } } = useFormContext();
     const watchedValue = watch(keyLabel);
-    let ref = useRef();
+    const [formattedValue, setFormattedValue] = useState('');
 
-    function handleValueChange(values: { floatValue: number | undefined }) {
-        setValue(keyLabel, values.floatValue);
-    }
+    useEffect(() => {
+        if (watchedValue === undefined) return;
+        setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));
+    }, []);
+
     const classNames = ['form-control'];
     if (showValidationInfo) {
-        if (errors.value) {
-            classNames.push('is-invalid');
-        } else {
-            classNames.push('is-valid');
-        }
+        classNames.push(errors.value ? 'is-invalid' : 'is-valid');
     }
 
     return (
@@ -361,25 +358,22 @@ export function ValueInPLNInput({
                 <Controller
                     control={control}
                     name={keyLabel}
-                    rules={{
-                        required: {
-                            value: required,
-                            message: "Podaj wartość! Jeśli jej nie znasz to wpisz zero",
-                        },
-                        max: { value: 9999999999, message: "Zbyt duża liczba" },
-                    }}
                     render={({ field }) => (
                         <NumericFormat
                             {...field}
-                            getInputRef={ref}
-                            value={watchedValue}
+                            value={formattedValue}
                             thousandSeparator=" "
                             decimalSeparator=","
                             decimalScale={2}
-                            fixedDecimalScale={true}
+                            allowLeadingZeros={false}
+                            fixedDecimalScale={false}
                             displayType="input"
                             allowNegative={false}
-                            onValueChange={handleValueChange}
+                            onValueChange={(values: NumberFormatValues) => {
+                                console.log('values: ', values);
+                                setValue(keyLabel, values.floatValue)
+                                field.onChange(values.value);
+                            }}
                             className={classNames.join(" ")}
                             valueIsNumericString={true}
                         />
@@ -395,6 +389,15 @@ export function ValueInPLNInput({
         </>
     );
 }
+
+export const valueValidation = Yup.string()
+    .typeError('Wartość jest wymagana')
+    .required('Wartość jest wymagana')
+    .test('valueValidation', 'Wartość musi być mniejsza od 9 999 999 999', function (value: string | undefined) {
+        if (value === undefined) return false;
+        const parsedValue = parseFloat(value.replace(/[^0-9.]/g, '').replace(',', '.'));
+        return parsedValue < 9999999999;
+    });
 
 type FileInputProps = {
     fieldName: string;

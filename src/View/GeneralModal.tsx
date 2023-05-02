@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row, Spinner } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
 import { useForm, FieldValues } from 'react-hook-form';
@@ -36,8 +36,6 @@ export function GeneralModal({
     validationSchema,
 }: GeneralModalProps) {
     const [errorMessage, setErrorMessage] = useState('');
-    const [validationArray, setValidationArray] = useState<{ name: string; isValid: boolean }[]>([]);
-    const [isValidated, setIsValidated] = useState(false);
     const [requestPending, setRequestPending] = useState(false);
 
     const {
@@ -47,6 +45,7 @@ export function GeneralModal({
         handleSubmit,
         control,
         formState: { errors, isValid },
+        trigger,
     } = useForm({
         defaultValues: {},
         mode: 'onChange',
@@ -54,27 +53,6 @@ export function GeneralModal({
     });
 
     let newObject: RepositoryDataItem;
-
-    function handleValidationChange(fieldName: string, isValid: boolean) {
-        // Aktualizuj tablicę walidacji
-        setValidationArray((prevState) => {
-            const newArray = [...prevState];
-            const existingIndex = newArray.findIndex((item) => item.name === fieldName);
-
-            if (existingIndex !== -1) {
-                newArray[existingIndex].isValid = isValid;
-            } else {
-                newArray.push({ name: fieldName, isValid });
-            }
-            console.log('handleValidationChange newArray', newArray);
-            return newArray;
-        });
-
-        // Sprawdź, czy wszystkie pola są prawidłowe, i ustaw stan `isSubmitEnabled`
-        const isAllValid = validationArray.every((item) => item.isValid);
-        console.log('handleValidationChange isAllValid', isAllValid);
-        setIsValidated(isAllValid);
-    }
 
     async function handleSubmitRepository(data: FieldValues) {
         try {
@@ -117,10 +95,9 @@ export function GeneralModal({
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid } }}>
+                    <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
                         <ModalBodyComponent
                             {...modalBodyProps}
-                            onValidationChange={handleValidationChange}
                         />
                         <Row>
                             {errorMessage && (
@@ -146,7 +123,15 @@ export function GeneralModal({
 }
 
 export function GeneralEditModalButton({
-    modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository },
+    modalProps: {
+        onEdit,
+        ModalBodyComponent,
+        additionalModalBodyProps,
+        modalTitle,
+        initialData,
+        repository,
+        validationSchema,
+    },
     buttonProps = {},
 }: GeneralEditModalButtonProps) {
     const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
@@ -173,6 +158,7 @@ export function GeneralEditModalButton({
                 repository={repository}
                 onEdit={onEdit}
                 ModalBodyComponent={ModalBodyComponent}
+                validationSchema={validationSchema}
                 modalBodyProps={{
                     isEditing: true,
                     initialData: initialData,
@@ -197,7 +183,9 @@ export function GeneralAddNewModalButton({
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
-        repository },
+        repository,
+        validationSchema,
+    },
     buttonProps: {
         buttonCaption,
         buttonVariant = "outline-primary",
@@ -235,6 +223,7 @@ export function GeneralAddNewModalButton({
                 repository={repository}
                 onAddNew={onAddNew}
                 ModalBodyComponent={ModalBodyComponent}
+                validationSchema={validationSchema}
                 modalBodyProps={{
                     isEditing: false,
                     additionalProps: additionalModalBodyProps,
@@ -291,7 +280,6 @@ export type ModalBodyProps = {
     isEditing: boolean;
     initialData?: RepositoryDataItem;
     additionalProps?: any;
-    onValidationChange?: (fieldName: string, isValid: boolean) => void;
 }
 
 type GeneralModalButtonModalProps = {
@@ -299,7 +287,7 @@ type GeneralModalButtonModalProps = {
     additionalModalBodyProps?: any;
     modalTitle: string;
     repository: RepositoryReact;
-    schema?: yup.ObjectSchema<any>;
+    validationSchema?: yup.ObjectSchema<any>;
 };
 
 type GeneralModalButtonButtonProps = {

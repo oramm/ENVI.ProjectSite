@@ -6,6 +6,7 @@ import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody
 import { GeneralEditModalButtonProps, GeneralEditModalButton, ModalBodyProps, GeneralAddNewModalButton, GeneralAddNewModalButtonProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps, additionalFieldsKeysValue as AdditionalFieldsKeysValue } from '../../../View/GeneralModal';
 import { contractsRepository, entitiesRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/FormContext';
+import { otherContractValidationSchema } from './ContractValidationSchema';
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function OtherContractModalBody(props: ModalBodyProps) {
@@ -30,7 +31,6 @@ export function OtherContractModalBody(props: ModalBodyProps) {
             (!props.isEditing) ?
                 <ContractTypeSelectFormElement
                     typesToInclude='other'
-                    required={true}
                 />
                 : null
         }
@@ -75,6 +75,7 @@ export function OtherContractEditModalButton({
                 modalTitle: "Edycja umowy",
                 repository: contractsRepository,
                 initialData: initialData,
+                validationSchema: otherContractValidationSchema
             }}
             buttonProps={{}}
         />
@@ -91,7 +92,8 @@ export function OtherContractAddNewModalButton({
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa umowa zewnętrzna",
-                repository: contractsRepository
+                repository: contractsRepository,
+                validationSchema: otherContractValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę zewnętrzną",

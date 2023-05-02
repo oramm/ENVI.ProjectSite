@@ -35,6 +35,7 @@ const ContractModalBody_1 = require("./ContractModalBody");
 const GeneralModal_1 = require("../../../View/GeneralModal");
 const ContractsSearch_1 = require("../ContractsSearch");
 const FormContext_1 = require("../../../View/FormContext");
+const ContractValidationSchema_1 = require("./ContractValidationSchema");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
@@ -52,7 +53,7 @@ function OtherContractModalBody(props) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other', required: true })
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other' })
             : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
@@ -76,6 +77,7 @@ function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) 
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
+            validationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {} }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
@@ -85,7 +87,8 @@ function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },
             modalTitle: "Nowa umowa zewnętrzna",
-            repository: ContractsSearch_1.contractsRepository
+            repository: ContractsSearch_1.contractsRepository,
+            validationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę zewnętrzną",
         } }));

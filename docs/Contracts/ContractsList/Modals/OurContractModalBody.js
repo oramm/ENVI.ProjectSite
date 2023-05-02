@@ -35,6 +35,7 @@ const GeneralModal_1 = require("../../../View/GeneralModal");
 const ContractsSearch_1 = require("../ContractsSearch");
 const FormContext_1 = require("../../../View/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
+const ContractValidationSchema_1 = require("./ContractValidationSchema");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
@@ -45,29 +46,13 @@ function OurContractModalBody(props) {
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
-    const ourIdValidation = (value) => {
-        const parts = value.split('.');
-        const typePart = parts[1];
-        if (parts[0].length !== 3)
-            return 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką';
-        if (typePart !== _type.name)
-            return 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu';
-        if (parts.length !== 3)
-            return 'Oznaczenie musi zawierać dwie kropki';
-        return true;
-    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our', required: true })
+            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' })
             : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!formState.errors?.ourId, isValid: !formState.errors?.ourId, ...register('ourId', {
-                    required: { value: true, message: 'Oznaczenie jest wymagane' },
-                    validate: ourIdValidation,
-                    minLength: { value: 9, message: 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami' },
-                    maxLength: { value: 11, message: 'Oznacznie może mieć maksymalnie 11 znaków' },
-                }), disabled: _type === undefined }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!formState.errors?.ourId, isValid: !formState.errors?.ourId, disabled: _type === undefined, ...register('ourId') }),
             formState.errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.ourId.message))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true }),
@@ -82,6 +67,7 @@ function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
+            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
@@ -94,6 +80,7 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
             repository: ContractsSearch_1.contractsRepository,
+            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę ENVI",
             buttonVariant: "outline-success",

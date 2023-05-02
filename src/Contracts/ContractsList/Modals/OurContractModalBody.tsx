@@ -6,11 +6,13 @@ import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, S
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/FormContext';
 import { Form } from 'react-bootstrap';
+import { ourContractValidationSchema } from './ContractValidationSchema';
 
 export function OurContractModalBody(props: ModalBodyProps) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = useFormContext();
     const _type = watch('_type');
+
     useEffect(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
@@ -19,27 +21,12 @@ export function OurContractModalBody(props: ModalBodyProps) {
         setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
 
-
-    const ourIdValidation = (value: string) => {
-        const parts = value.split('.');
-        const typePart = parts[1];
-        if (parts[0].length !== 3)
-            return 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką';
-        if (typePart !== _type.name)
-            return 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu';
-        if (parts.length !== 3)
-            return 'Oznaczenie musi zawierać dwie kropki'
-
-        return true;
-    };
-
     return (
         <>
             {
                 (!props.isEditing) ?
                     <ContractTypeSelectFormElement
                         typesToInclude='our'
-                        required={true}
                     />
                     : null
             }
@@ -50,14 +37,9 @@ export function OurContractModalBody(props: ModalBodyProps) {
                     placeholder="Oznaczenie ENVI"
                     isInvalid={!!formState.errors?.ourId}
                     isValid={!formState.errors?.ourId}
-                    {...register('ourId', {
-                        required: { value: true, message: 'Oznaczenie jest wymagane' },
-                        minLength: { value: 9, message: 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami' },
-                        maxLength: { value: 11, message: 'Oznacznie może mieć maksymalnie 11 znaków' },
-                        validate: ourIdValidation,
-                    })
-                    }
-                    disabled={_type === undefined} />
+                    disabled={_type === undefined}
+                    {...register('ourId')}
+                />
                 {formState.errors?.ourId && (
                     <Form.Text className="text-danger">
                         {formState.errors.ourId.message as string}
@@ -98,6 +80,7 @@ export function OurContractEditModalButton({
                 modalTitle: "Edycja umowy",
                 repository: contractsRepository,
                 initialData: initialData,
+                validationSchema: ourContractValidationSchema
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -117,6 +100,7 @@ export function OurContractAddNewModalButton({
                 additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
                 modalTitle: "Nowa umowa ENVI",
                 repository: contractsRepository,
+                validationSchema: ourContractValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę ENVI",

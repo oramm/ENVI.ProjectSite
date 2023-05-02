@@ -61,7 +61,7 @@ exports.default = FilteredTable;
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const { setObjects } = (0, exports.useFilteredTableContext)();
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
@@ -70,7 +70,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
         onIsReadyChange(true);
     }
     ;
-    return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid } } },
+    return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
             react_1.default.createElement(react_bootstrap_1.Col, null,

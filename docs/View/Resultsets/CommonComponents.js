@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
+exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -36,6 +36,7 @@ const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const ContractsController_1 = __importDefault(require("../../Contracts/ContractsList/ContractsController"));
 const react_number_format_1 = require("react-number-format");
+const Yup = __importStar(require("yup"));
 function ProjectSelector({ repository, required = false, showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
@@ -174,35 +175,39 @@ exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-function ValueInPLNInput({ required = false, showValidationInfo = true, keyLabel = 'value', }) {
+function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     const { register, control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
-    let ref = (0, react_1.useRef)();
-    function handleValueChange(values) {
-        setValue(keyLabel, values.floatValue);
-    }
+    const [formattedValue, setFormattedValue] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        if (watchedValue === undefined)
+            return;
+        setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));
+    }, []);
     const classNames = ['form-control'];
     if (showValidationInfo) {
-        if (errors.value) {
-            classNames.push('is-invalid');
-        }
-        else {
-            classNames.push('is-valid');
-        }
+        classNames.push(errors.value ? 'is-invalid' : 'is-valid');
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, rules: {
-                    required: {
-                        value: required,
-                        message: "Podaj wartość! Jeśli jej nie znasz to wpisz zero",
-                    },
-                    max: { value: 9999999999, message: "Zbyt duża liczba" },
-                }, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, getInputRef: ref, value: watchedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: handleValueChange, className: classNames.join(" "), valueIsNumericString: true })) }),
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: formattedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: false, displayType: "input", allowNegative: false, onValueChange: (values) => {
+                        console.log('values: ', values);
+                        setValue(keyLabel, values.floatValue);
+                        field.onChange(values.value);
+                    }, className: classNames.join(" "), valueIsNumericString: true })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
         errors?.value && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.value?.message))));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
+exports.valueValidation = Yup.string()
+    .typeError('Wartość jest wymagana')
+    .required('Wartość jest wymagana')
+    .test('valueValidation', 'Wartość musi być mniejsza od 9 999 999 999', function (value) {
+    if (value === undefined)
+        return false;
+    const parsedValue = parseFloat(value.replace(/[^0-9.]/g, '').replace(',', '.'));
+    return parsedValue < 9999999999;
+});
 /**Pole dodawania plików
  * @param fieldName nazwa pola w formularzu
  * @param isRequired czy pole jest wymagane

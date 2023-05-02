@@ -22,9 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
@@ -34,13 +31,12 @@ const react_bootstrap_1 = require("react-bootstrap");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("../ContractsSearch");
-const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const FormContext_1 = require("../../../View/FormContext");
 const yup = __importStar(require("yup"));
 const validationSchema = yup.object().shape({
 // definicja schematu walidacji
 });
-function ContractModalBody({ isEditing, initialData, onValidationChange }) {
+function ContractModalBody({ isEditing, initialData }) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
@@ -60,16 +56,13 @@ exports.ContractModalBody = ContractModalBody;
  *
  */
 let initialData = null;
-function ProjectSelectorModalBody({ isEditing, additionalProps, onValidationChange }) {
+function ProjectSelectorModalBody({ isEditing, additionalProps, }) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('_contractType', initialData?._type, { shouldValidate: true });
-        setValue('_admin', initialData?._admin, { shouldValidate: true });
-        setValue('_manager', initialData?._manager, { shouldValidate: true });
+        setValue('value', initialData?.value || 0, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }),
-        react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })));
+        react_1.default.createElement(CommonComponents_1.ValueInPLNInput, null)));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

@@ -8,37 +8,18 @@ import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { RepositoryDataItem } from '../../../React/RepositoryReact';
 import { useFormContext } from '../../../View/FormContext';
 
-export function ContractModalBody({ isEditing, initialData, onValidationChange }: ModalBodyProps) {
-    const { register, setValue, watch, formState } = useFormContext();
-    const startDate = watch('startDate');
-    const endDate = watch('endDate');
-    const [dateValidationResult, setDateValidationResult] = useState('');
+export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
+    const { register, setValue, watch, formState, trigger } = useFormContext();
 
     useEffect(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
         setValue('alias', initialData?.alias || '', { shouldValidate: true });
         setValue('comment', initialData?.comment || '', { shouldValidate: true });
         setValue('value', initialData?.value || '', { shouldValidate: true });
-        setValue('status', initialData?.satus || '', { shouldValidate: true });
+        setValue('status', initialData?.status || '', { shouldValidate: true });
         setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
         setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
     }, [initialData, setValue]);
-
-    useEffect(() => {
-        if (!startDate || !endDate) return;
-        const validationMessage = datesValidationFunction();
-        setDateValidationResult(validationMessage);
-    }, [startDate, endDate]);
-
-    function datesValidationFunction() {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        if (start >= end)
-            return 'Początek musi być wcześniejszy niż zakończenie';
-
-        return '';
-    }
 
     return (
         <>
@@ -49,12 +30,8 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     placeholder="Podaj nazwę"
                     isInvalid={!!formState.errors?.name}
                     isValid={!formState.errors?.name}
-                    {...register('name', {
-                        required: { value: true, message: 'Nazwa jest wymagana' },
-                        minLength: { value: 3, message: 'Nazwa musi mieć przynajmniej 3 znaki' },
-                        maxLength: { value: 50, message: 'Nazwa może mieć maksymalnie 50 znaków' }
-                    })
-                    } />
+                    {...register('name')}
+                />
                 {formState.errors?.name && (
                     <Form.Text className="text-danger">
                         {formState.errors.name.message as string}
@@ -86,11 +63,7 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                     placeholder="Podaj opis"
                     isValid={!formState.errors?.comment}
                     isInvalid={!!formState.errors?.comment}
-                    {...register('comment', {
-                        required: false,
-                        maxLength: { value: 50, message: 'Opis może mieć maksymalnie 50 znaków' }
-                    })
-                    }
+                    {...register('comment')}
                 />
                 {
                     formState.errors?.comment && (
@@ -108,14 +81,17 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Początek</Form.Label>
                 <Form.Control
                     type="date"
-                    isValid={dateValidationResult === ''}
-                    isInvalid={dateValidationResult !== ''}
-
+                    isValid={!formState.errors.startDate}
+                    isInvalid={!!formState.errors.startDate}
                     {...register('startDate')}
+                    onChange={(e) => {
+                        register("startDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("endDate");
+                    }}
                 />
-                {dateValidationResult && (
+                {formState.errors.startDate && (
                     <Form.Text className="text-danger">
-                        {dateValidationResult}
+                        {formState.errors.startDate.message as string}
                     </Form.Text>
                 )}
             </Form.Group>
@@ -123,13 +99,17 @@ export function ContractModalBody({ isEditing, initialData, onValidationChange }
                 <Form.Label>Zakończenie</Form.Label>
                 <Form.Control
                     type="date"
-                    isValid={dateValidationResult === ''}
-                    isInvalid={dateValidationResult !== ''}
+                    isValid={!formState.errors.endDate}
+                    isInvalid={!!formState.errors.endDate}
                     {...register('endDate')}
+                    onChange={(e) => {
+                        register("endDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("startDate");
+                    }}
                 />
-                {dateValidationResult && (
+                {formState.errors.endDate && (
                     <Form.Text className="text-danger">
-                        {dateValidationResult}
+                        {formState.errors.endDate.message as string}
                     </Form.Text>
                 )}
             </Form.Group>
@@ -147,7 +127,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * 
  */
-export function ProjectSelectorModalBody({ isEditing, additionalProps, onValidationChange }: ProjectSelectorProps) {
+export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
     const project = (watch('_parent') as RepositoryDataItem | undefined);
 
@@ -161,7 +141,6 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps, onValidat
                 <SpecificContractModalBody
                     isEditing={isEditing}
                     additionalProps={additionalProps}
-                    onValidationChange={onValidationChange}
                 />
             ) : (
                 <ProjectSelector
