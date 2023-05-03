@@ -35,9 +35,9 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
     function handleRowClick(id) {
-        console.log('handleRowClick', id);
         setActiveRowId(id);
         repository.addToCurrentItems(id);
+        console.log('handleRowClick', repository.currentItems);
     }
     return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } },
         react_1.default.createElement(react_bootstrap_1.Container, null,

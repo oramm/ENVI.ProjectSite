@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 const GeneralModal_1 = require("../../../View/GeneralModal");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const OurContractModalBody_1 = require("./OurContractModalBody");
+const OurContractModalBody_TEST_1 = require("./OurContractModalBody-TEST");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("../ContractsSearch");
 const FormContext_1 = require("../../../View/FormContext");
@@ -96,7 +96,7 @@ exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
     return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        ? react_1.default.createElement(OurContractModalBody_TEST_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;

@@ -12,6 +12,7 @@ import { Controller } from 'react-hook-form';
 import ContractsController from '../../Contracts/ContractsList/ContractsController';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
+import { FieldValue } from 'react-hook-form/dist/types/fields';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -173,7 +174,7 @@ export function PersonSelectFormElement({
     showValidationInfo = true,
     required = false
 }: PersonsSelectFormElementProps) {
-    const { control, setValue, formState: { errors } } = useFormContext();
+    const { control, setValue, watch, formState: { errors } } = useFormContext();
 
     function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
         repositoryDataItems.map(item => item._nameSurname = `${item.name} ${item.surname}`);
@@ -186,20 +187,24 @@ export function PersonSelectFormElement({
         field.onChange(valueToBeSent);
     }
 
+    function handleSelected(field: ControllerRenderProps<any, string>) {
+        const currentValue = (field.value ? multiple ? field.value : [field.value] : []) as RepositoryDataItem[];
+        return makeoptions(currentValue);
+    }
+
     return (
         <Form.Group controlId={label}>
             <Form.Label>{label}</Form.Label>
             <Controller
                 name={name}
                 control={control}
-                rules={{ required: { value: required, message: `${label} musi być wybrany` } }}
                 render={({ field }) => (
                     <Typeahead
                         id={`${label}-controlled`}
                         labelKey="_nameSurname"
                         options={makeoptions(repository.items)}
                         onChange={(items) => handleOnChange(items, field)}
-                        selected={field.value ? multiple ? field.value : [field.value] : []}
+                        selected={handleSelected(field)}
                         placeholder="-- Wybierz osobę --"
                         multiple={multiple}
                         isValid={showValidationInfo ? !(errors?.[name]) : undefined}

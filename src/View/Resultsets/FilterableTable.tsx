@@ -33,9 +33,9 @@ export default function FilteredTable({
     const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = useFilteredTableState();
 
     function handleRowClick(id: number) {
-        console.log('handleRowClick', id);
         setActiveRowId(id);
         repository.addToCurrentItems(id);
+        console.log('handleRowClick', repository.currentItems);
     }
 
     return (

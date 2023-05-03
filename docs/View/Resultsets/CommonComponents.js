@@ -103,7 +103,7 @@ exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 function PersonSelectFormElement({ label, name, repository, multiple = false, showValidationInfo = true, required = false }) {
-    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
         repositoryDataItems.map(item => item._nameSurname = `${item.name} ${item.surname}`);
         return repositoryDataItems;
@@ -113,9 +113,13 @@ function PersonSelectFormElement({ label, name, repository, multiple = false, sh
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
     }
+    function handleSelected(field) {
+        const currentValue = (field.value ? multiple ? field.value : [field.value] : []);
+        return makeoptions(currentValue);
+    }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: `${label} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? multiple ? field.value : [field.value] : [], placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
         errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;

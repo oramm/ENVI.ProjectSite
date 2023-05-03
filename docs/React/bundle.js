@@ -67759,7 +67759,7 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
         react_1.default.createElement("td", null, dataObject.startDate),
         react_1.default.createElement("td", null, dataObject.endDate),
         isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId.length > 1 })),
+            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId })),
             onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
 }
 
@@ -67803,7 +67803,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const GeneralModal_1 = __webpack_require__(/*! ../../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx");
+const OurContractModalBody_TEST_1 = __webpack_require__(/*! ./OurContractModalBody-TEST */ "./src/Contracts/ContractsList/Modals/OurContractModalBody-TEST.tsx");
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx");
 const ContractsSearch_1 = __webpack_require__(/*! ../ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../../View/FormContext */ "./src/View/FormContext.tsx");
@@ -67871,7 +67871,7 @@ exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
     return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        ? react_1.default.createElement(OurContractModalBody_TEST_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
@@ -68078,6 +68078,92 @@ function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/ContractsList/Modals/OurContractModalBody-TEST.tsx":
+/*!**************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/Modals/OurContractModalBody-TEST.tsx ***!
+  \**************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ContractModalBody_1 = __webpack_require__(/*! ./ContractModalBody */ "./src/Contracts/ContractsList/Modals/ContractModalBody.tsx");
+const GeneralModal_1 = __webpack_require__(/*! ../../../View/GeneralModal */ "./src/View/GeneralModal.tsx");
+const ContractsSearch_1 = __webpack_require__(/*! ../ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/FormContext */ "./src/View/FormContext.tsx");
+const ContractValidationSchema_1 = __webpack_require__(/*! ./ContractValidationSchema */ "./src/Contracts/ContractsList/Modals/ContractValidationSchema.ts");
+function OurContractModalBody(props) {
+    const initialData = props.initialData;
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const _type = watch('_type');
+    (0, react_1.useEffect)(() => {
+        setValue('_manager', initialData?._manager, { shouldValidate: true });
+    }, [initialData, setValue]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })));
+}
+exports.OurContractModalBody = OurContractModalBody;
+function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: OurContractModalBody,
+            modalTitle: "Edycja umowy",
+            repository: ContractsSearch_1.contractsRepository,
+            initialData: initialData,
+            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.OurContractEditModalButton = OurContractEditModalButton;
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
+            additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
+            modalTitle: "Nowa umowa ENVI",
+            repository: ContractsSearch_1.contractsRepository,
+            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Rejestruj umowę ENVI",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
 
 
 /***/ }),
@@ -69225,7 +69311,7 @@ exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 function PersonSelectFormElement({ label, name, repository, multiple = false, showValidationInfo = true, required = false }) {
-    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
         repositoryDataItems.map(item => item._nameSurname = `${item.name} ${item.surname}`);
         return repositoryDataItems;
@@ -69235,9 +69321,13 @@ function PersonSelectFormElement({ label, name, repository, multiple = false, sh
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
     }
+    function handleSelected(field) {
+        const currentValue = (field.value ? multiple ? field.value : [field.value] : []);
+        return makeoptions(currentValue);
+    }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: `${label} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? multiple ? field.value : [field.value] : [], placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
         errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
@@ -69487,9 +69577,9 @@ function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewBu
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
     function handleRowClick(id) {
-        console.log('handleRowClick', id);
         setActiveRowId(id);
         repository.addToCurrentItems(id);
+        console.log('handleRowClick', repository.currentItems);
     }
     return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } },
         react_1.default.createElement(react_bootstrap_1.Container, null,
