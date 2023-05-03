@@ -5,7 +5,7 @@ import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody
 import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../../View/GeneralModal';
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/FormContext';
-import { Form } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import { ourContractValidationSchema } from './ContractValidationSchema';
 
 export function OurContractModalBody(props: ModalBodyProps) {
@@ -49,18 +49,24 @@ export function OurContractModalBody(props: ModalBodyProps) {
             <ContractModalBody
                 {...props}
             />
-            <PersonSelectFormElement
-                label='Koordynator'
-                name='_manager'
-                repository={MainSetup.personsEnviRepository}
-                required={true}
-            />
-            <PersonSelectFormElement
-                label='Administrator'
-                name='_admin'
-                repository={MainSetup.personsEnviRepository}
-                required={true}
-            />
+            <Row>
+                <Form.Group as={Col} controlId="_manager">
+                    <PersonSelectFormElement
+                        label='Koordynator'
+                        name='_manager'
+                        repository={MainSetup.personsEnviRepository}
+                        required={true}
+                    />
+                </Form.Group>
+                <Form.Group as={Col} controlId="_admin">
+                    <PersonSelectFormElement
+                        label='Administrator'
+                        name='_admin'
+                        repository={MainSetup.personsEnviRepository}
+                        required={true}
+                    />
+                </Form.Group>
+            </Row>
             <FileInput
                 fieldName="exampleFile"
                 acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"

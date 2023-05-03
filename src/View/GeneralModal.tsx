@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row, Spinner } from 'react-bootstrap';
+import { Modal, Button, ButtonProps, Form, FormControlProps, Alert, Row, Spinner, Container, Col } from 'react-bootstrap';
 import { ButtonVariant } from 'react-bootstrap/esm/types';
 import { useForm, FieldValues } from 'react-hook-form';
 import RepositoryReact, { RepositoryDataItem } from '../React/RepositoryReact';
@@ -89,24 +89,22 @@ export function GeneralModal({
     };
 
     return (
-        <Modal show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
+        <Modal size='lg' show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
             <Form onSubmit={handleSubmit(handleSubmitRepository)}>
                 <Modal.Header closeButton={true}>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
-                        <ModalBodyComponent
-                            {...modalBodyProps}
-                        />
-                        <Row>
+                    <Container>
+                        <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
+                            <ModalBodyComponent {...modalBodyProps} />
                             {errorMessage && (
                                 <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
                                     {errorMessage}
                                 </Alert>
                             )}
-                        </Row>
-                    </FormProvider>
+                        </FormProvider>
+                    </Container>
                 </Modal.Body>
                 <Modal.Footer>
                     {requestPending && <Spinner animation="border" variant="primary" />}

@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 const GeneralModal_1 = require("../../../View/GeneralModal");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const OurContractModalBody_TEST_1 = require("./OurContractModalBody-TEST");
+const OurContractModalBody_1 = require("./OurContractModalBody");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("../ContractsSearch");
 const FormContext_1 = require("../../../View/FormContext");
@@ -36,6 +36,7 @@ function ContractModalBody({ isEditing, initialData }) {
     const { register, setValue, watch, formState, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldValidate: true });
         setValue('alias', initialData?.alias || '', { shouldValidate: true });
         setValue('comment', initialData?.comment || '', { shouldValidate: true });
         setValue('value', initialData?.value || '', { shouldValidate: true });
@@ -44,9 +45,13 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer kontraktu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: 'text', placeholder: "Podaj numer", isInvalid: !!formState.errors?.number, isValid: !formState.errors?.number, ...register('number') }),
+            formState.errors?.number && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.number.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isInvalid: !!formState.errors?.name, isValid: !formState.errors?.name, ...register('name') }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!formState.errors?.name, isValid: !formState.errors?.name, ...register('name') }),
             formState.errors?.name && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.name.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
@@ -59,20 +64,21 @@ function ContractModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
             react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { required: true })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.startDate, isInvalid: !!formState.errors.startDate, ...register('startDate'), onChange: (e) => {
-                    register("startDate").onChange(e); // wywołaj standardowe zachowanie
-                    trigger("endDate");
-                } }),
-            formState.errors.startDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.startDate.message))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.endDate, isInvalid: !!formState.errors.endDate, ...register('endDate'), onChange: (e) => {
-                    register("endDate").onChange(e); // wywołaj standardowe zachowanie
-                    trigger("startDate");
-                } }),
-            formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.startDate, isInvalid: !!formState.errors.startDate, ...register('startDate'), onChange: (e) => {
+                        register("startDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("endDate");
+                    } }),
+                formState.errors.startDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.startDate.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "endDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.endDate, isInvalid: !!formState.errors.endDate, ...register('endDate'), onChange: (e) => {
+                        register("endDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("startDate");
+                    } }),
+                formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message)))),
         react_1.default.createElement(CommonComponents_1.ContractStatus, { required: true })));
 }
 exports.ContractModalBody = ContractModalBody;
@@ -96,7 +102,7 @@ exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
     return (isOurContract
-        ? react_1.default.createElement(OurContractModalBody_TEST_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;

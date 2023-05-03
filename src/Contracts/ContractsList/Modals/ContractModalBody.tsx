@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../../View/GeneralModal';
 import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../../View/Resultsets/CommonComponents';
-import { Form } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
 import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
@@ -13,6 +13,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
 
     useEffect(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldValidate: true });
         setValue('alias', initialData?.alias || '', { shouldValidate: true });
         setValue('comment', initialData?.comment || '', { shouldValidate: true });
         setValue('value', initialData?.value || '', { shouldValidate: true });
@@ -23,10 +24,27 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
 
     return (
         <>
+            <Form.Group controlId="number">
+                <Form.Label>Numer kontraktu</Form.Label>
+                <Form.Control
+                    type='text'
+                    placeholder="Podaj numer"
+                    isInvalid={!!formState.errors?.number}
+                    isValid={!formState.errors?.number}
+                    {...register('number')}
+                />
+                {formState.errors?.number && (
+                    <Form.Text className="text-danger">
+                        {formState.errors.number.message as string}
+                    </Form.Text>
+                )}
+            </Form.Group>
+
             <Form.Group controlId="name">
                 <Form.Label>Nazwa kontraktu</Form.Label>
                 <Form.Control
-                    type="text"
+                    as="textarea"
+                    rows={2}
                     placeholder="Podaj nazwę"
                     isInvalid={!!formState.errors?.name}
                     isValid={!formState.errors?.name}
@@ -77,42 +95,44 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                 <Form.Label>Wartość netto w PLN</Form.Label>
                 <ValueInPLNInput required={true} />
             </Form.Group>
-            <Form.Group controlId="startDate">
-                <Form.Label>Początek</Form.Label>
-                <Form.Control
-                    type="date"
-                    isValid={!formState.errors.startDate}
-                    isInvalid={!!formState.errors.startDate}
-                    {...register('startDate')}
-                    onChange={(e) => {
-                        register("startDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("endDate");
-                    }}
-                />
-                {formState.errors.startDate && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.startDate.message as string}
-                    </Form.Text>
-                )}
-            </Form.Group>
-            <Form.Group controlId="endDate">
-                <Form.Label>Zakończenie</Form.Label>
-                <Form.Control
-                    type="date"
-                    isValid={!formState.errors.endDate}
-                    isInvalid={!!formState.errors.endDate}
-                    {...register('endDate')}
-                    onChange={(e) => {
-                        register("endDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("startDate");
-                    }}
-                />
-                {formState.errors.endDate && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.endDate.message as string}
-                    </Form.Text>
-                )}
-            </Form.Group>
+            <Row >
+                <Form.Group as={Col} controlId="startDate">
+                    <Form.Label>Początek</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!formState.errors.startDate}
+                        isInvalid={!!formState.errors.startDate}
+                        {...register('startDate')}
+                        onChange={(e) => {
+                            register("startDate").onChange(e); // wywołaj standardowe zachowanie
+                            trigger("endDate");
+                        }}
+                    />
+                    {formState.errors.startDate && (
+                        <Form.Text className="text-danger">
+                            {formState.errors.startDate.message as string}
+                        </Form.Text>
+                    )}
+                </Form.Group>
+                <Form.Group as={Col} controlId="endDate">
+                    <Form.Label>Zakończenie</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!formState.errors.endDate}
+                        isInvalid={!!formState.errors.endDate}
+                        {...register('endDate')}
+                        onChange={(e) => {
+                            register("endDate").onChange(e); // wywołaj standardowe zachowanie
+                            trigger("startDate");
+                        }}
+                    />
+                    {formState.errors.endDate && (
+                        <Form.Text className="text-danger">
+                            {formState.errors.endDate.message as string}
+                        </Form.Text>
+                    )}
+                </Form.Group>
+            </Row>
             <ContractStatus required={true} />
         </>
     );

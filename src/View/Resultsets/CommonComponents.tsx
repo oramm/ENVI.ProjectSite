@@ -22,7 +22,7 @@ type ProjectSelectorProps = {
 export function ProjectSelector({ repository, required = false, showValidationInfo = true }: ProjectSelectorProps) {
     const { register, formState: { errors } } = useFormContext();
     return (
-        <Form.Group>
+        <>
             <Form.Label>Projekt</Form.Label>
             <MyAsyncTypeahead
                 name='_parent'
@@ -33,7 +33,7 @@ export function ProjectSelector({ repository, required = false, showValidationIn
                 showValidationInfo={showValidationInfo}
                 multiple={false}
             />
-        </Form.Group>
+        </>
     )
 }
 
@@ -193,7 +193,7 @@ export function PersonSelectFormElement({
     }
 
     return (
-        <Form.Group controlId={label}>
+        <>
             <Form.Label>{label}</Form.Label>
             <Controller
                 name={name}
@@ -217,7 +217,7 @@ export function PersonSelectFormElement({
                     {errors[name]?.message as string}
                 </Form.Text>
             )}
-        </Form.Group>
+        </>
     );
 }
 
@@ -347,6 +347,7 @@ export function ValueInPLNInput({
     const watchedValue = watch(keyLabel);
     const [formattedValue, setFormattedValue] = useState('');
 
+    //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
     useEffect(() => {
         if (watchedValue === undefined) return;
         setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));

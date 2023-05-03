@@ -121,9 +121,11 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
         <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
             <Form onSubmit={handleSubmit(handleSubmitSearch)}>
                 <FilterBodyComponent />
-                <Col>
-                    <Button type="submit">Szukaj</Button>
-                </Col>
+                <Row xl={1}>
+                    <Form.Group as={Col} >
+                        <Button type="submit">Szukaj</Button>
+                    </Form.Group>
+                </Row>
 
             </Form>
         </FormProvider>

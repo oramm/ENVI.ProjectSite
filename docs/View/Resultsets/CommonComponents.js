@@ -39,7 +39,7 @@ const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
 function ProjectSelector({ repository, required = false, showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+    return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
         react_1.default.createElement(MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: required, showValidationInfo: showValidationInfo, multiple: false })));
 }
@@ -117,7 +117,7 @@ function PersonSelectFormElement({ label, name, repository, multiple = false, sh
         const currentValue = (field.value ? multiple ? field.value : [field.value] : []);
         return makeoptions(currentValue);
     }
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+    return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
         errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
@@ -183,6 +183,7 @@ function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     const { register, control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
     const [formattedValue, setFormattedValue] = (0, react_1.useState)('');
+    //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
     (0, react_1.useEffect)(() => {
         if (watchedValue === undefined)
             return;

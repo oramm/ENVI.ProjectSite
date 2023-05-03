@@ -3,14 +3,18 @@ import { valueValidation } from '../../../View/Resultsets/CommonComponents';
 
 const commonFields = {
     _type: Yup.object().required('Typ kontraktu jest wymagany'), //przy walidacji jest wpsólny, ale w formularzu jest osobno dla każdego typu
+    number: Yup.string()
+        .required('Numer jest wymagany')
+        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
     name: Yup.string()
         .required('Nazwa jest wymagana')
         .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
-        .max(50, 'Nazwa może mieć maksymalnie 50 znaków'),
+        .max(150, 'Nazwa może mieć maksymalnie 150 znaków'),
 
-    alias: Yup.string(),
+    alias: Yup.string()
+        .max(30, 'Alias może mieć maksymalnie 30 znaków'),
     comment: Yup.string()
-        .max(100, 'Komentarz może mieć maksymalnie 100 znaków'),
+        .max(1000, 'Komentarz może mieć maksymalnie 1000 znaków'),
     value: valueValidation,
     status: Yup.string().required('Status jest wymagany'),
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')

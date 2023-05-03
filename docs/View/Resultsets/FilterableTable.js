@@ -73,8 +73,9 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
-            react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj")))));
+            react_1.default.createElement(react_bootstrap_1.Row, { xl: 1 },
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
 }
 function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, RowComponent, onIsReadyChange, onEdit, onDelete, onAddNew }) {
     const navigate = (0, react_router_dom_1.useNavigate)();

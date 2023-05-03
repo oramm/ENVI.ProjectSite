@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
-import { Form } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import { contractsRepository, projectsRepository } from './ContractsSearch';
 import { useFormContext } from '../../View/FormContext';
 import ToolsDate from '../../React/ToolsDate';
@@ -12,8 +12,8 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
     const { register } = useFormContext();
 
     return (
-        <>
-            <Form.Group>
+        <Row xl={5} md={3} xs={1}>
+            <Form.Group as={Col}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control
                     type="text"
@@ -21,7 +21,7 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
                     {...register('searchText')}
                 />
             </Form.Group>
-            <Form.Group>
+            <Form.Group as={Col}>
                 <Form.Label>Początek od</Form.Label>
                 <Form.Control
                     type="date"
@@ -30,7 +30,7 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
                 />
 
             </Form.Group>
-            <Form.Group>
+            <Form.Group as={Col}>
                 <Form.Label>Początek do</Form.Label>
                 <Form.Control
                     type="date"
@@ -38,16 +38,19 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
                     {...register('startDateTo')}
                 />
             </Form.Group>
-            <ProjectSelector
-                repository={projectsRepository}
-                required={false}
-                showValidationInfo={false}
-            />
-
-            <ContractTypeSelectFormElement
-                name='_contractType'
-                showValidationInfo={false}
-            />
-        </>
+            <Form.Group as={Col}>
+                <ProjectSelector
+                    repository={projectsRepository}
+                    required={false}
+                    showValidationInfo={false}
+                />
+            </Form.Group>
+            <Form.Group as={Col}>
+                <ContractTypeSelectFormElement
+                    name='_contractType'
+                    showValidationInfo={false}
+                />
+            </Form.Group>
+        </Row>
     );
 }
