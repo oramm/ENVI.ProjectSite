@@ -77,9 +77,10 @@ export function GeneralModal({
 
     async function handleEdit(data: FormData | FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
-        const editedObject = data instanceof FormData ? Tools.updateObject(data, currentDataItem) : data as RepositoryDataItem;
-
-        await repository.editItemNodeJS(editedObject);
+        const objectToEdit = data instanceof FormData ? Tools.updateObject(data, currentDataItem) : data as RepositoryDataItem;
+        //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
+        objectToEdit.id = currentDataItem.id;
+        const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit) onEdit(editedObject);
     };
 

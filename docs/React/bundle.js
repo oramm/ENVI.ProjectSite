@@ -68480,8 +68480,12 @@ class RepositoryReact {
             };
             requestOptions.body = JSON.stringify(newItem);
         }
-        const rawResult = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
-        const newItemFromServer = await rawResult.json();
+        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
+        const newItemFromServer = await resultRawResponse.json();
+        if (newItemFromServer.errorMessage) {
+            console.error('Error from server: %o', newItemFromServer.errorMessage);
+            throw new Error(`Błąd serwera: ${newItemFromServer.errorMessage}`);
+        }
         if (newItemFromServer.authorizeUrl)
             window.open(newItemFromServer.authorizeUrl);
         const noBlobNewItem = { ...newItemFromServer };
@@ -68490,18 +68494,31 @@ class RepositoryReact {
         this.currentItems = [newItemFromServer];
         return newItemFromServer;
     }
-    /**Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
-     * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
-     * @param item obiekt do edycji
-    */
+    /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
+  * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
+  * @param item obiekt do edycji
+ */
     async editItemNodeJS(item) {
-        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + item.id, {
+        const requestOptions = {
             method: 'PUT',
-            headers: this.makeRequestHeaders(),
             credentials: 'include',
-            body: JSON.stringify(item)
-        });
+        };
+        if (item instanceof FormData) {
+            requestOptions.body = item;
+        }
+        else {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                ['Content-Type']: 'application/json',
+            };
+            requestOptions.body = JSON.stringify(item);
+        }
+        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id), requestOptions);
         const resultObject = await resultRawResponse.json();
+        if (resultRawResponse.status >= 400) {
+            console.error('Error from server: %o', resultObject.errorMessage);
+            throw new Error(`Błąd serwera: ${resultObject.errorMessage}`);
+        }
         if (resultObject.authorizeUrl) {
             window.open(resultObject.authorizeUrl);
             console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
@@ -68526,14 +68543,20 @@ class RepositoryReact {
         if (!oldItem)
             throw new Error('Nie znaleziono obiektu do usunięcia');
         try {
-            let result = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
+            const response = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
                 method: 'DELETE',
                 headers: this.makeRequestHeaders(),
                 credentials: 'include',
                 body: JSON.stringify(oldItem)
             });
-            if (result.authorizeUrl)
+            const result = await response.json();
+            if (result.errorMessage) {
+                console.error('Error from server: %s', result.errorMessage);
+                throw new Error(`Błąd serwera: ${result.errorMessage}`);
+            }
+            if (result.authorizeUrl) {
                 window.open(result.authorizeUrl);
+            }
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
             console.log('%s:: usunięto obiekt: %o', this.name, oldItem);
@@ -69037,8 +69060,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
     ;
     async function handleEdit(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const editedObject = data instanceof FormData ? Tools_1.default.updateObject(data, currentDataItem) : data;
-        await repository.editItemNodeJS(editedObject);
+        const objectToEdit = data instanceof FormData ? Tools_1.default.updateObject(data, currentDataItem) : data;
+        //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
+        objectToEdit.id = currentDataItem.id;
+        const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit)
             onEdit(editedObject);
     }

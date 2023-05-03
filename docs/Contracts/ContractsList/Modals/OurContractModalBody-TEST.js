@@ -40,6 +40,9 @@ function OurContractModalBody(props) {
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _type = watch('_type');
     (0, react_1.useEffect)(() => {
+        setValue('_type', initialData?._type, { shouldValidate: true });
+        setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
+        setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,

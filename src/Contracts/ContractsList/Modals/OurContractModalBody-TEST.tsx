@@ -14,6 +14,10 @@ export function OurContractModalBody(props: ModalBodyProps) {
     const _type = watch('_type');
 
     useEffect(() => {
+        setValue('_type', initialData?._type, { shouldValidate: true });
+        setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
+
+        setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
 

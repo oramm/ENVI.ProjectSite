@@ -42,7 +42,6 @@ function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsRe
                 {onDelete && (
                     <ContractDeleteModalButton
                         modalProps={{ onDelete, initialData: dataObject }}
-
                     />
                 )}
             </td>

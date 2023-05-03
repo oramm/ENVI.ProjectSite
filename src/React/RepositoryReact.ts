@@ -123,11 +123,18 @@ export default class RepositoryReact {
             requestOptions.body = JSON.stringify(newItem);
         }
 
-        const rawResult = await fetch(
+        const resultRawResponse = await fetch(
             MainSetup.serverUrl + this.actionRoutes.addNewRoute,
             requestOptions
         );
-        const newItemFromServer: RepositoryDataItem = await rawResult.json();
+
+        const newItemFromServer: RepositoryDataItem = await resultRawResponse.json();
+
+        if (newItemFromServer.errorMessage) {
+            console.error('Error from server: %o', newItemFromServer.errorMessage);
+            throw new Error(`Błąd serwera: ${newItemFromServer.errorMessage}`);
+        }
+
         if (newItemFromServer.authorizeUrl)
             window.open(newItemFromServer.authorizeUrl);
 
@@ -139,22 +146,42 @@ export default class RepositoryReact {
         return newItemFromServer as RepositoryDataItem;
     }
 
-    /**Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium 
-     * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
-     * @param item obiekt do edycji
-    */
-    async editItemNodeJS(item: RepositoryDataItem) {
-        const resultRawResponse = await fetch(MainSetup.serverUrl + this.actionRoutes.editRoute + '/' + item.id, {
+    /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium 
+  * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
+  * @param item obiekt do edycji
+ */
+    async editItemNodeJS(item: RepositoryDataItem | FormData) {
+        const requestOptions: RequestInit = {
             method: 'PUT',
-            headers: this.makeRequestHeaders(),
             credentials: 'include',
-            body: JSON.stringify(item)
-        });
-        const resultObject: RepositoryDataItem = await resultRawResponse.json();
+        };
+
+        if (item instanceof FormData) {
+            requestOptions.body = item;
+        } else {
+            requestOptions.headers = {
+                ...requestOptions.headers,
+                ['Content-Type']: 'application/json',
+            };
+            requestOptions.body = JSON.stringify(item);
+        }
+
+        const resultRawResponse = await fetch(
+            MainSetup.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id),
+            requestOptions
+        );
+
+        const resultObject = await resultRawResponse.json() as RepositoryDataItem;
+
+        if (resultRawResponse.status >= 400) {
+            console.error('Error from server: %o', resultObject.errorMessage);
+            throw new Error(`Błąd serwera: ${resultObject.errorMessage}`);
+        }
+
         if (resultObject.authorizeUrl) {
             window.open(resultObject.authorizeUrl);
             console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
-            return item;
+            return item as RepositoryDataItem;
         }
 
         this.replaceItemById(resultObject.id, resultObject);
@@ -176,14 +203,23 @@ export default class RepositoryReact {
         const oldItem = this.items.find((item) => item.id == id);
         if (!oldItem) throw new Error('Nie znaleziono obiektu do usunięcia');
         try {
-            let result: any = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
+            const response = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
                 method: 'DELETE',
                 headers: this.makeRequestHeaders(),
                 credentials: 'include',
                 body: JSON.stringify(oldItem)
             });
-            if (result.authorizeUrl)
+
+            const result = await response.json();
+
+            if (result.errorMessage) {
+                console.error('Error from server: %s', result.errorMessage);
+                throw new Error(`Błąd serwera: ${result.errorMessage}`);
+            }
+
+            if (result.authorizeUrl) {
                 window.open(result.authorizeUrl);
+            }
 
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
@@ -195,6 +231,7 @@ export default class RepositoryReact {
             this.deleteFromCurrentItemsById(oldItem.id);
         }
     }
+
 
     private makeRequestHeaders() {
         let myHeaders = new Headers();
