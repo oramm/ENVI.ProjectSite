@@ -26,11 +26,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
+exports.GDDocFileIconLink = exports.GDFolderIconLink = exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
 require("react-bootstrap-typeahead/css/Typeahead.css");
+const Google_Drive_icon_png_1 = __importDefault(require("../../Resources/View/Google-Drive-icon.png"));
+const Google_Docs_icon_png_1 = __importDefault(require("../../Resources/View/Google-Docs-icon.png"));
+require("../../Css/styles.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
@@ -290,3 +293,13 @@ function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
             isError && (react_1.default.createElement(AlertComponent, { message: errorMessage, type: 'danger', timeout: 5000 })))));
 }
 exports.ConfirmModal = ConfirmModal;
+function GDFolderIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
+        react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+}
+exports.GDFolderIconLink = GDFolderIconLink;
+function GDDocFileIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
+        react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+}
+exports.GDDocFileIconLink = GDDocFileIconLink;

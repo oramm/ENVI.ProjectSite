@@ -11715,6 +11715,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".rbt .rbt-input-main::-ms-clear {\n  d
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/Css/styles.css":
+/*!******************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/Css/styles.css ***!
+  \******************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".icon-vertical {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: block;\r\n    margin-bottom: 10px;\r\n    /* Dodaj margines dolny według własnych potrzeb */\r\n}", "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,cAAc;IACd,mBAAmB;IACnB,iDAAiD;AACrD","sourcesContent":[".icon-vertical {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: block;\r\n    margin-bottom: 10px;\r\n    /* Dodaj margines dolny według własnych potrzeb */\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/runtime/api.js":
 /*!*****************************************************!*\
   !*** ./node_modules/css-loader/dist/runtime/api.js ***!
@@ -67161,6 +67188,61 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./src/Css/styles.css":
+/*!****************************!*\
+  !*** ./src/Css/styles.css ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./styles.css */ "./node_modules/css-loader/dist/cjs.js!./src/Css/styles.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_styles_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
 /*!****************************************************************************!*\
   !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
@@ -67748,22 +67830,12 @@ exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
 function ContractsSearch({ title }) {
-    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], RowComponent: ContractSearchTableRow, AddNewButtons: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], repository: exports.contractsRepository }));
+    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: {
+            headers: ['Oznaczenie', 'Numer', 'Nazwa', 'Rozpoczęcie', 'Zakończenie'],
+            objectAttributesToShow: ['ourId', 'number', 'name', 'startDate', 'endDate'],
+        }, AddNewButtonComponents: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalBody_1.ContractEditModalButton, DeleteButtonComponent: ContractModalBody_1.ContractDeleteModalButton, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
 }
 exports["default"] = ContractsSearch;
-function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
-    if (!onIsReadyChange)
-        throw new Error('onIsReadyChange is not defined');
-    return react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("td", null, dataObject.ourId),
-        react_1.default.createElement("td", null, dataObject.number),
-        react_1.default.createElement("td", null, dataObject.name),
-        react_1.default.createElement("td", null, dataObject.startDate),
-        react_1.default.createElement("td", null, dataObject.endDate),
-        isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId })),
-            onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
-}
 
 
 /***/ }),
@@ -67877,8 +67949,8 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
-    return (isOurContract
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (initialData.ourId
         ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
@@ -69030,6 +69102,7 @@ const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/FormC
 const CommonComponents_1 = __webpack_require__(/*! ./Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const CommonComponentsController_1 = __webpack_require__(/*! ./Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
+__webpack_require__(/*! ../Css/styles.css */ "./src/Css/styles.css");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
@@ -69090,7 +69163,7 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
 }
 exports.GeneralModal = GeneralModal;
 function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, validationSchema, }, buttonProps = {}, }) {
-    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
+    const { buttonCaption, buttonVariant = "light" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -69099,7 +69172,8 @@ function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, addi
         setShowForm(false);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-general' },
+            react_1.default.createElement("i", { className: "fa fa-pencil fa-lg" })),
         react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, validationSchema: validationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
@@ -69133,7 +69207,7 @@ ModalBodyComponent, additionalModalBodyProps, modalTitle, repository, validation
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps = {}, }) {
-    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+    const { buttonCaption, buttonVariant = "outline-danger" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -69146,8 +69220,9 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
         onDelete(initialData.id);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData.name}?` })));
+        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-danger' },
+            react_1.default.createElement("i", { className: "fa fa-trash fa-lg" })),
+        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
 
@@ -69189,11 +69264,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
+exports.GDDocFileIconLink = exports.GDFolderIconLink = exports.ConfirmModal = exports.SpinnerBootstrap = exports.ProgressBar = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
+const Google_Drive_icon_png_1 = __importDefault(__webpack_require__(/*! ../../Resources/View/Google-Drive-icon.png */ "./src/Resources/View/Google-Drive-icon.png"));
+const Google_Docs_icon_png_1 = __importDefault(__webpack_require__(/*! ../../Resources/View/Google-Docs-icon.png */ "./src/Resources/View/Google-Docs-icon.png"));
+__webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/FormContext.tsx");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
@@ -69453,6 +69531,16 @@ function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
             isError && (react_1.default.createElement(AlertComponent, { message: errorMessage, type: 'danger', timeout: 5000 })))));
 }
 exports.ConfirmModal = ConfirmModal;
+function GDFolderIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
+        react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+}
+exports.GDFolderIconLink = GDFolderIconLink;
+function GDDocFileIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
+        react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+}
+exports.GDDocFileIconLink = GDDocFileIconLink;
 
 
 /***/ }),
@@ -69521,44 +69609,65 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useFilteredTableState = exports.useFilteredTableContext = exports.TableTitle = void 0;
+exports.FilteredTableContext = exports.TableTitle = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/FormContext.tsx");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const CommonComponentsController_1 = __webpack_require__(/*! ./CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
-function FilteredTable({ title, repository, tableHeaders, RowComponent, AddNewButtons = [], FilterBodyComponent }) {
+const CommonComponents_1 = __webpack_require__(/*! ./CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+function FilteredTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, DeleteButtonComponent, FilterBodyComponent, selectedObjectRoute = '', }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = (0, exports.useFilteredTableState)();
+    const [objects, setObjects] = (0, react_1.useState)([]);
+    function handleAddObject(object) {
+        setObjects([...objects, object]);
+    }
+    function handleEditObject(object) {
+        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+    }
+    function handleDeleteObject(objectId) {
+        setObjects(objects.filter((o) => o.id !== objectId));
+    }
     function handleRowClick(id) {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
     }
-    return (react_1.default.createElement(FilteredTableContext.Provider, { value: { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } },
+    return (react_1.default.createElement(exports.FilteredTableContext.Provider, { value: {
+            handleAddObject,
+            handleEditObject,
+            handleDeleteObject,
+            tableStructure,
+            objects,
+            setObjects,
+            selectedObjectRoute,
+            activeRowId,
+            EditButtonComponent,
+            DeleteButtonComponent
+        } },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null,
                     react_1.default.createElement(TableTitle, { title: title })),
-                AddNewButtons &&
-                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtons.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
+                AddNewButtonComponents &&
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                         react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
-                        index < AddNewButtons.length - 1 && ' '))))),
+                        index < AddNewButtonComponents.length - 1 && ' '))))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyCHange: (isReady) => {
+                react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
                         setIsReady(isReady);
                     } })),
             !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { style: { height: "5px" } })),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { objects: objects, activeRowId: activeRowId, onRowClick: handleRowClick, tableHeaders: tableHeaders, RowComponent: RowComponent, onIsReadyChange: (isReady) => { setIsReady(isReady); }, onEdit: handleEditObject, onDelete: handleDeleteObject, onAddNew: handleAddObject })))))));
+                react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports["default"] = FilteredTable;
-function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }) {
+function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const { setObjects } = (0, exports.useFilteredTableContext)();
+    const { setObjects } = (0, react_1.useContext)(exports.FilteredTableContext);
     const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
@@ -69575,52 +69684,54 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
 }
-function ResultSetTable({ objects, activeRowId, onRowClick, tableHeaders, RowComponent, onIsReadyChange, onEdit, onDelete, onAddNew }) {
-    const navigate = (0, react_router_dom_1.useNavigate)();
+function ResultSetTable({ onRowClick, onIsReadyChange, }) {
+    const { objects, activeRowId, tableStructure: { headers } } = (0, react_1.useContext)(exports.FilteredTableContext);
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, tableHeaders.map((header, index) => (react_1.default.createElement("th", { key: index }, header))))),
+            react_1.default.createElement("tr", null, headers.map((header, index) => (react_1.default.createElement("th", { key: index }, header))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
-            return (react_1.default.createElement("tr", { key: dataObject.id, onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => { navigate('/contract/' + dataObject.id); }, className: isActive ? 'active' : '' },
-                react_1.default.createElement(RowComponent, { dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onEdit: onEdit, onDelete: onDelete, onAddNew: onAddNew })));
+            return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
         }))));
+}
+function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }) {
+    if (!onIsReadyChange)
+        throw new Error('onIsReadyChange is not defined');
+    const navigate = (0, react_router_dom_1.useNavigate)();
+    const { selectedObjectRoute, tableStructure: { objectAttributesToShow } } = (0, react_1.useContext)(exports.FilteredTableContext);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
+                if (selectedObjectRoute)
+                    navigate(selectedObjectRoute + dataObject.id);
+            }, className: isActive ? 'active' : '' },
+            objectAttributesToShow.map((attr, index) => (react_1.default.createElement("td", { key: index }, dataObject[attr]))),
+            isActive &&
+                react_1.default.createElement("td", { align: 'center' },
+                    react_1.default.createElement(RowActionMenu, { dataObject: dataObject })))));
+}
+function RowActionMenu({ dataObject, }) {
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, DeleteButtonComponent } = (0, react_1.useContext)(exports.FilteredTableContext);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
+        EditButtonComponent && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
+        DeleteButtonComponent && (react_1.default.createElement(DeleteButtonComponent, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject } }))));
 }
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
-const FilteredTableContext = (0, react_1.createContext)({
+exports.FilteredTableContext = (0, react_1.createContext)({
     objects: [],
+    tableStructure: { headers: [], objectAttributesToShow: [] },
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
     setObjects: () => { },
+    selectedObjectRoute: '',
+    activeRowId: 0,
+    EditButtonComponent: undefined,
+    DeleteButtonComponent: undefined,
 });
-const useFilteredTableContext = () => {
-    return (0, react_1.useContext)(FilteredTableContext);
-};
-exports.useFilteredTableContext = useFilteredTableContext;
-const useFilteredTableState = () => {
-    const [objects, setObjects] = (0, react_1.useState)([]);
-    function handleAddObject(object) {
-        setObjects([...objects, object]);
-    }
-    function handleEditObject(object) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
-    }
-    function handleDeleteObject(objectId) {
-        setObjects(objects.filter((o) => o.id !== objectId));
-    }
-    return {
-        objects,
-        setObjects,
-        handleAddObject,
-        handleEditObject,
-        handleDeleteObject,
-    };
-};
-exports.useFilteredTableState = useFilteredTableState;
 
 
 /***/ }),
@@ -69984,6 +70095,36 @@ function defaultKey(key) {
 function canAcceptRef(component) {
   return !!component && (typeof component !== 'function' || component.prototype && component.prototype.isReactComponent);
 }
+
+/***/ }),
+
+/***/ "./src/Resources/View/Google-Docs-icon.png":
+/*!*************************************************!*\
+  !*** ./src/Resources/View/Google-Docs-icon.png ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAMFBMVEVHcEyKx/oilvQhlvMrqv8hlvONx/gil/QilvMglfQhlvPj8v0VZcC73vscf9wbftmRqDvNAAAACnRSTlMAx4jlBubEieSHUYjJYQAAAJBJREFUOMvd1D0OQEAQhmFHcAiVIyg17qByNw0jWf26gmYbnRs4hCV+ZmS+hGQrX2efvNnKRlHYFSWdqwSk1zlNAu6A5pgDMXAIRCLAIeCJBIeAJQ9wGiyjnwYGwZ6oYBBsiQ4GgU8AGAS0IOg5dMMx6z9egdgr+NUd9gt8vyMUZPK80X7nbe0FuUjqJPD7sgLWh7eGYpeipQAAAABJRU5ErkJggg==");
+
+/***/ }),
+
+/***/ "./src/Resources/View/Google-Drive-icon.png":
+/*!**************************************************!*\
+  !*** ./src/Resources/View/Google-Drive-icon.png ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("data:image/png;base64,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");
 
 /***/ }),
 

@@ -4,6 +4,9 @@ import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { RenderMenuItemChildren } from 'react-bootstrap-typeahead/types/components/TypeaheadMenu';
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form/dist/types';
+import GDFolderIcon from '../../Resources/View/Google-Drive-icon.png';
+import GDDocFileIcon from '../../Resources/View/Google-Docs-icon.png';
+import '../../Css/styles.css';
 
 import MainSetup from '../../React/MainSetupReact';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
@@ -12,7 +15,6 @@ import { Controller } from 'react-hook-form';
 import ContractsController from '../../Contracts/ContractsList/ContractsController';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
-import { FieldValue } from 'react-hook-form/dist/types/fields';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -550,5 +552,21 @@ export function ConfirmModal({ show, onClose, title, prompt, onConfirm }: { show
                 )}
             </Modal.Footer>
         </Modal>
+    );
+}
+
+export function GDFolderIconLink({ folderUrl }: { folderUrl: string }) {
+    return (
+        <a href={folderUrl} target="_blank">
+            <img src={GDFolderIcon} alt="Dysk Google" className='icon-vertical' />
+        </a>
+    );
+}
+
+export function GDDocFileIconLink({ folderUrl }: { folderUrl: string }) {
+    return (
+        <a href={folderUrl} target="_blank">
+            <img src={GDDocFileIcon} alt="Dysk Google" className='icon-vertical' />
+        </a>
     );
 }

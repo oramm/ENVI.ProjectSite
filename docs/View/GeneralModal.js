@@ -35,6 +35,7 @@ const FormContext_1 = require("./FormContext");
 const CommonComponents_1 = require("./Resultsets/CommonComponents");
 const CommonComponentsController_1 = require("./Resultsets/CommonComponentsController");
 const yup_1 = require("@hookform/resolvers/yup");
+require("../Css/styles.css");
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
@@ -95,7 +96,7 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
 }
 exports.GeneralModal = GeneralModal;
 function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, validationSchema, }, buttonProps = {}, }) {
-    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
+    const { buttonCaption, buttonVariant = "light" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -104,7 +105,8 @@ function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, addi
         setShowForm(false);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
+        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-general' },
+            react_1.default.createElement("i", { className: "fa fa-pencil fa-lg" })),
         react_1.default.createElement(GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, validationSchema: validationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
@@ -138,7 +140,7 @@ ModalBodyComponent, additionalModalBodyProps, modalTitle, repository, validation
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps = {}, }) {
-    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+    const { buttonCaption, buttonVariant = "outline-danger" } = buttonProps;
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -151,7 +153,8 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
         onDelete(initialData.id);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { variant: buttonVariant, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData.name}?` })));
+        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-danger' },
+            react_1.default.createElement("i", { className: "fa fa-trash fa-lg" })),
+        react_1.default.createElement(CommonComponents_1.ConfirmModal, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;

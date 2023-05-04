@@ -15,19 +15,9 @@ exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
 function ContractsSearch({ title }) {
-    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableHeaders: ['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca'], RowComponent: ContractSearchTableRow, AddNewButtons: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], repository: exports.contractsRepository }));
+    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: {
+            headers: ['Oznaczenie', 'Numer', 'Nazwa', 'Rozpoczęcie', 'Zakończenie'],
+            objectAttributesToShow: ['ourId', 'number', 'name', 'startDate', 'endDate'],
+        }, AddNewButtonComponents: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalBody_1.ContractEditModalButton, DeleteButtonComponent: ContractModalBody_1.ContractDeleteModalButton, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
 }
 exports.default = ContractsSearch;
-function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }) {
-    if (!onIsReadyChange)
-        throw new Error('onIsReadyChange is not defined');
-    return react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("td", null, dataObject.ourId),
-        react_1.default.createElement("td", null, dataObject.number),
-        react_1.default.createElement("td", null, dataObject.name),
-        react_1.default.createElement("td", null, dataObject.startDate),
-        react_1.default.createElement("td", null, dataObject.endDate),
-        isActive && (react_1.default.createElement("td", null,
-            onEdit && (react_1.default.createElement(ContractModalBody_1.ContractEditModalButton, { modalProps: { onEdit, initialData: dataObject, }, isOurContract: dataObject.ourId })),
-            onDelete && (react_1.default.createElement(ContractModalBody_1.ContractDeleteModalButton, { modalProps: { onDelete, initialData: dataObject } })))));
-}

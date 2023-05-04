@@ -1,36 +1,54 @@
 import React, { createContext, FormEventHandler, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { Table, Container, Accordion, Collapse, Button, Row, Col, Form, ProgressBar } from 'react-bootstrap';
+import { Table, Container, Button, Row, Col, Form } from 'react-bootstrap';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
 import { FormProvider } from '../FormContext';
 import { FieldValues, useForm } from 'react-hook-form';
 import { parseFieldValuestoFormData } from './CommonComponentsController';
-import { SpecificAddNewModalButtonProps } from '../GeneralModal';
+import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../GeneralModal';
+import { GDFolderIconLink } from './CommonComponents';
+import { useNavigate } from 'react-router-dom';
 
 
 export type FilterBodyProps = {}
 
 export type FilteredTableProps = {
     title: string,
-    tableHeaders: string[],
-    RowComponent: React.ComponentType<FilterTableRowProps>,
+    tableStructure: { headers: string[], objectAttributesToShow: string[] },
     repository: RepositoryReact
-    AddNewButtons?: React.ComponentType<SpecificAddNewModalButtonProps>[]
+    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps>[]
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>;
+    DeleteButtonComponent?: React.ComponentType<SpecificDeleteModalButtonProps>;
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
+    selectedObjectRoute?: string;
 }
 
 export default function FilteredTable({
     title,
     repository,
-    tableHeaders,
-    RowComponent,
-    AddNewButtons = [],
-    FilterBodyComponent
+    tableStructure,
+    AddNewButtonComponents = [],
+    EditButtonComponent,
+    DeleteButtonComponent,
+    FilterBodyComponent,
+    selectedObjectRoute = '',
 }: FilteredTableProps) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
-    const { handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects } = useFilteredTableState();
+
+    const [objects, setObjects] = useState([] as RepositoryDataItem[]);
+
+    function handleAddObject(object: RepositoryDataItem) {
+        setObjects([...objects, object]);
+    }
+
+    function handleEditObject(object: RepositoryDataItem) {
+        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+    }
+
+    function handleDeleteObject(objectId: number) {
+        setObjects(objects.filter((o) => o.id !== objectId));
+    }
 
     function handleRowClick(id: number) {
         setActiveRowId(id);
@@ -39,20 +57,31 @@ export default function FilteredTable({
     }
 
     return (
-        <FilteredTableContext.Provider value={{ handleAddObject, handleEditObject, handleDeleteObject, objects, setObjects }}>
+        <FilteredTableContext.Provider value={{
+            handleAddObject,
+            handleEditObject,
+            handleDeleteObject,
+            tableStructure,
+            objects,
+            setObjects,
+            selectedObjectRoute,
+            activeRowId,
+            EditButtonComponent,
+            DeleteButtonComponent
+        }}>
             <Container>
                 <Row>
                     <Col>
                         <TableTitle title={title} />
                     </Col>
-                    {AddNewButtons &&
+                    {AddNewButtonComponents &&
                         <Col md="auto">
-                            {AddNewButtons.map((ButtonComponent, index) => (
+                            {AddNewButtonComponents.map((ButtonComponent, index) => (
                                 <React.Fragment key={index}>
                                     <ButtonComponent
                                         modalProps={{ onAddNew: handleAddObject }}
                                     />
-                                    {index < AddNewButtons.length - 1 && ' '}
+                                    {index < AddNewButtonComponents.length - 1 && ' '}
                                 </React.Fragment>
                             ))}
                         </Col>
@@ -62,7 +91,7 @@ export default function FilteredTable({
                     <FilterPanel
                         FilterBodyComponent={FilterBodyComponent}
                         repository={repository}
-                        onIsReadyCHange={(isReady) => {
+                        onIsReadyChange={(isReady) => {
                             setIsReady(isReady);
                         }}
                     />
@@ -72,15 +101,8 @@ export default function FilteredTable({
                     <Col>
                         {objects.length > 0 && (
                             <ResultSetTable
-                                objects={objects}
-                                activeRowId={activeRowId}
                                 onRowClick={handleRowClick}
-                                tableHeaders={tableHeaders}
-                                RowComponent={RowComponent}
                                 onIsReadyChange={(isReady) => { setIsReady(isReady); }}
-                                onEdit={handleEditObject}
-                                onDelete={handleDeleteObject}
-                                onAddNew={handleAddObject}
                             />
                         )}
                     </Col>
@@ -93,12 +115,11 @@ export default function FilteredTable({
 type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     repository: RepositoryReact,
-    onIsReadyCHange: React.Dispatch<React.SetStateAction<boolean>>,
-
+    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
 }
-function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsReadyChange }: FilterPanelProps) {
+function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }: FilterPanelProps) {
     const [errorMessage, setErrorMessage] = useState('');
-    const { setObjects } = useFilteredTableContext();
+    const { setObjects } = useContext(FilteredTableContext);
     const {
         register,
         setValue,
@@ -133,34 +154,20 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyCHange: onIsRea
 }
 
 type ResultSetTableProps = {
-    objects: RepositoryDataItem[],
-    activeRowId: number,
     onRowClick: (id: number) => void,
-    tableHeaders: string[],
-    RowComponent: React.ComponentType<FilterTableRowProps>
     onIsReadyChange?: (isReady: boolean) => void
-    onEdit?: (object: RepositoryDataItem) => void
-    onDelete?: (id: number) => void
-    onAddNew?: (object: RepositoryDataItem) => void
 }
 
 function ResultSetTable({
-    objects,
-    activeRowId,
     onRowClick,
-    tableHeaders,
-    RowComponent,
     onIsReadyChange,
-    onEdit,
-    onDelete,
-    onAddNew
 }: ResultSetTableProps) {
-    const navigate = useNavigate();
+    const { objects, activeRowId, tableStructure: { headers } } = useContext(FilteredTableContext);
     return (
         <Table striped hover size="sm">
             <thead>
                 <tr>
-                    {tableHeaders.map((header, index) => (
+                    {headers.map((header, index) => (
                         <th key={index}>{header}</th>
                     ))}
                 </tr>
@@ -169,21 +176,14 @@ function ResultSetTable({
                 {objects.map((dataObject) => {
                     const isActive = dataObject.id === activeRowId;
                     return (
-                        < tr
+                        <FiterableTableRow
                             key={dataObject.id}
-                            onClick={(e) => (onRowClick(dataObject.id))}
-                            onDoubleClick={() => { navigate('/contract/' + dataObject.id) }}
-                            className={isActive ? 'active' : ''}
-                        >
-                            <RowComponent
-                                dataObject={dataObject}
-                                isActive={isActive}
-                                onIsReadyChange={onIsReadyChange}
-                                onEdit={onEdit}
-                                onDelete={onDelete}
-                                onAddNew={onAddNew}
-                            />
-                        </tr>)
+                            dataObject={dataObject}
+                            isActive={isActive}
+                            onIsReadyChange={onIsReadyChange}
+                            onRowClick={onRowClick}
+                        />
+                    )
                 })}
             </tbody>
         </Table >
@@ -193,11 +193,61 @@ function ResultSetTable({
 export type FilterTableRowProps = {
     dataObject: RepositoryDataItem,
     isActive: boolean,
-    onDelete?: (id: number) => void,
-    onEdit?: (object: RepositoryDataItem) => void
-    onAddNew?: (object: RepositoryDataItem) => void
     onDoubleClick?: (object: RepositoryDataItem) => void
-    onIsReadyChange?: (isReady: boolean) => void
+    onIsReadyChange?: (isReady: boolean) => void,
+    onRowClick: (id: number) => void,
+}
+
+function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }: FilterTableRowProps): JSX.Element {
+    if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
+    const navigate = useNavigate();
+    const { selectedObjectRoute, tableStructure: { objectAttributesToShow } } = useContext(FilteredTableContext);
+    return (
+        <>
+            <tr
+                onClick={(e) => (onRowClick(dataObject.id))}
+                onDoubleClick={() => {
+                    if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id)
+                }}
+                className={isActive ? 'active' : ''}
+            >
+                {objectAttributesToShow.map((attr, index) => (
+                    <td key={index}>{dataObject[attr]}</td>
+                ))}
+                {isActive &&
+                    <td align='center'>
+                        <RowActionMenu dataObject={dataObject} />
+                    </td>
+                }
+            </tr>
+        </>);
+}
+
+interface RowActionMenuProps {
+    dataObject: RepositoryDataItem;
+}
+
+function RowActionMenu({
+    dataObject,
+}: RowActionMenuProps) {
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, DeleteButtonComponent } = useContext(FilteredTableContext);
+    return (
+        <>
+            {dataObject._gdFolderUrl && (
+                <GDFolderIconLink folderUrl={dataObject._gdFolderUrl} />
+            )}
+            {EditButtonComponent && (
+                <EditButtonComponent
+                    modalProps={{ onEdit: handleEditObject, initialData: dataObject, }}
+                />
+            )}
+            {DeleteButtonComponent && (
+                <DeleteButtonComponent
+                    modalProps={{ onDelete: handleDeleteObject, initialData: dataObject }}
+                />
+            )}
+        </>
+    );
 }
 
 export function TableTitle({ title }: { title: string }) {
@@ -206,45 +256,26 @@ export function TableTitle({ title }: { title: string }) {
 
 interface FilteredTableContextType {
     objects: RepositoryDataItem[];
+    tableStructure: { headers: string[], objectAttributesToShow: string[] },
     handleAddObject: (object: RepositoryDataItem) => void;
     handleEditObject: (object: RepositoryDataItem) => void;
     handleDeleteObject: (objectId: number) => void;
     setObjects: React.Dispatch<React.SetStateAction<RepositoryDataItem[]>>;
+    selectedObjectRoute: string,
+    activeRowId: number,
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>,
+    DeleteButtonComponent?: React.ComponentType<SpecificDeleteModalButtonProps>,
 }
 
-const FilteredTableContext = createContext<FilteredTableContextType>({
+export const FilteredTableContext = createContext<FilteredTableContextType>({
     objects: [],
+    tableStructure: { headers: [], objectAttributesToShow: [] },
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
     setObjects: () => { },
+    selectedObjectRoute: '',
+    activeRowId: 0,
+    EditButtonComponent: undefined,
+    DeleteButtonComponent: undefined,
 });
-
-export const useFilteredTableContext = () => {
-    return useContext(FilteredTableContext);
-};
-
-export const useFilteredTableState = () => {
-    const [objects, setObjects] = useState([] as RepositoryDataItem[]);
-
-
-    function handleAddObject(object: RepositoryDataItem) {
-        setObjects([...objects, object]);
-    }
-
-    function handleEditObject(object: RepositoryDataItem) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
-    }
-
-    function handleDeleteObject(objectId: number) {
-        setObjects(objects.filter((o) => o.id !== objectId));
-    }
-
-    return {
-        objects,
-        setObjects,
-        handleAddObject,
-        handleEditObject,
-        handleDeleteObject,
-    };
-};

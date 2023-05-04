@@ -176,11 +176,9 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
 export function ContractEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
-    isOurContract,
-}: SpecificEditModalButtonProps & { isOurContract: boolean }) {
-
+}: SpecificEditModalButtonProps) {
     return (
-        isOurContract
+        initialData.ourId
             ? <OurContractEditModalButton
                 modalProps={{ onEdit, initialData }}
                 buttonProps={buttonProps}

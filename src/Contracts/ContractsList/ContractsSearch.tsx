@@ -1,5 +1,5 @@
-import React, { FormEventHandler, useEffect, useState } from 'react';
-import FilteredTable, { FilterTableRowProps } from '../../View/Resultsets/FilterableTable';
+import React from 'react';
+import FilteredTable from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
 import { ContractDeleteModalButton, ContractEditModalButton } from './Modals/ContractModalBody';
 import { ContractsFilterBody } from './ContractsFilterBody';
@@ -15,36 +15,15 @@ export default function ContractsSearch({ title }: { title: string }) {
         <FilteredTable
             title={title}
             FilterBodyComponent={ContractsFilterBody}
-            tableHeaders={['Oznaczenie', 'Numer', 'Nazwa', 'Data początku', 'Data końca']}
-            RowComponent={ContractSearchTableRow}
-            AddNewButtons={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
+            tableStructure={{
+                headers: ['Oznaczenie', 'Numer', 'Nazwa', 'Rozpoczęcie', 'Zakończenie'],
+                objectAttributesToShow: ['ourId', 'number', 'name', 'startDate', 'endDate'],
+            }}
+            AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
+            EditButtonComponent={ContractEditModalButton}
+            DeleteButtonComponent={ContractDeleteModalButton}
             repository={contractsRepository}
+            selectedObjectRoute={'/contract/'}
         />
     );
-}
-
-function ContractSearchTableRow({ dataObject, isActive, onEdit, onDelete, onIsReadyChange }: FilterTableRowProps): JSX.Element {
-    if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
-    return <>
-        <td>{dataObject.ourId}</td>
-        <td>{dataObject.number}</td>
-        <td>{dataObject.name}</td>
-        <td>{dataObject.startDate}</td>
-        <td>{dataObject.endDate}</td>
-        {isActive && (
-            <td>
-                {onEdit && (
-                    <ContractEditModalButton
-                        modalProps={{ onEdit, initialData: dataObject, }}
-                        isOurContract={dataObject.ourId}
-                    />
-                )}
-                {onDelete && (
-                    <ContractDeleteModalButton
-                        modalProps={{ onDelete, initialData: dataObject }}
-                    />
-                )}
-            </td>
-        )}
-    </>;
 }

@@ -9,6 +9,7 @@ import { ConfirmModal } from './Resultsets/CommonComponents';
 import { parseFieldValuestoFormData } from './Resultsets/CommonComponentsController';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import '../Css/styles.css';
 
 type GeneralModalProps = {
     show: boolean;
@@ -133,7 +134,7 @@ export function GeneralEditModalButton({
     },
     buttonProps = {},
 }: GeneralEditModalButtonProps) {
-    const { buttonCaption = "Edytuj", buttonVariant = "outline-primary" } = buttonProps;
+    const { buttonCaption, buttonVariant = "light" } = buttonProps;
     const [showForm, setShowForm] = useState(false);
 
     function handleOpen() {
@@ -145,9 +146,9 @@ export function GeneralEditModalButton({
 
     return (
         <>
-            <Button variant={buttonVariant} onClick={handleOpen}>
-                {buttonCaption}
-            </Button>
+            <a href='#' onClick={handleOpen} className='icon-vertical text-general'>
+                <i className="fa fa-pencil fa-lg"></i>
+            </a>
 
             <GeneralModal
                 onClose={handleClose}
@@ -236,7 +237,7 @@ export function GeneralDeleteModalButton({
     modalProps: { onDelete, modalTitle, initialData, repository },
     buttonProps = {},
 }: GeneralDeleteModalButtonProps) {
-    const { buttonCaption = "Usuń", buttonVariant = "outline-danger" } = buttonProps;
+    const { buttonCaption, buttonVariant = "outline-danger" } = buttonProps;
 
     const [showForm, setShowForm] = useState(false);
 
@@ -254,16 +255,16 @@ export function GeneralDeleteModalButton({
 
     return (
         <>
-            <Button variant={buttonVariant} onClick={handleOpen}>
-                {buttonCaption}
-            </Button>
+            <a href='#' onClick={handleOpen} className='icon-vertical text-danger'>
+                <i className="fa fa-trash fa-lg"></i>
+            </a>
 
             <ConfirmModal
                 onClose={handleClose}
                 show={showForm}
                 title={modalTitle}
                 onConfirm={handleDelete}
-                prompt={`Czy na pewno chcesz usunąć ${initialData.name}?`}
+                prompt={`Czy na pewno chcesz usunąć ${initialData?.name}?`}
             />
         </>
     );
@@ -389,9 +390,7 @@ export type SpecificDeleteModalButtonProps = {
     buttonProps?: SpecificDeleteModalButtonButtonProps;
 };
 
-
 export type additionalFieldsKeysValue = {
     name: string;
     value: string;
 };
-

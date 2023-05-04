@@ -100,8 +100,8 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, isOurContract, }) {
-    return (isOurContract
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (initialData.ourId
         ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
