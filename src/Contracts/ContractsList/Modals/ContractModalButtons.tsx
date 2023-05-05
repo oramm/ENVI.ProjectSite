@@ -26,24 +26,6 @@ export function ContractEditModalButton({
     );
 }
 
-export function ContractDeleteModalButton({
-    modalProps: { onDelete } }: SpecificDeleteModalButtonProps) {
-    const currentContract = contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-
-    return (
-        <GeneralDeleteModalButton
-            modalProps={{
-                onDelete,
-                modalTitle,
-                repository: contractsRepository,
-                initialData: contractsRepository.currentItems[0],
-            }}
-        />
-    );
-}
-
-
 export function OurContractEditModalButton({
     modalProps: { onEdit, initialData, },
 }: SpecificEditModalButtonProps) {

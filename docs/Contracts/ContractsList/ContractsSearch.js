@@ -19,6 +19,6 @@ function ContractsSearch({ title }) {
             { header: 'Nazwa', objectAttributeToShow: 'name' },
             { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
             { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
-        ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, DeleteButtonComponent: ContractModalButtons_1.ContractDeleteModalButton, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
+        ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
 }
 exports.default = ContractsSearch;

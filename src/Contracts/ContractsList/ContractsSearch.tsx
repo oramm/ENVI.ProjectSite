@@ -2,7 +2,7 @@ import React from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
 import { ContractsFilterBody } from './ContractsFilterBody';
-import { ContractDeleteModalButton, ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
+import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;
@@ -22,7 +22,7 @@ export default function ContractsSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}
-            DeleteButtonComponent={ContractDeleteModalButton}
+            isDeletable={true}
             repository={contractsRepository}
             selectedObjectRoute={'/contract/'}
         />

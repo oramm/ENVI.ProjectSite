@@ -5,10 +5,10 @@ import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact
 import { FormProvider } from '../Modals/FormContext';
 import { FieldValues, useForm } from 'react-hook-form';
 import { parseFieldValuestoFormData } from './CommonComponentsController';
-//import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/GeneralModal';
 import { GDFolderIconLink } from './CommonComponents';
 import { useNavigate } from 'react-router-dom';
 import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/ModalsTypes';
+import { GeneralDeleteModalButton } from '../Modals/GeneralModalButtons';
 
 
 export type FilterBodyProps = {}
@@ -19,18 +19,27 @@ export type FilterableTableProps = {
     repository: RepositoryReact
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps>[]
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>;
-    DeleteButtonComponent?: React.ComponentType<SpecificDeleteModalButtonProps>;
+    isDeletable?: boolean;
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
 }
-
+/** Wyświetla tablicę z filtrem i modalami CRUD
+ * @param title tytuł tabeli
+ * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach)
+ * @param repository repozytorium z danymi
+ * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden) 
+ * @param EditButtonComponent komponent przycisku edycji obiektu
+ * @param isDeletable czy można usuwać obiekty z tabeli (domyślnie true)
+ * @param FilterBodyComponent komponent zawartości filtra
+ * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
+ */
 export default function FilterableTable({
     title,
     repository,
     tableStructure,
     AddNewButtonComponents = [],
     EditButtonComponent,
-    DeleteButtonComponent,
+    isDeletable = true,
     FilterBodyComponent,
     selectedObjectRoute = '',
 }: FilterableTableProps) {
@@ -64,11 +73,12 @@ export default function FilterableTable({
             handleDeleteObject,
             tableStructure,
             objects,
+            repository,
             setObjects,
             selectedObjectRoute,
             activeRowId,
             EditButtonComponent,
-            DeleteButtonComponent
+            isDeletable,
         }}>
             <Container>
                 <Row>
@@ -168,8 +178,8 @@ function ResultSetTable({
         <Table striped hover size="sm">
             <thead>
                 <tr>
-                    {tableStructure.map((column, index) => (
-                        <th key={index}>{column.header}</th>
+                    {tableStructure.map((column) => (
+                        <th key={column.objectAttributeToShow}>{column.header}</th>
                     ))}
                 </tr>
             </thead>
@@ -212,8 +222,8 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 }}
                 className={isActive ? 'active' : ''}
             >
-                {tableStructure.map((column, index) => (
-                    <td key={index}>{dataObject[column.objectAttributeToShow]}</td>
+                {tableStructure.map((column) => (
+                    <td key={column.objectAttributeToShow}>{dataObject[column.objectAttributeToShow]}</td>
                 ))}
                 {isActive &&
                     <td align='center'>
@@ -231,7 +241,7 @@ interface RowActionMenuProps {
 function RowActionMenu({
     dataObject,
 }: RowActionMenuProps) {
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, DeleteButtonComponent } = useContext(FilterableTableContext);
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useContext(FilterableTableContext);
     return (
         <>
             {dataObject._gdFolderUrl && (
@@ -242,8 +252,8 @@ function RowActionMenu({
                     modalProps={{ onEdit: handleEditObject, initialData: dataObject, }}
                 />
             )}
-            {DeleteButtonComponent && (
-                <DeleteButtonComponent
+            {isDeletable && (
+                <DeleteModalButton
                     modalProps={{ onDelete: handleDeleteObject, initialData: dataObject }}
                 />
             )}
@@ -255,8 +265,27 @@ export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
 }
 
+export function DeleteModalButton({
+    modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps) {
+
+    const { repository } = useContext(FilterableTableContext);
+    const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
+
+    return (
+        <GeneralDeleteModalButton
+            modalProps={{
+                onDelete,
+                modalTitle,
+                repository,
+                initialData,
+            }}
+        />
+    );
+}
+
 interface FilterableTableContextType {
     objects: RepositoryDataItem[];
+    repository: RepositoryReact;
     tableStructure: { header: string, objectAttributeToShow: string }[],
     handleAddObject: (object: RepositoryDataItem) => void;
     handleEditObject: (object: RepositoryDataItem) => void;
@@ -265,11 +294,12 @@ interface FilterableTableContextType {
     selectedObjectRoute: string,
     activeRowId: number,
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>,
-    DeleteButtonComponent?: React.ComponentType<SpecificDeleteModalButtonProps>,
+    isDeletable: boolean,
 }
 
 export const FilterableTableContext = createContext<FilterableTableContextType>({
     objects: [],
+    repository: {} as RepositoryReact,
     tableStructure: [{ header: '', objectAttributeToShow: '' }],
     handleAddObject: () => { },
     handleEditObject: () => { },
@@ -278,5 +308,5 @@ export const FilterableTableContext = createContext<FilterableTableContextType>(
     selectedObjectRoute: '',
     activeRowId: 0,
     EditButtonComponent: undefined,
-    DeleteButtonComponent: undefined,
+    isDeletable: true,
 });

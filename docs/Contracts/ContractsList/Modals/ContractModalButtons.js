@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.ContractDeleteModalButton = exports.ContractEditModalButton = void 0;
+exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.ContractEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ContractsSearch_1 = require("../ContractsSearch");
@@ -18,17 +18,6 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
         : react_1.default.createElement(OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function ContractDeleteModalButton({ modalProps: { onDelete } }) {
-    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
-            onDelete,
-            modalTitle,
-            repository: ContractsSearch_1.contractsRepository,
-            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
-        } }));
-}
-exports.ContractDeleteModalButton = ContractDeleteModalButton;
 function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
