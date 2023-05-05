@@ -14,7 +14,7 @@ export type FilterBodyProps = {}
 
 export type FilteredTableProps = {
     title: string,
-    tableStructure: { headers: string[], objectAttributesToShow: string[] },
+    tableStructure: { header: string, objectAttributeToShow: string }[],
     repository: RepositoryReact
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps>[]
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>;
@@ -162,13 +162,13 @@ function ResultSetTable({
     onRowClick,
     onIsReadyChange,
 }: ResultSetTableProps) {
-    const { objects, activeRowId, tableStructure: { headers } } = useContext(FilteredTableContext);
+    const { objects, activeRowId, tableStructure } = useContext(FilteredTableContext);
     return (
         <Table striped hover size="sm">
             <thead>
                 <tr>
-                    {headers.map((header, index) => (
-                        <th key={index}>{header}</th>
+                    {tableStructure.map((column, index) => (
+                        <th key={index}>{column.header}</th>
                     ))}
                 </tr>
             </thead>
@@ -201,7 +201,7 @@ export type FilterTableRowProps = {
 function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }: FilterTableRowProps): JSX.Element {
     if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
     const navigate = useNavigate();
-    const { selectedObjectRoute, tableStructure: { objectAttributesToShow } } = useContext(FilteredTableContext);
+    const { selectedObjectRoute, tableStructure } = useContext(FilteredTableContext);
     return (
         <>
             <tr
@@ -211,8 +211,8 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 }}
                 className={isActive ? 'active' : ''}
             >
-                {objectAttributesToShow.map((attr, index) => (
-                    <td key={index}>{dataObject[attr]}</td>
+                {tableStructure.map((column, index) => (
+                    <td key={index}>{dataObject[column.objectAttributeToShow]}</td>
                 ))}
                 {isActive &&
                     <td align='center'>
@@ -256,7 +256,7 @@ export function TableTitle({ title }: { title: string }) {
 
 interface FilteredTableContextType {
     objects: RepositoryDataItem[];
-    tableStructure: { headers: string[], objectAttributesToShow: string[] },
+    tableStructure: { header: string, objectAttributeToShow: string }[],
     handleAddObject: (object: RepositoryDataItem) => void;
     handleEditObject: (object: RepositoryDataItem) => void;
     handleDeleteObject: (objectId: number) => void;
@@ -269,7 +269,7 @@ interface FilteredTableContextType {
 
 export const FilteredTableContext = createContext<FilteredTableContextType>({
     objects: [],
-    tableStructure: { headers: [], objectAttributesToShow: [] },
+    tableStructure: [{ header: '', objectAttributeToShow: '' }],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },

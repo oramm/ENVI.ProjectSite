@@ -15,10 +15,13 @@ export default function ContractsSearch({ title }: { title: string }) {
         <FilteredTable
             title={title}
             FilterBodyComponent={ContractsFilterBody}
-            tableStructure={{
-                headers: ['Oznaczenie', 'Numer', 'Nazwa', 'Rozpoczęcie', 'Zakończenie'],
-                objectAttributesToShow: ['ourId', 'number', 'name', 'startDate', 'endDate'],
-            }}
+            tableStructure={[
+                { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
+                { header: 'Numer', objectAttributeToShow: 'number' },
+                { header: 'Nazwa', objectAttributeToShow: 'name' },
+                { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
+                { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
+            ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}
             DeleteButtonComponent={ContractDeleteModalButton}

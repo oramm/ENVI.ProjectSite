@@ -99,10 +99,10 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
 }
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
-    const { objects, activeRowId, tableStructure: { headers } } = (0, react_1.useContext)(exports.FilteredTableContext);
+    const { objects, activeRowId, tableStructure } = (0, react_1.useContext)(exports.FilteredTableContext);
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, headers.map((header, index) => (react_1.default.createElement("th", { key: index }, header))))),
+            react_1.default.createElement("tr", null, tableStructure.map((column, index) => (react_1.default.createElement("th", { key: index }, column.header))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
             return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
@@ -112,13 +112,13 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     if (!onIsReadyChange)
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
-    const { selectedObjectRoute, tableStructure: { objectAttributesToShow } } = (0, react_1.useContext)(exports.FilteredTableContext);
+    const { selectedObjectRoute, tableStructure } = (0, react_1.useContext)(exports.FilteredTableContext);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
                 if (selectedObjectRoute)
                     navigate(selectedObjectRoute + dataObject.id);
             }, className: isActive ? 'active' : '' },
-            objectAttributesToShow.map((attr, index) => (react_1.default.createElement("td", { key: index }, dataObject[attr]))),
+            tableStructure.map((column, index) => (react_1.default.createElement("td", { key: index }, dataObject[column.objectAttributeToShow]))),
             isActive &&
                 react_1.default.createElement("td", { align: 'center' },
                     react_1.default.createElement(RowActionMenu, { dataObject: dataObject })))));
@@ -136,7 +136,7 @@ function TableTitle({ title }) {
 exports.TableTitle = TableTitle;
 exports.FilteredTableContext = (0, react_1.createContext)({
     objects: [],
-    tableStructure: { headers: [], objectAttributesToShow: [] },
+    tableStructure: [{ header: '', objectAttributeToShow: '' }],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
