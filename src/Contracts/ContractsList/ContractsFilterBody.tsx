@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../View/Resultsets/CommonComponents';
+import React from 'react';
+import { ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository, projectsRepository } from './ContractsSearch';
-import { useFormContext } from '../../View/FormContext';
+import { projectsRepository } from './ContractsSearch';
+import { useFormContext } from '../../View/Modals/FormContext';
 import ToolsDate from '../../React/ToolsDate';
 import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
 

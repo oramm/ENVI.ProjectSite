@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MainSetup from '../../../React/MainSetupReact';
-import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../../View/Resultsets/CommonComponents';
+import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
-import { GeneralEditModalButton, ModalBodyProps, SpecificEditModalButtonProps, SpecificAddNewModalButtonProps, GeneralAddNewModalButton } from '../../../View/GeneralModal';
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
-import { useFormContext } from '../../../View/FormContext';
+import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ourContractValidationSchema } from './ContractValidationSchema';
+import { ModalBodyProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../../View/Modals/ModalsTypes';
+import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 
 export function OurContractModalBody(props: ModalBodyProps) {
     const initialData = props.initialData;
@@ -72,46 +73,5 @@ export function OurContractModalBody(props: ModalBodyProps) {
                 acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
             />
         </>
-    );
-}
-
-export function OurContractEditModalButton({
-    modalProps: { onEdit, initialData, },
-}: SpecificEditModalButtonProps) {
-    return (
-        <GeneralEditModalButton
-            modalProps={{
-                onEdit: onEdit,
-                ModalBodyComponent: OurContractModalBody,
-                modalTitle: "Edycja umowy",
-                repository: contractsRepository,
-                initialData: initialData,
-                validationSchema: ourContractValidationSchema
-            }}
-            buttonProps={{
-                buttonVariant: "outline-success",
-            }}
-        />
-    );
-}
-
-export function OurContractAddNewModalButton({
-    modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps) {
-    return (
-        <GeneralAddNewModalButton
-            modalProps={{
-                onAddNew: onAddNew,
-                ModalBodyComponent: ProjectSelectorModalBody,
-                additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
-                modalTitle: "Nowa umowa ENVI",
-                repository: contractsRepository,
-                validationSchema: ourContractValidationSchema
-            }}
-            buttonProps={{
-                buttonCaption: "Rejestruj umowę ENVI",
-                buttonVariant: "outline-success",
-            }}
-        />
     );
 }

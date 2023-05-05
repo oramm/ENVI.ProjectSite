@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GeneralDeleteModalButton, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, ModalBodyProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../../View/GeneralModal';
-import { ContractStatus, ContractTypeSelectFormElement, MyAsyncTypeahead, ProjectSelector, ValueInPLNInput } from '../../../View/Resultsets/CommonComponents';
+import { ContractStatus, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { OurContractEditModalButton, OurContractModalBody } from './OurContractModalBody';
-import { OtherContractEditModalButton, OtherContractModalBody } from './OtherContractModalBody';
-import { contractsRepository, projectsRepository } from '../ContractsSearch';
+import { projectsRepository } from '../ContractsSearch';
 import { RepositoryDataItem } from '../../../React/RepositoryReact';
-import { useFormContext } from '../../../View/FormContext';
+import { useFormContext } from '../../../View/Modals/FormContext';
+import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
     const { register, setValue, watch, formState, trigger } = useFormContext();
@@ -171,38 +169,3 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
         </>
     );
 };
-
-/** przycisk i modal edycji OurCOntract lub OtherContract */
-export function ContractEditModalButton({
-    modalProps: { onEdit, initialData },
-    buttonProps,
-}: SpecificEditModalButtonProps) {
-    return (
-        initialData.ourId
-            ? <OurContractEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-            : <OtherContractEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-    );
-}
-
-export function ContractDeleteModalButton({
-    modalProps: { onDelete } }: SpecificDeleteModalButtonProps) {
-    const currentContract = contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-
-    return (
-        <GeneralDeleteModalButton
-            modalProps={{
-                onDelete,
-                modalTitle,
-                repository: contractsRepository,
-                initialData: contractsRepository.currentItems[0],
-            }}
-        />
-    );
-}

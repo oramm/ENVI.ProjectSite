@@ -1,10 +1,8 @@
 import React from 'react';
-import FilteredTable from '../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../View/Resultsets/FilterableTable';
 import ContractsController from './ContractsController';
-import { ContractDeleteModalButton, ContractEditModalButton } from './Modals/ContractModalBody';
 import { ContractsFilterBody } from './ContractsFilterBody';
-import { OurContractAddNewModalButton } from './Modals/OurContractModalBody';
-import { OtherContractAddNewModalButton } from './Modals/OtherContractModalBody';
+import { ContractDeleteModalButton, ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
 
 export const contractsRepository = ContractsController.contractsRepository;
 export const entitiesRepository = ContractsController.entitiesRepository;
@@ -12,7 +10,7 @@ export const projectsRepository = ContractsController.projectsRepository;
 
 export default function ContractsSearch({ title }: { title: string }) {
     return (
-        <FilteredTable
+        <FilterableTable
             title={title}
             FilterBodyComponent={ContractsFilterBody}
             tableStructure={[

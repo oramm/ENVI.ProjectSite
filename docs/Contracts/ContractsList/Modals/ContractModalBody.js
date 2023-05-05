@@ -23,15 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContractDeleteModalButton = exports.ContractEditModalButton = exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
+exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const GeneralModal_1 = require("../../../View/GeneralModal");
-const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const OurContractModalBody_1 = require("./OurContractModalBody");
-const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const ContractsSearch_1 = require("../ContractsSearch");
-const FormContext_1 = require("../../../View/FormContext");
+const FormContext_1 = require("../../../View/Modals/FormContext");
 function ContractModalBody({ isEditing, initialData }) {
     const { register, setValue, watch, formState, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -63,7 +60,7 @@ function ContractModalBody({ isEditing, initialData }) {
             formState.errors?.comment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.comment.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonComponents_1.ValueInPLNInput, { required: true })),
+            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { required: true })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
@@ -79,7 +76,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                     } }),
                 formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message)))),
-        react_1.default.createElement(CommonComponents_1.ContractStatus, { required: true })));
+        react_1.default.createElement(CommonFormComponents_1.ContractStatus, { required: true })));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
@@ -95,25 +92,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
-/** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
-    return (initialData.ourId
-        ? react_1.default.createElement(OurContractModalBody_1.OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractModalBody_1.OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
-}
-exports.ContractEditModalButton = ContractEditModalButton;
-function ContractDeleteModalButton({ modalProps: { onDelete } }) {
-    const currentContract = ContractsSearch_1.contractsRepository.currentItems[0];
-    const modalTitle = 'Usuwanie kontraktu ' + (currentContract?.ourId || currentContract?._number || '');
-    return (react_1.default.createElement(GeneralModal_1.GeneralDeleteModalButton, { modalProps: {
-            onDelete,
-            modalTitle,
-            repository: ContractsSearch_1.contractsRepository,
-            initialData: ContractsSearch_1.contractsRepository.currentItems[0],
-        } }));
-}
-exports.ContractDeleteModalButton = ContractDeleteModalButton;

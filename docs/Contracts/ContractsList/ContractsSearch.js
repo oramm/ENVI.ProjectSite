@@ -7,10 +7,8 @@ exports.projectsRepository = exports.entitiesRepository = exports.contractsRepos
 const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable"));
 const ContractsController_1 = __importDefault(require("./ContractsController"));
-const ContractModalBody_1 = require("./Modals/ContractModalBody");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
-const OurContractModalBody_1 = require("./Modals/OurContractModalBody");
-const OtherContractModalBody_1 = require("./Modals/OtherContractModalBody");
+const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 exports.contractsRepository = ContractsController_1.default.contractsRepository;
 exports.entitiesRepository = ContractsController_1.default.entitiesRepository;
 exports.projectsRepository = ContractsController_1.default.projectsRepository;
@@ -21,6 +19,6 @@ function ContractsSearch({ title }) {
             { header: 'Nazwa', objectAttributeToShow: 'name' },
             { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
             { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
-        ], AddNewButtonComponents: [OurContractModalBody_1.OurContractAddNewModalButton, OtherContractModalBody_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalBody_1.ContractEditModalButton, DeleteButtonComponent: ContractModalBody_1.ContractDeleteModalButton, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
+        ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, DeleteButtonComponent: ContractModalButtons_1.ContractDeleteModalButton, repository: exports.contractsRepository, selectedObjectRoute: '/contract/' }));
 }
 exports.default = ContractsSearch;

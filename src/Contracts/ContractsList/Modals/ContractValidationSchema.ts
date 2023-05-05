@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { valueValidation } from '../../../View/Resultsets/CommonComponents';
+import { valueValidation } from '../../../View/Modals/CommonFormComponents';
 
 const commonFields = {
     _type: Yup.object().required('Typ kontraktu jest wymagany'), //przy walidacji jest wpsólny, ale w formularzu jest osobno dla każdego typu

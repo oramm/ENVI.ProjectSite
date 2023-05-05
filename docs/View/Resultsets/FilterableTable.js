@@ -26,9 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilteredTableContext = exports.TableTitle = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const FormContext_1 = require("../FormContext");
+const FormContext_1 = require("../Modals/FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const CommonComponentsController_1 = require("./CommonComponentsController");
+//import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/GeneralModal';
 const CommonComponents_1 = require("./CommonComponents");
 const react_router_dom_1 = require("react-router-dom");
 function FilteredTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, DeleteButtonComponent, FilterBodyComponent, selectedObjectRoute = '', }) {

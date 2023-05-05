@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.otherContractValidationSchema = exports.ourContractValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
-const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const commonFields = {
     _type: Yup.object().required('Typ kontraktu jest wymagany'),
     number: Yup.string()
@@ -39,7 +39,7 @@ const commonFields = {
         .max(30, 'Alias może mieć maksymalnie 30 znaków'),
     comment: Yup.string()
         .max(1000, 'Komentarz może mieć maksymalnie 1000 znaków'),
-    value: CommonComponents_1.valueValidation,
+    value: CommonFormComponents_1.valueValidation,
     status: Yup.string().required('Status jest wymagany'),
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
         .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {

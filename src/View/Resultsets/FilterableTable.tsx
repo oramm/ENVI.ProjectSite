@@ -2,17 +2,18 @@ import React, { createContext, FormEventHandler, useContext, useEffect, useState
 
 import { Table, Container, Button, Row, Col, Form } from 'react-bootstrap';
 import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
-import { FormProvider } from '../FormContext';
+import { FormProvider } from '../Modals/FormContext';
 import { FieldValues, useForm } from 'react-hook-form';
 import { parseFieldValuestoFormData } from './CommonComponentsController';
-import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../GeneralModal';
+//import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/GeneralModal';
 import { GDFolderIconLink } from './CommonComponents';
 import { useNavigate } from 'react-router-dom';
+import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/ModalsTypes';
 
 
 export type FilterBodyProps = {}
 
-export type FilteredTableProps = {
+export type FilterableTableProps = {
     title: string,
     tableStructure: { header: string, objectAttributeToShow: string }[],
     repository: RepositoryReact
@@ -23,7 +24,7 @@ export type FilteredTableProps = {
     selectedObjectRoute?: string;
 }
 
-export default function FilteredTable({
+export default function FilterableTable({
     title,
     repository,
     tableStructure,
@@ -32,7 +33,7 @@ export default function FilteredTable({
     DeleteButtonComponent,
     FilterBodyComponent,
     selectedObjectRoute = '',
-}: FilteredTableProps) {
+}: FilterableTableProps) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
 
@@ -57,7 +58,7 @@ export default function FilteredTable({
     }
 
     return (
-        <FilteredTableContext.Provider value={{
+        <FilterableTableContext.Provider value={{
             handleAddObject,
             handleEditObject,
             handleDeleteObject,
@@ -108,7 +109,7 @@ export default function FilteredTable({
                     </Col>
                 </Row>
             </Container>
-        </FilteredTableContext.Provider>
+        </FilterableTableContext.Provider>
     );
 }
 
@@ -119,7 +120,7 @@ type FilterPanelProps = {
 }
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }: FilterPanelProps) {
     const [errorMessage, setErrorMessage] = useState('');
-    const { setObjects } = useContext(FilteredTableContext);
+    const { setObjects } = useContext(FilterableTableContext);
     const {
         register,
         setValue,
@@ -162,7 +163,7 @@ function ResultSetTable({
     onRowClick,
     onIsReadyChange,
 }: ResultSetTableProps) {
-    const { objects, activeRowId, tableStructure } = useContext(FilteredTableContext);
+    const { objects, activeRowId, tableStructure } = useContext(FilterableTableContext);
     return (
         <Table striped hover size="sm">
             <thead>
@@ -201,7 +202,7 @@ export type FilterTableRowProps = {
 function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }: FilterTableRowProps): JSX.Element {
     if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
     const navigate = useNavigate();
-    const { selectedObjectRoute, tableStructure } = useContext(FilteredTableContext);
+    const { selectedObjectRoute, tableStructure } = useContext(FilterableTableContext);
     return (
         <>
             <tr
@@ -230,7 +231,7 @@ interface RowActionMenuProps {
 function RowActionMenu({
     dataObject,
 }: RowActionMenuProps) {
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, DeleteButtonComponent } = useContext(FilteredTableContext);
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, DeleteButtonComponent } = useContext(FilterableTableContext);
     return (
         <>
             {dataObject._gdFolderUrl && (
@@ -254,7 +255,7 @@ export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
 }
 
-interface FilteredTableContextType {
+interface FilterableTableContextType {
     objects: RepositoryDataItem[];
     tableStructure: { header: string, objectAttributeToShow: string }[],
     handleAddObject: (object: RepositoryDataItem) => void;
@@ -267,7 +268,7 @@ interface FilteredTableContextType {
     DeleteButtonComponent?: React.ComponentType<SpecificDeleteModalButtonProps>,
 }
 
-export const FilteredTableContext = createContext<FilteredTableContextType>({
+export const FilterableTableContext = createContext<FilterableTableContextType>({
     objects: [],
     tableStructure: [{ header: '', objectAttributeToShow: '' }],
     handleAddObject: () => { },

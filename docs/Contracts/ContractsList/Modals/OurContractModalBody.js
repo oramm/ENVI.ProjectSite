@@ -26,16 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.OurContractModalBody = void 0;
+exports.OurContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
-const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const ContractModalBody_1 = require("./ContractModalBody");
-const GeneralModal_1 = require("../../../View/GeneralModal");
-const ContractsSearch_1 = require("../ContractsSearch");
-const FormContext_1 = require("../../../View/FormContext");
+const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
-const ContractValidationSchema_1 = require("./ContractValidationSchema");
 function OurContractModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
@@ -48,7 +45,7 @@ function OurContractModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (!props.isEditing) ?
-            react_1.default.createElement(CommonComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' })
+            react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' })
             : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
@@ -57,36 +54,9 @@ function OurContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
-                react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(CommonComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true }))),
-        react_1.default.createElement(CommonComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true }))),
+        react_1.default.createElement(CommonFormComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
 }
 exports.OurContractModalBody = OurContractModalBody;
-function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
-    return (react_1.default.createElement(GeneralModal_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
-            ModalBodyComponent: OurContractModalBody,
-            modalTitle: "Edycja umowy",
-            repository: ContractsSearch_1.contractsRepository,
-            initialData: initialData,
-            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
-        }, buttonProps: {
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.OurContractEditModalButton = OurContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
-    return (react_1.default.createElement(GeneralModal_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
-            ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
-            modalTitle: "Nowa umowa ENVI",
-            repository: ContractsSearch_1.contractsRepository,
-            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
-        }, buttonProps: {
-            buttonCaption: "Rejestruj umowę ENVI",
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
