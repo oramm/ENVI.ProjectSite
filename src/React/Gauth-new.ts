@@ -1,4 +1,4 @@
-import { renderApp } from "./index";
+import { renderApp } from "./MainWindow/index";
 
 declare const google: any;
 

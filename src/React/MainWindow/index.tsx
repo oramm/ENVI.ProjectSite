@@ -2,20 +2,24 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom";
-import ContractsSearch from "../Contracts/ContractsList/ContractsSearch";
-import { SpinnerBootstrap } from "../View/Resultsets/CommonComponents";
-import ErrorPage from "./ErrorPage";
-import GoogleButton from "./GoogleLoginButton";
-import MainController from "./MainControllerReact";
-import MainSetup from "./MainSetupReact";
+import { BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes, useNavigate } from "react-router-dom";
+import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
+import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
+import ErrorPage from "../ErrorPage";
+import GoogleButton from "../GoogleLoginButton";
+import MainController from "../MainControllerReact";
+import MainMenu from "./MainMenu";
+import MainSetup from "../MainSetupReact";
+import Footer from "./Footer";
+
+const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState('' as string | null);
 
-    const rootPath = '/envi.projectsite/docs/React/';
+
 
     useEffect(() => {
         async function fetchData() {
@@ -42,37 +46,42 @@ function App() {
         }
     };
 
-    const router = createBrowserRouter([
-        {
-            path: `/`,
-            element: <ContractsSearch title={"Wyszukiwarka kontraktów"} />,
-            errorElement: <ErrorPage />,
-        },
-        {
-            path: `/contract/:id`,
-            element: <ContractsSearch title={"test"} />,
-            errorElement: <ErrorPage />,
-        }
-    ], { basename: rootPath });
-
     if (errorMessage)
         return (
-            <div><h1>Ups! mamy błąd</h1>
+            <div>
+                <h1>Ups! mamy błąd</h1>
                 <Alert variant="danger"> {errorMessage}</Alert>
             </div>
         )
-    else if (isReady)
-        return (
+    else if (isReady) {
+        return isLoggedIn ? (
             <>
-                {isLoggedIn ? (
-                    <RouterProvider router={router} />
-                ) : (
-                    <GoogleButton onServerResponse={handleServerResponse} />
-                )}
+                <AppRoutes />
+                <Footer />
             </>
-        )
-    else return <SpinnerBootstrap />
+
+        ) : (
+            <GoogleButton onServerResponse={handleServerResponse} />
+        );
+    }
+    else
+        return <SpinnerBootstrap />
 }
+
+function AppRoutes() {
+    return (
+        <BrowserRouter basename={rootPath}>
+            <MainMenu />
+            <Routes>
+                <Route path="/" element={<ContractsSearch title={"Strona główna"} />} />
+                <Route path="/contracts" element={<ContractsSearch title={"Wyszukiwarka kontraktów"} />} />
+                <Route path="/contract/:id" element={<ContractsSearch title={"test"} />} />
+                {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
 
 export async function renderApp() {
     const root = document.getElementById("root");

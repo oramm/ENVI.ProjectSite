@@ -68275,34 +68275,6 @@ exports.OurContractModalBody = OurContractModalBody;
 
 /***/ }),
 
-/***/ "./src/React/ErrorPage.tsx":
-/*!*********************************!*\
-  !*** ./src/React/ErrorPage.tsx ***!
-  \*********************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-function ErrorPage() {
-    const error = (0, react_router_dom_1.useRouteError)();
-    console.error(error);
-    return (react_1.default.createElement("div", { id: "error-page" },
-        react_1.default.createElement("h1", null, "Oops!"),
-        react_1.default.createElement("p", null, "Sorry, an unexpected error has occurred."),
-        react_1.default.createElement("p", null,
-            react_1.default.createElement("i", null, error.message))));
-}
-exports["default"] = ErrorPage;
-
-
-/***/ }),
-
 /***/ "./src/React/GoogleLoginButton.tsx":
 /*!*****************************************!*\
   !*** ./src/React/GoogleLoginButton.tsx ***!
@@ -68432,6 +68404,221 @@ class MainSetup {
 exports["default"] = MainSetup;
 MainSetup.CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 MainSetup.serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/Footer.tsx":
+/*!*****************************************!*\
+  !*** ./src/React/MainWindow/Footer.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const Footer = () => {
+    return (react_1.default.createElement(react_bootstrap_1.Navbar, { fixed: "bottom", bg: "light" },
+        react_1.default.createElement(react_bootstrap_1.Container, null,
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center w-100" },
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(react_bootstrap_1.Navbar.Text, null,
+                        "\u00A9 ",
+                        new Date().getFullYear(),
+                        " ENVI Konsulting. Wszelkie prawa zastrze\u017Cone.")),
+                react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
+                    react_1.default.createElement(react_bootstrap_1.Navbar.Text, null,
+                        react_1.default.createElement("a", { href: "https://www.envi.com.pl", target: "_blank", rel: "noreferrer", style: { textDecoration: 'none' } }, "www.envi.com.pl")))))));
+};
+exports["default"] = Footer;
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/MainMenu.tsx":
+/*!*******************************************!*\
+  !*** ./src/React/MainWindow/MainMenu.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+function MainMenu() {
+    const [showOffcanvas, setShowOffcanvas] = (0, react_1.useState)(false);
+    const location = (0, react_router_dom_1.useLocation)();
+    const handleShowOffcanvas = () => setShowOffcanvas(true);
+    const handleCloseOffcanvas = () => setShowOffcanvas(false);
+    const isActive = (path) => {
+        return location.pathname === path ? 'active' : '';
+    };
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: 'top', bg: "light", expand: "lg" },
+            react_1.default.createElement(react_bootstrap_1.Container, null,
+                react_1.default.createElement(react_bootstrap_1.Navbar.Brand, null, "Witryna Projekt\u00F3w"),
+                react_1.default.createElement(react_bootstrap_1.Navbar.Toggle, { "aria-controls": "basic-navbar-nav" }),
+                react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
+                    react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/'), onClick: handleCloseOffcanvas }, "Strona g\u0142\u00F3wna"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/contracts", className: isActive('/contracts'), onClick: handleCloseOffcanvas }, "Kontrakty"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters'), onClick: handleCloseOffcanvas }, "Pisma")),
+                    react_1.default.createElement(react_bootstrap_1.Button, { className: "d-lg-none", onClick: handleShowOffcanvas }, "Offcanvas menu")))),
+        react_1.default.createElement(react_bootstrap_1.Offcanvas, { show: showOffcanvas, onHide: handleCloseOffcanvas },
+            react_1.default.createElement(react_bootstrap_1.Offcanvas.Header, { closeButton: true },
+                react_1.default.createElement(react_bootstrap_1.Offcanvas.Title, null, "Menu")),
+            react_1.default.createElement(react_bootstrap_1.Offcanvas.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Nav, { className: "flex-column" },
+                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/'), onClick: handleCloseOffcanvas }, "Strona g\u0142\u00F3wna"),
+                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/pageone", className: isActive('/pageone'), onClick: handleCloseOffcanvas }, "Strona 1"),
+                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/pagetwo", className: isActive('/pagetwo'), onClick: handleCloseOffcanvas }, "Strona 2"))))));
+}
+exports["default"] = MainMenu;
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/index.tsx":
+/*!****************************************!*\
+  !*** ./src/React/MainWindow/index.tsx ***!
+  \****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.renderApp = void 0;
+const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const client_1 = __importDefault(__webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+const ContractsSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const GoogleLoginButton_1 = __importDefault(__webpack_require__(/*! ../GoogleLoginButton */ "./src/React/GoogleLoginButton.tsx"));
+const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ../MainControllerReact */ "./src/React/MainControllerReact.ts"));
+const MainMenu_1 = __importDefault(__webpack_require__(/*! ./MainMenu */ "./src/React/MainWindow/MainMenu.tsx"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./src/React/MainWindow/Footer.tsx"));
+const rootPath = '/envi.projectsite/docs/React/';
+function App() {
+    const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
+    const [isReady, setIsReady] = (0, react_1.useState)(false);
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        async function fetchData() {
+            try {
+                await MainControllerReact_1.default.main();
+                setIsReady(true);
+            }
+            catch (error) {
+                if (error instanceof Error) {
+                    console.error(error);
+                    setErrorMessage(`${error.name} ${error.message}`);
+                }
+                return;
+            }
+        }
+        fetchData();
+    }, []);
+    // Handle the server's response
+    const handleServerResponse = (response) => {
+        if (response.userData) {
+            MainSetupReact_1.default.currentUser = response.userData;
+            setIsLoggedIn(true);
+        }
+        else {
+            console.log('Authentication failed:', response.error);
+        }
+    };
+    if (errorMessage)
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("h1", null, "Ups! mamy b\u0142\u0105d"),
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
+                " ",
+                errorMessage)));
+    else if (isReady) {
+        return isLoggedIn ? (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(AppRoutes, null),
+            react_1.default.createElement(Footer_1.default, null))) : (react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }));
+    }
+    else
+        return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
+}
+function AppRoutes() {
+    return (react_1.default.createElement(react_router_dom_1.BrowserRouter, { basename: rootPath },
+        react_1.default.createElement(MainMenu_1.default, null),
+        react_1.default.createElement(react_router_dom_1.Routes, null,
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Strona główna" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Wyszukiwarka kontraktów" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }))));
+}
+async function renderApp() {
+    const root = document.getElementById("root");
+    if (root) {
+        client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
+            react_1.default.createElement(react_1.StrictMode, null,
+                react_1.default.createElement(App, null))));
+    }
+}
+exports.renderApp = renderApp;
+renderApp();
 
 
 /***/ }),
@@ -68920,121 +69107,6 @@ class ToolsDate {
     }
 }
 exports["default"] = ToolsDate;
-
-
-/***/ }),
-
-/***/ "./src/React/index.tsx":
-/*!*****************************!*\
-  !*** ./src/React/index.tsx ***!
-  \*****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderApp = void 0;
-const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const client_1 = __importDefault(__webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js"));
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-const ContractsSearch_1 = __importDefault(__webpack_require__(/*! ../Contracts/ContractsList/ContractsSearch */ "./src/Contracts/ContractsList/ContractsSearch.tsx"));
-const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const ErrorPage_1 = __importDefault(__webpack_require__(/*! ./ErrorPage */ "./src/React/ErrorPage.tsx"));
-const GoogleLoginButton_1 = __importDefault(__webpack_require__(/*! ./GoogleLoginButton */ "./src/React/GoogleLoginButton.tsx"));
-const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ./MainControllerReact */ "./src/React/MainControllerReact.ts"));
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
-function App() {
-    const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
-    const [isReady, setIsReady] = (0, react_1.useState)(false);
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const rootPath = '/envi.projectsite/docs/React/';
-    (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            try {
-                await MainControllerReact_1.default.main();
-                setIsReady(true);
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    console.error(error);
-                    setErrorMessage(`${error.name} ${error.message}`);
-                }
-                return;
-            }
-        }
-        fetchData();
-    }, []);
-    // Handle the server's response
-    const handleServerResponse = (response) => {
-        if (response.userData) {
-            MainSetupReact_1.default.currentUser = response.userData;
-            setIsLoggedIn(true);
-        }
-        else {
-            console.log('Authentication failed:', response.error);
-        }
-    };
-    const router = (0, react_router_dom_1.createBrowserRouter)([
-        {
-            path: `/`,
-            element: react_1.default.createElement(ContractsSearch_1.default, { title: "Wyszukiwarka kontraktów" }),
-            errorElement: react_1.default.createElement(ErrorPage_1.default, null),
-        },
-        {
-            path: `/contract/:id`,
-            element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }),
-            errorElement: react_1.default.createElement(ErrorPage_1.default, null),
-        }
-    ], { basename: rootPath });
-    if (errorMessage)
-        return (react_1.default.createElement("div", null,
-            react_1.default.createElement("h1", null, "Ups! mamy b\u0142\u0105d"),
-            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
-                " ",
-                errorMessage)));
-    else if (isReady)
-        return (react_1.default.createElement(react_1.default.Fragment, null, isLoggedIn ? (react_1.default.createElement(react_router_dom_1.RouterProvider, { router: router })) : (react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }))));
-    else
-        return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
-}
-async function renderApp() {
-    const root = document.getElementById("root");
-    if (root) {
-        client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
-            react_1.default.createElement(react_1.StrictMode, null,
-                react_1.default.createElement(App, null))));
-    }
-}
-exports.renderApp = renderApp;
-renderApp();
 
 
 /***/ }),
@@ -73501,7 +73573,7 @@ function _unsupportedIterableToArray(o, minLen) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/React/index.tsx");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/React/MainWindow/index.tsx");
 /******/ 	
 /******/ })()
 ;

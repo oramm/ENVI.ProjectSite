@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GAuth = void 0;
-const index_1 = require("./index");
+const index_1 = require("./MainWindow/index");
 class GAuth {
     static async mainWindowInitialise() {
         await google.accounts.id.initialize({
