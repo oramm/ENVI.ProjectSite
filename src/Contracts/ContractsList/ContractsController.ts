@@ -1,3 +1,4 @@
+import { Entity, OtherContract, OurContract, Project } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
 
@@ -9,7 +10,7 @@ export default class ContractsController {
         'Archiwalny'
     ];
 
-    static contractsRepository = new RepositoryReact({
+    static contractsRepository = new RepositoryReact<OurContract | OtherContract>({
         actionRoutes: {
             getRoute: 'contracts',
             addNewRoute: 'contractReact',
@@ -19,7 +20,7 @@ export default class ContractsController {
         name: 'contracts'
     });
 
-    static entitiesRepository = new RepositoryReact({
+    static entitiesRepository = new RepositoryReact<Entity>({
         actionRoutes: {
             getRoute: 'entities',
             addNewRoute: 'entity',
@@ -29,7 +30,7 @@ export default class ContractsController {
         name: 'entities'
     });
 
-    static projectsRepository = new RepositoryReact({
+    static projectsRepository = new RepositoryReact<Project>({
         actionRoutes: {
             getRoute: 'projects',
             addNewRoute: 'project',

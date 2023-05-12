@@ -1,31 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Modal, Button, ButtonProps, Form, Alert, Spinner, Container } from 'react-bootstrap';
-import { ButtonVariant } from 'react-bootstrap/esm/types';
+import React, { useState } from 'react';
+import { Modal, Button, Form, Alert, Spinner, Container } from 'react-bootstrap';
 import { useForm, FieldValues } from 'react-hook-form';
-import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
+import RepositoryReact from '../../React/RepositoryReact';
 import Tools from '../../React/Tools';
 import { FormProvider } from './FormContext';
-import ConfirmModal from './ConfirmModal';
 import { parseFieldValuestoFormData } from '../Resultsets/CommonComponentsController';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import '../../Css/styles.css';
-import { GeneralEditModalButtonProps, ModalBodyProps } from './ModalsTypes';
+import { ModalBodyProps } from './ModalsTypes';
+import { RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import ErrorBoundary from './ErrorBoundary';
 
-type GeneralModalProps = {
+type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
     title: string;
     isEditing: boolean;
-    onEdit?: (object: RepositoryDataItem) => void;
-    onAddNew?: (object: RepositoryDataItem) => void;
+    onEdit?: (object: DataItemType) => void;
+    onAddNew?: (object: DataItemType) => void;
     onClose: () => void;
-    repository: RepositoryReact;
+    repository: RepositoryReact<DataItemType>;
     ModalBodyComponent: React.ComponentType<ModalBodyProps>;
     modalBodyProps: ModalBodyProps;
     validationSchema?: yup.ObjectSchema<any>;
 };
 
-export function GeneralModal({
+export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     show,
     title,
     isEditing,
@@ -36,7 +36,7 @@ export function GeneralModal({
     ModalBodyComponent,
     modalBodyProps,
     validationSchema,
-}: GeneralModalProps) {
+}: GeneralModalProps<DataItemType>) {
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
 
@@ -54,7 +54,7 @@ export function GeneralModal({
         resolver: validationSchema ? yupResolver(validationSchema) : undefined
     });
 
-    let newObject: RepositoryDataItem;
+    let newObject: DataItemType;
 
     async function handleSubmitRepository(data: FieldValues) {
         try {
@@ -79,7 +79,7 @@ export function GeneralModal({
 
     async function handleEdit(data: FormData | FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
-        const objectToEdit = data instanceof FormData ? Tools.updateObject(data, currentDataItem) : data as RepositoryDataItem;
+        const objectToEdit = data instanceof FormData ? Tools.updateObject(data, currentDataItem) as DataItemType : data as DataItemType;
         //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
         objectToEdit.id = currentDataItem.id;
         const editedObject = await repository.editItemNodeJS(objectToEdit);
@@ -99,14 +99,16 @@ export function GeneralModal({
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
-                        <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
-                            <ModalBodyComponent {...modalBodyProps} />
-                            {errorMessage && (
-                                <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
-                                    {errorMessage}
-                                </Alert>
-                            )}
-                        </FormProvider>
+                        <ErrorBoundary>
+                            <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
+                                <ModalBodyComponent {...modalBodyProps} />
+                                {errorMessage && (
+                                    <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                                        {errorMessage}
+                                    </Alert>
+                                )}
+                            </FormProvider>
+                        </ErrorBoundary>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>

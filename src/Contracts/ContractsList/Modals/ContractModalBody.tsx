@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ContractStatus, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { projectsRepository } from '../ContractsSearch';
-import { RepositoryDataItem } from '../../../React/RepositoryReact';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
+import { Project } from '../../../../Typings/bussinesTypes';
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
     const { register, setValue, watch, formState, trigger } = useFormContext();
@@ -147,7 +147,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
-    const project = (watch('_parent') as RepositoryDataItem | undefined);
+    const project = (watch('_parent') as Project | undefined);
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody } = additionalProps;

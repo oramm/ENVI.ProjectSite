@@ -1,11 +1,10 @@
+import { RepositoryDataItem } from "../../Typings/bussinesTypes";
 import MainSetup from "./MainSetupReact";
-import Tools from "./Tools";
 
-
-export default class RepositoryReact {
+export default class RepositoryReact<DataItemType extends RepositoryDataItem = RepositoryDataItem> {
     actionRoutes: ActionRoutes;
-    items: RepositoryDataItem[];
-    currentItems: RepositoryDataItem[] = [];
+    items: DataItemType[];
+    currentItems: DataItemType[] = [];
     name: string;
     isMultiSelect: boolean = false;
 
@@ -37,12 +36,12 @@ export default class RepositoryReact {
         this.currentItems.splice(index, 1);
     }
 
-    replaceCurrentItemById(id: number, editedItem: RepositoryDataItem) {
+    replaceCurrentItemById(id: number, editedItem: DataItemType) {
         const index = this.currentItems.findIndex(item => item.id === id);
         this.currentItems.splice(index, 1, editedItem);
     }
 
-    replaceItemById(id: number, editedItem: RepositoryDataItem) {
+    replaceItemById(id: number, editedItem: DataItemType) {
         const index = this.items.findIndex(item => item.id === id);
         this.currentItems.splice(index, 1, editedItem);
     }
@@ -90,7 +89,7 @@ export default class RepositoryReact {
     /** używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
-    async clientSideEditItemHandler(dataItem: RepositoryDataItem) {
+    async clientSideEditItemHandler(dataItem: DataItemType) {
         const newIndex = this.items.findIndex((item) => item.id == dataItem.id);
         this.items[newIndex] = dataItem;
         console.log('%s:: wykonano funkcję: %s, %o', this.name, this, dataItem);
@@ -99,7 +98,7 @@ export default class RepositoryReact {
     /** używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
      * gdy edytujemy element nieposiadający listy
      */
-    clientSideAddNewItemHandler(dataItem: RepositoryDataItem) {
+    clientSideAddNewItemHandler(dataItem: DataItemType) {
         this.items.push(dataItem);
         console.log('dodaję obiekt docelowy, jego parent: ,%o', dataItem._parent)
         this.addToCurrentItems(dataItem.id);
@@ -128,7 +127,7 @@ export default class RepositoryReact {
             requestOptions
         );
 
-        const newItemFromServer: RepositoryDataItem = await resultRawResponse.json();
+        const newItemFromServer: DataItemType = await resultRawResponse.json();
 
         if (newItemFromServer.errorMessage) {
             console.error('Error from server: %o', newItemFromServer.errorMessage);
@@ -143,14 +142,14 @@ export default class RepositoryReact {
 
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
-        return newItemFromServer as RepositoryDataItem;
+        return newItemFromServer as DataItemType;
     }
 
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium 
   * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
   * @param item obiekt do edycji
  */
-    async editItemNodeJS(item: RepositoryDataItem | FormData) {
+    async editItemNodeJS(item: DataItemType | FormData) {
         const requestOptions: RequestInit = {
             method: 'PUT',
             credentials: 'include',
@@ -171,7 +170,7 @@ export default class RepositoryReact {
             requestOptions
         );
 
-        const resultObject = await resultRawResponse.json() as RepositoryDataItem;
+        const resultObject = await resultRawResponse.json() as DataItemType;
 
         if (resultRawResponse.status >= 400) {
             console.error('Error from server: %o', resultObject.errorMessage);
@@ -181,7 +180,7 @@ export default class RepositoryReact {
         if (resultObject.authorizeUrl) {
             window.open(resultObject.authorizeUrl);
             console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
-            return item as RepositoryDataItem;
+            return item as DataItemType;
         }
 
         this.replaceItemById(resultObject.id, resultObject);
@@ -247,8 +246,3 @@ export type ActionRoutes = {
     deleteRoute: string;
     copyRoute?: string;
 }
-
-export type RepositoryDataItem = {
-    id: number;
-    [key: string]: any;
-};

@@ -35,6 +35,7 @@ const FormContext_1 = require("./FormContext");
 const CommonComponentsController_1 = require("../Resultsets/CommonComponentsController");
 const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
+const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
@@ -85,9 +86,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
                 react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
             react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
                 react_1.default.createElement(react_bootstrap_1.Container, null,
-                    react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
-                        react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
-                        errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
+                    react_1.default.createElement(ErrorBoundary_1.default, null,
+                        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
+                            react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
+                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                 requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),

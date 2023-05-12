@@ -1,4 +1,4 @@
-import { RepositoryDataItem } from "./RepositoryReact";
+import { RepositoryDataItem } from "../../Typings/bussinesTypes";
 
 export default class Tools {
     /** Aktualizuje dane obiektu na podstawie danych z formularza 

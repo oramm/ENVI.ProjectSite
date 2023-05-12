@@ -11,6 +11,7 @@ import MainController from "../MainControllerReact";
 import MainMenu from "./MainMenu";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
+import LettersSearch from "../../Letters/LettersList/LettersSearch";
 
 const rootPath = '/envi.projectsite/docs/React/';
 
@@ -76,6 +77,8 @@ function AppRoutes() {
                 <Route path="/" element={<ContractsSearch title={"Strona główna"} />} />
                 <Route path="/contracts" element={<ContractsSearch title={"Wyszukiwarka kontraktów"} />} />
                 <Route path="/contract/:id" element={<ContractsSearch title={"test"} />} />
+                <Route path="/letters" element={<LettersSearch title={"Wyszukiwarka pism"} />} />
+
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </BrowserRouter>

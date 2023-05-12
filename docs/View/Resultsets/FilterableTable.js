@@ -34,7 +34,7 @@ const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli
- * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach)
+ * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
  * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden)
  * @param EditButtonComponent komponent przycisku edycji obiektu
@@ -110,11 +110,18 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
 }
+function renderHeaderBody(column) {
+    if (column.header)
+        return column.header;
+    if (!column.renderThBody)
+        return '';
+    return column.renderThBody();
+}
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
     const { objects, activeRowId, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.objectAttributeToShow }, column.header))))),
+            react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
             return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
@@ -125,15 +132,21 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
-                if (selectedObjectRoute)
-                    navigate(selectedObjectRoute + dataObject.id);
-            }, className: isActive ? 'active' : '' },
-            tableStructure.map((column) => (react_1.default.createElement("td", { key: column.objectAttributeToShow }, dataObject[column.objectAttributeToShow]))),
-            isActive &&
-                react_1.default.createElement("td", { align: 'center' },
-                    react_1.default.createElement(RowActionMenu, { dataObject: dataObject })))));
+    function tdBodyRender(columStructure, dataObject) {
+        if (columStructure.objectAttributeToShow !== undefined)
+            return dataObject[columStructure.objectAttributeToShow];
+        if (columStructure.renderTdBody !== undefined)
+            return columStructure.renderTdBody(dataObject);
+        return '';
+    }
+    return (react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
+            if (selectedObjectRoute)
+                navigate(selectedObjectRoute + dataObject.id);
+        }, className: isActive ? 'active' : '' },
+        tableStructure.map((column, index) => (react_1.default.createElement("td", { key: column.objectAttributeToShow || index }, tdBodyRender(column, dataObject)))),
+        isActive &&
+            react_1.default.createElement("td", { align: 'center' },
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject }))));
 }
 function RowActionMenu({ dataObject, }) {
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = (0, react_1.useContext)(exports.FilterableTableContext);
@@ -160,7 +173,7 @@ exports.DeleteModalButton = DeleteModalButton;
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
     repository: {},
-    tableStructure: [{ header: '', objectAttributeToShow: '' }],
+    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => react_1.default.createElement(react_1.default.Fragment, null) }],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },

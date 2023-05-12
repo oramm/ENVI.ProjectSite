@@ -1,0 +1,50 @@
+import React from 'react';
+import { ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
+import { Col, Form, Row } from 'react-bootstrap';
+import { projectsRepository } from './LettersSearch';
+import { useFormContext } from '../../View/Modals/FormContext';
+import ToolsDate from '../../React/ToolsDate';
+import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
+
+
+export function LettersFilterBody({ }: FilterBodyProps) {
+    const { register } = useFormContext();
+
+    return (
+        <Row xl={5} md={3} xs={1}>
+            <Form.Group as={Col}>
+                <Form.Label>Szukana fraza</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Wpisz tekst"
+                    {...register('searchText')}
+                />
+            </Form.Group>
+            <Form.Group as={Col}>
+                <Form.Label>Utworzono od</Form.Label>
+                <Form.Control
+                    type="date"
+                    defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)}
+                    {...register('creationDateFrom')}
+                />
+
+            </Form.Group>
+            <Form.Group as={Col}>
+                <Form.Label>Utworzono do</Form.Label>
+                <Form.Control
+                    type="date"
+                    defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)}
+                    {...register('creationDateTo')}
+                />
+            </Form.Group>
+            <Form.Group as={Col}>
+                <ProjectSelector
+                    name='_project'
+                    repository={projectsRepository}
+                    required={false}
+                    showValidationInfo={false}
+                />
+            </Form.Group>
+        </Row>
+    );
+}

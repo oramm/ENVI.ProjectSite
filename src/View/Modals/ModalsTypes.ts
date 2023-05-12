@@ -5,14 +5,15 @@
  * @param additionalProps - dodatkowe właściwości przekazywane do body - np. inne komponenty - patrz OurContractAddNewModalButton
  */
 
-import RepositoryReact, { RepositoryDataItem } from "../../React/RepositoryReact";
+import RepositoryReact from "../../React/RepositoryReact";
 import * as yup from "yup";
 import { ButtonProps } from "react-bootstrap";
 import { ButtonVariant } from "react-bootstrap/esm/types";
+import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 
-export type ModalBodyProps = {
+export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     isEditing: boolean;
-    initialData?: RepositoryDataItem;
+    initialData?: DataItemType;
     additionalProps?: any;
 }
 
@@ -36,8 +37,8 @@ export type GeneralModalButtonProps = {
     buttonProps: GeneralModalButtonButtonProps;
 };
 
-type GeneralAddNewModalButtonModalProps = GeneralModalButtonModalProps & {
-    onAddNew: (object: RepositoryDataItem) => void;
+type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps & {
+    onAddNew: (object: DataItemType) => void;
 };
 
 type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {
@@ -49,9 +50,9 @@ export type GeneralAddNewModalButtonProps = {
     buttonProps: GeneralAddNewModalButtonButtonProps;
 };
 
-type GeneralEditModalButtonModalProps = GeneralModalButtonModalProps & {
-    onEdit: (object: RepositoryDataItem) => void;
-    initialData: RepositoryDataItem;
+type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps & {
+    onEdit: (object: DataItemType) => void;
+    initialData: DataItemType;
 };
 
 type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {

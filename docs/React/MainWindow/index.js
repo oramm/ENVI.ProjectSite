@@ -39,6 +39,7 @@ const MainControllerReact_1 = __importDefault(require("../MainControllerReact"))
 const MainMenu_1 = __importDefault(require("./MainMenu"));
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
+const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
 const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
@@ -90,7 +91,8 @@ function AppRoutes() {
         react_1.default.createElement(react_router_dom_1.Routes, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Strona główna" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Wyszukiwarka kontraktów" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Wyszukiwarka pism" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

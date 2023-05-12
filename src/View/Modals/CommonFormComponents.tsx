@@ -1,35 +1,53 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Form, Spinner, FormControlProps, Button, Modal, Alert, InputGroup } from "react-bootstrap";
-import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Form, InputGroup } from "react-bootstrap";
+import { AsyncTypeahead, Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { RenderMenuItemChildren } from 'react-bootstrap-typeahead/types/components/TypeaheadMenu';
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form/dist/types';
 import '../../Css/styles.css';
 
 import MainSetup from '../../React/MainSetupReact';
-import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
+import RepositoryReact from '../../React/RepositoryReact';
 import { useFormContext } from './FormContext';
 import { Controller } from 'react-hook-form';
 import ContractsController from '../../Contracts/ContractsList/ContractsController';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
+import { TypeaheadManagerChildProps } from 'react-bootstrap-typeahead/types/types';
+import { Case, Contract, Milestone, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
     required?: boolean,
     showValidationInfo?: boolean,
+    name?: string,
+    disabled?: boolean,
 }
-export function ProjectSelector({ repository, required = false, showValidationInfo = true }: ProjectSelectorProps) {
-    const { register, formState: { errors } } = useFormContext();
+
+/** 
+ * Komponent formularza wyboru projektu
+ * @param repository Repozytorium projektów 
+ * @param required Czy pole jest wymagane - domyślnie false
+ * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
+export function ProjectSelector({
+    name = '_parent',
+    repository,
+    required = false,
+    showValidationInfo = true,
+    disabled = false,
+}: ProjectSelectorProps) {
+    const { formState: { errors } } = useFormContext();
     return (
         <>
             <Form.Label>Projekt</Form.Label>
             <MyAsyncTypeahead
-                name='_parent'
+                name={name}
                 labelKey="ourId"
                 repository={repository}
                 specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
-                isRequired={required}
+                required={required}
                 showValidationInfo={showValidationInfo}
                 multiple={false}
             />
@@ -69,6 +87,57 @@ export function ContractStatus({ required = false, showValidationInfo = true }: 
         </Form.Group>
     );
 };
+
+export type ContractSelectFormElementProps = {
+    name?: string,
+    showValidationInfo?: boolean,
+    multiple?: boolean,
+    typesToInclude?: 'our' | 'other' | 'all',
+    repository: RepositoryReact,
+    _project?: RepositoryDataItem,
+    readOnly?: boolean,
+}
+export function ContractSelectFormElement({
+    name = '_contract',
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    typesToInclude = 'all',
+    _project,
+    readOnly = false,
+}: ContractSelectFormElementProps) {
+    const { control, watch, setValue, formState: { errors } } = useFormContext();
+
+    function makeContextSearchParams() {
+        const params = [
+            { key: 'typesToInclude', value: typesToInclude }
+        ];
+        if (_project) params.push({ key: 'project', value: _project.ourId });
+        return params;
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey='name'
+                searchKey='searchText'
+                contextSearchParams={makeContextSearchParams()}
+                repository={repository}
+                renderMenuItemChildren={(option: any) => (<div>{option._ourIdOrNumber_Name}</div>)}
+                multiple={multiple}
+                showValidationInfo={showValidationInfo}
+                readOnly={readOnly}
+            />
+            {errors?.[name] && (
+                <Form.Text className="text-danger">
+                    {errors?.[name]?.message as string}
+                </Form.Text>
+
+            )}
+        </>
+    )
+}
 
 type ContractTypeSelectFormElementProps = {
     typesToInclude?: 'our' | 'other' | 'all'
@@ -212,7 +281,15 @@ export function PersonSelectFormElement({
                     />
                 )}
             />
-            {errors?.[name] && (
+            <ErrorMessage errors={errors} name={name} />
+        </>
+    );
+}
+type ErrorMessageProps = { errors: FieldErrors<any>, name: string }
+function ErrorMessage({ errors, name }: ErrorMessageProps) {
+    return (
+        <>
+            {errors[name] && (
                 <Form.Text className="text-danger">
                     {errors[name]?.message as string}
                 </Form.Text>
@@ -229,9 +306,11 @@ type MyAsyncTypeaheadProps = {
     contextSearchParams?: { key: string, value: string }[],
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
-    isRequired?: boolean;
+    required?: boolean;
     showValidationInfo?: boolean,
-    renderMenuItemChildren?: RenderMenuItemChildren
+    renderMenuItemChildren?: RenderMenuItemChildren,
+    renderMenu?: (results: any[], menuProps: any, state: TypeaheadManagerChildProps) => JSX.Element,
+    readOnly?: boolean,
 }
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
@@ -250,16 +329,19 @@ export function MyAsyncTypeahead({
     contextSearchParams = [],
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
+    renderMenu,
     multiple = false,
-    isRequired = false,
+    required = false,
     showValidationInfo = true,
+    readOnly = false
 }: MyAsyncTypeaheadProps) {
-    const { control, setValue, formState: { errors } } = useFormContext();
+    const { register, control, setValue, formState: { errors } } = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
 
     function handleSearch(query: string) {
         setIsLoading(true);
+        console.log('handleSearch', query);
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
@@ -275,56 +357,157 @@ export function MyAsyncTypeahead({
     const filterBy = () => true;
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        console.log('handleOnChange', selectedOptions);
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
+        if (readOnly)
+            setValue(name, valueToBeSent);
+
     }
     return (
-        <Controller
-            name={name}
-            control={control}
-            rules={{ required: { value: isRequired, message: `${name} musi być wybrany` } }}
-            render={({ field }) => (
-                <AsyncTypeahead
-                    filterBy={filterBy}
-                    id="async-example"
-                    isLoading={isLoading}
-                    labelKey={labelKey}
-                    minLength={3}
-                    onSearch={handleSearch}
-                    options={options}
-                    onChange={(items) => handleOnChange(items, field)}
-                    onBlur={field.onBlur}
-                    selected={field.value ? multiple ? field.value : [field.value] : []}
-                    multiple={multiple}
-                    newSelectionPrefix="Dodaj nowy: "
-                    placeholder="-- Wybierz opcję --"
-                    renderMenuItemChildren={renderMenuItemChildren}
-                    isValid={showValidationInfo ? isRequired && field.value && field.value.length > 0 : undefined}
-                    isInvalid={showValidationInfo ? isRequired && (!field.value || field.value.length === 0) : undefined}
+        <>
+            <Controller
+                name={name}
+                control={control}
+                rules={{ required: { value: required, message: `${name} musi być wybrany` } }}
+                render={({ field }) => (
+                    <AsyncTypeahead
+                        renderMenu={renderMenu ? renderMenu : undefined}
+                        filterBy={filterBy}
+                        id="async-example"
+                        isLoading={isLoading}
+                        labelKey={labelKey}
+                        minLength={2}
+                        onSearch={handleSearch}
+                        options={options}
+                        onChange={(items) => handleOnChange(items, field)}
+                        onBlur={field.onBlur}
+                        selected={field.value ? multiple ? field.value : [field.value] : []}
+                        multiple={multiple}
+                        newSelectionPrefix="Dodaj nowy: "
+                        placeholder="-- Wybierz opcję --"
+                        renderMenuItemChildren={renderMenuItemChildren}
+                        isValid={showValidationInfo ? required && field.value && field.value.length > 0 : undefined}
+                        isInvalid={showValidationInfo ? required && (!field.value || field.value.length === 0) : undefined}
+                    />
+                )}
+            />
+
+            <ErrorMessage errors={errors} name={name} />
+            {readOnly && (
+                <input
+                    type="hidden"
+                    {...register(name)}
                 />
             )}
-        />
-    );
+        </>
+    )
 };
 
-export function handleEditMyAsyncTypeaheadElement(
-    currentSelectedDataItems: any[],
-    previousSelectedItems: RepositoryDataItem[],
-    setSuperiorElementState: React.Dispatch<React.SetStateAction<RepositoryDataItem[]>>
-) {
-    const currentAndPreviousSelections = previousSelectedItems.concat(currentSelectedDataItems);
-    const allUniqueDataItems = currentAndPreviousSelections.reduce((uniqueItems: RepositoryDataItem[], dataItem) => {
-        const isDuplicate = uniqueItems.some(item => item.id === dataItem.id);
-        if (!isDuplicate) {
-            uniqueItems.push(dataItem);
+function groupByMilestone(cases: Case[]) {
+    return cases.reduce<Record<string, Case[]>>((groups, item) => {
+        if (!groups[item._parent._FolderNumber_TypeName_Name]) {
+            groups[item._parent._FolderNumber_TypeName_Name] = [];
         }
-        return uniqueItems;
-    }, []);
-    const finalItemsSelected = (currentSelectedDataItems.length < allUniqueDataItems.length) ? currentSelectedDataItems : allUniqueDataItems;
+        groups[item._parent._FolderNumber_TypeName_Name].push(item);
+        return groups;
+    }, {});
+}
 
-    setSuperiorElementState(finalItemsSelected);
-    console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
+function renderCaseMenu(
+    results: Case[],
+    menuProps: any,
+    state: TypeaheadManagerChildProps,
+    groupedResults: Record<string, Case[]>,
+    milestoneNames: string[]
+) {
+    console.log('renderCaseMenu', results.length, milestoneNames.length);
+    let index = 0;
+
+    const items = milestoneNames.map((milestoneName) => (
+        <Fragment key={milestoneName}>
+            {index !== 0 && <Menu.Divider />}
+            <Menu.Header>{milestoneName}</Menu.Header>
+            {groupedResults[milestoneName].map((item) => {
+                const menuItem = (
+                    <MenuItem key={index} option={item} position={index}>
+                        {item._type.folderNumber} {item._type.name} {item._folderName}
+                    </MenuItem>
+                );
+
+                index += 1;
+                return menuItem;
+            })}
+        </Fragment>
+    ));
+
+    return <Menu {...menuProps}>{items}</Menu>;
+}
+
+
+interface CaseSelectMenuElementProps {
+    name?: string;
+    repository: RepositoryReact<Case>;
+    _project?: Project;
+    _contract?: Contract;
+    _milestone?: Milestone;
+    required?: boolean;
+    readonly?: boolean;
+}
+
+/**
+ * Pole wyboru sprawy z repozytorium pogrupowane po Milestonach
+ * @param name nazwa pola formularza (musi być zgodna z nazwą pola w obiekcie)
+ * @param repository repozytorium z którego pobierane są dane 
+ * @param labelKey nazwa pola w obiekcie które ma być wyświetlane w polu wyboru
+ * @param searchKey nazwa pola w obiekcie które ma być wyszukiwane (domyślnie labelKey)
+ * @param contextSearchParams parametry wyszukiwania które mają być wysyłane do serwera (np. parametry kontekstowe)
+ * @param specialSerwerSearchActionRoute nazwa akcji wyszukiwania na serwerze (domyślnie search)
+ * @param renderMenuItemChildren funkcja renderująca elementy menu
+ * @param renderMenu funkcja renderująca menu
+ * @param multiple czy można wybrać wiele opcji
+ * @param required czy pole jest wymagane
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
+ * @param readOnly czy pole jest tylko do odczytu  
+ */
+export function CaseSelectMenuElement({
+    name = '_case',
+    required = false,
+    readonly = false,
+    _project,
+    _contract,
+    _milestone,
+    repository
+}: CaseSelectMenuElementProps) {
+
+    function makeContextSearchParams() {
+        const contextSearchParams: { key: string, value: string }[] = [];
+        if (_project)
+            contextSearchParams.push({ key: 'projectId', value: _project?.ourId });
+        if (_contract)
+            contextSearchParams.push({ key: 'contractId', value: _contract.id.toString() });
+        if (_milestone)
+            contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
+        return contextSearchParams
+        //return [{ key: 'projectId', value: 'SCI.GWS.01.POIS' }];
+    }
+
+    return <MyAsyncTypeahead
+        contextSearchParams={makeContextSearchParams()}
+        name={name}
+        repository={repository}
+        labelKey='_typeFolderNumber_TypeName_Number_Name'
+        searchKey='searchText'
+        renderMenu={(results, menuProps, state) => {
+            const groupedResults = groupByMilestone(results);
+            const milestoneNames = Object.keys(groupedResults).sort();
+            return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
+        }}
+        multiple={true}
+        required={required}
+        readOnly={readonly}
+    />;
 }
 
 type ValueInPLNInputProps = {
@@ -343,7 +526,7 @@ export function ValueInPLNInput({
     showValidationInfo = true,
     keyLabel = 'value',
 }: ValueInPLNInputProps) {
-    const { register, control, setValue, watch, formState: { errors } } = useFormContext();
+    const { control, setValue, watch, formState: { errors } } = useFormContext();
     const watchedValue = watch(keyLabel);
     const [formattedValue, setFormattedValue] = useState('');
 
@@ -406,46 +589,33 @@ export const valueValidation = Yup.string()
     });
 
 type FileInputProps = {
-    fieldName: string;
-    isRequired?: boolean;
+    name: string;
+    required?: boolean;
     acceptedFileTypes?: string;
 }
 
 /**Pole dodawania plików
- * @param fieldName nazwa pola w formularzu
- * @param isRequired czy pole jest wymagane
+ * @param name nazwa pola w formularzu
+ * @param required czy pole jest wymagane
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
 export function FileInput({
-    fieldName,
-    isRequired = false,
+    name,
+    required = false,
     acceptedFileTypes = '',
 }: FileInputProps) {
-    const [file, setFile] = useState<File | null>(null);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files && event.target.files[0];
-
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFile(selectedFile);
-            };
-            reader.readAsDataURL(selectedFile);
-        }
-    };
+    const { register, formState: { errors } } = useFormContext();
 
     return (
-        <Form.Group>
-            <Form.Label>Wybierz plik</Form.Label>
-            <Form.Control
-                type="file"
-                name={fieldName}
-                onChange={handleFileChange}
-                required={isRequired}
-                accept={acceptedFileTypes}
-            />
-        </Form.Group>
+        <Form.Control
+            type="file"
+            required={required}
+            accept={acceptedFileTypes}
+            {...register(name, {
+                required: { value: required, message: 'Pole jest wymagane' },
+            })}
+        />
     );
 }

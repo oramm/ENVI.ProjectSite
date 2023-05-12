@@ -1,7 +1,7 @@
 import React, { createContext, FormEventHandler, useContext, useEffect, useState } from 'react';
 
 import { Table, Container, Button, Row, Col, Form } from 'react-bootstrap';
-import RepositoryReact, { RepositoryDataItem } from '../../React/RepositoryReact';
+import RepositoryReact from '../../React/RepositoryReact';
 import { FormProvider } from '../Modals/FormContext';
 import { FieldValues, useForm } from 'react-hook-form';
 import { parseFieldValuestoFormData } from './CommonComponentsController';
@@ -9,13 +9,14 @@ import { GDFolderIconLink } from './CommonComponents';
 import { useNavigate } from 'react-router-dom';
 import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/ModalsTypes';
 import { GeneralDeleteModalButton } from '../Modals/GeneralModalButtons';
+import { RepositoryDataItem } from '../../../Typings/bussinesTypes';
 
 
 export type FilterBodyProps = {}
 
 export type FilterableTableProps = {
     title: string,
-    tableStructure: { header: string, objectAttributeToShow: string }[],
+    tableStructure: RowStructure[],
     repository: RepositoryReact
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps>[]
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>;
@@ -25,7 +26,7 @@ export type FilterableTableProps = {
 }
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli
- * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach)
+ * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
  * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden) 
  * @param EditButtonComponent komponent przycisku edycji obiektu
@@ -169,6 +170,12 @@ type ResultSetTableProps = {
     onIsReadyChange?: (isReady: boolean) => void
 }
 
+function renderHeaderBody(column: RowStructure) {
+    if (column.header) return column.header;
+    if (!column.renderThBody) return '';
+    return column.renderThBody();
+}
+
 function ResultSetTable({
     onRowClick,
     onIsReadyChange,
@@ -179,7 +186,9 @@ function ResultSetTable({
             <thead>
                 <tr>
                     {tableStructure.map((column) => (
-                        <th key={column.objectAttributeToShow}>{column.header}</th>
+                        <th key={column.renderThBody?.name || column.header}>
+                            {renderHeaderBody(column)}
+                        </th>
                     ))}
                 </tr>
             </thead>
@@ -213,25 +222,35 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
     const navigate = useNavigate();
     const { selectedObjectRoute, tableStructure } = useContext(FilterableTableContext);
+
+    function tdBodyRender(columStructure: RowStructure, dataObject: RepositoryDataItem) {
+        if (columStructure.objectAttributeToShow !== undefined)
+            return dataObject[columStructure.objectAttributeToShow] as string;
+        if (columStructure.renderTdBody !== undefined)
+            return columStructure.renderTdBody(dataObject);
+        return '';
+    }
+
     return (
-        <>
-            <tr
-                onClick={(e) => (onRowClick(dataObject.id))}
-                onDoubleClick={() => {
-                    if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id)
-                }}
-                className={isActive ? 'active' : ''}
-            >
-                {tableStructure.map((column) => (
-                    <td key={column.objectAttributeToShow}>{dataObject[column.objectAttributeToShow]}</td>
-                ))}
-                {isActive &&
-                    <td align='center'>
-                        <RowActionMenu dataObject={dataObject} />
-                    </td>
-                }
-            </tr>
-        </>);
+        <tr
+            onClick={(e) => (onRowClick(dataObject.id))}
+            onDoubleClick={() => {
+                if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id)
+            }}
+            className={isActive ? 'active' : ''}
+        >
+            {tableStructure.map((column, index) => (
+                <td key={column.objectAttributeToShow || index}>
+                    {tdBodyRender(column, dataObject)}
+                </td>
+            ))}
+            {isActive &&
+                <td align='center'>
+                    <RowActionMenu dataObject={dataObject} />
+                </td>
+            }
+        </tr>
+    );
 }
 
 interface RowActionMenuProps {
@@ -283,10 +302,17 @@ export function DeleteModalButton({
     );
 }
 
-interface FilterableTableContextType {
+type RowStructure = {
+    header?: string,
+    objectAttributeToShow?: string,
+    renderTdBody?: (dataItem: RepositoryDataItem) => JSX.Element
+    renderThBody?: () => JSX.Element
+};
+
+type FilterableTableContextType = {
     objects: RepositoryDataItem[];
     repository: RepositoryReact;
-    tableStructure: { header: string, objectAttributeToShow: string }[],
+    tableStructure: RowStructure[],
     handleAddObject: (object: RepositoryDataItem) => void;
     handleEditObject: (object: RepositoryDataItem) => void;
     handleDeleteObject: (objectId: number) => void;
@@ -300,7 +326,7 @@ interface FilterableTableContextType {
 export const FilterableTableContext = createContext<FilterableTableContextType>({
     objects: [],
     repository: {} as RepositoryReact,
-    tableStructure: [{ header: '', objectAttributeToShow: '' }],
+    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => <></> }],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },

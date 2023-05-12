@@ -56,7 +56,6 @@ function OurContractModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
                 react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true }))),
-        react_1.default.createElement(CommonFormComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

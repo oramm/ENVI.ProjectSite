@@ -68267,10 +68267,573 @@ function OurContractModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
                 react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true }))),
-        react_1.default.createElement(CommonFormComponents_1.FileInput, { fieldName: "exampleFile", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" })));
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true })))));
 }
 exports.OurContractModalBody = OurContractModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/LetterFilterBody.tsx":
+/*!******************************************************!*\
+  !*** ./src/Letters/LettersList/LetterFilterBody.tsx ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LettersFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonFormComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const LettersSearch_1 = __webpack_require__(/*! ./LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+function LettersFilterBody({}) {
+    const { register } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono od"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10), ...register('creationDateFrom') })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono do"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register('creationDateTo') })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { name: '_project', repository: LettersSearch_1.projectsRepository, required: false, showValidationInfo: false }))));
+}
+exports.LettersFilterBody = LettersFilterBody;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/LettersController.ts":
+/*!******************************************************!*\
+  !*** ./src/Letters/LettersList/LettersController.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+class LettersController {
+}
+exports["default"] = LettersController;
+LettersController.statusNames = [
+    'Roboczy',
+    'Do wysłania',
+    'Wysłany',
+];
+LettersController.lettersRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'letters',
+        addNewRoute: 'letterReact',
+        editRoute: 'letter',
+        deleteRoute: 'letter'
+    },
+    name: 'letters'
+});
+LettersController.projectsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'projects',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'projects'
+});
+LettersController.contractsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'contracts',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'contracts'
+});
+LettersController.milestonesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'milestones',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'milestones'
+});
+LettersController.casesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'cases',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'cases'
+});
+LettersController.entitiesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'entities',
+        addNewRoute: 'entity',
+        editRoute: 'entity',
+        deleteRoute: 'entity'
+    },
+    name: 'entities'
+});
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/LettersSearch.tsx":
+/*!***************************************************!*\
+  !*** ./src/Letters/LettersList/LettersSearch.tsx ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.projectsRepository = exports.entitiesRepository = exports.lettersRepository = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
+const LettersController_1 = __importDefault(__webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts"));
+const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/Letters/LettersList/LetterFilterBody.tsx");
+const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
+exports.lettersRepository = LettersController_1.default.lettersRepository;
+exports.entitiesRepository = LettersController_1.default.entitiesRepository;
+exports.projectsRepository = LettersController_1.default.projectsRepository;
+exports.contractsRepository = LettersController_1.default.contractsRepository;
+exports.milestonesRepository = LettersController_1.default.milestonesRepository;
+exports.casesRepository = LettersController_1.default.casesRepository;
+function LettersSearch({ title }) {
+    function makeEntitiesLabel(letter) {
+        letter = letter;
+        const entities = letter._entitiesMain;
+        let label = '';
+        for (var i = 0; i < entities.length - 1; i++) {
+            label += entities[i].name + ', ';
+        }
+        if (entities[i])
+            label += entities[i].name;
+        return react_1.default.createElement(react_1.default.Fragment, null, label);
+    }
+    function renderIconTdBody(letter) {
+        letter = letter;
+        const icon = letter.isOur ? 'fa fa-paper-plane fa-lg' : 'fa fa-envelope fa-lg';
+        return react_1.default.createElement("i", { className: icon });
+    }
+    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
+            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
+            { header: 'Utworzono', objectAttributeToShow: 'creationDate' },
+            { header: 'Wysłano &nbs', objectAttributeToShow: 'registrationDate' },
+            { header: 'Numer', objectAttributeToShow: 'number' },
+            { header: 'Dotyczy', objectAttributeToShow: 'description' },
+            { header: 'Odbiorca', renderTdBody: makeEntitiesLabel },
+        ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: exports.lettersRepository, selectedObjectRoute: '/letter/' }));
+}
+exports["default"] = LettersSearch;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/IncomingLetterModalBody.tsx":
+/*!********************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/IncomingLetterModalBody.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.IncomingLetterModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const CommonFormComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
+const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+/**Wywoływana w ProjectsSelector jako props  */
+function IncomingLetterModalBody(props) {
+    const initialData = props.initialData;
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldValidate: true });
+    }, [initialData, setValue]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer pisma"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: 'text', placeholder: "Podaj numer", isInvalid: !!formState.errors?.number, isValid: !formState.errors?.number, ...register('number') }),
+            formState.errors?.number && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.number.message))),
+        react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }))));
+}
+exports.IncomingLetterModalBody = IncomingLetterModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/LetterModalBody.tsx":
+/*!************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/LetterModalBody.tsx ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProjectSelectorModalBody = exports.LetterModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonFormComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+function LetterModalBody({ isEditing, initialData }) {
+    const { register, setValue, watch, formState, trigger } = (0, FormContext_1.useFormContext)();
+    const _project = watch('_project');
+    const _contract = watch('_contract');
+    function getContractFromCases(_cases) {
+        if (!_cases || _cases.length === 0)
+            return undefined;
+        const _contract = LettersSearch_1.contractsRepository;
+        return _cases[0]._parent._parent;
+    }
+    (0, react_1.useEffect)(() => {
+        setValue('_contract', getContractFromCases(initialData?._cases), { shouldValidate: true });
+        setValue('description', initialData?.description || '', { shouldValidate: true });
+        setValue('creationDate', initialData?.creationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('registrationDate', initialData?.registrationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('_editor', initialData?._editor, { shouldValidate: true });
+    }, [initialData, setValue]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.description, isInvalid: !!formState.errors?.description, ...register('description') }),
+            formState.errors?.description && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.description.message))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.creationDate, isInvalid: !!formState.errors.creationDate, ...register('creationDate'), onChange: (e) => {
+                        register("creationDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("registrationDate");
+                    } }),
+                formState.errors.startDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.startDate.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.registrationDate, isInvalid: !!formState.errors.registrationDate, ...register('registrationDate'), onChange: (e) => {
+                        register("registrationDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("creationDate");
+                    } }),
+                formState.errors.registrationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.registrationDate.message)))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
+            react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_editor', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
+            react_1.default.createElement(CommonFormComponents_1.FileInput, { name: "file", acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf" }))));
+}
+exports.LetterModalBody = LetterModalBody;
+/** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
+ * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
+ * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
+ *
+ */
+function ProjectSelectorModalBody({ isEditing, additionalProps }) {
+    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
+    const project = watch('_project');
+    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
+    const { SpecificLetterModalBody } = additionalProps;
+    if (!SpecificLetterModalBody)
+        throw new Error("SpecificContractModalBody is not defined");
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
+}
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx":
+/*!***************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/LetterModalButtons.tsx ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
+const LetterValidationSchema_1 = __webpack_require__(/*! ./LetterValidationSchema */ "./src/Letters/LettersList/Modals/LetterValidationSchema.ts");
+const IncomingLetterModalBody_1 = __webpack_require__(/*! ./IncomingLetterModalBody */ "./src/Letters/LettersList/Modals/IncomingLetterModalBody.tsx");
+const OurLetterModalBody_TEST_1 = __webpack_require__(/*! ./OurLetterModalBody TEST */ "./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx");
+const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
+/** przycisk i modal edycji Letter */
+function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    (0, react_1.useEffect)(() => {
+        console.log("LetterEditModalButton initialData", initialData);
+    }, [initialData]);
+    return (initialData.ourId
+        ? react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
+        : react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+}
+exports.LetterEditModalButton = LetterEditModalButton;
+function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: OurLetterModalBody_TEST_1.OurLetterModalBody,
+            modalTitle: "Edycja pisma wychodzącego",
+            repository: LettersSearch_1.lettersRepository,
+            initialData: initialData,
+            validationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.OurLetterEditModalButton = OurLetterEditModalButton;
+function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
+            additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_TEST_1.OurLetterModalBody },
+            modalTitle: "Rejestruj pismo wychodzące",
+            repository: LettersSearch_1.lettersRepository,
+            validationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Rejestruj wychodzące",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
+function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: IncomingLetterModalBody_1.IncomingLetterModalBody,
+            modalTitle: "Edycja pisma przychodzącego",
+            repository: LettersSearch_1.lettersRepository,
+            initialData: initialData,
+            validationSchema: LetterValidationSchema_1.otherLetterValidationSchema
+        }, buttonProps: {} }));
+}
+exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
+function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
+            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody, },
+            modalTitle: "Nowe pismo przychodzące",
+            repository: LettersSearch_1.lettersRepository,
+            validationSchema: LetterValidationSchema_1.otherLetterValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Rejestruj przychodzące",
+        } }));
+}
+exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/LetterValidationSchema.ts":
+/*!******************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/LetterValidationSchema.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.otherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+const commonFields = {
+    _contract: Yup.object()
+        .required('Wybież kontrakt'),
+    number: Yup.string()
+        .required('Numer jest wymagany')
+        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+    description: Yup.string()
+        .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
+    creationDate: Yup.date().required('Data rozpoczęcia jest wymagana')
+        .test('creationDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
+        return this.parent.registrationDate >= value;
+    }),
+    registrationDate: Yup.date().required('Data zakończenia jest wymagana')
+        .test('registrationDateValidation', 'Koniec musi być późniejszy niż początek', function (value) {
+        return value >= this.parent.creationDate;
+    }),
+    _entitiesMain: Yup.array(),
+    _editor: Yup.object()
+        .required('Podaj kto rejestruje'),
+};
+exports.ourLetterValidationSchema = Yup.object().shape({
+    ...commonFields,
+});
+exports.otherLetterValidationSchema = Yup.object().shape({
+    ...commonFields,
+});
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx":
+/*!********************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OurLetterModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function OurLetterModalBody(props) {
+    const initialData = props.initialData;
+    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const _contract = watch('_contract');
+    const _project = watch('_project');
+    (0, react_1.useEffect)(() => {
+        //setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
+    }, [initialData, setValue]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("h1", null, "OurLetterModalBody")));
+}
+exports.OurLetterModalBody = OurLetterModalBody;
 
 
 /***/ }),
@@ -68448,60 +69011,28 @@ exports["default"] = Footer;
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 function MainMenu() {
-    const [showOffcanvas, setShowOffcanvas] = (0, react_1.useState)(false);
     const location = (0, react_router_dom_1.useLocation)();
-    const handleShowOffcanvas = () => setShowOffcanvas(true);
-    const handleCloseOffcanvas = () => setShowOffcanvas(false);
     const isActive = (path) => {
         return location.pathname === path ? 'active' : '';
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: 'top', bg: "light", expand: "lg" },
+        react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: 'top', bg: "light", expand: "md" },
             react_1.default.createElement(react_bootstrap_1.Container, null,
                 react_1.default.createElement(react_bootstrap_1.Navbar.Brand, null, "Witryna Projekt\u00F3w"),
                 react_1.default.createElement(react_bootstrap_1.Navbar.Toggle, { "aria-controls": "basic-navbar-nav" }),
                 react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/'), onClick: handleCloseOffcanvas }, "Strona g\u0142\u00F3wna"),
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/contracts", className: isActive('/contracts'), onClick: handleCloseOffcanvas }, "Kontrakty"),
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters'), onClick: handleCloseOffcanvas }, "Pisma")),
-                    react_1.default.createElement(react_bootstrap_1.Button, { className: "d-lg-none", onClick: handleShowOffcanvas }, "Offcanvas menu")))),
-        react_1.default.createElement(react_bootstrap_1.Offcanvas, { show: showOffcanvas, onHide: handleCloseOffcanvas },
-            react_1.default.createElement(react_bootstrap_1.Offcanvas.Header, { closeButton: true },
-                react_1.default.createElement(react_bootstrap_1.Offcanvas.Title, null, "Menu")),
-            react_1.default.createElement(react_bootstrap_1.Offcanvas.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Nav, { className: "flex-column" },
-                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/'), onClick: handleCloseOffcanvas }, "Strona g\u0142\u00F3wna"),
-                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/pageone", className: isActive('/pageone'), onClick: handleCloseOffcanvas }, "Strona 1"),
-                    react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/pagetwo", className: isActive('/pagetwo'), onClick: handleCloseOffcanvas }, "Strona 2"))))));
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/') }, "Strona g\u0142\u00F3wna"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/contracts", className: isActive('/contracts') }, "Kontrakty"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters') }, "Pisma")))))));
 }
 exports["default"] = MainMenu;
 
@@ -68556,6 +69087,7 @@ const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ../MainCon
 const MainMenu_1 = __importDefault(__webpack_require__(/*! ./MainMenu */ "./src/React/MainWindow/MainMenu.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const Footer_1 = __importDefault(__webpack_require__(/*! ./Footer */ "./src/React/MainWindow/Footer.tsx"));
+const LettersSearch_1 = __importDefault(__webpack_require__(/*! ../../Letters/LettersList/LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx"));
 const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
@@ -68607,7 +69139,8 @@ function AppRoutes() {
         react_1.default.createElement(react_router_dom_1.Routes, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Strona główna" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Wyszukiwarka kontraktów" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Wyszukiwarka pism" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
@@ -69146,7 +69679,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.handleEditMyAsyncTypeaheadElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
+exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.PersonSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -69158,11 +69691,18 @@ const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_mod
 const ContractsController_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const react_number_format_1 = __webpack_require__(/*! react-number-format */ "./node_modules/react-number-format/dist/react-number-format.es.js");
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
-function ProjectSelector({ repository, required = false, showValidationInfo = true }) {
-    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+/**
+ * Komponent formularza wyboru projektu
+ * @param repository Repozytorium projektów
+ * @param required Czy pole jest wymagane - domyślnie false
+ * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
+function ProjectSelector({ name = '_parent', repository, required = false, showValidationInfo = true, disabled = false, }) {
+    const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(MyAsyncTypeahead, { name: '_parent', labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, isRequired: required, showValidationInfo: showValidationInfo, multiple: false })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, required: required, showValidationInfo: showValidationInfo, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
 function ContractStatus({ required = false, showValidationInfo = true }) {
@@ -69178,6 +69718,21 @@ function ContractStatus({ required = false, showValidationInfo = true }) {
 }
 exports.ContractStatus = ContractStatus;
 ;
+function ContractSelectFormElement({ name = '_contract', showValidationInfo = true, multiple = false, repository, typesToInclude = 'all', _project, readOnly = false, }) {
+    const { control, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    function makeContextSearchParams() {
+        const params = [
+            { key: 'typesToInclude', value: typesToInclude }
+        ];
+        if (_project)
+            params.push({ key: 'project', value: _project.ourId });
+        return params;
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: 'name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly }),
+        errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors?.[name]?.message))));
+}
+exports.ContractSelectFormElement = ContractSelectFormElement;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -69241,9 +69796,12 @@ function PersonSelectFormElement({ label, name, repository, multiple = false, sh
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
-        errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
+        react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
 exports.PersonSelectFormElement = PersonSelectFormElement;
+function ErrorMessage({ errors, name }) {
+    return (react_1.default.createElement(react_1.default.Fragment, null, errors[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message))));
+}
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
@@ -69253,12 +69811,13 @@ exports.PersonSelectFormElement = PersonSelectFormElement;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), multiple = false, isRequired = false, showValidationInfo = true, }) {
-    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), renderMenu, multiple = false, required = false, showValidationInfo = true, readOnly = false }) {
+    const { register, control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
+        console.log('handleSearch', query);
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
@@ -69272,28 +69831,81 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
     function handleOnChange(selectedOptions, field) {
+        console.log('handleOnChange', selectedOptions);
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
+        if (readOnly)
+            setValue(name, valueToBeSent);
     }
-    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: isRequired, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 3, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? isRequired && field.value && field.value.length > 0 : undefined, isInvalid: showValidationInfo ? isRequired && (!field.value || field.value.length === 0) : undefined })) }));
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: `${name} musi być wybrany` } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? required && field.value && field.value.length > 0 : undefined, isInvalid: showValidationInfo ? required && (!field.value || field.value.length === 0) : undefined })) }),
+        react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
+        readOnly && (react_1.default.createElement("input", { type: "hidden", ...register(name) }))));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 ;
-function handleEditMyAsyncTypeaheadElement(currentSelectedDataItems, previousSelectedItems, setSuperiorElementState) {
-    const currentAndPreviousSelections = previousSelectedItems.concat(currentSelectedDataItems);
-    const allUniqueDataItems = currentAndPreviousSelections.reduce((uniqueItems, dataItem) => {
-        const isDuplicate = uniqueItems.some(item => item.id === dataItem.id);
-        if (!isDuplicate) {
-            uniqueItems.push(dataItem);
+function groupByMilestone(cases) {
+    return cases.reduce((groups, item) => {
+        if (!groups[item._parent._FolderNumber_TypeName_Name]) {
+            groups[item._parent._FolderNumber_TypeName_Name] = [];
         }
-        return uniqueItems;
-    }, []);
-    const finalItemsSelected = (currentSelectedDataItems.length < allUniqueDataItems.length) ? currentSelectedDataItems : allUniqueDataItems;
-    setSuperiorElementState(finalItemsSelected);
-    console.log('handleEditMyAsyncTypeaheadElement:: ', finalItemsSelected);
+        groups[item._parent._FolderNumber_TypeName_Name].push(item);
+        return groups;
+    }, {});
 }
-exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
+function renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames) {
+    console.log('renderCaseMenu', results.length, milestoneNames.length);
+    let index = 0;
+    const items = milestoneNames.map((milestoneName) => (react_1.default.createElement(react_1.Fragment, { key: milestoneName },
+        index !== 0 && react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Divider, null),
+        react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Header, null, milestoneName),
+        groupedResults[milestoneName].map((item) => {
+            const menuItem = (react_1.default.createElement(react_bootstrap_typeahead_1.MenuItem, { key: index, option: item, position: index },
+                item._type.folderNumber,
+                " ",
+                item._type.name,
+                " ",
+                item._folderName));
+            index += 1;
+            return menuItem;
+        }))));
+    return react_1.default.createElement(react_bootstrap_typeahead_1.Menu, { ...menuProps }, items);
+}
+/**
+ * Pole wyboru sprawy z repozytorium pogrupowane po Milestonach
+ * @param name nazwa pola formularza (musi być zgodna z nazwą pola w obiekcie)
+ * @param repository repozytorium z którego pobierane są dane
+ * @param labelKey nazwa pola w obiekcie które ma być wyświetlane w polu wyboru
+ * @param searchKey nazwa pola w obiekcie które ma być wyszukiwane (domyślnie labelKey)
+ * @param contextSearchParams parametry wyszukiwania które mają być wysyłane do serwera (np. parametry kontekstowe)
+ * @param specialSerwerSearchActionRoute nazwa akcji wyszukiwania na serwerze (domyślnie search)
+ * @param renderMenuItemChildren funkcja renderująca elementy menu
+ * @param renderMenu funkcja renderująca menu
+ * @param multiple czy można wybrać wiele opcji
+ * @param required czy pole jest wymagane
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
+ * @param readOnly czy pole jest tylko do odczytu
+ */
+function CaseSelectMenuElement({ name = '_case', required = false, readonly = false, _project, _contract, _milestone, repository }) {
+    function makeContextSearchParams() {
+        const contextSearchParams = [];
+        if (_project)
+            contextSearchParams.push({ key: 'projectId', value: _project?.ourId });
+        if (_contract)
+            contextSearchParams.push({ key: 'contractId', value: _contract.id.toString() });
+        if (_milestone)
+            contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
+        return contextSearchParams;
+        //return [{ key: 'projectId', value: 'SCI.GWS.01.POIS' }];
+    }
+    return react_1.default.createElement(MyAsyncTypeahead, { contextSearchParams: makeContextSearchParams(), name: name, repository: repository, labelKey: '_typeFolderNumber_TypeName_Number_Name', searchKey: 'searchText', renderMenu: (results, menuProps, state) => {
+            const groupedResults = groupByMilestone(results);
+            const milestoneNames = Object.keys(groupedResults).sort();
+            return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
+        }, multiple: true, required: required, readOnly: readonly });
+}
+exports.CaseSelectMenuElement = CaseSelectMenuElement;
 /**
  * Wyświetla pole do wprowadzania wartości w PLN
  * @param required czy pole jest wymagane
@@ -69301,7 +69913,7 @@ exports.handleEditMyAsyncTypeaheadElement = handleEditMyAsyncTypeaheadElement;
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
-    const { register, control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
     const [formattedValue, setFormattedValue] = (0, react_1.useState)('');
     //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
@@ -69335,26 +69947,16 @@ exports.valueValidation = Yup.string()
     return parsedValue < 9999999999;
 });
 /**Pole dodawania plików
- * @param fieldName nazwa pola w formularzu
- * @param isRequired czy pole jest wymagane
+ * @param name nazwa pola w formularzu
+ * @param required czy pole jest wymagane
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-function FileInput({ fieldName, isRequired = false, acceptedFileTypes = '', }) {
-    const [file, setFile] = (0, react_1.useState)(null);
-    const handleFileChange = (event) => {
-        const selectedFile = event.target.files && event.target.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFile(selectedFile);
-            };
-            reader.readAsDataURL(selectedFile);
-        }
-    };
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz plik"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", name: fieldName, onChange: handleFileChange, required: isRequired, accept: acceptedFileTypes })));
+function FileInput({ name, required = false, acceptedFileTypes = '', }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, ...register(name, {
+            required: { value: required, message: 'Pole jest wymagane' },
+        }) }));
 }
 exports.FileInput = FileInput;
 
@@ -69431,6 +70033,76 @@ exports["default"] = ConfirmModal;
 
 /***/ }),
 
+/***/ "./src/View/Modals/ErrorBoundary.tsx":
+/*!*******************************************!*\
+  !*** ./src/View/Modals/ErrorBoundary.tsx ***!
+  \*******************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const defaultFallback = react_1.default.createElement("h1", null, "Wyst\u0105pi\u0142 b\u0142\u0105d.");
+function reducer(state, action) {
+    switch (action.type) {
+        case 'SET_ERROR':
+            return { error: action.payload };
+        case 'RESET_ERROR':
+            return { error: null };
+        default:
+            return state;
+    }
+}
+function ErrorBoundary({ children, fallback = defaultFallback }) {
+    const [{ error }, dispatch] = (0, react_1.useReducer)(reducer, { error: null });
+    (0, react_1.useEffect)(() => {
+        if (error) {
+            console.error(error);
+        }
+    }, [error]);
+    (0, react_1.useEffect)(() => {
+        const handleUncaughtError = (e) => {
+            dispatch({ type: 'SET_ERROR', payload: e.error });
+        };
+        window.addEventListener('error', handleUncaughtError);
+        return () => {
+            window.removeEventListener('error', handleUncaughtError);
+        };
+    }, []);
+    if (error) {
+        return react_1.default.createElement(react_1.default.Fragment, null, fallback);
+    }
+    return react_1.default.createElement(react_1.default.Fragment, null, children);
+}
+exports["default"] = ErrorBoundary;
+
+
+/***/ }),
+
 /***/ "./src/View/Modals/FormContext.ts":
 /*!****************************************!*\
   !*** ./src/View/Modals/FormContext.ts ***!
@@ -69500,6 +70172,7 @@ const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/Modal
 const CommonComponentsController_1 = __webpack_require__(/*! ../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
 __webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
+const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
@@ -69550,9 +70223,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
                 react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
             react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
                 react_1.default.createElement(react_bootstrap_1.Container, null,
-                    react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
-                        react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
-                        errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
+                    react_1.default.createElement(ErrorBoundary_1.default, null,
+                        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
+                            react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
+                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))))),
             react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                 requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
@@ -69825,7 +70499,7 @@ const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_m
 const GeneralModalButtons_1 = __webpack_require__(/*! ../Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli
- * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach)
+ * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
  * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden)
  * @param EditButtonComponent komponent przycisku edycji obiektu
@@ -69901,11 +70575,18 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
 }
+function renderHeaderBody(column) {
+    if (column.header)
+        return column.header;
+    if (!column.renderThBody)
+        return '';
+    return column.renderThBody();
+}
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
     const { objects, activeRowId, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.objectAttributeToShow }, column.header))))),
+            react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
         react_1.default.createElement("tbody", null, objects.map((dataObject) => {
             const isActive = dataObject.id === activeRowId;
             return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
@@ -69916,15 +70597,21 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
-                if (selectedObjectRoute)
-                    navigate(selectedObjectRoute + dataObject.id);
-            }, className: isActive ? 'active' : '' },
-            tableStructure.map((column) => (react_1.default.createElement("td", { key: column.objectAttributeToShow }, dataObject[column.objectAttributeToShow]))),
-            isActive &&
-                react_1.default.createElement("td", { align: 'center' },
-                    react_1.default.createElement(RowActionMenu, { dataObject: dataObject })))));
+    function tdBodyRender(columStructure, dataObject) {
+        if (columStructure.objectAttributeToShow !== undefined)
+            return dataObject[columStructure.objectAttributeToShow];
+        if (columStructure.renderTdBody !== undefined)
+            return columStructure.renderTdBody(dataObject);
+        return '';
+    }
+    return (react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
+            if (selectedObjectRoute)
+                navigate(selectedObjectRoute + dataObject.id);
+        }, className: isActive ? 'active' : '' },
+        tableStructure.map((column, index) => (react_1.default.createElement("td", { key: column.objectAttributeToShow || index }, tdBodyRender(column, dataObject)))),
+        isActive &&
+            react_1.default.createElement("td", { align: 'center' },
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject }))));
 }
 function RowActionMenu({ dataObject, }) {
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = (0, react_1.useContext)(exports.FilterableTableContext);
@@ -69951,7 +70638,7 @@ exports.DeleteModalButton = DeleteModalButton;
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
     repository: {},
-    tableStructure: [{ header: '', objectAttributeToShow: '' }],
+    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => react_1.default.createElement(react_1.default.Fragment, null) }],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },

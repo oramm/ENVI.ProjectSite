@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MainSetup from '../../../React/MainSetupReact';
-import { ContractTypeSelectFormElement, FileInput, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
+import { ContractTypeSelectFormElement, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
@@ -68,10 +68,6 @@ export function OurContractModalBody(props: ModalBodyProps) {
                     />
                 </Form.Group>
             </Row>
-            <FileInput
-                fieldName="exampleFile"
-                acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
-            />
         </>
     );
 }
