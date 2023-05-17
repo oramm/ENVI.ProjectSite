@@ -76,7 +76,7 @@ function ContractSelectFormElement({ name = '_contract', showValidationInfo = tr
         return params;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: 'name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly }),
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly }),
         errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors?.[name]?.message))));
 }
 exports.ContractSelectFormElement = ContractSelectFormElement;
@@ -244,7 +244,6 @@ function CaseSelectMenuElement({ name = '_case', required = false, readonly = fa
         if (_milestone)
             contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
         return contextSearchParams;
-        //return [{ key: 'projectId', value: 'SCI.GWS.01.POIS' }];
     }
     return react_1.default.createElement(MyAsyncTypeahead, { contextSearchParams: makeContextSearchParams(), name: name, repository: repository, labelKey: '_typeFolderNumber_TypeName_Number_Name', searchKey: 'searchText', renderMenu: (results, menuProps, state) => {
             const groupedResults = groupByMilestone(results);

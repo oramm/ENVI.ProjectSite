@@ -35,8 +35,8 @@ function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
-        setValue('number', initialData?.number || '', { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },

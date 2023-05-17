@@ -17,11 +17,11 @@ export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryD
     additionalProps?: any;
 }
 
-type GeneralModalButtonModalProps = {
-    ModalBodyComponent: React.ComponentType<ModalBodyProps>;
+type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     additionalModalBodyProps?: any;
     modalTitle: string;
-    repository: RepositoryReact;
+    repository: RepositoryReact<DataItemType>;
     validationSchema?: yup.ObjectSchema<any>;
 };
 
@@ -32,12 +32,12 @@ type GeneralModalButtonButtonProps = {
     buttonIsDisabled?: boolean;
 };
 
-export type GeneralModalButtonProps = {
-    modalProps: GeneralModalButtonModalProps;
+export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralModalButtonModalProps<DataItemType>;
     buttonProps: GeneralModalButtonButtonProps;
 };
 
-type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps & {
+type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
     onAddNew: (object: DataItemType) => void;
 };
 
@@ -45,12 +45,12 @@ type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {
     buttonCaption: string;
 };
 
-export type GeneralAddNewModalButtonProps = {
-    modalProps: GeneralAddNewModalButtonModalProps;
+export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralAddNewModalButtonModalProps<DataItemType>;
     buttonProps: GeneralAddNewModalButtonButtonProps;
 };
 
-type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps & {
+type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
     onEdit: (object: DataItemType) => void;
     initialData: DataItemType;
 };
@@ -59,69 +59,66 @@ type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {
     buttonCaption?: string;
 };
 
-export type GeneralEditModalButtonProps = {
-    modalProps: GeneralEditModalButtonModalProps;
+export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralEditModalButtonModalProps<DataItemType>;
     buttonProps?: GeneralEditModalButtonButtonProps;
 };
 
-type GeneralDeleteModalButtonModalProps = Omit<
-    GeneralModalButtonModalProps,
+type GeneralDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralModalButtonModalProps<DataItemType>,
     "ModalBodyComponent"
 > & {
     onDelete: (objectId: number) => void;
-    initialData: RepositoryDataItem;
+    initialData: DataItemType;
 };
 
 type GeneralDeleteModalButtonButtonProps = GeneralModalButtonButtonProps & {
     buttonCaption?: string;
 };
 
-export type GeneralDeleteModalButtonProps = {
-    modalProps: GeneralDeleteModalButtonModalProps;
+export type GeneralDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralDeleteModalButtonModalProps<DataItemType>;
     //buttonProps?: GeneralDeleteModalButtonButtonProps;
 };
 
-type SpecificAddNewModalButtonModalProps = Omit<
-    GeneralAddNewModalButtonModalProps,
+type SpecificAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralAddNewModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
-> & {
-    onAddNew: (object: RepositoryDataItem) => void;
-};
-
+>
 type SpecificAddNewModalButtonButtonProps = GeneralAddNewModalButtonButtonProps;
 
-export type SpecificAddNewModalButtonProps = {
-    modalProps: SpecificAddNewModalButtonModalProps;
+export type SpecificAddNewModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: SpecificAddNewModalButtonModalProps<DataItemType>;
     buttonProps?: SpecificAddNewModalButtonButtonProps;
 };
 
-type SpecificEditModalButtonModalProps = Omit<
-    GeneralEditModalButtonModalProps,
+type SpecificEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralEditModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
 > & {
-    onEdit: (object: RepositoryDataItem) => void;
-    initialData: RepositoryDataItem;
+    onEdit: (object: DataItemType) => void;
+    initialData: DataItemType;
 };
 
 type SpecificEditModalButtonButtonProps = GeneralEditModalButtonButtonProps;
 
-export type SpecificEditModalButtonProps = {
-    modalProps: SpecificEditModalButtonModalProps;
+export type SpecificEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: SpecificEditModalButtonModalProps<DataItemType>;
     buttonProps?: SpecificEditModalButtonButtonProps;
 };
 
-type SpecificDeleteModalButtonModalProps = Omit<
-    GeneralDeleteModalButtonModalProps,
+type SpecificDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralDeleteModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
 > & {
     onDelete: (objectId: number) => void;
-    initialData: RepositoryDataItem;
+    initialData: DataItemType;
 };
 
 type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;
 
-export type SpecificDeleteModalButtonProps = {
-    modalProps: SpecificDeleteModalButtonModalProps;
+export type SpecificDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: SpecificDeleteModalButtonModalProps<DataItemType>;
     buttonProps?: SpecificDeleteModalButtonButtonProps;
 };
 

@@ -32,16 +32,13 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 function OurLetterModalBody(props) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { reset, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _contract = watch('_contract');
     const _project = watch('_project');
     (0, react_1.useEffect)(() => {
-        //setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
-            react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, required: true, _project: _project, _contract: _contract })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),

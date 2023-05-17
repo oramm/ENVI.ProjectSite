@@ -120,7 +120,7 @@ export function ContractSelectFormElement({
         <>
             <MyAsyncTypeahead
                 name={name}
-                labelKey='name'
+                labelKey='_ourIdOrNumber_Name'
                 searchKey='searchText'
                 contextSearchParams={makeContextSearchParams()}
                 repository={repository}
@@ -489,8 +489,7 @@ export function CaseSelectMenuElement({
             contextSearchParams.push({ key: 'contractId', value: _contract.id.toString() });
         if (_milestone)
             contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
-        return contextSearchParams
-        //return [{ key: 'projectId', value: 'SCI.GWS.01.POIS' }];
+        return contextSearchParams;
     }
 
     return <MyAsyncTypeahead

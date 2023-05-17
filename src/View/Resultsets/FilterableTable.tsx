@@ -1,4 +1,4 @@
-import React, { createContext, FormEventHandler, useContext, useEffect, useState } from 'react';
+import React, { createContext, Dispatch, FormEventHandler, SetStateAction, useContext, useEffect, useState } from 'react';
 
 import { Table, Container, Button, Row, Col, Form } from 'react-bootstrap';
 import RepositoryReact from '../../React/RepositoryReact';
@@ -14,12 +14,12 @@ import { RepositoryDataItem } from '../../../Typings/bussinesTypes';
 
 export type FilterBodyProps = {}
 
-export type FilterableTableProps = {
+export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     title: string,
-    tableStructure: RowStructure[],
-    repository: RepositoryReact
-    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps>[]
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>;
+    tableStructure: RowStructure<DataItemType>[],
+    repository: RepositoryReact<DataItemType>,
+    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
@@ -34,7 +34,7 @@ export type FilterableTableProps = {
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-export default function FilterableTable({
+export default function FilterableTable<DataItemType extends RepositoryDataItem>({
     title,
     repository,
     tableStructure,
@@ -43,17 +43,17 @@ export default function FilterableTable({
     isDeletable = true,
     FilterBodyComponent,
     selectedObjectRoute = '',
-}: FilterableTableProps) {
+}: FilterableTableProps<DataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
 
-    const [objects, setObjects] = useState([] as RepositoryDataItem[]);
+    const [objects, setObjects] = useState([] as DataItemType[]);
 
-    function handleAddObject(object: RepositoryDataItem) {
+    function handleAddObject(object: DataItemType) {
         setObjects([...objects, object]);
     }
 
-    function handleEditObject(object: RepositoryDataItem) {
+    function handleEditObject(object: DataItemType) {
         setObjects(objects.map((o) => (o.id === object.id ? object : o)));
     }
 
@@ -68,19 +68,19 @@ export default function FilterableTable({
     }
 
     return (
-        <FilterableTableContext.Provider value={{
-            handleAddObject,
-            handleEditObject,
-            handleDeleteObject,
-            tableStructure,
-            objects,
-            repository,
-            setObjects,
-            selectedObjectRoute,
-            activeRowId,
-            EditButtonComponent,
-            isDeletable,
-        }}>
+        <FilterableTableProvider<DataItemType>
+            objects={objects}
+            activeRowId={activeRowId}
+            repository={repository}
+            tableStructure={tableStructure}//as RowStructure<RepositoryDataItem>[]}
+            handleAddObject={handleAddObject}//as (object: RepositoryDataItem) => void}
+            handleEditObject={handleEditObject}// as (object: RepositoryDataItem) => void}
+            handleDeleteObject={handleDeleteObject}
+            setObjects={setObjects}//as Dispatch<SetStateAction<RepositoryDataItem[]>>}
+            selectedObjectRoute={selectedObjectRoute}
+            EditButtonComponent={EditButtonComponent}// as React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>> | undefined}
+            isDeletable={isDeletable}
+        >
             <Container>
                 <Row>
                     <Col>
@@ -112,7 +112,7 @@ export default function FilterableTable({
                 <Row>
                     <Col>
                         {objects.length > 0 && (
-                            <ResultSetTable
+                            <ResultSetTable<DataItemType>
                                 onRowClick={handleRowClick}
                                 onIsReadyChange={(isReady) => { setIsReady(isReady); }}
                             />
@@ -120,7 +120,7 @@ export default function FilterableTable({
                     </Col>
                 </Row>
             </Container>
-        </FilterableTableContext.Provider>
+        </FilterableTableProvider>
     );
 }
 
@@ -129,30 +129,22 @@ type FilterPanelProps = {
     repository: RepositoryReact,
     onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
 }
-function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }: FilterPanelProps) {
+function FilterPanel<DataItemType extends RepositoryDataItem>({ FilterBodyComponent, repository, onIsReadyChange }: FilterPanelProps) {
     const [errorMessage, setErrorMessage] = useState('');
-    const { setObjects } = useContext(FilterableTableContext);
-    const {
-        register,
-        setValue,
-        watch,
-        handleSubmit,
-        control,
-        formState: { errors, isValid },
-        trigger
-    } = useForm({ defaultValues: {}, mode: 'onChange' });
+    const { setObjects } = useFilterableTableContext<DataItemType>();
+    const formMethods = useForm({ defaultValues: {}, mode: 'onChange' });
 
     async function handleSubmitSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuestoFormData(data);
-        const result = await repository.loadItemsfromServer(formData);
+        const result = await repository.loadItemsfromServer(formData) as DataItemType[];
         setObjects(result);
         onIsReadyChange(true);
     };
 
     return (
-        <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
-            <Form onSubmit={handleSubmit(handleSubmitSearch)}>
+        <FormProvider value={formMethods}>
+            <Form onSubmit={formMethods.handleSubmit(handleSubmitSearch)}>
                 <FilterBodyComponent />
                 <Row xl={1}>
                     <Form.Group as={Col} >
@@ -170,17 +162,17 @@ type ResultSetTableProps = {
     onIsReadyChange?: (isReady: boolean) => void
 }
 
-function renderHeaderBody(column: RowStructure) {
+function renderHeaderBody<DataItemType extends RepositoryDataItem>(column: RowStructure<DataItemType>) {
     if (column.header) return column.header;
     if (!column.renderThBody) return '';
     return column.renderThBody();
 }
 
-function ResultSetTable({
+function ResultSetTable<DataItemType extends RepositoryDataItem>({
     onRowClick,
     onIsReadyChange,
 }: ResultSetTableProps) {
-    const { objects, activeRowId, tableStructure } = useContext(FilterableTableContext);
+    const { objects, activeRowId, tableStructure } = useFilterableTableContext<DataItemType>();
     return (
         <Table striped hover size="sm">
             <thead>
@@ -196,7 +188,7 @@ function ResultSetTable({
                 {objects.map((dataObject) => {
                     const isActive = dataObject.id === activeRowId;
                     return (
-                        <FiterableTableRow
+                        <FiterableTableRow<DataItemType>
                             key={dataObject.id}
                             dataObject={dataObject}
                             isActive={isActive}
@@ -210,20 +202,25 @@ function ResultSetTable({
     );
 }
 
-export type FilterTableRowProps = {
-    dataObject: RepositoryDataItem,
+export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
+    dataObject: DataItemType,
     isActive: boolean,
-    onDoubleClick?: (object: RepositoryDataItem) => void
+    onDoubleClick?: (object: DataItemType) => void
     onIsReadyChange?: (isReady: boolean) => void,
     onRowClick: (id: number) => void,
 }
 
-function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }: FilterTableRowProps): JSX.Element {
+function FiterableTableRow<DataItemType extends RepositoryDataItem>({
+    dataObject,
+    isActive,
+    onIsReadyChange,
+    onRowClick
+}: FilterTableRowProps<DataItemType>): JSX.Element {
     if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
     const navigate = useNavigate();
-    const { selectedObjectRoute, tableStructure } = useContext(FilterableTableContext);
+    const { selectedObjectRoute, tableStructure } = useFilterableTableContext<DataItemType>();
 
-    function tdBodyRender(columStructure: RowStructure, dataObject: RepositoryDataItem) {
+    function tdBodyRender(columStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
         if (columStructure.objectAttributeToShow !== undefined)
             return dataObject[columStructure.objectAttributeToShow] as string;
         if (columStructure.renderTdBody !== undefined)
@@ -253,14 +250,19 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     );
 }
 
-interface RowActionMenuProps {
-    dataObject: RepositoryDataItem;
+interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
+    dataObject: DataItemType;
 }
 
-function RowActionMenu({
+function RowActionMenu<DataItemType extends RepositoryDataItem>({
     dataObject,
-}: RowActionMenuProps) {
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useContext(FilterableTableContext);
+}: RowActionMenuProps<DataItemType>) {
+    const {
+        handleEditObject,
+        handleDeleteObject,
+        EditButtonComponent,
+        isDeletable
+    } = useFilterableTableContext<DataItemType>();
     return (
         <>
             {dataObject._gdFolderUrl && (
@@ -284,14 +286,14 @@ export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
 }
 
-export function DeleteModalButton({
-    modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps) {
+export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
+    modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps<DataItemType>) {
 
-    const { repository } = useContext(FilterableTableContext);
+    const { repository } = useFilterableTableContext<DataItemType>();
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
 
     return (
-        <GeneralDeleteModalButton
+        <GeneralDeleteModalButton<DataItemType>
             modalProps={{
                 onDelete,
                 modalTitle,
@@ -302,31 +304,31 @@ export function DeleteModalButton({
     );
 }
 
-type RowStructure = {
+type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     header?: string,
     objectAttributeToShow?: string,
-    renderTdBody?: (dataItem: RepositoryDataItem) => JSX.Element
+    renderTdBody?: (dataItem: DataItemType) => JSX.Element
     renderThBody?: () => JSX.Element
 };
 
-type FilterableTableContextType = {
-    objects: RepositoryDataItem[];
-    repository: RepositoryReact;
-    tableStructure: RowStructure[],
-    handleAddObject: (object: RepositoryDataItem) => void;
-    handleEditObject: (object: RepositoryDataItem) => void;
+type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
+    objects: DataItemType[];
+    repository: RepositoryReact<DataItemType>;
+    tableStructure: RowStructure<DataItemType>[],
+    handleAddObject: (object: DataItemType) => void;
+    handleEditObject: (object: DataItemType) => void;
     handleDeleteObject: (objectId: number) => void;
-    setObjects: React.Dispatch<React.SetStateAction<RepositoryDataItem[]>>;
+    setObjects: React.Dispatch<React.SetStateAction<DataItemType[]>>;
     selectedObjectRoute: string,
     activeRowId: number,
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps>,
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>,
     isDeletable: boolean,
-}
+};
 
-export const FilterableTableContext = createContext<FilterableTableContextType>({
+export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
     objects: [],
-    repository: {} as RepositoryReact,
-    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => <></> }],
+    repository: {} as RepositoryReact<RepositoryDataItem>,
+    tableStructure: [],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
@@ -336,3 +338,46 @@ export const FilterableTableContext = createContext<FilterableTableContextType>(
     EditButtonComponent: undefined,
     isDeletable: true,
 });
+
+function FilterableTableProvider<Item extends RepositoryDataItem>({
+    objects,
+    setObjects,
+    repository,
+    handleAddObject,
+    handleEditObject,
+    handleDeleteObject,
+    tableStructure,
+    selectedObjectRoute,
+    activeRowId,
+    EditButtonComponent,
+    isDeletable = true,
+    children, }: React.PropsWithChildren<FilterableTableContextProps<Item>>
+) {
+    const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>;
+
+    return <FilterableTableContextGeneric.Provider value={{
+        objects,
+        setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
+        repository,
+        tableStructure,
+        handleAddObject,
+        handleEditObject,
+        handleDeleteObject,
+        selectedObjectRoute,
+        activeRowId,
+        EditButtonComponent,
+        isDeletable,
+    }}>
+        {children}
+    </FilterableTableContextGeneric.Provider>;
+}
+
+function useFilterableTableContext<Item extends RepositoryDataItem>() {
+    const context = React.useContext<FilterableTableContextProps<Item>>(
+        (FilterableTableContext as unknown) as React.Context<FilterableTableContextProps<Item>>
+    );
+    if (!context) {
+        throw new Error('useMyContext must be used under MyContextProvider');
+    }
+    return context;
+}

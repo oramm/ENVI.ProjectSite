@@ -1,5 +1,6 @@
 import RepositoryReact from "./RepositoryReact";
 import MainSetup from "./MainSetupReact";
+import { ContractType, Person } from "../../Typings/bussinesTypes";
 
 export default class MainController {
     static async main() {
@@ -8,7 +9,7 @@ export default class MainController {
     }
 
     static async setRepostories() {
-        const personsEnviRepository = new RepositoryReact({
+        const personsEnviRepository = new RepositoryReact<Person>({
             name: 'personsEnvi',
             actionRoutes: {
                 getRoute: 'persons',
@@ -23,7 +24,7 @@ export default class MainController {
         personsEnviRepository.saveToSessionStorage();
         MainSetup.personsEnviRepository = personsEnviRepository;
 
-        const contractTypesRepository = new RepositoryReact({
+        const contractTypesRepository = new RepositoryReact<ContractType>({
             name: 'contractTypes',
             actionRoutes: {
                 getRoute: 'contractTypes',

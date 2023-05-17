@@ -39,7 +39,7 @@ const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger, } = (0, react_hook_form_1.useForm)({
+    const formMethods = (0, react_hook_form_1.useForm)({
         defaultValues: {},
         mode: 'onChange',
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined
@@ -81,18 +81,18 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
     }
     ;
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: 'lg', show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitRepository) },
-            react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-                react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
-            react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Container, null,
-                    react_1.default.createElement(ErrorBoundary_1.default, null,
-                        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
+        react_1.default.createElement(ErrorBoundary_1.default, null,
+            react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
+                react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+                    react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+                react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
+                    react_1.default.createElement(react_bootstrap_1.Container, null,
+                        react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
                             react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
-                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))))),
-            react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
-                react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isValid }, "Zatwierd\u017A")))));
+                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
+                react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                    requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid }, "Zatwierd\u017A"))))));
 }
 exports.GeneralModal = GeneralModal;

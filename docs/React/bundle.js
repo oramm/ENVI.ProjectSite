@@ -68418,7 +68418,6 @@ exports.milestonesRepository = LettersController_1.default.milestonesRepository;
 exports.casesRepository = LettersController_1.default.casesRepository;
 function LettersSearch({ title }) {
     function makeEntitiesLabel(letter) {
-        letter = letter;
         const entities = letter._entitiesMain;
         let label = '';
         for (var i = 0; i < entities.length - 1; i++) {
@@ -68491,8 +68490,8 @@ function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
-        setValue('number', initialData?.number || '', { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
@@ -68552,45 +68551,55 @@ const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Lette
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function LetterModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState, trigger } = (0, FormContext_1.useFormContext)();
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors }, trigger } = (0, FormContext_1.useFormContext)();
     const _project = watch('_project');
     const _contract = watch('_contract');
+    const creationDate = watch('creationDate');
+    const registrationDate = watch('registrationDate');
     function getContractFromCases(_cases) {
         if (!_cases || _cases.length === 0)
             return undefined;
-        const _contract = LettersSearch_1.contractsRepository;
         return _cases[0]._parent._parent;
     }
     (0, react_1.useEffect)(() => {
-        setValue('_contract', getContractFromCases(initialData?._cases), { shouldValidate: true });
-        setValue('description', initialData?.description || '', { shouldValidate: true });
-        setValue('creationDate', initialData?.creationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('registrationDate', initialData?.registrationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('_editor', initialData?._editor, { shouldValidate: true });
-    }, [initialData, setValue]);
+        reset({
+            _project,
+            _contract: getContractFromCases(initialData?._cases),
+            _cases: initialData?._cases,
+            description: initialData?.description || '',
+            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
+            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            _editor: initialData?._editor
+        });
+    }, [initialData, reset]);
+    (0, react_1.useEffect)(() => {
+        if (!dirtyFields._contract)
+            return;
+        setValue('_cases', undefined, { shouldValidate: true });
+    }, [_contract, _contract?.id, setValue]);
+    (0, react_1.useEffect)(() => {
+        trigger(['creationDate', 'registrationDate']);
+    }, [trigger, watch, creationDate, registrationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
             react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
+            react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, required: true, _project: _project, _contract: _contract, readonly: !_contract })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.description, isInvalid: !!formState.errors?.description, ...register('description') }),
-            formState.errors?.description && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.description.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            errors?.description && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.description.message))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.creationDate, isInvalid: !!formState.errors.creationDate, ...register('creationDate'), onChange: (e) => {
-                        register("creationDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("registrationDate");
-                    } }),
-                formState.errors.startDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.startDate.message))),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register('creationDate') }),
+                errors.creationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.creationDate.message))),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.registrationDate, isInvalid: !!formState.errors.registrationDate, ...register('registrationDate'), onChange: (e) => {
-                        register("registrationDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("creationDate");
-                    } }),
-                formState.errors.registrationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.registrationDate.message)))),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.registrationDate, isInvalid: !!errors.registrationDate, ...register('registrationDate') }),
+                errors.registrationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.registrationDate.message)))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
             react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_editor', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
@@ -68605,12 +68614,12 @@ exports.LetterModalBody = LetterModalBody;
  */
 function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const project = watch('_project');
+    const _project = watch('_project');
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -68656,14 +68665,14 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/Gener
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
 const LetterValidationSchema_1 = __webpack_require__(/*! ./LetterValidationSchema */ "./src/Letters/LettersList/Modals/LetterValidationSchema.ts");
 const IncomingLetterModalBody_1 = __webpack_require__(/*! ./IncomingLetterModalBody */ "./src/Letters/LettersList/Modals/IncomingLetterModalBody.tsx");
-const OurLetterModalBody_TEST_1 = __webpack_require__(/*! ./OurLetterModalBody TEST */ "./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx");
+const OurLetterModalBody_1 = __webpack_require__(/*! ./OurLetterModalBody */ "./src/Letters/LettersList/Modals/OurLetterModalBody.tsx");
 const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
 /** przycisk i modal edycji Letter */
 function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
         console.log("LetterEditModalButton initialData", initialData);
     }, [initialData]);
-    return (initialData.ourId
+    return (initialData.isOur
         ? react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
@@ -68671,7 +68680,7 @@ exports.LetterEditModalButton = LetterEditModalButton;
 function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
-            ModalBodyComponent: OurLetterModalBody_TEST_1.OurLetterModalBody,
+            ModalBodyComponent: OurLetterModalBody_1.OurLetterModalBody,
             modalTitle: "Edycja pisma wychodzącego",
             repository: LettersSearch_1.lettersRepository,
             initialData: initialData,
@@ -68685,7 +68694,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_TEST_1.OurLetterModalBody },
+            additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_1.OurLetterModalBody },
             modalTitle: "Rejestruj pismo wychodzące",
             repository: LettersSearch_1.lettersRepository,
             validationSchema: LetterValidationSchema_1.ourLetterValidationSchema
@@ -68766,11 +68775,11 @@ const commonFields = {
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     creationDate: Yup.date().required('Data rozpoczęcia jest wymagana')
-        .test('creationDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
+        .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
         return this.parent.registrationDate >= value;
     }),
     registrationDate: Yup.date().required('Data zakończenia jest wymagana')
-        .test('registrationDateValidation', 'Koniec musi być późniejszy niż początek', function (value) {
+        .test('registrationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
         return value >= this.parent.creationDate;
     }),
     _entitiesMain: Yup.array(),
@@ -68787,10 +68796,10 @@ exports.otherLetterValidationSchema = Yup.object().shape({
 
 /***/ }),
 
-/***/ "./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx":
-/*!********************************************************************!*\
-  !*** ./src/Letters/LettersList/Modals/OurLetterModalBody TEST.tsx ***!
-  \********************************************************************/
+/***/ "./src/Letters/LettersList/Modals/OurLetterModalBody.tsx":
+/*!***************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/OurLetterModalBody.tsx ***!
+  \***************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -68821,17 +68830,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OurLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonFormComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
+const LettersSearch_1 = __webpack_require__(/*! ../LettersSearch */ "./src/Letters/LettersList/LettersSearch.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 function OurLetterModalBody(props) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { reset, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _contract = watch('_contract');
     const _project = watch('_project');
     (0, react_1.useEffect)(() => {
-        //setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("h1", null, "OurLetterModalBody")));
+        react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }))));
 }
 exports.OurLetterModalBody = OurLetterModalBody;
 
@@ -69729,7 +69745,7 @@ function ContractSelectFormElement({ name = '_contract', showValidationInfo = tr
         return params;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: 'name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly }),
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly }),
         errors?.[name] && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors?.[name]?.message))));
 }
 exports.ContractSelectFormElement = ContractSelectFormElement;
@@ -69897,7 +69913,6 @@ function CaseSelectMenuElement({ name = '_case', required = false, readonly = fa
         if (_milestone)
             contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
         return contextSearchParams;
-        //return [{ key: 'projectId', value: 'SCI.GWS.01.POIS' }];
     }
     return react_1.default.createElement(MyAsyncTypeahead, { contextSearchParams: makeContextSearchParams(), name: name, repository: repository, labelKey: '_typeFolderNumber_TypeName_Number_Name', searchKey: 'searchText', renderMenu: (results, menuProps, state) => {
             const groupedResults = groupByMilestone(results);
@@ -70176,7 +70191,7 @@ const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./ErrorBoundary 
 function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, validationSchema, }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger, } = (0, react_hook_form_1.useForm)({
+    const formMethods = (0, react_hook_form_1.useForm)({
         defaultValues: {},
         mode: 'onChange',
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined
@@ -70218,19 +70233,19 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
     }
     ;
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: 'lg', show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitRepository) },
-            react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-                react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
-            react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Container, null,
-                    react_1.default.createElement(ErrorBoundary_1.default, null,
-                        react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
+        react_1.default.createElement(ErrorBoundary_1.default, null,
+            react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
+                react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+                    react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+                react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
+                    react_1.default.createElement(react_bootstrap_1.Container, null,
+                        react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
                             react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
-                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage)))))),
-            react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
-                react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !isValid }, "Zatwierd\u017A")))));
+                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
+                react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                    requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid }, "Zatwierd\u017A"))))));
 }
 exports.GeneralModal = GeneralModal;
 
@@ -70525,19 +70540,7 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
     }
-    return (react_1.default.createElement(exports.FilterableTableContext.Provider, { value: {
-            handleAddObject,
-            handleEditObject,
-            handleDeleteObject,
-            tableStructure,
-            objects,
-            repository,
-            setObjects,
-            selectedObjectRoute,
-            activeRowId,
-            EditButtonComponent,
-            isDeletable,
-        } },
+    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -70558,8 +70561,8 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
 exports["default"] = FilterableTable;
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const { setObjects } = (0, react_1.useContext)(exports.FilterableTableContext);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const { setObjects } = useFilterableTableContext();
+    const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
@@ -70568,8 +70571,8 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
         onIsReadyChange(true);
     }
     ;
-    return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
+    return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
+        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
             react_1.default.createElement(react_bootstrap_1.Row, { xl: 1 },
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
@@ -70583,7 +70586,7 @@ function renderHeaderBody(column) {
     return column.renderThBody();
 }
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
-    const { objects, activeRowId, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { objects, activeRowId, tableStructure } = useFilterableTableContext();
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
             react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
@@ -70596,7 +70599,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     if (!onIsReadyChange)
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
-    const { selectedObjectRoute, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { selectedObjectRoute, tableStructure } = useFilterableTableContext();
     function tdBodyRender(columStructure, dataObject) {
         if (columStructure.objectAttributeToShow !== undefined)
             return dataObject[columStructure.objectAttributeToShow];
@@ -70614,7 +70617,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 react_1.default.createElement(RowActionMenu, { dataObject: dataObject }))));
 }
 function RowActionMenu({ dataObject, }) {
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useFilterableTableContext();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
         EditButtonComponent && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
@@ -70625,7 +70628,7 @@ function TableTitle({ title }) {
 }
 exports.TableTitle = TableTitle;
 function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
-    const { repository } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { repository } = useFilterableTableContext();
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
             onDelete,
@@ -70638,7 +70641,7 @@ exports.DeleteModalButton = DeleteModalButton;
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
     repository: {},
-    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => react_1.default.createElement(react_1.default.Fragment, null) }],
+    tableStructure: [],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
@@ -70648,6 +70651,29 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     EditButtonComponent: undefined,
     isDeletable: true,
 });
+function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, children, }) {
+    const FilterableTableContextGeneric = exports.FilterableTableContext;
+    return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
+            objects,
+            setObjects: setObjects,
+            repository,
+            tableStructure,
+            handleAddObject,
+            handleEditObject,
+            handleDeleteObject,
+            selectedObjectRoute,
+            activeRowId,
+            EditButtonComponent,
+            isDeletable,
+        } }, children);
+}
+function useFilterableTableContext() {
+    const context = react_1.default.useContext(exports.FilterableTableContext);
+    if (!context) {
+        throw new Error('useMyContext must be used under MyContextProvider');
+    }
+    return context;
+}
 
 
 /***/ }),

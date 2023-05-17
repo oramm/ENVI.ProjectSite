@@ -17,7 +17,6 @@ exports.milestonesRepository = LettersController_1.default.milestonesRepository;
 exports.casesRepository = LettersController_1.default.casesRepository;
 function LettersSearch({ title }) {
     function makeEntitiesLabel(letter) {
-        letter = letter;
         const entities = letter._entitiesMain;
         let label = '';
         for (var i = 0; i < entities.length - 1; i++) {

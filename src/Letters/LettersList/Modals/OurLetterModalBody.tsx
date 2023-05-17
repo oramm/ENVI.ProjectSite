@@ -7,30 +7,21 @@ import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ourLetterValidationSchema } from './LetterValidationSchema';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
+import { Contract, IncomingLetter, OurLetter, Project } from '../../../../Typings/bussinesTypes';
 
-export function OurLetterModalBody(props: ModalBodyProps) {
+export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = useFormContext();
+    const { reset, trigger, setValue, watch, formState, control } = useFormContext();
 
-    const _contract = watch('_contract');
-    const _project = watch('_project');
+    const _contract = watch('_contract') as Contract | undefined;
+    const _project = watch('_project') as Project | undefined;
 
     useEffect(() => {
-        //setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
         <>
-            <Form.Group>
-                <Form.Label>Dotyczy spraw</Form.Label>
-                <CaseSelectMenuElement
-                    name='_cases'
-                    repository={casesRepository}
-                    required={true}
-                    _project={_project}
-                    _contract={_contract}
-                />
-            </Form.Group>
             <LetterModalBody
                 {...props}
             />

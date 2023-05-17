@@ -60,19 +60,7 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
     }
-    return (react_1.default.createElement(exports.FilterableTableContext.Provider, { value: {
-            handleAddObject,
-            handleEditObject,
-            handleDeleteObject,
-            tableStructure,
-            objects,
-            repository,
-            setObjects,
-            selectedObjectRoute,
-            activeRowId,
-            EditButtonComponent,
-            isDeletable,
-        } },
+    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -93,8 +81,8 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
 exports.default = FilterableTable;
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const { setObjects } = (0, react_1.useContext)(exports.FilterableTableContext);
-    const { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const { setObjects } = useFilterableTableContext();
+    const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
@@ -103,8 +91,8 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
         onIsReadyChange(true);
     }
     ;
-    return (react_1.default.createElement(FormContext_1.FormProvider, { value: { register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger } },
-        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: handleSubmit(handleSubmitSearch) },
+    return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
+        react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
             react_1.default.createElement(react_bootstrap_1.Row, { xl: 1 },
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
@@ -118,7 +106,7 @@ function renderHeaderBody(column) {
     return column.renderThBody();
 }
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
-    const { objects, activeRowId, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { objects, activeRowId, tableStructure } = useFilterableTableContext();
     return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
         react_1.default.createElement("thead", null,
             react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
@@ -131,7 +119,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     if (!onIsReadyChange)
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
-    const { selectedObjectRoute, tableStructure } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { selectedObjectRoute, tableStructure } = useFilterableTableContext();
     function tdBodyRender(columStructure, dataObject) {
         if (columStructure.objectAttributeToShow !== undefined)
             return dataObject[columStructure.objectAttributeToShow];
@@ -149,7 +137,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 react_1.default.createElement(RowActionMenu, { dataObject: dataObject }))));
 }
 function RowActionMenu({ dataObject, }) {
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useFilterableTableContext();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
         EditButtonComponent && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
@@ -160,7 +148,7 @@ function TableTitle({ title }) {
 }
 exports.TableTitle = TableTitle;
 function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
-    const { repository } = (0, react_1.useContext)(exports.FilterableTableContext);
+    const { repository } = useFilterableTableContext();
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
             onDelete,
@@ -173,7 +161,7 @@ exports.DeleteModalButton = DeleteModalButton;
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
     repository: {},
-    tableStructure: [{ header: '', objectAttributeToShow: '', renderTdBody: () => react_1.default.createElement(react_1.default.Fragment, null) }],
+    tableStructure: [],
     handleAddObject: () => { },
     handleEditObject: () => { },
     handleDeleteObject: () => { },
@@ -183,3 +171,26 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     EditButtonComponent: undefined,
     isDeletable: true,
 });
+function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, children, }) {
+    const FilterableTableContextGeneric = exports.FilterableTableContext;
+    return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
+            objects,
+            setObjects: setObjects,
+            repository,
+            tableStructure,
+            handleAddObject,
+            handleEditObject,
+            handleDeleteObject,
+            selectedObjectRoute,
+            activeRowId,
+            EditButtonComponent,
+            isDeletable,
+        } }, children);
+}
+function useFilterableTableContext() {
+    const context = react_1.default.useContext(exports.FilterableTableContext);
+    if (!context) {
+        throw new Error('useMyContext must be used under MyContextProvider');
+    }
+    return context;
+}

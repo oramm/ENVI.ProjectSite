@@ -1,11 +1,12 @@
 
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
+import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
 import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps } from "./ModalsTypes";
 
-export function GeneralEditModalButton({
+export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
     modalProps: {
         onEdit,
         ModalBodyComponent,
@@ -16,7 +17,7 @@ export function GeneralEditModalButton({
         validationSchema,
     },
     buttonProps = {},
-}: GeneralEditModalButtonProps) {
+}: GeneralEditModalButtonProps<DataItemTpe>) {
     const { buttonCaption, buttonVariant = "light" } = buttonProps;
     const [showForm, setShowForm] = useState(false);
 
@@ -33,7 +34,7 @@ export function GeneralEditModalButton({
                 <i className="fa fa-pencil fa-lg"></i>
             </a>
 
-            <GeneralModal
+            <GeneralModal<DataItemTpe>
                 onClose={handleClose}
                 show={showForm}
                 isEditing={true}
@@ -60,7 +61,7 @@ export function GeneralEditModalButton({
  * @param buttonProps - właściwości przycisku
  * 
  */
-export function GeneralAddNewModalButton({
+export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: {
         onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
         ModalBodyComponent,
@@ -76,7 +77,7 @@ export function GeneralAddNewModalButton({
         buttonIsActive = false,
         buttonIsDisabled = false,
     },
-}: GeneralAddNewModalButtonProps) {
+}: GeneralAddNewModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
 
     function handleOpen() {
@@ -98,7 +99,7 @@ export function GeneralAddNewModalButton({
             >
                 {buttonCaption}
             </Button>
-            <GeneralModal
+            <GeneralModal<DataItemType>
                 onClose={handleClose}
                 show={showForm}
                 isEditing={false}
@@ -117,9 +118,9 @@ export function GeneralAddNewModalButton({
 }
 
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
-export function GeneralDeleteModalButton({
+export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: { onDelete, modalTitle, initialData, repository },
-}: GeneralDeleteModalButtonProps) {
+}: GeneralDeleteModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
 
     function handleOpen() {

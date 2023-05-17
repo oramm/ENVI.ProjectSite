@@ -11,12 +11,12 @@ const commonFields = {
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     creationDate: Yup.date().required('Data rozpoczęcia jest wymagana')
-        .test('creationDateValidation', 'Początek musi być wcześniejszy niż zakończenie',
+        .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem',
             function (value: Date) {
                 return this.parent.registrationDate >= value;
             }),
     registrationDate: Yup.date().required('Data zakończenia jest wymagana')
-        .test('registrationDateValidation', 'Koniec musi być późniejszy niż początek',
+        .test('registrationDateValidation', 'Pismo nie może być nadane przed utworzeniem',
             function (value: Date) {
                 return value >= this.parent.creationDate;
             }),

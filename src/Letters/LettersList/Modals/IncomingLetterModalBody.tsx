@@ -5,15 +5,16 @@ import { LetterModalBody } from './LetterModalBody';
 import { entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
+import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
 
 /**Wywoływana w ProjectsSelector jako props  */
-export function IncomingLetterModalBody(props: ModalBodyProps) {
+export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState, control } = useFormContext();
 
     useEffect(() => {
-        setValue('_entitiesMain', initialData?._entitiesMain, { shouldValidate: true });
-        setValue('number', initialData?.number || '', { shouldValidate: true });
+        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue('number', initialData?.number || '', { shouldDirty: false, shouldValidate: true });
 
     }, [initialData, setValue]);
 
@@ -46,7 +47,6 @@ export function IncomingLetterModalBody(props: ModalBodyProps) {
                     multiple={true}
                 />
             </Form.Group>
-
         </>
     );
 }

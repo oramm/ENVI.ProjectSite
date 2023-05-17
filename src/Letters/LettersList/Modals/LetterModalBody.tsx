@@ -1,31 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ContractSelectFormElement, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
+import { CaseSelectMenuElement, ContractSelectFormElement, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository, projectsRepository } from '../LettersSearch';
+import { casesRepository, contractsRepository, projectsRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import MainSetup from '../../../React/MainSetupReact';
-import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
+import { Case, Contract, IncomingLetter, OurLetter, Project, RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 
-export function LetterModalBody({ isEditing, initialData }: ModalBodyProps) {
-    const { register, setValue, watch, formState, trigger } = useFormContext();
-    const _project = watch('_project') as RepositoryDataItem | undefined;
+export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors }, trigger } = useFormContext();
+    const _project = watch('_project') as Project | undefined;
     const _contract = watch('_contract');
+    const creationDate = watch('creationDate');
+    const registrationDate = watch('registrationDate');
 
-    function getContractFromCases(_cases: RepositoryDataItem[]) {
+    function getContractFromCases(_cases: Case[] | undefined) {
         if (!_cases || _cases.length === 0) return undefined;
-        const _contract = contractsRepository
-        return _cases[0]._parent._parent as RepositoryDataItem;
+        return _cases[0]._parent._parent as Contract;
     }
 
     useEffect(() => {
-        setValue('_contract', getContractFromCases(initialData?._cases), { shouldValidate: true });
-        setValue('description', initialData?.description || '', { shouldValidate: true });
-        setValue('creationDate', initialData?.creationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('registrationDate', initialData?.registrationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('_editor', initialData?._editor, { shouldValidate: true });
+        reset({
+            _project,
+            _contract: getContractFromCases(initialData?._cases),
+            _cases: initialData?._cases,
+            description: initialData?.description || '',
+            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
+            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            _editor: initialData?._editor
+        });
+    }, [initialData, reset]);
 
-    }, [initialData, setValue]);
+    useEffect(() => {
+        if (!dirtyFields._contract) return;
+        setValue('_cases', undefined, { shouldValidate: true });
+    }, [_contract, _contract?.id, setValue]);
+
+    useEffect(() => {
+        trigger(['creationDate', 'registrationDate']);
+    }, [trigger, watch, creationDate, registrationDate]);
 
     return (
         <>
@@ -38,20 +51,31 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps) {
                     readOnly={!isEditing}
                 />
             </Form.Group>
+            <Form.Group>
+                <Form.Label>Dotyczy spraw</Form.Label>
+                <CaseSelectMenuElement
+                    name='_cases'
+                    repository={casesRepository}
+                    required={true}
+                    _project={_project}
+                    _contract={_contract}
+                    readonly={!_contract}
+                />
+            </Form.Group>
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
                     as="textarea"
                     rows={3}
                     placeholder="Podaj opis"
-                    isValid={!formState.errors?.description}
-                    isInvalid={!!formState.errors?.description}
+                    isValid={!errors?.description}
+                    isInvalid={!!errors?.description}
                     {...register('description')}
                 />
                 {
-                    formState.errors?.description && (
+                    errors?.description && (
                         <Form.Text className="text-danger">
-                            {formState.errors.description.message as string}
+                            {errors.description.message as string}
                         </Form.Text>
                     )
                 }
@@ -61,17 +85,13 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps) {
                     <Form.Label>Data utworzenia</Form.Label>
                     <Form.Control
                         type="date"
-                        isValid={!formState.errors.creationDate}
-                        isInvalid={!!formState.errors.creationDate}
+                        isValid={!errors.creationDate}
+                        isInvalid={!!errors.creationDate}
                         {...register('creationDate')}
-                        onChange={(e) => {
-                            register("creationDate").onChange(e); // wywołaj standardowe zachowanie
-                            trigger("registrationDate");
-                        }}
                     />
-                    {formState.errors.startDate && (
+                    {errors.creationDate && (
                         <Form.Text className="text-danger">
-                            {formState.errors.startDate.message as string}
+                            {errors.creationDate.message as string}
                         </Form.Text>
                     )}
                 </Form.Group>
@@ -79,17 +99,13 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps) {
                     <Form.Label>Data Nadania</Form.Label>
                     <Form.Control
                         type="date"
-                        isValid={!formState.errors.registrationDate}
-                        isInvalid={!!formState.errors.registrationDate}
+                        isValid={!errors.registrationDate}
+                        isInvalid={!!errors.registrationDate}
                         {...register('registrationDate')}
-                        onChange={(e) => {
-                            register("registrationDate").onChange(e); // wywołaj standardowe zachowanie
-                            trigger("creationDate");
-                        }}
                     />
-                    {formState.errors.registrationDate && (
+                    {errors.registrationDate && (
                         <Form.Text className="text-danger">
-                            {formState.errors.registrationDate.message as string}
+                            {errors.registrationDate.message as string}
                         </Form.Text>
                     )}
                 </Form.Group>
@@ -123,7 +139,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
-    const project = (watch('_project') as RepositoryDataItem | undefined);
+    const _project = (watch('_project') as Project | undefined);
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificLetterModalBody } = additionalProps;
@@ -131,7 +147,7 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
 
     return (
         <>
-            {project ? (
+            {_project ? (
                 <SpecificLetterModalBody
                     isEditing={isEditing}
                     additionalProps={additionalProps}

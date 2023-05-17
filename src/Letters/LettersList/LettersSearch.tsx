@@ -13,8 +13,7 @@ export const milestonesRepository = LettersController.milestonesRepository;
 export const casesRepository = LettersController.casesRepository;
 
 export default function LettersSearch({ title }: { title: string }) {
-    function makeEntitiesLabel(letter: RepositoryDataItem) {
-        letter = letter as OurLetter | IncomingLetter;
+    function makeEntitiesLabel(letter: OurLetter | IncomingLetter) {
         const entities = letter._entitiesMain;
         let label = '';
         for (var i = 0; i < entities.length - 1; i++) {
@@ -25,14 +24,14 @@ export default function LettersSearch({ title }: { title: string }) {
         return <>{label}</>;
     }
 
-    function renderIconTdBody(letter: RepositoryDataItem) {
+    function renderIconTdBody(letter: OurLetter | IncomingLetter) {
         letter = letter as OurLetter | IncomingLetter;
         const icon = letter.isOur ? 'fa fa-paper-plane fa-lg' : 'fa fa-envelope fa-lg';
         return <i className={icon}></i>
     }
 
     return (
-        <FilterableTable
+        <FilterableTable<OurLetter | IncomingLetter>
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[

@@ -20,8 +20,8 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     onAddNew?: (object: DataItemType) => void;
     onClose: () => void;
     repository: RepositoryReact<DataItemType>;
-    ModalBodyComponent: React.ComponentType<ModalBodyProps>;
-    modalBodyProps: ModalBodyProps;
+    ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
+    modalBodyProps: ModalBodyProps<DataItemType>;
     validationSchema?: yup.ObjectSchema<any>;
 };
 
@@ -40,15 +40,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
 
-    const {
-        register,
-        setValue,
-        watch,
-        handleSubmit,
-        control,
-        formState: { errors, isValid },
-        trigger,
-    } = useForm({
+    const formMethods = useForm({
         defaultValues: {},
         mode: 'onChange',
         resolver: validationSchema ? yupResolver(validationSchema) : undefined
@@ -93,14 +85,14 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     return (
         <Modal size='lg' show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
-            <Form onSubmit={handleSubmit(handleSubmitRepository)}>
-                <Modal.Header closeButton={true}>
-                    <Modal.Title>{title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Container>
-                        <ErrorBoundary>
-                            <FormProvider value={{ register, setValue, watch, handleSubmit, control, formState: { errors, isValid }, trigger }}>
+            <ErrorBoundary>
+                <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
+                    <Modal.Header closeButton={true}>
+                        <Modal.Title>{title}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Container>
+                            <FormProvider value={formMethods}>
                                 <ModalBodyComponent {...modalBodyProps} />
                                 {errorMessage && (
                                     <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
@@ -108,19 +100,19 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                                     </Alert>
                                 )}
                             </FormProvider>
-                        </ErrorBoundary>
-                    </Container>
-                </Modal.Body>
-                <Modal.Footer>
-                    {requestPending && <Spinner animation="border" variant="primary" />}
-                    <Button variant="secondary" onClick={onClose}>
-                        Anuluj
-                    </Button>
-                    <Button type="submit" variant="primary" disabled={!isValid}>
-                        Zatwierdź
-                    </Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
+                        </Container>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        {requestPending && <Spinner animation="border" variant="primary" />}
+                        <Button variant="secondary" onClick={onClose}>
+                            Anuluj
+                        </Button>
+                        <Button type="submit" variant="primary" disabled={!formMethods.formState.isValid}>
+                            Zatwierdź
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </ErrorBoundary>
+        </Modal >
     );
 }

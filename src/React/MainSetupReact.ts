@@ -1,11 +1,12 @@
+import { CaseType, ContractType, Person, Project } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
 
 export default class MainSetup {
-    static projectsRepository: RepositoryReact;
+    static projectsRepository: RepositoryReact<Project>;
     static documentTemplatesRepository: RepositoryReact;
-    static personsEnviRepository: RepositoryReact;
-    static contractTypesRepository: RepositoryReact;
-    static caseTypesRepository: RepositoryReact;
+    static personsEnviRepository: RepositoryReact<Person>;
+    static contractTypesRepository: RepositoryReact<ContractType>;
+    static caseTypesRepository: RepositoryReact<CaseType>;
 
     static CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 

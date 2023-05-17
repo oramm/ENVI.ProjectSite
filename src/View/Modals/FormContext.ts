@@ -1,23 +1,13 @@
 import { createContext, useContext } from 'react';
-import { FieldErrors, UseFormHandleSubmit, Control, UseFormRegister, UseFormSetValue, UseFormWatch, UseFormTrigger } from 'react-hook-form';
+import { UseFormReturn, FieldValues } from 'react-hook-form';
 
-interface FormContextValues {
-    register: UseFormRegister<any>;
-    setValue: UseFormSetValue<any>;
-    watch: UseFormWatch<any>;
-    handleSubmit: UseFormHandleSubmit<any>;
-    trigger: UseFormTrigger<any>;
-    control: Control<any>;
-    formState: {
-        errors: FieldErrors<any>,
-        isValid: boolean
-    };
-}
+interface FormContextValues extends UseFormReturn<FieldValues> { }
 
 const FormContext = createContext<FormContextValues | null>(null);
 
 export const useFormContext = () => {
     const context = useContext(FormContext);
+
     if (!context) {
         throw new Error('useFormContext must be used within a FormProvider');
     }

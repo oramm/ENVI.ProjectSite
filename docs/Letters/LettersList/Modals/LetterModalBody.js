@@ -34,45 +34,55 @@ const LettersSearch_1 = require("../LettersSearch");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function LetterModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState, trigger } = (0, FormContext_1.useFormContext)();
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors }, trigger } = (0, FormContext_1.useFormContext)();
     const _project = watch('_project');
     const _contract = watch('_contract');
+    const creationDate = watch('creationDate');
+    const registrationDate = watch('registrationDate');
     function getContractFromCases(_cases) {
         if (!_cases || _cases.length === 0)
             return undefined;
-        const _contract = LettersSearch_1.contractsRepository;
         return _cases[0]._parent._parent;
     }
     (0, react_1.useEffect)(() => {
-        setValue('_contract', getContractFromCases(initialData?._cases), { shouldValidate: true });
-        setValue('description', initialData?.description || '', { shouldValidate: true });
-        setValue('creationDate', initialData?.creationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('registrationDate', initialData?.registrationDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('_editor', initialData?._editor, { shouldValidate: true });
-    }, [initialData, setValue]);
+        reset({
+            _project,
+            _contract: getContractFromCases(initialData?._cases),
+            _cases: initialData?._cases,
+            description: initialData?.description || '',
+            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
+            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            _editor: initialData?._editor
+        });
+    }, [initialData, reset]);
+    (0, react_1.useEffect)(() => {
+        if (!dirtyFields._contract)
+            return;
+        setValue('_cases', undefined, { shouldValidate: true });
+    }, [_contract, _contract?.id, setValue]);
+    (0, react_1.useEffect)(() => {
+        trigger(['creationDate', 'registrationDate']);
+    }, [trigger, watch, creationDate, registrationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
             react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
+            react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, required: true, _project: _project, _contract: _contract, readonly: !_contract })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !formState.errors?.description, isInvalid: !!formState.errors?.description, ...register('description') }),
-            formState.errors?.description && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.description.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            errors?.description && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.description.message))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.creationDate, isInvalid: !!formState.errors.creationDate, ...register('creationDate'), onChange: (e) => {
-                        register("creationDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("registrationDate");
-                    } }),
-                formState.errors.startDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.startDate.message))),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register('creationDate') }),
+                errors.creationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.creationDate.message))),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !formState.errors.registrationDate, isInvalid: !!formState.errors.registrationDate, ...register('registrationDate'), onChange: (e) => {
-                        register("registrationDate").onChange(e); // wywołaj standardowe zachowanie
-                        trigger("creationDate");
-                    } }),
-                formState.errors.registrationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.registrationDate.message)))),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.registrationDate, isInvalid: !!errors.registrationDate, ...register('registrationDate') }),
+                errors.registrationDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.registrationDate.message)))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
             react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_editor', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
@@ -87,12 +97,12 @@ exports.LetterModalBody = LetterModalBody;
  */
 function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const project = watch('_project');
+    const _project = watch('_project');
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

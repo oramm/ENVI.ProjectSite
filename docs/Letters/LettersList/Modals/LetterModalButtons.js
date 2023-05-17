@@ -29,14 +29,14 @@ const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons"
 const LetterModalBody_1 = require("./LetterModalBody");
 const LetterValidationSchema_1 = require("./LetterValidationSchema");
 const IncomingLetterModalBody_1 = require("./IncomingLetterModalBody");
-const OurLetterModalBody_TEST_1 = require("./OurLetterModalBody TEST");
+const OurLetterModalBody_1 = require("./OurLetterModalBody");
 const LettersSearch_1 = require("../LettersSearch");
 /** przycisk i modal edycji Letter */
 function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
         console.log("LetterEditModalButton initialData", initialData);
     }, [initialData]);
-    return (initialData.ourId
+    return (initialData.isOur
         ? react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
         : react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
@@ -44,7 +44,7 @@ exports.LetterEditModalButton = LetterEditModalButton;
 function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
-            ModalBodyComponent: OurLetterModalBody_TEST_1.OurLetterModalBody,
+            ModalBodyComponent: OurLetterModalBody_1.OurLetterModalBody,
             modalTitle: "Edycja pisma wychodzącego",
             repository: LettersSearch_1.lettersRepository,
             initialData: initialData,
@@ -58,7 +58,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_TEST_1.OurLetterModalBody },
+            additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_1.OurLetterModalBody },
             modalTitle: "Rejestruj pismo wychodzące",
             repository: LettersSearch_1.lettersRepository,
             validationSchema: LetterValidationSchema_1.ourLetterValidationSchema

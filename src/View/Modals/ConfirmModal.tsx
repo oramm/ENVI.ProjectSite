@@ -2,7 +2,16 @@ import React, { useState } from "react";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AlertComponent } from "../Resultsets/CommonComponents";
 
-export default function ConfirmModal({ show, onClose, title, prompt, onConfirm }: { show: boolean, onClose: () => void, title: string, prompt: string, onConfirm: () => Promise<void> }) {
+
+type ConfirmModalProps = {
+    show: boolean;
+    onClose: () => void;
+    title: string;
+    prompt: string;
+    onConfirm: () => Promise<void>;
+};
+
+export default function ConfirmModal({ show, onClose, title, prompt, onConfirm }: ConfirmModalProps) {
     const [isWaiting, setIsWaiting] = useState(false);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
