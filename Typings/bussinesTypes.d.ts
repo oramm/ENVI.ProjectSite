@@ -128,3 +128,16 @@ export interface Person extends RepositoryDataItem {
     position: string;
     _entity: Entity;
 }
+
+export interface DocumentTemplate extends RepositoryDataItem {
+    name: string;
+    description: string;
+    gdId: string;
+    _contents: {
+        id?: number;
+        gdId?: string;
+        alias: string;
+        caseTypeId: number | null;
+    };
+    _nameContentsAlias?: string;
+}

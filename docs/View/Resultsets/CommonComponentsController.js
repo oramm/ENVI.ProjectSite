@@ -4,17 +4,24 @@ exports.parseFieldValuestoFormData = void 0;
 function parseFieldValuestoFormData(data) {
     const formData = new FormData();
     for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            const element = data[key];
-            let parsedValue = '';
-            if (typeof element === 'string')
-                parsedValue = element;
-            if (typeof element === 'object')
-                parsedValue = JSON.stringify(element);
-            if (typeof element === 'number')
-                parsedValue = element.toString();
-            formData.append(key, parsedValue);
+        if (!data.hasOwnProperty(key))
+            continue;
+        const element = data[key];
+        if (element instanceof File) {
+            formData.append(key, element);
+            continue;
         }
+        let parsedValue = '';
+        switch (typeof element) {
+            case 'string':
+            case 'number':
+                parsedValue = element.toString();
+                break;
+            case 'object':
+                parsedValue = JSON.stringify(element);
+                break;
+        }
+        formData.append(key, parsedValue);
     }
     return formData;
 }

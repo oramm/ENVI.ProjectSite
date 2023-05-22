@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CaseSelectMenuElement, ContractSelectFormElement, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
+import { CaseSelectMenuElement, ContractSelectFormElement, ErrorMessage, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { casesRepository, contractsRepository, projectsRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
@@ -8,7 +8,7 @@ import MainSetup from '../../../React/MainSetupReact';
 import { Case, Contract, IncomingLetter, OurLetter, Project, RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 
 export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors }, trigger } = useFormContext();
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
     const _project = watch('_project') as Project | undefined;
     const _contract = watch('_contract');
     const creationDate = watch('creationDate');
@@ -23,15 +23,17 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
         reset({
             _project,
             _contract: getContractFromCases(initialData?._cases),
-            _cases: initialData?._cases,
+            _cases: initialData?._cases || [],
             description: initialData?.description || '',
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
             _editor: initialData?._editor
         });
+        trigger();
     }, [initialData, reset]);
 
     useEffect(() => {
+        console.log('isValid', isValid);
         if (!dirtyFields._contract) return;
         setValue('_cases', undefined, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
@@ -56,7 +58,6 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                 <CaseSelectMenuElement
                     name='_cases'
                     repository={casesRepository}
-                    required={true}
                     _project={_project}
                     _contract={_contract}
                     readonly={!_contract}
@@ -72,13 +73,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                     isInvalid={!!errors?.description}
                     {...register('description')}
                 />
-                {
-                    errors?.description && (
-                        <Form.Text className="text-danger">
-                            {errors.description.message as string}
-                        </Form.Text>
-                    )
-                }
+                <ErrorMessage name='description' errors={errors} />
             </Form.Group>
             <Row >
                 <Form.Group as={Col} controlId="creationDate">
@@ -89,11 +84,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                         isInvalid={!!errors.creationDate}
                         {...register('creationDate')}
                     />
-                    {errors.creationDate && (
-                        <Form.Text className="text-danger">
-                            {errors.creationDate.message as string}
-                        </Form.Text>
-                    )}
+                    <ErrorMessage name='creationDate' errors={errors} />
                 </Form.Group>
                 <Form.Group as={Col} controlId="registrationDate">
                     <Form.Label>Data Nadania</Form.Label>
@@ -103,11 +94,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                         isInvalid={!!errors.registrationDate}
                         {...register('registrationDate')}
                     />
-                    {errors.registrationDate && (
-                        <Form.Text className="text-danger">
-                            {errors.registrationDate.message as string}
-                        </Form.Text>
-                    )}
+                    <ErrorMessage name='registrationDate' errors={errors} />
                 </Form.Group>
             </Row>
             <Form.Group controlId="_editor">
@@ -115,13 +102,13 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
                     label='Osoba rejestrująca'
                     name='_editor'
                     repository={MainSetup.personsEnviRepository}
-                    required={true}
                 />
             </Form.Group>
             <Form.Group controlId="file">
+                <Form.Label>Plik</Form.Label>
                 <FileInput
-                    name="file"
                     acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
+                    {...register('file')}
                 />
             </Form.Group>
         </>

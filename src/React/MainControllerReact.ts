@@ -1,6 +1,6 @@
 import RepositoryReact from "./RepositoryReact";
 import MainSetup from "./MainSetupReact";
-import { ContractType, Person } from "../../Typings/bussinesTypes";
+import { ContractType, DocumentTemplate, Person } from "../../Typings/bussinesTypes";
 
 export default class MainController {
     static async main() {
@@ -39,7 +39,7 @@ export default class MainController {
         contractTypesRepository.saveToSessionStorage();
         MainSetup.contractTypesRepository = contractTypesRepository;
 
-        const documentTemplatesRepository = new RepositoryReact({
+        const documentTemplatesRepository = new RepositoryReact<DocumentTemplate>({
             name: 'documentTemplates',
             actionRoutes: {
                 getRoute: 'documentTemplates',

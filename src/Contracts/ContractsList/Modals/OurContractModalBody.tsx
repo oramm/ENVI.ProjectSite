@@ -10,8 +10,8 @@ import { ModalBodyProps, SpecificAddNewModalButtonProps, SpecificEditModalButton
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 
 export function OurContractModalBody(props: ModalBodyProps) {
-    const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = useFormContext();
+    const { initialData, isEditing } = props;
+    const { register, trigger, setValue, watch, formState, control } = useFormContext();
     const _type = watch('_type');
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
     return (
         <>
             {
-                (!props.isEditing) ?
+                (!isEditing) ?
                     <ContractTypeSelectFormElement
                         typesToInclude='our'
                     />
@@ -56,7 +56,6 @@ export function OurContractModalBody(props: ModalBodyProps) {
                         label='Koordynator'
                         name='_manager'
                         repository={MainSetup.personsEnviRepository}
-                        required={true}
                     />
                 </Form.Group>
                 <Form.Group as={Col} controlId="_admin">
@@ -64,7 +63,6 @@ export function OurContractModalBody(props: ModalBodyProps) {
                         label='Administrator'
                         name='_admin'
                         repository={MainSetup.personsEnviRepository}
-                        required={true}
                     />
                 </Form.Group>
             </Row>

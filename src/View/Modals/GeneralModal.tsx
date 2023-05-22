@@ -22,7 +22,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     repository: RepositoryReact<DataItemType>;
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     modalBodyProps: ModalBodyProps<DataItemType>;
-    validationSchema?: yup.ObjectSchema<any>;
+    makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
 };
 
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -35,7 +35,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     repository,
     ModalBodyComponent,
     modalBodyProps,
-    validationSchema,
+    makeValidationSchema: validationSchema,
 }: GeneralModalProps<DataItemType>) {
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
@@ -43,7 +43,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     const formMethods = useForm({
         defaultValues: {},
         mode: 'onChange',
-        resolver: validationSchema ? yupResolver(validationSchema) : undefined
+        resolver: validationSchema ? yupResolver(validationSchema(isEditing)) : undefined
     });
 
     let newObject: DataItemType;

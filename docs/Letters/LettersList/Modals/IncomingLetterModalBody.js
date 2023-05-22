@@ -33,7 +33,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, control } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue('number', initialData?.number || '', { shouldDirty: false, shouldValidate: true });
@@ -41,11 +41,12 @@ function IncomingLetterModalBody(props) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer pisma"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: 'text', placeholder: "Podaj numer", isInvalid: !!formState.errors?.number, isValid: !formState.errors?.number, ...register('number') }),
-            formState.errors?.number && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.number.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: 'text', placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register('number') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'number' })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }))));
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_entitiesMain' }))));
 }
 exports.IncomingLetterModalBody = IncomingLetterModalBody;

@@ -1,16 +1,13 @@
 import * as Yup from 'yup';
-import { valueValidation } from '../../../View/Modals/CommonFormComponents';
 
 const commonFields = {
     _contract: Yup.object()
-        .required('Wybież kontrakt'),
-    number: Yup.string()
-        .required('Numer jest wymagany')
-        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+        .required('Wybierz kontrakt'),
 
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
-    creationDate: Yup.date().required('Data rozpoczęcia jest wymagana')
+    creationDate: Yup.date()
+        .required('Data rozpoczęcia jest wymagana')
         .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem',
             function (value: Date) {
                 return this.parent.registrationDate >= value;
@@ -20,18 +17,32 @@ const commonFields = {
             function (value: Date) {
                 return value >= this.parent.creationDate;
             }),
-    _entitiesMain: Yup.array(),
+    _entitiesMain: Yup.array()
+        .required('Wybierz podmiot'),
     _editor: Yup.object()
         .required('Podaj kto rejestruje'),
 
 };
 
-export const ourLetterValidationSchema = Yup.object().shape({
-    ...commonFields,
-});
+export function ourLetterValidationSchema(isEditing: boolean) {
+    return (
+        Yup.object().shape({
+            ...commonFields,
+            _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
+        })
+    )
+}
 
-export const otherLetterValidationSchema = Yup.object().shape({
-    ...commonFields,
 
-});
+
+export function makeOtherLetterValidationSchema(isEditing: boolean) {
+    return (
+        Yup.object().shape({
+            ...commonFields,
+            number: Yup.string()
+                .required('Numer jest wymagany')
+                .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+        })
+    )
+}
 

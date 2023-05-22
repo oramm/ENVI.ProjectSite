@@ -23,17 +23,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.otherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
+exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const commonFields = {
     _contract: Yup.object()
-        .required('Wybież kontrakt'),
-    number: Yup.string()
-        .required('Numer jest wymagany')
-        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+        .required('Wybierz kontrakt'),
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
-    creationDate: Yup.date().required('Data rozpoczęcia jest wymagana')
+    creationDate: Yup.date()
+        .required('Data rozpoczęcia jest wymagana')
         .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
         return this.parent.registrationDate >= value;
     }),
@@ -41,13 +39,24 @@ const commonFields = {
         .test('registrationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
         return value >= this.parent.creationDate;
     }),
-    _entitiesMain: Yup.array(),
+    _entitiesMain: Yup.array()
+        .required('Wybierz podmiot'),
     _editor: Yup.object()
         .required('Podaj kto rejestruje'),
 };
-exports.ourLetterValidationSchema = Yup.object().shape({
-    ...commonFields,
-});
-exports.otherLetterValidationSchema = Yup.object().shape({
-    ...commonFields,
-});
+function ourLetterValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
+    }));
+}
+exports.ourLetterValidationSchema = ourLetterValidationSchema;
+function makeOtherLetterValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        number: Yup.string()
+            .required('Numer jest wymagany')
+            .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+    }));
+}
+exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;

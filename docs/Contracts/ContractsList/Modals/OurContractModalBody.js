@@ -34,8 +34,8 @@ const ContractModalBody_1 = require("./ContractModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 function OurContractModalBody(props) {
-    const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { initialData, isEditing } = props;
+    const { register, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
     const _type = watch('_type');
     (0, react_1.useEffect)(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
@@ -44,7 +44,7 @@ function OurContractModalBody(props) {
         setValue('_manager', initialData?._manager, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        (!props.isEditing) ?
+        (!isEditing) ?
             react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' })
             : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
@@ -54,8 +54,8 @@ function OurContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
-                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository, required: true })),
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository, required: true })))));
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

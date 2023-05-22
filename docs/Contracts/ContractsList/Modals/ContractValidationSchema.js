@@ -50,29 +50,35 @@ const commonFields = {
         return value > this.parent.startDate;
     }),
 };
-exports.ourContractValidationSchema = Yup.object().shape({
-    ...commonFields,
-    ourId: Yup.string()
-        .required('Oznaczenie jest wymagane')
-        .min(9, 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami')
-        .max(11, 'Oznacznie może mieć maksymalnie 11 znaków')
-        .test('threeCharsBeforeFirstDot', 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką', function (value) {
-        const parts = value.split('.');
-        return parts[0].length === 3;
-    })
-        .test('textAfterFirstDotEqualsType', 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu', function (value) {
-        const parts = value.split('.');
-        const { _type } = this.parent;
-        return _type ? parts[1] === _type.name : false;
-    })
-        .test('containsTwoDots', 'Oznaczenie musi zawierać dwie kropki', (value) => {
-        const parts = value.split('.');
-        return parts.length === 3;
-    }),
-});
-exports.otherContractValidationSchema = Yup.object().shape({
-    ...commonFields,
-    _contractors: Yup.array(),
-    _ourContract: Yup.object()
-        .required('Powiązana umowa Envi jest wymagana'),
-});
+function ourContractValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        ourId: Yup.string()
+            .required('Oznaczenie jest wymagane')
+            .min(9, 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami')
+            .max(11, 'Oznacznie może mieć maksymalnie 11 znaków')
+            .test('threeCharsBeforeFirstDot', 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką', function (value) {
+            const parts = value.split('.');
+            return parts[0].length === 3;
+        })
+            .test('textAfterFirstDotEqualsType', 'Po pierwszej kropce musi następować tekst równy wybranemu typowi kontraktu', function (value) {
+            const parts = value.split('.');
+            const { _type } = this.parent;
+            return _type ? parts[1] === _type.name : false;
+        })
+            .test('containsTwoDots', 'Oznaczenie musi zawierać dwie kropki', (value) => {
+            const parts = value.split('.');
+            return parts.length === 3;
+        }),
+    }));
+}
+exports.ourContractValidationSchema = ourContractValidationSchema;
+function otherContractValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        _contractors: Yup.array(),
+        _ourContract: Yup.object()
+            .required('Powiązana umowa Envi jest wymagana'),
+    }));
+}
+exports.otherContractValidationSchema = otherContractValidationSchema;

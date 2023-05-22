@@ -48,7 +48,7 @@ function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             modalTitle: "Edycja pisma wychodzącego",
             repository: LettersSearch_1.lettersRepository,
             initialData: initialData,
-            validationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
@@ -61,7 +61,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_1.OurLetterModalBody },
             modalTitle: "Rejestruj pismo wychodzące",
             repository: LettersSearch_1.lettersRepository,
-            validationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj wychodzące",
             buttonVariant: "outline-success",
@@ -75,7 +75,7 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             modalTitle: "Edycja pisma przychodzącego",
             repository: LettersSearch_1.lettersRepository,
             initialData: initialData,
-            validationSchema: LetterValidationSchema_1.otherLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
         }, buttonProps: {} }));
 }
 exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
@@ -86,7 +86,7 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody, },
             modalTitle: "Nowe pismo przychodzące",
             repository: LettersSearch_1.lettersRepository,
-            validationSchema: LetterValidationSchema_1.otherLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj przychodzące",
         } }));

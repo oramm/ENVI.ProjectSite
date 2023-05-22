@@ -22,7 +22,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     additionalModalBodyProps?: any;
     modalTitle: string;
     repository: RepositoryReact<DataItemType>;
-    validationSchema?: yup.ObjectSchema<any>;
+    makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
 };
 
 type GeneralModalButtonButtonProps = {

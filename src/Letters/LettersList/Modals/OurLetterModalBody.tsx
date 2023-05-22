@@ -1,20 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MainSetup from '../../../React/MainSetupReact';
-import { CaseSelectMenuElement, FileInput, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
+import { CaseSelectMenuElement, ErrorMessage, FileInput, MyAsyncTypeahead, OurLetterTemplateSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { LetterModalBody, ProjectSelectorModalBody } from './LetterModalBody';
 import { casesRepository, entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ourLetterValidationSchema } from './LetterValidationSchema';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
-import { Contract, IncomingLetter, OurLetter, Project } from '../../../../Typings/bussinesTypes';
+import { Case, Contract, IncomingLetter, OurLetter, Project } from '../../../../Typings/bussinesTypes';
 
 export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
-    const initialData = props.initialData;
-    const { reset, trigger, setValue, watch, formState, control } = useFormContext();
-
-    const _contract = watch('_contract') as Contract | undefined;
-    const _project = watch('_project') as Project | undefined;
+    const { initialData, isEditing } = props;
+    const { setValue, trigger, watch, register, formState: { errors } } = useFormContext();
+    const _cases = watch('_cases') as Case[] | undefined;
 
     useEffect(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -25,6 +23,13 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
             <LetterModalBody
                 {...props}
             />
+            {
+                (!isEditing) ?
+                    <OurLetterTemplateSelectFormElement
+                        _cases={_cases || []}
+                    />
+                    : null
+            }
             <Form.Group>
                 <Form.Label>Odbiorca</Form.Label>
                 <MyAsyncTypeahead
@@ -33,7 +38,9 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
                     repository={entitiesRepository}
                     multiple={true}
                 />
+                <ErrorMessage errors={errors} name='_entitiesMain' />
             </Form.Group>
+            <input type="hidden" {...register('isOur')} value='true' />
         </>
     );
 }

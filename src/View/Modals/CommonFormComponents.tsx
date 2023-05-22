@@ -14,7 +14,7 @@ import ContractsController from '../../Contracts/ContractsList/ContractsControll
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
 import { TypeaheadManagerChildProps } from 'react-bootstrap-typeahead/types/types';
-import { Case, Contract, Milestone, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { Case, Contract, DocumentTemplate, Milestone, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -27,14 +27,12 @@ type ProjectSelectorProps = {
 /** 
  * Komponent formularza wyboru projektu
  * @param repository Repozytorium projektów 
- * @param required Czy pole jest wymagane - domyślnie false
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 export function ProjectSelector({
     name = '_parent',
     repository,
-    required = false,
     showValidationInfo = true,
     disabled = false,
 }: ProjectSelectorProps) {
@@ -47,7 +45,6 @@ export function ProjectSelector({
                 labelKey="ourId"
                 repository={repository}
                 specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
-                required={required}
                 showValidationInfo={showValidationInfo}
                 multiple={false}
             />
@@ -62,15 +59,15 @@ type ContractStatusProps = {
 
 export function ContractStatus({ required = false, showValidationInfo = true }: ContractStatusProps) {
     const { register, formState: { errors } } = useFormContext();
-
+    const name = 'status';
     return (
         <Form.Group controlId="status">
             <Form.Label>Status</Form.Label>
             <Form.Control
                 as="select"
-                isValid={showValidationInfo ? !errors?.status : undefined}
-                isInvalid={showValidationInfo ? !!errors?.status : undefined}
-                {...register('status', {
+                isValid={showValidationInfo ? !errors[name] : undefined}
+                isInvalid={showValidationInfo ? !!errors[name] : undefined}
+                {...register(name, {
                     required: { value: required, message: 'Pole jest wymagane' },
                 })}
             >
@@ -81,9 +78,7 @@ export function ContractStatus({ required = false, showValidationInfo = true }: 
                     </option>
                 ))}
             </Form.Control>
-            {errors?.status && (
-                <Form.Text className="text-danger">{errors.status.message as string}</Form.Text>
-            )}
+            <ErrorMessage errors={errors} name={name} />
         </Form.Group>
     );
 };
@@ -106,13 +101,13 @@ export function ContractSelectFormElement({
     _project,
     readOnly = false,
 }: ContractSelectFormElementProps) {
-    const { control, watch, setValue, formState: { errors } } = useFormContext();
+    const { formState: { errors } } = useFormContext();
 
     function makeContextSearchParams() {
         const params = [
             { key: 'typesToInclude', value: typesToInclude }
         ];
-        if (_project) params.push({ key: 'project', value: _project.ourId });
+        if (_project) params.push({ key: 'projectId', value: _project.ourId });
         return params;
     }
 
@@ -129,12 +124,6 @@ export function ContractSelectFormElement({
                 showValidationInfo={showValidationInfo}
                 readOnly={readOnly}
             />
-            {errors?.[name] && (
-                <Form.Text className="text-danger">
-                    {errors?.[name]?.message as string}
-                </Form.Text>
-
-            )}
         </>
     )
 }
@@ -175,7 +164,7 @@ export function ContractTypeSelectFormElement({
         return filteredItems;
     }
 
-    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, '_type' | '_contractType'>) {
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
@@ -211,12 +200,77 @@ export function ContractTypeSelectFormElement({
                         />
                     )}
                 />
-                {errors?.[name] && (
-                    <Form.Text className="text-danger">
-                        {errors?.[name]?.message as string}
-                    </Form.Text>
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
 
-                )}
+type OurLetterTemplateSelectFormElementProps = {
+    showValidationInfo?: boolean,
+    _cases: Case[],
+}
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function OurLetterTemplateSelectFormElement({
+    showValidationInfo = true,
+    _cases = [],
+}: OurLetterTemplateSelectFormElementProps) {
+    const { control, watch, setValue, formState: { errors } } = useFormContext();
+    const name = '_template';
+    const label = 'Szablon pisma';
+    const repository = MainSetup.documentTemplatesRepository;
+
+    function makeoptions(templates: DocumentTemplate[]) {
+        console.log('makeoptions', _cases);
+        const filteredTemplates = templates.filter((template) => {
+            return !template._contents.caseTypeId || _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId);
+        });
+        return filteredTemplates;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={false}
+                            options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? [field.value] : []}
+                            placeholder="-- Wybierz szablon --"
+                            isValid={showValidationInfo ? !(errors?.[name]) : undefined}
+                            isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as DocumentTemplate;
+                                return (
+                                    <div>
+                                        <span>{myOption._nameContentsAlias}</span>
+                                        <div className="text-muted small">{myOption.description}</div>
+                                    </div>);
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
             </>
         </Form.Group>
     );
@@ -228,7 +282,6 @@ type PersonsSelectFormElementProps = {
     repository: RepositoryReact,
     multiple?: boolean,
     showValidationInfo?: boolean,
-    required?: boolean,
 }
 /**
  * Komponent formularza wyboru osoby
@@ -241,7 +294,6 @@ export function PersonSelectFormElement({
     repository,
     multiple = false,
     showValidationInfo = true,
-    required = false
 }: PersonsSelectFormElementProps) {
     const { control, setValue, watch, formState: { errors } } = useFormContext();
 
@@ -285,8 +337,9 @@ export function PersonSelectFormElement({
         </>
     );
 }
-type ErrorMessageProps = { errors: FieldErrors<any>, name: string }
-function ErrorMessage({ errors, name }: ErrorMessageProps) {
+
+export type ErrorMessageProps = { errors: FieldErrors<any>, name: string }
+export function ErrorMessage({ errors, name }: ErrorMessageProps) {
     return (
         <>
             {errors[name] && (
@@ -306,7 +359,6 @@ type MyAsyncTypeaheadProps = {
     contextSearchParams?: { key: string, value: string }[],
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
-    required?: boolean;
     showValidationInfo?: boolean,
     renderMenuItemChildren?: RenderMenuItemChildren,
     renderMenu?: (results: any[], menuProps: any, state: TypeaheadManagerChildProps) => JSX.Element,
@@ -331,7 +383,6 @@ export function MyAsyncTypeahead({
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     renderMenu,
     multiple = false,
-    required = false,
     showValidationInfo = true,
     readOnly = false
 }: MyAsyncTypeaheadProps) {
@@ -370,7 +421,6 @@ export function MyAsyncTypeahead({
             <Controller
                 name={name}
                 control={control}
-                rules={{ required: { value: required, message: `${name} musi być wybrany` } }}
                 render={({ field }) => (
                     <AsyncTypeahead
                         renderMenu={renderMenu ? renderMenu : undefined}
@@ -388,12 +438,11 @@ export function MyAsyncTypeahead({
                         newSelectionPrefix="Dodaj nowy: "
                         placeholder="-- Wybierz opcję --"
                         renderMenuItemChildren={renderMenuItemChildren}
-                        isValid={showValidationInfo ? required && field.value && field.value.length > 0 : undefined}
-                        isInvalid={showValidationInfo ? required && (!field.value || field.value.length === 0) : undefined}
+                        isValid={showValidationInfo ? !(errors?.[name]) : undefined}
+                        isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
                     />
                 )}
             />
-
             <ErrorMessage errors={errors} name={name} />
             {readOnly && (
                 <input
@@ -452,7 +501,6 @@ interface CaseSelectMenuElementProps {
     _project?: Project;
     _contract?: Contract;
     _milestone?: Milestone;
-    required?: boolean;
     readonly?: boolean;
 }
 
@@ -473,7 +521,6 @@ interface CaseSelectMenuElementProps {
  */
 export function CaseSelectMenuElement({
     name = '_case',
-    required = false,
     readonly = false,
     _project,
     _contract,
@@ -504,7 +551,6 @@ export function CaseSelectMenuElement({
             return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
         }}
         multiple={true}
-        required={required}
         readOnly={readonly}
     />;
 }
@@ -569,11 +615,7 @@ export function ValueInPLNInput({
                 />
                 <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
             </InputGroup>
-            {errors?.value && (
-                <Form.Text className="text-danger">
-                    {errors.value?.message as string}
-                </Form.Text>
-            )}
+            <ErrorMessage name={keyLabel} errors={errors} />
         </>
     );
 }
@@ -599,22 +641,32 @@ type FileInputProps = {
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-export function FileInput({
-    name,
-    required = false,
-    acceptedFileTypes = '',
-}: FileInputProps) {
+export function FileInput({ name, required = false, acceptedFileTypes = '' }: FileInputProps) {
+    const { register, watch, setValue, formState: { errors } } = useFormContext();
+    const selectedFile = watch(name); // monitoruje zmiany w input
 
-    const { register, formState: { errors } } = useFormContext();
+    useEffect(() => {
+        register(name); // rejestracja inputa
+    }, [register, name]);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setValue(name, event.target.files[0]); // aktualizacja wartości po wybraniu pliku
+        }
+    };
+
 
     return (
-        <Form.Control
-            type="file"
-            required={required}
-            accept={acceptedFileTypes}
-            {...register(name, {
-                required: { value: required, message: 'Pole jest wymagane' },
-            })}
-        />
+        <>
+            <Form.Control
+                type="file"
+                required={required}
+                accept={acceptedFileTypes}
+                onChange={handleChange}
+                isInvalid={!!errors[name]}
+                isValid={!errors[name]}
+            />
+            <ErrorMessage name={name} errors={errors} />
+        </>
     );
 }

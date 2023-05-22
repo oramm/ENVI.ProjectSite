@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { ProjectSelectorModalBody } from './LetterModalBody';
-import { otherLetterValidationSchema, ourLetterValidationSchema } from './LetterValidationSchema';
+import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from './LetterValidationSchema';
 import { IncomingLetterModalBody } from './IncomingLetterModalBody';
 import { OurLetterModalBody } from './OurLetterModalBody';
 import { lettersRepository } from '../LettersSearch';
@@ -43,7 +43,7 @@ export function OurLetterEditModalButton({
                 modalTitle: "Edycja pisma wychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                validationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -63,7 +63,7 @@ export function OurLetterAddNewModalButton({
                 additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody },
                 modalTitle: "Rejestruj pismo wychodzące",
                 repository: lettersRepository,
-                validationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj wychodzące",
@@ -84,7 +84,7 @@ export function IncomingLetterEditModalButton({
                 modalTitle: "Edycja pisma przychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                validationSchema: otherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema
             }}
             buttonProps={{}}
         />
@@ -102,7 +102,7 @@ export function IncomingLetterAddNewModalButton({
                 additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowe pismo przychodzące",
                 repository: lettersRepository,
-                validationSchema: otherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj przychodzące",

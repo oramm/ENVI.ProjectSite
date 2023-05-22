@@ -30,7 +30,6 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
                 <CaseSelectMenuElement
                     name='_cases'
                     repository={casesRepository}
-                    required={true}
                 />
             </Form.Group>
         </>

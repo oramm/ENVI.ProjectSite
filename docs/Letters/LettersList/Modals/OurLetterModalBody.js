@@ -31,17 +31,21 @@ const LettersSearch_1 = require("../LettersSearch");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 function OurLetterModalBody(props) {
-    const initialData = props.initialData;
-    const { reset, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
-    const _contract = watch('_contract');
-    const _project = watch('_project');
+    const { initialData, isEditing } = props;
+    const { setValue, trigger, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const _cases = watch('_cases');
     (0, react_1.useEffect)(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        (!isEditing) ?
+            react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] })
+            : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }))));
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_entitiesMain' })),
+        react_1.default.createElement("input", { type: "hidden", ...register('isOur'), value: 'true' })));
 }
 exports.OurLetterModalBody = OurLetterModalBody;

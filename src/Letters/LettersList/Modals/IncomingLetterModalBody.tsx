@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import { ContractTypeSelectFormElement, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
+import { ErrorMessage, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
 import { LetterModalBody } from './LetterModalBody';
 import { entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
@@ -10,7 +10,7 @@ import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState, control } = useFormContext();
+    const { register, setValue, watch, formState: { errors }, control } = useFormContext();
 
     useEffect(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -25,15 +25,11 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | Incomi
                 <Form.Control
                     type='text'
                     placeholder="Podaj numer"
-                    isInvalid={!!formState.errors?.number}
-                    isValid={!formState.errors?.number}
+                    isInvalid={!!errors?.number}
+                    isValid={!errors?.number}
                     {...register('number')}
                 />
-                {formState.errors?.number && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.number.message as string}
-                    </Form.Text>
-                )}
+                <ErrorMessage errors={errors} name={'number'} />
             </Form.Group>
             <LetterModalBody
                 {...props}
@@ -46,6 +42,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | Incomi
                     repository={entitiesRepository}
                     multiple={true}
                 />
+                <ErrorMessage errors={errors} name={'_entitiesMain'} />
             </Form.Group>
         </>
     );

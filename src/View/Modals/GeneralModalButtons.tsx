@@ -14,7 +14,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
         modalTitle,
         initialData,
         repository,
-        validationSchema,
+        makeValidationSchema,
     },
     buttonProps = {},
 }: GeneralEditModalButtonProps<DataItemTpe>) {
@@ -42,7 +42,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
                 repository={repository}
                 onEdit={onEdit}
                 ModalBodyComponent={ModalBodyComponent}
-                validationSchema={validationSchema}
+                makeValidationSchema={makeValidationSchema}
                 modalBodyProps={{
                     isEditing: true,
                     initialData: initialData,
@@ -68,7 +68,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         additionalModalBodyProps,
         modalTitle,
         repository,
-        validationSchema,
+        makeValidationSchema: validationSchema,
     },
     buttonProps: {
         buttonCaption,
@@ -107,7 +107,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                 repository={repository}
                 onAddNew={onAddNew}
                 ModalBodyComponent={ModalBodyComponent}
-                validationSchema={validationSchema}
+                makeValidationSchema={validationSchema}
                 modalBodyProps={{
                     isEditing: false,
                     additionalProps: additionalModalBodyProps,

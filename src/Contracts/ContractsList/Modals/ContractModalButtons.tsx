@@ -37,7 +37,7 @@ export function OurContractEditModalButton({
                 modalTitle: "Edycja umowy",
                 repository: contractsRepository,
                 initialData: initialData,
-                validationSchema: ourContractValidationSchema
+                makeValidationSchema: ourContractValidationSchema
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -57,7 +57,7 @@ export function OurContractAddNewModalButton({
                 additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
                 modalTitle: "Nowa umowa ENVI",
                 repository: contractsRepository,
-                validationSchema: ourContractValidationSchema
+                makeValidationSchema: ourContractValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę ENVI",
@@ -78,7 +78,7 @@ export function OtherContractEditModalButton({
                 modalTitle: "Edycja umowy",
                 repository: contractsRepository,
                 initialData: initialData,
-                validationSchema: otherContractValidationSchema
+                makeValidationSchema: otherContractValidationSchema
             }}
             buttonProps={{}}
         />
@@ -96,7 +96,7 @@ export function OtherContractAddNewModalButton({
                 additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa umowa zewnętrzna",
                 repository: contractsRepository,
-                validationSchema: otherContractValidationSchema
+                makeValidationSchema: otherContractValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę zewnętrzną",

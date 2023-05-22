@@ -1,9 +1,9 @@
-import { CaseType, ContractType, Person, Project } from "../../Typings/bussinesTypes";
+import { CaseType, ContractType, DocumentTemplate, Person, Project } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
 
 export default class MainSetup {
     static projectsRepository: RepositoryReact<Project>;
-    static documentTemplatesRepository: RepositoryReact;
+    static documentTemplatesRepository: RepositoryReact<DocumentTemplate>;
     static personsEnviRepository: RepositoryReact<Person>;
     static contractTypesRepository: RepositoryReact<ContractType>;
     static caseTypesRepository: RepositoryReact<CaseType>;

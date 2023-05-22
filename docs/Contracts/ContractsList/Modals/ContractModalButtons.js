@@ -25,7 +25,7 @@ function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
-            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
+            makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
@@ -38,7 +38,7 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody_1.OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
             repository: ContractsSearch_1.contractsRepository,
-            validationSchema: ContractValidationSchema_1.ourContractValidationSchema
+            makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę ENVI",
             buttonVariant: "outline-success",
@@ -52,7 +52,7 @@ function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) 
             modalTitle: "Edycja umowy",
             repository: ContractsSearch_1.contractsRepository,
             initialData: initialData,
-            validationSchema: ContractValidationSchema_1.otherContractValidationSchema
+            makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {} }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
@@ -63,7 +63,7 @@ function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody, },
             modalTitle: "Nowa umowa zewnętrzna",
             repository: ContractsSearch_1.contractsRepository,
-            validationSchema: ContractValidationSchema_1.otherContractValidationSchema
+            makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę zewnętrzną",
         } }));
