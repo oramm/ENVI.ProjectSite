@@ -5,9 +5,7 @@ import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody
 import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
-import { ourContractValidationSchema } from './ContractValidationSchema';
-import { ModalBodyProps, SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../../View/Modals/ModalsTypes';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
+import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 
 export function OurContractModalBody(props: ModalBodyProps) {
     const { initialData, isEditing } = props;

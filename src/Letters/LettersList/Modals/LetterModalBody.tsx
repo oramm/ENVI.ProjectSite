@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CaseSelectMenuElement, ContractSelectFormElement, ErrorMessage, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Alert, Col, Form, Placeholder, Row } from 'react-bootstrap';
 import { casesRepository, contractsRepository, projectsRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
@@ -42,6 +42,10 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
         trigger(['creationDate', 'registrationDate']);
     }, [trigger, watch, creationDate, registrationDate]);
 
+    useEffect(() => {
+        setValue('registrationDate', creationDate);
+    }, [setValue, creationDate]);
+
     return (
         <>
             <Form.Group controlId="_contract">
@@ -55,14 +59,19 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
             </Form.Group>
             <Form.Group>
                 <Form.Label>Dotyczy spraw</Form.Label>
-                <CaseSelectMenuElement
-                    name='_cases'
-                    repository={casesRepository}
-                    _project={_project}
-                    _contract={_contract}
-                    readonly={!_contract}
-                />
+                {_contract ?
+                    <CaseSelectMenuElement
+                        name='_cases'
+                        repository={casesRepository}
+                        _project={_project}
+                        _contract={_contract}
+                        readonly={!_contract}
+                    />
+                    :
+                    <Alert variant='warning'>Wybierz kontrakt, by przypisać do spraw</Alert>
+                }
             </Form.Group>
+
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control

@@ -39,9 +39,8 @@ function OurLetterModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        (!isEditing) ?
-            react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] })
-            : null,
+        !isEditing &&
+            react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }),

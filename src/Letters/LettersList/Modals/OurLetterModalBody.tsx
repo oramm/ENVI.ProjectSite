@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MainSetup from '../../../React/MainSetupReact';
 import { CaseSelectMenuElement, ErrorMessage, FileInput, MyAsyncTypeahead, OurLetterTemplateSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { LetterModalBody, ProjectSelectorModalBody } from './LetterModalBody';
 import { casesRepository, entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
-import { ourLetterValidationSchema } from './LetterValidationSchema';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import { Case, Contract, IncomingLetter, OurLetter, Project } from '../../../../Typings/bussinesTypes';
 
@@ -23,12 +21,10 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
             <LetterModalBody
                 {...props}
             />
-            {
-                (!isEditing) ?
-                    <OurLetterTemplateSelectFormElement
-                        _cases={_cases || []}
-                    />
-                    : null
+            {!isEditing &&
+                <OurLetterTemplateSelectFormElement
+                    _cases={_cases || []}
+                />
             }
             <Form.Group>
                 <Form.Label>Odbiorca</Form.Label>

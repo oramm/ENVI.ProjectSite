@@ -28,6 +28,8 @@ const Yup = __importStar(require("yup"));
 const commonFields = {
     _contract: Yup.object()
         .required('Wybierz kontrakt'),
+    _cases: Yup.array()
+        .required('Wybierz sprawy'),
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     creationDate: Yup.date()

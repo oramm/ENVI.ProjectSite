@@ -68589,13 +68589,19 @@ function LetterModalBody({ isEditing, initialData }) {
     (0, react_1.useEffect)(() => {
         trigger(['creationDate', 'registrationDate']);
     }, [trigger, watch, creationDate, registrationDate]);
+    (0, react_1.useEffect)(() => {
+        setValue('registrationDate', creationDate, { shouldValidate: true });
+    }, [setValue, creationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
             react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
-            react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })),
+            _contract ?
+                react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })
+                :
+                    react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'warning' }, "Wybierz kontrakt, by przypisa\u0107 do spraw")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
@@ -68779,6 +68785,8 @@ const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/inde
 const commonFields = {
     _contract: Yup.object()
         .required('Wybierz kontrakt'),
+    _cases: Yup.array()
+        .required('Wybierz sprawy'),
     description: Yup.string()
         .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     creationDate: Yup.date()
@@ -68863,9 +68871,8 @@ function OurLetterModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        (!isEditing) ?
-            react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] })
-            : null,
+        !isEditing &&
+            react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersSearch_1.entitiesRepository, multiple: true }),
