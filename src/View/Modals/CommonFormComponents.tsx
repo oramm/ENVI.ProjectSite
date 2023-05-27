@@ -18,7 +18,6 @@ import { Case, Contract, DocumentTemplate, Milestone, Project, RepositoryDataIte
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
-    required?: boolean,
     showValidationInfo?: boolean,
     name?: string,
     disabled?: boolean,
@@ -34,7 +33,7 @@ export function ProjectSelector({
     name = '_parent',
     repository,
     showValidationInfo = true,
-    disabled = false,
+    disabled = false
 }: ProjectSelectorProps) {
     const { formState: { errors } } = useFormContext();
     return (
@@ -228,7 +227,6 @@ export function OurLetterTemplateSelectFormElement({
     const repository = MainSetup.documentTemplatesRepository;
 
     function makeoptions(templates: DocumentTemplate[]) {
-        console.log('makeoptions', _cases);
         const filteredTemplates = templates.filter((template) => {
             return !template._contents.caseTypeId || _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId);
         });
@@ -392,7 +390,6 @@ export function MyAsyncTypeahead({
 
     function handleSearch(query: string) {
         setIsLoading(true);
-        console.log('handleSearch', query);
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
@@ -408,7 +405,6 @@ export function MyAsyncTypeahead({
     const filterBy = () => true;
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        console.log('handleOnChange', selectedOptions);
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
@@ -471,7 +467,6 @@ function renderCaseMenu(
     groupedResults: Record<string, Case[]>,
     milestoneNames: string[]
 ) {
-    console.log('renderCaseMenu', results.length, milestoneNames.length);
     let index = 0;
 
     const items = milestoneNames.map((milestoneName) => (
@@ -573,13 +568,15 @@ export function ValueInPLNInput({
 }: ValueInPLNInputProps) {
     const { control, setValue, watch, formState: { errors } } = useFormContext();
     const watchedValue = watch(keyLabel);
-    const [formattedValue, setFormattedValue] = useState('');
 
-    //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
     useEffect(() => {
-        if (watchedValue === undefined) return;
-        setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));
-    }, []);
+        if (watchedValue !== undefined) {
+            setValue(keyLabel, watchedValue, { shouldValidate: true });
+        } else {
+            setValue(keyLabel, '', { shouldValidate: true });
+        }
+    }, [watchedValue, setValue]);
+
 
     const classNames = ['form-control'];
     if (showValidationInfo) {
@@ -595,22 +592,24 @@ export function ValueInPLNInput({
                     render={({ field }) => (
                         <NumericFormat
                             {...field}
-                            value={formattedValue}
+                            value={watchedValue}
                             thousandSeparator=" "
-                            decimalSeparator=","
+                            decimalSeparator="."
                             decimalScale={2}
                             allowLeadingZeros={false}
-                            fixedDecimalScale={false}
+                            fixedDecimalScale={true}
                             displayType="input"
                             allowNegative={false}
                             onValueChange={(values: NumberFormatValues) => {
                                 console.log('values: ', values);
                                 setValue(keyLabel, values.floatValue)
-                                field.onChange(values.value);
+                                //field.onChange(values.floatValue);
                             }}
                             className={classNames.join(" ")}
-                            valueIsNumericString={true}
+                            valueIsNumericString={false}
                         />
+
+
                     )}
                 />
                 <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
@@ -619,6 +618,7 @@ export function ValueInPLNInput({
         </>
     );
 }
+
 
 export const valueValidation = Yup.string()
     .typeError('Wartość jest wymagana')

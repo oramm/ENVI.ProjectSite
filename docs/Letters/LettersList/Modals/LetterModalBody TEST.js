@@ -13,7 +13,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
     const _project = watch('_project');
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }),
+        react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, name: '_project' }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository }))));

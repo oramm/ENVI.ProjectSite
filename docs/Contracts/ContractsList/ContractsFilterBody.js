@@ -23,7 +23,7 @@ function ContractsFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register('startDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: false, showValidationInfo: false })),
+            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { name: '_contractType', showValidationInfo: false }))));
 }

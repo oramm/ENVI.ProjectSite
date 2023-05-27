@@ -55,10 +55,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
             const hasFiles = Object.values(data).some(value => value instanceof File);
-
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? parseFieldValuestoFormData(data) : data;
-
             (isEditing) ? await handleEdit(requestData) : await handleAdd(requestData);
             onClose();
             setRequestPending(false);
@@ -71,9 +69,11 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEdit(data: FormData | FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
-        const objectToEdit = data instanceof FormData ? Tools.updateObject(data, currentDataItem) as DataItemType : data as DataItemType;
-        //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
-        objectToEdit.id = currentDataItem.id;
+        const objectToEdit = data instanceof FormData ?
+            Tools.updateObject(data, currentDataItem) as DataItemType
+            :
+            { ...currentDataItem, ...data } as DataItemType;
+
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit) onEdit(editedObject);
     };
@@ -103,12 +103,18 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                         </Container>
                     </Modal.Body>
                     <Modal.Footer>
-                        {requestPending && <Spinner animation="border" variant="primary" />}
                         <Button variant="secondary" onClick={onClose}>
                             Anuluj
                         </Button>
-                        <Button type="submit" variant="primary" disabled={!formMethods.formState.isValid}>
-                            Zatwierdź
+                        <Button type="submit" variant="primary" disabled={!formMethods.formState.isValid || requestPending}>
+                            Zatwierdź {' '}
+                            {requestPending && <Spinner
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                            />}
                         </Button>
                     </Modal.Footer>
                 </Form>

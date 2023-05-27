@@ -41,7 +41,6 @@ export function LettersFilterBody({ }: FilterBodyProps) {
                 <ProjectSelector
                     name='_project'
                     repository={projectsRepository}
-                    required={false}
                     showValidationInfo={false}
                 />
             </Form.Group>

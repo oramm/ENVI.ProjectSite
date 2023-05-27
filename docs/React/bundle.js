@@ -67797,7 +67797,7 @@ function ContractsFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register('startDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: false, showValidationInfo: false })),
+            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { name: '_contractType', showValidationInfo: false }))));
 }
@@ -67942,7 +67942,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -68075,7 +68075,7 @@ const commonFields = {
     name: Yup.string()
         .required('Nazwa jest wymagana')
         .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
-        .max(150, 'Nazwa może mieć maksymalnie 150 znaków'),
+        .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
     alias: Yup.string()
         .max(30, 'Alias może mieć maksymalnie 30 znaków'),
     comment: Yup.string()
@@ -68312,7 +68312,7 @@ function LettersFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register('creationDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { name: '_project', repository: LettersSearch_1.projectsRepository, required: false, showValidationInfo: false }))));
+            react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { name: '_project', repository: LettersSearch_1.projectsRepository, showValidationInfo: false }))));
 }
 exports.LettersFilterBody = LettersFilterBody;
 
@@ -68559,7 +68559,7 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function LetterModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _project = watch('_project');
+    const _project = isEditing ? undefined : watch('_project');
     const _contract = watch('_contract');
     const creationDate = watch('creationDate');
     const registrationDate = watch('registrationDate');
@@ -68569,15 +68569,17 @@ function LetterModalBody({ isEditing, initialData }) {
         return _cases[0]._parent._parent;
     }
     (0, react_1.useEffect)(() => {
-        reset({
-            _project,
+        const resetData = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || '',
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
             _editor: initialData?._editor
-        });
+        };
+        if (!isEditing)
+            resetData._project = _project;
+        reset(resetData);
         trigger();
     }, [initialData, reset]);
     (0, react_1.useEffect)(() => {
@@ -68590,7 +68592,7 @@ function LetterModalBody({ isEditing, initialData }) {
         trigger(['creationDate', 'registrationDate']);
     }, [trigger, watch, creationDate, registrationDate]);
     (0, react_1.useEffect)(() => {
-        setValue('registrationDate', creationDate, { shouldValidate: true });
+        setValue('registrationDate', creationDate);
     }, [setValue, creationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
@@ -68635,7 +68637,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, name: '_project' }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
@@ -68864,9 +68866,10 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 function OurLetterModalBody(props) {
     const { initialData, isEditing } = props;
-    const { setValue, trigger, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { setValue, unregister, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const _cases = watch('_cases');
     (0, react_1.useEffect)(() => {
+        console.log('initialData', initialData?._project);
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -69336,6 +69339,7 @@ class RepositoryReact {
         delete noBlobNewItem._blobEnviObjects;
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
+        console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
         return newItemFromServer;
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
@@ -69743,7 +69747,7 @@ const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/inde
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-function ProjectSelector({ name = '_parent', repository, showValidationInfo = true, disabled = false, }) {
+function ProjectSelector({ name = '_parent', repository, showValidationInfo = true, disabled = false }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -69831,7 +69835,6 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
     const label = 'Szablon pisma';
     const repository = MainSetupReact_1.default.documentTemplatesRepository;
     function makeoptions(templates) {
-        console.log('makeoptions', _cases);
         const filteredTemplates = templates.filter((template) => {
             return !template._contents.caseTypeId || _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId);
         });
@@ -69899,7 +69902,6 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
-        console.log('handleSearch', query);
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
@@ -69913,7 +69915,6 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
     function handleOnChange(selectedOptions, field) {
-        console.log('handleOnChange', selectedOptions);
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
@@ -69937,7 +69938,6 @@ function groupByMilestone(cases) {
     }, {});
 }
 function renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames) {
-    console.log('renderCaseMenu', results.length, milestoneNames.length);
     let index = 0;
     const items = milestoneNames.map((milestoneName) => (react_1.default.createElement(react_1.Fragment, { key: milestoneName },
         index !== 0 && react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Divider, null),
@@ -69996,24 +69996,25 @@ exports.CaseSelectMenuElement = CaseSelectMenuElement;
 function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
-    const [formattedValue, setFormattedValue] = (0, react_1.useState)('');
-    //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
     (0, react_1.useEffect)(() => {
-        if (watchedValue === undefined)
-            return;
-        setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));
-    }, []);
+        if (watchedValue !== undefined) {
+            setValue(keyLabel, watchedValue, { shouldValidate: true });
+        }
+        else {
+            setValue(keyLabel, '', { shouldValidate: true });
+        }
+    }, [watchedValue, setValue]);
     const classNames = ['form-control'];
     if (showValidationInfo) {
         classNames.push(errors.value ? 'is-invalid' : 'is-valid');
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: formattedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: false, displayType: "input", allowNegative: false, onValueChange: (values) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
                         console.log('values: ', values);
                         setValue(keyLabel, values.floatValue);
-                        field.onChange(values.value);
-                    }, className: classNames.join(" "), valueIsNumericString: true })) }),
+                        //field.onChange(values.floatValue);
+                    }, className: classNames.join(" "), valueIsNumericString: false })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
         react_1.default.createElement(ErrorMessage, { name: keyLabel, errors: errors })));
 }
@@ -70293,9 +70294,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
     ;
     async function handleEdit(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = data instanceof FormData ? Tools_1.default.updateObject(data, currentDataItem) : data;
-        //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
-        objectToEdit.id = currentDataItem.id;
+        const objectToEdit = data instanceof FormData ?
+            Tools_1.default.updateObject(data, currentDataItem)
+            :
+                { ...currentDataItem, ...data };
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit)
             onEdit(editedObject);
@@ -70318,9 +70320,11 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
                             react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
                             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                    requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid }, "Zatwierd\u017A"))))));
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending },
+                        "Zatwierd\u017A ",
+                        ' ',
+                        requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })))))));
 }
 exports.GeneralModal = GeneralModal;
 

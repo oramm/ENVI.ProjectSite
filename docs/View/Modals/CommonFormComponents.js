@@ -44,7 +44,7 @@ const Yup = __importStar(require("yup"));
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-function ProjectSelector({ name = '_parent', repository, showValidationInfo = true, disabled = false, }) {
+function ProjectSelector({ name = '_parent', repository, showValidationInfo = true, disabled = false }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -132,7 +132,6 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
     const label = 'Szablon pisma';
     const repository = MainSetupReact_1.default.documentTemplatesRepository;
     function makeoptions(templates) {
-        console.log('makeoptions', _cases);
         const filteredTemplates = templates.filter((template) => {
             return !template._contents.caseTypeId || _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId);
         });
@@ -200,7 +199,6 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
-        console.log('handleSearch', query);
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
@@ -214,7 +212,6 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
     function handleOnChange(selectedOptions, field) {
-        console.log('handleOnChange', selectedOptions);
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
@@ -238,7 +235,6 @@ function groupByMilestone(cases) {
     }, {});
 }
 function renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames) {
-    console.log('renderCaseMenu', results.length, milestoneNames.length);
     let index = 0;
     const items = milestoneNames.map((milestoneName) => (react_1.default.createElement(react_1.Fragment, { key: milestoneName },
         index !== 0 && react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Divider, null),
@@ -297,24 +293,25 @@ exports.CaseSelectMenuElement = CaseSelectMenuElement;
 function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(keyLabel);
-    const [formattedValue, setFormattedValue] = (0, react_1.useState)('');
-    //potrzebne ze względu na używanie ',' zamiast '.' w formacie PLN
     (0, react_1.useEffect)(() => {
-        if (watchedValue === undefined)
-            return;
-        setFormattedValue(watchedValue.toLocaleString('pl-PL', { minimumFractionDigits: 2 }));
-    }, []);
+        if (watchedValue !== undefined) {
+            setValue(keyLabel, watchedValue, { shouldValidate: true });
+        }
+        else {
+            setValue(keyLabel, '', { shouldValidate: true });
+        }
+    }, [watchedValue, setValue]);
     const classNames = ['form-control'];
     if (showValidationInfo) {
         classNames.push(errors.value ? 'is-invalid' : 'is-valid');
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: formattedValue, thousandSeparator: " ", decimalSeparator: ",", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: false, displayType: "input", allowNegative: false, onValueChange: (values) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
                         console.log('values: ', values);
                         setValue(keyLabel, values.floatValue);
-                        field.onChange(values.value);
-                    }, className: classNames.join(" "), valueIsNumericString: true })) }),
+                        //field.onChange(values.floatValue);
+                    }, className: classNames.join(" "), valueIsNumericString: false })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
         react_1.default.createElement(ErrorMessage, { name: keyLabel, errors: errors })));
 }

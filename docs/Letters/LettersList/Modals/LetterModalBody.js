@@ -35,7 +35,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function LetterModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _project = watch('_project');
+    const _project = isEditing ? undefined : watch('_project');
     const _contract = watch('_contract');
     const creationDate = watch('creationDate');
     const registrationDate = watch('registrationDate');
@@ -45,15 +45,17 @@ function LetterModalBody({ isEditing, initialData }) {
         return _cases[0]._parent._parent;
     }
     (0, react_1.useEffect)(() => {
-        reset({
-            _project,
+        const resetData = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || '',
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
             _editor: initialData?._editor
-        });
+        };
+        if (!isEditing)
+            resetData._project = _project;
+        reset(resetData);
         trigger();
     }, [initialData, reset]);
     (0, react_1.useEffect)(() => {
@@ -66,7 +68,7 @@ function LetterModalBody({ isEditing, initialData }) {
         trigger(['creationDate', 'registrationDate']);
     }, [trigger, watch, creationDate, registrationDate]);
     (0, react_1.useEffect)(() => {
-        setValue('registrationDate', creationDate, { shouldValidate: true });
+        setValue('registrationDate', creationDate);
     }, [setValue, creationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
@@ -111,7 +113,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, required: true, name: '_project' }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, name: '_project' }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

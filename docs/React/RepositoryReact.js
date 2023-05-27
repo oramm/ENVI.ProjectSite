@@ -125,6 +125,7 @@ class RepositoryReact {
         delete noBlobNewItem._blobEnviObjects;
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
+        console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
         return newItemFromServer;
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium

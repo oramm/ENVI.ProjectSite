@@ -41,7 +41,6 @@ export function ContractsFilterBody({ }: FilterBodyProps) {
             <Form.Group as={Col}>
                 <ProjectSelector
                     repository={projectsRepository}
-                    required={false}
                     showValidationInfo={false}
                 />
             </Form.Group>

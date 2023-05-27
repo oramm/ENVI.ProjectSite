@@ -9,7 +9,8 @@ import { Case, Contract, IncomingLetter, OurLetter, Project, RepositoryDataItem 
 
 export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
-    const _project = watch('_project') as Project | undefined;
+    const _project = isEditing ? undefined : watch('_project') as Project | undefined;
+
     const _contract = watch('_contract');
     const creationDate = watch('creationDate');
     const registrationDate = watch('registrationDate');
@@ -20,15 +21,19 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
     }
 
     useEffect(() => {
-        reset({
-            _project,
+        const resetData: any = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || '',
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
             _editor: initialData?._editor
-        });
+        };
+
+        if (!isEditing) resetData._project = _project;
+
+        reset(resetData);
+
         trigger();
     }, [initialData, reset]);
 
@@ -151,7 +156,6 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
             ) : (
                 <ProjectSelector
                     repository={projectsRepository}
-                    required={true}
                     name='_project'
                 />
             )}

@@ -21,7 +21,6 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
         <>
             <ProjectSelector
                 repository={projectsRepository}
-                required={true}
                 name='_project'
             />
 

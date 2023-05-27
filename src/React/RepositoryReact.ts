@@ -142,6 +142,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
+        console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
         return newItemFromServer as DataItemType;
     }
 

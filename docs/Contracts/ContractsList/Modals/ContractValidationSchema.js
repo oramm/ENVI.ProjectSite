@@ -34,7 +34,7 @@ const commonFields = {
     name: Yup.string()
         .required('Nazwa jest wymagana')
         .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
-        .max(150, 'Nazwa może mieć maksymalnie 150 znaków'),
+        .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
     alias: Yup.string()
         .max(30, 'Alias może mieć maksymalnie 30 znaków'),
     comment: Yup.string()

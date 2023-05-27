@@ -9,10 +9,11 @@ import { Case, Contract, IncomingLetter, OurLetter, Project } from '../../../../
 
 export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const { initialData, isEditing } = props;
-    const { setValue, trigger, watch, register, formState: { errors } } = useFormContext();
+    const { setValue, unregister, watch, register, formState: { errors } } = useFormContext();
     const _cases = watch('_cases') as Case[] | undefined;
 
     useEffect(() => {
+        console.log('initialData', initialData?._project);
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
 

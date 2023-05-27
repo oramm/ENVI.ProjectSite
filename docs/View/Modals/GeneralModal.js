@@ -66,9 +66,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
     ;
     async function handleEdit(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = data instanceof FormData ? Tools_1.default.updateObject(data, currentDataItem) : data;
-        //uzupełnij atrybut id - bo nie jest przesyłany w formularzu
-        objectToEdit.id = currentDataItem.id;
+        const objectToEdit = data instanceof FormData ?
+            Tools_1.default.updateObject(data, currentDataItem)
+            :
+                { ...currentDataItem, ...data };
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit)
             onEdit(editedObject);
@@ -91,8 +92,10 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
                             react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
                             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                    requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "primary" }),
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid }, "Zatwierd\u017A"))))));
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending },
+                        "Zatwierd\u017A ",
+                        ' ',
+                        requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })))))));
 }
 exports.GeneralModal = GeneralModal;

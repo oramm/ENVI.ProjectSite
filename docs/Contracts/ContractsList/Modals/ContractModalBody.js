@@ -92,7 +92,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository, required: true }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsSearch_1.projectsRepository }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;
