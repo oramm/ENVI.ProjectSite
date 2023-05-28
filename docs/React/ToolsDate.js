@@ -11,6 +11,22 @@ class ToolsDate {
         else
             return false;
     }
+    /** Przekształca datę na string UTC w formacie YYYY-MM-DD
+     * @param date
+     * @returns
+     */
+    static toUTC(date) {
+        let utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        return utcDate.toISOString().slice(0, 10);
+    }
+    /** Przetwarza wszystkie daty w obiekcie na UTC */
+    static convertDatesToUTC(obj) {
+        for (let key in obj) {
+            if (obj[key] instanceof Date) {
+                obj[key] = this.toUTC(obj[key]);
+            }
+        }
+    }
     static isStringADMYDate(string) {
         if (string && string.length == 10) {
             var parts = string.split("-");

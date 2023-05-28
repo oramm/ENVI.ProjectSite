@@ -1,5 +1,6 @@
 import { RepositoryDataItem } from "../../Typings/bussinesTypes";
 import MainSetup from "./MainSetupReact";
+import ToolsDate from "./ToolsDate";
 
 export default class RepositoryReact<DataItemType extends RepositoryDataItem = RepositoryDataItem> {
     actionRoutes: ActionRoutes;
@@ -163,6 +164,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
             };
+            ToolsDate.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify(item);
         }
 

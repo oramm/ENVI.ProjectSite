@@ -13,7 +13,6 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
     const _cases = watch('_cases') as Case[] | undefined;
 
     useEffect(() => {
-        console.log('initialData', initialData?._project);
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
 

@@ -66,6 +66,7 @@ function LetterModalBody({ isEditing, initialData }) {
     }, [_contract, _contract?.id, setValue]);
     (0, react_1.useEffect)(() => {
         trigger(['creationDate', 'registrationDate']);
+        console.log('creationDate %s registrationDate %s ', creationDate, registrationDate);
     }, [trigger, watch, creationDate, registrationDate]);
     (0, react_1.useEffect)(() => {
         setValue('registrationDate', creationDate);

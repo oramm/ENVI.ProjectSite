@@ -45,6 +45,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
 
     useEffect(() => {
         trigger(['creationDate', 'registrationDate']);
+        console.log('creationDate %s registrationDate %s ', creationDate, registrationDate);
     }, [trigger, watch, creationDate, registrationDate]);
 
     useEffect(() => {

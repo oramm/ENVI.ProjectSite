@@ -68590,6 +68590,7 @@ function LetterModalBody({ isEditing, initialData }) {
     }, [_contract, _contract?.id, setValue]);
     (0, react_1.useEffect)(() => {
         trigger(['creationDate', 'registrationDate']);
+        console.log('creationDate %s registrationDate %s ', creationDate, registrationDate);
     }, [trigger, watch, creationDate, registrationDate]);
     (0, react_1.useEffect)(() => {
         setValue('registrationDate', creationDate);
@@ -68869,7 +68870,6 @@ function OurLetterModalBody(props) {
     const { setValue, unregister, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const _cases = watch('_cases');
     (0, react_1.useEffect)(() => {
-        console.log('initialData', initialData?._project);
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -69218,6 +69218,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./ToolsDate */ "./src/React/ToolsDate.ts"));
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -69359,6 +69360,11 @@ class RepositoryReact {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
             };
+            ToolsDate_1.default.convertDatesToUTC(item);
+            console.log('editItemNodeJS item to edit: %o', item);
+            console.log('item.creationDate to edit: %o', item.creationDate);
+            const creationDateJSON = JSON.stringify(item.creationDate);
+            console.log('dete after JSON: %o', creationDateJSON);
             requestOptions.body = JSON.stringify(item);
         }
         const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id), requestOptions);
@@ -69597,6 +69603,22 @@ class ToolsDate {
         }
         else
             return false;
+    }
+    /** Przekształca datę na string UTC w formacie YYYY-MM-DD
+     * @param date
+     * @returns
+     */
+    static toUTC(date) {
+        let utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        return utcDate.toISOString().slice(0, 10);
+    }
+    /** Przetwarza wszystkie daty w obiekcie na UTC */
+    static convertDatesToUTC(obj) {
+        for (let key in obj) {
+            if (obj[key] instanceof Date) {
+                obj[key] = this.toUTC(obj[key]);
+            }
+        }
     }
     static isStringADMYDate(string) {
         if (string && string.length == 10) {
