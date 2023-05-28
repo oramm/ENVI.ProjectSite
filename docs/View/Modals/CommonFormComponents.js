@@ -331,7 +331,7 @@ exports.valueValidation = Yup.string()
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-function FileInput({ name, required = false, acceptedFileTypes = '' }) {
+function FileInput({ name, required = false, acceptedFileTypes = '', multiple = true }) {
     const { register, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const selectedFile = watch(name); // monitoruje zmiany w input
     (0, react_1.useEffect)(() => {
@@ -339,11 +339,11 @@ function FileInput({ name, required = false, acceptedFileTypes = '' }) {
     }, [register, name]);
     const handleChange = (event) => {
         if (event.target.files) {
-            setValue(name, event.target.files[0]); // aktualizacja wartości po wybraniu pliku
+            setValue(name, event.target.files); // aktualizacja wartości po wybraniu pliku
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, onChange: handleChange, isInvalid: !!errors[name], isValid: !errors[name] }),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, onChange: handleChange, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple }),
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
 exports.FileInput = FileInput;

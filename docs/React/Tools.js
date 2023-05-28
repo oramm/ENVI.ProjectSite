@@ -1,28 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Tools {
-    /** Aktualizuje dane obiektu na podstawie danych z formularza
-      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
-      */
-    static updateObject(formData, obj) {
-        const updatedObj = { ...obj };
-        formData.forEach((value, key) => {
-            if (updatedObj.hasOwnProperty(key)) {
-                if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
-                    try {
-                        updatedObj[key] = JSON.parse(value);
-                    }
-                    catch (e) {
-                        updatedObj[key] = value;
-                    }
-                else
-                    updatedObj[key] = value;
-            }
-            else
-                throw new Error(`Form data key ${key} does not match any attribute in current contract object`);
-        });
-        return updatedObj;
-    }
     /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(i) {
         let label = i.toString();

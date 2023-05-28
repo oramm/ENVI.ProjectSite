@@ -5,7 +5,7 @@ import RepositoryReact from '../../React/RepositoryReact';
 import { FormProvider } from '../Modals/FormContext';
 import { FieldValues, useForm } from 'react-hook-form';
 import { parseFieldValuestoFormData } from './CommonComponentsController';
-import { GDFolderIconLink } from './CommonComponents';
+import { GDDocFileIconLink, GDFolderIconLink } from './CommonComponents';
 import { useNavigate } from 'react-router-dom';
 import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../Modals/ModalsTypes';
 import { GeneralDeleteModalButton } from '../Modals/GeneralModalButtons';
@@ -267,6 +267,9 @@ function RowActionMenu<DataItemType extends RepositoryDataItem>({
         <>
             {dataObject._gdFolderUrl && (
                 <GDFolderIconLink folderUrl={dataObject._gdFolderUrl} />
+            )}
+            {dataObject._documentOpenUrl && (
+                <GDDocFileIconLink folderUrl={dataObject._documentOpenUrl} />
             )}
             {EditButtonComponent && (
                 <EditButtonComponent

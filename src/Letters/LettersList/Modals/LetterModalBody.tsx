@@ -38,14 +38,12 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
     }, [initialData, reset]);
 
     useEffect(() => {
-        console.log('isValid', isValid);
         if (!dirtyFields._contract) return;
         setValue('_cases', undefined, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
 
     useEffect(() => {
         trigger(['creationDate', 'registrationDate']);
-        console.log('creationDate %s registrationDate %s ', creationDate, registrationDate);
     }, [trigger, watch, creationDate, registrationDate]);
 
     useEffect(() => {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, Alert, Spinner, Container } from 'react-bootstrap';
 import { useForm, FieldValues } from 'react-hook-form';
 import RepositoryReact from '../../React/RepositoryReact';
-import Tools from '../../React/Tools';
 import { FormProvider } from './FormContext';
 import { parseFieldValuestoFormData } from '../Resultsets/CommonComponentsController';
 import * as yup from 'yup';
@@ -54,10 +53,18 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             setRequestPending(true);
 
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
-            const hasFiles = Object.values(data).some(value => value instanceof File);
+            const hasFiles = Object.values(data).some(value => value instanceof FileList || value instanceof File);
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? parseFieldValuestoFormData(data) : data;
-            (isEditing) ? await handleEdit(requestData) : await handleAdd(requestData);
+            if (isEditing) {
+                if (hasFiles) {
+                    await handleEditWithFiles(requestData as FormData);
+                } else {
+                    await handleEditWithoutFiles(requestData as FieldValues);
+                }
+            } else {
+                await handleAdd(requestData);
+            }
             onClose();
             setRequestPending(false);
         } catch (error) {
@@ -67,16 +74,36 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         }
     };
 
-    async function handleEdit(data: FormData | FieldValues) {
+    async function handleEditWithFiles(data: FormData) {
         const currentDataItem = { ...repository.currentItems[0] }
-        const objectToEdit = data instanceof FormData ?
-            Tools.updateObject(data, currentDataItem) as DataItemType
-            :
-            { ...currentDataItem, ...data } as DataItemType;
+        data.append('id', currentDataItem.id.toString());
 
+        appendContextData(currentDataItem, data);
+        const editedObject = await repository.editItemNodeJS(data as FormData);
+        if (onEdit) onEdit(editedObject);
+    };
+
+    /** uzupełnij o dane z obiektu currentDataItem, które nie zostały przesłane w formularzu */
+    function appendContextData(currentDataItem: DataItemType, data: FormData) {
+        for (const key in currentDataItem) {
+            if (!data.has(key)) {
+                // Przekształć obiekt JavaScript do formatu JSON jeżeli jest obiektem
+                if (typeof currentDataItem[key] === 'object' && currentDataItem[key] !== null) {
+                    data.append(key, JSON.stringify(currentDataItem[key]));
+                } else {
+                    data.append(key, currentDataItem[key]);
+                }
+            }
+        }
+    }
+
+    async function handleEditWithoutFiles(data: FieldValues) {
+        const currentDataItem = { ...repository.currentItems[0] }
+        const objectToEdit = { ...currentDataItem, ...data } as DataItemType;
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit) onEdit(editedObject);
     };
+
 
     async function handleAdd(formData: FormData | FieldValues) {
         newObject = await repository.addNewItemNodeJS(formData);

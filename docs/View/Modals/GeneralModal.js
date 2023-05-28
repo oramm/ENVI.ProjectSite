@@ -30,7 +30,6 @@ exports.GeneralModal = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_hook_form_1 = require("react-hook-form");
-const Tools_1 = __importDefault(require("../../React/Tools"));
 const FormContext_1 = require("./FormContext");
 const CommonComponentsController_1 = require("../Resultsets/CommonComponentsController");
 const yup_1 = require("@hookform/resolvers/yup");
@@ -50,10 +49,20 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
             setErrorMessage('');
             setRequestPending(true);
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
-            const hasFiles = Object.values(data).some(value => value instanceof File);
+            const hasFiles = Object.values(data).some(value => value instanceof FileList || value instanceof File);
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? (0, CommonComponentsController_1.parseFieldValuestoFormData)(data) : data;
-            (isEditing) ? await handleEdit(requestData) : await handleAdd(requestData);
+            if (isEditing) {
+                if (hasFiles) {
+                    await handleEditWithFiles(requestData);
+                }
+                else {
+                    await handleEditWithoutFiles(requestData);
+                }
+            }
+            else {
+                await handleAdd(requestData);
+            }
             onClose();
             setRequestPending(false);
         }
@@ -64,12 +73,32 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
         }
     }
     ;
-    async function handleEdit(data) {
+    async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = data instanceof FormData ?
-            Tools_1.default.updateObject(data, currentDataItem)
-            :
-                { ...currentDataItem, ...data };
+        data.append('id', currentDataItem.id.toString());
+        appendContextData(currentDataItem, data);
+        const editedObject = await repository.editItemNodeJS(data);
+        if (onEdit)
+            onEdit(editedObject);
+    }
+    ;
+    /** uzupełnij o dane z obiektu currentDataItem, które nie zostały przesłane w formularzu */
+    function appendContextData(currentDataItem, data) {
+        for (const key in currentDataItem) {
+            if (!data.has(key)) {
+                // Przekształć obiekt JavaScript do formatu JSON jeżeli jest obiektem
+                if (typeof currentDataItem[key] === 'object' && currentDataItem[key] !== null) {
+                    data.append(key, JSON.stringify(currentDataItem[key]));
+                }
+                else {
+                    data.append(key, currentDataItem[key]);
+                }
+            }
+        }
+    }
+    async function handleEditWithoutFiles(data) {
+        const currentDataItem = { ...repository.currentItems[0] };
+        const objectToEdit = { ...currentDataItem, ...data };
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit)
             onEdit(editedObject);

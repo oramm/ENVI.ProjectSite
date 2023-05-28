@@ -147,10 +147,6 @@ class RepositoryReact {
                 ['Content-Type']: 'application/json',
             };
             ToolsDate_1.default.convertDatesToUTC(item);
-            console.log('editItemNodeJS item to edit: %o', item);
-            console.log('item.creationDate to edit: %o', item.creationDate);
-            const creationDateJSON = JSON.stringify(item.creationDate);
-            console.log('dete after JSON: %o', creationDateJSON);
             requestOptions.body = JSON.stringify(item);
         }
         const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id), requestOptions);

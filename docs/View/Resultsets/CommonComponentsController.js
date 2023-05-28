@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseFieldValuestoFormData = void 0;
+exports.updateObject = exports.parseFieldValuestoFormData = void 0;
+const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 function parseFieldValuestoFormData(data) {
     const formData = new FormData();
     for (const key in data) {
@@ -11,6 +15,12 @@ function parseFieldValuestoFormData(data) {
             formData.append(key, element);
             continue;
         }
+        if (element instanceof FileList) {
+            for (let i = 0; i < element.length; i++) {
+                formData.append(key, element[i]);
+            }
+            continue;
+        }
         let parsedValue = '';
         switch (typeof element) {
             case 'string':
@@ -18,7 +28,12 @@ function parseFieldValuestoFormData(data) {
                 parsedValue = element.toString();
                 break;
             case 'object':
-                parsedValue = JSON.stringify(element);
+                if (element instanceof Date) {
+                    parsedValue = ToolsDate_1.default.toUTC(element); // lub użyj swojej funkcji konwertującej na UTC
+                }
+                else {
+                    parsedValue = JSON.stringify(element);
+                }
                 break;
         }
         formData.append(key, parsedValue);
@@ -26,3 +41,26 @@ function parseFieldValuestoFormData(data) {
     return formData;
 }
 exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
+/** Aktualizuje dane obiektu na podstawie danych z formularza
+      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
+      */
+function updateObject(formData, obj) {
+    const updatedObj = { ...obj };
+    formData.forEach((value, key) => {
+        if (updatedObj.hasOwnProperty(key)) {
+            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
+                try {
+                    updatedObj[key] = JSON.parse(value);
+                }
+                catch (e) {
+                    updatedObj[key] = value;
+                }
+            else
+                updatedObj[key] = value;
+        }
+        else
+            console.log(`Form data key ${key} does not match any attribute in current object`);
+    });
+    return updatedObj;
+}
+exports.updateObject = updateObject;

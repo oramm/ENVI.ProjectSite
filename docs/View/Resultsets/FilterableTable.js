@@ -140,6 +140,7 @@ function RowActionMenu({ dataObject, }) {
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useFilterableTableContext();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
+        dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: dataObject._documentOpenUrl })),
         EditButtonComponent && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
         isDeletable && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject } }))));
 }

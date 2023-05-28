@@ -633,6 +633,7 @@ type FileInputProps = {
     name: string;
     required?: boolean;
     acceptedFileTypes?: string;
+    multiple?: boolean;
 }
 
 /**Pole dodawania plików
@@ -641,7 +642,12 @@ type FileInputProps = {
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-export function FileInput({ name, required = false, acceptedFileTypes = '' }: FileInputProps) {
+export function FileInput({
+    name,
+    required = false,
+    acceptedFileTypes = '',
+    multiple = true
+}: FileInputProps) {
     const { register, watch, setValue, formState: { errors } } = useFormContext();
     const selectedFile = watch(name); // monitoruje zmiany w input
 
@@ -651,7 +657,7 @@ export function FileInput({ name, required = false, acceptedFileTypes = '' }: Fi
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            setValue(name, event.target.files[0]); // aktualizacja wartości po wybraniu pliku
+            setValue(name, event.target.files); // aktualizacja wartości po wybraniu pliku
         }
     };
 
@@ -665,6 +671,7 @@ export function FileInput({ name, required = false, acceptedFileTypes = '' }: Fi
                 onChange={handleChange}
                 isInvalid={!!errors[name]}
                 isValid={!errors[name]}
+                multiple={multiple}
             />
             <ErrorMessage name={name} errors={errors} />
         </>

@@ -68583,14 +68583,12 @@ function LetterModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset]);
     (0, react_1.useEffect)(() => {
-        console.log('isValid', isValid);
         if (!dirtyFields._contract)
             return;
         setValue('_cases', undefined, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
     (0, react_1.useEffect)(() => {
         trigger(['creationDate', 'registrationDate']);
-        console.log('creationDate %s registrationDate %s ', creationDate, registrationDate);
     }, [trigger, watch, creationDate, registrationDate]);
     (0, react_1.useEffect)(() => {
         setValue('registrationDate', creationDate);
@@ -69361,10 +69359,6 @@ class RepositoryReact {
                 ['Content-Type']: 'application/json',
             };
             ToolsDate_1.default.convertDatesToUTC(item);
-            console.log('editItemNodeJS item to edit: %o', item);
-            console.log('item.creationDate to edit: %o', item.creationDate);
-            const creationDateJSON = JSON.stringify(item.creationDate);
-            console.log('dete after JSON: %o', creationDateJSON);
             requestOptions.body = JSON.stringify(item);
         }
         const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id), requestOptions);
@@ -69428,158 +69422,6 @@ class RepositoryReact {
     }
 }
 exports["default"] = RepositoryReact;
-
-
-/***/ }),
-
-/***/ "./src/React/Tools.ts":
-/*!****************************!*\
-  !*** ./src/React/Tools.ts ***!
-  \****************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-class Tools {
-    /** Aktualizuje dane obiektu na podstawie danych z formularza
-      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
-      */
-    static updateObject(formData, obj) {
-        const updatedObj = { ...obj };
-        formData.forEach((value, key) => {
-            if (updatedObj.hasOwnProperty(key)) {
-                if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
-                    try {
-                        updatedObj[key] = JSON.parse(value);
-                    }
-                    catch (e) {
-                        updatedObj[key] = value;
-                    }
-                else
-                    updatedObj[key] = value;
-            }
-            else
-                throw new Error(`Form data key ${key} does not match any attribute in current contract object`);
-        });
-        return updatedObj;
-    }
-    /**dodaje przedrostek "0" do liczb 0-9 */
-    static addZero(i) {
-        let label = i.toString();
-        if (i < 10) {
-            label = "0" + i;
-        }
-        return label;
-    }
-    //retrieves GET variables from URL
-    static getUrlVars() {
-        const vars = {};
-        const parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, 
-        //@ts-ignore    
-        function (m, key, value) {
-            vars[key] = value;
-        });
-        return vars;
-    }
-    static stringToSql(string) {
-        var sqlString = string.replace(/\'/gi, "\\'");
-        sqlString = sqlString.replace(/\"/gi, '\\"');
-        sqlString = sqlString.replace(/\%/gi, '\\%');
-        sqlString = sqlString.replace(/\_/gi, '\\_');
-        return sqlString;
-    }
-    static areEqualObjects(obj1, obj2) {
-        //Loop through properties in object 1
-        let p1;
-        for (p1 in obj1) {
-            //Check property exists on both objects
-            if (obj1.hasOwnProperty(p1) !== obj2.hasOwnProperty(p1))
-                return false;
-            switch (typeof (obj1[p1])) {
-                //Deep compare objects
-                case 'object':
-                    if (!Tools.areEqualObjects(obj1[p1], obj2[p1]))
-                        return false;
-                    break;
-                //Compare function code
-                case 'function':
-                    if (typeof (obj2[p1]) == 'undefined' || obj1[p1].toString() != obj2[p1].toString())
-                        return false;
-                    break;
-                //Compare values
-                default:
-                    if (obj1[p1] != obj2[p1])
-                        return false;
-            }
-        }
-        //Check object 2 for any extra properties
-        let p2;
-        for (p2 in obj2) {
-            if (typeof (obj1[p2]) == 'undefined')
-                return false;
-        }
-        return true;
-    }
-    /* https://www.sitepoint.com/sort-an-array-of-objects-in-javascript/
-     * sprawdza który oiekt jest większy - do użycia w Array.sort()
-     * @param {type} key - nazwa atrybutu obiektu
-     * @param {type} order
-     * @returns {Function}
-     */
-    static compareValues(key, order = 'asc') {
-        return function (a, b) {
-            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key))
-                return 0;
-            let comparison = a[key].localeCompare(b[key]);
-            return ((order == 'desc') ? (comparison * -1) : comparison);
-        };
-    }
-    /**
-     * If you don't care about primitives and only objects then this function
-     * is for you, otherwise look elsewhere.
-     * This function will return `false` for any valid json primitive.
-     * EG, 'true' -> false
-     *     '123' -> false
-     *     'null' -> false
-     *     '"I'm a string"' -> false
-     */
-    static tryParseJSONObject(jsonString) {
-        try {
-            const o = JSON.parse(jsonString);
-            // Handle non-exception-throwing cases:
-            // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-            // but... JSON.parse(null) returns null, and typeof null === "object", 
-            // so we must check for that, too. Thankfully, null is falsey, so this suffices:
-            if (o && typeof o === "object")
-                return o;
-        }
-        catch (e) { }
-        return false;
-    }
-    //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-    static b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-        const byteCharacters = atob(b64Data);
-        const byteArrays = [];
-        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            const slice = byteCharacters.slice(offset, offset + sliceSize);
-            const byteNumbers = new Array(slice.length);
-            for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-        const blob = new Blob(byteArrays, { type: contentType });
-        return blob;
-    }
-    static isObjectEmpty(object) {
-        for (const element in object)
-            return true;
-        return false;
-    }
-}
-exports["default"] = Tools;
 
 
 /***/ }),
@@ -70056,7 +69898,7 @@ exports.valueValidation = Yup.string()
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-function FileInput({ name, required = false, acceptedFileTypes = '' }) {
+function FileInput({ name, required = false, acceptedFileTypes = '', multiple = true }) {
     const { register, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const selectedFile = watch(name); // monitoruje zmiany w input
     (0, react_1.useEffect)(() => {
@@ -70064,11 +69906,11 @@ function FileInput({ name, required = false, acceptedFileTypes = '' }) {
     }, [register, name]);
     const handleChange = (event) => {
         if (event.target.files) {
-            setValue(name, event.target.files[0]); // aktualizacja wartości po wybraniu pliku
+            setValue(name, event.target.files); // aktualizacja wartości po wybraniu pliku
         }
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, onChange: handleChange, isInvalid: !!errors[name], isValid: !errors[name] }),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, onChange: handleChange, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple }),
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
 exports.FileInput = FileInput;
@@ -70280,7 +70122,6 @@ exports.GeneralModal = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/Modals/FormContext.ts");
 const CommonComponentsController_1 = __webpack_require__(/*! ../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
@@ -70300,10 +70141,20 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
             setErrorMessage('');
             setRequestPending(true);
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
-            const hasFiles = Object.values(data).some(value => value instanceof File);
+            const hasFiles = Object.values(data).some(value => value instanceof FileList || value instanceof File);
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? (0, CommonComponentsController_1.parseFieldValuestoFormData)(data) : data;
-            (isEditing) ? await handleEdit(requestData) : await handleAdd(requestData);
+            if (isEditing) {
+                if (hasFiles) {
+                    await handleEditWithFiles(requestData);
+                }
+                else {
+                    await handleEditWithoutFiles(requestData);
+                }
+            }
+            else {
+                await handleAdd(requestData);
+            }
             onClose();
             setRequestPending(false);
         }
@@ -70314,12 +70165,32 @@ function GeneralModal({ show, title, isEditing, onEdit, onAddNew, onClose, repos
         }
     }
     ;
-    async function handleEdit(data) {
+    async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = data instanceof FormData ?
-            Tools_1.default.updateObject(data, currentDataItem)
-            :
-                { ...currentDataItem, ...data };
+        data.append('id', currentDataItem.id.toString());
+        appendContextData(currentDataItem, data);
+        const editedObject = await repository.editItemNodeJS(data);
+        if (onEdit)
+            onEdit(editedObject);
+    }
+    ;
+    /** uzupełnij o dane z obiektu currentDataItem, które nie zostały przesłane w formularzu */
+    function appendContextData(currentDataItem, data) {
+        for (const key in currentDataItem) {
+            if (!data.has(key)) {
+                // Przekształć obiekt JavaScript do formatu JSON jeżeli jest obiektem
+                if (typeof currentDataItem[key] === 'object' && currentDataItem[key] !== null) {
+                    data.append(key, JSON.stringify(currentDataItem[key]));
+                }
+                else {
+                    data.append(key, currentDataItem[key]);
+                }
+            }
+        }
+    }
+    async function handleEditWithoutFiles(data) {
+        const currentDataItem = { ...repository.currentItems[0] };
+        const objectToEdit = { ...currentDataItem, ...data };
         const editedObject = await repository.editItemNodeJS(objectToEdit);
         if (onEdit)
             onEdit(editedObject);
@@ -70544,12 +70415,16 @@ exports.GDDocFileIconLink = GDDocFileIconLink;
 /*!************************************************************!*\
   !*** ./src/View/Resultsets/CommonComponentsController.tsx ***!
   \************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseFieldValuestoFormData = void 0;
+exports.updateObject = exports.parseFieldValuestoFormData = void 0;
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
 function parseFieldValuestoFormData(data) {
     const formData = new FormData();
     for (const key in data) {
@@ -70560,6 +70435,12 @@ function parseFieldValuestoFormData(data) {
             formData.append(key, element);
             continue;
         }
+        if (element instanceof FileList) {
+            for (let i = 0; i < element.length; i++) {
+                formData.append(key, element[i]);
+            }
+            continue;
+        }
         let parsedValue = '';
         switch (typeof element) {
             case 'string':
@@ -70567,7 +70448,12 @@ function parseFieldValuestoFormData(data) {
                 parsedValue = element.toString();
                 break;
             case 'object':
-                parsedValue = JSON.stringify(element);
+                if (element instanceof Date) {
+                    parsedValue = ToolsDate_1.default.toUTC(element); // lub użyj swojej funkcji konwertującej na UTC
+                }
+                else {
+                    parsedValue = JSON.stringify(element);
+                }
                 break;
         }
         formData.append(key, parsedValue);
@@ -70575,6 +70461,29 @@ function parseFieldValuestoFormData(data) {
     return formData;
 }
 exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
+/** Aktualizuje dane obiektu na podstawie danych z formularza
+      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
+      */
+function updateObject(formData, obj) {
+    const updatedObj = { ...obj };
+    formData.forEach((value, key) => {
+        if (updatedObj.hasOwnProperty(key)) {
+            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
+                try {
+                    updatedObj[key] = JSON.parse(value);
+                }
+                catch (e) {
+                    updatedObj[key] = value;
+                }
+            else
+                updatedObj[key] = value;
+        }
+        else
+            console.log(`Form data key ${key} does not match any attribute in current object`);
+    });
+    return updatedObj;
+}
+exports.updateObject = updateObject;
 
 
 /***/ }),
@@ -70728,6 +70637,7 @@ function RowActionMenu({ dataObject, }) {
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = useFilterableTableContext();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
+        dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: dataObject._documentOpenUrl })),
         EditButtonComponent && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
         isDeletable && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject } }))));
 }
