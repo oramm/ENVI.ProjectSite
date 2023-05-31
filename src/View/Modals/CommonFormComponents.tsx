@@ -52,11 +52,10 @@ export function ProjectSelector({
 }
 
 type ContractStatusProps = {
-    required?: boolean,
     showValidationInfo?: boolean,
 }
 
-export function ContractStatus({ required = false, showValidationInfo = true }: ContractStatusProps) {
+export function ContractStatus({ showValidationInfo = true }: ContractStatusProps) {
     const { register, formState: { errors } } = useFormContext();
     const name = 'status';
     return (
@@ -66,12 +65,10 @@ export function ContractStatus({ required = false, showValidationInfo = true }: 
                 as="select"
                 isValid={showValidationInfo ? !errors[name] : undefined}
                 isInvalid={showValidationInfo ? !!errors[name] : undefined}
-                {...register(name, {
-                    required: { value: required, message: 'Pole jest wymagane' },
-                })}
+                {...register(name)}
             >
                 <option value="">-- Wybierz opcję --</option>
-                {ContractsController.statusNames.map((statusName, index) => (
+                {MainSetup.contractStatusNames.map((statusName, index) => (
                     <option key={index} value={statusName}>
                         {statusName}
                     </option>

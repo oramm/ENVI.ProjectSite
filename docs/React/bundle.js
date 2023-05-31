@@ -67881,12 +67881,6 @@ const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/Re
 class ContractsController {
 }
 exports["default"] = ContractsController;
-ContractsController.statusNames = [
-    'Nie rozpoczęty',
-    'W trakcie',
-    'Zakończony',
-    'Archiwalny'
-];
 ContractsController.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
@@ -68079,7 +68073,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                     } }),
                 formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message)))),
-        react_1.default.createElement(CommonFormComponents_1.ContractStatus, { required: true })));
+        react_1.default.createElement(CommonFormComponents_1.ContractStatus, null)));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
@@ -68474,6 +68468,7 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const InvoicesSearch_1 = __webpack_require__(/*! ../InvoicesSearch */ "./src/Erp/LettersList/InvoicesSearch.tsx");
+const InvoiceItemModalButtons_1 = __webpack_require__(/*! ../Modals/InvoiceItemModalButtons */ "./src/Erp/LettersList/Modals/InvoiceItemModalButtons.tsx");
 function InvoiceDetails() {
     const invoice = InvoicesSearch_1.invoicesRepository.currentItems[0];
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -68500,6 +68495,7 @@ function InvoiceDetails() {
                     react_1.default.createElement("h5", null, invoice.number),
                     " do Umowy: ",
                     react_1.default.createElement("h5", null, invoice._contract.ourId),
+                    invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl })),
                     invoice.description &&
                         react_1.default.createElement("p", null,
                             "Opis: ",
@@ -68516,9 +68512,7 @@ function InvoiceDetails() {
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement("h5", null, "Pozycje faktury:"),
             invoiceItems ?
-                react_1.default.createElement(FilterableTable_1.default, { title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: undefined, 
-                    //EditButtonComponents={}
-                    tableStructure: [
+                react_1.default.createElement(FilterableTable_1.default, { title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
                         { header: 'Opis', objectAttributeToShow: 'description' },
                         { header: 'Netto', objectAttributeToShow: '_netValue' },
                         { header: 'Brutto', objectAttributeToShow: '_grossValue' },
@@ -68689,6 +68683,201 @@ exports["default"] = InvoicesSearch;
 
 /***/ }),
 
+/***/ "./src/Erp/LettersList/Modals/InvoiceItemModalBody.tsx":
+/*!*************************************************************!*\
+  !*** ./src/Erp/LettersList/Modals/InvoiceItemModalBody.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.InvoiceItemModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonFormComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function InvoiceItemModalBody({ isEditing, initialData }) {
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        console.log('InvoiceModalBody useEffect', initialData);
+        const resetData = {
+            description: initialData?.description || '',
+            quantity: initialData?.quantity || 1,
+            unitPrice: initialData?.unitPrice,
+            vatTax: initialData?.vatTax || 23,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 4, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "quantity" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Ilo\u015B\u0107"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", style: { width: '5rem' }, ...register('quantity') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'quantity', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "unitPrice" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Cena jedn."),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", ...register('unitPrice') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'unitPrice', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "vatTax" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stawka VAT"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", ...register('vatTax') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'vatTax', errors: errors })))));
+}
+exports.InvoiceItemModalBody = InvoiceItemModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Erp/LettersList/Modals/InvoiceItemModalButtons.tsx":
+/*!****************************************************************!*\
+  !*** ./src/Erp/LettersList/Modals/InvoiceItemModalButtons.tsx ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.InvoiceItemAddNewModalButton = exports.InvoiceItemEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const InvoicesSearch_1 = __webpack_require__(/*! ../InvoicesSearch */ "./src/Erp/LettersList/InvoicesSearch.tsx");
+const InvoiceItemModalBody_1 = __webpack_require__(/*! ./InvoiceItemModalBody */ "./src/Erp/LettersList/Modals/InvoiceItemModalBody.tsx");
+const InvoiceItemValidationSchema_1 = __webpack_require__(/*! ./InvoiceItemValidationSchema */ "./src/Erp/LettersList/Modals/InvoiceItemValidationSchema.ts");
+/** przycisk i modal edycji Invoice */
+function InvoiceItemEditModalButton({ modalProps: { onEdit, initialData, }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: InvoiceItemModalBody_1.InvoiceItemModalBody,
+            modalTitle: "Edycja pozycji faktury",
+            repository: InvoicesSearch_1.invoiceItemsRepository,
+            initialData: initialData,
+            makeValidationSchema: InvoiceItemValidationSchema_1.InvoiceItemValidationSchema
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.InvoiceItemEditModalButton = InvoiceItemEditModalButton;
+function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: InvoiceItemModalBody_1.InvoiceItemModalBody,
+            modalTitle: "Dpdaj pozycję faktury",
+            repository: InvoicesSearch_1.invoiceItemsRepository,
+            makeValidationSchema: InvoiceItemValidationSchema_1.InvoiceItemValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Dodaj pozycję",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.InvoiceItemAddNewModalButton = InvoiceItemAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Erp/LettersList/Modals/InvoiceItemValidationSchema.ts":
+/*!*******************************************************************!*\
+  !*** ./src/Erp/LettersList/Modals/InvoiceItemValidationSchema.ts ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeOtherLetterValidationSchema = exports.InvoiceItemValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+const commonFields = {
+    _contract: Yup.object()
+        .required('Wybierz kontrakt'),
+    issueDate: Yup.date()
+        .required('Data wystawienia jest wymagana'),
+    _entity: Yup.array()
+        .required('Wybierz podmiot'),
+    daysToPay: Yup.number()
+        .required('To pole jest wymagane')
+        .min(0, 'Liczba musi być większa lub równa 0')
+        .max(60, 'Liczba musi być mniejsza lub równa 60'),
+    status: Yup.string()
+        .required('Status jest wymagany'),
+    _editor: Yup.object()
+        .required('Podaj kto rejestruje'),
+    description: Yup.string()
+        .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
+};
+function InvoiceItemValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
+    }));
+}
+exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;
+function makeOtherLetterValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+        number: Yup.string()
+            .required('Numer jest wymagany')
+            .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+    }));
+}
+exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
+
+
+/***/ }),
+
 /***/ "./src/Erp/LettersList/Modals/InvoiceModalBody.tsx":
 /*!*********************************************************!*\
   !*** ./src/Erp/LettersList/Modals/InvoiceModalBody.tsx ***!
@@ -68724,7 +68913,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectSelectorModalBody = exports.InvoiceModalBody = void 0;
+exports.InvoiceModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const CommonFormComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -68733,75 +68922,47 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function InvoiceModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _project = isEditing ? undefined : watch('_project');
-    const _contract = watch('_contract');
-    const creationDate = watch('creationDate');
-    const registrationDate = watch('registrationDate');
     (0, react_1.useEffect)(() => {
+        console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {
             _contract: initialData?._contract,
+            issueDate: initialData?.issueDate || new Date().toISOString().slice(0, 10),
+            daysToPay: initialData?.daysToPay,
+            _entity: initialData?._entity,
+            status: initialData?.status || 'Na później',
+            _owner: initialData?._owner,
             description: initialData?.description || '',
-            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
-            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
-            _editor: initialData?._editor
         };
-        if (!isEditing)
-            resetData._project = _project;
         reset(resetData);
         trigger();
     }, [initialData, reset]);
-    (0, react_1.useEffect)(() => {
-        if (!dirtyFields._contract)
-            return;
-        setValue('_cases', undefined, { shouldValidate: true });
-    }, [_contract, _contract?.id, setValue]);
-    (0, react_1.useEffect)(() => {
-        trigger(['creationDate', 'registrationDate']);
-    }, [trigger, watch, creationDate, registrationDate]);
-    (0, react_1.useEffect)(() => {
-        setValue('registrationDate', creationDate);
-    }, [setValue, creationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors })),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesSearch_1.contractsRepository, typesToInclude: 'our', readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register('creationDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'creationDate', errors: errors })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.registrationDate, isInvalid: !!errors.registrationDate, ...register('registrationDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'registrationDate', errors: errors }))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
-            react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_editor', repository: MainSetupReact_1.default.personsEnviRepository })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(CommonFormComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register('file') }))));
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.issueDate, isInvalid: !!errors.issueDate, ...register('issueDate') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'issueDate', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "daysToPay" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dni do zap\u0142aty"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "0", max: "60", ...register('daysToPay') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'daysToPay', errors: errors }))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: !errors.status, isInvalid: !!errors.status, ...register('status') },
+                react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
+                MainSetupReact_1.default.invoiceStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'status' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
+            react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_owner', repository: MainSetupReact_1.default.personsEnviRepository })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors }))));
 }
 exports.InvoiceModalBody = InvoiceModalBody;
-/** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
- * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
- * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- *
- */
-function ProjectSelectorModalBody({ isEditing, additionalProps }) {
-    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const _project = watch('_project');
-    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
-    const { SpecificLetterModalBody } = additionalProps;
-    if (!SpecificLetterModalBody)
-        throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: InvoicesSearch_1.projectsRepository, name: '_project' }))));
-}
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
-;
 
 
 /***/ }),
@@ -68841,8 +69002,7 @@ exports.InvoiceEditModalButton = InvoiceEditModalButton;
 function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            ModalBodyComponent: InvoiceModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: InvoiceModalBody_1.InvoiceModalBody },
+            ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Rejestruj fakturę",
             repository: InvoicesSearch_1.invoicesRepository,
             makeValidationSchema: InvoiceValidationSchema_1.ourLetterValidationSchema
@@ -68893,21 +69053,20 @@ const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/inde
 const commonFields = {
     _contract: Yup.object()
         .required('Wybierz kontrakt'),
-    description: Yup.string()
-        .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     issueDate: Yup.date()
-        .required('Data wystawienia jest wymagana')
-        .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
-        return this.parent.registrationDate >= value;
-    }),
-    sentDate: Yup.date().required('Data nadania jest wymagana')
-        .test('registrationDateValidation', 'Pismo nie może być nadane przed utworzeniem', function (value) {
-        return value >= this.parent.creationDate;
-    }),
+        .required('Data wystawienia jest wymagana'),
     _entity: Yup.array()
         .required('Wybierz podmiot'),
+    daysToPay: Yup.number()
+        .required('To pole jest wymagane')
+        .min(0, 'Liczba musi być większa lub równa 0')
+        .max(60, 'Liczba musi być mniejsza lub równa 60'),
+    status: Yup.string()
+        .required('Status jest wymagany'),
     _editor: Yup.object()
         .required('Podaj kto rejestruje'),
+    description: Yup.string()
+        .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
 };
 function ourLetterValidationSchema(isEditing) {
     return (Yup.object().shape({
@@ -69663,6 +69822,21 @@ class MainSetup {
 exports["default"] = MainSetup;
 MainSetup.CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 MainSetup.serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
+MainSetup.invoiceStatusNames = [
+    'Na później',
+    'Do zrobienia',
+    'Zrobiona',
+    'Wysłana',
+    'Zapłacona',
+    'Do korekty',
+    'Wycofana'
+];
+MainSetup.contractStatusNames = [
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony',
+    'Archiwalny'
+];
 
 
 /***/ }),
@@ -70259,7 +70433,6 @@ __webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/Modals/FormContext.ts");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
-const ContractsController_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts"));
 const react_number_format_1 = __webpack_require__(/*! react-number-format */ "./node_modules/react-number-format/dist/react-number-format.es.js");
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 /**
@@ -70275,16 +70448,14 @@ function ProjectSelector({ name = '_parent', repository, showValidationInfo = tr
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, showValidationInfo: showValidationInfo, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
-function ContractStatus({ required = false, showValidationInfo = true }) {
+function ContractStatus({ showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const name = 'status';
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name, {
-                required: { value: required, message: 'Pole jest wymagane' },
-            }) },
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-            ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            MainSetupReact_1.default.contractStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
 exports.ContractStatus = ContractStatus;
@@ -71201,7 +71372,6 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
-    console.log('FilterableTable', objects);
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }

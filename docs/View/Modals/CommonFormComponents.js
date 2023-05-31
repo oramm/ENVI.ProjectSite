@@ -35,7 +35,6 @@ require("../../Css/styles.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const FormContext_1 = require("./FormContext");
 const react_hook_form_1 = require("react-hook-form");
-const ContractsController_1 = __importDefault(require("../../Contracts/ContractsList/ContractsController"));
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
 /**
@@ -51,16 +50,14 @@ function ProjectSelector({ name = '_parent', repository, showValidationInfo = tr
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, showValidationInfo: showValidationInfo, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
-function ContractStatus({ required = false, showValidationInfo = true }) {
+function ContractStatus({ showValidationInfo = true }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const name = 'status';
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name, {
-                required: { value: required, message: 'Pole jest wymagane' },
-            }) },
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-            ContractsController_1.default.statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            MainSetupReact_1.default.contractStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
 exports.ContractStatus = ContractStatus;

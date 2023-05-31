@@ -131,7 +131,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                     )}
                 </Form.Group>
             </Row>
-            <ContractStatus required={true} />
+            <ContractStatus />
         </>
     );
 }

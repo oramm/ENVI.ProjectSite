@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { InvoiceModalBody, ProjectSelectorModalBody } from './InvoiceModalBody';
+import { InvoiceModalBody } from './InvoiceModalBody';
 import { ourLetterValidationSchema } from './InvoiceValidationSchema';
 import { invoicesRepository } from '../InvoicesSearch';
 import { Invoice } from '../../../../Typings/bussinesTypes';
@@ -35,8 +35,7 @@ export function InvoiceAddNewModalButton({
         <GeneralAddNewModalButton<Invoice>
             modalProps={{
                 onAddNew: onAddNew,
-                ModalBodyComponent: ProjectSelectorModalBody,
-                additionalModalBodyProps: { SpecificLetterModalBody: InvoiceModalBody },
+                ModalBodyComponent: InvoiceModalBody,
                 modalTitle: "Rejestruj fakturę",
                 repository: invoicesRepository,
                 makeValidationSchema: ourLetterValidationSchema

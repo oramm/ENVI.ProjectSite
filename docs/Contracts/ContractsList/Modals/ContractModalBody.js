@@ -76,7 +76,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                     } }),
                 formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message)))),
-        react_1.default.createElement(CommonFormComponents_1.ContractStatus, { required: true })));
+        react_1.default.createElement(CommonFormComponents_1.ContractStatus, null)));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

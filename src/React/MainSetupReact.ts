@@ -26,4 +26,21 @@ export default class MainSetup {
     static get currentContract() {
         return JSON.parse(<string>sessionStorage.getItem('Contracts repository')).currentItems[0];
     }
+
+    static invoiceStatusNames = [
+        'Na później',
+        'Do zrobienia',
+        'Zrobiona',
+        'Wysłana',
+        'Zapłacona',
+        'Do korekty',
+        'Wycofana'
+    ];
+
+    static contractStatusNames = [
+        'Nie rozpoczęty',
+        'W trakcie',
+        'Zakończony',
+        'Archiwalny'
+    ];
 }

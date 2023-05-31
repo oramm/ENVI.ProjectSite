@@ -3,12 +3,6 @@ import RepositoryReact from "../../React/RepositoryReact";
 
 
 export default class ContractsController {
-    static statusNames = [
-        'Nie rozpoczęty',
-        'W trakcie',
-        'Zakończony',
-        'Archiwalny'
-    ];
 
     static contractsRepository = new RepositoryReact<OurContract | OtherContract>({
         actionRoutes: {

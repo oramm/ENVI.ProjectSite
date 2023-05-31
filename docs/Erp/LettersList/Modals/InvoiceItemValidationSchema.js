@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
+exports.makeOtherLetterValidationSchema = exports.InvoiceItemValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const commonFields = {
     _contract: Yup.object()
@@ -43,13 +43,13 @@ const commonFields = {
     description: Yup.string()
         .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
 };
-function ourLetterValidationSchema(isEditing) {
+function InvoiceItemValidationSchema(isEditing) {
     return (Yup.object().shape({
         ...commonFields,
         _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
     }));
 }
-exports.ourLetterValidationSchema = ourLetterValidationSchema;
+exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;
 function makeOtherLetterValidationSchema(isEditing) {
     return (Yup.object().shape({
         ...commonFields,

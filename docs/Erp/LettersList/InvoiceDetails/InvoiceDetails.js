@@ -32,6 +32,7 @@ const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable"));
 const InvoicesSearch_1 = require("../InvoicesSearch");
+const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 function InvoiceDetails() {
     const invoice = InvoicesSearch_1.invoicesRepository.currentItems[0];
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -58,6 +59,7 @@ function InvoiceDetails() {
                     react_1.default.createElement("h5", null, invoice.number),
                     " do Umowy: ",
                     react_1.default.createElement("h5", null, invoice._contract.ourId),
+                    invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl })),
                     invoice.description &&
                         react_1.default.createElement("p", null,
                             "Opis: ",
@@ -74,9 +76,7 @@ function InvoiceDetails() {
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement("h5", null, "Pozycje faktury:"),
             invoiceItems ?
-                react_1.default.createElement(FilterableTable_1.default, { title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: undefined, 
-                    //EditButtonComponents={}
-                    tableStructure: [
+                react_1.default.createElement(FilterableTable_1.default, { title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
                         { header: 'Opis', objectAttributeToShow: 'description' },
                         { header: 'Netto', objectAttributeToShow: '_netValue' },
                         { header: 'Brutto', objectAttributeToShow: '_grossValue' },

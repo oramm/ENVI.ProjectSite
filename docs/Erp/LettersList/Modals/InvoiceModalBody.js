@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectSelectorModalBody = exports.InvoiceModalBody = void 0;
+exports.InvoiceModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
@@ -35,72 +35,44 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function InvoiceModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _project = isEditing ? undefined : watch('_project');
-    const _contract = watch('_contract');
-    const creationDate = watch('creationDate');
-    const registrationDate = watch('registrationDate');
     (0, react_1.useEffect)(() => {
+        console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {
             _contract: initialData?._contract,
+            issueDate: initialData?.issueDate || new Date().toISOString().slice(0, 10),
+            daysToPay: initialData?.daysToPay,
+            _entity: initialData?._entity,
+            status: initialData?.status || 'Na później',
+            _owner: initialData?._owner,
             description: initialData?.description || '',
-            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
-            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
-            _editor: initialData?._editor
         };
-        if (!isEditing)
-            resetData._project = _project;
         reset(resetData);
         trigger();
     }, [initialData, reset]);
-    (0, react_1.useEffect)(() => {
-        if (!dirtyFields._contract)
-            return;
-        setValue('_cases', undefined, { shouldValidate: true });
-    }, [_contract, _contract?.id, setValue]);
-    (0, react_1.useEffect)(() => {
-        trigger(['creationDate', 'registrationDate']);
-    }, [trigger, watch, creationDate, registrationDate]);
-    (0, react_1.useEffect)(() => {
-        setValue('registrationDate', creationDate);
-    }, [setValue, creationDate]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors })),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesSearch_1.contractsRepository, typesToInclude: 'our', readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register('creationDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'creationDate', errors: errors })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.registrationDate, isInvalid: !!errors.registrationDate, ...register('registrationDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'registrationDate', errors: errors }))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
-            react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_editor', repository: MainSetupReact_1.default.personsEnviRepository })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(CommonFormComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register('file') }))));
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.issueDate, isInvalid: !!errors.issueDate, ...register('issueDate') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'issueDate', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "daysToPay" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dni do zap\u0142aty"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "0", max: "60", ...register('daysToPay') }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'daysToPay', errors: errors }))),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: !errors.status, isInvalid: !!errors.status, ...register('status') },
+                react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
+                MainSetupReact_1.default.invoiceStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'status' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
+            react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_owner', repository: MainSetupReact_1.default.personsEnviRepository })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors }))));
 }
 exports.InvoiceModalBody = InvoiceModalBody;
-/** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
- * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
- * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- *
- */
-function ProjectSelectorModalBody({ isEditing, additionalProps }) {
-    const { register, setValue, watch, formState } = (0, FormContext_1.useFormContext)();
-    const _project = watch('_project');
-    //musi być zgodna z nazwą w Our... lub OtherContractModalBody
-    const { SpecificLetterModalBody } = additionalProps;
-    if (!SpecificLetterModalBody)
-        throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: InvoicesSearch_1.projectsRepository, name: '_project' }))));
-}
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
-;

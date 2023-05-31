@@ -3,24 +3,20 @@ import * as Yup from 'yup';
 const commonFields = {
     _contract: Yup.object()
         .required('Wybierz kontrakt'),
-
-    description: Yup.string()
-        .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
     issueDate: Yup.date()
-        .required('Data wystawienia jest wymagana')
-        .test('creationDateValidation', 'Pismo nie może być nadane przed utworzeniem',
-            function (value: Date) {
-                return this.parent.registrationDate >= value;
-            }),
-    sentDate: Yup.date().required('Data nadania jest wymagana')
-        .test('registrationDateValidation', 'Pismo nie może być nadane przed utworzeniem',
-            function (value: Date) {
-                return value >= this.parent.creationDate;
-            }),
+        .required('Data wystawienia jest wymagana'),
     _entity: Yup.array()
         .required('Wybierz podmiot'),
+    daysToPay: Yup.number()
+        .required('To pole jest wymagane')
+        .min(0, 'Liczba musi być większa lub równa 0')
+        .max(60, 'Liczba musi być mniejsza lub równa 60'),
+    status: Yup.string()
+        .required('Status jest wymagany'),
     _editor: Yup.object()
         .required('Podaj kto rejestruje'),
+    description: Yup.string()
+        .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
 
 };
 

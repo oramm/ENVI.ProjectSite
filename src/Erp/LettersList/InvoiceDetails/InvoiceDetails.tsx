@@ -2,9 +2,11 @@ import React, { FC, useEffect, useState } from 'react';
 import { Card, Dropdown, DropdownButton } from 'react-bootstrap';
 import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
 import ToolsDate from '../../../React/ToolsDate';
-import { SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
+import { GDDocFileIconLink, SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../View/Resultsets/FilterableTable';
 import { invoiceItemsRepository, invoicesRepository } from '../InvoicesSearch';
+import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from '../Modals/InvoiceItemModalButtons';
+
 
 
 export default function InvoiceDetails() {
@@ -30,12 +32,16 @@ export default function InvoiceDetails() {
                 <div className="d-flex justify-content-between">
                     <div>
                         Nr faktury: <h5>{invoice.number}</h5> do Umowy: <h5>{invoice._contract.ourId}</h5>
+                        {invoice._documentOpenUrl && (
+                            <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />
+                        )}
                         {invoice.description &&
                             <p>Opis: {invoice.description}</p>
                         }
                         <p>Data wystawienia: {invoice.issueDate ? ToolsDate.dateYMDtoDMY(invoice.issueDate) : 'Jeszcze nie wystawiono'}</p>
                         <p>Data wysłania: {invoice.sentDate ? ToolsDate.dateYMDtoDMY(invoice.sentDate) : 'Jeszcze nie wysłano'}</p>
                         <p>Termin płatności: {invoice.paymentDeadline ? ToolsDate.dateYMDtoDMY(invoice.paymentDeadline) : 'Jeszcze nie okreśony'}</p>
+
                     </div>
 
                 </div>
@@ -48,8 +54,8 @@ export default function InvoiceDetails() {
                         title=''
                         initialObjects={invoiceItems}
                         repository={invoiceItemsRepository}
-                        AddNewButtonComponents={undefined}
-                        //EditButtonComponents={}
+                        AddNewButtonComponents={[InvoiceItemAddNewModalButton]}
+                        EditButtonComponent={InvoiceItemEditModalButton}
                         tableStructure={[
                             { header: 'Opis', objectAttributeToShow: 'description' },
                             { header: 'Netto', objectAttributeToShow: '_netValue' },

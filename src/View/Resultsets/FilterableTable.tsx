@@ -50,7 +50,6 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [objects, setObjects] = useState(initialObjects as DataItemType[]);
-    console.log('FilterableTable', objects);
 
     function handleAddObject(object: DataItemType) {
         setObjects([...objects, object]);

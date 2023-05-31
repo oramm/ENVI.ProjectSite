@@ -26,8 +26,7 @@ exports.InvoiceEditModalButton = InvoiceEditModalButton;
 function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            ModalBodyComponent: InvoiceModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: InvoiceModalBody_1.InvoiceModalBody },
+            ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Rejestruj fakturę",
             repository: InvoicesSearch_1.invoicesRepository,
             makeValidationSchema: InvoiceValidationSchema_1.ourLetterValidationSchema

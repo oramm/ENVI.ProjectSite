@@ -47,7 +47,6 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
-    console.log('FilterableTable', objects);
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
