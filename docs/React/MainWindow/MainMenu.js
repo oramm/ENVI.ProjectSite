@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
+const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
     const isActive = (path) => {
@@ -20,6 +21,8 @@ function MainMenu() {
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/", className: isActive('/') }, "Strona g\u0142\u00F3wna"),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/contracts", className: isActive('/contracts') }, "Kontrakty"),
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters') }, "Pisma")))))));
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters') }, "Pisma"),
+                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) &&
+                            react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive('/invoices') }, "Faktury")))))));
 }
 exports.default = MainMenu;

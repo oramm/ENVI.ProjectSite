@@ -89,30 +89,30 @@ class ToolsDate {
         }
     }
     static dateYMDtoDMY(inputDate) {
-        if (inputDate) {
-            var parts = inputDate.split("-");
-            if (parts[0].length == 4)
-                return parts[2] + '-' + parts[1] + '-' + parts[0];
-            else
-                return inputDate;
+        if (!inputDate) {
+            throw new Error("The input date is null or undefined.");
         }
+        const parts = inputDate.split("-");
+        // check if the provided string has the correct length and structure for the YMD format
+        if (parts.length !== 3 || parts[0].length !== 4 || parts[1].length !== 2 || parts[2].length !== 2) {
+            throw new Error("Invalid input date format. The input should be in YMD format.");
+        }
+        return parts[2] + '-' + parts[1] + '-' + parts[0];
     }
     static timestampToString(timestamp) {
         if (typeof timestamp === 'string')
             timestamp = new Date(timestamp);
-        var day = this.addZero(timestamp.getDate());
-        var month = this.addZero(timestamp.getMonth() + 1);
-        var year = timestamp.getFullYear();
-        var h = this.addZero(timestamp.getHours());
-        var m = this.addZero(timestamp.getMinutes());
+        var day = this.addZero(timestamp.getUTCDate());
+        var month = this.addZero(timestamp.getUTCMonth() + 1); // months are zero-indexed
+        var year = timestamp.getUTCFullYear();
+        var h = this.addZero(timestamp.getUTCHours());
+        var m = this.addZero(timestamp.getUTCMinutes());
         return day + '&#8209;' + month + '&#8209;' + year + ' ' +
             h + ':' + m;
     }
-    static addZero(i) {
-        if (i < 10) {
-            i = "0" + i;
-        }
-        return i;
+    /**dodaje przedrostek "0" do liczb 0-9 */
+    static addZero(num) {
+        return num.toString().padStart(2, '0');
     }
     static dateDiff(first, second) {
         return Math.round((second - first) / (1000 * 60 * 60 * 24));

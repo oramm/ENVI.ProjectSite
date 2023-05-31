@@ -1,4 +1,4 @@
-import { CaseType, ContractType, DocumentTemplate, Person, Project } from "../../Typings/bussinesTypes";
+import { CaseType, ContractType, DocumentTemplate, Person, Project, User } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
 
 export default class MainSetup {
@@ -13,7 +13,7 @@ export default class MainSetup {
     static serverUrl = (window.location.href.includes('localhost')) ? 'http://localhost:3000/' : 'https://erp-envi.herokuapp.com/';
 
     static get currentUser() {
-        return JSON.parse(<string>sessionStorage.getItem('Current User'));
+        return JSON.parse(<string>sessionStorage.getItem('Current User')) as User;
     }
 
     static set currentUser(data) {

@@ -33,7 +33,8 @@ const CommonComponents_1 = require("./CommonComponents");
 const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
 /** Wyświetla tablicę z filtrem i modalami CRUD
- * @param title tytuł tabeli
+ * @param title tytuł tabeli (domyślnie pusty)
+ * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
  * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
  * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden)
@@ -42,10 +43,11 @@ const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', }) {
+function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
-    const [objects, setObjects] = (0, react_1.useState)([]);
+    const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    console.log('FilterableTable', objects);
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
@@ -63,16 +65,16 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
     return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null,
-                    react_1.default.createElement(TableTitle, { title: title })),
+                react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents &&
                     react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                         react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
                         index < AddNewButtonComponents.length - 1 && ' '))))),
-            react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
-                        setIsReady(isReady);
-                    } })),
+            FilterBodyComponent &&
+                react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
+                            setIsReady(isReady);
+                        } })),
             !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { style: { height: "5px" } })),
             react_1.default.createElement(react_bootstrap_1.Row, null,

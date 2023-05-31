@@ -20,27 +20,34 @@ class Tools {
     static timestampToString(timestamp) {
         if (typeof timestamp === 'string')
             timestamp = new Date(timestamp);
-        var day = this.addZero(timestamp.getDate());
-        var month = this.addZero(timestamp.getMonth() + 1);
-        var year = timestamp.getFullYear();
-        var h = this.addZero(timestamp.getHours());
-        var m = this.addZero(timestamp.getMinutes());
+        var day = this.addZero(timestamp.getUTCDate());
+        var month = this.addZero(timestamp.getUTCMonth() + 1); // months are zero-indexed
+        var year = timestamp.getUTCFullYear();
+        var h = this.addZero(timestamp.getUTCHours());
+        var m = this.addZero(timestamp.getUTCMinutes());
         return day + '&#8209;' + month + '&#8209;' + year + ' ' +
             h + ':' + m;
     }
     /**dodaje przedrostek "0" do liczb 0-9 */
-    static addZero(i) {
-        let label = i.toString();
-        if (i < 10) {
-            label = "0" + i;
-        }
-        return label;
+    static addZero(num) {
+        return num.toString().padStart(2, '0');
     }
     static dateJStoDMY(inputDate) {
         const dd = this.addZero(inputDate.getDate());
         const mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
         const yyyy = inputDate.getFullYear();
         return dd + '-' + mm + '-' + yyyy;
+    }
+    static dateYMDtoDMY(inputDate) {
+        if (!inputDate) {
+            throw new Error("The input date is null or undefined.");
+        }
+        const parts = inputDate.split("-");
+        // check if the provided string has the correct length and structure for the YMD format
+        if (parts.length !== 3 || parts[0].length !== 4 || parts[1].length !== 2 || parts[2].length !== 2) {
+            throw new Error("Invalid input date format. The input should be in YMD format.");
+        }
+        return parts[2] + '-' + parts[1] + '-' + parts[0];
     }
     static dateJStoYMD(inputDate) {
         return this.dateDMYtoYMD(this.dateJStoDMY(inputDate));

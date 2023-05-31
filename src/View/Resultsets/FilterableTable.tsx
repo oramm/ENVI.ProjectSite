@@ -21,11 +21,13 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
-    FilterBodyComponent: React.ComponentType<FilterBodyProps>;
+    FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
+    initialObjects?: DataItemType[];
 }
 /** Wyświetla tablicę z filtrem i modalami CRUD
- * @param title tytuł tabeli
+ * @param title tytuł tabeli (domyślnie pusty)
+ * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
  * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
  * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden) 
@@ -43,11 +45,12 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     isDeletable = true,
     FilterBodyComponent,
     selectedObjectRoute = '',
+    initialObjects = [],
 }: FilterableTableProps<DataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
-
-    const [objects, setObjects] = useState([] as DataItemType[]);
+    const [objects, setObjects] = useState(initialObjects as DataItemType[]);
+    console.log('FilterableTable', objects);
 
     function handleAddObject(object: DataItemType) {
         setObjects([...objects, object]);
@@ -84,7 +87,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
             <Container>
                 <Row>
                     <Col>
-                        <TableTitle title={title} />
+                        {title && <TableTitle title={title} />}
                     </Col>
                     {AddNewButtonComponents &&
                         <Col md="auto">
@@ -99,15 +102,17 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                         </Col>
                     }
                 </Row>
-                <Row>
-                    <FilterPanel
-                        FilterBodyComponent={FilterBodyComponent}
-                        repository={repository}
-                        onIsReadyChange={(isReady) => {
-                            setIsReady(isReady);
-                        }}
-                    />
-                </Row>
+                {FilterBodyComponent &&
+                    <Row>
+                        <FilterPanel
+                            FilterBodyComponent={FilterBodyComponent}
+                            repository={repository}
+                            onIsReadyChange={(isReady) => {
+                                setIsReady(isReady);
+                            }}
+                        />
+                    </Row>
+                }
                 {!isReady && <Row><progress style={{ height: "5px" }} /></Row>}
                 <Row>
                     <Col>
@@ -151,7 +156,6 @@ function FilterPanel<DataItemType extends RepositoryDataItem>({ FilterBodyCompon
                         <Button type="submit">Szukaj</Button>
                     </Form.Group>
                 </Row>
-
             </Form>
         </FormProvider>
     );

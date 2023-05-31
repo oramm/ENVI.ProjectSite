@@ -1,5 +1,14 @@
 import { number } from "yup";
 
+export interface User {
+    googleId: string;
+    picture: string;
+    systemEmail: string;
+    systemRoleId: number;
+    systemRoleName: 'ADMIN' | 'ENVI_MANAGER' | 'ENVI_EMPLOYEE' | 'ENVI_COOPERATOR' | 'EXTERNAL_USER';
+    userName: string;
+}
+
 export interface RepositoryDataItem {
     id: number;
     [key: string]: any;
@@ -140,4 +149,34 @@ export interface DocumentTemplate extends RepositoryDataItem {
         caseTypeId: number | null;
     };
     _nameContentsAlias?: string;
+}
+
+export interface Invoice extends RepositoryDataItem {
+    number: string;
+    description: string;
+    issueDate: string;
+    sentDate: string;
+    paymentDeadline: string;
+    daysToPay: number;
+    status: string;
+    gdId: string;
+    _contract: OurContract;
+    _editor: Person;
+    _owner: Person;
+    _entity: Entity;
+    _lastUpdated: string;
+    _documentOpenUrl?: string;
+}
+
+export interface InvoiceItem extends RepositoryDataItem {
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    vatTax: number;
+    _parent: Invoice;
+    _editor: Person;
+    _lastUpdated: string;
+    _grossValue: number;
+    _netValue: number;
+    _vatValue: number;
 }

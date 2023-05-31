@@ -12,6 +12,9 @@ import MainMenu from "./MainMenu";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
+import InvoicesSearch from "../../Erp/LettersList/InvoicesSearch";
+import InvoiceDetails from "../../Erp/LettersList/InvoiceDetails/InvoiceDetails";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const rootPath = '/envi.projectsite/docs/React/';
 
@@ -74,10 +77,12 @@ function AppRoutes() {
         <BrowserRouter basename={rootPath}>
             <MainMenu />
             <Routes>
-                <Route path="/" element={<ContractsSearch title={"Strona główna"} />} />
-                <Route path="/contracts" element={<ContractsSearch title={"Wyszukiwarka kontraktów"} />} />
+                <Route path="/" element={<></>} />
+                <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
                 <Route path="/contract/:id" element={<ContractsSearch title={"test"} />} />
-                <Route path="/letters" element={<LettersSearch title={"Wyszukiwarka pism"} />} />
+                <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
+                <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
+                <Route path="/invoice/:id" element={<InvoiceDetails />} />
 
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>

@@ -40,6 +40,9 @@ const MainMenu_1 = __importDefault(require("./MainMenu"));
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
 const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
+const InvoicesSearch_1 = __importDefault(require("../../Erp/LettersList/InvoicesSearch"));
+const InvoiceDetails_1 = __importDefault(require("../../Erp/LettersList/InvoiceDetails/InvoiceDetails"));
+require("bootstrap/dist/css/bootstrap.min.css");
 const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
@@ -89,10 +92,12 @@ function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.BrowserRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
         react_1.default.createElement(react_router_dom_1.Routes, null,
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Strona główna" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Wyszukiwarka kontraktów" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(react_1.default.Fragment, null) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Wyszukiwarka pism" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
