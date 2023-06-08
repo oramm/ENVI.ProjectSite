@@ -125,7 +125,9 @@ export interface IncomingLetter extends Letter {
 
 export interface Entity extends RepositoryDataItem {
     name: string;
+    address: string;
     description: string;
+    taxNumber?: string;
 }
 
 export interface Person extends RepositoryDataItem {

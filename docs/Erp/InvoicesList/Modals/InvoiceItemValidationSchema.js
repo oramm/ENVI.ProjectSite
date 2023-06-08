@@ -23,39 +23,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
+exports.InvoiceItemValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const commonFields = {
-    _contract: Yup.object()
-        .required('Wybierz kontrakt'),
-    issueDate: Yup.date()
-        .required('Data wystawienia jest wymagana'),
-    _entity: Yup.array()
-        .required('Wybierz podmiot'),
-    daysToPay: Yup.number()
-        .required('To pole jest wymagane')
-        .min(0, 'Liczba musi być większa lub równa 0')
-        .max(60, 'Liczba musi być mniejsza lub równa 60'),
-    status: Yup.string()
-        .required('Status jest wymagany'),
-    _editor: Yup.object()
-        .required('Podaj kto rejestruje'),
     description: Yup.string()
+        .required('To pole jest wymagane')
+        .min(10, 'Opis musi zawiera co najmniej 10 znaków')
         .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
+    quantity: Yup.number()
+        .required('To pole jest wymagane')
+        .min(1, 'Ilość musi być większa lub równa 1'),
+    unitPrice: Yup.number()
+        .required('To pole jest wymagane')
+        .min(1, 'Cena musi być większa lub równa 1'),
+    vatTax: Yup.number()
+        .required('To pole jest wymagane')
+        .min(1, 'Stawka musi być większa lub równa 1')
+        .max(23, 'Stawka musi być mniejsza lub równa 23'),
 };
-function ourLetterValidationSchema(isEditing) {
+function InvoiceItemValidationSchema(isEditing) {
     return (Yup.object().shape({
         ...commonFields,
-        _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
     }));
 }
-exports.ourLetterValidationSchema = ourLetterValidationSchema;
-function makeOtherLetterValidationSchema(isEditing) {
-    return (Yup.object().shape({
-        ...commonFields,
-        number: Yup.string()
-            .required('Numer jest wymagany')
-            .max(50, 'Numer może mieć maksymalnie 50 znaków'),
-    }));
-}
-exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
+exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;

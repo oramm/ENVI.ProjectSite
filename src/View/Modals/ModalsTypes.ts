@@ -25,7 +25,8 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
 };
 
-type GeneralModalButtonButtonProps = {
+export type GeneralModalButtonButtonProps = {
+    buttonCaption?: string;
     buttonVariant?: ButtonVariant;
     buttonSize?: ButtonProps["size"];
     buttonIsActive?: boolean;
@@ -52,12 +53,11 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
 
 type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
     onEdit: (object: DataItemType) => void;
+    specialActionRoute?: string;
     initialData: DataItemType;
 };
 
-type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {
-    buttonCaption?: string;
-};
+type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps
 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;

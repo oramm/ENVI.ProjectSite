@@ -31,8 +31,7 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
-function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, }, buttonProps = {}, }) {
-    const { buttonCaption, buttonVariant = "light" } = buttonProps;
+function GeneralEditModalButton({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, }, buttonProps = {}, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -41,15 +40,25 @@ function GeneralEditModalButton({ modalProps: { onEdit, ModalBodyComponent, addi
         setShowForm(false);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-general' },
-            react_1.default.createElement("i", { className: "fa fa-pencil fa-lg" })),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneraEditButton, { ...buttonProps, onClick: handleOpen }),
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
             } })));
 }
 exports.GeneralEditModalButton = GeneralEditModalButton;
+/**wyświelta ikonę albo przycisk */
+function GeneraEditButton(buttonProps) {
+    const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = 'sm', buttonVariant = 'outline-success', onClick } = {
+        ...buttonProps
+    };
+    if (!buttonCaption)
+        return (react_1.default.createElement("a", { href: '#', onClick: onClick, className: 'icon-vertical text-general' },
+            react_1.default.createElement("i", { className: "fa fa-pencil fa-lg" })));
+    else
+        return (react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: onClick }, buttonCaption));
+}
 /** Wyświetla przycisk i przypięty do niego modal
  * @param modalProps - właściwości modalu
  * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu

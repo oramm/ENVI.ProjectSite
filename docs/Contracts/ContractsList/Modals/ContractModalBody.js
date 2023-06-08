@@ -60,7 +60,7 @@ function ContractModalBody({ isEditing, initialData }) {
             formState.errors?.comment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.comment.message))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { required: true })),
+            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, null)),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
@@ -76,7 +76,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                     } }),
                 formState.errors.endDate && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.endDate.message)))),
-        react_1.default.createElement(CommonFormComponents_1.ContractStatus, null)));
+        react_1.default.createElement(CommonFormComponents_1.ContractStatusSelectFormElement, null)));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

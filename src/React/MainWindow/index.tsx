@@ -2,18 +2,17 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
-import ErrorPage from "../ErrorPage";
 import GoogleButton from "../GoogleLoginButton";
 import MainController from "../MainControllerReact";
 import MainMenu from "./MainMenu";
 import MainSetup from "../MainSetupReact";
 import Footer from "./Footer";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
-import InvoicesSearch from "../../Erp/LettersList/InvoicesSearch";
-import InvoiceDetails from "../../Erp/LettersList/InvoiceDetails/InvoiceDetails";
+import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
+import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const rootPath = '/envi.projectsite/docs/React/';
@@ -22,8 +21,6 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [errorMessage, setErrorMessage] = useState('' as string | null);
-
-
 
     useEffect(() => {
         async function fetchData() {

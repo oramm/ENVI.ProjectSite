@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Spinner, Alert } from "react-bootstrap";
+import { Spinner, Alert, Badge } from "react-bootstrap";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import GDFolderIcon from '../../Resources/View/Google-Drive-icon.png';
 import GDDocFileIcon from '../../Resources/View/Google-Docs-icon.png';
 import '../../Css/styles.css';
+import MainSetup from '../../React/MainSetupReact';
+import { Color } from 'react-bootstrap/esm/types';
 
 export function ProgressBar() {
     return (
@@ -66,5 +68,43 @@ export function GDDocFileIconLink({ folderUrl }: { folderUrl: string }) {
         <a href={folderUrl} target="_blank">
             <img src={GDDocFileIcon} alt="Dysk Google" className='icon-vertical' />
         </a>
+    );
+}
+
+export function InvoiceStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = 'light';
+    switch (status) {
+        case MainSetup.invoiceStatusNames[0]: //'Na później'
+            variant = 'light';
+            textMode = 'dark';
+            break;
+        case MainSetup.invoiceStatusNames[1]: //'Do zrobienia'
+            variant = 'primary';
+            break;
+        case MainSetup.invoiceStatusNames[2]: //'Zrobiona'
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetup.invoiceStatusNames[3]: //'Wysłana'
+            variant = 'info';
+            break;
+        case MainSetup.invoiceStatusNames[4]: //'Zapłacona'
+            variant = 'success';
+            break;
+        case MainSetup.invoiceStatusNames[5]: //'Do korekty'
+            variant = 'danger';
+            break;
+        case MainSetup.invoiceStatusNames[6]: //'Wycofana'
+            variant = 'dark';
+            break;
+        default:
+            variant = 'secondary';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
     );
 }

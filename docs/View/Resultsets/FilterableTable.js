@@ -87,7 +87,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
-        const result = await repository.loadItemsfromServer(formData);
+        const result = await repository.loadItemsFromServer(formData);
         setObjects(result);
         onIsReadyChange(true);
     }

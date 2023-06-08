@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { invoiceItemsRepository } from '../InvoicesSearch';
-import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
+import { InvoiceItem } from '../../../../Typings/bussinesTypes';
 import { InvoiceItemModalBody } from './InvoiceItemModalBody';
 import { InvoiceItemValidationSchema } from './InvoiceItemValidationSchema';
-
 
 /** przycisk i modal edycji Invoice */
 export function InvoiceItemEditModalButton({
@@ -36,7 +35,7 @@ export function InvoiceItemAddNewModalButton({
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: InvoiceItemModalBody,
-                modalTitle: "Dpdaj pozycję faktury",
+                modalTitle: "Dodaj pozycję faktury",
                 repository: invoiceItemsRepository,
                 makeValidationSchema: InvoiceItemValidationSchema
             }}

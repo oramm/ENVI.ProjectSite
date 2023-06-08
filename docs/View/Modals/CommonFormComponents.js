@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.ContractStatus = exports.ProjectSelector = void 0;
+exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -50,17 +50,26 @@ function ProjectSelector({ name = '_parent', repository, showValidationInfo = tr
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, showValidationInfo: showValidationInfo, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
-function ContractStatus({ showValidationInfo = true }) {
+function StatusSelectFormElement({ statusNames, showValidationInfo = true, name = 'status' }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
-    const name = 'status';
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-            MainSetupReact_1.default.contractStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+            statusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
-exports.ContractStatus = ContractStatus;
+exports.StatusSelectFormElement = StatusSelectFormElement;
+;
+function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.contractStatusNames, showValidationInfo: showValidationInfo, name: name });
+}
+exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
+;
+function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }) {
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.invoiceStatusNames, showValidationInfo: showValidationInfo, name: name });
+}
+exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
 ;
 function ContractSelectFormElement({ name = '_contract', showValidationInfo = true, multiple = false, repository, typesToInclude = 'all', _project, readOnly = false, }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
@@ -199,7 +208,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
-        repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
             setOptions(items);
             setIsLoading(false);
@@ -283,9 +292,8 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _co
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 /**
  * Wyświetla pole do wprowadzania wartości w PLN
- * @param required czy pole jest wymagane
- * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
- * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
+ * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
 function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     const { control, setValue, watch, formState: { errors } } = (0, FormContext_1.useFormContext)();
@@ -328,19 +336,22 @@ exports.valueValidation = Yup.string()
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-function FileInput({ name, required = false, acceptedFileTypes = '', multiple = true }) {
+function FileInput1({ name, required = false, acceptedFileTypes = '', multiple = true }) {
     const { register, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
-    const selectedFile = watch(name); // monitoruje zmiany w input
-    (0, react_1.useEffect)(() => {
-        register(name); // rejestracja inputa
-    }, [register, name]);
-    const handleChange = (event) => {
-        if (event.target.files) {
-            setValue(name, event.target.files); // aktualizacja wartości po wybraniu pliku
-        }
-    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", required: required, accept: acceptedFileTypes, onChange: handleChange, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple }),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { ...register(name), type: "file", required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple }),
+        react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
+}
+exports.FileInput1 = FileInput1;
+function FileInput({ name, required = false, acceptedFileTypes = '', multiple = true }) {
+    const { control, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, defaultValue: [], 
+            //render={({ field: { onChange } }) => (
+            render: ({ field: { value, onChange, ...field } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", value: value?.fileName, required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple, onChange: (event) => {
+                    const files = event.target.files;
+                    onChange(files);
+                } })) }),
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
 exports.FileInput = FileInput;

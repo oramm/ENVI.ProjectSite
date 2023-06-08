@@ -15,7 +15,7 @@ InvoicesController.statusNames = [
 InvoicesController.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'invoices',
-        addNewRoute: 'invoiceReact',
+        addNewRoute: 'invoice',
         editRoute: 'invoice',
         deleteRoute: 'invoice'
     },
@@ -24,7 +24,7 @@ InvoicesController.invoicesRepository = new RepositoryReact_1.default({
 InvoicesController.invoiceItemsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'invoiceItems',
-        addNewRoute: 'invoiceItemReact',
+        addNewRoute: 'invoiceItem',
         editRoute: 'invoiceItem',
         deleteRoute: 'invoiceItem'
     },

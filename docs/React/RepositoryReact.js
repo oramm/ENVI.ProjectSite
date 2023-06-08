@@ -62,7 +62,7 @@ class RepositoryReact {
      * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsfromServer(formData, specialActionRoute) {
+    async loadItemsFromServer(formData, specialActionRoute) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         if (formData)
@@ -80,23 +80,6 @@ class RepositoryReact {
         this.currentItems = [];
         console.log(this.name + ' NodeJS: %o', this.items);
         return this.items;
-    }
-    /** używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
-     * gdy edytujemy element nieposiadający listy
-     */
-    async clientSideEditItemHandler(dataItem) {
-        const newIndex = this.items.findIndex((item) => item.id == dataItem.id);
-        this.items[newIndex] = dataItem;
-        console.log('%s:: wykonano funkcję: %s, %o', this.name, this, dataItem);
-    }
-    /** używany do ustawienia repozytorium po stronie klienta (bez obsługi viewObject)
-     * gdy edytujemy element nieposiadający listy
-     */
-    clientSideAddNewItemHandler(dataItem) {
-        this.items.push(dataItem);
-        console.log('dodaję obiekt docelowy, jego parent: ,%o', dataItem._parent);
-        this.addToCurrentItems(dataItem.id);
-        console.log('%s:: wykonano funkcję: %o', this.name, dataItem);
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem) {
@@ -130,10 +113,12 @@ class RepositoryReact {
         return newItemFromServer;
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
-  * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
-  * @param item obiekt do edycji
- */
-    async editItemNodeJS(item) {
+      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
+      * @param item obiekt do edycji
+      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
+      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
+      */
+    async editItemNodeJS(item, specialActionRoute) {
         const requestOptions = {
             method: 'PUT',
             credentials: 'include',
@@ -149,7 +134,10 @@ class RepositoryReact {
             ToolsDate_1.default.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify(item);
         }
-        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.editRoute + '/' + (item instanceof FormData ? item.get('id') : item.id), requestOptions);
+        let actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
+        //MainSetup.serverUrl + actionRoute + '/' + (item instanceof FormData ? item.get('id') : item.id),
+        const resultRawResponse = await fetch(urlPath, requestOptions);
         const resultObject = await resultRawResponse.json();
         if (resultRawResponse.status >= 400) {
             console.error('Error from server: %o', resultObject.errorMessage);

@@ -23,39 +23,49 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeOtherLetterValidationSchema = exports.InvoiceItemValidationSchema = void 0;
+exports.makeInvoiceSetAsSentValidationSchema = exports.makeInvoiceIssueValidationSchema = exports.makeInvoiceValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const commonFields = {
     _contract: Yup.object()
         .required('Wybierz kontrakt'),
     issueDate: Yup.date()
         .required('Data wystawienia jest wymagana'),
-    _entity: Yup.array()
+    _entity: Yup.object()
         .required('Wybierz podmiot'),
     daysToPay: Yup.number()
         .required('To pole jest wymagane')
-        .min(0, 'Liczba musi być większa lub równa 0')
+        .min(1, 'Liczba musi być większa lub równa 0')
         .max(60, 'Liczba musi być mniejsza lub równa 60'),
     status: Yup.string()
         .required('Status jest wymagany'),
-    _editor: Yup.object()
+    _owner: Yup.object()
         .required('Podaj kto rejestruje'),
     description: Yup.string()
-        .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
+        .max(300, 'Opis może mieć maksymalnie 300 znaków'),
 };
-function InvoiceItemValidationSchema(isEditing) {
+function makeInvoiceValidationSchema(isEditing) {
     return (Yup.object().shape({
         ...commonFields,
-        _template: isEditing ? Yup.object() : Yup.object().required('Wybierz szablon'),
     }));
 }
-exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;
-function makeOtherLetterValidationSchema(isEditing) {
+exports.makeInvoiceValidationSchema = makeInvoiceValidationSchema;
+function makeInvoiceIssueValidationSchema() {
     return (Yup.object().shape({
-        ...commonFields,
         number: Yup.string()
-            .required('Numer jest wymagany')
-            .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+            .min(6, 'Numer musi mieć co najmniej 6 znaków')
+            .max(9, 'Numer może mieć maksymalnie 9 znaków'),
+        file: Yup.mixed()
+            .test('file', 'Plik jest wymagany', (value) => {
+            console.log('issueInvoiceSchema:', value);
+            return value && value.length > 0;
+        })
     }));
 }
-exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
+exports.makeInvoiceIssueValidationSchema = makeInvoiceIssueValidationSchema;
+function makeInvoiceSetAsSentValidationSchema() {
+    return (Yup.object().shape({
+        sentDate: Yup.date()
+            .required('Data nadania jest wymagana'),
+    }));
+}
+exports.makeInvoiceSetAsSentValidationSchema = makeInvoiceSetAsSentValidationSchema;

@@ -20,7 +20,7 @@ export default class MainController {
         });
         const personsEnviData = new FormData();
         personsEnviData.append('systemRoleName', 'ENVI_EMPLOYEE|ENVI_MANAGER');
-        await personsEnviRepository.loadItemsfromServer(personsEnviData);
+        await personsEnviRepository.loadItemsFromServer(personsEnviData);
         personsEnviRepository.saveToSessionStorage();
         MainSetup.personsEnviRepository = personsEnviRepository;
 
@@ -35,7 +35,7 @@ export default class MainController {
         });
         const contractTypesData = new FormData();
         contractTypesData.append('status', 'ACTIVE');
-        await contractTypesRepository.loadItemsfromServer();
+        await contractTypesRepository.loadItemsFromServer();
         contractTypesRepository.saveToSessionStorage();
         MainSetup.contractTypesRepository = contractTypesRepository;
 
@@ -48,7 +48,7 @@ export default class MainController {
                 deleteRoute: 'documentTemplates'
             }
         });
-        await documentTemplatesRepository.loadItemsfromServer();
+        await documentTemplatesRepository.loadItemsFromServer();
         documentTemplatesRepository.saveToSessionStorage();
         MainSetup.documentTemplatesRepository = documentTemplatesRepository;
     }

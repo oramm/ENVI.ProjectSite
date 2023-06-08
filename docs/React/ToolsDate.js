@@ -107,8 +107,7 @@ class ToolsDate {
         var year = timestamp.getUTCFullYear();
         var h = this.addZero(timestamp.getUTCHours());
         var m = this.addZero(timestamp.getUTCMinutes());
-        return day + '&#8209;' + month + '&#8209;' + year + ' ' +
-            h + ':' + m;
+        return day + '-' + month + '-' + year + ' ' + h + ':' + m;
     }
     /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(num) {

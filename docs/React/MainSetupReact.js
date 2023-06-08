@@ -7,6 +7,10 @@ class MainSetup {
     static set currentUser(data) {
         sessionStorage.setItem('Current User', JSON.stringify(data));
     }
+    static getCurrentUserAsPerson() {
+        const currentUser = this.currentUser;
+        return this.personsEnviRepository.items.find(p => `${p.name} ${p.surname}` === currentUser.userName);
+    }
     static get currentProject() {
         return JSON.parse(sessionStorage.getItem('Projects repository')).currentItems[0];
     }

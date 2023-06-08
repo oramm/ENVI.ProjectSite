@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ContractStatus, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
+import { ContractStatusSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
@@ -91,7 +91,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
             </Form.Group>
             <Form.Group controlId="valueInPLN">
                 <Form.Label>Wartość netto w PLN</Form.Label>
-                <ValueInPLNInput required={true} />
+                <ValueInPLNInput />
             </Form.Group>
             <Row >
                 <Form.Group as={Col} controlId="startDate">
@@ -131,7 +131,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                     )}
                 </Form.Group>
             </Row>
-            <ContractStatus />
+            <ContractStatusSelectFormElement />
         </>
     );
 }

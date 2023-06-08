@@ -27,7 +27,7 @@ function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: InvoiceItemModalBody_1.InvoiceItemModalBody,
-            modalTitle: "Dpdaj pozycję faktury",
+            modalTitle: "Dodaj pozycję faktury",
             repository: InvoicesSearch_1.invoiceItemsRepository,
             makeValidationSchema: InvoiceItemValidationSchema_1.InvoiceItemValidationSchema
         }, buttonProps: {

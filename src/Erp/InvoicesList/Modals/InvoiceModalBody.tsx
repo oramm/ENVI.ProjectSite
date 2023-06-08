@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ContractSelectFormElement, ErrorMessage, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
+import { ContractSelectFormElement, ErrorMessage, MyAsyncTypeahead, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository } from '../InvoicesSearch';
+import { contractsRepository, entitiesRepository } from '../InvoicesSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import MainSetup from '../../../React/MainSetupReact';
@@ -18,7 +18,8 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
             daysToPay: initialData?.daysToPay,
             _entity: initialData?._entity,
             status: initialData?.status || 'Na później',
-            _owner: initialData?._owner,
+            _owner: initialData?._owner || MainSetup.getCurrentUserAsPerson(),
+            _editor: MainSetup.getCurrentUserAsPerson(),
             description: initialData?.description || '',
         };
         reset(resetData);
@@ -52,7 +53,9 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
                     <Form.Label>Dni do zapłaty</Form.Label>
                     <Form.Control
                         type="number"
-                        min="0"
+                        isValid={!errors.daysToPay}
+                        isInvalid={!!errors.daysToPay}
+                        min="1"
                         max="60"
                         {...register('daysToPay')}
                     />
@@ -75,6 +78,15 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
                     ))}
                 </Form.Control>
                 <ErrorMessage errors={errors} name={'status'} />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label>Odbiorca</Form.Label>
+                <MyAsyncTypeahead
+                    name='_entity'
+                    labelKey='name'
+                    repository={entitiesRepository}
+                    multiple={false}
+                />
             </Form.Group>
             <Form.Group controlId="_owner">
                 <PersonSelectFormElement

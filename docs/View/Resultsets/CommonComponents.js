@@ -26,13 +26,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GDDocFileIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.InvoiceStatusBadge = exports.GDDocFileIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
 const Google_Drive_icon_png_1 = __importDefault(require("../../Resources/View/Google-Drive-icon.png"));
 const Google_Docs_icon_png_1 = __importDefault(require("../../Resources/View/Google-Docs-icon.png"));
 require("../../Css/styles.css");
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }
@@ -67,3 +68,36 @@ function GDDocFileIconLink({ folderUrl }) {
         react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
 }
 exports.GDDocFileIconLink = GDDocFileIconLink;
+function InvoiceStatusBadge({ status }) {
+    let variant;
+    let textMode = 'light';
+    switch (status) {
+        case MainSetupReact_1.default.invoiceStatusNames[0]: //'Na później'
+            variant = 'light';
+            textMode = 'dark';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[1]: //'Do zrobienia'
+            variant = 'primary';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[2]: //'Zrobiona'
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[3]: //'Wysłana'
+            variant = 'info';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[4]: //'Zapłacona'
+            variant = 'success';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[5]: //'Do korekty'
+            variant = 'danger';
+            break;
+        case MainSetupReact_1.default.invoiceStatusNames[6]: //'Wycofana'
+            variant = 'dark';
+            break;
+        default:
+            variant = 'secondary';
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.InvoiceStatusBadge = InvoiceStatusBadge;

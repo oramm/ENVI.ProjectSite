@@ -141,7 +141,7 @@ function FilterPanel<DataItemType extends RepositoryDataItem>({ FilterBodyCompon
     async function handleSubmitSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuestoFormData(data);
-        const result = await repository.loadItemsfromServer(formData) as DataItemType[];
+        const result = await repository.loadItemsFromServer(formData) as DataItemType[];
         setObjects(result);
         onIsReadyChange(true);
     };

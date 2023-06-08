@@ -1,0 +1,175 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Container, Card, Col, Row, Button } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
+import ToolsDate from '../../../React/ToolsDate';
+import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
+import FilterableTable from '../../../View/Resultsets/FilterableTable';
+import { invoiceItemsRepository, invoicesRepository } from '../InvoicesSearch';
+import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from '../Modals/InvoiceItemModalButtons';
+import { ActionButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButtons';
+import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
+
+export default function InvoiceDetails() {
+    const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0] || getInvoiceFromRouter());
+    const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
+
+    function getInvoiceFromRouter() {
+        const { id } = useParams();
+        const invoiceId = Number(id);
+        const invoice = invoicesRepository.items.find(invoice => invoice.id === invoiceId);
+        return invoice;
+    }
+
+    useEffect(() => {
+        const fetchInvoiceItems = async () => {
+            const formData = new FormData();
+            formData.append('invoiceId', invoice.id.toString());
+            const items = await invoiceItemsRepository.loadItemsFromServer(formData);
+            setInvoiceItems(items);
+        };
+
+        fetchInvoiceItems();
+    }, []);
+    if (!invoice) {
+        return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
+    }
+    return (
+        <InvoiceProvider invoice={invoice} setInvoice={setInvoice} >
+            <Card >
+                <Card.Body >
+                    <Container>
+                        <Row>
+                            <Col sm={1} lg='auto'>
+                                {invoice._documentOpenUrl && (
+                                    <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />
+                                )}
+                            </Col>
+                            <Col sm={4} md={2}>
+                                <div>Nr faktury:</div>
+                                <h5>{invoice.number}</h5>
+                            </Col>
+                            <Col sm={4} md={3} lg='3'>
+                                <div>do Umowy:</div>
+                                <h5>{invoice._contract.ourId}</h5>
+                            </Col>
+                            <Col sm={2}>
+                                <InvoiceStatusBadge status={invoice.status} />
+                            </Col>
+                            <Col md="auto">
+                                <ActionButton /> {' '}
+                                <InvoiceEditModalButton
+                                    modalProps={{
+                                        onEdit: setInvoice,
+                                        initialData: invoice,
+                                        makeValidationSchema: makeInvoiceValidationSchema
+                                    }
+                                    }
+                                    buttonProps={{ buttonCaption: 'Edytuj Fakturę' }}
+                                />
+                            </Col>
+
+                        </Row>
+                        <Row>
+                            <Col sm={4} md={2}>
+                                <div>Data wystawienia:</div>
+                                {invoice.issueDate
+                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.issueDate)} </h5>
+                                    : 'Jeszcze nie wystawiono'}
+                            </Col>
+                            <Col sm={4} md={2}>
+                                <div>Data wysłania:</div>
+                                {invoice.sentDate
+                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.sentDate)}</h5>
+                                    : 'Jeszcze nie wysłano'}
+                            </Col>
+                            <Col sm={4} md={2}>
+                                <div>Termin płatności:</div>
+                                {invoice.paymentDeadline
+                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.paymentDeadline)}</h5>
+                                    : 'Jeszcze nie okreśony'}
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={4} md={2}>
+                                <div>Wartość Brutto:</div>
+                                <h5>{invoice._grossValue}</h5>
+                            </Col>
+
+                            <Col sm={4} md={2}>
+                                <div>Wartość Netto:</div>
+                                <h5>{invoice._netValue}</h5>
+                            </Col>
+                            <Col sm={12} md={8}>
+                                <div>Odbiorca</div>
+                                <h5>{invoice._entity.name}</h5>
+                            </Col>
+
+                        </Row>
+                        <Row>
+                            <Col >
+                                {invoice.description && <p>Opis: {invoice.description}</p>}
+                            </Col>
+                        </Row>
+                    </Container >
+
+
+                    {invoiceItems ?
+                        <FilterableTable<InvoiceItem>
+                            title=''
+                            initialObjects={invoiceItems}
+                            repository={invoiceItemsRepository}
+                            AddNewButtonComponents={[InvoiceItemAddNewModalButton]}
+                            EditButtonComponent={InvoiceItemEditModalButton}
+                            tableStructure={[
+                                { header: 'Opis', objectAttributeToShow: 'description' },
+                                { header: 'Netto', objectAttributeToShow: '_netValue' },
+                                { header: 'Brutto', objectAttributeToShow: '_grossValue' },
+                            ]}
+                        />
+                        : <>"Ładowanie pozycji faktury..." <SpinnerBootstrap /></>
+                    }
+
+                    <p className='tekst-muted small'>
+                        Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}<br />
+                        Aktualizacja: {ToolsDate.timestampToString(invoice._lastUpdated)}
+                    </p>
+                </Card.Body>
+            </Card >
+        </InvoiceProvider>
+    );
+}
+
+// Utwórz kontekst
+const InvoiceContext = createContext<{
+    invoice: Invoice,
+    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>
+}>({
+    invoice: {} as Invoice,
+    setInvoice: () => { }
+});
+
+type InvoiceProviderProps = {
+    invoice: Invoice,
+    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>
+}
+
+// Twórz dostawcę kontekstu, który przechowuje stan faktury
+export function InvoiceProvider({
+    invoice,
+    setInvoice,
+    children
+}: React.PropsWithChildren<InvoiceProviderProps>) {
+    if (!invoice) throw new Error("Invoice not found");
+
+    return (
+        <InvoiceContext.Provider value={{ invoice, setInvoice }}>
+            {children}
+        </InvoiceContext.Provider>
+    );
+}
+
+// Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury
+export function useInvoice() {
+    return useContext(InvoiceContext);
+}

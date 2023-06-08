@@ -16,6 +16,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     title: string;
     isEditing: boolean;
     onEdit?: (object: DataItemType) => void;
+    specialActionRoute?: string;
     onAddNew?: (object: DataItemType) => void;
     onClose: () => void;
     repository: RepositoryReact<DataItemType>;
@@ -28,6 +29,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     show,
     title,
     isEditing,
+    specialActionRoute,
     onEdit,
     onAddNew,
     onClose,
@@ -79,7 +81,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         data.append('id', currentDataItem.id.toString());
 
         appendContextData(currentDataItem, data);
-        const editedObject = await repository.editItemNodeJS(data as FormData);
+        const editedObject = await repository.editItemNodeJS(data as FormData, specialActionRoute);
         if (onEdit) onEdit(editedObject);
     };
 
@@ -100,7 +102,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
         const objectToEdit = { ...currentDataItem, ...data } as DataItemType;
-        const editedObject = await repository.editItemNodeJS(objectToEdit);
+        const editedObject = await repository.editItemNodeJS(objectToEdit, specialActionRoute);
         if (onEdit) onEdit(editedObject);
     };
 

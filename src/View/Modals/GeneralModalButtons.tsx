@@ -4,11 +4,12 @@ import { Button } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
-import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps } from "./ModalsTypes";
+import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
 
 export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
     modalProps: {
         onEdit,
+        specialActionRoute,
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
@@ -18,7 +19,6 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
     },
     buttonProps = {},
 }: GeneralEditModalButtonProps<DataItemTpe>) {
-    const { buttonCaption, buttonVariant = "light" } = buttonProps;
     const [showForm, setShowForm] = useState(false);
 
     function handleOpen() {
@@ -30,10 +30,10 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
 
     return (
         <>
-            <a href='#' onClick={handleOpen} className='icon-vertical text-general'>
-                <i className="fa fa-pencil fa-lg"></i>
-            </a>
-
+            <GeneraEditButton
+                {...buttonProps}
+                onClick={handleOpen}
+            />
             <GeneralModal<DataItemTpe>
                 onClose={handleClose}
                 show={showForm}
@@ -41,6 +41,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
                 title={modalTitle}
                 repository={repository}
                 onEdit={onEdit}
+                specialActionRoute={specialActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
                 makeValidationSchema={makeValidationSchema}
                 modalBodyProps={{
@@ -51,6 +52,34 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
             />
         </>
     );
+}
+/**wyświelta ikonę albo przycisk */
+function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void }) {
+    const {
+        buttonCaption,
+        buttonIsActive,
+        buttonIsDisabled,
+        buttonSize = 'sm',
+        buttonVariant = 'outline-success',
+        onClick } = {
+        ...buttonProps
+    }
+    if (!buttonCaption)
+        return (
+            <a href='#' onClick={onClick} className='icon-vertical text-general'>
+                <i className="fa fa-pencil fa-lg"></i>
+            </a>)
+    else
+        return (<Button
+            key={buttonCaption}
+            variant={buttonVariant}
+            size={buttonSize}
+            active={buttonIsActive}
+            disabled={buttonIsDisabled}
+            onClick={onClick}
+        >
+            {buttonCaption}
+        </Button>)
 }
 
 /** Wyświetla przycisk i przypięty do niego modal

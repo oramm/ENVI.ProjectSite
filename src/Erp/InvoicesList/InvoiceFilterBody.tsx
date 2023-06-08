@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContractSelectFormElement, ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
+import { ContractSelectFormElement } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { contractsRepository, projectsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';

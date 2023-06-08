@@ -43,7 +43,8 @@ function InvoiceModalBody({ isEditing, initialData }) {
             daysToPay: initialData?.daysToPay,
             _entity: initialData?._entity,
             status: initialData?.status || 'Na później',
-            _owner: initialData?._owner,
+            _owner: initialData?._owner || MainSetupReact_1.default.getCurrentUserAsPerson(),
+            _editor: MainSetupReact_1.default.getCurrentUserAsPerson(),
             description: initialData?.description || '',
         };
         reset(resetData);
@@ -60,7 +61,7 @@ function InvoiceModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'issueDate', errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "daysToPay" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dni do zap\u0142aty"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "0", max: "60", ...register('daysToPay') }),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", isValid: !errors.daysToPay, isInvalid: !!errors.daysToPay, min: "1", max: "60", ...register('daysToPay') }),
                 react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'daysToPay', errors: errors }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
@@ -68,6 +69,9 @@ function InvoiceModalBody({ isEditing, initialData }) {
                 react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
                 MainSetupReact_1.default.invoiceStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'status' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entity', labelKey: 'name', repository: InvoicesSearch_1.entitiesRepository, multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_owner', repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },

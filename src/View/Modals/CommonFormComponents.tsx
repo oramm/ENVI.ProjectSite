@@ -51,13 +51,19 @@ export function ProjectSelector({
     )
 }
 
-type ContractStatusProps = {
+type StatusSelectFormElementProps = {
     showValidationInfo?: boolean,
+    statusNames: string[],
+    name?: string,
 }
 
-export function ContractStatus({ showValidationInfo = true }: ContractStatusProps) {
+export function StatusSelectFormElement({
+    statusNames,
+    showValidationInfo = true,
+    name = 'status'
+}: StatusSelectFormElementProps) {
     const { register, formState: { errors } } = useFormContext();
-    const name = 'status';
+
     return (
         <Form.Group controlId="status">
             <Form.Label>Status</Form.Label>
@@ -68,7 +74,7 @@ export function ContractStatus({ showValidationInfo = true }: ContractStatusProp
                 {...register(name)}
             >
                 <option value="">-- Wybierz opcję --</option>
-                {MainSetup.contractStatusNames.map((statusName, index) => (
+                {statusNames.map((statusName, index) => (
                     <option key={index} value={statusName}>
                         {statusName}
                     </option>
@@ -77,6 +83,27 @@ export function ContractStatus({ showValidationInfo = true }: ContractStatusProp
             <ErrorMessage errors={errors} name={name} />
         </Form.Group>
     );
+};
+
+type SpecificStatusProps = {
+    showValidationInfo?: boolean,
+    name?: string,
+}
+
+export function ContractStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    return <StatusSelectFormElement
+        statusNames={MainSetup.contractStatusNames}
+        showValidationInfo={showValidationInfo}
+        name={name}
+    />
+};
+
+export function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    return <StatusSelectFormElement
+        statusNames={MainSetup.invoiceStatusNames}
+        showValidationInfo={showValidationInfo}
+        name={name}
+    />
 };
 
 export type ContractSelectFormElementProps = {
@@ -390,7 +417,7 @@ export function MyAsyncTypeahead({
         const formData = new FormData();
         formData.append(searchKey, query);
         contextSearchParams.forEach(param => formData.append(param.key, param.value));
-        repository.loadItemsfromServer(formData, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServer(formData, specialSerwerSearchActionRoute)
             .then((items) => {
                 setOptions(items);
                 setIsLoading(false);
@@ -548,16 +575,14 @@ export function CaseSelectMenuElement({
 }
 
 type ValueInPLNInputProps = {
-    required?: boolean;
     showValidationInfo?: boolean;
     keyLabel?: string;
 }
 
 /**
  * Wyświetla pole do wprowadzania wartości w PLN
- * @param required czy pole jest wymagane
- * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
- * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
+ * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
 export function ValueInPLNInput({
     showValidationInfo = true,
@@ -639,36 +664,62 @@ type FileInputProps = {
  * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
  * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
  */
-export function FileInput({
+export function FileInput1({
     name,
     required = false,
     acceptedFileTypes = '',
     multiple = true
 }: FileInputProps) {
     const { register, watch, setValue, formState: { errors } } = useFormContext();
-    const selectedFile = watch(name); // monitoruje zmiany w input
-
-    useEffect(() => {
-        register(name); // rejestracja inputa
-    }, [register, name]);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            setValue(name, event.target.files); // aktualizacja wartości po wybraniu pliku
-        }
-    };
-
 
     return (
         <>
             <Form.Control
+                {...register(name)}
                 type="file"
                 required={required}
                 accept={acceptedFileTypes}
-                onChange={handleChange}
                 isInvalid={!!errors[name]}
                 isValid={!errors[name]}
                 multiple={multiple}
+            />
+            <ErrorMessage name={name} errors={errors} />
+        </>
+    );
+}
+
+export function FileInput({
+    name,
+    required = false,
+    acceptedFileTypes = '',
+    multiple = true
+}: FileInputProps) {
+    const { control, formState: { errors } } = useFormContext();
+
+    return (
+        <>
+            <Controller
+                control={control}
+                name={name}
+                defaultValue={[]}
+                //render={({ field: { onChange } }) => (
+                render={({ field: { value, onChange, ...field } }) => (
+                    <Form.Control
+                        type="file"
+                        value={value?.fileName}
+                        required={required}
+                        accept={acceptedFileTypes}
+                        isInvalid={!!errors[name]}
+                        isValid={!errors[name]}
+                        multiple={multiple}
+                        onChange={(event) => {
+                            const files = (event.target as HTMLInputElement).files;
+
+                            onChange(files);
+
+                        }}
+                    />
+                )}
             />
             <ErrorMessage name={name} errors={errors} />
         </>

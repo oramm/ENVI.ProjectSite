@@ -12,7 +12,7 @@ export default class InvoicesController {
     static invoicesRepository = new RepositoryReact<Invoice>({
         actionRoutes: {
             getRoute: 'invoices',
-            addNewRoute: 'invoiceReact',
+            addNewRoute: 'invoice',
             editRoute: 'invoice',
             deleteRoute: 'invoice'
         },
@@ -22,7 +22,7 @@ export default class InvoicesController {
     static invoiceItemsRepository = new RepositoryReact<InvoiceItem>({
         actionRoutes: {
             getRoute: 'invoiceItems',
-            addNewRoute: 'invoiceItemReact',
+            addNewRoute: 'invoiceItem',
             editRoute: 'invoiceItem',
             deleteRoute: 'invoiceItem'
         },

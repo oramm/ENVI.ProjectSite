@@ -40,8 +40,8 @@ const MainMenu_1 = __importDefault(require("./MainMenu"));
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
 const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
-const InvoicesSearch_1 = __importDefault(require("../../Erp/LettersList/InvoicesSearch"));
-const InvoiceDetails_1 = __importDefault(require("../../Erp/LettersList/InvoiceDetails/InvoiceDetails"));
+const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
+const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
 require("bootstrap/dist/css/bootstrap.min.css");
 const rootPath = '/envi.projectsite/docs/React/';
 function App() {

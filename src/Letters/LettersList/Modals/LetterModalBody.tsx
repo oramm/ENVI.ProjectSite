@@ -29,9 +29,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
             registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
             _editor: initialData?._editor
         };
-
         if (!isEditing) resetData._project = _project;
-
         reset(resetData);
 
         trigger();

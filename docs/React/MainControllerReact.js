@@ -22,7 +22,7 @@ class MainController {
         });
         const personsEnviData = new FormData();
         personsEnviData.append('systemRoleName', 'ENVI_EMPLOYEE|ENVI_MANAGER');
-        await personsEnviRepository.loadItemsfromServer(personsEnviData);
+        await personsEnviRepository.loadItemsFromServer(personsEnviData);
         personsEnviRepository.saveToSessionStorage();
         MainSetupReact_1.default.personsEnviRepository = personsEnviRepository;
         const contractTypesRepository = new RepositoryReact_1.default({
@@ -36,7 +36,7 @@ class MainController {
         });
         const contractTypesData = new FormData();
         contractTypesData.append('status', 'ACTIVE');
-        await contractTypesRepository.loadItemsfromServer();
+        await contractTypesRepository.loadItemsFromServer();
         contractTypesRepository.saveToSessionStorage();
         MainSetupReact_1.default.contractTypesRepository = contractTypesRepository;
         const documentTemplatesRepository = new RepositoryReact_1.default({
@@ -48,7 +48,7 @@ class MainController {
                 deleteRoute: 'documentTemplates'
             }
         });
-        await documentTemplatesRepository.loadItemsfromServer();
+        await documentTemplatesRepository.loadItemsFromServer();
         documentTemplatesRepository.saveToSessionStorage();
         MainSetupReact_1.default.documentTemplatesRepository = documentTemplatesRepository;
     }
