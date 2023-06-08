@@ -18,7 +18,7 @@ import { ContractDetailsTabs } from "../../Contracts/ContractsList/ContractDetai
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
-
+console.log('rootPath', rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {

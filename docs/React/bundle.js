@@ -70258,6 +70258,7 @@ __webpack_require__(/*! bootstrap/dist/css/bootstrap.min.css */ "./node_modules/
 const ContractDetails_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/ContractDetails */ "./src/Contracts/ContractsList/ContractDetails/ContractDetails.tsx");
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
+console.log('rootPath', rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
