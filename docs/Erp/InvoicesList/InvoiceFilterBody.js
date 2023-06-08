@@ -24,6 +24,8 @@ function InvoicesFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +15).toISOString().slice(0, 10), ...register('issueDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false }))));
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(CommonFormComponents_1.InvoiceStatusSelectFormElement, { showValidationInfo: false }))));
 }
 exports.InvoicesFilterBody = InvoicesFilterBody;

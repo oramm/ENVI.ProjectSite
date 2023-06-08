@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContractSelectFormElement } from '../../View/Modals/CommonFormComponents';
+import { ContractSelectFormElement, InvoiceStatusSelectFormElement } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { contractsRepository, projectsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
@@ -45,6 +45,9 @@ export function InvoicesFilterBody({ }: FilterBodyProps) {
                     typesToInclude='our'
                     showValidationInfo={false}
                 />
+            </Form.Group>
+            <Form.Group as={Col}>
+                <InvoiceStatusSelectFormElement showValidationInfo={false} />
             </Form.Group>
         </Row>
     );

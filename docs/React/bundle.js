@@ -68623,7 +68623,9 @@ function InvoicesFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +15).toISOString().slice(0, 10), ...register('issueDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false }))));
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(CommonFormComponents_1.InvoiceStatusSelectFormElement, { showValidationInfo: false }))));
 }
 exports.InvoicesFilterBody = InvoicesFilterBody;
 
@@ -68718,6 +68720,7 @@ const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Res
 const InvoicesController_1 = __importDefault(__webpack_require__(/*! ./InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts"));
 const InvoiceFilterBody_1 = __webpack_require__(/*! ./InvoiceFilterBody */ "./src/Erp/InvoicesList/InvoiceFilterBody.tsx");
 const InvoiceModalButtons_1 = __webpack_require__(/*! ./Modals/InvoiceModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceModalButtons.tsx");
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 exports.invoicesRepository = InvoicesController_1.default.invoicesRepository;
 exports.invoiceItemsRepository = InvoicesController_1.default.invoiceItemsRepository;
 exports.entitiesRepository = InvoicesController_1.default.entitiesRepository;
@@ -68725,7 +68728,12 @@ exports.projectsRepository = InvoicesController_1.default.projectsRepository;
 exports.contractsRepository = InvoicesController_1.default.contractsRepository;
 function InvoicesSearch({ title }) {
     function makeEntityLabel(invoice) {
-        return react_1.default.createElement(react_1.default.Fragment, null, invoice._entity.name);
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            invoice._entity.name,
+            " ",
+            ' ',
+            " ",
+            react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
             { header: 'Numer', objectAttributeToShow: 'number' },

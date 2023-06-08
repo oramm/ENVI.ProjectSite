@@ -4,6 +4,7 @@ import InvoicesController from './InvoicesController';
 import { InvoicesFilterBody } from './InvoiceFilterBody';
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from './Modals/InvoiceModalButtons';
 import { Invoice } from '../../../Typings/bussinesTypes';
+import { InvoiceStatusBadge } from '../../View/Resultsets/CommonComponents';
 
 export const invoicesRepository = InvoicesController.invoicesRepository;
 export const invoiceItemsRepository = InvoicesController.invoiceItemsRepository;
@@ -13,7 +14,11 @@ export const contractsRepository = InvoicesController.contractsRepository;
 
 export default function InvoicesSearch({ title }: { title: string }) {
     function makeEntityLabel(invoice: Invoice) {
-        return <>{invoice._entity.name}</>;
+        return (
+            <>
+                {invoice._entity.name} {' '} <InvoiceStatusBadge status={invoice.status} />
+            </>
+        );
     }
 
     return (
