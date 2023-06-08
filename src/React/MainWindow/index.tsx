@@ -14,8 +14,12 @@ import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ContractDetailsTabs } from "../../Contracts/ContractsList/ContractDetails/ContractDetails";
 
-const rootPath = '/envi.projectsite/docs/React/';
+const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
+const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
+
+//const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,7 +80,7 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<></>} />
                 <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                <Route path="/contract/:id" element={<ContractsSearch title={"test"} />} />
+                <Route path="/contract/:id" element={<ContractDetailsTabs />} />
                 <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                 <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                 <Route path="/invoice/:id" element={<InvoiceDetails />} />

@@ -67865,6 +67865,34 @@ function makeNodesHash(arr){
 
 /***/ }),
 
+/***/ "./src/Contracts/ContractsList/ContractDetails/ContractDetails.tsx":
+/*!*************************************************************************!*\
+  !*** ./src/Contracts/ContractsList/ContractDetails/ContractDetails.tsx ***!
+  \*************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContractDetailsTabs = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+function ContractDetailsTabs() {
+    return (react_1.default.createElement(react_bootstrap_1.Tabs, { defaultActiveKey: "general", id: "uncontrolled-tab-example", fill: true },
+        react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "General" },
+            react_1.default.createElement("h1", null, "Szczeg\u00F3\u0142y umowy")),
+        react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Tasks" },
+            react_1.default.createElement("h1", null, "Tasks"))));
+}
+exports.ContractDetailsTabs = ContractDetailsTabs;
+;
+
+
+/***/ }),
+
 /***/ "./src/Contracts/ContractsList/ContractsController.ts":
 /*!************************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractsController.ts ***!
@@ -70227,7 +70255,10 @@ const LettersSearch_1 = __importDefault(__webpack_require__(/*! ../../Letters/Le
 const InvoicesSearch_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoicesSearch */ "./src/Erp/InvoicesList/InvoicesSearch.tsx"));
 const InvoiceDetails_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails */ "./src/Erp/InvoicesList/InvoiceDetails/InvoiceDetails.tsx"));
 __webpack_require__(/*! bootstrap/dist/css/bootstrap.min.css */ "./node_modules/bootstrap/dist/css/bootstrap.min.css");
-const rootPath = '/envi.projectsite/docs/React/';
+const ContractDetails_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/ContractDetails */ "./src/Contracts/ContractsList/ContractDetails/ContractDetails.tsx");
+const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
+const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
+//const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
@@ -70278,7 +70309,7 @@ function AppRoutes() {
         react_1.default.createElement(react_router_dom_1.Routes, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(react_1.default.Fragment, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractsSearch_1.default, { title: "test" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractDetails_1.ContractDetailsTabs, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }))));
