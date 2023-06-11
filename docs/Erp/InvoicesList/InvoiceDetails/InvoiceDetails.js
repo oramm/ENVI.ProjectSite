@@ -29,7 +29,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useInvoice = exports.InvoiceProvider = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const react_router_dom_1 = require("react-router-dom");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable"));
@@ -38,14 +37,8 @@ const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 function InvoiceDetails() {
-    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesSearch_1.invoicesRepository.currentItems[0] || getInvoiceFromRouter());
+    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesSearch_1.invoicesRepository.currentItems[0] || InvoicesSearch_1.invoicesRepository.getItemFromRouter());
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
-    function getInvoiceFromRouter() {
-        const { id } = (0, react_router_dom_1.useParams)();
-        const invoiceId = Number(id);
-        const invoice = InvoicesSearch_1.invoicesRepository.items.find(invoice => invoice.id === invoiceId);
-        return invoice;
-    }
     (0, react_1.useEffect)(() => {
         const fetchInvoiceItems = async () => {
             const formData = new FormData();

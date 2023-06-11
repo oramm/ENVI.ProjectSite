@@ -108,3 +108,76 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
         </Badge>
     );
 }
+
+export function ContractStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = 'light';
+    switch (status) {
+        case MainSetup.contractStatusNames[0]: //'Na później'
+            variant = 'light';
+            textMode = 'dark';
+            break;
+        case MainSetup.contractStatusNames[1]: //'Do zrobienia'
+            variant = 'primary';
+            break;
+        case MainSetup.contractStatusNames[2]: //'Zrobiona'
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetup.contractStatusNames[3]: //'Wysłana'
+            variant = 'info';
+            break;
+        case MainSetup.contractStatusNames[4]: //'Zapłacona'
+            variant = 'success';
+            break;
+        case MainSetup.contractStatusNames[5]: //'Do korekty'
+            variant = 'danger';
+            break;
+        case MainSetup.contractStatusNames[6]: //'Wycofana'
+            variant = 'dark';
+            break;
+        default:
+            variant = 'secondary';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
+export function TaskStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = 'light';
+    switch (status) {
+        case MainSetup.taskStatusNames[0]: //'Backlog'
+            variant = 'light';
+            textMode = 'dark';
+            break;
+        case MainSetup.taskStatusNames[1]: //'Nie rozpoczęty'
+            variant = 'secondary';
+            break;
+        case MainSetup.taskStatusNames[2]: //'W trakcie'
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetup.taskStatusNames[3]: //'Do poprawy'
+            variant = 'danger';
+            break;
+        case MainSetup.taskStatusNames[4]: //'Oczekiwanie na odpowiedź'
+            variant = 'info';
+            break;
+        case MainSetup.taskStatusNames[5]: //'Zrobione'
+            variant = 'success';
+            break;
+        default:
+            variant = 'secondary';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}

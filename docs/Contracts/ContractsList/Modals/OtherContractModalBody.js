@@ -32,7 +32,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const RepositoryReact_1 = __importDefault(require("../../../React/RepositoryReact"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const ContractModalBody_1 = require("./ContractModalBody");
-const ContractsSearch_1 = require("../ContractsSearch");
+const ContractsController_1 = require("../ContractsController");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
@@ -56,7 +56,7 @@ function OtherContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsSearch_1.entitiesRepository, multiple: true })),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsController_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', contextSearchParams: [

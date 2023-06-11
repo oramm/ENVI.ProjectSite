@@ -32,7 +32,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 function OurLetterModalBody(props) {
     const { initialData, isEditing } = props;
-    const { setValue, unregister, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { setValue, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const _cases = watch('_cases');
     (0, react_1.useEffect)(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });

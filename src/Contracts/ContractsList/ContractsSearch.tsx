@@ -1,12 +1,9 @@
 import React from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable';
-import ContractsController from './ContractsController';
+import { contractsRepository } from './ContractsController';
 import { ContractsFilterBody } from './ContractsFilterBody';
 import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
 
-export const contractsRepository = ContractsController.contractsRepository;
-export const entitiesRepository = ContractsController.entitiesRepository;
-export const projectsRepository = ContractsController.projectsRepository;
 
 export default function ContractsSearch({ title }: { title: string }) {
     return (

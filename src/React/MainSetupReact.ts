@@ -48,4 +48,13 @@ export default class MainSetup {
         'Zakończony',
         'Archiwalny'
     ];
+
+    static taskStatusNames = [
+        'Backlog',
+        'Nie rozpoczęty',
+        'W trakcie',
+        'Do poprawy',
+        'Oczekiwanie na odpowiedź',
+        'Zrobione'
+    ];
 }

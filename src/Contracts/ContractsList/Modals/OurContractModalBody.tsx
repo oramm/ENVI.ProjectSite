@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import MainSetup from '../../../React/MainSetupReact';
 import { ContractTypeSelectFormElement, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { ContractModalBody, ProjectSelectorModalBody } from './ContractModalBody';
-import { contractsRepository, projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';

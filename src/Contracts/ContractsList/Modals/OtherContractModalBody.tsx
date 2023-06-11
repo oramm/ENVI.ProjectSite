@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import RepositoryReact from '../../../React/RepositoryReact';
 import { ContractTypeSelectFormElement, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
 import { ContractModalBody } from './ContractModalBody';
-import { entitiesRepository } from '../ContractsSearch';
+import { entitiesRepository } from '../ContractsController';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 

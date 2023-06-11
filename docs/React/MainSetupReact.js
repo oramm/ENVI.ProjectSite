@@ -36,3 +36,11 @@ MainSetup.contractStatusNames = [
     'Zakończony',
     'Archiwalny'
 ];
+MainSetup.taskStatusNames = [
+    'Backlog',
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Do poprawy',
+    'Oczekiwanie na odpowiedź',
+    'Zrobione'
+];

@@ -177,31 +177,36 @@ function ResultSetTable<DataItemType extends RepositoryDataItem>({
 }: ResultSetTableProps) {
     const { objects, activeRowId, tableStructure } = useFilterableTableContext<DataItemType>();
     return (
-        <Table striped hover size="sm">
-            <thead>
-                <tr>
-                    {tableStructure.map((column) => (
-                        <th key={column.renderThBody?.name || column.header}>
-                            {renderHeaderBody(column)}
-                        </th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {objects.map((dataObject) => {
-                    const isActive = dataObject.id === activeRowId;
-                    return (
-                        <FiterableTableRow<DataItemType>
-                            key={dataObject.id}
-                            dataObject={dataObject}
-                            isActive={isActive}
-                            onIsReadyChange={onIsReadyChange}
-                            onRowClick={onRowClick}
-                        />
-                    )
-                })}
-            </tbody>
-        </Table >
+        <>
+            <p className='tekst-muted small'>
+                Znaleziono: {objects.length}  pozycji.
+            </p>
+            <Table striped hover size="sm">
+                <thead>
+                    <tr>
+                        {tableStructure.map((column) => (
+                            <th key={column.renderThBody?.name || column.header}>
+                                {renderHeaderBody(column)}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {objects.map((dataObject) => {
+                        const isActive = dataObject.id === activeRowId;
+                        return (
+                            <FiterableTableRow<DataItemType>
+                                key={dataObject.id}
+                                dataObject={dataObject}
+                                isActive={isActive}
+                                onIsReadyChange={onIsReadyChange}
+                                onRowClick={onRowClick}
+                            />
+                        )
+                    })}
+                </tbody>
+            </Table >
+        </>
     );
 }
 

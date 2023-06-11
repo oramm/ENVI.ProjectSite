@@ -108,13 +108,18 @@ function renderHeaderBody(column) {
 }
 function ResultSetTable({ onRowClick, onIsReadyChange, }) {
     const { objects, activeRowId, tableStructure } = useFilterableTableContext();
-    return (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
-        react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
-        react_1.default.createElement("tbody", null, objects.map((dataObject) => {
-            const isActive = dataObject.id === activeRowId;
-            return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
-        }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("p", { className: 'tekst-muted small' },
+            "Znaleziono: ",
+            objects.length,
+            "  pozycji."),
+        react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
+            react_1.default.createElement("tbody", null, objects.map((dataObject) => {
+                const isActive = dataObject.id === activeRowId;
+                return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
+            })))));
 }
 function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }) {
     if (!onIsReadyChange)

@@ -10,7 +10,7 @@ import MainSetup from '../../../React/MainSetupReact';
 
 export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem>) {
     const { register, reset, formState: { errors }, trigger } = useFormContext();
-    const invoice = useInvoice();
+    const { invoice } = useInvoice();
     useEffect(() => {
 
         console.log('InvoiceModalBody useEffect', initialData);

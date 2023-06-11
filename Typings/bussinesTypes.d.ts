@@ -45,6 +45,7 @@ export interface Contract extends RepositoryDataItem {
     _gdFolderUrl: string;
     _ourIdOrNumber_Alias: string;
     _ourIdOrNumber_Name: string;
+    _lastUpdated: string;
 }
 
 export interface OurContract extends Contract {
@@ -71,13 +72,6 @@ export interface Milestone extends RepositoryDataItem {
     _gdFolderUrl: string;
 }
 
-export interface CaseType extends RepositoryDataItem {
-    name: string;
-    folderNumber: string;
-    isDefault: boolean;
-    milestoneTypeId: number;
-};
-
 export interface Case extends RepositoryDataItem {
     name: string;
     number: number;
@@ -91,12 +85,43 @@ export interface Case extends RepositoryDataItem {
     _typeFolderNumber_TypeName_Number_Name: string;
 }
 
+export interface Task extends RepositoryDataItem {
+    name: string;
+    description: string;
+    deadline: string;
+    _parent: Case;
+    _editor: Person;
+    _lastUpdated: string;
+}
 
 export interface ContractType extends RepositoryDataItem {
     name: string;
     description: string;
     isOur: boolean;
+    status: string;
 }
+
+export interface MilestoneType extends RepositoryDataItem {
+    name: string;
+    description: string;
+    isInScrumByDefault: boolean;
+    isUniquePerContract: boolean;
+    _isDefault: boolean;
+    _contractType: ContractType;
+    _folderNumber_MilestoneTypeName: string;
+    _folderNumber: string;
+}
+
+export interface CaseType extends RepositoryDataItem {
+    name: string;
+    folderNumber: string;
+    _folderName: string;
+    isDefault: boolean;
+    isUniquePerMilestone: boolean;
+    _milestoneType: MilestoneType;
+    isDefault: boolean;
+};
+
 
 export interface Letter extends RepositoryDataItem {
     number: string;

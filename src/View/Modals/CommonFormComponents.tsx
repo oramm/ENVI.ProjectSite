@@ -10,7 +10,6 @@ import MainSetup from '../../React/MainSetupReact';
 import RepositoryReact from '../../React/RepositoryReact';
 import { useFormContext } from './FormContext';
 import { Controller } from 'react-hook-form';
-import ContractsController from '../../Contracts/ContractsList/ContractsController';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
 import { TypeaheadManagerChildProps } from 'react-bootstrap-typeahead/types/types';
@@ -98,6 +97,15 @@ export function ContractStatusSelectFormElement({ showValidationInfo = true, nam
     />
 };
 
+export function TaksStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    return <StatusSelectFormElement
+        statusNames={MainSetup.taskStatusNames}
+        showValidationInfo={showValidationInfo}
+        name={name}
+    />
+};
+
+
 export function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
     return <StatusSelectFormElement
         statusNames={MainSetup.invoiceStatusNames}
@@ -112,7 +120,7 @@ export type ContractSelectFormElementProps = {
     multiple?: boolean,
     typesToInclude?: 'our' | 'other' | 'all',
     repository: RepositoryReact,
-    _project?: RepositoryDataItem,
+    _project?: Project,
     readOnly?: boolean,
 }
 export function ContractSelectFormElement({
@@ -127,9 +135,8 @@ export function ContractSelectFormElement({
     const { formState: { errors } } = useFormContext();
 
     function makeContextSearchParams() {
-        const params = [
-            { key: 'typesToInclude', value: typesToInclude }
-        ];
+        const params = [] as { key: string, value: string }[];
+        params.push({ key: 'typesToInclude', value: typesToInclude });
         if (_project) params.push({ key: 'projectId', value: _project.ourId });
         return params;
     }
@@ -521,6 +528,7 @@ interface CaseSelectMenuElementProps {
     _contract?: Contract;
     _milestone?: Milestone;
     readonly?: boolean;
+    showValidationInfo?: boolean;
 }
 
 /**
@@ -544,7 +552,8 @@ export function CaseSelectMenuElement({
     _project,
     _contract,
     _milestone,
-    repository
+    repository,
+    showValidationInfo = true
 }: CaseSelectMenuElementProps) {
 
     function makeContextSearchParams() {
@@ -571,6 +580,7 @@ export function CaseSelectMenuElement({
         }}
         multiple={true}
         readOnly={readonly}
+        showValidationInfo={showValidationInfo}
     />;
 }
 

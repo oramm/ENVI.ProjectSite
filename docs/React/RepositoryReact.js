@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
 const ToolsDate_1 = __importDefault(require("./ToolsDate"));
 class RepositoryReact {
@@ -44,6 +45,13 @@ class RepositoryReact {
     }
     saveToSessionStorage() {
         sessionStorage.setItem(this.name, JSON.stringify(this));
+    }
+    /**pobiera obiekt z repozytorim na podstawie Id w adresie */
+    getItemFromRouter() {
+        const { id } = (0, react_router_dom_1.useParams)();
+        const itemId = Number(id);
+        const item = this.items.find(item => item.id === itemId);
+        return item;
     }
     /**Ładuje items z sessionstorage i resetuje currentitems */
     loadFromSessionStorage() {

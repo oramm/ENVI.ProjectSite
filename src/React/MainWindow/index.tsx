@@ -14,7 +14,8 @@ import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ContractDetailsTabs } from "../../Contracts/ContractsList/ContractDetails/ContractDetails";
+import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
+import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
@@ -80,11 +81,11 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<></>} />
                 <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                <Route path="/contract/:id" element={<ContractDetailsTabs />} />
+                <Route path="/contract/:id" element={<ContractMainViewTabs />} />
                 <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                 <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                 <Route path="/invoice/:id" element={<InvoiceDetails />} />
-
+                <Route path="/tasksGlobal" element={<TasksGlobal />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </BrowserRouter>

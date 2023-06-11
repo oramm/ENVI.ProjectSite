@@ -11,15 +11,8 @@ import { ActionButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButt
 import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
 
 export default function InvoiceDetails() {
-    const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0] || getInvoiceFromRouter());
+    const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0] || invoicesRepository.getItemFromRouter());
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
-
-    function getInvoiceFromRouter() {
-        const { id } = useParams();
-        const invoiceId = Number(id);
-        const invoice = invoicesRepository.items.find(invoice => invoice.id === invoiceId);
-        return invoice;
-    }
 
     useEffect(() => {
         const fetchInvoiceItems = async () => {

@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { RepositoryDataItem } from "../../Typings/bussinesTypes";
 import MainSetup from "./MainSetupReact";
 import ToolsDate from "./ToolsDate";
@@ -50,6 +51,14 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     saveToSessionStorage() {
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
+    /**pobiera obiekt z repozytorim na podstawie Id w adresie */
+    getItemFromRouter() {
+        const { id } = useParams();
+        const itemId = Number(id);
+        const item = this.items.find(item => item.id === itemId);
+        return item;
+    }
+
 
     /**Ładuje items z sessionstorage i resetuje currentitems */
     loadFromSessionStorage() {

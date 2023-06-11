@@ -1,7 +1,7 @@
 import React from 'react';
 import { GeneralAddNewModalButton, GeneralDeleteModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { contractsRepository } from '../ContractsSearch';
+import { contractsRepository } from '../ContractsController';
 import { ProjectSelectorModalBody } from './ContractModalBody';
 import { otherContractValidationSchema, ourContractValidationSchema } from './ContractValidationSchema';
 import { OtherContractModalBody } from './OtherContractModalBody';

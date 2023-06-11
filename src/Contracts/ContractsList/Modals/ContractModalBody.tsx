@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ContractStatusSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
+import { ContractStatusSelectFormElement, ErrorMessage, ProjectSelector, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { projectsRepository } from '../ContractsSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import { Project } from '../../../../Typings/bussinesTypes';
+import { projectsRepository } from '../ContractsController';
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
-    const { register, setValue, watch, formState, trigger } = useFormContext();
+    const { register, setValue, watch, formState: { errors }, trigger } = useFormContext();
 
     useEffect(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
@@ -27,15 +27,11 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                 <Form.Control
                     type='text'
                     placeholder="Podaj numer"
-                    isInvalid={!!formState.errors?.number}
-                    isValid={!formState.errors?.number}
+                    isInvalid={!!errors?.number}
+                    isValid={!errors?.number}
                     {...register('number')}
                 />
-                {formState.errors?.number && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.number.message as string}
-                    </Form.Text>
-                )}
+                <ErrorMessage errors={errors} name='number' />
             </Form.Group>
 
             <Form.Group controlId="name">
@@ -44,15 +40,11 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                     as="textarea"
                     rows={2}
                     placeholder="Podaj nazwę"
-                    isInvalid={!!formState.errors?.name}
-                    isValid={!formState.errors?.name}
+                    isInvalid={!!errors?.name}
+                    isValid={!errors?.name}
                     {...register('name')}
                 />
-                {formState.errors?.name && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.name.message as string}
-                    </Form.Text>
-                )}
+                <ErrorMessage errors={errors} name='name' />
             </Form.Group>
 
             <Form.Group controlId="alias">
@@ -60,15 +52,12 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                 <Form.Control
                     type="text"
                     placeholder="Podaj alias"
-                    isValid={!formState.errors?.alias}
-                    isInvalid={!!formState.errors?.alias}
+                    isValid={!errors?.alias}
+                    isInvalid={!!errors?.alias}
                     {...register('alias')}
                 />
-                {formState.errors?.alias && (
-                    <Form.Text className="text-danger">
-                        {formState.errors.alias.message as string}
-                    </Form.Text>
-                )}
+                <ErrorMessage errors={errors} name='alias' />
+
             </Form.Group>
 
             <Form.Group controlId="comment">
@@ -77,17 +66,11 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                     as="textarea"
                     rows={3}
                     placeholder="Podaj opis"
-                    isValid={!formState.errors?.comment}
-                    isInvalid={!!formState.errors?.comment}
+                    isValid={!errors?.comment}
+                    isInvalid={!!errors?.comment}
                     {...register('comment')}
                 />
-                {
-                    formState.errors?.comment && (
-                        <Form.Text className="text-danger">
-                            {formState.errors.comment.message as string}
-                        </Form.Text>
-                    )
-                }
+                <ErrorMessage errors={errors} name='comment' />
             </Form.Group>
             <Form.Group controlId="valueInPLN">
                 <Form.Label>Wartość netto w PLN</Form.Label>
@@ -98,37 +81,29 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                     <Form.Label>Początek</Form.Label>
                     <Form.Control
                         type="date"
-                        isValid={!formState.errors.startDate}
-                        isInvalid={!!formState.errors.startDate}
+                        isValid={!errors.startDate}
+                        isInvalid={!!errors.startDate}
                         {...register('startDate')}
                         onChange={(e) => {
                             register("startDate").onChange(e); // wywołaj standardowe zachowanie
                             trigger("endDate");
                         }}
                     />
-                    {formState.errors.startDate && (
-                        <Form.Text className="text-danger">
-                            {formState.errors.startDate.message as string}
-                        </Form.Text>
-                    )}
+                    <ErrorMessage errors={errors} name='startDate' />
                 </Form.Group>
                 <Form.Group as={Col} controlId="endDate">
                     <Form.Label>Zakończenie</Form.Label>
                     <Form.Control
                         type="date"
-                        isValid={!formState.errors.endDate}
-                        isInvalid={!!formState.errors.endDate}
+                        isValid={!errors.endDate}
+                        isInvalid={!!errors.endDate}
                         {...register('endDate')}
                         onChange={(e) => {
                             register("endDate").onChange(e); // wywołaj standardowe zachowanie
                             trigger("startDate");
                         }}
                     />
-                    {formState.errors.endDate && (
-                        <Form.Text className="text-danger">
-                            {formState.errors.endDate.message as string}
-                        </Form.Text>
-                    )}
+                    <ErrorMessage errors={errors} name='endDate' />
                 </Form.Group>
             </Row>
             <ContractStatusSelectFormElement />

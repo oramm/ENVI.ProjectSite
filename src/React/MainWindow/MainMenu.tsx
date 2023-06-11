@@ -18,9 +18,6 @@ export default function MainMenu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link as={Link} to="/" className={isActive('/')}>
-                                Strona główna
-                            </Nav.Link>
                             <Nav.Link as={Link} to="/contracts" className={isActive('/contracts')}>
                                 Kontrakty
                             </Nav.Link>
@@ -32,6 +29,9 @@ export default function MainMenu() {
                                     Faktury
                                 </Nav.Link>
                             }
+                            <Nav.Link as={Link} to="/tasksGlobal" className={isActive('/tasksGlobal')}>
+                                Zadania
+                            </Nav.Link>
 
                         </Nav>
                     </Navbar.Collapse>

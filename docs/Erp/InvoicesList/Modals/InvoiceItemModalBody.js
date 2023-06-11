@@ -35,7 +35,7 @@ const InvoiceDetails_1 = require("../InvoiceDetails/InvoiceDetails");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function InvoiceItemModalBody({ initialData }) {
     const { register, reset, formState: { errors }, trigger } = (0, FormContext_1.useFormContext)();
-    const invoice = (0, InvoiceDetails_1.useInvoice)();
+    const { invoice } = (0, InvoiceDetails_1.useInvoice)();
     (0, react_1.useEffect)(() => {
         console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {

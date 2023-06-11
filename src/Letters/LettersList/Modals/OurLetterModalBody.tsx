@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CaseSelectMenuElement, ErrorMessage, FileInput, MyAsyncTypeahead, OurLetterTemplateSelectFormElement } from '../../../View/Modals/CommonFormComponents';
+import { ErrorMessage, MyAsyncTypeahead, OurLetterTemplateSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { LetterModalBody, ProjectSelectorModalBody } from './LetterModalBody';
 import { casesRepository, entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
@@ -9,7 +9,7 @@ import { Case, Contract, IncomingLetter, OurLetter, Project } from '../../../../
 
 export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const { initialData, isEditing } = props;
-    const { setValue, unregister, watch, register, formState: { errors } } = useFormContext();
+    const { setValue, watch, register, formState: { errors } } = useFormContext();
     const _cases = watch('_cases') as Case[] | undefined;
 
     useEffect(() => {

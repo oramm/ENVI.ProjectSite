@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -66,6 +66,11 @@ function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
 }
 exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
 ;
+function TaksStatusSelectFormElement({ showValidationInfo = true, name }) {
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.taskStatusNames, showValidationInfo: showValidationInfo, name: name });
+}
+exports.TaksStatusSelectFormElement = TaksStatusSelectFormElement;
+;
 function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }) {
     return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.invoiceStatusNames, showValidationInfo: showValidationInfo, name: name });
 }
@@ -74,9 +79,8 @@ exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
 function ContractSelectFormElement({ name = '_contract', showValidationInfo = true, multiple = false, repository, typesToInclude = 'all', _project, readOnly = false, }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeContextSearchParams() {
-        const params = [
-            { key: 'typesToInclude', value: typesToInclude }
-        ];
+        const params = [];
+        params.push({ key: 'typesToInclude', value: typesToInclude });
         if (_project)
             params.push({ key: 'projectId', value: _project.ourId });
         return params;
@@ -272,7 +276,7 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
  * @param readOnly czy pole jest tylko do odczytu
  */
-function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _contract, _milestone, repository }) {
+function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true }) {
     function makeContextSearchParams() {
         const contextSearchParams = [];
         if (_project)
@@ -287,7 +291,7 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _co
             const groupedResults = groupByMilestone(results);
             const milestoneNames = Object.keys(groupedResults).sort();
             return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
-        }, multiple: true, readOnly: readonly });
+        }, multiple: true, readOnly: readonly, showValidationInfo: showValidationInfo });
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 /**

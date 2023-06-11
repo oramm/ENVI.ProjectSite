@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.ContractEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
-const ContractsSearch_1 = require("../ContractsSearch");
+const ContractsController_1 = require("../ContractsController");
 const ContractModalBody_1 = require("./ContractModalBody");
 const ContractValidationSchema_1 = require("./ContractValidationSchema");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
@@ -23,7 +23,7 @@ function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             onEdit: onEdit,
             ModalBodyComponent: OurContractModalBody_1.OurContractModalBody,
             modalTitle: "Edycja umowy",
-            repository: ContractsSearch_1.contractsRepository,
+            repository: ContractsController_1.contractsRepository,
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
@@ -37,7 +37,7 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody_1.OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
-            repository: ContractsSearch_1.contractsRepository,
+            repository: ContractsController_1.contractsRepository,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę ENVI",
@@ -50,7 +50,7 @@ function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) 
             onEdit: onEdit,
             ModalBodyComponent: OtherContractModalBody_1.OtherContractModalBody,
             modalTitle: "Edycja umowy",
-            repository: ContractsSearch_1.contractsRepository,
+            repository: ContractsController_1.contractsRepository,
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {} }));
@@ -62,7 +62,7 @@ function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody, },
             modalTitle: "Nowa umowa zewnętrzna",
-            repository: ContractsSearch_1.contractsRepository,
+            repository: ContractsController_1.contractsRepository,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę zewnętrzną",

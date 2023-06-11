@@ -43,7 +43,8 @@ const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/Lette
 const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
 const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
 require("bootstrap/dist/css/bootstrap.min.css");
-const ContractDetails_1 = require("../../Contracts/ContractsList/ContractDetails/ContractDetails");
+const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
+const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
 console.log('rootPath', rootPath);
@@ -98,10 +99,11 @@ function AppRoutes() {
         react_1.default.createElement(react_router_dom_1.Routes, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(react_1.default.Fragment, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractDetails_1.ContractDetailsTabs, null) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
