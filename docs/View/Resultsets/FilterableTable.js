@@ -43,10 +43,13 @@ const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], }) {
+function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    (0, react_1.useEffect)(() => {
+        setObjects(initialObjects);
+    }, [externalUpdate]);
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
@@ -60,6 +63,9 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
         setActiveRowId(id);
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
+        if (onRowClick) {
+            onRowClick(repository.currentItems[0]);
+        }
     }
     return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
         react_1.default.createElement(react_bootstrap_1.Container, null,

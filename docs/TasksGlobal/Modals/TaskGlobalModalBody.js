@@ -28,9 +28,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskGlobalModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const TaskModalBody_1 = require("../Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody");
-const MainSetupReact_1 = __importDefault(require("../React/MainSetupReact"));
-const FormContext_1 = require("../View/Modals/FormContext");
+const TaskModalBody_1 = require("../../Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody");
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const FormContext_1 = require("../../View/Modals/FormContext");
 function TaskGlobalModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
     const _contract = watch('_contract');

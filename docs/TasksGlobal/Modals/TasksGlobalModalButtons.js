@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const TaskGlobalModalBody_1 = require("./TaskGlobalModalBody");
-const GeneralModalButtons_1 = require("../View/Modals/GeneralModalButtons");
-const TaskGlobalValidationSchema_1 = require("./Modals/TaskGlobalValidationSchema");
-const TasksGlobalController_1 = require("./TasksGlobalController");
+const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
+const TaskGlobalValidationSchema_1 = require("./TaskGlobalValidationSchema");
+const TasksGlobalController_1 = require("../TasksGlobalController");
 /** przycisk i modal edycji Task */
 function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {

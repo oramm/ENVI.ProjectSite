@@ -33,30 +33,50 @@ const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable"));
 const TasksGlobalController_1 = require("./TasksGlobalController");
 const TasksGlobalFilterBody_1 = require("./TasksGlobalFilterBody");
-const TasksGlobalModalButtons_1 = require("./TasksGlobalModalButtons");
+const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
+const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
+const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]);
-    const [showLeftCol, setShowLeftCol] = (0, react_1.useState)(true);
-    const handleToggle = () => {
-        setShowLeftCol(!showLeftCol);
-    };
+    const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
+    const [tasksLoaded, setTasksLoaded] = (0, react_1.useState)(true);
+    const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
+    (0, react_1.useEffect)(() => {
+        if (!selectedProject)
+            return;
+        async function fetchData() {
+            setTasksLoaded(false);
+            const formData = new FormData();
+            formData.append('_project', JSON.stringify(selectedProject));
+            const tasks = await TasksGlobalController_1.tasksRepository.loadItemsFromServer(formData);
+            setTasks(tasks);
+            setExternalTasksUpdate(prevState => prevState + 1);
+            setTasksLoaded(true);
+        }
+        ;
+        fetchData();
+    }, [selectedProject]);
     return (react_1.default.createElement(ContractContext_1.ContractProvider, { tasks: tasks, setTasks: setTasks },
         react_1.default.createElement(react_bootstrap_1.Card, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                showLeftCol && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, "Projekty")),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: showLeftCol ? 9 : 12 }, tasks ?
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                    react_1.default.createElement(FilterableTable_1.default, { title: 'Projekty', repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                            { header: 'Nazwa', renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
+                        ], onRowClick: setSelectedProject })),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: '9' }, tasksLoaded ?
                     react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: TasksGlobalFilterBody_1.TasksGlobalFilterBody, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, tableStructure: [
+                            { header: 'Kamień|Sprawa', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, task._parent._typeFolderNumber_TypeName_Number_Name) },
                             { header: 'Nazwa', objectAttributeToShow: 'name' },
                             { header: 'Opis', objectAttributeToShow: 'description' },
                             { header: 'Termin', objectAttributeToShow: 'deadline' },
                             { header: 'Status', renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) },
                             { header: 'Właściciel', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`) },
-                        ] })
-                    : react_1.default.createElement(react_1.default.Fragment, null,
-                        "\"\u0141adowanie zada\u0144...\" ",
-                        react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))),
-            react_1.default.createElement(react_bootstrap_1.Button, { onClick: handleToggle },
-                showLeftCol ? 'Ukryj' : 'Pokaż',
-                " Projekty"))));
+                        ], externalUpdate: externalTasksUpdate })
+                    :
+                        react_1.default.createElement(react_1.default.Fragment, null,
+                            react_1.default.createElement("p", null, "\u0141aduj\u0119 zadania dla projektu:"),
+                            react_1.default.createElement("h3", null, selectedProject?._ourId_Alias),
+                            react_1.default.createElement("p", null, selectedProject?.name),
+                            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))))));
 }
 exports.default = TasksGlobal;

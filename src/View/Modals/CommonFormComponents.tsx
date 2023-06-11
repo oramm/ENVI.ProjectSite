@@ -89,6 +89,14 @@ type SpecificStatusProps = {
     name?: string,
 }
 
+export function ProjectStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    return <StatusSelectFormElement
+        statusNames={MainSetup.projectStatusNames}
+        showValidationInfo={showValidationInfo}
+        name={name}
+    />
+};
+
 export function ContractStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
     return <StatusSelectFormElement
         statusNames={MainSetup.contractStatusNames}

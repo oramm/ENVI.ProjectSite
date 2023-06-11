@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { Task } from '../../Typings/bussinesTypes';
+import { Task } from '../../../Typings/bussinesTypes';
 import { TaskGlobalModalBody as TaskGlobalModalBody } from './TaskGlobalModalBody';
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../View/Modals/ModalsTypes';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../View/Modals/GeneralModalButtons';
-import { makeTaskGlobalValidationSchema } from './Modals/TaskGlobalValidationSchema';
-import { tasksRepository } from './TasksGlobalController';
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../View/Modals/ModalsTypes';
+import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../View/Modals/GeneralModalButtons';
+import { makeTaskGlobalValidationSchema } from './TaskGlobalValidationSchema';
+import { tasksRepository } from '../TasksGlobalController';
 
 
 /** przycisk i modal edycji Task */

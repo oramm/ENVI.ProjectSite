@@ -30,6 +30,11 @@ MainSetup.invoiceStatusNames = [
     'Do korekty',
     'Wycofana'
 ];
+MainSetup.projectStatusNames = [
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony'
+];
 MainSetup.contractStatusNames = [
     'Nie rozpoczęty',
     'W trakcie',

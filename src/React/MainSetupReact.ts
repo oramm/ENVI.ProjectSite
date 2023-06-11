@@ -42,6 +42,12 @@ export default class MainSetup {
         'Wycofana'
     ];
 
+    static projectStatusNames = [
+        'Nie rozpoczęty',
+        'W trakcie',
+        'Zakończony'
+    ];
+
     static contractStatusNames = [
         'Nie rozpoczęty',
         'W trakcie',

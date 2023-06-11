@@ -18,7 +18,8 @@ function TasksGlobalFilterBody({}) {
         react_1.default.createElement(TasksFilterBodyCommonFields_1.TasksFilterBodyCommonFields, null),
         react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project &&
             react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: TasksGlobalController_1.projectsRepository, name: '_project', showValidationInfo: false }),
-                react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: TasksGlobalController_1.contractsRepository, showValidationInfo: false, _project: project })))));
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+                    react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: TasksGlobalController_1.contractsRepository, showValidationInfo: false, _project: project }))))));
 }
 exports.TasksGlobalFilterBody = TasksGlobalFilterBody;

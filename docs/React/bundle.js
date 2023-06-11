@@ -70589,6 +70589,193 @@ exports.OurLetterModalBody = OurLetterModalBody;
 
 /***/ }),
 
+/***/ "./src/Projects/Modals/ProjectModalBody.tsx":
+/*!**************************************************!*\
+  !*** ./src/Projects/Modals/ProjectModalBody.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProjectModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonFormComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents */ "./src/View/Modals/CommonFormComponents.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function ProjectModalBody({ isEditing, initialData }) {
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            name: initialData?.name,
+            alias: initialData?.alias,
+            comment: initialData?.comment,
+            startDate: initialData?.startDate || new Date().toISOString().slice(0, 10),
+            endDate: initialData?.endDate || new Date().toISOString().slice(0, 10),
+            status: initialData?.status || MainSetupReact_1.default.projectStatusNames[1],
+            totalValue: initialData?.totalValue,
+            qualifiedValue: initialData?.qualifiedValue,
+            dotationValue: initialData?.dotationValue,
+            ourId: initialData?.ourId,
+            _employers: initialData?._employers,
+            _engineers: initialData?._engineers
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie Projektu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: 'text', placeholder: "Podaj numer", isInvalid: !!errors?.ourId, isValid: !errors?.ourId, ...register('ourId') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'ourId' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa projektu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'name' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register('alias') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'alias' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.comment, isInvalid: !!errors?.comment, ...register('comment') }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'comment' })),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "totalValue" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 ca\u0142kowita"),
+                react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'totalValue' })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "qualifiedValue" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 kwalifikowana"),
+                react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'qualifiedValue' })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "dotationValue" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 dofinansowania"),
+                react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'dotationValue' }))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.startDate, isInvalid: !!errors.startDate, ...register('startDate'), onChange: (e) => {
+                        register("startDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("endDate");
+                    } }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'startDate' })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "endDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register('endDate'), onChange: (e) => {
+                        register("endDate").onChange(e); // wywołaj standardowe zachowanie
+                        trigger("startDate");
+                    } }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'endDate' }))),
+        react_1.default.createElement(CommonFormComponents_1.ProjectStatusSelectFormElement, null)));
+}
+exports.ProjectModalBody = ProjectModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Projects/Modals/ProjectValidationSchema.ts":
+/*!********************************************************!*\
+  !*** ./src/Projects/Modals/ProjectValidationSchema.ts ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeProjectValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+const commonFields = {
+    name: Yup.string()
+        .required('Nazwa jest wymagana')
+        .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
+        .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
+    comment: Yup.string()
+        .max(1000, 'Komentarz może mieć maksymalnie 1000 znaków'),
+    alias: Yup.string()
+        .max(30, 'Alias może mieć maksymalnie 30 znaków'),
+    value: Yup.string(),
+    status: Yup.string().required('Status jest wymagany'),
+    startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
+        .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
+        return this.parent.endDate > value;
+    }),
+    endDate: Yup.date().required('Data zakończenia jest wymagana')
+        .test('endDateValidation', 'Koniec musi być późniejszy niż początek', function (value) {
+        return value > this.parent.startDate;
+    }),
+    _contractors: Yup.array(),
+    ourId: Yup.string()
+        .required('Oznaczenie jest wymagane')
+        .min(9, 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami')
+        .max(19, 'Oznacznie może mieć maksymalnie 19 znaków')
+        .test('threeCharsBeforeFirstDot', 'Oznaczenie musi mieć 3 znaki przed pierwszą kropką', function (value) {
+        const parts = value.split('.');
+        return parts[0].length === 3;
+    })
+        .test('containsThreeDots', 'Oznaczenie musi zawierać 3 kropki', (value) => {
+        const parts = value.split('.');
+        return parts.length === 4;
+    }),
+};
+function makeProjectValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...commonFields,
+    }));
+}
+exports.makeProjectValidationSchema = makeProjectValidationSchema;
+
+
+/***/ }),
+
 /***/ "./src/React/GoogleLoginButton.tsx":
 /*!*****************************************!*\
   !*** ./src/React/GoogleLoginButton.tsx ***!
@@ -70730,6 +70917,11 @@ MainSetup.invoiceStatusNames = [
     'Zapłacona',
     'Do korekty',
     'Wycofana'
+];
+MainSetup.projectStatusNames = [
+    'Nie rozpoczęty',
+    'W trakcie',
+    'Zakończony'
 ];
 MainSetup.contractStatusNames = [
     'Nie rozpoczęty',
@@ -71298,6 +71490,124 @@ exports["default"] = ToolsDate;
 
 /***/ }),
 
+/***/ "./src/TasksGlobal/Modals/ProjectModalButtons.tsx":
+/*!********************************************************!*\
+  !*** ./src/TasksGlobal/Modals/ProjectModalButtons.tsx ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProjectAddNewModalButton = exports.ProjectEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
+const ProjectValidationSchema_1 = __webpack_require__(/*! ../../Projects/Modals/ProjectValidationSchema */ "./src/Projects/Modals/ProjectValidationSchema.ts");
+const ProjectModalBody_1 = __webpack_require__(/*! ../../Projects/Modals/ProjectModalBody */ "./src/Projects/Modals/ProjectModalBody.tsx");
+/** przycisk i modal edycji Project */
+function ProjectEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: ProjectModalBody_1.ProjectModalBody,
+            modalTitle: "Edycja Projektu",
+            repository: TasksGlobalController_1.projectsRepository,
+            initialData: initialData,
+            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema
+        }, buttonProps: {
+            ...buttonProps,
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.ProjectEditModalButton = ProjectEditModalButton;
+function ProjectAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: ProjectModalBody_1.ProjectModalBody,
+            modalTitle: "Dodaj projekt",
+            repository: TasksGlobalController_1.projectsRepository,
+            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Dodaj projekt",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.ProjectAddNewModalButton = ProjectAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/Modals/TaskGlobalModalBody.tsx":
+/*!********************************************************!*\
+  !*** ./src/TasksGlobal/Modals/TaskGlobalModalBody.tsx ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TaskGlobalModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const TaskModalBody_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody */ "./src/Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function TaskGlobalModalBody({ isEditing, initialData }) {
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    const _contract = watch('_contract');
+    const _case = watch('_case');
+    (0, react_1.useEffect)(() => {
+        console.log('TaskModalBody useEffect', initialData);
+        const resetData = {
+            _contract: initialData?._contract,
+            name: initialData?.name,
+            description: initialData?.description || '',
+            deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
+            daysToPay: initialData?.daysToPay,
+            status: initialData?.status || MainSetupReact_1.default.taskStatusNames[1],
+            _owner: initialData?._owner || MainSetupReact_1.default.getCurrentUserAsPerson(),
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        !isEditing &&
+            react_1.default.createElement(react_1.default.Fragment, null),
+        react_1.default.createElement(TaskModalBody_1.TaskModalBody, { isEditing: isEditing, initialData: initialData })));
+}
+exports.TaskGlobalModalBody = TaskGlobalModalBody;
+
+
+/***/ }),
+
 /***/ "./src/TasksGlobal/Modals/TaskGlobalValidationSchema.ts":
 /*!**************************************************************!*\
   !*** ./src/TasksGlobal/Modals/TaskGlobalValidationSchema.ts ***!
@@ -71345,70 +71655,80 @@ exports.makeTaskGlobalValidationSchema = makeTaskGlobalValidationSchema;
 
 /***/ }),
 
-/***/ "./src/TasksGlobal/TaskGlobalModalBody.tsx":
-/*!*************************************************!*\
-  !*** ./src/TasksGlobal/TaskGlobalModalBody.tsx ***!
-  \*************************************************/
+/***/ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx":
+/*!************************************************************!*\
+  !*** ./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx ***!
+  \************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskGlobalModalBody = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const TaskModalBody_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody */ "./src/Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskModalBody.tsx");
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-function TaskGlobalModalBody({ isEditing, initialData }) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _contract = watch('_contract');
-    const _case = watch('_case');
-    (0, react_1.useEffect)(() => {
-        console.log('TaskModalBody useEffect', initialData);
-        const resetData = {
-            _contract: initialData?._contract,
-            name: initialData?.name,
-            description: initialData?.description || '',
-            deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
-            daysToPay: initialData?.daysToPay,
-            status: initialData?.status || MainSetupReact_1.default.taskStatusNames[1],
-            _owner: initialData?._owner || MainSetupReact_1.default.getCurrentUserAsPerson(),
-        };
-        reset(resetData);
-        trigger();
-    }, [initialData, reset]);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        !isEditing &&
-            react_1.default.createElement(react_1.default.Fragment, null),
-        react_1.default.createElement(TaskModalBody_1.TaskModalBody, { isEditing: isEditing, initialData: initialData })));
+exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const TaskGlobalModalBody_1 = __webpack_require__(/*! ./TaskGlobalModalBody */ "./src/TasksGlobal/Modals/TaskGlobalModalBody.tsx");
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const TaskGlobalValidationSchema_1 = __webpack_require__(/*! ./TaskGlobalValidationSchema */ "./src/TasksGlobal/Modals/TaskGlobalValidationSchema.ts");
+const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
+/** przycisk i modal edycji Task */
+function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
+            modalTitle: "Edycja zadania",
+            repository: TasksGlobalController_1.tasksRepository,
+            initialData: initialData,
+            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
+        }, buttonProps: {
+            ...buttonProps,
+            buttonVariant: "outline-success",
+        } }));
 }
-exports.TaskGlobalModalBody = TaskGlobalModalBody;
+exports.TaskEditModalButton = TaskEditModalButton;
+function TaskAddNewModalButton({ modalProps: { onAddNew }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
+            modalTitle: "Dodaj zadanie",
+            repository: TasksGlobalController_1.tasksRepository,
+            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
+        }, buttonProps: {
+            buttonCaption: "Dodaj zadanie",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.TaskAddNewModalButton = TaskAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/ProjectsFilterBody.tsx":
+/*!************************************************!*\
+  !*** ./src/TasksGlobal/ProjectsFilterBody.tsx ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProjectsFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+function ProjectsFilterBody({}) {
+    const { register } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') }))));
+}
+exports.ProjectsFilterBody = ProjectsFilterBody;
 
 
 /***/ }),
@@ -71455,31 +71775,51 @@ const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComp
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable */ "./src/View/Resultsets/FilterableTable.tsx"));
 const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
 const TasksGlobalFilterBody_1 = __webpack_require__(/*! ./TasksGlobalFilterBody */ "./src/TasksGlobal/TasksGlobalFilterBody.tsx");
-const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./TasksGlobalModalButtons */ "./src/TasksGlobal/TasksGlobalModalButtons.tsx");
+const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalModalButtons */ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx");
+const ProjectModalButtons_1 = __webpack_require__(/*! ./Modals/ProjectModalButtons */ "./src/TasksGlobal/Modals/ProjectModalButtons.tsx");
+const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]);
-    const [showLeftCol, setShowLeftCol] = (0, react_1.useState)(true);
-    const handleToggle = () => {
-        setShowLeftCol(!showLeftCol);
-    };
+    const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
+    const [tasksLoaded, setTasksLoaded] = (0, react_1.useState)(true);
+    const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
+    (0, react_1.useEffect)(() => {
+        if (!selectedProject)
+            return;
+        async function fetchData() {
+            setTasksLoaded(false);
+            const formData = new FormData();
+            formData.append('_project', JSON.stringify(selectedProject));
+            const tasks = await TasksGlobalController_1.tasksRepository.loadItemsFromServer(formData);
+            setTasks(tasks);
+            setExternalTasksUpdate(prevState => prevState + 1);
+            setTasksLoaded(true);
+        }
+        ;
+        fetchData();
+    }, [selectedProject]);
     return (react_1.default.createElement(ContractContext_1.ContractProvider, { tasks: tasks, setTasks: setTasks },
         react_1.default.createElement(react_bootstrap_1.Card, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                showLeftCol && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, "Projekty")),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: showLeftCol ? 9 : 12 }, tasks ?
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                    react_1.default.createElement(FilterableTable_1.default, { title: 'Projekty', repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                            { header: 'Nazwa', renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
+                        ], onRowClick: setSelectedProject })),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: '9' }, tasksLoaded ?
                     react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: TasksGlobalFilterBody_1.TasksGlobalFilterBody, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, tableStructure: [
+                            { header: 'Kamień|Sprawa', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, task._parent._typeFolderNumber_TypeName_Number_Name) },
                             { header: 'Nazwa', objectAttributeToShow: 'name' },
                             { header: 'Opis', objectAttributeToShow: 'description' },
                             { header: 'Termin', objectAttributeToShow: 'deadline' },
                             { header: 'Status', renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) },
                             { header: 'Właściciel', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`) },
-                        ] })
-                    : react_1.default.createElement(react_1.default.Fragment, null,
-                        "\"\u0141adowanie zada\u0144...\" ",
-                        react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))),
-            react_1.default.createElement(react_bootstrap_1.Button, { onClick: handleToggle },
-                showLeftCol ? 'Ukryj' : 'Pokaż',
-                " Projekty"))));
+                        ], externalUpdate: externalTasksUpdate })
+                    :
+                        react_1.default.createElement(react_1.default.Fragment, null,
+                            react_1.default.createElement("p", null, "\u0141aduj\u0119 zadania dla projektu:"),
+                            react_1.default.createElement("h3", null, selectedProject?._ourId_Alias),
+                            react_1.default.createElement("p", null, selectedProject?.name),
+                            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))))));
 }
 exports["default"] = TasksGlobal;
 
@@ -71603,60 +71943,11 @@ function TasksGlobalFilterBody({}) {
         react_1.default.createElement(TasksFilterBodyCommonFields_1.TasksFilterBodyCommonFields, null),
         react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project &&
             react_1.default.createElement(react_bootstrap_1.Col, null,
-                react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: TasksGlobalController_1.projectsRepository, name: '_project', showValidationInfo: false }),
-                react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: TasksGlobalController_1.contractsRepository, showValidationInfo: false, _project: project })))));
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+                    react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: TasksGlobalController_1.contractsRepository, showValidationInfo: false, _project: project }))))));
 }
 exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
-
-
-/***/ }),
-
-/***/ "./src/TasksGlobal/TasksGlobalModalButtons.tsx":
-/*!*****************************************************!*\
-  !*** ./src/TasksGlobal/TasksGlobalModalButtons.tsx ***!
-  \*****************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const TaskGlobalModalBody_1 = __webpack_require__(/*! ./TaskGlobalModalBody */ "./src/TasksGlobal/TaskGlobalModalBody.tsx");
-const GeneralModalButtons_1 = __webpack_require__(/*! ../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-const TaskGlobalValidationSchema_1 = __webpack_require__(/*! ./Modals/TaskGlobalValidationSchema */ "./src/TasksGlobal/Modals/TaskGlobalValidationSchema.ts");
-const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
-/** przycisk i modal edycji Task */
-function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
-            ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
-            modalTitle: "Edycja zadania",
-            repository: TasksGlobalController_1.tasksRepository,
-            initialData: initialData,
-            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
-        }, buttonProps: {
-            ...buttonProps,
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.TaskEditModalButton = TaskEditModalButton;
-function TaskAddNewModalButton({ modalProps: { onAddNew }, }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
-            ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
-            modalTitle: "Dodaj zadanie",
-            repository: TasksGlobalController_1.tasksRepository,
-            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
-        }, buttonProps: {
-            buttonCaption: "Dodaj zadanie",
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.TaskAddNewModalButton = TaskAddNewModalButton;
 
 
 /***/ }),
@@ -71696,7 +71987,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -71730,6 +72021,11 @@ function StatusSelectFormElement({ statusNames, showValidationInfo = true, name 
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
 exports.StatusSelectFormElement = StatusSelectFormElement;
+;
+function ProjectStatusSelectFormElement({ showValidationInfo = true, name }) {
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.projectStatusNames, showValidationInfo: showValidationInfo, name: name });
+}
+exports.ProjectStatusSelectFormElement = ProjectStatusSelectFormElement;
 ;
 function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
     return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.contractStatusNames, showValidationInfo: showValidationInfo, name: name });
@@ -72761,10 +73057,13 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../Modals/GeneralModalButt
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], }) {
+function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    (0, react_1.useEffect)(() => {
+        setObjects(initialObjects);
+    }, [externalUpdate]);
     function handleAddObject(object) {
         setObjects([...objects, object]);
     }
@@ -72778,6 +73077,9 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
         setActiveRowId(id);
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
+        if (onRowClick) {
+            onRowClick(repository.currentItems[0]);
+        }
     }
     return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
         react_1.default.createElement(react_bootstrap_1.Container, null,

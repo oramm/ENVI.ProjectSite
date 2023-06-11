@@ -24,6 +24,8 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
     initialObjects?: DataItemType[];
+    onRowClick?: (object: DataItemType) => void;
+    externalUpdate?: number;
 }
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
@@ -46,10 +48,16 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     FilterBodyComponent,
     selectedObjectRoute = '',
     initialObjects = [],
+    onRowClick,
+    externalUpdate = 0,
 }: FilterableTableProps<DataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [objects, setObjects] = useState(initialObjects as DataItemType[]);
+
+    useEffect(() => {
+        setObjects(initialObjects);
+    }, [externalUpdate]);
 
     function handleAddObject(object: DataItemType) {
         setObjects([...objects, object]);
@@ -67,6 +75,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
         setActiveRowId(id);
         repository.addToCurrentItems(id);
         console.log('handleRowClick', repository.currentItems);
+        if (onRowClick) { onRowClick(repository.currentItems[0]) }
     }
 
     return (
