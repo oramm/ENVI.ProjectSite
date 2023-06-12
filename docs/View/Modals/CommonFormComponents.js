@@ -47,7 +47,9 @@ function ProjectSelector({ name = '_parent', repository, showValidationInfo = tr
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, specialSerwerSearchActionRoute: 'projects/' + MainSetupReact_1.default.currentUser.systemEmail, showValidationInfo: showValidationInfo, multiple: false })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, 
+            //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
+            showValidationInfo: showValidationInfo, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
 function StatusSelectFormElement({ statusNames, showValidationInfo = true, name = 'status' }) {

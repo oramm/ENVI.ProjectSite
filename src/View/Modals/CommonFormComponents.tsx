@@ -42,7 +42,7 @@ export function ProjectSelector({
                 name={name}
                 labelKey="ourId"
                 repository={repository}
-                specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
+                //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                 showValidationInfo={showValidationInfo}
                 multiple={false}
             />
