@@ -30,6 +30,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
                 { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
                 { header: 'Odbiorca', renderTdBody: makeEntityLabel },
+                { header: 'Netto, zł', objectAttributeToShow: '_totalNetValue' },
                 { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
             ]}
             AddNewButtonComponents={[InvoiceAddNewModalButton]}

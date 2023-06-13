@@ -193,6 +193,8 @@ export interface Invoice extends RepositoryDataItem {
     _entity: Entity;
     _lastUpdated: string;
     _documentOpenUrl?: string;
+    _totalGrossValue: number;
+    _totalNetValue?: number;
 }
 
 export interface InvoiceItem extends RepositoryDataItem {

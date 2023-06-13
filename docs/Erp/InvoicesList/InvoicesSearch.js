@@ -29,6 +29,7 @@ function InvoicesSearch({ title }) {
             { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
             { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
             { header: 'Odbiorca', renderTdBody: makeEntityLabel },
+            { header: 'Netto, zł', objectAttributeToShow: '_totalNetValue' },
             { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
         ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, repository: exports.invoicesRepository, selectedObjectRoute: '/invoice/' }));
 }

@@ -55,6 +55,24 @@ export function InvoiceAddNewModalButton({
     );
 }
 
+export function CopyButton() {
+    const { invoice } = useInvoice();
+
+    async function handleClick() {
+        await invoicesRepository.editItemNodeJS(invoice, 'copyInvoice');
+    }
+
+    return (
+        <Button
+            key={`Kopiuj`}
+            variant='primary'
+            size='sm'
+            onClick={handleClick}
+        >
+            {`Kopiuj`}
+        </Button>);
+}
+
 export function ChangeStatusButton({ specialActionRoute, newStatus }: { specialActionRoute: string, newStatus: string }) {
     const { invoice, setInvoice } = useInvoice();
 

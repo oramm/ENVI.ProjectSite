@@ -33,14 +33,14 @@ function InvoiceSetAsSentModalBody({ initialData }) {
     (0, react_1.useEffect)(() => {
         console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {
-            sentDate: initialData?.sentDate,
+            sentDate: initialData?.sentDate || new Date().toISOString().slice(0, 10),
         };
         reset(resetData);
         trigger();
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "sentDate" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data nadania"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.sentDate, isInvalid: !!errors.sentDate, ...register('sentDate') }),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'sentDate', errors: errors }))));
 }

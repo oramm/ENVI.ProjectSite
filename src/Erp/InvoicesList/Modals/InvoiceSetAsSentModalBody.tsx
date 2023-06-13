@@ -11,7 +11,7 @@ export function InvoiceSetAsSentModalBody({ initialData }: ModalBodyProps<Invoic
     useEffect(() => {
         console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {
-            sentDate: initialData?.sentDate,
+            sentDate: initialData?.sentDate || new Date().toISOString().slice(0, 10),
         };
         reset(resetData);
         trigger();
@@ -21,7 +21,7 @@ export function InvoiceSetAsSentModalBody({ initialData }: ModalBodyProps<Invoic
     return (
         <>
             <Form.Group controlId="sentDate">
-                <Form.Label>Data utworzenia</Form.Label>
+                <Form.Label>Data nadania</Form.Label>
                 <Form.Control
                     type="date"
                     isValid={!errors.sentDate}
