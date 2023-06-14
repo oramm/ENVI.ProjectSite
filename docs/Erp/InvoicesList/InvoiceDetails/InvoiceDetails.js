@@ -72,6 +72,9 @@ function InvoiceDetails() {
                             react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
                             " ",
                             ' ',
+                            " ",
+                            react_1.default.createElement(InvoiceModalButtons_1.CopyButton, null),
+                            ' ',
                             react_1.default.createElement(InvoiceModalButtons_1.InvoiceEditModalButton, { modalProps: {
                                     onEdit: setInvoice,
                                     initialData: invoice,

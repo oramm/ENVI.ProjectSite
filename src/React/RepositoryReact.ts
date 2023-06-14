@@ -97,7 +97,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem: any | FormData) {
+    async addNewItemNodeJS(newItem: any | FormData, specialActionRoute?: string) {
         const requestOptions: RequestInit = {
             method: 'POST',
             credentials: 'include',
@@ -106,15 +106,17 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         if (newItem instanceof FormData) {
             requestOptions.body = newItem;
         } else {
+            delete newItem.id;
             requestOptions.headers = {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
             };
             requestOptions.body = JSON.stringify(newItem);
         }
-
+        let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
         const resultRawResponse = await fetch(
-            MainSetup.serverUrl + this.actionRoutes.addNewRoute,
+            urlPath,
             requestOptions
         );
 

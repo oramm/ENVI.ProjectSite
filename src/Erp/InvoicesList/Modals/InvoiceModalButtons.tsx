@@ -59,13 +59,13 @@ export function CopyButton() {
     const { invoice } = useInvoice();
 
     async function handleClick() {
-        await invoicesRepository.editItemNodeJS(invoice, 'copyInvoice');
+        await invoicesRepository.addNewItemNodeJS(invoice, 'copyInvoice');
     }
 
     return (
         <Button
             key={`Kopiuj`}
-            variant='primary'
+            variant='outline-secondary'
             size='sm'
             onClick={handleClick}
         >

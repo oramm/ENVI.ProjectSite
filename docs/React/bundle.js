@@ -11777,6 +11777,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".rbt .rbt-input-main::-ms-clear {\n  d
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/react-toastify/dist/ReactToastify.css":
+/*!**************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/react-toastify/dist/ReactToastify.css ***!
+  \**************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ":root {\n  --toastify-color-light: #fff;\n  --toastify-color-dark: #121212;\n  --toastify-color-info: #3498db;\n  --toastify-color-success: #07bc0c;\n  --toastify-color-warning: #f1c40f;\n  --toastify-color-error: #e74c3c;\n  --toastify-color-transparent: rgba(255, 255, 255, 0.7);\n  --toastify-icon-color-info: var(--toastify-color-info);\n  --toastify-icon-color-success: var(--toastify-color-success);\n  --toastify-icon-color-warning: var(--toastify-color-warning);\n  --toastify-icon-color-error: var(--toastify-color-error);\n  --toastify-toast-width: 320px;\n  --toastify-toast-background: #fff;\n  --toastify-toast-min-height: 64px;\n  --toastify-toast-max-height: 800px;\n  --toastify-font-family: sans-serif;\n  --toastify-z-index: 9999;\n  --toastify-text-color-light: #757575;\n  --toastify-text-color-dark: #fff;\n  --toastify-text-color-info: #fff;\n  --toastify-text-color-success: #fff;\n  --toastify-text-color-warning: #fff;\n  --toastify-text-color-error: #fff;\n  --toastify-spinner-color: #616161;\n  --toastify-spinner-color-empty-area: #e0e0e0;\n  --toastify-color-progress-light: linear-gradient(\n    to right,\n    #4cd964,\n    #5ac8fa,\n    #007aff,\n    #34aadc,\n    #5856d6,\n    #ff2d55\n  );\n  --toastify-color-progress-dark: #bb86fc;\n  --toastify-color-progress-info: var(--toastify-color-info);\n  --toastify-color-progress-success: var(--toastify-color-success);\n  --toastify-color-progress-warning: var(--toastify-color-warning);\n  --toastify-color-progress-error: var(--toastify-color-error);\n}\n\n.Toastify__toast-container {\n  z-index: var(--toastify-z-index);\n  -webkit-transform: translate3d(0, 0, var(--toastify-z-index));\n  position: fixed;\n  padding: 4px;\n  width: var(--toastify-toast-width);\n  box-sizing: border-box;\n  color: #fff;\n}\n.Toastify__toast-container--top-left {\n  top: 1em;\n  left: 1em;\n}\n.Toastify__toast-container--top-center {\n  top: 1em;\n  left: 50%;\n  transform: translateX(-50%);\n}\n.Toastify__toast-container--top-right {\n  top: 1em;\n  right: 1em;\n}\n.Toastify__toast-container--bottom-left {\n  bottom: 1em;\n  left: 1em;\n}\n.Toastify__toast-container--bottom-center {\n  bottom: 1em;\n  left: 50%;\n  transform: translateX(-50%);\n}\n.Toastify__toast-container--bottom-right {\n  bottom: 1em;\n  right: 1em;\n}\n\n@media only screen and (max-width : 480px) {\n  .Toastify__toast-container {\n    width: 100vw;\n    padding: 0;\n    left: 0;\n    margin: 0;\n  }\n  .Toastify__toast-container--top-left, .Toastify__toast-container--top-center, .Toastify__toast-container--top-right {\n    top: 0;\n    transform: translateX(0);\n  }\n  .Toastify__toast-container--bottom-left, .Toastify__toast-container--bottom-center, .Toastify__toast-container--bottom-right {\n    bottom: 0;\n    transform: translateX(0);\n  }\n  .Toastify__toast-container--rtl {\n    right: 0;\n    left: initial;\n  }\n}\n.Toastify__toast {\n  position: relative;\n  min-height: var(--toastify-toast-min-height);\n  box-sizing: border-box;\n  margin-bottom: 1rem;\n  padding: 8px;\n  border-radius: 4px;\n  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1), 0 2px 15px 0 rgba(0, 0, 0, 0.05);\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n  max-height: var(--toastify-toast-max-height);\n  overflow: hidden;\n  font-family: var(--toastify-font-family);\n  cursor: default;\n  direction: ltr;\n  /* webkit only issue #791 */\n  z-index: 0;\n}\n.Toastify__toast--rtl {\n  direction: rtl;\n}\n.Toastify__toast--close-on-click {\n  cursor: pointer;\n}\n.Toastify__toast-body {\n  margin: auto 0;\n  -ms-flex: 1 1 auto;\n      flex: 1 1 auto;\n  padding: 6px;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-align: center;\n      align-items: center;\n}\n.Toastify__toast-body > div:last-child {\n  word-break: break-word;\n  -ms-flex: 1;\n      flex: 1;\n}\n.Toastify__toast-icon {\n  -webkit-margin-end: 10px;\n          margin-inline-end: 10px;\n  width: 20px;\n  -ms-flex-negative: 0;\n      flex-shrink: 0;\n  display: -ms-flexbox;\n  display: flex;\n}\n\n.Toastify--animate {\n  animation-fill-mode: both;\n  animation-duration: 0.7s;\n}\n\n.Toastify--animate-icon {\n  animation-fill-mode: both;\n  animation-duration: 0.3s;\n}\n\n@media only screen and (max-width : 480px) {\n  .Toastify__toast {\n    margin-bottom: 0;\n    border-radius: 0;\n  }\n}\n.Toastify__toast-theme--dark {\n  background: var(--toastify-color-dark);\n  color: var(--toastify-text-color-dark);\n}\n.Toastify__toast-theme--light {\n  background: var(--toastify-color-light);\n  color: var(--toastify-text-color-light);\n}\n.Toastify__toast-theme--colored.Toastify__toast--default {\n  background: var(--toastify-color-light);\n  color: var(--toastify-text-color-light);\n}\n.Toastify__toast-theme--colored.Toastify__toast--info {\n  color: var(--toastify-text-color-info);\n  background: var(--toastify-color-info);\n}\n.Toastify__toast-theme--colored.Toastify__toast--success {\n  color: var(--toastify-text-color-success);\n  background: var(--toastify-color-success);\n}\n.Toastify__toast-theme--colored.Toastify__toast--warning {\n  color: var(--toastify-text-color-warning);\n  background: var(--toastify-color-warning);\n}\n.Toastify__toast-theme--colored.Toastify__toast--error {\n  color: var(--toastify-text-color-error);\n  background: var(--toastify-color-error);\n}\n\n.Toastify__progress-bar-theme--light {\n  background: var(--toastify-color-progress-light);\n}\n.Toastify__progress-bar-theme--dark {\n  background: var(--toastify-color-progress-dark);\n}\n.Toastify__progress-bar--info {\n  background: var(--toastify-color-progress-info);\n}\n.Toastify__progress-bar--success {\n  background: var(--toastify-color-progress-success);\n}\n.Toastify__progress-bar--warning {\n  background: var(--toastify-color-progress-warning);\n}\n.Toastify__progress-bar--error {\n  background: var(--toastify-color-progress-error);\n}\n.Toastify__progress-bar-theme--colored.Toastify__progress-bar--info, .Toastify__progress-bar-theme--colored.Toastify__progress-bar--success, .Toastify__progress-bar-theme--colored.Toastify__progress-bar--warning, .Toastify__progress-bar-theme--colored.Toastify__progress-bar--error {\n  background: var(--toastify-color-transparent);\n}\n\n.Toastify__close-button {\n  color: #fff;\n  background: transparent;\n  outline: none;\n  border: none;\n  padding: 0;\n  cursor: pointer;\n  opacity: 0.7;\n  transition: 0.3s ease;\n  -ms-flex-item-align: start;\n      align-self: flex-start;\n}\n.Toastify__close-button--light {\n  color: #000;\n  opacity: 0.3;\n}\n.Toastify__close-button > svg {\n  fill: currentColor;\n  height: 16px;\n  width: 14px;\n}\n.Toastify__close-button:hover, .Toastify__close-button:focus {\n  opacity: 1;\n}\n\n@keyframes Toastify__trackProgress {\n  0% {\n    transform: scaleX(1);\n  }\n  100% {\n    transform: scaleX(0);\n  }\n}\n.Toastify__progress-bar {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 5px;\n  z-index: var(--toastify-z-index);\n  opacity: 0.7;\n  transform-origin: left;\n}\n.Toastify__progress-bar--animated {\n  animation: Toastify__trackProgress linear 1 forwards;\n}\n.Toastify__progress-bar--controlled {\n  transition: transform 0.2s;\n}\n.Toastify__progress-bar--rtl {\n  right: 0;\n  left: initial;\n  transform-origin: right;\n}\n\n.Toastify__spinner {\n  width: 20px;\n  height: 20px;\n  box-sizing: border-box;\n  border: 2px solid;\n  border-radius: 100%;\n  border-color: var(--toastify-spinner-color-empty-area);\n  border-right-color: var(--toastify-spinner-color);\n  animation: Toastify__spin 0.65s linear infinite;\n}\n\n@keyframes Toastify__bounceInRight {\n  from, 60%, 75%, 90%, to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(-25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(-5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes Toastify__bounceOutRight {\n  20% {\n    opacity: 1;\n    transform: translate3d(-20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(2000px, 0, 0);\n  }\n}\n@keyframes Toastify__bounceInLeft {\n  from, 60%, 75%, 90%, to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(-3000px, 0, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(25px, 0, 0);\n  }\n  75% {\n    transform: translate3d(-10px, 0, 0);\n  }\n  90% {\n    transform: translate3d(5px, 0, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes Toastify__bounceOutLeft {\n  20% {\n    opacity: 1;\n    transform: translate3d(20px, 0, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(-2000px, 0, 0);\n  }\n}\n@keyframes Toastify__bounceInUp {\n  from, 60%, 75%, 90%, to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  from {\n    opacity: 0;\n    transform: translate3d(0, 3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  75% {\n    transform: translate3d(0, 10px, 0);\n  }\n  90% {\n    transform: translate3d(0, -5px, 0);\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes Toastify__bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n@keyframes Toastify__bounceInDown {\n  from, 60%, 75%, 90%, to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes Toastify__bounceOutDown {\n  20% {\n    transform: translate3d(0, 10px, 0);\n  }\n  40%, 45% {\n    opacity: 1;\n    transform: translate3d(0, -20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, 2000px, 0);\n  }\n}\n.Toastify__bounce-enter--top-left, .Toastify__bounce-enter--bottom-left {\n  animation-name: Toastify__bounceInLeft;\n}\n.Toastify__bounce-enter--top-right, .Toastify__bounce-enter--bottom-right {\n  animation-name: Toastify__bounceInRight;\n}\n.Toastify__bounce-enter--top-center {\n  animation-name: Toastify__bounceInDown;\n}\n.Toastify__bounce-enter--bottom-center {\n  animation-name: Toastify__bounceInUp;\n}\n\n.Toastify__bounce-exit--top-left, .Toastify__bounce-exit--bottom-left {\n  animation-name: Toastify__bounceOutLeft;\n}\n.Toastify__bounce-exit--top-right, .Toastify__bounce-exit--bottom-right {\n  animation-name: Toastify__bounceOutRight;\n}\n.Toastify__bounce-exit--top-center {\n  animation-name: Toastify__bounceOutUp;\n}\n.Toastify__bounce-exit--bottom-center {\n  animation-name: Toastify__bounceOutDown;\n}\n\n@keyframes Toastify__zoomIn {\n  from {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  50% {\n    opacity: 1;\n  }\n}\n@keyframes Toastify__zoomOut {\n  from {\n    opacity: 1;\n  }\n  50% {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  to {\n    opacity: 0;\n  }\n}\n.Toastify__zoom-enter {\n  animation-name: Toastify__zoomIn;\n}\n\n.Toastify__zoom-exit {\n  animation-name: Toastify__zoomOut;\n}\n\n@keyframes Toastify__flipIn {\n  from {\n    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);\n    animation-timing-function: ease-in;\n    opacity: 0;\n  }\n  40% {\n    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);\n    animation-timing-function: ease-in;\n  }\n  60% {\n    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);\n    opacity: 1;\n  }\n  80% {\n    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);\n  }\n  to {\n    transform: perspective(400px);\n  }\n}\n@keyframes Toastify__flipOut {\n  from {\n    transform: perspective(400px);\n  }\n  30% {\n    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);\n    opacity: 1;\n  }\n  to {\n    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);\n    opacity: 0;\n  }\n}\n.Toastify__flip-enter {\n  animation-name: Toastify__flipIn;\n}\n\n.Toastify__flip-exit {\n  animation-name: Toastify__flipOut;\n}\n\n@keyframes Toastify__slideInRight {\n  from {\n    transform: translate3d(110%, 0, 0);\n    visibility: visible;\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes Toastify__slideInLeft {\n  from {\n    transform: translate3d(-110%, 0, 0);\n    visibility: visible;\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes Toastify__slideInUp {\n  from {\n    transform: translate3d(0, 110%, 0);\n    visibility: visible;\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes Toastify__slideInDown {\n  from {\n    transform: translate3d(0, -110%, 0);\n    visibility: visible;\n  }\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes Toastify__slideOutRight {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n  to {\n    visibility: hidden;\n    transform: translate3d(110%, 0, 0);\n  }\n}\n@keyframes Toastify__slideOutLeft {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n  to {\n    visibility: hidden;\n    transform: translate3d(-110%, 0, 0);\n  }\n}\n@keyframes Toastify__slideOutDown {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n  to {\n    visibility: hidden;\n    transform: translate3d(0, 500px, 0);\n  }\n}\n@keyframes Toastify__slideOutUp {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n  to {\n    visibility: hidden;\n    transform: translate3d(0, -500px, 0);\n  }\n}\n.Toastify__slide-enter--top-left, .Toastify__slide-enter--bottom-left {\n  animation-name: Toastify__slideInLeft;\n}\n.Toastify__slide-enter--top-right, .Toastify__slide-enter--bottom-right {\n  animation-name: Toastify__slideInRight;\n}\n.Toastify__slide-enter--top-center {\n  animation-name: Toastify__slideInDown;\n}\n.Toastify__slide-enter--bottom-center {\n  animation-name: Toastify__slideInUp;\n}\n\n.Toastify__slide-exit--top-left, .Toastify__slide-exit--bottom-left {\n  animation-name: Toastify__slideOutLeft;\n}\n.Toastify__slide-exit--top-right, .Toastify__slide-exit--bottom-right {\n  animation-name: Toastify__slideOutRight;\n}\n.Toastify__slide-exit--top-center {\n  animation-name: Toastify__slideOutUp;\n}\n.Toastify__slide-exit--bottom-center {\n  animation-name: Toastify__slideOutDown;\n}\n\n@keyframes Toastify__spin {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n/*# sourceMappingURL=ReactToastify.css.map */", "",{"version":3,"sources":["webpack://./node_modules/react-toastify/scss/_variables.scss","webpack://./node_modules/react-toastify/dist/ReactToastify.css","webpack://./node_modules/react-toastify/scss/_toastContainer.scss","webpack://./node_modules/react-toastify/scss/_toast.scss","webpack://./node_modules/react-toastify/scss/_theme.scss","webpack://./node_modules/react-toastify/scss/_closeButton.scss","webpack://./node_modules/react-toastify/scss/_progressBar.scss","webpack://./node_modules/react-toastify/scss/_icons.scss","webpack://./node_modules/react-toastify/scss/animations/_bounce.scss","webpack://./node_modules/react-toastify/scss/animations/_zoom.scss","webpack://./node_modules/react-toastify/scss/animations/_flip.scss","webpack://./node_modules/react-toastify/scss/animations/_slide.scss","webpack://./node_modules/react-toastify/scss/animations/_spin.scss"],"names":[],"mappings":"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","sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/Css/styles.css":
 /*!******************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/Css/styles.css ***!
@@ -67341,6 +67368,61 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./node_modules/react-toastify/dist/ReactToastify.css":
+/*!************************************************************!*\
+  !*** ./node_modules/react-toastify/dist/ReactToastify.css ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _css_loader_dist_cjs_js_ReactToastify_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js!./ReactToastify.css */ "./node_modules/css-loader/dist/cjs.js!./node_modules/react-toastify/dist/ReactToastify.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_ReactToastify_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_ReactToastify_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _css_loader_dist_cjs_js_ReactToastify_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _css_loader_dist_cjs_js_ReactToastify_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
 /***/ "./src/Css/styles.css":
 /*!****************************!*\
   !*** ./src/Css/styles.css ***!
@@ -69152,6 +69234,9 @@ function InvoiceDetails() {
                             react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
                             " ",
                             ' ',
+                            " ",
+                            react_1.default.createElement(InvoiceModalButtons_1.CopyButton, null),
+                            ' ',
                             react_1.default.createElement(InvoiceModalButtons_1.InvoiceEditModalButton, { modalProps: {
                                     onEdit: setInvoice,
                                     initialData: invoice,
@@ -69742,7 +69827,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
+exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.CopyButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const InvoiceModalBody_1 = __webpack_require__(/*! ./InvoiceModalBody */ "./src/Erp/InvoicesList/Modals/InvoiceModalBody.tsx");
@@ -69781,6 +69866,14 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
+function CopyButton() {
+    const { invoice } = (0, InvoiceDetails_1.useInvoice)();
+    async function handleClick() {
+        await InvoicesSearch_1.invoicesRepository.addNewItemNodeJS(invoice, 'copyInvoice');
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Kopiuj`, variant: 'outline-secondary', size: 'sm', onClick: handleClick }, `Kopiuj`));
+}
+exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {
@@ -71065,6 +71158,7 @@ const LettersSearch_1 = __importDefault(__webpack_require__(/*! ../../Letters/Le
 const InvoicesSearch_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoicesSearch */ "./src/Erp/InvoicesList/InvoicesSearch.tsx"));
 const InvoiceDetails_1 = __importDefault(__webpack_require__(/*! ../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails */ "./src/Erp/InvoicesList/InvoiceDetails/InvoiceDetails.tsx"));
 __webpack_require__(/*! bootstrap/dist/css/bootstrap.min.css */ "./node_modules/bootstrap/dist/css/bootstrap.min.css");
+__webpack_require__(/*! react-toastify/dist/ReactToastify.css */ "./node_modules/react-toastify/dist/ReactToastify.css");
 const ContractMainViewTabs_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs */ "./src/Contracts/ContractsList/ContractDetails/ContractMainViewTabs.tsx");
 const TasksGlobal_1 = __importDefault(__webpack_require__(/*! ../../TasksGlobal/TasksGlobal */ "./src/TasksGlobal/TasksGlobal.tsx"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
@@ -71240,7 +71334,7 @@ class RepositoryReact {
         return this.items;
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem) {
+    async addNewItemNodeJS(newItem, specialActionRoute) {
         const requestOptions = {
             method: 'POST',
             credentials: 'include',
@@ -71249,13 +71343,16 @@ class RepositoryReact {
             requestOptions.body = newItem;
         }
         else {
+            delete newItem.id;
             requestOptions.headers = {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
             };
             requestOptions.body = JSON.stringify(newItem);
         }
-        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
+        let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
+        const resultRawResponse = await fetch(urlPath, requestOptions);
         const newItemFromServer = await resultRawResponse.json();
         if (newItemFromServer.errorMessage) {
             console.error('Error from server: %o', newItemFromServer.errorMessage);

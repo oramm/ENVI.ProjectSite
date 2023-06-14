@@ -43,6 +43,7 @@ const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/Lette
 const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
 const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
 require("bootstrap/dist/css/bootstrap.min.css");
+require("react-toastify/dist/ReactToastify.css");
 const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';

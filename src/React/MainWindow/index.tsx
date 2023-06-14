@@ -14,6 +14,8 @@ import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 

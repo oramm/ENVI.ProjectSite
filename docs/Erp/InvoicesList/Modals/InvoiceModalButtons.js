@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
+exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.CopyButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const InvoiceModalBody_1 = require("./InvoiceModalBody");
@@ -42,6 +42,14 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
+function CopyButton() {
+    const { invoice } = (0, InvoiceDetails_1.useInvoice)();
+    async function handleClick() {
+        await InvoicesSearch_1.invoicesRepository.addNewItemNodeJS(invoice, 'copyInvoice');
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Kopiuj`, variant: 'outline-secondary', size: 'sm', onClick: handleClick }, `Kopiuj`));
+}
+exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {

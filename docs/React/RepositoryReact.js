@@ -90,7 +90,7 @@ class RepositoryReact {
         return this.items;
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem) {
+    async addNewItemNodeJS(newItem, specialActionRoute) {
         const requestOptions = {
             method: 'POST',
             credentials: 'include',
@@ -99,13 +99,16 @@ class RepositoryReact {
             requestOptions.body = newItem;
         }
         else {
+            delete newItem.id;
             requestOptions.headers = {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
             };
             requestOptions.body = JSON.stringify(newItem);
         }
-        const resultRawResponse = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.addNewRoute, requestOptions);
+        let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
+        const resultRawResponse = await fetch(urlPath, requestOptions);
         const newItemFromServer = await resultRawResponse.json();
         if (newItemFromServer.errorMessage) {
             console.error('Error from server: %o', newItemFromServer.errorMessage);

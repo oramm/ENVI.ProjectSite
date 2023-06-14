@@ -7,7 +7,7 @@ import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from '../../.
 import FilterableTable from '../../../View/Resultsets/FilterableTable';
 import { invoiceItemsRepository, invoicesRepository } from '../InvoicesSearch';
 import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from '../Modals/InvoiceItemModalButtons';
-import { ActionButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButtons';
+import { ActionButton, CopyButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButtons';
 import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
 
 export default function InvoiceDetails() {
@@ -50,7 +50,7 @@ export default function InvoiceDetails() {
                                 <InvoiceStatusBadge status={invoice.status} />
                             </Col>
                             <Col md="auto">
-                                <ActionButton /> {' '}
+                                <ActionButton /> {' '} <CopyButton />{' '}
                                 <InvoiceEditModalButton
                                     modalProps={{
                                         onEdit: setInvoice,
