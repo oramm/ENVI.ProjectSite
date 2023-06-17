@@ -31,6 +31,8 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function GeneralEditModalButton({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, }, buttonProps = {}, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -55,7 +57,7 @@ function GeneraEditButton(buttonProps) {
     };
     if (!buttonCaption)
         return (react_1.default.createElement("a", { href: '#', onClick: onClick, className: 'icon-vertical text-general' },
-            react_1.default.createElement("i", { className: "fa fa-pencil fa-lg" })));
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faPencil, size: "lg" })));
     else
         return (react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: onClick }, buttonCaption));
 }
@@ -99,7 +101,7 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-danger' },
-            react_1.default.createElement("i", { className: "fa fa-trash fa-lg" })),
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faTrash, size: "lg" })),
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;

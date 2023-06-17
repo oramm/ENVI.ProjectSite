@@ -94,17 +94,17 @@ exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
 function ActionButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     switch (invoice.status) {
-        case MainSetupReact_1.default.invoiceStatusNames[0]: //'Na później'
-            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsToMakeInvoice', newStatus: MainSetupReact_1.default.invoiceStatusNames[1] }));
-        case MainSetupReact_1.default.invoiceStatusNames[1]: //'Do zrobienia'
+        case MainSetupReact_1.default.InvoiceStatuses.FOR_LATER:
+            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsToMakeInvoice', newStatus: MainSetupReact_1.default.InvoiceStatuses.TO_DO }));
+        case MainSetupReact_1.default.InvoiceStatuses.TO_DO:
             return react_1.default.createElement(InvoiceIssueModalButton, null);
-        case MainSetupReact_1.default.invoiceStatusNames[2]: //'Zrobiona'
+        case MainSetupReact_1.default.InvoiceStatuses.DONE:
             return react_1.default.createElement(InvoiceSetAsSentModalButton, null);
-        case MainSetupReact_1.default.invoiceStatusNames[3]: //'Wysłana'
-            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsPaidInvoice', newStatus: MainSetupReact_1.default.invoiceStatusNames[4] }));
-        case MainSetupReact_1.default.invoiceStatusNames[4]: //'Zapłacona'
-        case MainSetupReact_1.default.invoiceStatusNames[5]: //'Do korekty'
-        case MainSetupReact_1.default.invoiceStatusNames[6]: //'Wycofana'
+        case MainSetupReact_1.default.InvoiceStatuses.SENT:
+            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsPaidInvoice', newStatus: MainSetupReact_1.default.InvoiceStatuses.PAID }));
+        case MainSetupReact_1.default.InvoiceStatuses.PAID:
+        case MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT:
+        case MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN:
         default:
             return react_1.default.createElement(react_1.default.Fragment, null);
     }

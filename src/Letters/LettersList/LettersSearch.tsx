@@ -4,6 +4,9 @@ import LettersController from './LettersController';
 import { LettersFilterBody } from './LetterFilterBody';
 import { LetterEditModalButton, IncomingLetterAddNewModalButton, OurLetterAddNewModalButton } from './Modals/LetterModalButtons';
 import { IncomingLetter, OurLetter, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+
 
 export const lettersRepository = LettersController.lettersRepository;
 export const entitiesRepository = LettersController.entitiesRepository;
@@ -26,8 +29,9 @@ export default function LettersSearch({ title }: { title: string }) {
 
     function renderIconTdBody(letter: OurLetter | IncomingLetter) {
         letter = letter as OurLetter | IncomingLetter;
-        const icon = letter.isOur ? 'fa fa-paper-plane fa-lg' : 'fa fa-envelope fa-lg';
-        return <i className={icon}></i>
+        const icon = letter.isOur ? faPaperPlane : faEnvelope;
+
+        return <FontAwesomeIcon icon={icon} size="lg" />
     }
 
     return (

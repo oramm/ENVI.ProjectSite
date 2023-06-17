@@ -9,6 +9,7 @@ import { Invoice } from '../../../../Typings/bussinesTypes';
 
 export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invoice>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
+    const statuses = Object.entries(MainSetup.InvoiceStatuses).map(([key, value]) => value);
 
     useEffect(() => {
         console.log('InvoiceModalBody useEffect', initialData);
@@ -71,7 +72,7 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
                     {...register('status')}
                 >
                     <option value="">-- Wybierz opcję --</option>
-                    {MainSetup.invoiceStatusNames.map((statusName, index) => (
+                    {statuses.map((statusName, index) => (
                         <option key={index} value={statusName}>
                             {statusName}
                         </option>

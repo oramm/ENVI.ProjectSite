@@ -9,7 +9,7 @@ const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents")
 const react_bootstrap_1 = require("react-bootstrap");
 const InvoicesSearch_1 = require("./InvoicesSearch");
 const FormContext_1 = require("../../View/Modals/FormContext");
-const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 function InvoicesFilterBody({}) {
     const { register } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
@@ -18,10 +18,10 @@ function InvoicesFilterBody({}) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wystawiono od"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -30).toISOString().slice(0, 10), ...register('issueDateFrom') })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_FROM, ...register('issueDateFrom') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wystawiono do"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +15).toISOString().slice(0, 10), ...register('issueDateTo') })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_TO, ...register('issueDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
             react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false })),

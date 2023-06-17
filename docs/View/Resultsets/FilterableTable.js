@@ -43,7 +43,7 @@ const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, }) {
+function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -67,7 +67,7 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable },
+    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -77,7 +77,7 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
                         index < AddNewButtonComponents.length - 1 && ' '))))),
             FilterBodyComponent &&
                 react_1.default.createElement(react_bootstrap_1.Row, null,
-                    react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
+                    react_1.default.createElement(FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, locaFilter: locaFilter, onIsReadyChange: (isReady) => {
                             setIsReady(isReady);
                         } })),
             !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -86,11 +86,28 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
                 react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports.default = FilterableTable;
-function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
-    const { setObjects } = useFilterableTableContext();
+function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, locaFilter = false, }) {
+    const { setObjects, objects, externalUpdate } = useFilterableTableContext();
+    const [originalObjects, setOriginalObjects] = (0, react_1.useState)([]);
     const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    (0, react_1.useEffect)(() => {
+        setOriginalObjects(objects);
+    }, [externalUpdate]);
     async function handleSubmitSearch(data) {
+        let result = [];
+        onIsReadyChange(false);
+        if (locaFilter)
+            result = handleLocalFilter(data);
+        else {
+            const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
+            result = await repository.loadItemsFromServer(formData);
+            await handleServerSearch(data);
+        }
+        setObjects(result);
+        onIsReadyChange(true);
+    }
+    ;
+    async function handleServerSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
         const result = await repository.loadItemsFromServer(formData);
@@ -98,6 +115,33 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange }) {
         onIsReadyChange(true);
     }
     ;
+    function handleLocalFilter(filterFormData) {
+        return originalObjects.filter(item => {
+            for (let key in filterFormData) {
+                const filterValue = filterFormData[key];
+                if (!filterValue)
+                    continue;
+                const itemValue = item[key];
+                // Jeśli wartość w elemencie jest obiektem, porównaj za pomocą labelKey
+                if (typeof itemValue === 'object' && itemValue !== null) {
+                    const labelKey = itemValue.labelKey;
+                    // Jeśli wartość filtra nie pasuje do wartości labelKey w obiekcie, zwróć false
+                    if (String(itemValue[labelKey]).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
+                        return false;
+                    }
+                }
+                else {
+                    // Jeśli wartość w elemencie nie jest obiektem, porównaj bezpośrednio
+                    // Jeśli wartość filtra nie pasuje do wartości w obiekcie, zwróć false
+                    if (String(itemValue).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
+                        return false;
+                    }
+                }
+            }
+            // Jeśli wszystkie pola pasują, zwróć true
+            return true;
+        });
+    }
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
@@ -183,8 +227,9 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     activeRowId: 0,
     EditButtonComponent: undefined,
     isDeletable: true,
+    externalUpdate: 0,
 });
-function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, children, }) {
+function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             objects,
@@ -198,6 +243,7 @@ function FilterableTableProvider({ objects, setObjects, repository, handleAddObj
             activeRowId,
             EditButtonComponent,
             isDeletable,
+            externalUpdate,
         } }, children);
 }
 function useFilterableTableContext() {

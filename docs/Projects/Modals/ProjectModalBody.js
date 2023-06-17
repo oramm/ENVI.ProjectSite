@@ -41,7 +41,7 @@ function ProjectModalBody({ isEditing, initialData }) {
             comment: initialData?.comment,
             startDate: initialData?.startDate || new Date().toISOString().slice(0, 10),
             endDate: initialData?.endDate || new Date().toISOString().slice(0, 10),
-            status: initialData?.status || MainSetupReact_1.default.projectStatusNames[1],
+            status: initialData?.status || MainSetupReact_1.default.ProjectStatuses.IN_PROGRESS,
             totalValue: initialData?.totalValue,
             qualifiedValue: initialData?.qualifiedValue,
             dotationValue: initialData?.dotationValue,

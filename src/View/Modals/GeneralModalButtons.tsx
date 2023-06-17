@@ -5,6 +5,8 @@ import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
 import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
     modalProps: {
@@ -67,7 +69,7 @@ function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick
     if (!buttonCaption)
         return (
             <a href='#' onClick={onClick} className='icon-vertical text-general'>
-                <i className="fa fa-pencil fa-lg"></i>
+                <FontAwesomeIcon icon={faPencil} size="lg" />
             </a>)
     else
         return (<Button
@@ -167,7 +169,7 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
     return (
         <>
             <a href='#' onClick={handleOpen} className='icon-vertical text-danger'>
-                <i className="fa fa-trash fa-lg"></i>
+                <FontAwesomeIcon icon={faTrash} size="lg" />
             </a>
 
             <ConfirmModal

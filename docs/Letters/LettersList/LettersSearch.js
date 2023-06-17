@@ -9,6 +9,8 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const LettersController_1 = __importDefault(require("./LettersController"));
 const LetterFilterBody_1 = require("./LetterFilterBody");
 const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 exports.lettersRepository = LettersController_1.default.lettersRepository;
 exports.entitiesRepository = LettersController_1.default.entitiesRepository;
 exports.projectsRepository = LettersController_1.default.projectsRepository;
@@ -28,8 +30,8 @@ function LettersSearch({ title }) {
     }
     function renderIconTdBody(letter) {
         letter = letter;
-        const icon = letter.isOur ? 'fa fa-paper-plane fa-lg' : 'fa fa-envelope fa-lg';
-        return react_1.default.createElement("i", { className: icon });
+        const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
+        return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
     return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },

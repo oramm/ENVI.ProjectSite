@@ -64,22 +64,26 @@ function StatusSelectFormElement({ statusNames, showValidationInfo = true, name 
 exports.StatusSelectFormElement = StatusSelectFormElement;
 ;
 function ProjectStatusSelectFormElement({ showValidationInfo = true, name }) {
-    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.projectStatusNames, showValidationInfo: showValidationInfo, name: name });
+    const statuses = Object.entries(MainSetupReact_1.default.ProjectStatuses).map(([key, value]) => value);
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.ProjectStatusSelectFormElement = ProjectStatusSelectFormElement;
 ;
 function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
-    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.contractStatusNames, showValidationInfo: showValidationInfo, name: name });
+    const statuses = Object.entries(MainSetupReact_1.default.ContractStatuses).map(([key, value]) => value);
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
 ;
 function TaksStatusSelectFormElement({ showValidationInfo = true, name }) {
-    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.taskStatusNames, showValidationInfo: showValidationInfo, name: name });
+    let statuses = Object.entries(MainSetupReact_1.default.TaskStatuses).map(([key, value]) => value);
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.TaksStatusSelectFormElement = TaksStatusSelectFormElement;
 ;
 function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }) {
-    return react_1.default.createElement(StatusSelectFormElement, { statusNames: MainSetupReact_1.default.invoiceStatusNames, showValidationInfo: showValidationInfo, name: name });
+    const statuses = Object.entries(MainSetupReact_1.default.InvoiceStatuses).map(([key, value]) => value);
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
 ;

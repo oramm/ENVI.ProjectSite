@@ -9,13 +9,15 @@ import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
 import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';
 import { ProjectAddNewModalButton, ProjectEditModalButton } from './Modals/ProjectModalButtons';
 import { ProjectsFilterBody } from './ProjectsFilterBody';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function TasksGlobal() {
     const [tasks, setTasks] = useState([] as Task[] | undefined);
     const [externalTasksUpdate, setExternalTasksUpdate] = useState(0);
     const [tasksLoaded, setTasksLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
-
+    const [showProjects, setShowProjects] = useState(true);
 
     useEffect(() => {
         if (!selectedProject) return;
@@ -33,6 +35,12 @@ export default function TasksGlobal() {
         fetchData();
     }, [selectedProject]);
 
+    function handleShowProjects() {
+        setShowProjects(!showProjects);
+        setTasks([]);
+        setExternalTasksUpdate(prevState => prevState + 1);
+    }
+
     return (
         <ContractProvider
             tasks={tasks}
@@ -40,29 +48,34 @@ export default function TasksGlobal() {
         >
             <Container>
                 <Row>
-
-                    <Col md={3}>
-                        <FilterableTable<Project>
-                            title='Projekty'
-                            repository={projectsRepository}
-                            AddNewButtonComponents={[ProjectAddNewModalButton]}
-                            FilterBodyComponent={ProjectsFilterBody}
-                            EditButtonComponent={ProjectEditModalButton}
-                            tableStructure={[
-                                { header: 'Nazwa', renderTdBody: (project: Project) => <>{project._ourId_Alias}</> },
-                            ]}
-                            onRowClick={setSelectedProject}
-                        />
-                    </Col>
-
-                    <Col md='9'>
+                    {showProjects &&
+                        <Col md={3}>
+                            <FilterableTable<Project>
+                                title='Projekty'
+                                repository={projectsRepository}
+                                AddNewButtonComponents={[ProjectAddNewModalButton]}
+                                FilterBodyComponent={ProjectsFilterBody}
+                                EditButtonComponent={ProjectEditModalButton}
+                                tableStructure={[
+                                    { header: 'Nazwa', renderTdBody: (project: Project) => <>{project._ourId_Alias}</> },
+                                ]}
+                                onRowClick={setSelectedProject}
+                            />
+                        </Col>
+                    }
+                    <Col md={showProjects ? '9' : '12'}>
+                        <div className="d-flex justify-content-end">
+                            <div onClick={handleShowProjects}>
+                                <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
+                            </div>
+                        </div>
                         {tasksLoaded ?
                             <FilterableTable<Task>
                                 title='Zadania'
                                 initialObjects={tasks}
                                 repository={tasksRepository}
                                 AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
-                                FilterBodyComponent={TasksGlobalFilterBody}
+                                FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
                                 EditButtonComponent={TaskGlobalEditModalButton}
                                 tableStructure={[
                                     { header: 'Kamień|Sprawa', renderTdBody: (task: Task) => <>{task._parent._typeFolderNumber_TypeName_Number_Name}</> },
@@ -73,6 +86,7 @@ export default function TasksGlobal() {
                                     { header: 'Właściciel', renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</> },
                                 ]}
                                 externalUpdate={externalTasksUpdate}
+
                             />
                             :
                             <>

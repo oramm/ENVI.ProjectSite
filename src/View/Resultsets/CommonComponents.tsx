@@ -6,6 +6,8 @@ import GDDocFileIcon from '../../Resources/View/Google-Docs-icon.png';
 import '../../Css/styles.css';
 import MainSetup from '../../React/MainSetupReact';
 import { Color } from 'react-bootstrap/esm/types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faBars } from '@fortawesome/free-solid-svg-icons';
 
 export function ProgressBar() {
     return (
@@ -63,6 +65,22 @@ export function GDFolderIconLink({ folderUrl }: { folderUrl: string }) {
     );
 }
 
+export function CopyIconLink({ folderUrl }: { folderUrl: string }) {
+    return (
+        <a href={folderUrl} target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={faCopy} className='icon-vertical' />
+        </a>
+    );
+}
+
+export function MenuIconLink({ folderUrl }: { folderUrl: string }) {
+    return (
+        <a href={folderUrl} target="_blank" rel="noopener noreferrer">
+            <FontAwesomeIcon icon={faBars} className='icon-vertical' />
+        </a>
+    );
+}
+
 export function GDDocFileIconLink({ folderUrl }: { folderUrl: string }) {
     return (
         <a href={folderUrl} target="_blank">
@@ -75,27 +93,27 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = 'light';
     switch (status) {
-        case MainSetup.invoiceStatusNames[0]: //'Na później'
+        case MainSetup.InvoiceStatuses.FOR_LATER:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetup.invoiceStatusNames[1]: //'Do zrobienia'
+        case MainSetup.InvoiceStatuses.TO_DO:
             variant = 'primary';
             break;
-        case MainSetup.invoiceStatusNames[2]: //'Zrobiona'
+        case MainSetup.InvoiceStatuses.DONE:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetup.invoiceStatusNames[3]: //'Wysłana'
+        case MainSetup.InvoiceStatuses.SENT:
             variant = 'info';
             break;
-        case MainSetup.invoiceStatusNames[4]: //'Zapłacona'
+        case MainSetup.InvoiceStatuses.PAID:
             variant = 'success';
             break;
-        case MainSetup.invoiceStatusNames[5]: //'Do korekty'
+        case MainSetup.InvoiceStatuses.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetup.invoiceStatusNames[6]: //'Wycofana'
+        case MainSetup.InvoiceStatuses.WITHDRAWN:
             variant = 'dark';
             break;
         default:
@@ -113,27 +131,17 @@ export function ContractStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = 'light';
     switch (status) {
-        case MainSetup.contractStatusNames[0]: //'Na później'
-            variant = 'light';
-            textMode = 'dark';
+        case MainSetup.ContractStatuses.NOT_STARTED:
+            variant = 'secondary';
             break;
-        case MainSetup.contractStatusNames[1]: //'Do zrobienia'
-            variant = 'primary';
-            break;
-        case MainSetup.contractStatusNames[2]: //'Zrobiona'
+        case MainSetup.ContractStatuses.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetup.contractStatusNames[3]: //'Wysłana'
-            variant = 'info';
-            break;
-        case MainSetup.contractStatusNames[4]: //'Zapłacona'
+        case MainSetup.ContractStatuses.FINISHED:
             variant = 'success';
             break;
-        case MainSetup.contractStatusNames[5]: //'Do korekty'
-            variant = 'danger';
-            break;
-        case MainSetup.contractStatusNames[6]: //'Wycofana'
+        case MainSetup.ContractStatuses.ARCHIVAL:
             variant = 'dark';
             break;
         default:
@@ -151,24 +159,24 @@ export function TaskStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = 'light';
     switch (status) {
-        case MainSetup.taskStatusNames[0]: //'Backlog'
+        case MainSetup.TaskStatuses.BACKLOG:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetup.taskStatusNames[1]: //'Nie rozpoczęty'
+        case MainSetup.TaskStatuses.NOT_STARTED:
             variant = 'secondary';
             break;
-        case MainSetup.taskStatusNames[2]: //'W trakcie'
+        case MainSetup.TaskStatuses.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetup.taskStatusNames[3]: //'Do poprawy'
+        case MainSetup.TaskStatuses.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetup.taskStatusNames[4]: //'Oczekiwanie na odpowiedź'
+        case MainSetup.TaskStatuses.AWAITING_RESPONSE:
             variant = 'info';
             break;
-        case MainSetup.taskStatusNames[5]: //'Zrobione'
+        case MainSetup.TaskStatuses.DONE:
             variant = 'success';
             break;
         default:

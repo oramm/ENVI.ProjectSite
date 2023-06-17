@@ -90,24 +90,27 @@ type SpecificStatusProps = {
 }
 
 export function ProjectStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    const statuses = Object.entries(MainSetup.ProjectStatuses).map(([key, value]) => value);
     return <StatusSelectFormElement
-        statusNames={MainSetup.projectStatusNames}
+        statusNames={statuses}
         showValidationInfo={showValidationInfo}
         name={name}
     />
 };
 
 export function ContractStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    const statuses = Object.entries(MainSetup.ContractStatuses).map(([key, value]) => value);
     return <StatusSelectFormElement
-        statusNames={MainSetup.contractStatusNames}
+        statusNames={statuses}
         showValidationInfo={showValidationInfo}
         name={name}
     />
 };
 
 export function TaksStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    let statuses = Object.entries(MainSetup.TaskStatuses).map(([key, value]) => value);
     return <StatusSelectFormElement
-        statusNames={MainSetup.taskStatusNames}
+        statusNames={statuses}
         showValidationInfo={showValidationInfo}
         name={name}
     />
@@ -115,8 +118,9 @@ export function TaksStatusSelectFormElement({ showValidationInfo = true, name }:
 
 
 export function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    const statuses = Object.entries(MainSetup.InvoiceStatuses).map(([key, value]) => value);
     return <StatusSelectFormElement
-        statusNames={MainSetup.invoiceStatusNames}
+        statusNames={statuses}
         showValidationInfo={showValidationInfo}
         name={name}
     />

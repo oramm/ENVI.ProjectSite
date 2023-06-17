@@ -44,7 +44,7 @@ function TaskModalBody({ isEditing, initialData }) {
             description: initialData?.description || '',
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
             daysToPay: initialData?.daysToPay,
-            status: initialData?.status || MainSetupReact_1.default.taskStatusNames[1],
+            status: initialData?.status || MainSetupReact_1.default.TaskStatuses.BACKLOG,
             _owner: initialData?._owner || MainSetupReact_1.default.getCurrentUserAsPerson(),
         };
         reset(resetData);

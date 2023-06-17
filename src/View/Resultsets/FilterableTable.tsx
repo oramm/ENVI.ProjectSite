@@ -26,6 +26,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     initialObjects?: DataItemType[];
     onRowClick?: (object: DataItemType) => void;
     externalUpdate?: number;
+    localFilter?: boolean;
 }
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
@@ -50,6 +51,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     initialObjects = [],
     onRowClick,
     externalUpdate = 0,
+    localFilter: locaFilter = false,
 }: FilterableTableProps<DataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
@@ -91,6 +93,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
             selectedObjectRoute={selectedObjectRoute}
             EditButtonComponent={EditButtonComponent}// as React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>> | undefined}
             isDeletable={isDeletable}
+            externalUpdate={externalUpdate}
         >
             <Container>
                 <Row>
@@ -115,6 +118,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                         <FilterPanel
                             FilterBodyComponent={FilterBodyComponent}
                             repository={repository}
+                            locaFilter={locaFilter}
                             onIsReadyChange={(isReady) => {
                                 setIsReady(isReady);
                             }}
@@ -141,19 +145,72 @@ type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     repository: RepositoryReact,
     onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
+    locaFilter: boolean,
 }
-function FilterPanel<DataItemType extends RepositoryDataItem>({ FilterBodyComponent, repository, onIsReadyChange }: FilterPanelProps) {
-    const [errorMessage, setErrorMessage] = useState('');
-    const { setObjects } = useFilterableTableContext<DataItemType>();
+function FilterPanel<DataItemType extends RepositoryDataItem>({
+    FilterBodyComponent,
+    repository,
+    onIsReadyChange,
+    locaFilter = false,
+}: FilterPanelProps) {
+    const { setObjects, objects, externalUpdate } = useFilterableTableContext<DataItemType>();
+    const [originalObjects, setOriginalObjects] = useState<DataItemType[]>([]);
+
     const formMethods = useForm({ defaultValues: {}, mode: 'onChange' });
 
+    useEffect(() => {
+        setOriginalObjects(objects);
+    }, [externalUpdate]);
+
     async function handleSubmitSearch(data: FieldValues) {
+        let result: DataItemType[] = [];
+        onIsReadyChange(false);
+        if (locaFilter)
+            result = handleLocalFilter(data);
+        else {
+            const formData = parseFieldValuestoFormData(data);
+            result = await repository.loadItemsFromServer(formData) as DataItemType[];
+            await handleServerSearch(data);
+        }
+        setObjects(result);
+        onIsReadyChange(true);
+    };
+
+    async function handleServerSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuestoFormData(data);
         const result = await repository.loadItemsFromServer(formData) as DataItemType[];
         setObjects(result);
         onIsReadyChange(true);
     };
+
+    function handleLocalFilter(filterFormData: FieldValues) {
+        return originalObjects.filter(item => {
+            for (let key in filterFormData) {
+                const filterValue = filterFormData[key];
+                if (!filterValue) continue;
+
+                const itemValue = item[key];
+                // Jeśli wartość w elemencie jest obiektem, porównaj za pomocą labelKey
+                if (typeof itemValue === 'object' && itemValue !== null) {
+                    const labelKey = itemValue.labelKey;
+                    // Jeśli wartość filtra nie pasuje do wartości labelKey w obiekcie, zwróć false
+                    if (String(itemValue[labelKey]).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
+                        return false;
+                    }
+                } else {
+                    // Jeśli wartość w elemencie nie jest obiektem, porównaj bezpośrednio
+                    // Jeśli wartość filtra nie pasuje do wartości w obiekcie, zwróć false
+                    if (String(itemValue).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
+                        return false;
+                    }
+                }
+            }
+            // Jeśli wszystkie pola pasują, zwróć true
+            return true;
+        });
+    }
+
 
     return (
         <FormProvider value={formMethods}>
@@ -343,6 +400,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     activeRowId: number,
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>,
     isDeletable: boolean,
+    externalUpdate: number,
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
@@ -357,6 +415,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     activeRowId: 0,
     EditButtonComponent: undefined,
     isDeletable: true,
+    externalUpdate: 0,
 });
 
 function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -371,6 +430,7 @@ function FilterableTableProvider<Item extends RepositoryDataItem>({
     activeRowId,
     EditButtonComponent,
     isDeletable = true,
+    externalUpdate,
     children, }: React.PropsWithChildren<FilterableTableContextProps<Item>>
 ) {
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>;
@@ -387,6 +447,7 @@ function FilterableTableProvider<Item extends RepositoryDataItem>({
         activeRowId,
         EditButtonComponent,
         isDeletable,
+        externalUpdate,
     }}>
         {children}
     </FilterableTableContextGeneric.Provider>;

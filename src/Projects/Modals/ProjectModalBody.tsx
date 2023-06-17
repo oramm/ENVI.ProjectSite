@@ -15,7 +15,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             comment: initialData?.comment,
             startDate: initialData?.startDate || new Date().toISOString().slice(0, 10),
             endDate: initialData?.endDate || new Date().toISOString().slice(0, 10),
-            status: initialData?.status || MainSetup.projectStatusNames[1],
+            status: initialData?.status || MainSetup.ProjectStatuses.IN_PROGRESS,
             totalValue: initialData?.totalValue,
             qualifiedValue: initialData?.qualifiedValue,
             dotationValue: initialData?.dotationValue,

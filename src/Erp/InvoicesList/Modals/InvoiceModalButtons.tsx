@@ -140,28 +140,27 @@ export function ActionButton() {
     const { invoice, setInvoice } = useInvoice();
 
     switch (invoice.status) {
-        case MainSetup.invoiceStatusNames[0]: //'Na później'
+        case MainSetup.InvoiceStatuses.FOR_LATER:
             return (
                 <ChangeStatusButton
                     specialActionRoute='setAsToMakeInvoice'
-                    newStatus={MainSetup.invoiceStatusNames[1]}
+                    newStatus={MainSetup.InvoiceStatuses.TO_DO}
                 />
             );
-        case MainSetup.invoiceStatusNames[1]: //'Do zrobienia'
+        case MainSetup.InvoiceStatuses.TO_DO:
             return <InvoiceIssueModalButton />;
-        case MainSetup.invoiceStatusNames[2]: //'Zrobiona'
+        case MainSetup.InvoiceStatuses.DONE:
             return <InvoiceSetAsSentModalButton />;
-        case MainSetup.invoiceStatusNames[3]: //'Wysłana'
+        case MainSetup.InvoiceStatuses.SENT:
             return (
                 <ChangeStatusButton
                     specialActionRoute='setAsPaidInvoice'
-                    newStatus={MainSetup.invoiceStatusNames[4]}
+                    newStatus={MainSetup.InvoiceStatuses.PAID}
                 />
             );
-        case MainSetup.invoiceStatusNames[4]: //'Zapłacona'
-
-        case MainSetup.invoiceStatusNames[5]: //'Do korekty'
-        case MainSetup.invoiceStatusNames[6]: //'Wycofana'
+        case MainSetup.InvoiceStatuses.PAID:
+        case MainSetup.InvoiceStatuses.TO_CORRECT:
+        case MainSetup.InvoiceStatuses.WITHDRAWN:
         default:
             return <></>
     }

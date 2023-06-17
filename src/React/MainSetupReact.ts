@@ -1,5 +1,6 @@
 import { CaseType, ContractType, DocumentTemplate, Person, Project, User } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
+import ToolsDate from "./ToolsDate";
 
 export default class MainSetup {
     static projectsRepository: RepositoryReact<Project>;
@@ -32,35 +33,46 @@ export default class MainSetup {
         return JSON.parse(<string>sessionStorage.getItem('Contracts repository')).currentItems[0];
     }
 
-    static invoiceStatusNames = [
-        'Na później',
-        'Do zrobienia',
-        'Zrobiona',
-        'Wysłana',
-        'Zapłacona',
-        'Do korekty',
-        'Wycofana'
-    ];
+    static InvoiceStatuses = {
+        FOR_LATER: 'Na później',
+        TO_DO: 'Do zrobienia',
+        DONE: 'Zrobiona',
+        SENT: 'Wysłana',
+        PAID: 'Zapłacona',
+        TO_CORRECT: 'Do korekty',
+        WITHDRAWN: 'Wycofana',
+    };
 
-    static projectStatusNames = [
-        'Nie rozpoczęty',
-        'W trakcie',
-        'Zakończony'
-    ];
+    static ProjectStatuses = {
+        NOT_STARTED: 'Nie rozpoczęty',
+        IN_PROGRESS: 'W trakcie',
+        FINISHED: 'Zakończony',
+    };
 
-    static contractStatusNames = [
-        'Nie rozpoczęty',
-        'W trakcie',
-        'Zakończony',
-        'Archiwalny'
-    ];
+    static ContractStatuses = {
+        NOT_STARTED: 'Nie rozpoczęty',
+        IN_PROGRESS: 'W trakcie',
+        FINISHED: 'Zakończony',
+        ARCHIVAL: 'Archiwalny',
+    };
 
-    static taskStatusNames = [
-        'Backlog',
-        'Nie rozpoczęty',
-        'W trakcie',
-        'Do poprawy',
-        'Oczekiwanie na odpowiedź',
-        'Zrobione'
-    ];
+
+    static TaskStatuses = {
+        BACKLOG: 'Backlog',
+        NOT_STARTED: 'Nie rozpoczęty',
+        IN_PROGRESS: 'W trakcie',
+        TO_CORRECT: 'Do poprawy',
+        AWAITING_RESPONSE: 'Oczekiwanie na odpowiedź',
+        DONE: 'Zrobione',
+    };
+
+    static InvoicesFilterInitState = {
+        ISSUE_DATE_FROM: ToolsDate.addDays(new Date(), -90).toISOString().slice(0, 10),
+        ISSUE_DATE_TO: ToolsDate.addDays(new Date(), +10).toISOString().slice(0, 10),
+    }
+
+    static LettersFilterInitState = {
+        CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
+        CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
+    }
 }

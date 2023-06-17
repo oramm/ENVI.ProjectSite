@@ -5,6 +5,7 @@ import { contractsRepository, projectsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
 import ToolsDate from '../../React/ToolsDate';
 import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
+import MainSetup from '../../React/MainSetupReact';
 
 
 export function InvoicesFilterBody({ }: FilterBodyProps) {
@@ -24,7 +25,7 @@ export function InvoicesFilterBody({ }: FilterBodyProps) {
                 <Form.Label>Wystawiono od</Form.Label>
                 <Form.Control
                     type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -30).toISOString().slice(0, 10)}
+                    defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM}
                     {...register('issueDateFrom')}
                 />
 
@@ -33,7 +34,7 @@ export function InvoicesFilterBody({ }: FilterBodyProps) {
                 <Form.Label>Wystawiono do</Form.Label>
                 <Form.Control
                     type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), +15).toISOString().slice(0, 10)}
+                    defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO}
                     {...register('issueDateTo')}
                 />
             </Form.Group>

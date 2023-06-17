@@ -35,6 +35,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function InvoiceModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    const statuses = Object.entries(MainSetupReact_1.default.InvoiceStatuses).map(([key, value]) => value);
     (0, react_1.useEffect)(() => {
         console.log('InvoiceModalBody useEffect', initialData);
         const resetData = {
@@ -67,7 +68,7 @@ function InvoiceModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: !errors.status, isInvalid: !!errors.status, ...register('status') },
                 react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
-                MainSetupReact_1.default.invoiceStatusNames.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
+                statuses.map((statusName, index) => (react_1.default.createElement("option", { key: index, value: statusName }, statusName)))),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'status' })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),

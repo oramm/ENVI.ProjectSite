@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TaskStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.GDDocFileIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.TaskStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -34,6 +34,8 @@ const Google_Drive_icon_png_1 = __importDefault(require("../../Resources/View/Go
 const Google_Docs_icon_png_1 = __importDefault(require("../../Resources/View/Google-Docs-icon.png"));
 require("../../Css/styles.css");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function ProgressBar() {
     return (react_1.default.createElement("progress", { style: { height: "5px" } }));
 }
@@ -63,6 +65,16 @@ function GDFolderIconLink({ folderUrl }) {
         react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
 }
 exports.GDFolderIconLink = GDFolderIconLink;
+function CopyIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCopy, className: 'icon-vertical' })));
+}
+exports.CopyIconLink = CopyIconLink;
+function MenuIconLink({ folderUrl }) {
+    return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faBars, className: 'icon-vertical' })));
+}
+exports.MenuIconLink = MenuIconLink;
 function GDDocFileIconLink({ folderUrl }) {
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
         react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
@@ -72,27 +84,27 @@ function InvoiceStatusBadge({ status }) {
     let variant;
     let textMode = 'light';
     switch (status) {
-        case MainSetupReact_1.default.invoiceStatusNames[0]: //'Na później'
+        case MainSetupReact_1.default.InvoiceStatuses.FOR_LATER:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[1]: //'Do zrobienia'
+        case MainSetupReact_1.default.InvoiceStatuses.TO_DO:
             variant = 'primary';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[2]: //'Zrobiona'
+        case MainSetupReact_1.default.InvoiceStatuses.DONE:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[3]: //'Wysłana'
+        case MainSetupReact_1.default.InvoiceStatuses.SENT:
             variant = 'info';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[4]: //'Zapłacona'
+        case MainSetupReact_1.default.InvoiceStatuses.PAID:
             variant = 'success';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[5]: //'Do korekty'
+        case MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetupReact_1.default.invoiceStatusNames[6]: //'Wycofana'
+        case MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN:
             variant = 'dark';
             break;
         default:
@@ -105,27 +117,17 @@ function ContractStatusBadge({ status }) {
     let variant;
     let textMode = 'light';
     switch (status) {
-        case MainSetupReact_1.default.contractStatusNames[0]: //'Na później'
-            variant = 'light';
-            textMode = 'dark';
+        case MainSetupReact_1.default.ContractStatuses.NOT_STARTED:
+            variant = 'secondary';
             break;
-        case MainSetupReact_1.default.contractStatusNames[1]: //'Do zrobienia'
-            variant = 'primary';
-            break;
-        case MainSetupReact_1.default.contractStatusNames[2]: //'Zrobiona'
+        case MainSetupReact_1.default.ContractStatuses.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.contractStatusNames[3]: //'Wysłana'
-            variant = 'info';
-            break;
-        case MainSetupReact_1.default.contractStatusNames[4]: //'Zapłacona'
+        case MainSetupReact_1.default.ContractStatuses.FINISHED:
             variant = 'success';
             break;
-        case MainSetupReact_1.default.contractStatusNames[5]: //'Do korekty'
-            variant = 'danger';
-            break;
-        case MainSetupReact_1.default.contractStatusNames[6]: //'Wycofana'
+        case MainSetupReact_1.default.ContractStatuses.ARCHIVAL:
             variant = 'dark';
             break;
         default:
@@ -138,24 +140,24 @@ function TaskStatusBadge({ status }) {
     let variant;
     let textMode = 'light';
     switch (status) {
-        case MainSetupReact_1.default.taskStatusNames[0]: //'Backlog'
+        case MainSetupReact_1.default.TaskStatuses.BACKLOG:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.taskStatusNames[1]: //'Nie rozpoczęty'
+        case MainSetupReact_1.default.TaskStatuses.NOT_STARTED:
             variant = 'secondary';
             break;
-        case MainSetupReact_1.default.taskStatusNames[2]: //'W trakcie'
+        case MainSetupReact_1.default.TaskStatuses.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.taskStatusNames[3]: //'Do poprawy'
+        case MainSetupReact_1.default.TaskStatuses.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetupReact_1.default.taskStatusNames[4]: //'Oczekiwanie na odpowiedź'
+        case MainSetupReact_1.default.TaskStatuses.AWAITING_RESPONSE:
             variant = 'info';
             break;
-        case MainSetupReact_1.default.taskStatusNames[5]: //'Zrobione'
+        case MainSetupReact_1.default.TaskStatuses.DONE:
             variant = 'success';
             break;
         default:

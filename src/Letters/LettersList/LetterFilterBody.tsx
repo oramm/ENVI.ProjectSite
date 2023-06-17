@@ -5,6 +5,7 @@ import { projectsRepository } from './LettersSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
 import ToolsDate from '../../React/ToolsDate';
 import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
+import MainSetup from '../../React/MainSetupReact';
 
 
 export function LettersFilterBody({ }: FilterBodyProps) {
@@ -24,7 +25,7 @@ export function LettersFilterBody({ }: FilterBodyProps) {
                 <Form.Label>Utworzono od</Form.Label>
                 <Form.Control
                     type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)}
+                    defaultValue={MainSetup.LettersFilterInitState.CREATION_DATE_FROM}
                     {...register('creationDateFrom')}
                 />
 
@@ -33,7 +34,7 @@ export function LettersFilterBody({ }: FilterBodyProps) {
                 <Form.Label>Utworzono do</Form.Label>
                 <Form.Control
                     type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)}
+                    defaultValue={MainSetup.LettersFilterInitState.CREATION_DATE_TO}
                     {...register('creationDateTo')}
                 />
             </Form.Group>
