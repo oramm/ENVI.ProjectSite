@@ -220,10 +220,11 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     const [options, setOptions] = (0, react_1.useState)([]);
     function handleSearch(query) {
         setIsLoading(true);
-        const formData = new FormData();
-        formData.append(searchKey, query);
-        contextSearchParams.forEach(param => formData.append(param.key, param.value));
-        repository.loadItemsFromServer(formData, specialSerwerSearchActionRoute)
+        const params = {
+            [searchKey]: query,
+            ...Object.fromEntries(contextSearchParams.map(param => [param.key, param.value]))
+        };
+        repository.loadItemsFromServer(params, specialSerwerSearchActionRoute)
             .then((items) => {
             setOptions(items);
             setIsLoading(false);

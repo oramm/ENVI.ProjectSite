@@ -41,9 +41,7 @@ function InvoiceDetails() {
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
     (0, react_1.useEffect)(() => {
         const fetchInvoiceItems = async () => {
-            const formData = new FormData();
-            formData.append('invoiceId', invoice.id.toString());
-            const items = await InvoicesSearch_1.invoiceItemsRepository.loadItemsFromServer(formData);
+            const items = await InvoicesSearch_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
             setInvoiceItems(items);
         };
         fetchInvoiceItems();

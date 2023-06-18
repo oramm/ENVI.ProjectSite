@@ -17,14 +17,12 @@ export function ContractMainViewTabs() {
 
     useEffect(() => {
         async function fetchData() {
-            const contractIdFormData = new FormData();
-            contractIdFormData.append('contractId', contract.id.toString());
-
-            const fetchMilestonesTypes = milestoneTypesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchCaseTypes = caseTypesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchMilestones = milestonesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchCases = casesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchTasks = tasksRepository.loadItemsFromServer(contractIdFormData);
+            const params = { contractId: contract.id.toString() }
+            const fetchMilestonesTypes = milestoneTypesRepository.loadItemsFromServer(params);
+            const fetchCaseTypes = caseTypesRepository.loadItemsFromServer(params);
+            const fetchMilestones = milestonesRepository.loadItemsFromServer(params);
+            const fetchCases = casesRepository.loadItemsFromServer(params);
+            const fetchTasks = tasksRepository.loadItemsFromServer(params);
 
             try {
                 const [

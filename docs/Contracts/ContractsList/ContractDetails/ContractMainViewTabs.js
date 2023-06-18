@@ -43,13 +43,12 @@ function ContractMainViewTabs() {
     const [tasks, setTasks] = (0, react_1.useState)(undefined);
     (0, react_1.useEffect)(() => {
         async function fetchData() {
-            const contractIdFormData = new FormData();
-            contractIdFormData.append('contractId', contract.id.toString());
-            const fetchMilestonesTypes = ContractsController_1.milestoneTypesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchCaseTypes = ContractsController_1.caseTypesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchMilestones = ContractsController_1.milestonesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchCases = ContractsController_1.casesRepository.loadItemsFromServer(contractIdFormData);
-            const fetchTasks = ContractsController_1.tasksRepository.loadItemsFromServer(contractIdFormData);
+            const params = { contractId: contract.id.toString() };
+            const fetchMilestonesTypes = ContractsController_1.milestoneTypesRepository.loadItemsFromServer(params);
+            const fetchCaseTypes = ContractsController_1.caseTypesRepository.loadItemsFromServer(params);
+            const fetchMilestones = ContractsController_1.milestonesRepository.loadItemsFromServer(params);
+            const fetchCases = ContractsController_1.casesRepository.loadItemsFromServer(params);
+            const fetchTasks = ContractsController_1.tasksRepository.loadItemsFromServer(params);
             try {
                 const [milestonesTypesData, caseTypesData, milestonesData, casesData, tasksData] = await Promise.all([
                     fetchMilestonesTypes,

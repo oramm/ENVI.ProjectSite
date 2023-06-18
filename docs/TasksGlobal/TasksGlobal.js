@@ -49,9 +49,11 @@ function TasksGlobal() {
             return;
         async function fetchData() {
             setTasksLoaded(false);
-            const formData = new FormData();
-            formData.append('_project', JSON.stringify(selectedProject));
-            const tasks = await TasksGlobalController_1.tasksRepository.loadItemsFromServer(formData);
+            const [tasks] = await Promise.all([
+                TasksGlobalController_1.tasksRepository.loadItemsFromServer({
+                    _project: JSON.stringify(selectedProject)
+                })
+            ]);
             setTasks(tasks);
             setExternalTasksUpdate(prevState => prevState + 1);
             setTasksLoaded(true);
@@ -77,7 +79,14 @@ function TasksGlobal() {
                         react_1.default.createElement("div", { onClick: handleShowProjects },
                             react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
                     tasksLoaded ?
-                        react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, tableStructure: [
+                        react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, sectionsStructure: [
+                                {
+                                    name: 'Kontrakty',
+                                    repository: TasksGlobalController_1.contractsRepository,
+                                    makeTittleLabel: (contract) => contract.name,
+                                    getIdAsLeafSection: (contract) => contract.id,
+                                },
+                            ], tableStructure: [
                                 { header: 'Kamień|Sprawa', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, task._parent._typeFolderNumber_TypeName_Number_Name) },
                                 { header: 'Nazwa', objectAttributeToShow: 'name' },
                                 { header: 'Opis', objectAttributeToShow: 'description' },

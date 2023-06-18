@@ -20,9 +20,7 @@ class MainController {
                 deleteRoute: 'persons'
             }
         });
-        const personsEnviData = new FormData();
-        personsEnviData.append('systemRoleName', 'ENVI_EMPLOYEE|ENVI_MANAGER');
-        await personsEnviRepository.loadItemsFromServer(personsEnviData);
+        await personsEnviRepository.loadItemsFromServer({ systemRoleName: 'ENVI_EMPLOYEE|ENVI_MANAGER' });
         personsEnviRepository.saveToSessionStorage();
         MainSetupReact_1.default.personsEnviRepository = personsEnviRepository;
         const contractTypesRepository = new RepositoryReact_1.default({

@@ -76,12 +76,12 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServer(formData?: FormData, specialActionRoute?: string) {
+    async loadItemsFromServer(params?: Record<string, string>, specialActionRoute?: string) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
-        if (formData)
-            for (const [key, value] of formData)
-                url.searchParams.append(key, value as string);
+        if (params)
+            for (const [key, value] of Object.entries(params))
+                url.searchParams.append(key, value);
         const response = await fetch(url, {
             method: 'GET',
             headers: this.makeRequestHeaders(),
@@ -95,6 +95,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         console.log(this.name + ' NodeJS: %o', this.items);
         return this.items;
     }
+
 
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItemNodeJS(newItem: any | FormData, specialActionRoute?: string) {

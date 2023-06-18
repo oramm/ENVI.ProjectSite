@@ -43,7 +43,7 @@ const GeneralModalButtons_1 = require("../Modals/GeneralModalButtons");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
+function FilterableTable({ title, repository, sectionsStructure = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -67,7 +67,7 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
+    return (react_1.default.createElement(FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, sectionsStructure: sectionsStructure, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -83,7 +83,19 @@ function FilterableTable({ title, repository, tableStructure, AddNewButtonCompon
             !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { style: { height: "5px" } })),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, objects.length > 0 && (react_1.default.createElement(ResultSetTable, { onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement("p", { className: 'tekst-muted small' },
+                        "Znaleziono: ",
+                        objects.length,
+                        "  pozycji."),
+                    objects.length > 0 &&
+                        (sectionsStructure.length > 0 ?
+                            react_1.default.createElement(Sections, { resulsetTableProps: {
+                                    onRowClick: handleRowClick,
+                                    onIsReadyChange: (isReady) => { setIsReady(isReady); }
+                                } })
+                            :
+                                react_1.default.createElement(ResultSetTable, { onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports.default = FilterableTable;
 function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, locaFilter = false, }) {
@@ -99,7 +111,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, locaFil
         if (locaFilter)
             result = handleLocalFilter(data);
         else {
-            const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
+            const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
             result = await repository.loadItemsFromServer(formData);
             await handleServerSearch(data);
         }
@@ -109,7 +121,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, locaFil
     ;
     async function handleServerSearch(data) {
         onIsReadyChange(false);
-        const formData = (0, CommonComponentsController_1.parseFieldValuestoFormData)(data);
+        const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
         const result = await repository.loadItemsFromServer(formData);
         setObjects(result);
         onIsReadyChange(true);
@@ -156,17 +168,38 @@ function renderHeaderBody(column) {
         return '';
     return column.renderThBody();
 }
-function ResultSetTable({ onRowClick, onIsReadyChange, }) {
-    const { objects, activeRowId, tableStructure } = useFilterableTableContext();
+function Sections({ resulsetTableProps }) {
+    const { sectionsStructure } = useFilterableTableContext();
+    return (react_1.default.createElement(react_1.default.Fragment, null, sectionsStructure.map((section, index) => section.repository.items.map((sectionObject, index) => react_1.default.createElement(Section, { key: index, sectionLevels: [{
+                repository: section.repository,
+                dataItem: sectionObject,
+                parentIdGetter: section.getParentId,
+                titleLabel: section.makeTittleLabel(sectionObject),
+            }], resulsetTableProps: { ...resulsetTableProps } })))));
+}
+function Section({ sectionLevels, resulsetTableProps }) {
+    const { objects } = useFilterableTableContext();
+    const leafSection = sectionLevels[sectionLevels.length - 1];
+    const filteredObjects = objects.filter(object => object.id === leafSection.dataItem.id);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("p", { className: 'tekst-muted small' },
-            "Znaleziono: ",
-            objects.length,
-            "  pozycji."),
+        sectionLevels.map((section, index) => {
+            const fontSize = `${2 - (index * 0.2)}rem`;
+            return (react_1.default.createElement("div", { key: index, style: { fontSize: fontSize } }, section.titleLabel));
+        }),
+        react_1.default.createElement(ResultSetTable, { ...resulsetTableProps, filteredObjects: filteredObjects })));
+}
+function ResultSetTable({ onRowClick, onIsReadyChange, filteredObjects }) {
+    const { objects, activeRowId, tableStructure } = useFilterableTableContext();
+    const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
+    (0, react_1.useEffect)(() => {
+        const objectsToShow = filteredObjects || objects;
+        setObjectsToShow(objectsToShow);
+    }, [objects, filteredObjects]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
             react_1.default.createElement("thead", null,
                 react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
-            react_1.default.createElement("tbody", null, objects.map((dataObject) => {
+            react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
                 const isActive = dataObject.id === activeRowId;
                 return (react_1.default.createElement(FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));
             })))));
@@ -217,6 +250,7 @@ function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
 exports.DeleteModalButton = DeleteModalButton;
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
+    sectionsStructure: [],
     repository: {},
     tableStructure: [],
     handleAddObject: () => { },
@@ -229,12 +263,13 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     isDeletable: true,
     externalUpdate: 0,
 });
-function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
+function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sectionsStructure, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             objects,
             setObjects: setObjects,
             repository,
+            sectionsStructure,
             tableStructure,
             handleAddObject,
             handleEditObject,

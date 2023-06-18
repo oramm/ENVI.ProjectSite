@@ -3,8 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateObject = exports.parseFieldValuestoFormData = void 0;
+exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
 const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+/** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
+function parseFieldValuesToParams(data) {
+    const params = {};
+    for (const key in data) {
+        if (!data.hasOwnProperty(key))
+            continue;
+        const element = data[key];
+        params[key] = processElement(element);
+    }
+    return params;
+}
+exports.parseFieldValuesToParams = parseFieldValuesToParams;
 function parseFieldValuestoFormData(data) {
     const formData = new FormData();
     for (const key in data) {
@@ -21,29 +33,32 @@ function parseFieldValuestoFormData(data) {
             }
             continue;
         }
-        let parsedValue = '';
-        switch (typeof element) {
-            case 'string':
-            case 'number':
-                parsedValue = element.toString();
-                break;
-            case 'object':
-                if (element instanceof Date) {
-                    parsedValue = ToolsDate_1.default.toUTC(element); // lub użyj swojej funkcji konwertującej na UTC
-                }
-                else {
-                    parsedValue = JSON.stringify(element);
-                }
-                break;
-        }
-        formData.append(key, parsedValue);
+        formData.append(key, processElement(element));
     }
     return formData;
 }
 exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
+function processElement(element) {
+    let parsedValue = '';
+    switch (typeof element) {
+        case 'string':
+        case 'number':
+            parsedValue = element.toString();
+            break;
+        case 'object':
+            if (element instanceof Date) {
+                parsedValue = ToolsDate_1.default.toUTC(element);
+            }
+            else {
+                parsedValue = JSON.stringify(element);
+            }
+            break;
+    }
+    return parsedValue;
+}
 /** Aktualizuje dane obiektu na podstawie danych z formularza
-      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
-      */
+ * działa na kopii obiektu, nie zmienia obiektu w repozytorium
+ */
 function updateObject(formData, obj) {
     const updatedObj = { ...obj };
     formData.forEach((value, key) => {

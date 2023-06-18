@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Button, Card as Container, Col, Row } from 'react-bootstrap';
-import { Project, Task } from '../../Typings/bussinesTypes';
+import { Contract, Project, Task } from '../../Typings/bussinesTypes';
 import { ContractProvider, useContract } from '../Contracts/ContractsList/ContractContext';
 import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComponents';
 import FilterableTable from '../View/Resultsets/FilterableTable';
-import { projectsRepository, tasksRepository } from './TasksGlobalController';
+import { contractsRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
 import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
 import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';
 import { ProjectAddNewModalButton, ProjectEditModalButton } from './Modals/ProjectModalButtons';
@@ -23,10 +23,12 @@ export default function TasksGlobal() {
         if (!selectedProject) return;
         async function fetchData() {
             setTasksLoaded(false);
-            const formData = new FormData();
-            formData.append('_project', JSON.stringify(selectedProject));
 
-            const tasks = await tasksRepository.loadItemsFromServer(formData);
+            const [tasks] = await Promise.all([
+                tasksRepository.loadItemsFromServer({
+                    _project: JSON.stringify(selectedProject)
+                })
+            ]);
             setTasks(tasks);
             setExternalTasksUpdate(prevState => prevState + 1);
             setTasksLoaded(true);
@@ -77,6 +79,15 @@ export default function TasksGlobal() {
                                 AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
                                 FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
                                 EditButtonComponent={TaskGlobalEditModalButton}
+                                sectionsStructure={[
+                                    {
+                                        name: 'Kontrakty',
+                                        repository: contractsRepository,
+                                        makeTittleLabel: (contract) => contract.name,
+                                        getIdAsLeafSection: (contract) => contract.id,
+                                    },
+
+                                ]}
                                 tableStructure={[
                                     { header: 'Kamień|Sprawa', renderTdBody: (task: Task) => <>{task._parent._typeFolderNumber_TypeName_Number_Name}</> },
                                     { header: 'Nazwa', objectAttributeToShow: 'name' },

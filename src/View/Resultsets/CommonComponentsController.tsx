@@ -2,6 +2,18 @@ import { FieldValues } from "react-hook-form";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ToolsDate from "../../React/ToolsDate";
 
+/** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
+export function parseFieldValuesToParams(data: FieldValues) {
+    const params: { [key: string]: any } = {};
+    for (const key in data) {
+        if (!data.hasOwnProperty(key)) continue;
+
+        const element = data[key];
+        params[key] = processElement(element);
+    }
+    return params;
+}
+
 export function parseFieldValuestoFormData(data: FieldValues) {
     const formData = new FormData();
     for (const key in data) {
@@ -20,29 +32,33 @@ export function parseFieldValuestoFormData(data: FieldValues) {
             continue;
         }
 
-        let parsedValue: string = '';
-        switch (typeof element) {
-            case 'string':
-            case 'number':
-                parsedValue = element.toString();
-                break;
-            case 'object':
-                if (element instanceof Date) {
-                    parsedValue = ToolsDate.toUTC(element); // lub użyj swojej funkcji konwertującej na UTC
-                } else {
-                    parsedValue = JSON.stringify(element);
-                }
-                break;
-        }
-
-        formData.append(key, parsedValue);
+        formData.append(key, processElement(element));
     }
     return formData;
 }
 
+function processElement(element: any) {
+    let parsedValue = '';
+    switch (typeof element) {
+        case 'string':
+        case 'number':
+            parsedValue = element.toString();
+            break;
+        case 'object':
+            if (element instanceof Date) {
+                parsedValue = ToolsDate.toUTC(element);
+            } else {
+                parsedValue = JSON.stringify(element);
+            }
+            break;
+    }
+
+    return parsedValue;
+}
+
 /** Aktualizuje dane obiektu na podstawie danych z formularza 
-      * działa na kopii obiektu, nie zmienia obiektu w repozytorium
-      */
+ * działa na kopii obiektu, nie zmienia obiektu w repozytorium
+ */
 export function updateObject(formData: FormData, obj: RepositoryDataItem): RepositoryDataItem {
     const updatedObj = { ...obj };
     formData.forEach((value, key) => {

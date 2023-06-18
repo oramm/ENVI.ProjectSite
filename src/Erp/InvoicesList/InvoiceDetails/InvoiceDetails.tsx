@@ -16,9 +16,7 @@ export default function InvoiceDetails() {
 
     useEffect(() => {
         const fetchInvoiceItems = async () => {
-            const formData = new FormData();
-            formData.append('invoiceId', invoice.id.toString());
-            const items = await invoiceItemsRepository.loadItemsFromServer(formData);
+            const items = await invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
             setInvoiceItems(items);
         };
 
