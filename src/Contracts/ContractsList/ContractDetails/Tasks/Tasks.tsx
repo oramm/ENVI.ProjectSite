@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 import { Task } from '../../../../../Typings/bussinesTypes';
 import ToolsDate from '../../../../React/ToolsDate';
 import { SpinnerBootstrap, TaskStatusBadge } from '../../../../View/Resultsets/CommonComponents';
-import FilterableTable from '../../../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../../../View/Resultsets/FilterableTable/FilterableTable';
 import { useContract } from '../../ContractContext';
 import { tasksRepository } from '../../ContractsController';
 import { TaskAddNewModalButton, TaskEditModalButton } from './Modals/TaskModalButtons';

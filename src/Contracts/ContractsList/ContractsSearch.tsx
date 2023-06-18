@@ -1,5 +1,5 @@
 import React from 'react';
-import FilterableTable from '../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import { contractsRepository } from './ContractsController';
 import { ContractsFilterBody } from './ContractsFilterBody';
 import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';

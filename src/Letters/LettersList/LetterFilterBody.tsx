@@ -3,10 +3,8 @@ import { ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from 
 import { Col, Form, Row } from 'react-bootstrap';
 import { projectsRepository } from './LettersSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
-import ToolsDate from '../../React/ToolsDate';
-import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
 import MainSetup from '../../React/MainSetupReact';
-
+import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
 
 export function LettersFilterBody({ }: FilterBodyProps) {
     const { register } = useFormContext();

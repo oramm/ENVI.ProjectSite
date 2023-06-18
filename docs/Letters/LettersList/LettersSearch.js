@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.projectsRepository = exports.entitiesRepository = exports.lettersRepository = void 0;
 const react_1 = __importDefault(require("react"));
-const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable"));
+const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const LettersController_1 = __importDefault(require("./LettersController"));
 const LetterFilterBody_1 = require("./LetterFilterBody");
 const LetterModalButtons_1 = require("./Modals/LetterModalButtons");

@@ -1,5 +1,5 @@
 import React from 'react';
-import FilterableTable from '../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import LettersController from './LettersController';
 import { LettersFilterBody } from './LetterFilterBody';
 import { LetterEditModalButton, IncomingLetterAddNewModalButton, OurLetterAddNewModalButton } from './Modals/LetterModalButtons';

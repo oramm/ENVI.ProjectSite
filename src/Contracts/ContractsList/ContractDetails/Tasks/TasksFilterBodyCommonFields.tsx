@@ -1,12 +1,12 @@
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../../../View/Modals/FormContext';
-import { FilterBodyProps } from '../../../../View/Resultsets/FilterableTable';
 import { CaseSelectMenuElement, PersonSelectFormElement, TaksStatusSelectFormElement } from '../../../../View/Modals/CommonFormComponents';
 import { useContract } from '../../ContractContext';
 import ToolsDate from '../../../../React/ToolsDate';
 import { casesRepository } from '../../ContractsController';
 import MainSetup from '../../../../React/MainSetupReact';
+import { FilterBodyProps } from '../../../../View/Resultsets/FilterableTable/FilterPanel';
 
 
 export function TasksFilterBodyCommonFields({ }: FilterBodyProps) {

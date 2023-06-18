@@ -1,5 +1,5 @@
 import React from 'react';
-import FilterableTable from '../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import InvoicesController from './InvoicesController';
 import { InvoicesFilterBody } from './InvoiceFilterBody';
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from './Modals/InvoiceModalButtons';

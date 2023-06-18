@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
 import ToolsDate from '../../../React/ToolsDate';
 import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
-import FilterableTable from '../../../View/Resultsets/FilterableTable';
+import FilterableTable from '../../../View/Resultsets/FilterableTable/FilterableTable';
 import { invoiceItemsRepository, invoicesRepository } from '../InvoicesSearch';
 import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from '../Modals/InvoiceItemModalButtons';
 import { ActionButton, CopyButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButtons';

@@ -1,11 +1,10 @@
 import React from 'react';
 import { ContractSelectFormElement, InvoiceStatusSelectFormElement } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository, projectsRepository } from './InvoicesSearch';
+import { contractsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
-import ToolsDate from '../../React/ToolsDate';
-import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
 import MainSetup from '../../React/MainSetupReact';
+import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
 
 
 export function InvoicesFilterBody({ }: FilterBodyProps) {

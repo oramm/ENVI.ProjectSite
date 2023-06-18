@@ -3,7 +3,7 @@ import { Button, Card as Container, Col, Row } from 'react-bootstrap';
 import { Contract, Project, Task } from '../../Typings/bussinesTypes';
 import { ContractProvider, useContract } from '../Contracts/ContractsList/ContractContext';
 import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComponents';
-import FilterableTable from '../View/Resultsets/FilterableTable';
+import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
 import { contractsRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
 import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
 import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';

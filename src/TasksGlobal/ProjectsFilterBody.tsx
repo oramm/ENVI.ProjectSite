@@ -1,8 +1,7 @@
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../View/Modals/FormContext';
-import { FilterBodyProps } from '../View/Resultsets/FilterableTable';
-
+import { FilterBodyProps } from '../View/Resultsets/FilterableTable/FilterPanel';
 
 export function ProjectsFilterBody({ }: FilterBodyProps) {
     const { register } = useFormContext();

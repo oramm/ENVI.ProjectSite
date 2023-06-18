@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
-const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable"));
+const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const ContractsController_1 = require("./ContractsController");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");

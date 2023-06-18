@@ -3,8 +3,8 @@ import { ContractTypeSelectFormElement, ProjectSelector } from '../../View/Modal
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../View/Modals/FormContext';
 import ToolsDate from '../../React/ToolsDate';
-import { FilterBodyProps } from '../../View/Resultsets/FilterableTable';
 import { projectsRepository } from './ContractsController';
+import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
 
 
 

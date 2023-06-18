@@ -70,25 +70,6 @@ class RepositoryReact {
      * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServer_OLD(formData, specialActionRoute) {
-        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
-        const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
-        if (formData)
-            for (const [key, value] of formData)
-                url.searchParams.append(key, value);
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: this.makeRequestHeaders(),
-            credentials: 'include',
-        });
-        if (!response.ok)
-            throw new Error(response.statusText);
-        const loadedItems = await response.json();
-        this.items = loadedItems;
-        this.currentItems = [];
-        console.log(this.name + ' NodeJS: %o', this.items);
-        return this.items;
-    }
     async loadItemsFromServer(params, specialActionRoute) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
