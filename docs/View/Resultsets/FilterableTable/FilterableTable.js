@@ -23,10 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteModalButton = exports.TableTitle = void 0;
+exports.TableTitle = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const GeneralModalButtons_1 = require("../../Modals/GeneralModalButtons");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterPanel_1 = require("./FilterPanel");
 const ResultSetTable_1 = require("./ResultSetTable");
@@ -120,14 +119,3 @@ function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
-function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
-    const { repository } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
-            onDelete,
-            modalTitle,
-            repository,
-            initialData,
-        } }));
-}
-exports.DeleteModalButton = DeleteModalButton;

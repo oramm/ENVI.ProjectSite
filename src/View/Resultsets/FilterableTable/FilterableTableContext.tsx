@@ -3,7 +3,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { SectionStruture } from "./FilterableTable";
-import { RowStructure } from "./ResultSetTable";
+import { RowStructure } from "./FiterableTableRow";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     objects: DataItemType[];

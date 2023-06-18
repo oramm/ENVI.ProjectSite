@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 
 import { Container, Row, Col } from 'react-bootstrap';
 import RepositoryReact from '../../../React/RepositoryReact';
-import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
 import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 import { FilterableTableProvider, useFilterableTableContext } from './FilterableTableContext';
 import { FilterBodyProps, FilterPanel } from './FilterPanel';
-import { ResultSetTable, ResultSetTableProps, RowStructure } from './ResultSetTable';
+import { ResultSetTable, ResultSetTableProps } from './ResultSetTable';
+import { RowStructure } from './FiterableTableRow';
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     title: string,
@@ -231,22 +232,4 @@ function Section<DataItemType extends RepositoryDataItem>({ sectionLevels, resul
 
 export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
-}
-
-export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
-    modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps<DataItemType>) {
-
-    const { repository } = useFilterableTableContext<DataItemType>();
-    const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
-
-    return (
-        <GeneralDeleteModalButton<DataItemType>
-            modalProps={{
-                onDelete,
-                modalTitle,
-                repository,
-                initialData,
-            }}
-        />
-    );
 }
