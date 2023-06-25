@@ -1,19 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Button, Card as Container, Col, Row } from 'react-bootstrap';
-import { Contract, Project, Task } from '../../Typings/bussinesTypes';
+import { Contract, OtherContract, OurContract, Person, Project, Task } from '../../Typings/bussinesTypes';
 import { ContractProvider, useContract } from '../Contracts/ContractsList/ContractContext';
 import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComponents';
 import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
-import { contractsRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
+import { casesRepository, contractsRepository, milestonesRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
 import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
 import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';
 import { ProjectAddNewModalButton, ProjectEditModalButton } from './Modals/ProjectModalButtons';
 import { ProjectsFilterBody } from './ProjectsFilterBody';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { SectionNode } from '../View/Resultsets/FilterableTable/Section';
 
 export default function TasksGlobal() {
-    const [tasks, setTasks] = useState([] as Task[] | undefined);
+    const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [externalTasksUpdate, setExternalTasksUpdate] = useState(0);
     const [tasksLoaded, setTasksLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
@@ -37,10 +38,38 @@ export default function TasksGlobal() {
         fetchData();
     }, [selectedProject]);
 
+
     function handleShowProjects() {
         setShowProjects(!showProjects);
         setTasks([]);
         setExternalTasksUpdate(prevState => prevState + 1);
+    }
+
+    function makeTaskParentsLabel(task: Task) {
+        const _contract = task._parent._parent._parent;
+        const _milestone = task._parent._parent;
+        const _case = task._parent;
+
+        return `${_contract.ourId || ''} ${_contract.alias || ''} ${_contract.number || ''} | ` +
+            `${_milestone._FolderNumber_TypeName_Name || ''} |` +
+            `${_case._type.name || ''} | ${_case.name || ''}`;
+    }
+
+    function makeTableStructure() {
+        const tableStructure = [];
+        if (!showProjects) {
+            tableStructure.push(
+                { header: 'Kamień|Sprawa', renderTdBody: (task: Task) => <>{makeTaskParentsLabel(task)}</> }
+            );
+        }
+
+        tableStructure.push(
+            { header: 'Nazwa i opis', renderTdBody: (task: Task) => <>{task.name}<br />{task.description}</> },
+            { header: 'Termin', objectAttributeToShow: 'deadline' },
+            { header: 'Status', renderTdBody: (task: Task) => <TaskStatusBadge status={task.status} /> },
+            { header: 'Właściciel', renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</> },
+        );
+        return tableStructure;
     }
 
     return (
@@ -74,28 +103,14 @@ export default function TasksGlobal() {
                         {tasksLoaded ?
                             <FilterableTable<Task>
                                 title='Zadania'
+                                showTableHeader={false}
                                 initialObjects={tasks}
                                 repository={tasksRepository}
                                 AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
                                 FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
                                 EditButtonComponent={TaskGlobalEditModalButton}
-                                sectionsStructure={[
-                                    {
-                                        name: 'Kontrakty',
-                                        repository: contractsRepository,
-                                        makeTittleLabel: (contract) => contract.name,
-                                        getIdAsLeafSection: (contract) => contract.id,
-                                    },
-
-                                ]}
-                                tableStructure={[
-                                    { header: 'Kamień|Sprawa', renderTdBody: (task: Task) => <>{task._parent._typeFolderNumber_TypeName_Number_Name}</> },
-                                    { header: 'Nazwa', objectAttributeToShow: 'name' },
-                                    { header: 'Opis', objectAttributeToShow: 'description' },
-                                    { header: 'Termin', objectAttributeToShow: 'deadline' },
-                                    { header: 'Status', renderTdBody: (task: Task) => <TaskStatusBadge status={task.status} /> },
-                                    { header: 'Właściciel', renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</> },
-                                ]}
+                                sections={buildTree(tasks || [])}
+                                tableStructure={makeTableStructure()}
                                 externalUpdate={externalTasksUpdate}
 
                             />
@@ -112,4 +127,75 @@ export default function TasksGlobal() {
             </Container>
         </ContractProvider>
     );
+}
+
+type TreeNode = SectionNode<Task>;
+
+function makeContractTitleLabel(contract: OurContract | OtherContract) {
+    const manager = contract._manager as Person;
+
+    let label = 'K: ';
+    label += contract.ourId ? `${contract.ourId || ''}` : `${contract._type.name} ${contract.number}`;
+    if (contract.alias) label += ` [${contract.alias || ''}] `;
+    if (manager) label += ` ${manager.name} ${manager.surname}`;
+    return label;
+}
+
+function buildTree(tasks: Task[]): TreeNode[] {
+    const contracts: TreeNode[] = [];
+
+    for (const task of tasks) {
+        const contract = task._parent._parent._parent;
+        const milestone = task._parent._parent;
+        const caseItem = task._parent;
+
+        let contractNode = contracts.find(c => c.dataItem.id === contract.id);
+        if (!contractNode) {
+            contractNode = {
+                id: contract.id,
+                isInAccordion: true,
+                level: 1,
+                name: 'contract',
+                repository: contractsRepository,
+                dataItem: contract,
+                titleLabel: makeContractTitleLabel(contract),
+                children: [],
+            };
+            contracts.push(contractNode);
+        }
+
+        let milestoneNode = contractNode.children.find(m => m.id === milestone.id);
+        if (!milestoneNode) {
+            milestoneNode = {
+                id: milestone.id,
+                isInAccordion: true,
+                level: 2,
+                name: 'milestone',
+                repository: milestonesRepository,
+                dataItem: milestone,
+                titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
+                children: [],
+            };
+            contractNode.children.push(milestoneNode);
+        }
+
+        let caseNode = milestoneNode.children.find(c => c.id === caseItem.id);
+        if (!caseNode) {
+            caseNode = {
+                id: caseItem.id,
+                level: 3,
+                name: 'case',
+                repository: casesRepository,
+                dataItem: caseItem,
+                titleLabel: `S: ${caseItem._type.name} ${caseItem.name || ''}`,
+                children: [],
+                leafs: [],
+            };
+            milestoneNode.children.push(caseNode);
+        }
+        if (!caseNode.leafs) caseNode.leafs = [];
+        caseNode.leafs.push(task);
+    }
+
+    return contracts;
 }

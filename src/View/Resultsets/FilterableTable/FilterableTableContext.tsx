@@ -2,13 +2,13 @@ import React, { createContext } from "react";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { SectionStruture } from "./FilterableTable";
 import { RowStructure } from "./FiterableTableRow";
+import { SectionNode } from "./Section";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     objects: DataItemType[];
     repository: RepositoryReact<DataItemType>;
-    sectionsStructure: SectionStruture[];
+    sections: SectionNode<DataItemType>[];
     tableStructure: RowStructure<DataItemType>[],
     handleAddObject: (object: DataItemType) => void;
     handleEditObject: (object: DataItemType) => void;
@@ -23,7 +23,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
     objects: [],
-    sectionsStructure: [],
+    sections: [],
     repository: {} as RepositoryReact<RepositoryDataItem>,
     tableStructure: [],
     handleAddObject: () => { },
@@ -44,7 +44,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     handleAddObject,
     handleEditObject,
     handleDeleteObject,
-    sectionsStructure,
+    sections,
     tableStructure,
     selectedObjectRoute,
     activeRowId,
@@ -59,7 +59,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
         objects,
         setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
         repository,
-        sectionsStructure,
+        sections,
         tableStructure,
         handleAddObject,
         handleEditObject,

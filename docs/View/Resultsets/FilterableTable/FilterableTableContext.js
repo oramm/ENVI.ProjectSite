@@ -27,7 +27,7 @@ exports.useFilterableTableContext = exports.FilterableTableProvider = exports.Fi
 const react_1 = __importStar(require("react"));
 exports.FilterableTableContext = (0, react_1.createContext)({
     objects: [],
-    sectionsStructure: [],
+    sections: [],
     repository: {},
     tableStructure: [],
     handleAddObject: () => { },
@@ -40,13 +40,13 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     isDeletable: true,
     externalUpdate: 0,
 });
-function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sectionsStructure, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
+function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, tableStructure, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             objects,
             setObjects: setObjects,
             repository,
-            sectionsStructure,
+            sections,
             tableStructure,
             handleAddObject,
             handleEditObject,

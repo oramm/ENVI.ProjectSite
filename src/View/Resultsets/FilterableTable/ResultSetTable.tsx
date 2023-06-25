@@ -5,12 +5,14 @@ import { useFilterableTableContext } from "./FilterableTableContext";
 import { FiterableTableRow, RowStructure } from "./FiterableTableRow";
 
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
+    showTableHeader: boolean,
     onRowClick: (id: number) => void,
     onIsReadyChange?: (isReady: boolean) => void
     filteredObjects?: DataItemType[],
 }
 
 export function ResultSetTable<DataItemType extends RepositoryDataItem>({
+    showTableHeader,
     onRowClick,
     onIsReadyChange,
     filteredObjects
@@ -25,16 +27,18 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
 
     return (
         <>
-            <Table striped hover size="sm">
-                <thead>
-                    <tr>
-                        {tableStructure.map((column) => (
-                            <th key={column.renderThBody?.name || column.header}>
-                                {renderHeaderBody(column)}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
+            <Table className={objectsToShow.length > 5 ? 'table-striped' : ''} hover size="sm">
+                {showTableHeader &&
+                    <thead>
+                        <tr>
+                            {tableStructure.map((column) => (
+                                <th key={column.renderThBody?.name || column.header}>
+                                    {renderHeaderBody(column)}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                }
                 <tbody>
                     {objectsToShow.map((dataObject) => {
                         const isActive = dataObject.id === activeRowId;

@@ -29,6 +29,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterPanel_1 = require("./FilterPanel");
 const ResultSetTable_1 = require("./ResultSetTable");
+const Section_1 = require("./Section");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -40,7 +41,7 @@ const ResultSetTable_1 = require("./ResultSetTable");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, repository, sectionsStructure = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
+function FilterableTable({ title, showTableHeader = true, repository, sections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -64,7 +65,7 @@ function FilterableTable({ title, repository, sectionsStructure = [], tableStruc
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, sectionsStructure: sectionsStructure, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -86,34 +87,20 @@ function FilterableTable({ title, repository, sectionsStructure = [], tableStruc
                         objects.length,
                         "  pozycji."),
                     objects.length > 0 &&
-                        (sectionsStructure.length > 0 ?
+                        (sections?.length > 0 ?
                             react_1.default.createElement(Sections, { resulsetTableProps: {
+                                    showTableHeader: showTableHeader,
                                     onRowClick: handleRowClick,
                                     onIsReadyChange: (isReady) => { setIsReady(isReady); }
                                 } })
                             :
-                                react_1.default.createElement(ResultSetTable_1.ResultSetTable, { onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
+                                react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports.default = FilterableTable;
 function Sections({ resulsetTableProps }) {
-    const { sectionsStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    return (react_1.default.createElement(react_1.default.Fragment, null, sectionsStructure.map((section, index) => section.repository.items.map((sectionObject, index) => react_1.default.createElement(Section, { key: index, sectionLevels: [{
-                repository: section.repository,
-                dataItem: sectionObject,
-                parentIdGetter: section.getParentId,
-                titleLabel: section.makeTittleLabel(sectionObject),
-            }], resulsetTableProps: { ...resulsetTableProps } })))));
-}
-function Section({ sectionLevels, resulsetTableProps }) {
-    const { objects } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const leafSection = sectionLevels[sectionLevels.length - 1];
-    const filteredObjects = objects.filter(object => object.id === leafSection.dataItem.id);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionLevels.map((section, index) => {
-            const fontSize = `${2 - (index * 0.2)}rem`;
-            return (react_1.default.createElement("div", { key: index, style: { fontSize: fontSize } }, section.titleLabel));
-        }),
-        react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: filteredObjects })));
+    const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.name, bg: 'light', border: 'light', style: { marginTop: '10px' } },
+        react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.name, sectionNode: section, resulsetTableProps: resulsetTableProps })))));
 }
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);

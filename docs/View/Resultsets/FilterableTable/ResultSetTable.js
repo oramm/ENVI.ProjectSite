@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FiterableTableRow_1 = require("./FiterableTableRow");
-function ResultSetTable({ onRowClick, onIsReadyChange, filteredObjects }) {
+function ResultSetTable({ showTableHeader, onRowClick, onIsReadyChange, filteredObjects }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
@@ -36,9 +36,10 @@ function ResultSetTable({ onRowClick, onIsReadyChange, filteredObjects }) {
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm" },
-            react_1.default.createElement("thead", null,
-                react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
+        react_1.default.createElement(react_bootstrap_1.Table, { className: objectsToShow.length > 5 ? 'table-striped' : '', hover: true, size: "sm" },
+            showTableHeader &&
+                react_1.default.createElement("thead", null,
+                    react_1.default.createElement("tr", null, tableStructure.map((column) => (react_1.default.createElement("th", { key: column.renderThBody?.name || column.header }, renderHeaderBody(column)))))),
             react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
                 const isActive = dataObject.id === activeRowId;
                 return (react_1.default.createElement(FiterableTableRow_1.FiterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onIsReadyChange: onIsReadyChange, onRowClick: onRowClick }));

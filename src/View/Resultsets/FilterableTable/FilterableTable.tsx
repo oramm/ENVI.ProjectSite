@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card, Accordion } from 'react-bootstrap';
 import RepositoryReact from '../../../React/RepositoryReact';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
-import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
 import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 import { FilterableTableProvider, useFilterableTableContext } from './FilterableTableContext';
 import { FilterBodyProps, FilterPanel } from './FilterPanel';
 import { ResultSetTable, ResultSetTableProps } from './ResultSetTable';
 import { RowStructure } from './FiterableTableRow';
+import { Section, SectionNode } from './Section';
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     title: string,
-    sectionsStructure?: SectionStruture[],
+    showTableHeader?: boolean,
+    sections?: SectionNode<DataItemType>[],
     tableStructure: RowStructure<DataItemType>[],
     repository: RepositoryReact<DataItemType>,
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
@@ -38,8 +39,9 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
  */
 export default function FilterableTable<DataItemType extends RepositoryDataItem>({
     title,
+    showTableHeader = true,
     repository,
-    sectionsStructure = [],
+    sections = [],
     tableStructure,
     AddNewButtonComponents = [],
     EditButtonComponent,
@@ -83,7 +85,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
             objects={objects}
             activeRowId={activeRowId}
             repository={repository}
-            sectionsStructure={sectionsStructure}
+            sections={sections}
             tableStructure={tableStructure}//as RowStructure<RepositoryDataItem>[]}
             handleAddObject={handleAddObject}//as (object: RepositoryDataItem) => void}
             handleEditObject={handleEditObject}// as (object: RepositoryDataItem) => void}
@@ -131,15 +133,17 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                             Znaleziono: {objects.length}  pozycji.
                         </p>
                         {objects.length > 0 &&
-                            (sectionsStructure.length > 0 ?
+                            (sections?.length > 0 ?
                                 <Sections
                                     resulsetTableProps={{
+                                        showTableHeader: showTableHeader,
                                         onRowClick: handleRowClick,
                                         onIsReadyChange: (isReady) => { setIsReady(isReady) }
                                     }}
                                 />
                                 :
                                 < ResultSetTable<DataItemType>
+                                    showTableHeader={showTableHeader}
                                     onRowClick={handleRowClick}
                                     onIsReadyChange={(isReady) => { setIsReady(isReady); }}
                                 />
@@ -151,32 +155,6 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     );
 }
 
-/** Struktura danej sekcji 
- * @param SectionStructure.repository - repozytorium z danymi
- * @param SectionStructure.getParentId - zwraca id rodzica sekcji
- * @param SectionStructure.getIdAsLeafSection - zwraca id sekcji, z poziomu tabeli z pozycjami
- * @param SectionStructure.makeTittleLabel - zwraca tytuł sekcji
- */
-export type SectionStruture = {
-    name: string,
-    repository: RepositoryReact,
-    getParentId?: (item: RepositoryDataItem) => number | string,
-    getIdAsLeafSection: (item: RepositoryDataItem) => number | string,
-    makeTittleLabel: (item: RepositoryDataItem) => string,
-};
-
-type SectionLevel = {
-    repository: RepositoryReact,
-    dataItem: RepositoryDataItem,
-    titleLabel: string,
-    parentIdGetter?: (item: RepositoryDataItem) => number | string,
-};
-
-export type SectionProps<DataItemType extends RepositoryDataItem> = {
-    sectionLevels: SectionLevel[],
-    resulsetTableProps: ResultSetTableProps<DataItemType>,
-}
-
 export type SectionsProps<DataItemType extends RepositoryDataItem> = {
     resulsetTableProps: ResultSetTableProps<DataItemType>,
 }
@@ -184,48 +162,24 @@ export type SectionsProps<DataItemType extends RepositoryDataItem> = {
 function Sections<DataItemType extends RepositoryDataItem>({
     resulsetTableProps
 }: SectionsProps<DataItemType>) {
-    const { sectionsStructure } = useFilterableTableContext<DataItemType>();
+    const { sections } = useFilterableTableContext<DataItemType>();
 
     return (
         <>
-            {sectionsStructure.map((section, index) =>
-                section.repository.items.map((sectionObject, index) =>
+            {sections.map((section, index) =>
+                <Card
+                    key={section.dataItem.id + section.name}
+                    bg='light'
+                    border='light'
+                    style={{ marginTop: '10px' }}
+                >
                     <Section<DataItemType>
-                        key={index}
-                        sectionLevels={[{
-                            repository: section.repository,
-                            dataItem: sectionObject,
-                            parentIdGetter: section.getParentId,
-                            titleLabel: section.makeTittleLabel(sectionObject),
-                        }]}
-                        resulsetTableProps={{ ...resulsetTableProps }}
+                        key={section.dataItem.id + section.name}
+                        sectionNode={section}
+                        resulsetTableProps={resulsetTableProps}
                     />
-                )
+                </Card>
             )}
-        </>
-    );
-}
-
-function Section<DataItemType extends RepositoryDataItem>({ sectionLevels, resulsetTableProps }: SectionProps<DataItemType>) {
-    const { objects } = useFilterableTableContext<DataItemType>();
-    const leafSection = sectionLevels[sectionLevels.length - 1];
-    const filteredObjects = objects.filter(object => object.id === leafSection.dataItem.id);
-
-    return (
-        <>
-            {sectionLevels.map((section, index) => {
-                const fontSize = `${2 - (index * 0.2)}rem`;
-                return (
-                    <div key={index} style={{ fontSize: fontSize }}>
-                        {section.titleLabel}
-                    </div>
-                );
-            })}
-
-            <ResultSetTable<DataItemType>
-                {...resulsetTableProps}
-                filteredObjects={filteredObjects}
-            />
         </>
     );
 }

@@ -89,13 +89,6 @@ function RowActionMenu<DataItemType extends RepositoryDataItem>({
     );
 }
 
-export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    header?: string,
-    objectAttributeToShow?: string,
-    renderTdBody?: (dataItem: DataItemType) => JSX.Element
-    renderThBody?: () => JSX.Element
-};
-
 export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps<DataItemType>) {
 
@@ -113,3 +106,10 @@ export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
         />
     );
 }
+
+export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    header?: string,
+    objectAttributeToShow?: string,
+    renderTdBody?: (dataItem: DataItemType) => JSX.Element
+    renderThBody?: () => JSX.Element
+};

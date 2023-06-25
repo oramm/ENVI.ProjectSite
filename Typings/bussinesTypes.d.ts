@@ -31,6 +31,7 @@ export interface Project extends RepositoryDataItem {
 
 export interface Contract extends RepositoryDataItem {
     name: string;
+    number: string;
     alias: string;
     comment: string;
     startDate: string;
@@ -66,7 +67,8 @@ export interface Milestone extends RepositoryDataItem {
     startDate: string;
     endDate: string;
     gdFolderId: string;
-    _parent: Contract;
+    _type: MilestoneType;
+    _parent: OurContract | OtherContract;
     _FolderNumber_TypeName_Name: string;
     _folderName: string;
     _gdFolderUrl: string;
