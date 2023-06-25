@@ -98,7 +98,7 @@ function TasksGlobal() {
                         react_1.default.createElement("div", { onClick: handleShowProjects },
                             react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
                     tasksLoaded ?
-                        react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', showTableHeader: false, initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, sections: buildTree(tasks || []), tableStructure: makeTableStructure(), externalUpdate: externalTasksUpdate })
+                        react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', showTableHeader: false, initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(tasks || []), tableStructure: makeTableStructure(), externalUpdate: externalTasksUpdate })
                         :
                             react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement("p", null, "\u0141aduj\u0119 zadania dla projektu:"),
@@ -141,7 +141,7 @@ function buildTree(tasks) {
         if (!milestoneNode) {
             milestoneNode = {
                 id: milestone.id,
-                isInAccordion: true,
+                isInAccordion: false,
                 level: 2,
                 name: 'milestone',
                 repository: TasksGlobalController_1.milestonesRepository,

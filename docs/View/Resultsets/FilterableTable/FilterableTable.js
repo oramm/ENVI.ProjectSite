@@ -41,9 +41,10 @@ const Section_1 = require("./Section");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, showTableHeader = true, repository, sections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
+function FilterableTable({ title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
+    const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
     (0, react_1.useEffect)(() => {
         setObjects(initialObjects);
@@ -56,6 +57,8 @@ function FilterableTable({ title, showTableHeader = true, repository, sections =
     }
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
+    }
+    function handleDeleteSection(id) {
     }
     function handleRowClick(id) {
         setActiveRowId(id);
@@ -87,7 +90,7 @@ function FilterableTable({ title, showTableHeader = true, repository, sections =
                         objects.length,
                         "  pozycji."),
                     objects.length > 0 &&
-                        (sections?.length > 0 ?
+                        (initialSections?.length > 0 ?
                             react_1.default.createElement(Sections, { resulsetTableProps: {
                                     showTableHeader: showTableHeader,
                                     onRowClick: handleRowClick,

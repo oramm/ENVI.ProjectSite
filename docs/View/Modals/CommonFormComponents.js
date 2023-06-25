@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileInput = exports.FileInput1 = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -346,19 +346,6 @@ exports.valueValidation = Yup.string()
     const parsedValue = parseFloat(value.replace(/[^0-9.]/g, '').replace(',', '.'));
     return parsedValue < 9999999999;
 });
-/**Pole dodawania plików
- * @param name nazwa pola w formularzu
- * @param required czy pole jest wymagane
- * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub
- * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
- */
-function FileInput1({ name, required = false, acceptedFileTypes = '', multiple = true }) {
-    const { register, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { ...register(name), type: "file", required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple }),
-        react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
-}
-exports.FileInput1 = FileInput1;
 function FileInput({ name, required = false, acceptedFileTypes = '', multiple = true }) {
     const { control, formState: { errors } } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -371,3 +358,9 @@ function FileInput({ name, required = false, acceptedFileTypes = '', multiple = 
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
 exports.FileInput = FileInput;
+function RadioButtonGroup({ name, options }) {
+    const { control } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, defaultValue: options[0].value, rules: { required: true }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.ButtonGroup, null, options.map((radio, idx) => (react_1.default.createElement(react_bootstrap_1.ToggleButton, { key: idx, id: `radio-${idx}`, type: "radio", variant: 'outline-secondary', name: "radio", value: radio.value, checked: field.value === radio.value, onChange: () => field.onChange(radio.value) }, radio.name))))) }));
+}
+exports.RadioButtonGroup = RadioButtonGroup;
+;

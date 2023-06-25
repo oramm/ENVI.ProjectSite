@@ -13,7 +13,7 @@ import { Section, SectionNode } from './Section';
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     title: string,
     showTableHeader?: boolean,
-    sections?: SectionNode<DataItemType>[],
+    initialSections?: SectionNode<DataItemType>[],
     tableStructure: RowStructure<DataItemType>[],
     repository: RepositoryReact<DataItemType>,
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
@@ -41,7 +41,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     title,
     showTableHeader = true,
     repository,
-    sections = [],
+    initialSections = [],
     tableStructure,
     AddNewButtonComponents = [],
     EditButtonComponent,
@@ -55,7 +55,9 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 }: FilterableTableProps<DataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
+    const [sections, setSections] = useState(initialSections as SectionNode<DataItemType>[]);
     const [objects, setObjects] = useState(initialObjects as DataItemType[]);
+
 
     useEffect(() => {
         setObjects(initialObjects);
@@ -71,6 +73,10 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 
     function handleDeleteObject(objectId: number) {
         setObjects(objects.filter((o) => o.id !== objectId));
+    }
+
+    function handleDeleteSection(id: number) {
+
     }
 
     function handleRowClick(id: number) {
@@ -133,7 +139,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                             Znaleziono: {objects.length}  pozycji.
                         </p>
                         {objects.length > 0 &&
-                            (sections?.length > 0 ?
+                            (initialSections?.length > 0 ?
                                 <Sections
                                     resulsetTableProps={{
                                         showTableHeader: showTableHeader,

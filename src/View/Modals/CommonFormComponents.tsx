@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Form, InputGroup } from "react-bootstrap";
+import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
 import { AsyncTypeahead, Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { RenderMenuItemChildren } from 'react-bootstrap-typeahead/types/components/TypeaheadMenu';
@@ -664,7 +664,6 @@ export function ValueInPLNInput({
     );
 }
 
-
 export const valueValidation = Yup.string()
     .typeError('Wartość jest wymagana')
     .required('Wartość jest wymagana')
@@ -679,36 +678,6 @@ type FileInputProps = {
     required?: boolean;
     acceptedFileTypes?: string;
     multiple?: boolean;
-}
-
-/**Pole dodawania plików
- * @param name nazwa pola w formularzu
- * @param required czy pole jest wymagane
- * @param acceptedFileTypes typy plików dozwolone do dodania np. "image/*" lub 
- * "image/png, image/jpeg, application/msword, application/vnd.ms-excel, application/pdf"
- */
-export function FileInput1({
-    name,
-    required = false,
-    acceptedFileTypes = '',
-    multiple = true
-}: FileInputProps) {
-    const { register, watch, setValue, formState: { errors } } = useFormContext();
-
-    return (
-        <>
-            <Form.Control
-                {...register(name)}
-                type="file"
-                required={required}
-                accept={acceptedFileTypes}
-                isInvalid={!!errors[name]}
-                isValid={!errors[name]}
-                multiple={multiple}
-            />
-            <ErrorMessage name={name} errors={errors} />
-        </>
-    );
 }
 
 export function FileInput({
@@ -748,3 +717,39 @@ export function FileInput({
         </>
     );
 }
+
+interface RadioButtonGroupProps {
+    name: string;
+    options: { name: string, value: string }[];
+}
+
+export function RadioButtonGroup({ name, options }: RadioButtonGroupProps) {
+    const { control } = useFormContext();
+
+    return (
+        <Controller
+            name={name}
+            control={control}
+            defaultValue={options[0].value}
+            rules={{ required: true }}
+            render={({ field }) => (
+                <ButtonGroup>
+                    {options.map((radio, idx) => (
+                        <ToggleButton
+                            key={idx}
+                            id={`radio-${idx}`}
+                            type="radio"
+                            variant={'outline-secondary'}
+                            name="radio"
+                            value={radio.value}
+                            checked={field.value === radio.value}
+                            onChange={() => field.onChange(radio.value)}
+                        >
+                            {radio.name}
+                        </ToggleButton>
+                    ))}
+                </ButtonGroup>
+            )}
+        />
+    );
+};

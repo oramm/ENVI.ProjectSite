@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Section = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const FiterableTableRow_1 = require("./FiterableTableRow");
 const ResultSetTable_1 = require("./ResultSetTable");
 function Section({ sectionNode, resulsetTableProps, }) {
     return (sectionNode.isInAccordion ?
@@ -34,7 +35,12 @@ function SectionHeader({ sectionNode }) {
         console.log('handleClick', sectionNode.dataItem);
         sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
     }
-    return react_1.default.createElement("div", { onClick: handleClick, key: sectionNode.name, style: makeTitleStyle(sectionNode.level) }, sectionNode.titleLabel);
+    function handleDeleteObject() {
+    }
+    return (react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', background: 'aliceblue' } },
+        react_1.default.createElement("div", { onClick: handleClick, key: sectionNode.name, style: makeTitleStyle(sectionNode.level) }, sectionNode.titleLabel),
+        react_1.default.createElement("div", null,
+            react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true }))));
 }
 function SectionBody({ sectionNode, resulsetTableProps }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,

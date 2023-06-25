@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
-import { SpecificDeleteModalButtonProps } from '../../Modals/ModalsTypes';
+import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { GDDocFileIconLink, GDFolderIconLink } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 
@@ -23,6 +23,12 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
     if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
     const navigate = useNavigate();
     const { selectedObjectRoute, tableStructure } = useFilterableTableContext<DataItemType>();
+    const {
+        handleEditObject,
+        handleDeleteObject,
+        EditButtonComponent,
+        isDeletable
+    } = useFilterableTableContext<DataItemType>();
 
     function tdBodyRender(columStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
         if (columStructure.objectAttributeToShow !== undefined)
@@ -47,7 +53,13 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
             ))}
             {isActive &&
                 <td align='center'>
-                    <RowActionMenu dataObject={dataObject} />
+                    <RowActionMenu
+                        dataObject={dataObject}
+                        handleEditObject={handleEditObject}
+                        EditButtonComponent={EditButtonComponent}
+                        handleDeleteObject={handleDeleteObject}
+                        isDeletable={isDeletable}
+                    />
                 </td>
             }
         </tr>
@@ -56,17 +68,20 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
 
 interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     dataObject: DataItemType;
+    handleEditObject?: (object: DataItemType) => void
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>> | undefined
+    handleDeleteObject?: (objectId: number) => void
+    isDeletable: boolean
 }
 
-function RowActionMenu<DataItemType extends RepositoryDataItem>({
+export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     dataObject,
+    handleEditObject,
+    EditButtonComponent,
+    handleDeleteObject,
+    isDeletable,
 }: RowActionMenuProps<DataItemType>) {
-    const {
-        handleEditObject,
-        handleDeleteObject,
-        EditButtonComponent,
-        isDeletable
-    } = useFilterableTableContext<DataItemType>();
+
     return (
         <>
             {dataObject._gdFolderUrl && (
@@ -75,12 +90,12 @@ function RowActionMenu<DataItemType extends RepositoryDataItem>({
             {dataObject._documentOpenUrl && (
                 <GDDocFileIconLink folderUrl={dataObject._documentOpenUrl} />
             )}
-            {EditButtonComponent && (
+            {EditButtonComponent && handleEditObject && (
                 <EditButtonComponent
                     modalProps={{ onEdit: handleEditObject, initialData: dataObject, }}
                 />
             )}
-            {isDeletable && (
+            {isDeletable && handleDeleteObject && (
                 <DeleteModalButton
                     modalProps={{ onDelete: handleDeleteObject, initialData: dataObject }}
                 />

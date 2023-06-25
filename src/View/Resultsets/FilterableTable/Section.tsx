@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Accordion } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
+import { RowActionMenu } from './FiterableTableRow';
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
@@ -68,13 +69,28 @@ function SectionHeader({ sectionNode }: { sectionNode: SectionNode<RepositoryDat
         sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
     }
 
-    return <div
-        onClick={handleClick}
-        key={sectionNode.name}
-        style={makeTitleStyle(sectionNode.level)}
-    >
-        {sectionNode.titleLabel}
-    </div>;
+    function handleDeleteObject() {
+
+    }
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', background: 'aliceblue' }}>
+            <div
+                onClick={handleClick}
+                key={sectionNode.name}
+                style={makeTitleStyle(sectionNode.level)}
+            >
+                {sectionNode.titleLabel}
+            </div>
+            <div>
+                <RowActionMenu
+                    dataObject={sectionNode.dataItem}
+                    isDeletable={true}
+                />
+            </div>
+        </div>
+    );
+
 }
 
 function SectionBody<DataItemType extends RepositoryDataItem>({

@@ -109,7 +109,7 @@ export default function TasksGlobal() {
                                 AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
                                 FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
                                 EditButtonComponent={TaskGlobalEditModalButton}
-                                sections={buildTree(tasks || [])}
+                                initialSections={buildTree(tasks || [])}
                                 tableStructure={makeTableStructure()}
                                 externalUpdate={externalTasksUpdate}
 
@@ -168,7 +168,7 @@ function buildTree(tasks: Task[]): TreeNode[] {
         if (!milestoneNode) {
             milestoneNode = {
                 id: milestone.id,
-                isInAccordion: true,
+                isInAccordion: false,
                 level: 2,
                 name: 'milestone',
                 repository: milestonesRepository,
