@@ -45,6 +45,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
+    const [activeSectionId, setActiveSectionId] = (0, react_1.useState)('');
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
     (0, react_1.useEffect)(() => {
         setObjects(initialObjects);
@@ -60,6 +61,10 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
     }
     function handleDeleteSection(id) {
     }
+    function handleHeaderClick(sectionNode) {
+        setActiveSectionId(sectionNode.id);
+        console.log('handleHeaderClick', sectionNode.dataItem);
+    }
     function handleRowClick(id) {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
@@ -68,7 +73,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -91,7 +96,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
                         "  pozycji."),
                     objects.length > 0 &&
                         (initialSections?.length > 0 ?
-                            react_1.default.createElement(Sections, { resulsetTableProps: {
+                            react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                                     showTableHeader: showTableHeader,
                                     onRowClick: handleRowClick,
                                     onIsReadyChange: (isReady) => { setIsReady(isReady); }
@@ -100,10 +105,12 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
                                 react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports.default = FilterableTable;
-function Sections({ resulsetTableProps }) {
+function Sections({ resulsetTableProps, onClick }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.name, bg: 'light', border: 'light', style: { marginTop: '10px' } },
-        react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.name, sectionNode: section, resulsetTableProps: resulsetTableProps })))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.name, bg: 'light', border: 'light', style: { marginTop: '10px' } },
+            react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.name, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
+    })));
 }
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);

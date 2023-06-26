@@ -69,7 +69,7 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
 interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     dataObject: DataItemType;
     handleEditObject?: (object: DataItemType) => void
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>> | undefined
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>
     handleDeleteObject?: (objectId: number) => void
     isDeletable: boolean
 }

@@ -1,50 +1,77 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Section = void 0;
-const react_1 = __importDefault(require("react"));
+const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const FilterableTableContext_1 = require("./FilterableTableContext");
 const FiterableTableRow_1 = require("./FiterableTableRow");
 const ResultSetTable_1 = require("./ResultSetTable");
-function Section({ sectionNode, resulsetTableProps, }) {
+require("./FilterableTable.css");
+function Section({ sectionNode, resulsetTableProps, onClick }) {
+    const { activeSectionId } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
+    (0, react_1.useEffect)(() => {
+        setIsActive(activeSectionId === sectionNode.id);
+    }, [activeSectionId, sectionNode.id]);
     return (sectionNode.isInAccordion ?
         react_1.default.createElement(react_bootstrap_1.Accordion, { key: sectionNode.name, alwaysOpen: true, defaultActiveKey: ['0'] },
             react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
                 react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
-                    react_1.default.createElement(SectionHeader, { sectionNode: sectionNode })),
+                    react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),
                 react_1.default.createElement(react_bootstrap_1.Accordion.Body, null,
-                    react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode }))))
+                    react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick }))))
         :
             react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode }),
-                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode })));
+                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick }),
+                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick })));
 }
 exports.Section = Section;
-function SectionHeader({ sectionNode }) {
-    function makeTitleStyle(nodeLevel) {
+function SectionHeader({ sectionNode, onClick, isActive }) {
+    function makeTitleClassName() {
+        const classSuffix = sectionNode.level === 1 ? '1' : 'x';
+        let name = `section-title-level-${classSuffix}`;
+        return name;
+    }
+    function makeSectionStyle() {
         return {
-            //marginTop: nodeLevel === 1 ? '35px' : undefined,
-            fontSize: nodeLevel === 1 ? '1.5rem' : '1rem',
-            fontWeight: 600 - nodeLevel * 100,
-            color: `rgb(${50}, ${130}, ${50})`
+            display: 'flex',
+            alignItems: 'center',
+            background: !sectionNode.isInAccordion ? 'aliceblue' : undefined,
         };
     }
-    function handleClick() {
-        console.log('handleClick', sectionNode.dataItem);
-        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
-    }
-    function handleDeleteObject() {
-    }
-    return (react_1.default.createElement("div", { style: { display: 'flex', alignItems: 'center', background: 'aliceblue' } },
-        react_1.default.createElement("div", { onClick: handleClick, key: sectionNode.name, style: makeTitleStyle(sectionNode.level) }, sectionNode.titleLabel),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true }))));
+    return (react_1.default.createElement("div", { style: makeSectionStyle() },
+        react_1.default.createElement("div", { className: (isActive ? 'active ' : '') + makeTitleClassName(), onClick: () => onClick(sectionNode), key: sectionNode.id }, sectionNode.titleLabel),
+        isActive ?
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent }))
+            : null));
 }
-function SectionBody({ sectionNode, resulsetTableProps }) {
+function SectionBody({ sectionNode, resulsetTableProps, onClick }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.name, sectionNode: childNode, resulsetTableProps: resulsetTableProps })),
+        sectionNode.children.map((childNode, index) => react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.name, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick })),
         sectionNode.leafs &&
             react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leafs })));
 }

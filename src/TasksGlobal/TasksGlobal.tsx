@@ -12,6 +12,7 @@ import { ProjectsFilterBody } from './ProjectsFilterBody';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { SectionNode } from '../View/Resultsets/FilterableTable/Section';
+import { ContractEditModalButton } from '../Contracts/ContractsList/Modals/ContractModalButtons';
 
 export default function TasksGlobal() {
     const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -129,8 +130,6 @@ export default function TasksGlobal() {
     );
 }
 
-type TreeNode = SectionNode<Task>;
-
 function makeContractTitleLabel(contract: OurContract | OtherContract) {
     const manager = contract._manager as Person;
 
@@ -141,9 +140,9 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
     return label;
 }
 
-function buildTree(tasks: Task[]): TreeNode[] {
-    const contracts: TreeNode[] = [];
-
+function buildTree(tasks: Task[]): SectionNode<Task>[] {
+    const contracts: SectionNode<Task>[] = [];
+    console.log('buildTree start');
     for (const task of tasks) {
         const contract = task._parent._parent._parent;
         const milestone = task._parent._parent;
@@ -151,26 +150,30 @@ function buildTree(tasks: Task[]): TreeNode[] {
 
         let contractNode = contracts.find(c => c.dataItem.id === contract.id);
         if (!contractNode) {
+            const nodeName = 'contract';
             contractNode = {
-                id: contract.id,
+                id: nodeName + contract.id,
                 isInAccordion: true,
                 level: 1,
-                name: 'contract',
+                name: nodeName,
                 repository: contractsRepository,
                 dataItem: contract,
                 titleLabel: makeContractTitleLabel(contract),
                 children: [],
+                EditButtonComponent: ContractEditModalButton,
             };
             contracts.push(contractNode);
         }
 
-        let milestoneNode = contractNode.children.find(m => m.id === milestone.id);
+        const milestoneNodeName = 'milestone';
+        let milestoneNode = contractNode.children.find(m => m.id === milestoneNodeName + milestone.id);
         if (!milestoneNode) {
+
             milestoneNode = {
-                id: milestone.id,
+                id: milestoneNodeName + milestone.id,
                 isInAccordion: false,
                 level: 2,
-                name: 'milestone',
+                name: milestoneNodeName,
                 repository: milestonesRepository,
                 dataItem: milestone,
                 titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
@@ -179,10 +182,11 @@ function buildTree(tasks: Task[]): TreeNode[] {
             contractNode.children.push(milestoneNode);
         }
 
-        let caseNode = milestoneNode.children.find(c => c.id === caseItem.id);
+        const caseNodeName = 'case';
+        let caseNode = milestoneNode.children.find(c => c.id === caseNodeName + caseItem.id);
         if (!caseNode) {
             caseNode = {
-                id: caseItem.id,
+                id: caseNodeName + caseItem.id,
                 level: 3,
                 name: 'case',
                 repository: casesRepository,

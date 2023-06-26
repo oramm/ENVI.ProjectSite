@@ -2,92 +2,132 @@ import React, { useEffect, useState } from 'react';
 import { Accordion } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
+import { SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
+import { useFilterableTableContext } from './FilterableTableContext';
 import { RowActionMenu } from './FiterableTableRow';
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
+import './FilterableTable.css'
 
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
  * @param SectionNode.repository - repozytorium z danymi
  * @param SectionNode.dataItem - obiekt z danymi sekcji
  * @param SectionNode.titleLabel - tytuł sekcji
  */
-export type SectionNode<DataItemType extends RepositoryDataItem> = {
-    id: number,
+export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
+    id: string,
     level: number,
     name: string,
     repository: RepositoryReact,
     dataItem: RepositoryDataItem,
     titleLabel: string,
-    children: SectionNode<DataItemType>[],
-    leafs?: DataItemType[],
+    children: SectionNode<LeafDataItemType>[],
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>
+    leafs?: LeafDataItemType[],
     isInAccordion?: boolean,
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>,
     resulsetTableProps: ResultSetTableProps<DataItemType>,
+    onClick: (sectionNode: SectionNode<DataItemType>) => void
 }
 
 export function Section<DataItemType extends RepositoryDataItem>({
     sectionNode,
     resulsetTableProps,
+    onClick
 }: SectionProps<DataItemType>) {
+    const { activeSectionId } = useFilterableTableContext<DataItemType>();
+    const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
+
+    useEffect(() => {
+        setIsActive(activeSectionId === sectionNode.id);
+    }, [activeSectionId, sectionNode.id]);
+
 
     return (
         sectionNode.isInAccordion ?
             <Accordion key={sectionNode.name} alwaysOpen defaultActiveKey={['0']}>
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>
-                        <SectionHeader sectionNode={sectionNode} />
+                        <SectionHeader
+                            sectionNode={sectionNode}
+                            isActive={isActive}
+                            onClick={onClick}
+                        />
                     </Accordion.Header>
                     <Accordion.Body>
-                        <SectionBody resulsetTableProps={resulsetTableProps} sectionNode={sectionNode} />
+                        <SectionBody
+                            resulsetTableProps={resulsetTableProps}
+                            sectionNode={sectionNode}
+                            onClick={onClick}
+                        />
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
             :
             <>
-                <SectionHeader sectionNode={sectionNode} />
-                <SectionBody resulsetTableProps={resulsetTableProps} sectionNode={sectionNode} />
+                <SectionHeader
+                    sectionNode={sectionNode}
+                    isActive={isActive}
+                    onClick={onClick}
+                />
+                <SectionBody
+                    resulsetTableProps={resulsetTableProps}
+                    sectionNode={sectionNode}
+                    onClick={onClick}
+                />
             </>
     );
-
-
+}
+type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
+    sectionNode: SectionNode<DataItemType>,
+    onClick: (sectionNode: SectionNode<DataItemType>) => void,
+    isActive: boolean,
 }
 
-function SectionHeader({ sectionNode }: { sectionNode: SectionNode<RepositoryDataItem> }) {
-    function makeTitleStyle(nodeLevel: number) {
+function SectionHeader<DataItemType extends RepositoryDataItem>({
+    sectionNode,
+    onClick,
+    isActive
+}: SectionHeaderProps<DataItemType>) {
+
+    function makeTitleClassName() {
+        const classSuffix = sectionNode.level === 1 ? '1' : 'x';
+        let name = `section-title-level-${classSuffix}`;
+
+        return name;
+    }
+
+    function makeSectionStyle() {
         return {
-            //marginTop: nodeLevel === 1 ? '35px' : undefined,
-            fontSize: nodeLevel === 1 ? '1.5rem' : '1rem',
-            fontWeight: 600 - nodeLevel * 100,
-            color: `rgb(${50}, ${130}, ${50})`
+            display: 'flex',
+            alignItems: 'center',
+            background: !sectionNode.isInAccordion ? 'aliceblue' : undefined,
         }
     }
 
-    function handleClick() {
-        console.log('handleClick', sectionNode.dataItem);
-        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
-    }
-
-    function handleDeleteObject() {
-
-    }
-
     return (
-        <div style={{ display: 'flex', alignItems: 'center', background: 'aliceblue' }}>
+        <div style={makeSectionStyle()}>
             <div
-                onClick={handleClick}
-                key={sectionNode.name}
-                style={makeTitleStyle(sectionNode.level)}
+                className={(isActive ? 'active ' : '') + makeTitleClassName()}
+                onClick={() => onClick(sectionNode)}
+                key={sectionNode.id}
+
             >
                 {sectionNode.titleLabel}
             </div>
-            <div>
-                <RowActionMenu
-                    dataObject={sectionNode.dataItem}
-                    isDeletable={true}
-                />
-            </div>
+            {isActive ?
+                <div>
+                    <RowActionMenu
+                        dataObject={sectionNode.dataItem}
+                        isDeletable={true}
+                        EditButtonComponent={sectionNode.EditButtonComponent}
+
+                    />
+                </div>
+                : null
+            }
         </div>
     );
 
@@ -95,7 +135,8 @@ function SectionHeader({ sectionNode }: { sectionNode: SectionNode<RepositoryDat
 
 function SectionBody<DataItemType extends RepositoryDataItem>({
     sectionNode,
-    resulsetTableProps
+    resulsetTableProps,
+    onClick
 }: SectionProps<DataItemType>) {
     return (
         <>
@@ -104,6 +145,7 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
                     key={childNode.dataItem.id + childNode.name}
                     sectionNode={childNode}
                     resulsetTableProps={resulsetTableProps}
+                    onClick={onClick}
                 />
             )}
 

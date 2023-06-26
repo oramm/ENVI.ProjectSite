@@ -38,6 +38,7 @@ const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
 const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const ContractModalButtons_1 = require("../Contracts/ContractsList/Modals/ContractModalButtons");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]); //undefined żeby pasowało do typu danych w ContractProvider
     const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
@@ -119,31 +120,35 @@ function makeContractTitleLabel(contract) {
 }
 function buildTree(tasks) {
     const contracts = [];
+    console.log('buildTree start');
     for (const task of tasks) {
         const contract = task._parent._parent._parent;
         const milestone = task._parent._parent;
         const caseItem = task._parent;
         let contractNode = contracts.find(c => c.dataItem.id === contract.id);
         if (!contractNode) {
+            const nodeName = 'contract';
             contractNode = {
-                id: contract.id,
+                id: nodeName + contract.id,
                 isInAccordion: true,
                 level: 1,
-                name: 'contract',
+                name: nodeName,
                 repository: TasksGlobalController_1.contractsRepository,
                 dataItem: contract,
                 titleLabel: makeContractTitleLabel(contract),
                 children: [],
+                EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
             };
             contracts.push(contractNode);
         }
-        let milestoneNode = contractNode.children.find(m => m.id === milestone.id);
+        const milestoneNodeName = 'milestone';
+        let milestoneNode = contractNode.children.find(m => m.id === milestoneNodeName + milestone.id);
         if (!milestoneNode) {
             milestoneNode = {
-                id: milestone.id,
+                id: milestoneNodeName + milestone.id,
                 isInAccordion: false,
                 level: 2,
-                name: 'milestone',
+                name: milestoneNodeName,
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
                 titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
@@ -151,10 +156,11 @@ function buildTree(tasks) {
             };
             contractNode.children.push(milestoneNode);
         }
-        let caseNode = milestoneNode.children.find(c => c.id === caseItem.id);
+        const caseNodeName = 'case';
+        let caseNode = milestoneNode.children.find(c => c.id === caseNodeName + caseItem.id);
         if (!caseNode) {
             caseNode = {
-                id: caseItem.id,
+                id: caseNodeName + caseItem.id,
                 level: 3,
                 name: 'case',
                 repository: TasksGlobalController_1.casesRepository,

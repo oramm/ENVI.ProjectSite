@@ -56,6 +56,8 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [sections, setSections] = useState(initialSections as SectionNode<DataItemType>[]);
+    const [activeSectionId, setActiveSectionId] = useState('');
+
     const [objects, setObjects] = useState(initialObjects as DataItemType[]);
 
 
@@ -79,6 +81,11 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 
     }
 
+    function handleHeaderClick(sectionNode: SectionNode<DataItemType>) {
+        setActiveSectionId(sectionNode.id);
+        console.log('handleHeaderClick', sectionNode.dataItem);
+    }
+
     function handleRowClick(id: number) {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
@@ -90,6 +97,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
         <FilterableTableProvider<DataItemType>
             objects={objects}
             activeRowId={activeRowId}
+            activeSectionId={activeSectionId}
             repository={repository}
             sections={sections}
             tableStructure={tableStructure}//as RowStructure<RepositoryDataItem>[]}
@@ -141,6 +149,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                         {objects.length > 0 &&
                             (initialSections?.length > 0 ?
                                 <Sections
+                                    onClick={handleHeaderClick}
                                     resulsetTableProps={{
                                         showTableHeader: showTableHeader,
                                         onRowClick: handleRowClick,
@@ -148,7 +157,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                                     }}
                                 />
                                 :
-                                < ResultSetTable<DataItemType>
+                                <ResultSetTable<DataItemType>
                                     showTableHeader={showTableHeader}
                                     onRowClick={handleRowClick}
                                     onIsReadyChange={(isReady) => { setIsReady(isReady); }}
@@ -163,29 +172,33 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 
 export type SectionsProps<DataItemType extends RepositoryDataItem> = {
     resulsetTableProps: ResultSetTableProps<DataItemType>,
+    onClick: (sectionNode: SectionNode<DataItemType>) => void
 }
 
 function Sections<DataItemType extends RepositoryDataItem>({
-    resulsetTableProps
+    resulsetTableProps,
+    onClick
 }: SectionsProps<DataItemType>) {
     const { sections } = useFilterableTableContext<DataItemType>();
 
     return (
         <>
-            {sections.map((section, index) =>
-                <Card
-                    key={section.dataItem.id + section.name}
-                    bg='light'
-                    border='light'
-                    style={{ marginTop: '10px' }}
-                >
-                    <Section<DataItemType>
+            {sections.map((section, index) => {
+                return (
+                    <Card
                         key={section.dataItem.id + section.name}
-                        sectionNode={section}
-                        resulsetTableProps={resulsetTableProps}
-                    />
-                </Card>
-            )}
+                        bg='light'
+                        border='light'
+                        style={{ marginTop: '10px' }}
+                    >
+                        <Section<DataItemType>
+                            key={section.dataItem.id + section.name}
+                            sectionNode={section}
+                            resulsetTableProps={resulsetTableProps}
+                            onClick={onClick}
+                        />
+                    </Card>)
+            })}
         </>
     );
 }
