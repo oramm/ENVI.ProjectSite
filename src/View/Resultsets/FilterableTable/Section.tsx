@@ -24,6 +24,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>
     leafs?: LeafDataItemType[],
     isInAccordion?: boolean,
+    isDeletable?: boolean,
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
@@ -92,11 +93,14 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     isActive
 }: SectionHeaderProps<DataItemType>) {
 
-    function makeTitleClassName() {
-        const classSuffix = sectionNode.level === 1 ? '1' : 'x';
-        let name = `section-title-level-${classSuffix}`;
-
-        return name;
+    const { handleDeleteSection, handleEditSection } = useFilterableTableContext<DataItemType>();
+    function makeTitleStyle() {
+        const nodeLevel = sectionNode.level;
+        return {
+            fontSize: nodeLevel === 1 ? '1.5rem' : '1rem',
+            fontWeight: 600 - nodeLevel * 100,
+            color: `rgb(${50}, ${130}, ${50})`,
+        }
     }
 
     function makeSectionStyle() {
@@ -110,20 +114,22 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     return (
         <div style={makeSectionStyle()}>
             <div
-                className={(isActive ? 'active ' : '') + makeTitleClassName()}
+                className={isActive ? 'active' : ''}
                 onClick={() => onClick(sectionNode)}
                 key={sectionNode.id}
-
+                style={makeTitleStyle()}
             >
                 {sectionNode.titleLabel}
             </div>
             {isActive ?
-                <div>
+                <div className='section-action-menu'>
                     <RowActionMenu
                         dataObject={sectionNode.dataItem}
                         isDeletable={true}
                         EditButtonComponent={sectionNode.EditButtonComponent}
-
+                        handleEditObject={handleEditSection}
+                        handleDeleteObject={handleDeleteSection}
+                        layout='horizontal'
                     />
                 </div>
                 : null

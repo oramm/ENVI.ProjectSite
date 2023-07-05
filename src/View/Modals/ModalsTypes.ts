@@ -31,6 +31,7 @@ export type GeneralModalButtonButtonProps = {
     buttonSize?: ButtonProps["size"];
     buttonIsActive?: boolean;
     buttonIsDisabled?: boolean;
+    layout?: 'vertical' | 'horizontal';
 };
 
 export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
@@ -57,11 +58,9 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
     initialData: DataItemType;
 };
 
-type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps
-
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;
-    buttonProps?: GeneralEditModalButtonButtonProps;
+    buttonProps?: GeneralModalButtonButtonProps;
 };
 
 type GeneralDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
@@ -78,7 +77,7 @@ type GeneralDeleteModalButtonButtonProps = GeneralModalButtonButtonProps & {
 
 export type GeneralDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralDeleteModalButtonModalProps<DataItemType>;
-    //buttonProps?: GeneralDeleteModalButtonButtonProps;
+    buttonProps?: GeneralDeleteModalButtonButtonProps;
 };
 
 type SpecificAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
@@ -100,11 +99,9 @@ type SpecificEditModalButtonModalProps<DataItemType extends RepositoryDataItem =
     initialData: DataItemType;
 };
 
-type SpecificEditModalButtonButtonProps = GeneralEditModalButtonButtonProps;
-
 export type SpecificEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: SpecificEditModalButtonModalProps<DataItemType>;
-    buttonProps?: SpecificEditModalButtonButtonProps;
+    buttonProps?: GeneralModalButtonButtonProps;
 };
 
 type SpecificDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<

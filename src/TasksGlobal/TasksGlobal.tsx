@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { ComponentType, createContext, useContext, useEffect, useState } from 'react';
 import { Button, Card as Container, Col, Row } from 'react-bootstrap';
-import { Contract, OtherContract, OurContract, Person, Project, Task } from '../../Typings/bussinesTypes';
+import { Contract, OtherContract, OurContract, Person, Project, RepositoryDataItem, Task } from '../../Typings/bussinesTypes';
 import { ContractProvider, useContract } from '../Contracts/ContractsList/ContractContext';
 import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComponents';
 import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { SectionNode } from '../View/Resultsets/FilterableTable/Section';
 import { ContractEditModalButton } from '../Contracts/ContractsList/Modals/ContractModalButtons';
+import { CaseEditModalButton } from './Modals/Case/CaseModalButtons';
+import { SpecificEditModalButtonProps } from '../View/Modals/ModalsTypes';
 
 export default function TasksGlobal() {
     const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -160,7 +162,8 @@ function buildTree(tasks: Task[]): SectionNode<Task>[] {
                 dataItem: contract,
                 titleLabel: makeContractTitleLabel(contract),
                 children: [],
-                EditButtonComponent: ContractEditModalButton,
+                EditButtonComponent: ContractEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>,
+                isDeletable: false,
             };
             contracts.push(contractNode);
         }
@@ -178,6 +181,7 @@ function buildTree(tasks: Task[]): SectionNode<Task>[] {
                 dataItem: milestone,
                 titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
                 children: [],
+                isDeletable: true,
             };
             contractNode.children.push(milestoneNode);
         }
@@ -194,6 +198,9 @@ function buildTree(tasks: Task[]): SectionNode<Task>[] {
                 titleLabel: `S: ${caseItem._type.name} ${caseItem.name || ''}`,
                 children: [],
                 leafs: [],
+                isDeletable: true,
+                EditButtonComponent: CaseEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>,
+
             };
             milestoneNode.children.push(caseNode);
         }

@@ -36,7 +36,7 @@ export interface Contract extends RepositoryDataItem {
     comment: string;
     startDate: string;
     endDate: string;
-    _project: Project;
+    _parent: Project;
     status: string;
     gdFolderId: string;
     meetingProtocolsGdFolderId: string;

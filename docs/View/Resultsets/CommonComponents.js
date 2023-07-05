@@ -60,24 +60,28 @@ const AlertComponent = ({ message, type, timeout = 3000 }) => {
     return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: type, onClose: () => setShow(false), dismissible: true }, message));
 };
 exports.AlertComponent = AlertComponent;
-function GDFolderIconLink({ folderUrl }) {
+function GDFolderIconLink({ folderUrl, layout = 'vertical' }) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
-        react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+        react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
 exports.GDFolderIconLink = GDFolderIconLink;
-function CopyIconLink({ folderUrl }) {
+function CopyIconLink({ folderUrl, layout = 'vertical' }) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
-        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCopy, className: 'icon-vertical' })));
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCopy, className: className })));
 }
 exports.CopyIconLink = CopyIconLink;
-function MenuIconLink({ folderUrl }) {
+function MenuIconLink({ folderUrl, layout = 'vertical' }) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
-        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faBars, className: 'icon-vertical' })));
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faBars, className: className })));
 }
 exports.MenuIconLink = MenuIconLink;
-function GDDocFileIconLink({ folderUrl }) {
+function GDDocFileIconLink({ folderUrl, layout = 'vertical' }) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
-        react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: 'icon-vertical' })));
+        react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
 exports.GDDocFileIconLink = GDDocFileIconLink;
 function InvoiceStatusBadge({ status }) {

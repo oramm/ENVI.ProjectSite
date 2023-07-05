@@ -1,7 +1,14 @@
-.icon-vertical {
+.icon {
     width: 24px;
     height: 24px;
+    display: inline-block;
+}
+
+.icon-vertical {
     display: block;
     margin-bottom: 10px;
-    /* Dodaj margines dolny według własnych potrzeb */
+}
+
+.icon-horizontal {
+    margin-right: 10px;
 }

@@ -33,7 +33,7 @@ const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
-function GeneralEditModalButton({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, }, buttonProps = {}, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, } }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -52,12 +52,14 @@ function GeneralEditModalButton({ modalProps: { onEdit, specialActionRoute, Moda
 exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */
 function GeneraEditButton(buttonProps) {
-    const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = 'sm', buttonVariant = 'outline-success', onClick } = {
+    const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = 'sm', buttonVariant = 'outline-success', onClick, layout = 'vertical' } = {
         ...buttonProps
     };
-    if (!buttonCaption)
-        return (react_1.default.createElement("a", { href: '#', onClick: onClick, className: 'icon-vertical text-general' },
+    if (!buttonCaption) {
+        const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+        return (react_1.default.createElement("a", { href: '#', onClick: onClick, className: `${className} text-general` },
             react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faPencil, size: "lg" })));
+    }
     else
         return (react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: onClick }, buttonCaption));
 }
@@ -87,8 +89,10 @@ ModalBodyComponent, additionalModalBodyProps, modalTitle, repository, makeValida
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
-function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, }) {
+function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
+    const { layout = 'vertical' } = { ...buttonProps };
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     function handleOpen() {
         setShowForm(true);
     }
@@ -100,7 +104,7 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
         onDelete(initialData.id);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: 'icon-vertical text-danger' },
+        react_1.default.createElement("a", { href: '#', onClick: handleOpen, className: `${className} text-danger` },
             react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faTrash, size: "lg" })),
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
 }

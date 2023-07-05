@@ -5,6 +5,7 @@ import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
 import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { GDDocFileIconLink, GDFolderIconLink } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
+import { SectionNode } from './Section';
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType,
@@ -72,6 +73,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>
     handleDeleteObject?: (objectId: number) => void
     isDeletable: boolean
+    layout?: 'vertical' | 'horizontal'
 }
 
 export function RowActionMenu<DataItemType extends RepositoryDataItem>({
@@ -80,24 +82,26 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     EditButtonComponent,
     handleDeleteObject,
     isDeletable,
+    layout = 'vertical'
 }: RowActionMenuProps<DataItemType>) {
-
     return (
         <>
             {dataObject._gdFolderUrl && (
-                <GDFolderIconLink folderUrl={dataObject._gdFolderUrl} />
+                <GDFolderIconLink layout={layout} folderUrl={dataObject._gdFolderUrl} />
             )}
             {dataObject._documentOpenUrl && (
-                <GDDocFileIconLink folderUrl={dataObject._documentOpenUrl} />
+                <GDDocFileIconLink layout={layout} folderUrl={dataObject._documentOpenUrl} />
             )}
             {EditButtonComponent && handleEditObject && (
                 <EditButtonComponent
                     modalProps={{ onEdit: handleEditObject, initialData: dataObject, }}
+                    buttonProps={{ layout }}
                 />
             )}
             {isDeletable && handleDeleteObject && (
                 <DeleteModalButton
                     modalProps={{ onDelete: handleDeleteObject, initialData: dataObject }}
+                    buttonProps={{ layout }}
                 />
             )}
         </>
@@ -105,7 +109,9 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
 }
 
 export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
-    modalProps: { onDelete, initialData } }: SpecificDeleteModalButtonProps<DataItemType>) {
+    modalProps: { onDelete, initialData },
+    buttonProps
+}: SpecificDeleteModalButtonProps<DataItemType>) {
 
     const { repository } = useFilterableTableContext<DataItemType>();
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
@@ -118,6 +124,7 @@ export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
                 repository,
                 initialData,
             }}
+            buttonProps={buttonProps}
         />
     );
 }

@@ -32,15 +32,15 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable }))));
 }
 exports.FiterableTableRow = FiterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, }) {
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = 'vertical' }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: dataObject._gdFolderUrl })),
-        dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: dataObject._documentOpenUrl })),
-        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, } })),
-        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject } }))));
+        dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl })),
+        dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
+        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, }, buttonProps: { layout } })),
+        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject }, buttonProps: { layout } }))));
 }
 exports.RowActionMenu = RowActionMenu;
-function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
+function DeleteModalButton({ modalProps: { onDelete, initialData }, buttonProps }) {
     const { repository } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
@@ -48,6 +48,6 @@ function DeleteModalButton({ modalProps: { onDelete, initialData } }) {
             modalTitle,
             repository,
             initialData,
-        } }));
+        }, buttonProps: buttonProps }));
 }
 exports.DeleteModalButton = DeleteModalButton;

@@ -50,10 +50,14 @@ function Section({ sectionNode, resulsetTableProps, onClick }) {
 }
 exports.Section = Section;
 function SectionHeader({ sectionNode, onClick, isActive }) {
-    function makeTitleClassName() {
-        const classSuffix = sectionNode.level === 1 ? '1' : 'x';
-        let name = `section-title-level-${classSuffix}`;
-        return name;
+    const { handleDeleteSection, handleEditSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    function makeTitleStyle() {
+        const nodeLevel = sectionNode.level;
+        return {
+            fontSize: nodeLevel === 1 ? '1.5rem' : '1rem',
+            fontWeight: 600 - nodeLevel * 100,
+            color: `rgb(${50}, ${130}, ${50})`,
+        };
     }
     function makeSectionStyle() {
         return {
@@ -63,10 +67,10 @@ function SectionHeader({ sectionNode, onClick, isActive }) {
         };
     }
     return (react_1.default.createElement("div", { style: makeSectionStyle() },
-        react_1.default.createElement("div", { className: (isActive ? 'active ' : '') + makeTitleClassName(), onClick: () => onClick(sectionNode), key: sectionNode.id }, sectionNode.titleLabel),
+        react_1.default.createElement("div", { className: isActive ? 'active' : '', onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
         isActive ?
-            react_1.default.createElement("div", null,
-                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent }))
+            react_1.default.createElement("div", { className: 'section-action-menu' },
+                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: 'horizontal' }))
             : null));
 }
 function SectionBody({ sectionNode, resulsetTableProps, onClick }) {

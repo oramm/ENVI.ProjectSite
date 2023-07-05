@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
+    buttonProps,
     modalProps: {
         onEdit,
         specialActionRoute,
@@ -18,8 +19,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
         initialData,
         repository,
         makeValidationSchema,
-    },
-    buttonProps = {},
+    }
 }: GeneralEditModalButtonProps<DataItemTpe>) {
     const [showForm, setShowForm] = useState(false);
 
@@ -63,14 +63,18 @@ function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick
         buttonIsDisabled,
         buttonSize = 'sm',
         buttonVariant = 'outline-success',
-        onClick } = {
+        onClick,
+        layout = 'vertical'
+    } = {
         ...buttonProps
     }
-    if (!buttonCaption)
+    if (!buttonCaption) {
+        const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
         return (
-            <a href='#' onClick={onClick} className='icon-vertical text-general'>
+            <a href='#' onClick={onClick} className={`${className} text-general`}>
                 <FontAwesomeIcon icon={faPencil} size="lg" />
             </a>)
+    }
     else
         return (<Button
             key={buttonCaption}
@@ -151,9 +155,11 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
 export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: { onDelete, modalTitle, initialData, repository },
+    buttonProps,
 }: GeneralDeleteModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
-
+    const { layout = 'vertical' } = { ...buttonProps };
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     function handleOpen() {
         setShowForm(true);
     }
@@ -168,7 +174,7 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
 
     return (
         <>
-            <a href='#' onClick={handleOpen} className='icon-vertical text-danger'>
+            <a href='#' onClick={handleOpen} className={`${className} text-danger`}>
                 <FontAwesomeIcon icon={faTrash} size="lg" />
             </a>
 

@@ -59,7 +59,20 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
     }
-    function handleDeleteSection(id) {
+    function handleAddSection(sectionDataObject) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections([...sections, section]);
+    }
+    function handleEditSection(sectionDataObject) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections(sections.map((s) => (s.id === section.id ? section : s)));
+    }
+    function handleDeleteSection(sectionDataObject) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections(sections.filter((s) => s.id !== section.id));
     }
     function handleHeaderClick(sectionNode) {
         setActiveSectionId(sectionNode.id);
@@ -73,7 +86,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),

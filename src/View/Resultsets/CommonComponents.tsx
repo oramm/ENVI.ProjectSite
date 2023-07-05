@@ -56,35 +56,44 @@ export const AlertComponent: React.FC<AlertComponentProps> = ({ message, type, t
     );
 };
 
+export type IconProps = {
+    layout?: 'horizontal' | 'vertical';
+    folderUrl: string;
+}
 
-export function GDFolderIconLink({ folderUrl }: { folderUrl: string }) {
+export function GDFolderIconLink({ folderUrl, layout = 'vertical' }: IconProps) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (
         <a href={folderUrl} target="_blank">
-            <img src={GDFolderIcon} alt="Dysk Google" className='icon-vertical' />
+            <img src={GDFolderIcon} alt="Dysk Google" className={className} />
         </a>
     );
 }
 
-export function CopyIconLink({ folderUrl }: { folderUrl: string }) {
+export function CopyIconLink({ folderUrl, layout = 'vertical' }: IconProps) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+
     return (
         <a href={folderUrl} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon={faCopy} className='icon-vertical' />
+            <FontAwesomeIcon icon={faCopy} className={className} />
         </a>
     );
 }
 
-export function MenuIconLink({ folderUrl }: { folderUrl: string }) {
+export function MenuIconLink({ folderUrl, layout = 'vertical' }: IconProps) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (
         <a href={folderUrl} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon={faBars} className='icon-vertical' />
+            <FontAwesomeIcon icon={faBars} className={className} />
         </a>
     );
 }
 
-export function GDDocFileIconLink({ folderUrl }: { folderUrl: string }) {
+export function GDDocFileIconLink({ folderUrl, layout = 'vertical' }: IconProps) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
     return (
         <a href={folderUrl} target="_blank">
-            <img src={GDDocFileIcon} alt="Dysk Google" className='icon-vertical' />
+            <img src={GDDocFileIcon} alt="Dysk Google" className={className} />
         </a>
     );
 }

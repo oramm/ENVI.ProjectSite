@@ -77,8 +77,22 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
         setObjects(objects.filter((o) => o.id !== objectId));
     }
 
-    function handleDeleteSection(id: number) {
+    function handleAddSection(sectionDataObject: RepositoryDataItem) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections([...sections, section]);
+    }
 
+    function handleEditSection(sectionDataObject: RepositoryDataItem) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections(sections.map((s) => (s.id === section.id ? section : s)));
+    }
+
+    function handleDeleteSection(sectionDataObject: number) {
+        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        if (section)
+            setSections(sections.filter((s) => s.id !== section.id));
     }
 
     function handleHeaderClick(sectionNode: SectionNode<DataItemType>) {
@@ -100,13 +114,17 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
             activeSectionId={activeSectionId}
             repository={repository}
             sections={sections}
-            tableStructure={tableStructure}//as RowStructure<RepositoryDataItem>[]}
-            handleAddObject={handleAddObject}//as (object: RepositoryDataItem) => void}
-            handleEditObject={handleEditObject}// as (object: RepositoryDataItem) => void}
+            tableStructure={tableStructure}
+            handleAddObject={handleAddObject}
+            handleEditObject={handleEditObject}
             handleDeleteObject={handleDeleteObject}
-            setObjects={setObjects}//as Dispatch<SetStateAction<RepositoryDataItem[]>>}
+            setObjects={setObjects}
+            setSections={setSections}
+            handleAddSection={handleAddSection}
+            handleEditSection={handleEditSection}
+            handleDeleteSection={handleDeleteSection}
             selectedObjectRoute={selectedObjectRoute}
-            EditButtonComponent={EditButtonComponent}// as React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>> | undefined}
+            EditButtonComponent={EditButtonComponent}
             isDeletable={isDeletable}
             externalUpdate={externalUpdate}
         >

@@ -18,7 +18,7 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
         : react_1.default.createElement(OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
+function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurContractModalBody_1.OurContractModalBody,
@@ -27,11 +27,12 @@ function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
+            ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.OurContractEditModalButton = OurContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
@@ -42,10 +43,11 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew }, }) {
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę ENVI",
             buttonVariant: "outline-success",
+            ...buttonProps,
         } }));
 }
 exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OtherContractModalBody_1.OtherContractModalBody,
@@ -53,7 +55,7 @@ function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, }) 
             repository: ContractsController_1.contractsRepository,
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
-        }, buttonProps: {} }));
+        }, buttonProps: { ...buttonProps } }));
 }
 exports.OtherContractEditModalButton = OtherContractEditModalButton;
 function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {

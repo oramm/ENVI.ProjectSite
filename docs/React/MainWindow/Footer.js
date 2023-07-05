@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const Footer = () => {
-    return (react_1.default.createElement(react_bootstrap_1.Navbar, { fixed: "bottom", bg: "light" },
+    return (react_1.default.createElement(react_bootstrap_1.Navbar, { bg: "light" },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center w-100" },
                 react_1.default.createElement(react_bootstrap_1.Col, null,

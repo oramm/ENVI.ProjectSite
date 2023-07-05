@@ -39,6 +39,7 @@ const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const ContractModalButtons_1 = require("../Contracts/ContractsList/Modals/ContractModalButtons");
+const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]); //undefined żeby pasowało do typu danych w ContractProvider
     const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
@@ -138,6 +139,7 @@ function buildTree(tasks) {
                 titleLabel: makeContractTitleLabel(contract),
                 children: [],
                 EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
+                isDeletable: false,
             };
             contracts.push(contractNode);
         }
@@ -153,6 +155,7 @@ function buildTree(tasks) {
                 dataItem: milestone,
                 titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
                 children: [],
+                isDeletable: true,
             };
             contractNode.children.push(milestoneNode);
         }
@@ -168,6 +171,8 @@ function buildTree(tasks) {
                 titleLabel: `S: ${caseItem._type.name} ${caseItem.name || ''}`,
                 children: [],
                 leafs: [],
+                isDeletable: true,
+                EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
             };
             milestoneNode.children.push(caseNode);
         }

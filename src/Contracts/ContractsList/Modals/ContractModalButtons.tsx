@@ -1,4 +1,5 @@
 import React from 'react';
+import { OtherContract, OurContract } from '../../../../Typings/bussinesTypes';
 import { GeneralAddNewModalButton, GeneralDeleteModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { contractsRepository } from '../ContractsController';
@@ -12,7 +13,7 @@ import { OurContractModalBody } from './OurContractModalBody';
 export function ContractEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
-}: SpecificEditModalButtonProps) {
+}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
         initialData.ourId
             ? <OurContractEditModalButton
@@ -28,9 +29,10 @@ export function ContractEditModalButton({
 
 export function OurContractEditModalButton({
     modalProps: { onEdit, initialData, },
-}: SpecificEditModalButtonProps) {
+    buttonProps
+}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
-        <GeneralEditModalButton
+        <GeneralEditModalButton<OurContract | OtherContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurContractModalBody,
@@ -40,6 +42,7 @@ export function OurContractEditModalButton({
                 makeValidationSchema: ourContractValidationSchema
             }}
             buttonProps={{
+                ...buttonProps,
                 buttonVariant: "outline-success",
             }}
         />
@@ -48,9 +51,10 @@ export function OurContractEditModalButton({
 
 export function OurContractAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps) {
+    buttonProps
+}: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     return (
-        <GeneralAddNewModalButton
+        <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
@@ -62,6 +66,7 @@ export function OurContractAddNewModalButton({
             buttonProps={{
                 buttonCaption: "Rejestruj umowę ENVI",
                 buttonVariant: "outline-success",
+                ...buttonProps,
             }}
         />
     );
@@ -69,9 +74,10 @@ export function OurContractAddNewModalButton({
 
 export function OtherContractEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps) {
+    buttonProps,
+}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
-        <GeneralEditModalButton
+        <GeneralEditModalButton<OurContract | OtherContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OtherContractModalBody,
@@ -80,16 +86,16 @@ export function OtherContractEditModalButton({
                 initialData: initialData,
                 makeValidationSchema: otherContractValidationSchema
             }}
-            buttonProps={{}}
+            buttonProps={{ ...buttonProps }}
         />
     );
 }
 
 export function OtherContractAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps) {
+}: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     return (
-        <GeneralAddNewModalButton
+        <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,

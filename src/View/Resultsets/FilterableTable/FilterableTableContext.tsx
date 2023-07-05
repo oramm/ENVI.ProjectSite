@@ -14,6 +14,11 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     handleEditObject: (object: DataItemType) => void;
     handleDeleteObject: (objectId: number) => void;
     setObjects: React.Dispatch<React.SetStateAction<DataItemType[]>>;
+    handleAddSection: (sectionObject: RepositoryDataItem) => void;
+    handleEditSection: (sectionObject: RepositoryDataItem) => void;
+    handleDeleteSection: (sectionObjectId: number) => void;
+    setSections: React.Dispatch<React.SetStateAction<SectionNode<DataItemType>[]>>;
+
     selectedObjectRoute: string,
     activeRowId: number,
     activeSectionId: string,
@@ -31,6 +36,10 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     handleEditObject: () => { },
     handleDeleteObject: () => { },
     setObjects: () => { },
+    handleAddSection: () => { },
+    handleEditSection: () => { },
+    handleDeleteSection: () => { },
+    setSections: () => { },
     selectedObjectRoute: '',
     activeRowId: 0,
     activeSectionId: '',
@@ -47,6 +56,10 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     handleEditObject,
     handleDeleteObject,
     sections,
+    setSections,
+    handleAddSection,
+    handleEditSection,
+    handleDeleteSection,
     tableStructure,
     selectedObjectRoute,
     activeRowId,
@@ -63,6 +76,10 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
         setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
         repository,
         sections,
+        setSections: setSections as React.Dispatch<React.SetStateAction<SectionNode<Item>[]>>,
+        handleAddSection,
+        handleEditSection,
+        handleDeleteSection,
         tableStructure,
         handleAddObject,
         handleEditObject,
