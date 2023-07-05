@@ -38,8 +38,8 @@ const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
 const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
-const ContractModalButtons_1 = require("../Contracts/ContractsList/Modals/ContractModalButtons");
 const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
+const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]); //undefined żeby pasowało do typu danych w ContractProvider
     const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
@@ -121,7 +121,6 @@ function makeContractTitleLabel(contract) {
 }
 function buildTree(tasks) {
     const contracts = [];
-    console.log('buildTree start');
     for (const task of tasks) {
         const contract = task._parent._parent._parent;
         const milestone = task._parent._parent;

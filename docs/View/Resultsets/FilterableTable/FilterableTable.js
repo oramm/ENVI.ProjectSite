@@ -76,7 +76,11 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
     }
     function handleHeaderClick(sectionNode) {
         setActiveSectionId(sectionNode.id);
-        console.log('handleHeaderClick', sectionNode.dataItem);
+        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
+        if (!sectionNode.repository.items.some((item) => item.id === sectionNode.dataItem.id))
+            sectionNode.repository.items.push(sectionNode.dataItem);
+        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
+        console.log('handleHeaderClick', sectionNode.repository.currentItems);
     }
     function handleRowClick(id) {
         setActiveRowId(id);

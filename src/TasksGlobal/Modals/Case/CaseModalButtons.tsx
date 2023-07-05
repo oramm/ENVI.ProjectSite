@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Case } from '../../../../Typings/bussinesTypes';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
@@ -10,6 +10,7 @@ export function CaseEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
 }: SpecificEditModalButtonProps<Case>) {
+
     return (
         <GeneralEditModalButton<Case>
             modalProps={{

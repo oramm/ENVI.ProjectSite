@@ -12,9 +12,9 @@ import { ProjectsFilterBody } from './ProjectsFilterBody';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { SectionNode } from '../View/Resultsets/FilterableTable/Section';
-import { ContractEditModalButton } from '../Contracts/ContractsList/Modals/ContractModalButtons';
 import { CaseEditModalButton } from './Modals/Case/CaseModalButtons';
 import { SpecificEditModalButtonProps } from '../View/Modals/ModalsTypes';
+import { ContractEditModalButton } from './Modals/ContractModalButtons';
 
 export default function TasksGlobal() {
     const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -144,7 +144,6 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
 
 function buildTree(tasks: Task[]): SectionNode<Task>[] {
     const contracts: SectionNode<Task>[] = [];
-    console.log('buildTree start');
     for (const task of tasks) {
         const contract = task._parent._parent._parent;
         const milestone = task._parent._parent;

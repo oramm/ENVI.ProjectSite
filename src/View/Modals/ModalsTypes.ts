@@ -83,7 +83,10 @@ export type GeneralDeleteModalButtonProps<DataItemType extends RepositoryDataIte
 type SpecificAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
     GeneralAddNewModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
->
+> & {
+    repository?: RepositoryReact<DataItemType>;
+};
+
 type SpecificAddNewModalButtonButtonProps = GeneralAddNewModalButtonButtonProps;
 
 export type SpecificAddNewModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
@@ -95,6 +98,7 @@ type SpecificEditModalButtonModalProps<DataItemType extends RepositoryDataItem =
     GeneralEditModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
 > & {
+    repository?: RepositoryReact<DataItemType>;
     onEdit: (object: DataItemType) => void;
     initialData: DataItemType;
 };
@@ -110,6 +114,7 @@ type SpecificDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem
 > & {
     onDelete: (objectId: number) => void;
     initialData: DataItemType;
+    repository?: RepositoryReact<DataItemType>;
 };
 
 type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;

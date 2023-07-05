@@ -10,49 +10,63 @@ import { OurContractModalBody } from './OurContractModalBody';
 
 
 /** przycisk i modal edycji OurCOntract lub OtherContract */
+export function ContractEditModalButtonGeneric({
+    modalProps: { onEdit, initialData, repository },
+    buttonProps,
+}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
+    if (!repository) throw new Error('repository is required');
+    return (
+        initialData.ourId
+            ? <GeneralEditModalButton<OurContract | OtherContract>
+                modalProps={{
+                    onEdit: onEdit,
+                    ModalBodyComponent: OurContractModalBody,
+                    modalTitle: "Edycja umowy",
+                    repository: repository,
+                    initialData: initialData,
+                    makeValidationSchema: ourContractValidationSchema
+                }}
+                buttonProps={{
+                    ...buttonProps,
+                    buttonVariant: "outline-success",
+                }}
+            />
+            : <GeneralEditModalButton<OurContract | OtherContract>
+                modalProps={{
+                    onEdit: onEdit,
+                    ModalBodyComponent: OtherContractModalBody,
+                    modalTitle: "Edycja umowy",
+                    repository: repository,
+                    initialData: initialData,
+                    makeValidationSchema: otherContractValidationSchema
+                }}
+                buttonProps={{ ...buttonProps }}
+            />
+    );
+}
+
 export function ContractEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
-        initialData.ourId
-            ? <OurContractEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-            : <OtherContractEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-    );
-}
-
-export function OurContractEditModalButton({
-    modalProps: { onEdit, initialData, },
-    buttonProps
-}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
-    return (
-        <GeneralEditModalButton<OurContract | OtherContract>
+        <ContractEditModalButtonGeneric
             modalProps={{
-                onEdit: onEdit,
-                ModalBodyComponent: OurContractModalBody,
-                modalTitle: "Edycja umowy",
-                repository: contractsRepository,
-                initialData: initialData,
-                makeValidationSchema: ourContractValidationSchema
+                onEdit,
+                initialData,
+                repository: contractsRepository
             }}
-            buttonProps={{
-                ...buttonProps,
-                buttonVariant: "outline-success",
-            }}
+            buttonProps={buttonProps}
         />
     );
 }
 
-export function OurContractAddNewModalButton({
-    modalProps: { onAddNew },
+export function OurContractAddNewModalButtonGeneric({
+    modalProps: { onAddNew, repository },
     buttonProps
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
+    if (!repository) throw new Error('repository is required');
+
     return (
         <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
@@ -60,7 +74,7 @@ export function OurContractAddNewModalButton({
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody },
                 modalTitle: "Nowa umowa ENVI",
-                repository: contractsRepository,
+                repository: repository,
                 makeValidationSchema: ourContractValidationSchema
             }}
             buttonProps={{
@@ -72,28 +86,25 @@ export function OurContractAddNewModalButton({
     );
 }
 
-export function OtherContractEditModalButton({
-    modalProps: { onEdit, initialData },
-    buttonProps,
-}: SpecificEditModalButtonProps<OurContract | OtherContract>) {
+export function OurContractAddNewModalButton({
+    modalProps: { onAddNew },
+    buttonProps
+}: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     return (
-        <GeneralEditModalButton<OurContract | OtherContract>
+        <OurContractAddNewModalButtonGeneric
             modalProps={{
-                onEdit: onEdit,
-                ModalBodyComponent: OtherContractModalBody,
-                modalTitle: "Edycja umowy",
-                repository: contractsRepository,
-                initialData: initialData,
-                makeValidationSchema: otherContractValidationSchema
+                onAddNew,
+                repository: contractsRepository
             }}
-            buttonProps={{ ...buttonProps }}
+            buttonProps={buttonProps}
         />
     );
 }
 
-export function OtherContractAddNewModalButton({
-    modalProps: { onAddNew },
+export function OtherContractAddNewModalButtonGeneric({
+    modalProps: { onAddNew, repository },
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
+    if (!repository) throw new Error('repository is required');
     return (
         <GeneralAddNewModalButton<OurContract | OtherContract>
             modalProps={{
@@ -101,12 +112,27 @@ export function OtherContractAddNewModalButton({
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa umowa zewnętrzna",
-                repository: contractsRepository,
+                repository: repository,
                 makeValidationSchema: otherContractValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj umowę zewnętrzną",
             }}
+        />
+    );
+}
+
+export function OtherContractAddNewModalButton({
+    modalProps: { onAddNew },
+    buttonProps
+}: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
+    return (
+        <OtherContractAddNewModalButtonGeneric
+            modalProps={{
+                onAddNew,
+                repository: contractsRepository
+            }}
+            buttonProps={buttonProps}
         />
     );
 }

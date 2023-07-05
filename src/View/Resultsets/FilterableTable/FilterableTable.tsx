@@ -97,7 +97,11 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 
     function handleHeaderClick(sectionNode: SectionNode<DataItemType>) {
         setActiveSectionId(sectionNode.id);
-        console.log('handleHeaderClick', sectionNode.dataItem);
+        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
+        if (!sectionNode.repository.items.some((item) => item.id === sectionNode.dataItem.id))
+            sectionNode.repository.items.push(sectionNode.dataItem);
+        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
+        console.log('handleHeaderClick', sectionNode.repository.currentItems);
     }
 
     function handleRowClick(id: number) {

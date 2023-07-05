@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OtherContractAddNewModalButton = exports.OtherContractEditModalButton = exports.OurContractAddNewModalButton = exports.OurContractEditModalButton = exports.ContractEditModalButton = void 0;
+exports.OtherContractAddNewModalButton = exports.OtherContractAddNewModalButtonGeneric = exports.OurContractAddNewModalButton = exports.OurContractAddNewModalButtonGeneric = exports.ContractEditModalButton = exports.ContractEditModalButtonGeneric = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ContractsController_1 = require("../ContractsController");
@@ -12,33 +12,48 @@ const ContractValidationSchema_1 = require("./ContractValidationSchema");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
+    if (!repository)
+        throw new Error('repository is required');
     return (initialData.ourId
-        ? react_1.default.createElement(OurContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(OtherContractEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+        ? react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+                onEdit: onEdit,
+                ModalBodyComponent: OurContractModalBody_1.OurContractModalBody,
+                modalTitle: "Edycja umowy",
+                repository: repository,
+                initialData: initialData,
+                makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
+            }, buttonProps: {
+                ...buttonProps,
+                buttonVariant: "outline-success",
+            } })
+        : react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+                onEdit: onEdit,
+                ModalBodyComponent: OtherContractModalBody_1.OtherContractModalBody,
+                modalTitle: "Edycja umowy",
+                repository: repository,
+                initialData: initialData,
+                makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
+            }, buttonProps: { ...buttonProps } }));
+}
+exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
+function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (react_1.default.createElement(ContractEditModalButtonGeneric, { modalProps: {
+            onEdit,
+            initialData,
+            repository: ContractsController_1.contractsRepository
+        }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function OurContractEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
-            ModalBodyComponent: OurContractModalBody_1.OurContractModalBody,
-            modalTitle: "Edycja umowy",
-            repository: ContractsController_1.contractsRepository,
-            initialData: initialData,
-            makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
-        }, buttonProps: {
-            ...buttonProps,
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.OurContractEditModalButton = OurContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps }) {
+    if (!repository)
+        throw new Error('repository is required');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OurContractModalBody_1.OurContractModalBody },
             modalTitle: "Nowa umowa ENVI",
-            repository: ContractsController_1.contractsRepository,
+            repository: repository,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę ENVI",
@@ -46,28 +61,33 @@ function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps })
             ...buttonProps,
         } }));
 }
-exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-function OtherContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
-            ModalBodyComponent: OtherContractModalBody_1.OtherContractModalBody,
-            modalTitle: "Edycja umowy",
-            repository: ContractsController_1.contractsRepository,
-            initialData: initialData,
-            makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
-        }, buttonProps: { ...buttonProps } }));
+exports.OurContractAddNewModalButtonGeneric = OurContractAddNewModalButtonGeneric;
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+    return (react_1.default.createElement(OurContractAddNewModalButtonGeneric, { modalProps: {
+            onAddNew,
+            repository: ContractsController_1.contractsRepository
+        }, buttonProps: buttonProps }));
 }
-exports.OtherContractEditModalButton = OtherContractEditModalButton;
-function OtherContractAddNewModalButton({ modalProps: { onAddNew }, }) {
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
+function OtherContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
+    if (!repository)
+        throw new Error('repository is required');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody, },
             modalTitle: "Nowa umowa zewnętrzna",
-            repository: ContractsController_1.contractsRepository,
+            repository: repository,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj umowę zewnętrzną",
         } }));
+}
+exports.OtherContractAddNewModalButtonGeneric = OtherContractAddNewModalButtonGeneric;
+function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+    return (react_1.default.createElement(OtherContractAddNewModalButtonGeneric, { modalProps: {
+            onAddNew,
+            repository: ContractsController_1.contractsRepository
+        }, buttonProps: buttonProps }));
 }
 exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
