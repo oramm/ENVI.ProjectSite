@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Accordion } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
-import { SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { useFilterableTableContext } from './FilterableTableContext';
 import { RowActionMenu } from './FiterableTableRow';
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
@@ -22,9 +22,11 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     titleLabel: string,
     children: SectionNode<LeafDataItemType>[],
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>
-    leafs?: LeafDataItemType[],
+    AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>
+    leaves?: LeafDataItemType[],
     isInAccordion?: boolean,
     isDeletable?: boolean,
+    editHandler?: (node: SectionNode<LeafDataItemType>) => void,
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
@@ -40,15 +42,15 @@ export function Section<DataItemType extends RepositoryDataItem>({
 }: SectionProps<DataItemType>) {
     const { activeSectionId } = useFilterableTableContext<DataItemType>();
     const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
-
+    const { sections } = useFilterableTableContext<DataItemType>();
     useEffect(() => {
         setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id]);
+    }, [activeSectionId, sectionNode.id, sections]);
 
 
     return (
         sectionNode.isInAccordion ?
-            <Accordion key={sectionNode.name} alwaysOpen defaultActiveKey={['0']}>
+            <Accordion key={sectionNode.id} alwaysOpen defaultActiveKey={['0']}>
                 <Accordion.Item eventKey="0">
                     <Accordion.Header>
                         <SectionHeader
@@ -93,7 +95,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     isActive
 }: SectionHeaderProps<DataItemType>) {
 
-    const { handleDeleteSection, handleEditSection } = useFilterableTableContext<DataItemType>();
+    const { handleDeleteSection, handleEditSection, handleAddSection } = useFilterableTableContext<DataItemType>();
     function makeTitleStyle() {
         const nodeLevel = sectionNode.level;
         return {
@@ -131,6 +133,14 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         handleDeleteObject={handleDeleteSection}
                         layout='horizontal'
                     />
+                    {sectionNode.AddNewButtonComponent &&
+                        <sectionNode.AddNewButtonComponent
+                            modalProps={{
+                                onAddNew: handleAddSection,
+                                contextData: sectionNode.dataItem,
+                            }}
+                        />
+                    }
                 </div>
                 : null
             }
@@ -155,10 +165,10 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
                 />
             )}
 
-            {sectionNode.leafs &&
+            {sectionNode.leaves &&
                 <ResultSetTable<DataItemType>
                     {...resulsetTableProps}
-                    filteredObjects={sectionNode.leafs}
+                    filteredObjects={sectionNode.leaves}
                 />
             }
         </>

@@ -31,18 +31,19 @@ export function CaseEditModalButton({
 }
 
 export function CaseAddNewModalButton({
-    modalProps: { onAddNew },
+    modalProps: { onAddNew, contextData },
     buttonProps
 }: SpecificAddNewModalButtonProps<Case>) {
     return (
         <GeneralAddNewModalButton
             modalProps={{
                 onAddNew: onAddNew,
+                contextData,
                 ModalBodyComponent: CaseModalBody,
                 additionalModalBodyProps: { SpecificContractModalBody: CaseModalBody },
                 modalTitle: "Nowa sprawa",
                 repository: casesRepository,
-                makeValidationSchema: makeMultipleCaseValidationSchema
+                makeValidationSchema: makeMultipleCaseValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj sprawę",

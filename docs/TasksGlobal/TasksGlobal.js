@@ -40,6 +40,7 @@ const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
+const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 function TasksGlobal() {
     const [tasks, setTasks] = (0, react_1.useState)([]); //undefined żeby pasowało do typu danych w ContractProvider
     const [externalTasksUpdate, setExternalTasksUpdate] = (0, react_1.useState)(0);
@@ -54,7 +55,9 @@ function TasksGlobal() {
             const [tasks] = await Promise.all([
                 TasksGlobalController_1.tasksRepository.loadItemsFromServer({
                     _project: JSON.stringify(selectedProject)
-                })
+                }),
+                ContractsController_1.caseTypesRepository.loadItemsFromServer(),
+                ContractsController_1.milestoneTypesRepository.loadItemsFromServer(),
             ]);
             setTasks(tasks);
             setExternalTasksUpdate(prevState => prevState + 1);
@@ -119,6 +122,16 @@ function makeContractTitleLabel(contract) {
         label += ` ${manager.name} ${manager.surname}`;
     return label;
 }
+function contractNodeEditHandler(node) {
+    const contract = node.dataItem;
+    node.titleLabel = makeContractTitleLabel(contract);
+}
+function makeMilestoneTitleLabel(milestone) {
+    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`;
+}
+function makeCaseTitleLabel(caseItem) {
+    return `S: ${caseItem._type.name} ${caseItem.name || ''}`;
+}
 function buildTree(tasks) {
     const contracts = [];
     for (const task of tasks) {
@@ -138,6 +151,7 @@ function buildTree(tasks) {
                 titleLabel: makeContractTitleLabel(contract),
                 children: [],
                 EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
+                editHandler: contractNodeEditHandler,
                 isDeletable: false,
             };
             contracts.push(contractNode);
@@ -152,8 +166,9 @@ function buildTree(tasks) {
                 name: milestoneNodeName,
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
-                titleLabel: `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`,
+                titleLabel: makeMilestoneTitleLabel(milestone),
                 children: [],
+                AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
                 isDeletable: true,
             };
             contractNode.children.push(milestoneNode);
@@ -167,17 +182,18 @@ function buildTree(tasks) {
                 name: 'case',
                 repository: TasksGlobalController_1.casesRepository,
                 dataItem: caseItem,
-                titleLabel: `S: ${caseItem._type.name} ${caseItem.name || ''}`,
+                titleLabel: makeCaseTitleLabel(caseItem),
                 children: [],
-                leafs: [],
+                leaves: [],
                 isDeletable: true,
                 EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
+                editHandler: (node) => { node.titleLabel = makeCaseTitleLabel(node.dataItem); },
             };
             milestoneNode.children.push(caseNode);
         }
-        if (!caseNode.leafs)
-            caseNode.leafs = [];
-        caseNode.leafs.push(task);
+        if (!caseNode.leaves)
+            caseNode.leaves = [];
+        caseNode.leaves.push(task);
     }
     return contracts;
 }

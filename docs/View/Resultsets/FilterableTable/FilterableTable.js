@@ -60,19 +60,15 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
         setObjects(objects.filter((o) => o.id !== objectId));
     }
     function handleAddSection(sectionDataObject) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        const section = sections.find((s) => s.dataItem.id === sectionDataObject.id && s.name === sectionDataObject.name);
         if (section)
             setSections([...sections, section]);
     }
     function handleEditSection(sectionDataObject) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
-        if (section)
-            setSections(sections.map((s) => (s.id === section.id ? section : s)));
+        setSections(editNodeDataItem(sections, activeSectionId, sectionDataObject));
     }
     function handleDeleteSection(sectionDataObject) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
-        if (section)
-            setSections(sections.filter((s) => s.id !== section.id));
+        //setSections(sections.filter((s) => s.id !== sectionDataObject));
     }
     function handleHeaderClick(sectionNode) {
         setActiveSectionId(sectionNode.id);
@@ -133,3 +129,33 @@ function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
 exports.TableTitle = TableTitle;
+// Funkcja do aktualizacji węzłów
+function editNodeDataItem(nodes, sectionId, newData) {
+    return nodes.map(node => {
+        if (node.id === sectionId) {
+            // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
+            const newSectionNode = { ...node };
+            newSectionNode.dataItem = newData;
+            if (newSectionNode.editHandler)
+                newSectionNode.editHandler(newSectionNode);
+            return newSectionNode;
+        }
+        else {
+            // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
+            return {
+                ...node,
+                children: editNodeDataItem(node.children, sectionId, newData),
+                leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
+            };
+        }
+    });
+}
+// Funkcja do aktualizacji liści
+function editLeafDataItem(leaves, id, newData) {
+    return leaves.map(leaf => leaf.id === id
+        ? {
+            ...leaf,
+            ...newData,
+        }
+        : leaf);
+}

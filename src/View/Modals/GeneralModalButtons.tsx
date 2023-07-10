@@ -99,6 +99,7 @@ function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick
 export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: {
         onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
+        contextData,
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
@@ -136,6 +137,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
             </Button>
             <GeneralModal<DataItemType>
                 onClose={handleClose}
+
                 show={showForm}
                 isEditing={false}
                 title={modalTitle}
@@ -145,6 +147,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                 makeValidationSchema={validationSchema}
                 modalBodyProps={{
                     isEditing: false,
+                    contextData,
                     additionalProps: additionalModalBodyProps,
                 }}
             />

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.projectsRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
+exports.projectsRepository = exports.entitiesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../React/RepositoryReact"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -40,24 +40,6 @@ exports.tasksRepository = new RepositoryReact_1.default({
         deleteRoute: 'task'
     },
     name: 'tasks'
-});
-exports.milestoneTypesRepository = new RepositoryReact_1.default({
-    actionRoutes: {
-        getRoute: 'milestoneTypes',
-        addNewRoute: 'milestoneType',
-        editRoute: 'milestoneType',
-        deleteRoute: 'milestoneType'
-    },
-    name: 'milestoneTypes'
-});
-exports.caseTypesRepository = new RepositoryReact_1.default({
-    actionRoutes: {
-        getRoute: 'caseTypes',
-        addNewRoute: 'caseType',
-        editRoute: 'caseType',
-        deleteRoute: 'caseType'
-    },
-    name: 'caseTypes'
 });
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {

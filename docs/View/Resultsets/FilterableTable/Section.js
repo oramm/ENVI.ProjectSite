@@ -33,11 +33,12 @@ require("./FilterableTable.css");
 function Section({ sectionNode, resulsetTableProps, onClick }) {
     const { activeSectionId } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
+    const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     (0, react_1.useEffect)(() => {
         setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id]);
+    }, [activeSectionId, sectionNode.id, sections]);
     return (sectionNode.isInAccordion ?
-        react_1.default.createElement(react_bootstrap_1.Accordion, { key: sectionNode.name, alwaysOpen: true, defaultActiveKey: ['0'] },
+        react_1.default.createElement(react_bootstrap_1.Accordion, { key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ['0'] },
             react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
                 react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                     react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),
@@ -50,7 +51,7 @@ function Section({ sectionNode, resulsetTableProps, onClick }) {
 }
 exports.Section = Section;
 function SectionHeader({ sectionNode, onClick, isActive }) {
-    const { handleDeleteSection, handleEditSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function makeTitleStyle() {
         const nodeLevel = sectionNode.level;
         return {
@@ -70,12 +71,17 @@ function SectionHeader({ sectionNode, onClick, isActive }) {
         react_1.default.createElement("div", { className: isActive ? 'active' : '', onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
         isActive ?
             react_1.default.createElement("div", { className: 'section-action-menu' },
-                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: 'horizontal' }))
+                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: 'horizontal' }),
+                sectionNode.AddNewButtonComponent &&
+                    react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
+                            onAddNew: handleAddSection,
+                            contextData: sectionNode.dataItem,
+                        } }))
             : null));
 }
 function SectionBody({ sectionNode, resulsetTableProps, onClick }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         sectionNode.children.map((childNode, index) => react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.name, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick })),
-        sectionNode.leafs &&
-            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leafs })));
+        sectionNode.leaves &&
+            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves })));
 }

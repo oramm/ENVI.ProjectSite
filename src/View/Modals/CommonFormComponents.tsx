@@ -13,7 +13,8 @@ import { Controller } from 'react-hook-form';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
 import { TypeaheadManagerChildProps } from 'react-bootstrap-typeahead/types/types';
-import { Case, Contract, DocumentTemplate, Milestone, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { Case, CaseType, Contract, DocumentTemplate, Milestone, MilestoneType, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { caseTypesRepository } from '../../Contracts/ContractsList/ContractsController';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -233,6 +234,83 @@ export function ContractTypeSelectFormElement({
                             isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
                             renderMenuItemChildren={(option, props, index) => {
                                 const myOption = option as RepositoryDataItem;
+                                return (
+                                    <div>
+                                        <span>{myOption.name}</span>
+                                        <div className="text-muted small">{myOption.description}</div>
+                                    </div>);
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type CaseTypeSelectFormElementProps = {
+    milestoneType?: MilestoneType,
+    showValidationInfo?: boolean,
+    required?: boolean,
+    multiple?: boolean,
+    name?: '_type' | '_caseType',
+}
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function CaseTypeSelectFormElement({
+    milestoneType,
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = '_type',
+}: CaseTypeSelectFormElementProps) {
+    const { control, watch, setValue, formState: { errors } } = useFormContext();
+    const label = 'Typ Sprawy';
+    const repository = caseTypesRepository;
+
+    function makeoptions(repositoryDataItems: CaseType[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!milestoneType) return true;
+            if (milestoneType.id === item._milestoneType.id) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: 'Wybierz typ sprawy' } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? multiple ? field.value : [field.value] : []}
+                            placeholder="-- Wybierz typ --"
+                            isValid={showValidationInfo ? !(errors?.[name]) : undefined}
+                            isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as CaseType;
                                 return (
                                     <div>
                                         <span>{myOption.name}</span>

@@ -7,7 +7,6 @@ export default class MainSetup {
     static documentTemplatesRepository: RepositoryReact<DocumentTemplate>;
     static personsEnviRepository: RepositoryReact<Person>;
     static contractTypesRepository: RepositoryReact<ContractType>;
-    static caseTypesRepository: RepositoryReact<CaseType>;
 
     static CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
 

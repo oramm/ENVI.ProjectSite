@@ -28,21 +28,32 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const FormContext_1 = require("../../../View/Modals/FormContext");
-function CaseModalBody({ isEditing, initialData }) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _contract = watch('_contract');
+function CaseModalBody({ isEditing, initialData, contextData }) {
+    const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    const _type = watch('_type');
+    const _milestone = (initialData?._milestone || contextData);
     (0, react_1.useEffect)(() => {
         console.log('CaseModalBody useEffect', initialData);
         const resetData = {
-            _milestone: initialData?._milestone,
+            _milestone: _milestone,
+            _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || '',
         };
         reset(resetData);
         trigger();
     }, [initialData, reset]);
+    function shoulShowCaseNameField() {
+        if (initialData?._type?.isUniquePerMilestone)
+            return false;
+        if (_type?.isUniquePerMilestone)
+            return false;
+        return true;
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        !initialData?._type.isUniquePerMilestone &&
+        !isEditing &&
+            react_1.default.createElement(CommonFormComponents_1.CaseTypeSelectFormElement, { milestoneType: _milestone._type }),
+        shoulShowCaseNameField() &&
             react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa sprawy"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),

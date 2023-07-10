@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -37,6 +37,7 @@ const FormContext_1 = require("./FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
+const ContractsController_1 = require("../../Contracts/ContractsList/ContractsController");
 /**
  * Komponent formularza wyboru projektu
  * @param repository Repozytorium projektów
@@ -140,6 +141,44 @@ function ContractTypeSelectFormElement({ typesToInclude = 'all', required = fals
             react_1.default.createElement(ErrorMessage, { errors: errors, name: name }))));
 }
 exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+function CaseTypeSelectFormElement({ milestoneType, required = false, showValidationInfo = true, multiple = false, name = '_type', }) {
+    const { control, watch, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const label = 'Typ Sprawy';
+    const repository = ContractsController_1.caseTypesRepository;
+    function makeoptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!milestoneType)
+                return true;
+            if (milestoneType.id === item._milestoneType.id)
+                return true;
+            return false;
+        });
+        return filteredItems;
+    }
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: 'Wybierz typ sprawy' } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? multiple ? field.value : [field.value] : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const myOption = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                    } })) }),
+            react_1.default.createElement(ErrorMessage, { errors: errors, name: name }))));
+}
+exports.CaseTypeSelectFormElement = CaseTypeSelectFormElement;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')

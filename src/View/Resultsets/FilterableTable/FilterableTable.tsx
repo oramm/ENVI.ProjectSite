@@ -60,7 +60,6 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
 
     const [objects, setObjects] = useState(initialObjects as DataItemType[]);
 
-
     useEffect(() => {
         setObjects(initialObjects);
     }, [externalUpdate]);
@@ -78,21 +77,17 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
+        const section = sections.find((s) => s.dataItem.id === sectionDataObject.id && s.name === sectionDataObject.name);
         if (section)
             setSections([...sections, section]);
     }
 
     function handleEditSection(sectionDataObject: RepositoryDataItem) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
-        if (section)
-            setSections(sections.map((s) => (s.id === section.id ? section : s)));
+        setSections(editNodeDataItem(sections, activeSectionId, sectionDataObject));
     }
 
     function handleDeleteSection(sectionDataObject: number) {
-        const section = sections.find((s) => JSON.stringify(s.dataItem) === JSON.stringify(sectionDataObject));
-        if (section)
-            setSections(sections.filter((s) => s.id !== section.id));
+        //setSections(sections.filter((s) => s.id !== sectionDataObject));
     }
 
     function handleHeaderClick(sectionNode: SectionNode<DataItemType>) {
@@ -227,4 +222,44 @@ function Sections<DataItemType extends RepositoryDataItem>({
 
 export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>
+}
+
+// Funkcja do aktualizacji węzłów
+function editNodeDataItem<LeafDataItemType extends RepositoryDataItem>(
+    nodes: SectionNode<LeafDataItemType>[],
+    sectionId: string,
+    newData: RepositoryDataItem
+): SectionNode<LeafDataItemType>[] {
+    return nodes.map(node => {
+        if (node.id === sectionId) {
+            // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
+            const newSectionNode = { ...node };
+            newSectionNode.dataItem = newData;
+            if (newSectionNode.editHandler) newSectionNode.editHandler(newSectionNode);
+            return newSectionNode;
+        } else {
+            // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
+            return {
+                ...node,
+                children: editNodeDataItem(node.children, sectionId, newData),
+                leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
+            };
+        }
+    });
+}
+
+// Funkcja do aktualizacji liści
+function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
+    leaves: LeafDataItemType[],
+    id: number,
+    newData: RepositoryDataItem
+): LeafDataItemType[] {
+    return leaves.map(leaf =>
+        leaf.id === id
+            ? {
+                ...leaf,
+                ...newData,
+            }
+            : leaf
+    );
 }

@@ -1,18 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Col, Form, Row } from 'react-bootstrap';
-import { Case } from '../../../../Typings/bussinesTypes';
-import { ErrorMessage } from '../../../View/Modals/CommonFormComponents';
+import { Case, Milestone } from '../../../../Typings/bussinesTypes';
+import { CaseTypeSelectFormElement, ErrorMessage } from '../../../View/Modals/CommonFormComponents';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 
-export function CaseModalBody({ isEditing, initialData }: ModalBodyProps<Case>) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
-    const _contract = watch('_contract');
+export function CaseModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Case>) {
+    const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
+    const _type = watch('_type');
+    const _milestone = (initialData?._milestone || contextData) as Milestone;
 
     useEffect(() => {
         console.log('CaseModalBody useEffect', initialData);
         const resetData = {
-            _milestone: initialData?._milestone,
+            _milestone: _milestone,
+            _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || '',
         };
@@ -20,10 +22,19 @@ export function CaseModalBody({ isEditing, initialData }: ModalBodyProps<Case>) 
         trigger();
     }, [initialData, reset]);
 
+    function shoulShowCaseNameField() {
+        if (initialData?._type?.isUniquePerMilestone) return false;
+        if (_type?.isUniquePerMilestone) return false;
+        return true;
+    }
 
     return (
-        <>
-            {!initialData?._type.isUniquePerMilestone &&
+        <>{!isEditing &&
+            <CaseTypeSelectFormElement
+                milestoneType={_milestone._type}
+            />
+        }
+            {shoulShowCaseNameField() &&
                 <Form.Group controlId="name">
                     <Form.Label>Nazwa sprawy</Form.Label>
                     <Form.Control

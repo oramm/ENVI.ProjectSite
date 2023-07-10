@@ -14,6 +14,7 @@ import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     isEditing: boolean;
     initialData?: DataItemType;
+    contextData?: unknown;
     additionalProps?: any;
 }
 
@@ -23,6 +24,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     modalTitle: string;
     repository: RepositoryReact<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
+    contextData?: unknown;
 };
 
 export type GeneralModalButtonButtonProps = {
@@ -41,6 +43,7 @@ export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = Re
 
 type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
     onAddNew: (object: DataItemType) => void;
+    initialData?: DataItemType;
 };
 
 type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {

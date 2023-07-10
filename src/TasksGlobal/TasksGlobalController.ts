@@ -41,26 +41,6 @@ export const tasksRepository = new RepositoryReact<Task>({
     name: 'tasks'
 });
 
-export const milestoneTypesRepository = new RepositoryReact<MilestoneType>({
-    actionRoutes: {
-        getRoute: 'milestoneTypes',
-        addNewRoute: 'milestoneType',
-        editRoute: 'milestoneType',
-        deleteRoute: 'milestoneType'
-    },
-    name: 'milestoneTypes'
-});
-
-export const caseTypesRepository = new RepositoryReact<CaseType>({
-    actionRoutes: {
-        getRoute: 'caseTypes',
-        addNewRoute: 'caseType',
-        editRoute: 'caseType',
-        deleteRoute: 'caseType'
-    },
-    name: 'caseTypes'
-});
-
 export const entitiesRepository = new RepositoryReact<Entity>({
     actionRoutes: {
         getRoute: 'entities',
