@@ -71,12 +71,13 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
         //setSections(sections.filter((s) => s.id !== sectionDataObject));
     }
     function handleHeaderClick(sectionNode) {
+        const repository = sectionNode.repository;
         setActiveSectionId(sectionNode.id);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
-        if (!sectionNode.repository.items.some((item) => item.id === sectionNode.dataItem.id))
-            sectionNode.repository.items.push(sectionNode.dataItem);
-        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
-        console.log('handleHeaderClick', sectionNode.repository.currentItems);
+        if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
+            repository.items.push(sectionNode.dataItem);
+        repository.addToCurrentItems(sectionNode.dataItem.id);
+        console.log('handleHeaderClick', repository.currentItems);
     }
     function handleRowClick(id) {
         setActiveRowId(id);
@@ -103,19 +104,15 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
                 react_1.default.createElement("progress", { style: { height: "5px" } })),
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null,
-                    react_1.default.createElement("p", { className: 'tekst-muted small' },
-                        "Znaleziono: ",
-                        objects.length,
-                        "  pozycji."),
-                    objects.length > 0 &&
-                        (initialSections?.length > 0 ?
-                            react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
-                                    showTableHeader: showTableHeader,
-                                    onRowClick: handleRowClick,
-                                    onIsReadyChange: (isReady) => { setIsReady(isReady); }
-                                } })
-                            :
-                                react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
+                    react_1.default.createElement("p", { className: 'tekst-muted small' }, objects && `Znaleziono: ${objects.length} pozycji`),
+                    (initialSections?.length > 0 ?
+                        react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                                showTableHeader: showTableHeader,
+                                onRowClick: handleRowClick,
+                                onIsReadyChange: (isReady) => { setIsReady(isReady); }
+                            } })
+                        :
+                            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
 }
 exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick }) {

@@ -1,9 +1,20 @@
 import { Case, CaseType, Entity, Milestone, MilestoneType, OtherContract, OurContract, Project, Task } from "../../Typings/bussinesTypes";
 import RepositoryReact from "../React/RepositoryReact";
+import { ContractsWithChildren } from "./TasksGlobalTypes";
+
+export const contractsWithChildrenRepository = new RepositoryReact<ContractsWithChildren>({
+    actionRoutes: {
+        getRoute: 'contractsWithChildren',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'contractsWithChildren'
+});
 
 export const contractsRepository = new RepositoryReact<OurContract | OtherContract>({
     actionRoutes: {
-        getRoute: 'contracts',
+        getRoute: 'contractsWitchChildren',
         addNewRoute: 'contractReact',
         editRoute: 'contract',
         deleteRoute: 'contract'

@@ -37,7 +37,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-export default function FilterableTable<DataItemType extends RepositoryDataItem>({
+export default function FilterableTable<LeafDataItemType extends RepositoryDataItem>({
     title,
     showTableHeader = true,
     repository,
@@ -52,23 +52,23 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     onRowClick,
     externalUpdate = 0,
     localFilter: locaFilter = false,
-}: FilterableTableProps<DataItemType>) {
+}: FilterableTableProps<LeafDataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
-    const [sections, setSections] = useState(initialSections as SectionNode<DataItemType>[]);
+    const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState('');
 
-    const [objects, setObjects] = useState(initialObjects as DataItemType[]);
+    const [objects, setObjects] = useState(initialObjects as LeafDataItemType[]);
 
     useEffect(() => {
         setObjects(initialObjects);
     }, [externalUpdate]);
 
-    function handleAddObject(object: DataItemType) {
+    function handleAddObject(object: LeafDataItemType) {
         setObjects([...objects, object]);
     }
 
-    function handleEditObject(object: DataItemType) {
+    function handleEditObject(object: LeafDataItemType) {
         setObjects(objects.map((o) => (o.id === object.id ? object : o)));
     }
 
@@ -90,13 +90,14 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
         //setSections(sections.filter((s) => s.id !== sectionDataObject));
     }
 
-    function handleHeaderClick(sectionNode: SectionNode<DataItemType>) {
+    function handleHeaderClick(sectionNode: SectionNode<LeafDataItemType>) {
+        const repository = sectionNode.repository;
         setActiveSectionId(sectionNode.id);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
-        if (!sectionNode.repository.items.some((item) => item.id === sectionNode.dataItem.id))
-            sectionNode.repository.items.push(sectionNode.dataItem);
-        sectionNode.repository.addToCurrentItems(sectionNode.dataItem.id);
-        console.log('handleHeaderClick', sectionNode.repository.currentItems);
+        if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
+            repository.items.push(sectionNode.dataItem);
+        repository.addToCurrentItems(sectionNode.dataItem.id);
+        console.log('handleHeaderClick', repository.currentItems);
     }
 
     function handleRowClick(id: number) {
@@ -107,7 +108,7 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
     }
 
     return (
-        <FilterableTableProvider<DataItemType>
+        <FilterableTableProvider<LeafDataItemType>
             objects={objects}
             activeRowId={activeRowId}
             activeSectionId={activeSectionId}
@@ -161,25 +162,24 @@ export default function FilterableTable<DataItemType extends RepositoryDataItem>
                 <Row>
                     <Col>
                         <p className='tekst-muted small'>
-                            Znaleziono: {objects.length}  pozycji.
+                            {objects && `Znaleziono: ${objects.length} pozycji`}
                         </p>
-                        {objects.length > 0 &&
-                            (initialSections?.length > 0 ?
-                                <Sections
-                                    onClick={handleHeaderClick}
-                                    resulsetTableProps={{
-                                        showTableHeader: showTableHeader,
-                                        onRowClick: handleRowClick,
-                                        onIsReadyChange: (isReady) => { setIsReady(isReady) }
-                                    }}
-                                />
-                                :
-                                <ResultSetTable<DataItemType>
-                                    showTableHeader={showTableHeader}
-                                    onRowClick={handleRowClick}
-                                    onIsReadyChange={(isReady) => { setIsReady(isReady); }}
-                                />
-                            )}
+                        {(initialSections?.length > 0 ?
+                            <Sections
+                                onClick={handleHeaderClick}
+                                resulsetTableProps={{
+                                    showTableHeader: showTableHeader,
+                                    onRowClick: handleRowClick,
+                                    onIsReadyChange: (isReady) => { setIsReady(isReady) }
+                                }}
+                            />
+                            :
+                            <ResultSetTable<LeafDataItemType>
+                                showTableHeader={showTableHeader}
+                                onRowClick={handleRowClick}
+                                onIsReadyChange={(isReady) => { setIsReady(isReady); }}
+                            />
+                        )}
                     </Col>
                 </Row>
             </Container>

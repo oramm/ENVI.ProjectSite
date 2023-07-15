@@ -30,6 +30,7 @@ const FilterableTableContext_1 = require("./FilterableTableContext");
 const FiterableTableRow_1 = require("./FiterableTableRow");
 const ResultSetTable_1 = require("./ResultSetTable");
 require("./FilterableTable.css");
+const react_router_dom_1 = require("react-router-dom");
 function Section({ sectionNode, resulsetTableProps, onClick }) {
     const { activeSectionId } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
@@ -51,7 +52,9 @@ function Section({ sectionNode, resulsetTableProps, onClick }) {
 }
 exports.Section = Section;
 function SectionHeader({ sectionNode, onClick, isActive }) {
+    const navigate = (0, react_router_dom_1.useNavigate)();
     const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { selectedObjectRoute, dataItem } = sectionNode;
     function makeTitleStyle() {
         const nodeLevel = sectionNode.level;
         return {
@@ -67,7 +70,10 @@ function SectionHeader({ sectionNode, onClick, isActive }) {
             background: !sectionNode.isInAccordion ? 'aliceblue' : undefined,
         };
     }
-    return (react_1.default.createElement("div", { style: makeSectionStyle() },
+    return (react_1.default.createElement("div", { style: makeSectionStyle(), onDoubleClick: () => {
+            if (selectedObjectRoute)
+                navigate(selectedObjectRoute + dataItem.id);
+        } },
         react_1.default.createElement("div", { className: isActive ? 'active' : '', onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
         isActive ?
             react_1.default.createElement("div", { className: 'section-action-menu' },

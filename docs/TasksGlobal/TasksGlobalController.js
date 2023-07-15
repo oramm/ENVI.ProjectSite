@@ -3,11 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.projectsRepository = exports.entitiesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
+exports.projectsRepository = exports.entitiesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.contractsWithChildrenRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../React/RepositoryReact"));
+exports.contractsWithChildrenRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'contractsWithChildren',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'contractsWithChildren'
+});
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'contracts',
+        getRoute: 'contractsWitchChildren',
         addNewRoute: 'contractReact',
         editRoute: 'contract',
         deleteRoute: 'contract'

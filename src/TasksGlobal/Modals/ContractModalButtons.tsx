@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../View/Modals/ModalsTypes';
 import { OtherContract, OurContract, Project } from '../../../Typings/bussinesTypes';
 import { ContractEditModalButtonGeneric, OtherContractAddNewModalButtonGeneric, OurContractAddNewModalButtonGeneric } from '../../Contracts/ContractsList/Modals/ContractModalButtons';
-import { contractsRepository } from '../TasksGlobalController';
+import { contractsRepository, contractsWithChildrenRepository } from '../TasksGlobalController';
 
 
 export function ContractEditModalButton({

@@ -4,7 +4,7 @@ import { useFormContext } from '../View/Modals/FormContext';
 import { TasksFilterBodyCommonFields } from '../Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields';
 import { useContract } from '../Contracts/ContractsList/ContractContext';
 import { ContractSelectFormElement } from '../View/Modals/CommonFormComponents';
-import { contractsRepository, projectsRepository } from './TasksGlobalController';
+import { contractsWithChildrenRepository, projectsRepository } from './TasksGlobalController';
 import { FilterBodyProps } from '../View/Resultsets/FilterableTable/FilterPanel';
 
 export function TasksGlobalFilterBody({ }: FilterBodyProps) {
@@ -19,7 +19,7 @@ export function TasksGlobalFilterBody({ }: FilterBodyProps) {
                         <Form.Group as={Col} controlId="_contract">
                             <Form.Label>Kontrakt</Form.Label>
                             <ContractSelectFormElement
-                                repository={contractsRepository}
+                                repository={contractsWithChildrenRepository}
                                 showValidationInfo={false}
                                 _project={project}
                             />

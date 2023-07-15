@@ -7,6 +7,7 @@ import { useFilterableTableContext } from './FilterableTableContext';
 import { RowActionMenu } from './FiterableTableRow';
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import './FilterableTable.css'
+import { useNavigate } from 'react-router-dom';
 
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
  * @param SectionNode.repository - repozytorium z danymi
@@ -27,6 +28,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     isInAccordion?: boolean,
     isDeletable?: boolean,
     editHandler?: (node: SectionNode<LeafDataItemType>) => void,
+    selectedObjectRoute?: string,
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
@@ -94,8 +96,9 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     onClick,
     isActive
 }: SectionHeaderProps<DataItemType>) {
-
+    const navigate = useNavigate();
     const { handleDeleteSection, handleEditSection, handleAddSection } = useFilterableTableContext<DataItemType>();
+    const { selectedObjectRoute, dataItem } = sectionNode;
     function makeTitleStyle() {
         const nodeLevel = sectionNode.level;
         return {
@@ -114,7 +117,9 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     }
 
     return (
-        <div style={makeSectionStyle()}>
+        <div style={makeSectionStyle()} onDoubleClick={() => {
+            if (selectedObjectRoute) navigate(selectedObjectRoute + dataItem.id)
+        }}>
             <div
                 className={isActive ? 'active' : ''}
                 onClick={() => onClick(sectionNode)}

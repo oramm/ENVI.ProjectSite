@@ -1,10 +1,9 @@
 import React, { ComponentType, createContext, useContext, useEffect, useState } from 'react';
 import { Button, Card as Container, Col, Row } from 'react-bootstrap';
-import { Case, Contract, Milestone, OtherContract, OurContract, Person, Project, RepositoryDataItem, Task } from '../../Typings/bussinesTypes';
-import { ContractProvider, useContract } from '../Contracts/ContractsList/ContractContext';
+import { Case, Milestone, OtherContract, OurContract, Person, Project, RepositoryDataItem, Task } from '../../Typings/bussinesTypes';
 import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComponents';
 import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
-import { casesRepository, contractsRepository, milestonesRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
+import { casesRepository, contractsRepository, contractsWithChildrenRepository, milestonesRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
 import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
 import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';
 import { ProjectAddNewModalButton, ProjectEditModalButton } from './Modals/ProjectModalButtons';
@@ -16,29 +15,31 @@ import { CaseAddNewModalButton, CaseEditModalButton } from './Modals/Case/CaseMo
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../View/Modals/ModalsTypes';
 import { ContractEditModalButton } from './Modals/ContractModalButtons';
 import { caseTypesRepository, milestoneTypesRepository } from '../Contracts/ContractsList/ContractsController';
+import { ContractsWithChildren } from './TasksGlobalTypes';
 
 export default function TasksGlobal() {
-    const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
-    const [externalTasksUpdate, setExternalTasksUpdate] = useState(0);
-    const [tasksLoaded, setTasksLoaded] = useState(true);
+    //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
+    const [contractsWithChildren, setContractsWithCildren] = useState([] as ContractsWithChildren[]);
+    const [externalUpdate, setExternalUpdate] = useState(0);
+    const [tasksLoaded, setDataLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
     const [showProjects, setShowProjects] = useState(true);
 
     useEffect(() => {
         if (!selectedProject) return;
         async function fetchData() {
-            setTasksLoaded(false);
+            setDataLoaded(false);
 
-            const [tasks] = await Promise.all([
-                tasksRepository.loadItemsFromServer({
+            const [contractsWithChildren] = await Promise.all([
+                contractsWithChildrenRepository.loadItemsFromServer({
                     _project: JSON.stringify(selectedProject)
                 }),
                 caseTypesRepository.loadItemsFromServer(),
                 milestoneTypesRepository.loadItemsFromServer(),
             ]);
-            setTasks(tasks);
-            setExternalTasksUpdate(prevState => prevState + 1);
-            setTasksLoaded(true);
+            setContractsWithCildren(contractsWithChildren);
+            setExternalUpdate(prevState => prevState + 1);
+            setDataLoaded(true);
         };
 
         fetchData();
@@ -47,8 +48,8 @@ export default function TasksGlobal() {
 
     function handleShowProjects() {
         setShowProjects(!showProjects);
-        setTasks([]);
-        setExternalTasksUpdate(prevState => prevState + 1);
+        setContractsWithCildren([]);
+        setExternalUpdate(prevState => prevState + 1);
     }
 
     function makeTaskParentsLabel(task: Task) {
@@ -61,7 +62,7 @@ export default function TasksGlobal() {
             `${_case._type.name || ''} | ${_case.name || ''}`;
     }
 
-    function makeTableStructure() {
+    function makeTasksTableStructure() {
         const tableStructure = [];
         if (!showProjects) {
             tableStructure.push(
@@ -79,60 +80,60 @@ export default function TasksGlobal() {
     }
 
     return (
-        <ContractProvider
-            tasks={tasks}
-            setTasks={setTasks}
-        >
-            <Container>
-                <Row>
-                    {showProjects &&
-                        <Col md={3}>
-                            <FilterableTable<Project>
-                                title='Projekty'
-                                repository={projectsRepository}
-                                AddNewButtonComponents={[ProjectAddNewModalButton]}
-                                FilterBodyComponent={ProjectsFilterBody}
-                                EditButtonComponent={ProjectEditModalButton}
-                                tableStructure={[
-                                    { header: 'Nazwa', renderTdBody: (project: Project) => <>{project._ourId_Alias}</> },
-                                ]}
-                                onRowClick={setSelectedProject}
-                            />
-                        </Col>
-                    }
-                    <Col md={showProjects ? '9' : '12'}>
-                        <div className="d-flex justify-content-end">
-                            <div onClick={handleShowProjects}>
-                                <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
-                            </div>
-                        </div>
-                        {tasksLoaded ?
-                            <FilterableTable<Task>
-                                title='Zadania'
-                                showTableHeader={false}
-                                initialObjects={tasks}
-                                repository={tasksRepository}
-                                AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
-                                FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
-                                EditButtonComponent={TaskGlobalEditModalButton}
-                                initialSections={buildTree(tasks || [])}
-                                tableStructure={makeTableStructure()}
-                                externalUpdate={externalTasksUpdate}
-
-                            />
-                            :
-                            <>
-                                <p>Ładuję zadania dla projektu:</p>
-                                <h3>{selectedProject?._ourId_Alias}</h3>
-                                <p>{selectedProject?.name}</p>
-                                <SpinnerBootstrap />
-                            </>
-                        }
+        <Container>
+            <Row>
+                {showProjects &&
+                    <Col md={3}>
+                        <FilterableTable<Project>
+                            title='Projekty'
+                            repository={projectsRepository}
+                            AddNewButtonComponents={[ProjectAddNewModalButton]}
+                            FilterBodyComponent={ProjectsFilterBody}
+                            EditButtonComponent={ProjectEditModalButton}
+                            tableStructure={[
+                                { header: 'Nazwa', renderTdBody: (project: Project) => <>{project._ourId_Alias}</> },
+                            ]}
+                            onRowClick={setSelectedProject}
+                        />
                     </Col>
-                </Row>
-            </Container>
-        </ContractProvider>
+                }
+                <Col md={showProjects ? '9' : '12'}>
+                    <div className="d-flex justify-content-end">
+                        <div onClick={handleShowProjects}>
+                            <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
+                        </div>
+                    </div>
+                    {tasksLoaded ?
+                        <FilterableTable<Task>
+                            title='Zadania'
+                            showTableHeader={false}
+                            //initialObjects={contractsWithChildren}
+                            repository={tasksRepository}
+                            AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
+                            FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
+                            EditButtonComponent={TaskGlobalEditModalButton}
+                            initialSections={buildTree(contractsWithChildren)}
+                            tableStructure={makeTasksTableStructure()}
+                            externalUpdate={externalUpdate}
+
+                        />
+                        :
+                        <LoadingMessage selectedProject={selectedProject} />
+                    }
+                </Col>
+            </Row>
+        </Container>
     );
+}
+
+function LoadingMessage({ selectedProject }: { selectedProject: Project | undefined }) {
+    return (
+        <>
+            <p> Ładuję zadania dla projektu:</p >
+            <h3>{selectedProject?._ourId_Alias}</h3>
+            <p>{selectedProject?.name}</p>
+            <SpinnerBootstrap />
+        </>)
 }
 
 function makeContractTitleLabel(contract: OurContract | OtherContract) {
@@ -158,73 +159,64 @@ function makeCaseTitleLabel(caseItem: Case) {
     return `S: ${caseItem._type.name} ${caseItem.name || ''}`;
 }
 
-function buildTree(tasks: Task[]): SectionNode<Task>[] {
-    const contracts: SectionNode<Task>[] = [];
-    for (const task of tasks) {
-        const contract = task._parent._parent._parent;
-        const milestone = task._parent._parent;
-        const caseItem = task._parent;
+function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
+    const contractNodes: SectionNode<Task>[] = [];
 
-        let contractNode = contracts.find(c => c.dataItem.id === contract.id);
-        if (!contractNode) {
-            const nodeName = 'contract';
-            contractNode = {
-                id: nodeName + contract.id,
-                isInAccordion: true,
-                level: 1,
-                name: nodeName,
-                repository: contractsRepository,
-                dataItem: contract,
-                titleLabel: makeContractTitleLabel(contract),
-                children: [],
-                EditButtonComponent: ContractEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>,
-                editHandler: contractNodeEditHandler,
-                isDeletable: false,
-            };
-            contracts.push(contractNode);
-        }
+    for (const { contract, milestonesWithCases: milestonesWitchCases } of contractsWithChildrenInput) {
+        const contractNode = {
+            id: 'contract' + contract.id,
+            isInAccordion: true,
+            level: 1,
+            name: 'contract',
+            repository: contractsRepository,
+            dataItem: contract,
+            titleLabel: makeContractTitleLabel(contract), // Dostosuj do Twojej metody
+            children: [] as SectionNode<Task>[],
+            EditButtonComponent: ContractEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
+            editHandler: contractNodeEditHandler, // Dostosuj do Twojej metody
+            isDeletable: false,
+        };
+        contractNodes.push(contractNode);
 
-        const milestoneNodeName = 'milestone';
-        let milestoneNode = contractNode.children.find(m => m.id === milestoneNodeName + milestone.id);
-        if (!milestoneNode) {
-
-            milestoneNode = {
-                id: milestoneNodeName + milestone.id,
+        for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
+            const milestoneNode = {
+                id: 'milestone' + milestone.id,
                 isInAccordion: false,
                 level: 2,
-                name: milestoneNodeName,
-                repository: milestonesRepository,
+                name: 'milestone',
+                repository: milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone),
-                children: [],
-                AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>,
-
+                titleLabel: makeMilestoneTitleLabel(milestone), // Dostosuj do Twojej metody
+                children: [] as SectionNode<Task>[],
+                AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
                 isDeletable: true,
             };
             contractNode.children.push(milestoneNode);
-        }
 
-        const caseNodeName = 'case';
-        let caseNode = milestoneNode.children.find(c => c.id === caseNodeName + caseItem.id);
-        if (!caseNode) {
-            caseNode = {
-                id: caseNodeName + caseItem.id,
-                level: 3,
-                name: 'case',
-                repository: casesRepository,
-                dataItem: caseItem,
-                titleLabel: makeCaseTitleLabel(caseItem),
-                children: [],
-                leaves: [],
-                isDeletable: true,
-                EditButtonComponent: CaseEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>,
-                editHandler: (node: SectionNode<Task>) => { node.titleLabel = makeCaseTitleLabel(node.dataItem as Case) },
-            };
-            milestoneNode.children.push(caseNode);
+            for (const { caseItem, tasks } of casesWithTasks || []) {
+                const caseNode = {
+                    id: 'case' + caseItem.id,
+                    level: 3,
+                    name: 'case',
+                    repository: casesRepository, // Dostosuj do Twojego repozytorium spraw
+                    dataItem: caseItem,
+                    titleLabel: makeCaseTitleLabel(caseItem), // Dostosuj do Twojej metody
+                    children: [],
+                    leaves: [] as Task[],
+                    isDeletable: true,
+                    EditButtonComponent: CaseEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
+                    editHandler: (node: SectionNode<Task>) => { node.titleLabel = makeCaseTitleLabel(node.dataItem as Case) }, // Dostosuj do Twojej metody
+                };
+                milestoneNode.children.push(caseNode);
+
+                for (const task of tasks || []) {
+                    if (!caseNode.leaves) caseNode.leaves = [];
+                    caseNode.leaves.push(task);
+                }
+                tasksRepository.items = [...tasksRepository.items, ...caseNode.leaves];
+            }
         }
-        if (!caseNode.leaves) caseNode.leaves = [];
-        caseNode.leaves.push(task);
     }
-
-    return contracts;
+    console.log('contractNodes', contractNodes);
+    return contractNodes;
 }

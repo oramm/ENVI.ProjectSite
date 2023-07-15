@@ -6,7 +6,7 @@ import MainSetup from '../../React/MainSetupReact';
 import { CaseSelectMenuElement, ContractSelectFormElement, ErrorMessage, PersonSelectFormElement, TaksStatusSelectFormElement } from '../../View/Modals/CommonFormComponents';
 import { useFormContext } from '../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../View/Modals/ModalsTypes';
-import { casesRepository, contractsRepository } from '../TasksGlobalController';
+import { casesRepository, contractsWithChildrenRepository } from '../TasksGlobalController';
 
 export function TaskGlobalModalBody({ isEditing, initialData }: ModalBodyProps<Task>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
