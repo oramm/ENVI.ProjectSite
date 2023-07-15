@@ -327,7 +327,7 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
  * @param readOnly czy pole jest tylko do odczytu
  */
-function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true }) {
+function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true, multiple = true }) {
     function makeContextSearchParams() {
         const contextSearchParams = [];
         if (_project)
@@ -342,7 +342,7 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _co
             const groupedResults = groupByMilestone(results);
             const milestoneNames = Object.keys(groupedResults).sort();
             return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
-        }, multiple: true, readOnly: readonly, showValidationInfo: showValidationInfo });
+        }, multiple: multiple, readOnly: readonly, showValidationInfo: showValidationInfo });
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 /**

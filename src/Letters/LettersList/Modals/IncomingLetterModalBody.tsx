@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { ErrorMessage, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
 import { LetterModalBody } from './LetterModalBody';
-import { entitiesRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
+import { entitiesRepository } from '../LettersController';
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {

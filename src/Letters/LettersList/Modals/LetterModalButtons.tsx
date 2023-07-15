@@ -5,8 +5,8 @@ import { ProjectSelectorModalBody } from './LetterModalBody';
 import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from './LetterValidationSchema';
 import { IncomingLetterModalBody } from './IncomingLetterModalBody';
 import { OurLetterModalBody } from './OurLetterModalBody';
-import { lettersRepository } from '../LettersSearch';
 import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
+import { lettersRepository } from '../LettersController';
 
 
 /** przycisk i modal edycji Letter */

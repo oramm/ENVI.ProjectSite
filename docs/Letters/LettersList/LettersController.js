@@ -3,16 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.entitiesRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.projectsRepository = exports.lettersRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
-class LettersController {
-}
-exports.default = LettersController;
-LettersController.statusNames = [
-    'Roboczy',
-    'Do wysłania',
-    'Wysłany',
-];
-LettersController.lettersRepository = new RepositoryReact_1.default({
+exports.lettersRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'letters',
         addNewRoute: 'letterReact',
@@ -21,7 +14,7 @@ LettersController.lettersRepository = new RepositoryReact_1.default({
     },
     name: 'letters'
 });
-LettersController.projectsRepository = new RepositoryReact_1.default({
+exports.projectsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'projects',
         addNewRoute: '',
@@ -30,7 +23,7 @@ LettersController.projectsRepository = new RepositoryReact_1.default({
     },
     name: 'projects'
 });
-LettersController.contractsRepository = new RepositoryReact_1.default({
+exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
         addNewRoute: '',
@@ -39,7 +32,7 @@ LettersController.contractsRepository = new RepositoryReact_1.default({
     },
     name: 'contracts'
 });
-LettersController.milestonesRepository = new RepositoryReact_1.default({
+exports.milestonesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'milestones',
         addNewRoute: '',
@@ -48,7 +41,7 @@ LettersController.milestonesRepository = new RepositoryReact_1.default({
     },
     name: 'milestones'
 });
-LettersController.casesRepository = new RepositoryReact_1.default({
+exports.casesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'cases',
         addNewRoute: '',
@@ -57,7 +50,7 @@ LettersController.casesRepository = new RepositoryReact_1.default({
     },
     name: 'cases'
 });
-LettersController.entitiesRepository = new RepositoryReact_1.default({
+exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'entities',
         addNewRoute: 'entity',

@@ -3,20 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.projectsRepository = exports.entitiesRepository = exports.lettersRepository = void 0;
 const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
-const LettersController_1 = __importDefault(require("./LettersController"));
+const LettersController_1 = require("./LettersController");
 const LetterFilterBody_1 = require("./LetterFilterBody");
 const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
-exports.lettersRepository = LettersController_1.default.lettersRepository;
-exports.entitiesRepository = LettersController_1.default.entitiesRepository;
-exports.projectsRepository = LettersController_1.default.projectsRepository;
-exports.contractsRepository = LettersController_1.default.contractsRepository;
-exports.milestonesRepository = LettersController_1.default.milestonesRepository;
-exports.casesRepository = LettersController_1.default.casesRepository;
 function LettersSearch({ title }) {
     function makeEntitiesLabel(letter) {
         const entities = letter._entitiesMain;
@@ -40,6 +33,6 @@ function LettersSearch({ title }) {
             { header: 'Numer', objectAttributeToShow: 'number' },
             { header: 'Dotyczy', objectAttributeToShow: 'description' },
             { header: 'Odbiorca', renderTdBody: makeEntitiesLabel },
-        ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: exports.lettersRepository, selectedObjectRoute: '/letter/' }));
+        ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: '/letter/' }));
 }
 exports.default = LettersSearch;

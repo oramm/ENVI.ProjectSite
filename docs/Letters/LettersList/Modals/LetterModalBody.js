@@ -30,9 +30,9 @@ exports.ProjectSelectorModalBody = exports.LetterModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const LettersSearch_1 = require("../LettersSearch");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const LettersController_1 = require("../LettersController");
 function LetterModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
     const _project = isEditing ? undefined : watch('_project');
@@ -72,11 +72,11 @@ function LetterModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersSearch_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _contract ?
-                react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersSearch_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })
+                react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: LettersController_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })
                 :
                     react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'warning' }, "Wybierz kontrakt, by przypisa\u0107 do spraw")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
@@ -112,7 +112,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersSearch_1.projectsRepository, name: '_project' }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersController_1.projectsRepository, name: '_project' }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 ;

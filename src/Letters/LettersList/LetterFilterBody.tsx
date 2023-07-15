@@ -1,13 +1,15 @@
 import React from 'react';
-import { ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
+import { CaseSelectMenuElement, ContractSelectFormElement, ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { projectsRepository } from './LettersSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
 import MainSetup from '../../React/MainSetupReact';
 import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
+import { casesRepository, contractsRepository, projectsRepository } from './LettersController';
 
 export function LettersFilterBody({ }: FilterBodyProps) {
-    const { register } = useFormContext();
+    const { register, watch } = useFormContext();
+    const _project = watch('_project');
+    const _contract = watch('_contract');
 
     return (
         <Row xl={5} md={3} xs={1}>
@@ -43,6 +45,26 @@ export function LettersFilterBody({ }: FilterBodyProps) {
                     showValidationInfo={false}
                 />
             </Form.Group>
+            <Form.Group as={Col}>
+                <Form.Label>Kontrakt</Form.Label>
+                <ContractSelectFormElement
+                    repository={contractsRepository}
+                    name='_contract'
+                    typesToInclude='all'
+                    showValidationInfo={false}
+                    _project={_project}
+                />
+            </Form.Group>
+            {1 && <Form.Group as={Col}>
+                <Form.Label>Sprawa</Form.Label>
+                <CaseSelectMenuElement
+                    name='_case'
+                    repository={casesRepository}
+                    showValidationInfo={false}
+                    _contract={_contract}
+                    multiple={false}
+                />
+            </Form.Group>}
         </Row>
     );
 }

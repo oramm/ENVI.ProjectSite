@@ -620,6 +620,7 @@ interface CaseSelectMenuElementProps {
     _milestone?: Milestone;
     readonly?: boolean;
     showValidationInfo?: boolean;
+    multiple?: boolean;
 }
 
 /**
@@ -644,7 +645,8 @@ export function CaseSelectMenuElement({
     _contract,
     _milestone,
     repository,
-    showValidationInfo = true
+    showValidationInfo = true,
+    multiple = true
 }: CaseSelectMenuElementProps) {
 
     function makeContextSearchParams() {
@@ -669,7 +671,7 @@ export function CaseSelectMenuElement({
             const milestoneNames = Object.keys(groupedResults).sort();
             return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
         }}
-        multiple={true}
+        multiple={multiple}
         readOnly={readonly}
         showValidationInfo={showValidationInfo}
     />;

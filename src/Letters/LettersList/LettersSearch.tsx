@@ -1,19 +1,12 @@
 import React from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
-import LettersController from './LettersController';
+import { lettersRepository } from './LettersController';
 import { LettersFilterBody } from './LetterFilterBody';
 import { LetterEditModalButton, IncomingLetterAddNewModalButton, OurLetterAddNewModalButton } from './Modals/LetterModalButtons';
 import { IncomingLetter, OurLetter, RepositoryDataItem } from '../../../Typings/bussinesTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
-
-export const lettersRepository = LettersController.lettersRepository;
-export const entitiesRepository = LettersController.entitiesRepository;
-export const projectsRepository = LettersController.projectsRepository;
-export const contractsRepository = LettersController.contractsRepository;
-export const milestonesRepository = LettersController.milestonesRepository;
-export const casesRepository = LettersController.casesRepository;
 
 export default function LettersSearch({ title }: { title: string }) {
     function makeEntitiesLabel(letter: OurLetter | IncomingLetter) {

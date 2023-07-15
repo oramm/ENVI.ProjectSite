@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ErrorMessage, MyAsyncTypeahead, OurLetterTemplateSelectFormElement } from '../../../View/Modals/CommonFormComponents';
-import { LetterModalBody, ProjectSelectorModalBody } from './LetterModalBody';
-import { casesRepository, entitiesRepository } from '../LettersSearch';
+import { LetterModalBody } from './LetterModalBody';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import { Case, Contract, IncomingLetter, OurLetter, Project } from '../../../../Typings/bussinesTypes';
+import { entitiesRepository } from '../LettersController';
 
 export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
     const { initialData, isEditing } = props;

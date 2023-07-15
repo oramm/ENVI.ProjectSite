@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CaseSelectMenuElement, ContractSelectFormElement, ErrorMessage, FileInput, MyAsyncTypeahead, PersonSelectFormElement, ProjectSelector } from '../../../View/Modals/CommonFormComponents';
 import { Alert, Col, Form, Placeholder, Row } from 'react-bootstrap';
-import { casesRepository, contractsRepository, projectsRepository } from '../LettersSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import MainSetup from '../../../React/MainSetupReact';
 import { Case, Contract, IncomingLetter, OurLetter, Project, RepositoryDataItem } from '../../../../Typings/bussinesTypes';
+import { casesRepository, contractsRepository, projectsRepository } from '../LettersController';
 
 export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();

@@ -30,7 +30,7 @@ const LetterModalBody_1 = require("./LetterModalBody");
 const LetterValidationSchema_1 = require("./LetterValidationSchema");
 const IncomingLetterModalBody_1 = require("./IncomingLetterModalBody");
 const OurLetterModalBody_1 = require("./OurLetterModalBody");
-const LettersSearch_1 = require("../LettersSearch");
+const LettersController_1 = require("../LettersController");
 /** przycisk i modal edycji Letter */
 function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
@@ -46,7 +46,7 @@ function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             onEdit: onEdit,
             ModalBodyComponent: OurLetterModalBody_1.OurLetterModalBody,
             modalTitle: "Edycja pisma wychodzącego",
-            repository: LettersSearch_1.lettersRepository,
+            repository: LettersController_1.lettersRepository,
             initialData: initialData,
             makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
         }, buttonProps: {
@@ -60,7 +60,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_1.OurLetterModalBody },
             modalTitle: "Rejestruj pismo wychodzące",
-            repository: LettersSearch_1.lettersRepository,
+            repository: LettersController_1.lettersRepository,
             makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj wychodzące",
@@ -73,7 +73,7 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             onEdit: onEdit,
             ModalBodyComponent: IncomingLetterModalBody_1.IncomingLetterModalBody,
             modalTitle: "Edycja pisma przychodzącego",
-            repository: LettersSearch_1.lettersRepository,
+            repository: LettersController_1.lettersRepository,
             initialData: initialData,
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
         }, buttonProps: {} }));
@@ -85,7 +85,7 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody, },
             modalTitle: "Nowe pismo przychodzące",
-            repository: LettersSearch_1.lettersRepository,
+            repository: LettersController_1.lettersRepository,
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj przychodzące",
