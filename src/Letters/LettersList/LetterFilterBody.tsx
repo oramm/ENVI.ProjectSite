@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CaseSelectMenuElement, ContractSelectFormElement, ContractTypeSelectFormElement, ProjectSelector, ValueInPLNInput } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../View/Modals/FormContext';
@@ -7,9 +7,19 @@ import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPan
 import { casesRepository, contractsRepository, projectsRepository } from './LettersController';
 
 export function LettersFilterBody({ }: FilterBodyProps) {
-    const { register, watch } = useFormContext();
+    const { register, watch, setValue } = useFormContext();
     const _project = watch('_project');
     const _contract = watch('_contract');
+    const _case = watch('_case');
+
+    useEffect(() => {
+        setValue('_contract', undefined);
+        setValue('_case', undefined);
+    }, [_project]);
+
+    useEffect(() => {
+        setValue('_case', undefined);
+    }, [_contract]);
 
     return (
         <Row xl={5} md={3} xs={1}>
@@ -55,7 +65,7 @@ export function LettersFilterBody({ }: FilterBodyProps) {
                     _project={_project}
                 />
             </Form.Group>
-            {1 && <Form.Group as={Col}>
+            {_contract && <Form.Group as={Col}>
                 <Form.Label>Sprawa</Form.Label>
                 <CaseSelectMenuElement
                     name='_case'
