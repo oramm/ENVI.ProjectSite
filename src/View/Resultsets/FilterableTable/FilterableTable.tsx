@@ -5,27 +5,12 @@ import RepositoryReact from '../../../React/RepositoryReact';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 import { FilterableTableProvider, useFilterableTableContext } from './FilterableTableContext';
-import { FilterBodyProps, FilterPanel } from './FilterPanel';
+import { FilterPanel } from './FilterPanel';
 import { ResultSetTable, ResultSetTableProps } from './ResultSetTable';
-import { RowStructure } from './FiterableTableRow';
 import { Section, SectionNode } from './Section';
+import { FilterableTableProps, FilterableTableSnapShot } from './FilterableTableTypes';
 
-export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    title: string,
-    showTableHeader?: boolean,
-    initialSections?: SectionNode<DataItemType>[],
-    tableStructure: RowStructure<DataItemType>[],
-    repository: RepositoryReact<DataItemType>,
-    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
-    isDeletable?: boolean;
-    FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
-    selectedObjectRoute?: string;
-    initialObjects?: DataItemType[];
-    onRowClick?: (object: DataItemType) => void;
-    externalUpdate?: number;
-    localFilter?: boolean;
-}
+
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -38,6 +23,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
 export default function FilterableTable<LeafDataItemType extends RepositoryDataItem>({
+    id,
     title,
     showTableHeader = true,
     repository,
@@ -57,10 +43,33 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const [activeRowId, setActiveRowId] = useState(0);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState('');
+    const [objects, setObjects] = useState(initObjects());
 
-    const [objects, setObjects] = useState(initialObjects as LeafDataItemType[]);
+    function initObjects() {
+        if (initialObjects.length > 0) return initialObjects;
+        const objectsFromStorage = getObjectsFroStorage();
+        if (objectsFromStorage) {
+            initialObjects = [...objectsFromStorage];
+            return objectsFromStorage;
+        }
+        return [];
+    }
+
+    function getObjectsFroStorage() {
+        const snapshotName = `filtersableTableSnapshot_${id}`;
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        if (!storedSnapshot) return;
+
+        const { storedObjects } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
+        return storedObjects;
+    }
 
     useEffect(() => {
+        console.log('Objects updated: ', objects);
+    }, [objects]);
+
+    useEffect(() => {
+        console.log('External update: setObject', initialObjects);
         setObjects(initialObjects);
     }, [externalUpdate]);
 
@@ -109,6 +118,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     return (
         <FilterableTableProvider<LeafDataItemType>
+            id={id}
             objects={objects}
             activeRowId={activeRowId}
             activeSectionId={activeSectionId}
@@ -151,7 +161,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                         <FilterPanel
                             FilterBodyComponent={FilterBodyComponent}
                             repository={repository}
-                            locaFilter={locaFilter}
                             onIsReadyChange={(isReady) => {
                                 setIsReady(isReady);
                             }}

@@ -85,6 +85,7 @@ export default function TasksGlobal() {
                 {showProjects &&
                     <Col md={3}>
                         <FilterableTable<Project>
+                            id='projects'
                             title='Projekty'
                             repository={projectsRepository}
                             AddNewButtonComponents={[ProjectAddNewModalButton]}
@@ -105,6 +106,7 @@ export default function TasksGlobal() {
                     </div>
                     {tasksLoaded ?
                         <FilterableTable<Task>
+                            id='tasks'
                             title='Zadania'
                             showTableHeader={false}
                             //initialObjects={contractsWithChildren}

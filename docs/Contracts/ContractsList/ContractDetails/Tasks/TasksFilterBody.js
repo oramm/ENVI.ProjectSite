@@ -12,7 +12,7 @@ const ContractContext_1 = require("../../ContractContext");
 const ToolsDate_1 = __importDefault(require("../../../../React/ToolsDate"));
 const ContractsController_1 = require("../../ContractsController");
 const MainSetupReact_1 = __importDefault(require("../../../../React/MainSetupReact"));
-function TasksFilterBody({}) {
+function TasksFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     const { contract } = (0, ContractContext_1.useContract)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },

@@ -5,7 +5,7 @@ import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
 import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { GDDocFileIconLink, GDFolderIconLink } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
-import { SectionNode } from './Section';
+import { RowStructure } from './FilterableTableTypes';
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType,
@@ -128,10 +128,3 @@ export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
         />
     );
 }
-
-export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    header?: string,
-    objectAttributeToShow?: string,
-    renderTdBody?: (dataItem: DataItemType) => JSX.Element
-    renderThBody?: () => JSX.Element
-};

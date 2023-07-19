@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFilterableTableContext = exports.FilterableTableProvider = exports.FilterableTableContext = void 0;
 const react_1 = __importStar(require("react"));
 exports.FilterableTableContext = (0, react_1.createContext)({
+    id: '',
     objects: [],
     sections: [],
     repository: {},
@@ -45,9 +46,10 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     isDeletable: true,
     externalUpdate: 0,
 });
-function FilterableTableProvider({ objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
+            id,
             objects,
             setObjects: setObjects,
             repository,

@@ -107,6 +107,7 @@ export default function InvoiceDetails() {
 
                     {invoiceItems ?
                         <FilterableTable<InvoiceItem>
+                            id='invoiceItems'
                             title=''
                             initialObjects={invoiceItems}
                             repository={invoiceItemsRepository}

@@ -23,7 +23,7 @@ function Tasks() {
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             tasks ?
-                react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', initialObjects: tasks, repository: ContractsController_1.tasksRepository, AddNewButtonComponents: [TaskModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: TasksFilterBody_1.TasksFilterBody, EditButtonComponent: TaskModalButtons_1.TaskEditModalButton, tableStructure: [
+                react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', initialObjects: tasks, repository: ContractsController_1.tasksRepository, AddNewButtonComponents: [TaskModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: TasksFilterBody_1.TasksFilterBody, EditButtonComponent: TaskModalButtons_1.TaskEditModalButton, tableStructure: [
                         { header: 'Nazwa', objectAttributeToShow: 'name' },
                         { header: 'Opis', objectAttributeToShow: 'description' },
                         { header: 'Termin', objectAttributeToShow: 'deadline' },

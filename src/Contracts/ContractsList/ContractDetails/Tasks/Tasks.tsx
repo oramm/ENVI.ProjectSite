@@ -22,6 +22,7 @@ export default function Tasks() {
             <Card.Body >
                 {tasks ?
                     <FilterableTable<Task>
+                        id='tasks'
                         title='Zadania'
                         initialObjects={tasks}
                         repository={tasksRepository}

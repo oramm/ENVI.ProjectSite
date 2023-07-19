@@ -23,6 +23,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
 
     return (
         <FilterableTable<Invoice>
+            id='invoices'
             title={title}
             FilterBodyComponent={InvoicesFilterBody}
             tableStructure={[

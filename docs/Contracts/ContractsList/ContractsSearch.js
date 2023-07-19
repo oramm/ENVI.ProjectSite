@@ -9,7 +9,7 @@ const ContractsController_1 = require("./ContractsController");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 function ContractsSearch({ title }) {
-    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: [
+    return (react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: [
             { header: 'Projekt', renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._parent.ourId) },
             { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
             { header: 'Numer', objectAttributeToShow: 'number' },

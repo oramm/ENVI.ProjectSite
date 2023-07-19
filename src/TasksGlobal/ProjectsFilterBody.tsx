@@ -3,9 +3,8 @@ import { Col, Form, Row } from 'react-bootstrap';
 import MainSetup from '../React/MainSetupReact';
 import { RadioButtonGroup } from '../View/Modals/CommonFormComponents';
 import { useFormContext } from '../View/Modals/FormContext';
-import { FilterBodyProps } from '../View/Resultsets/FilterableTable/FilterPanel';
 
-export function ProjectsFilterBody({ }: FilterBodyProps) {
+export function ProjectsFilterBody() {
     const { register } = useFormContext();
 
     return (

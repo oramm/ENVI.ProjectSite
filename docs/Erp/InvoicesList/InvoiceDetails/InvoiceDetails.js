@@ -111,7 +111,7 @@ function InvoiceDetails() {
                             "Opis: ",
                             invoice.description)))),
                 invoiceItems ?
-                    react_1.default.createElement(FilterableTable_1.default, { title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
+                    react_1.default.createElement(FilterableTable_1.default, { id: 'invoiceItems', title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
                             { header: 'Opis', objectAttributeToShow: 'description' },
                             { header: 'Netto', objectAttributeToShow: '_netValue' },
                             { header: 'Brutto', objectAttributeToShow: '_grossValue' },

@@ -11,7 +11,7 @@ const TasksFilterBodyCommonFields_1 = require("../Contracts/ContractsList/Contra
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
 const CommonFormComponents_1 = require("../View/Modals/CommonFormComponents");
 const TasksGlobalController_1 = require("./TasksGlobalController");
-function TasksGlobalFilterBody({}) {
+function TasksGlobalFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     const { project } = (0, ContractContext_1.useContract)();
     return (react_1.default.createElement(react_1.default.Fragment, null,

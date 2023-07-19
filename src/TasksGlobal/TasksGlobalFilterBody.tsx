@@ -5,9 +5,8 @@ import { TasksFilterBodyCommonFields } from '../Contracts/ContractsList/Contract
 import { useContract } from '../Contracts/ContractsList/ContractContext';
 import { ContractSelectFormElement } from '../View/Modals/CommonFormComponents';
 import { contractsWithChildrenRepository, projectsRepository } from './TasksGlobalController';
-import { FilterBodyProps } from '../View/Resultsets/FilterableTable/FilterPanel';
 
-export function TasksGlobalFilterBody({ }: FilterBodyProps) {
+export function TasksGlobalFilterBody() {
     const { register } = useFormContext();
     const { project } = useContract();
     return (

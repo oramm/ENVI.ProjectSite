@@ -29,6 +29,7 @@ export default function LettersSearch({ title }: { title: string }) {
 
     return (
         <FilterableTable<OurLetter | IncomingLetter>
+            id='letters'
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[

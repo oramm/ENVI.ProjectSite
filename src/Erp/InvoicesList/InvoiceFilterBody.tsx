@@ -4,10 +4,8 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { contractsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
 import MainSetup from '../../React/MainSetupReact';
-import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
 
-
-export function InvoicesFilterBody({ }: FilterBodyProps) {
+export function InvoicesFilterBody() {
     const { register } = useFormContext();
 
     return (

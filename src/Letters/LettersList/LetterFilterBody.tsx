@@ -3,10 +3,9 @@ import { CaseSelectMenuElement, ContractSelectFormElement, ContractTypeSelectFor
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../View/Modals/FormContext';
 import MainSetup from '../../React/MainSetupReact';
-import { FilterBodyProps } from '../../View/Resultsets/FilterableTable/FilterPanel';
 import { casesRepository, contractsRepository, projectsRepository } from './LettersController';
 
-export function LettersFilterBody({ }: FilterBodyProps) {
+export function LettersFilterBody() {
     const { register, watch, setValue } = useFormContext();
     const _project = watch('_project');
     const _contract = watch('_contract');

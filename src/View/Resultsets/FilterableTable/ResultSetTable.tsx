@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { useFilterableTableContext } from "./FilterableTableContext";
-import { FiterableTableRow, RowStructure } from "./FiterableTableRow";
+import { RowStructure } from "./FilterableTableTypes";
+import { FiterableTableRow } from "./FiterableTableRow";
 
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
     showTableHeader: boolean,
@@ -21,6 +22,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
     const [objectsToShow, setObjectsToShow] = useState<DataItemType[]>([]);
 
     useEffect(() => {
+        console.log('ResultSetTable update objects: ', objects);
         const objectsToShow = filteredObjects || objects;
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);

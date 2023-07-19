@@ -10,6 +10,7 @@ import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAdd
 export default function ContractsSearch({ title }: { title: string }) {
     return (
         <FilterableTable<OurContract | OtherContract>
+            id='contracts'
             title={title}
             FilterBodyComponent={ContractsFilterBody}
             tableStructure={[

@@ -6,10 +6,8 @@ import { useContract } from '../../ContractContext';
 import ToolsDate from '../../../../React/ToolsDate';
 import { casesRepository } from '../../ContractsController';
 import MainSetup from '../../../../React/MainSetupReact';
-import { FilterBodyProps } from '../../../../View/Resultsets/FilterableTable/FilterPanel';
 
-
-export function TasksFilterBodyCommonFields({ }: FilterBodyProps) {
+export function TasksFilterBodyCommonFields() {
     const { register } = useFormContext();
     const { contract } = useContract();
     return (

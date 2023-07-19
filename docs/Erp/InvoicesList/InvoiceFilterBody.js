@@ -10,7 +10,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const InvoicesSearch_1 = require("./InvoicesSearch");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
-function InvoicesFilterBody({}) {
+function InvoicesFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },

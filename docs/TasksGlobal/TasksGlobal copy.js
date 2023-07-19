@@ -95,7 +95,7 @@ function TasksGlobal() {
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 showProjects &&
                     react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                        react_1.default.createElement(FilterableTable_1.default, { title: 'Projekty', repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                        react_1.default.createElement(FilterableTable_1.default, { id: 'projects', title: 'Projekty', repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
                                 { header: 'Nazwa', renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
                             ], onRowClick: setSelectedProject })),
                 react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? '9' : '12' },
@@ -103,7 +103,7 @@ function TasksGlobal() {
                         react_1.default.createElement("div", { onClick: handleShowProjects },
                             react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
                     tasksLoaded ?
-                        react_1.default.createElement(FilterableTable_1.default, { title: 'Zadania', showTableHeader: false, initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(tasks || []), tableStructure: makeTableStructure(), externalUpdate: externalTasksUpdate })
+                        react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, initialObjects: tasks, repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(tasks || []), tableStructure: makeTableStructure(), externalUpdate: externalTasksUpdate })
                         :
                             react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement("p", null, "\u0141aduj\u0119 zadania dla projektu:"),

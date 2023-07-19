@@ -9,7 +9,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../React/MainSetupReact"));
 const CommonFormComponents_1 = require("../View/Modals/CommonFormComponents");
 const FormContext_1 = require("../View/Modals/FormContext");
-function ProjectsFilterBody({}) {
+function ProjectsFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,

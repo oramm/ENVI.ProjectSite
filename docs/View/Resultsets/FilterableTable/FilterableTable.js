@@ -41,13 +41,35 @@ const Section_1 = require("./Section");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, localFilter: locaFilter = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)('');
-    const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    const [objects, setObjects] = (0, react_1.useState)(initObjects());
+    function initObjects() {
+        if (initialObjects.length > 0)
+            return initialObjects;
+        const objectsFromStorage = getObjectsFroStorage();
+        if (objectsFromStorage) {
+            initialObjects = [...objectsFromStorage];
+            return objectsFromStorage;
+        }
+        return [];
+    }
+    function getObjectsFroStorage() {
+        const snapshotName = `filtersableTableSnapshot_${id}`;
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        if (!storedSnapshot)
+            return;
+        const { storedObjects } = JSON.parse(storedSnapshot);
+        return storedObjects;
+    }
     (0, react_1.useEffect)(() => {
+        console.log('Objects updated: ', objects);
+    }, [objects]);
+    (0, react_1.useEffect)(() => {
+        console.log('External update: setObject', initialObjects);
         setObjects(initialObjects);
     }, [externalUpdate]);
     function handleAddObject(object) {
@@ -87,7 +109,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
             onRowClick(repository.currentItems[0]);
         }
     }
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -97,7 +119,7 @@ function FilterableTable({ title, showTableHeader = true, repository, initialSec
                         index < AddNewButtonComponents.length - 1 && ' '))))),
             FilterBodyComponent &&
                 react_1.default.createElement(react_bootstrap_1.Row, null,
-                    react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, locaFilter: locaFilter, onIsReadyChange: (isReady) => {
+                    react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
                             setIsReady(isReady);
                         } })),
             !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,

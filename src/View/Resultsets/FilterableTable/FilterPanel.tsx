@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { FieldValues, useForm } from 'react-hook-form';
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
@@ -6,80 +6,45 @@ import RepositoryReact from "../../../React/RepositoryReact";
 import { FormProvider } from "../../Modals/FormContext";
 import { parseFieldValuesToParams } from "../CommonComponentsController";
 import { useFilterableTableContext } from "./FilterableTableContext";
-
-export type FilterPanelProps = {
-    FilterBodyComponent: React.ComponentType<FilterBodyProps>;
-    repository: RepositoryReact,
-    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
-    locaFilter: boolean,
-}
-
-export type FilterBodyProps = {};
+import { FilterableTableSnapShot, FilterPanelProps } from "./FilterableTableTypes";
 
 export function FilterPanel<DataItemType extends RepositoryDataItem>({
     FilterBodyComponent,
     repository,
     onIsReadyChange,
-    locaFilter = false,
 }: FilterPanelProps) {
-    const { setObjects, objects, externalUpdate } = useFilterableTableContext<DataItemType>();
-    const [originalObjects, setOriginalObjects] = useState<DataItemType[]>([]);
+    const { setObjects, objects, id } = useFilterableTableContext<DataItemType>();
 
     const formMethods = useForm({ defaultValues: {}, mode: 'onChange' });
-
+    const snapshotName = `filtersableTableSnapshot_${id}`;
+    //odtwórz stan z sessionStorage
     useEffect(() => {
-        setOriginalObjects(objects);
-    }, [externalUpdate]);
+        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        if (!storedSnapshot) return;
+
+        const { criteria, storedObjects } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
+        for (let key in criteria) {
+            (formMethods.setValue as (name: string, value: any) => void)(key, criteria[key]);
+        }
+    }, []);
 
     async function handleSubmitSearch(data: FieldValues) {
-        let result: DataItemType[] = [];
-        onIsReadyChange(false);
-        if (locaFilter)
-            result = handleLocalFilter(data);
-        else {
-            const formData = parseFieldValuesToParams(data);
-            result = await repository.loadItemsFromServer(formData) as DataItemType[];
-            await handleServerSearch(data);
-        }
-        setObjects(result);
-        onIsReadyChange(true);
-    };
-
-    async function handleServerSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuesToParams(data);
         const result = await repository.loadItemsFromServer(formData) as DataItemType[];
         setObjects(result);
+        saveSnapshotToStorage(result);
         onIsReadyChange(true);
     };
 
-    function handleLocalFilter(filterFormData: FieldValues) {
-        return originalObjects.filter(item => {
-            for (let key in filterFormData) {
-                const filterValue = filterFormData[key];
-                if (!filterValue) continue;
-
-                const itemValue = item[key];
-                // Jeśli wartość w elemencie jest obiektem, porównaj za pomocą labelKey
-                if (typeof itemValue === 'object' && itemValue !== null) {
-                    const labelKey = itemValue.labelKey;
-                    // Jeśli wartość filtra nie pasuje do wartości labelKey w obiekcie, zwróć false
-                    if (String(itemValue[labelKey]).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
-                        return false;
-                    }
-                } else {
-                    // Jeśli wartość w elemencie nie jest obiektem, porównaj bezpośrednio
-                    // Jeśli wartość filtra nie pasuje do wartości w obiekcie, zwróć false
-                    if (String(itemValue).toLowerCase().includes(String(filterValue).toLowerCase()) === false) {
-                        return false;
-                    }
-                }
-            }
-            // Jeśli wszystkie pola pasują, zwróć true
-            return true;
-        });
+    function saveSnapshotToStorage(result: DataItemType[]) {
+        const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
+            criteria: formMethods.getValues(),
+            storedObjects: result,
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+        console.log('Saved snapshot: ', filterableTableSnapshot.storedObjects);
     }
-
 
     return (
         <FormProvider value={formMethods}>

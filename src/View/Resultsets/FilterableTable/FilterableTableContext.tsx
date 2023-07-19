@@ -2,10 +2,11 @@ import React, { createContext } from "react";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { RowStructure } from "./FiterableTableRow";
+import { RowStructure } from "./FilterableTableTypes";
 import { SectionNode } from "./Section";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
+    id: string,
     objects: DataItemType[];
     repository: RepositoryReact<DataItemType>;
     sections: SectionNode<DataItemType>[];
@@ -28,6 +29,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
+    id: '',
     objects: [],
     sections: [],
     repository: {} as RepositoryReact<RepositoryDataItem>,
@@ -49,6 +51,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
+    id,
     objects,
     setObjects,
     repository,
@@ -72,6 +75,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>;
 
     return <FilterableTableContextGeneric.Provider value={{
+        id,
         objects,
         setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
         repository,

@@ -24,7 +24,7 @@ function InvoicesSearch({ title }) {
             " ",
             react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })));
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
+    return (react_1.default.createElement(FilterableTable_1.default, { id: 'invoices', title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
             { header: 'Numer', objectAttributeToShow: 'number' },
             { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
             { header: 'Wysłano', objectAttributeToShow: 'sentDate' },

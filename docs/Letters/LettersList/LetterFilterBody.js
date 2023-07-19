@@ -33,7 +33,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const LettersController_1 = require("./LettersController");
-function LettersFilterBody({}) {
+function LettersFilterBody() {
     const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     const _project = watch('_project');
     const _contract = watch('_contract');
