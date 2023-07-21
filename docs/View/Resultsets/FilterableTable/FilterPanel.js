@@ -39,7 +39,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot)
             return;
-        const { criteria, storedObjects } = JSON.parse(storedSnapshot);
+        const { criteria } = JSON.parse(storedSnapshot);
         for (let key in criteria) {
             formMethods.setValue(key, criteria[key]);
         }

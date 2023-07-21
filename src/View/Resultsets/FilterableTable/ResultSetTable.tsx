@@ -22,7 +22,6 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
     const [objectsToShow, setObjectsToShow] = useState<DataItemType[]>([]);
 
     useEffect(() => {
-        console.log('ResultSetTable update objects: ', objects);
         const objectsToShow = filteredObjects || objects;
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);

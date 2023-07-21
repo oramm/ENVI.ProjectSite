@@ -5,7 +5,7 @@ import { SpinnerBootstrap, TaskStatusBadge } from '../View/Resultsets/CommonComp
 import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
 import { casesRepository, contractsRepository, contractsWithChildrenRepository, milestonesRepository, projectsRepository, tasksRepository } from './TasksGlobalController';
 import { TasksGlobalFilterBody } from './TasksGlobalFilterBody';
-import { TaskAddNewModalButton as TaskGlobalAddNewModalButton, TaskEditModalButton as TaskGlobalEditModalButton } from './Modals/TasksGlobalModalButtons';
+import { TaskAddNewModalButton, TaskEditModalButton } from './Modals/TasksGlobalModalButtons';
 import { ProjectAddNewModalButton, ProjectEditModalButton } from './Modals/ProjectModalButtons';
 import { ProjectsFilterBody } from './ProjectsFilterBody';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -109,11 +109,10 @@ export default function TasksGlobal() {
                             id='tasks'
                             title='Zadania'
                             showTableHeader={false}
-                            //initialObjects={contractsWithChildren}
                             repository={tasksRepository}
-                            AddNewButtonComponents={[TaskGlobalAddNewModalButton]}
+                            //AddNewButtonComponents={[TaskAddNewModalButton]}
                             FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
-                            EditButtonComponent={TaskGlobalEditModalButton}
+                            EditButtonComponent={TaskEditModalButton}
                             initialSections={buildTree(contractsWithChildren)}
                             tableStructure={makeTasksTableStructure()}
                             externalUpdate={externalUpdate}
@@ -206,6 +205,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     children: [],
                     leaves: [] as Task[],
                     isDeletable: true,
+                    AddNewButtonComponent: TaskAddNewModalButton as unknown as ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
                     EditButtonComponent: CaseEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
                     editHandler: (node: SectionNode<Task>) => { node.titleLabel = makeCaseTitleLabel(node.dataItem as Case) }, // Dostosuj do Twojej metody
                 };

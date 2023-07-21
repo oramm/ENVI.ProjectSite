@@ -24,10 +24,11 @@ function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps
         } }));
 }
 exports.TaskEditModalButton = TaskEditModalButton;
-function TaskAddNewModalButton({ modalProps: { onAddNew }, }) {
+function TaskAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
+            contextData,
             modalTitle: "Dodaj zadanie",
             repository: TasksGlobalController_1.tasksRepository,
             makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema

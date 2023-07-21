@@ -50,14 +50,14 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     function initObjects() {
         if (initialObjects.length > 0)
             return initialObjects;
-        const objectsFromStorage = getObjectsFroStorage();
+        const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
-            initialObjects = [...objectsFromStorage];
+            initialObjects = objectsFromStorage;
             return objectsFromStorage;
         }
         return [];
     }
-    function getObjectsFroStorage() {
+    function getObjectsFromStorage() {
         const snapshotName = `filtersableTableSnapshot_${id}`;
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot)
@@ -66,10 +66,6 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         return storedObjects;
     }
     (0, react_1.useEffect)(() => {
-        console.log('Objects updated: ', objects);
-    }, [objects]);
-    (0, react_1.useEffect)(() => {
-        console.log('External update: setObject', initialObjects);
         setObjects(initialObjects);
     }, [externalUpdate]);
     function handleAddObject(object) {

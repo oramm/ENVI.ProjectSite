@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Task } from '../../../Typings/bussinesTypes';
-import { TaskGlobalModalBody as TaskGlobalModalBody } from './TaskGlobalModalBody';
+import { TaskGlobalModalBody } from './TaskGlobalModalBody';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../View/Modals/ModalsTypes';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../View/Modals/GeneralModalButtons';
 import { makeTaskGlobalValidationSchema } from './TaskGlobalValidationSchema';
@@ -31,13 +31,14 @@ export function TaskEditModalButton({
 }
 
 export function TaskAddNewModalButton({
-    modalProps: { onAddNew },
+    modalProps: { onAddNew, contextData },
 }: SpecificAddNewModalButtonProps<Task>) {
     return (
         <GeneralAddNewModalButton<Task>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: TaskGlobalModalBody,
+                contextData,
                 modalTitle: "Dodaj zadanie",
                 repository: tasksRepository,
                 makeValidationSchema: makeTaskGlobalValidationSchema

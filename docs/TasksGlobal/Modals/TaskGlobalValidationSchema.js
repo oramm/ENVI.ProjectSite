@@ -29,8 +29,6 @@ const TaskValidationSchema_1 = require("../../Contracts/ContractsList/ContractDe
 function makeTaskGlobalValidationSchema(isEditing) {
     return (Yup.object().shape({
         ...TaskValidationSchema_1.commonFields,
-        _contract: isEditing ? Yup.object() : Yup.object().required('Wybierz kontrakt'),
-        _case: isEditing ? Yup.object() : Yup.object().required('Wybierz sprawę'),
     }));
 }
 exports.makeTaskGlobalValidationSchema = makeTaskGlobalValidationSchema;

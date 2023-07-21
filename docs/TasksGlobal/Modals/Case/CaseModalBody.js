@@ -35,7 +35,7 @@ function CaseModalBody({ isEditing, initialData, contextData }) {
     (0, react_1.useEffect)(() => {
         console.log('CaseModalBody useEffect', initialData);
         const resetData = {
-            _milestone: _milestone,
+            _milestone,
             _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || '',

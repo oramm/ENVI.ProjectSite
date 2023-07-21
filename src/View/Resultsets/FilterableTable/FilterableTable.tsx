@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
 import { Container, Row, Col, Card, Accordion } from 'react-bootstrap';
-import RepositoryReact from '../../../React/RepositoryReact';
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
 import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
 import { FilterableTableProvider, useFilterableTableContext } from './FilterableTableContext';
 import { FilterPanel } from './FilterPanel';
@@ -47,15 +44,15 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function initObjects() {
         if (initialObjects.length > 0) return initialObjects;
-        const objectsFromStorage = getObjectsFroStorage();
+        const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
-            initialObjects = [...objectsFromStorage];
+            initialObjects = objectsFromStorage;
             return objectsFromStorage;
         }
         return [];
     }
 
-    function getObjectsFroStorage() {
+    function getObjectsFromStorage() {
         const snapshotName = `filtersableTableSnapshot_${id}`;
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot) return;
@@ -65,11 +62,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     useEffect(() => {
-        console.log('Objects updated: ', objects);
-    }, [objects]);
-
-    useEffect(() => {
-        console.log('External update: setObject', initialObjects);
         setObjects(initialObjects);
     }, [externalUpdate]);
 

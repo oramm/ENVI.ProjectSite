@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { FieldValues, useForm } from 'react-hook-form';
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
-import RepositoryReact from "../../../React/RepositoryReact";
 import { FormProvider } from "../../Modals/FormContext";
 import { parseFieldValuesToParams } from "../CommonComponentsController";
 import { useFilterableTableContext } from "./FilterableTableContext";
@@ -22,7 +21,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot) return;
 
-        const { criteria, storedObjects } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
+        const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
         for (let key in criteria) {
             (formMethods.setValue as (name: string, value: any) => void)(key, criteria[key]);
         }

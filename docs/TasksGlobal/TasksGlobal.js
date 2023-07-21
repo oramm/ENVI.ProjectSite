@@ -102,9 +102,9 @@ function TasksGlobal() {
                     react_1.default.createElement("div", { onClick: handleShowProjects },
                         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
                 tasksLoaded ?
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, 
-                        //initialObjects={contractsWithChildren}
-                        repository: TasksGlobalController_1.tasksRepository, AddNewButtonComponents: [TasksGlobalModalButtons_1.TaskAddNewModalButton], FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })
+                    react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, 
+                        //AddNewButtonComponents={[TaskAddNewModalButton]}
+                        FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })
                     :
                         react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))));
 }
@@ -178,6 +178,7 @@ function buildTree(contractsWithChildrenInput) {
                     children: [],
                     leaves: [],
                     isDeletable: true,
+                    AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
                     EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
                     editHandler: (node) => { node.titleLabel = makeCaseTitleLabel(node.dataItem); }, // Dostosuj do Twojej metody
                 };

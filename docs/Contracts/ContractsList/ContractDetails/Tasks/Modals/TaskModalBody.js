@@ -30,16 +30,15 @@ exports.TaskModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../../../View/Modals/FormContext");
-const ContractsController_1 = require("../../../ContractsController");
 const MainSetupReact_1 = __importDefault(require("../../../../../React/MainSetupReact"));
 const CommonFormComponents_1 = require("../../../../../View/Modals/CommonFormComponents");
-function TaskModalBody({ isEditing, initialData }) {
+function TaskModalBody({ isEditing, initialData, contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _contract = watch('_contract');
+    const _case = initialData?._case || contextData;
     (0, react_1.useEffect)(() => {
         console.log('TaskModalBody useEffect', initialData);
         const resetData = {
-            _contract: initialData?._contract,
+            _case,
             name: initialData?.name,
             description: initialData?.description || '',
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
@@ -51,17 +50,6 @@ function TaskModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        !isEditing &&
-            react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-                    react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: ContractsController_1.contractsRepository, typesToInclude: 'our', readOnly: !isEditing })),
-                react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy sprawy"),
-                    _contract ?
-                        react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_cases', repository: ContractsController_1.casesRepository, _contract: _contract, readonly: !_contract })
-                        :
-                            react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'warning' }, "Wybierz kontrakt, by przypisa\u0107 do sprawy"))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa zadania"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),

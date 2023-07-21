@@ -3,18 +3,17 @@ import { Alert, Col, Form, Row } from 'react-bootstrap';
 import { Task } from '../../../../../../Typings/bussinesTypes';
 import { ModalBodyProps } from '../../../../../View/Modals/ModalsTypes';
 import { useFormContext } from '../../../../../View/Modals/FormContext';
-import { casesRepository, contractsRepository } from '../../../ContractsController';
 import MainSetup from '../../../../../React/MainSetupReact';
-import { CaseSelectMenuElement, ContractSelectFormElement, ErrorMessage, PersonSelectFormElement, TaksStatusSelectFormElement } from '../../../../../View/Modals/CommonFormComponents';
+import { ErrorMessage, PersonSelectFormElement, TaksStatusSelectFormElement } from '../../../../../View/Modals/CommonFormComponents';
 
-export function TaskModalBody({ isEditing, initialData }: ModalBodyProps<Task>) {
+export function TaskModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
-    const _contract = watch('_contract');
+    const _case = initialData?._case || contextData;
 
     useEffect(() => {
         console.log('TaskModalBody useEffect', initialData);
         const resetData = {
-            _contract: initialData?._contract,
+            _case,
             name: initialData?.name,
             description: initialData?.description || '',
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
@@ -29,33 +28,6 @@ export function TaskModalBody({ isEditing, initialData }: ModalBodyProps<Task>) 
 
     return (
         <>
-
-            {!isEditing &&
-                <>
-                    <Form.Group controlId="_contract">
-                        <Form.Label>Wybierz kontrakt</Form.Label>
-                        <ContractSelectFormElement
-                            name='_contract'
-                            repository={contractsRepository}
-                            typesToInclude='our'
-                            readOnly={!isEditing}
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Dotyczy sprawy</Form.Label>
-                        {_contract ?
-                            <CaseSelectMenuElement
-                                name='_cases'
-                                repository={casesRepository}
-                                _contract={_contract}
-                                readonly={!_contract}
-                            />
-                            :
-                            <Alert variant='warning'>Wybierz kontrakt, by przypisać do sprawy</Alert>
-                        }
-                    </Form.Group>
-                </>
-            }
             <Form.Group controlId="name">
                 <Form.Label>Nazwa zadania</Form.Label>
                 <Form.Control

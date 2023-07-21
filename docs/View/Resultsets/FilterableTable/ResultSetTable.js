@@ -32,7 +32,6 @@ function ResultSetTable({ showTableHeader, onRowClick, onIsReadyChange, filtered
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
-        console.log('ResultSetTable update objects: ', objects);
         const objectsToShow = filteredObjects || objects;
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);

@@ -5,8 +5,6 @@ export function makeTaskGlobalValidationSchema(isEditing: boolean) {
     return (
         Yup.object().shape({
             ...commonFields,
-            _contract: isEditing ? Yup.object() : Yup.object().required('Wybierz kontrakt'),
-            _case: isEditing ? Yup.object() : Yup.object().required('Wybierz sprawę'),
         })
     )
 }
