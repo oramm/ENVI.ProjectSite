@@ -70,7 +70,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleEditObject(object: LeafDataItemType) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+        if (!sections)
+            setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+        else
+            setSections(editNodeDataItem(sections, activeSectionId, object));
     }
 
     function handleDeleteObject(objectId: number) {
