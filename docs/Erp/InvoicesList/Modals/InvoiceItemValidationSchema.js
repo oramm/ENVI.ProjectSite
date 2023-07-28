@@ -29,7 +29,7 @@ const commonFields = {
     description: Yup.string()
         .required('To pole jest wymagane')
         .min(10, 'Opis musi zawiera co najmniej 10 znaków')
-        .max(300, 'Opis może mieć maksymalnie 1000 znaków'),
+        .max(700, 'Opis może mieć maksymalnie 700 znaków'),
     quantity: Yup.number()
         .required('To pole jest wymagane')
         .min(1, 'Ilość musi być większa lub równa 1'),

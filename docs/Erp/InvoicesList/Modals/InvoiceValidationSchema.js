@@ -41,7 +41,7 @@ const commonFields = {
     _owner: Yup.object()
         .required('Podaj kto rejestruje'),
     description: Yup.string()
-        .max(300, 'Opis może mieć maksymalnie 300 znaków'),
+        .max(500, 'Opis może mieć maksymalnie 500 znaków'),
 };
 function makeInvoiceValidationSchema(isEditing) {
     return (Yup.object().shape({

@@ -168,13 +168,14 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             id: 'contract' + contract.id,
             isInAccordion: true,
             level: 1,
-            name: 'contract',
+            type: 'contract',
+            childrenNodesType: 'milestone',
             repository: contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract), // Dostosuj do Twojej metody
+            titleLabel: makeContractTitleLabel(contract),
             children: [] as SectionNode<Task>[],
-            EditButtonComponent: ContractEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>, // Dostosuj do Twojego komponentu
-            editHandler: contractNodeEditHandler, // Dostosuj do Twojej metody
+            EditButtonComponent: ContractEditModalButton as unknown as ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>,
+            editHandler: contractNodeEditHandler,
             isDeletable: false,
         };
         contractNodes.push(contractNode);
@@ -184,7 +185,8 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 id: 'milestone' + milestone.id,
                 isInAccordion: false,
                 level: 2,
-                name: 'milestone',
+                type: 'milestone',
+                childrenNodesType: 'case',
                 repository: milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
                 dataItem: milestone,
                 titleLabel: makeMilestoneTitleLabel(milestone), // Dostosuj do Twojej metody
@@ -198,7 +200,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 const caseNode = {
                     id: 'case' + caseItem.id,
                     level: 3,
-                    name: 'case',
+                    type: 'case',
                     repository: casesRepository, // Dostosuj do Twojego repozytorium spraw
                     dataItem: caseItem,
                     titleLabel: makeCaseTitleLabel(caseItem), // Dostosuj do Twojej metody

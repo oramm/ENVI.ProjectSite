@@ -32,16 +32,21 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
                 react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable }))));
 }
 exports.FiterableTableRow = FiterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = 'vertical' }) {
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = 'vertical', sectionRepository }) {
+    function setRepository() {
+        if (sectionRepository)
+            return sectionRepository;
+        else
+            return (0, FilterableTableContext_1.useFilterableTableContext)().repository;
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl })),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
         EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, }, buttonProps: { layout } })),
-        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject }, buttonProps: { layout } }))));
+        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject, repository: setRepository() }, buttonProps: { layout } }))));
 }
 exports.RowActionMenu = RowActionMenu;
-function DeleteModalButton({ modalProps: { onDelete, initialData }, buttonProps }) {
-    const { repository } = (0, FilterableTableContext_1.useFilterableTableContext)();
+function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, buttonProps }) {
     const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
             onDelete,

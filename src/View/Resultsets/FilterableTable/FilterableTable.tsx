@@ -73,7 +73,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         if (!sections)
             setObjects(objects.map((o) => (o.id === object.id ? object : o)));
         else
-            setSections(editNodeDataItem(sections, activeSectionId, object));
+            setSections(editNode(sections, activeSectionId, object));
     }
 
     function handleDeleteObject(objectId: number) {
@@ -81,17 +81,15 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
-        const section = sections.find((s) => s.dataItem.id === sectionDataObject.id && s.name === sectionDataObject.name);
-        if (section)
-            setSections([...sections, section]);
+        setSections(addNode(sections, activeSectionId, sectionDataObject));
     }
 
     function handleEditSection(sectionDataObject: RepositoryDataItem) {
-        setSections(editNodeDataItem(sections, activeSectionId, sectionDataObject));
+        setSections(editNode(sections, activeSectionId, sectionDataObject));
     }
 
     function handleDeleteSection(sectionDataObject: number) {
-        //setSections(sections.filter((s) => s.id !== sectionDataObject));
+        setSections(deleteNode(sections, activeSectionId));
     }
 
     function handleHeaderClick(sectionNode: SectionNode<LeafDataItemType>) {
@@ -207,13 +205,13 @@ function Sections<DataItemType extends RepositoryDataItem>({
             {sections.map((section, index) => {
                 return (
                     <Card
-                        key={section.dataItem.id + section.name}
+                        key={section.dataItem.id + section.type}
                         bg='light'
                         border='light'
                         style={{ marginTop: '10px' }}
                     >
                         <Section<DataItemType>
-                            key={section.dataItem.id + section.name}
+                            key={section.dataItem.id + section.type}
                             sectionNode={section}
                             resulsetTableProps={resulsetTableProps}
                             onClick={onClick}
@@ -229,7 +227,7 @@ export function TableTitle({ title }: { title: string }) {
 }
 
 // Funkcja do aktualizacji węzłów
-function editNodeDataItem<LeafDataItemType extends RepositoryDataItem>(
+function editNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
     sectionId: string,
     newData: RepositoryDataItem
@@ -245,7 +243,7 @@ function editNodeDataItem<LeafDataItemType extends RepositoryDataItem>(
             // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
             return {
                 ...node,
-                children: editNodeDataItem(node.children, sectionId, newData),
+                children: editNode(node.children, sectionId, newData),
                 leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
             };
         }
@@ -266,4 +264,69 @@ function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
             }
             : leaf
     );
+}
+
+// Funkcja do dodawania nowych węzłów i liści
+function addNode<LeafDataItemType extends RepositoryDataItem>(
+    nodes: SectionNode<LeafDataItemType>[],
+    parentId: string,
+    newData: RepositoryDataItem,
+): SectionNode<LeafDataItemType>[] {
+    return nodes.map(node => {
+        if (node.id === parentId) {
+            // Jeśli rodzic ma już liście, dodajemy nowe dane jako liść
+            if (node.leaves) {
+                const newLeaf = { ...newData } as LeafDataItemType;
+
+                return {
+                    ...node,
+                    leaves: [...node.leaves, newLeaf],
+                };
+            }
+            const newNodeType = node.childrenNodesType || '';
+
+            // W przeciwnym razie dodajemy nowe dane jako węzeł
+            const newChild: SectionNode<LeafDataItemType> = {
+                id: newNodeType + newData.id,
+                isInAccordion: true,
+                level: node.level + 1,
+                type: newNodeType,
+                repository: node.repository,
+                dataItem: newData,
+                titleLabel: 'nowy tytuł',
+                children: [],
+                leaves: [],
+            };
+
+            return {
+                ...node,
+                children: [...node.children, newChild],
+            };
+        } else {
+            // Nie znaleziono węzła, przeszukujemy dzieci
+            return {
+                ...node,
+                children: addNode(node.children, parentId, newData),
+            };
+        }
+    });
+}
+
+function deleteNode<LeafDataItemType extends RepositoryDataItem>(
+    nodes: SectionNode<LeafDataItemType>[],
+    nodeId: string,
+): SectionNode<LeafDataItemType>[] {
+    return nodes.reduce<SectionNode<LeafDataItemType>[]>((newNodes, node) => {
+        if (node.id === nodeId) {
+            // Jeśli id węzła pasuje do id, które chcemy usunąć, pomijamy ten węzeł
+            return newNodes;
+        } else {
+            // Jeśli id nie pasuje, przeszukujemy dzieci
+            const newNode = {
+                ...node,
+                children: deleteNode(node.children, nodeId)
+            };
+            return [...newNodes, newNode];
+        }
+    }, []);
 }

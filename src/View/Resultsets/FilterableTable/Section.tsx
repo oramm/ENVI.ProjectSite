@@ -17,7 +17,8 @@ import { useNavigate } from 'react-router-dom';
 export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     id: string,
     level: number,
-    name: string,
+    type: string,
+    childrenNodesType?: string,
     repository: RepositoryReact,
     dataItem: RepositoryDataItem,
     titleLabel: string,
@@ -137,6 +138,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         handleEditObject={handleEditSection}
                         handleDeleteObject={handleDeleteSection}
                         layout='horizontal'
+                        sectionRepository={sectionNode.repository}
                     />
                     {sectionNode.AddNewButtonComponent &&
                         <sectionNode.AddNewButtonComponent
@@ -163,7 +165,7 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
         <>
             {sectionNode.children.map((childNode, index) =>
                 <Section<DataItemType>
-                    key={childNode.dataItem.id + childNode.name}
+                    key={childNode.dataItem.id + childNode.type}
                     sectionNode={childNode}
                     resulsetTableProps={resulsetTableProps}
                     onClick={onClick}

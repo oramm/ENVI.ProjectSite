@@ -77,7 +77,7 @@ function SectionHeader({ sectionNode, onClick, isActive }) {
         react_1.default.createElement("div", { className: isActive ? 'active' : '', onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
         isActive ?
             react_1.default.createElement("div", { className: 'section-action-menu' },
-                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: 'horizontal' }),
+                react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: true, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: 'horizontal', sectionRepository: sectionNode.repository }),
                 sectionNode.AddNewButtonComponent &&
                     react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                             onAddNew: handleAddSection,
@@ -87,7 +87,7 @@ function SectionHeader({ sectionNode, onClick, isActive }) {
 }
 function SectionBody({ sectionNode, resulsetTableProps, onClick }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.name, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick })),
+        sectionNode.children.map((childNode, index) => react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick })),
         sectionNode.leaves &&
             react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves })));
 }

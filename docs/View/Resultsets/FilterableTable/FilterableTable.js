@@ -75,21 +75,19 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         if (!sections)
             setObjects(objects.map((o) => (o.id === object.id ? object : o)));
         else
-            setSections(editNodeDataItem(sections, activeSectionId, object));
+            setSections(editNode(sections, activeSectionId, object));
     }
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
     }
     function handleAddSection(sectionDataObject) {
-        const section = sections.find((s) => s.dataItem.id === sectionDataObject.id && s.name === sectionDataObject.name);
-        if (section)
-            setSections([...sections, section]);
+        setSections(addNode(sections, activeSectionId, sectionDataObject));
     }
     function handleEditSection(sectionDataObject) {
-        setSections(editNodeDataItem(sections, activeSectionId, sectionDataObject));
+        setSections(editNode(sections, activeSectionId, sectionDataObject));
     }
     function handleDeleteSection(sectionDataObject) {
-        //setSections(sections.filter((s) => s.id !== sectionDataObject));
+        setSections(deleteNode(sections, activeSectionId));
     }
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
@@ -139,8 +137,8 @@ exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.name, bg: 'light', border: 'light', style: { marginTop: '10px' } },
-            react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.name, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
+        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: 'light', border: 'light', style: { marginTop: '10px' } },
+            react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
 }
 function TableTitle({ title }) {
@@ -148,7 +146,7 @@ function TableTitle({ title }) {
 }
 exports.TableTitle = TableTitle;
 // Funkcja do aktualizacji węzłów
-function editNodeDataItem(nodes, sectionId, newData) {
+function editNode(nodes, sectionId, newData) {
     return nodes.map(node => {
         if (node.id === sectionId) {
             // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
@@ -162,7 +160,7 @@ function editNodeDataItem(nodes, sectionId, newData) {
             // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
             return {
                 ...node,
-                children: editNodeDataItem(node.children, sectionId, newData),
+                children: editNode(node.children, sectionId, newData),
                 leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
             };
         }
@@ -176,4 +174,59 @@ function editLeafDataItem(leaves, id, newData) {
             ...newData,
         }
         : leaf);
+}
+// Funkcja do dodawania nowych węzłów i liści
+function addNode(nodes, parentId, newData) {
+    return nodes.map(node => {
+        if (node.id === parentId) {
+            // Jeśli rodzic ma już liście, dodajemy nowe dane jako liść
+            if (node.leaves) {
+                const newLeaf = { ...newData };
+                return {
+                    ...node,
+                    leaves: [...node.leaves, newLeaf],
+                };
+            }
+            const newNodeType = node.childrenNodesType || '';
+            // W przeciwnym razie dodajemy nowe dane jako węzeł
+            const newChild = {
+                id: newNodeType + newData.id,
+                isInAccordion: true,
+                level: node.level + 1,
+                type: newNodeType,
+                repository: node.repository,
+                dataItem: newData,
+                titleLabel: 'nowy tytuł',
+                children: [],
+                leaves: [],
+            };
+            return {
+                ...node,
+                children: [...node.children, newChild],
+            };
+        }
+        else {
+            // Nie znaleziono węzła, przeszukujemy dzieci
+            return {
+                ...node,
+                children: addNode(node.children, parentId, newData),
+            };
+        }
+    });
+}
+function deleteNode(nodes, nodeId) {
+    return nodes.reduce((newNodes, node) => {
+        if (node.id === nodeId) {
+            // Jeśli id węzła pasuje do id, które chcemy usunąć, pomijamy ten węzeł
+            return newNodes;
+        }
+        else {
+            // Jeśli id nie pasuje, przeszukujemy dzieci
+            const newNode = {
+                ...node,
+                children: deleteNode(node.children, nodeId)
+            };
+            return [...newNodes, newNode];
+        }
+    }, []);
 }

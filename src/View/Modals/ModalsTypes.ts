@@ -117,7 +117,7 @@ type SpecificDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem
 > & {
     onDelete: (objectId: number) => void;
     initialData: DataItemType;
-    repository?: RepositoryReact<DataItemType>;
+    repository: RepositoryReact<DataItemType>;
 };
 
 type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;
