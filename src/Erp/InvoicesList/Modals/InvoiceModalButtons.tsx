@@ -3,13 +3,13 @@ import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { InvoiceModalBody } from './InvoiceModalBody';
 import { makeInvoiceIssueValidationSchema, makeInvoiceSetAsSentValidationSchema, makeInvoiceValidationSchema } from './InvoiceValidationSchema';
-import { invoicesRepository } from '../InvoicesSearch';
 import { Invoice } from '../../../../Typings/bussinesTypes';
 import { useInvoice } from '../InvoiceDetails/InvoiceDetails';
 import { Button } from 'react-bootstrap';
 import MainSetup from '../../../React/MainSetupReact';
 import { InvoiceIssueModalBody } from './InvoiceIssueModalBody';
 import { InvoiceSetAsSentModalBody } from './InvoiceSetAsSentModalBody';
+import { invoicesRepository } from '../InvoicesController';
 
 
 /** przycisk i modal edycji Invoice */
@@ -59,7 +59,7 @@ export function CopyButton() {
     const { invoice } = useInvoice();
 
     async function handleClick() {
-        await invoicesRepository.addNewItemNodeJS(invoice, 'copyInvoice');
+        await invoicesRepository.copyItem(invoice);
     }
 
     return (
@@ -77,7 +77,7 @@ export function ChangeStatusButton({ specialActionRoute, newStatus }: { specialA
     const { invoice, setInvoice } = useInvoice();
 
     async function handleChangeStatus() {
-        const editedInvoice = await invoicesRepository.editItemNodeJS(invoice, specialActionRoute);
+        const editedInvoice = await invoicesRepository.editItem(invoice, specialActionRoute);
         setInvoice(editedInvoice);
     }
 

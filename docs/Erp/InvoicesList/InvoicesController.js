@@ -3,25 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.entitiesRepository = exports.contractsRepository = exports.projectsRepository = exports.invoiceItemsRepository = exports.invoicesRepository = exports.statusNames = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
-class InvoicesController {
-}
-exports.default = InvoicesController;
-InvoicesController.statusNames = [
+exports.statusNames = [
     'Roboczy',
     'Do wysłania',
     'Wysłany',
 ];
-InvoicesController.invoicesRepository = new RepositoryReact_1.default({
+exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'invoices',
         addNewRoute: 'invoice',
         editRoute: 'invoice',
+        copyRoute: 'copyInvoice',
         deleteRoute: 'invoice'
     },
     name: 'invoices'
 });
-InvoicesController.invoiceItemsRepository = new RepositoryReact_1.default({
+exports.invoiceItemsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'invoiceItems',
         addNewRoute: 'invoiceItem',
@@ -30,7 +29,7 @@ InvoicesController.invoiceItemsRepository = new RepositoryReact_1.default({
     },
     name: 'invoiceItems'
 });
-InvoicesController.projectsRepository = new RepositoryReact_1.default({
+exports.projectsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'projects',
         addNewRoute: '',
@@ -39,7 +38,7 @@ InvoicesController.projectsRepository = new RepositoryReact_1.default({
     },
     name: 'projects'
 });
-InvoicesController.contractsRepository = new RepositoryReact_1.default({
+exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
         addNewRoute: '',
@@ -48,7 +47,7 @@ InvoicesController.contractsRepository = new RepositoryReact_1.default({
     },
     name: 'contracts'
 });
-InvoicesController.entitiesRepository = new RepositoryReact_1.default({
+exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'entities',
         addNewRoute: 'entity',

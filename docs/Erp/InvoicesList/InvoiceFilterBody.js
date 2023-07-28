@@ -7,9 +7,9 @@ exports.InvoicesFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const InvoicesSearch_1 = require("./InvoicesSearch");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const InvoicesController_1 = require("./InvoicesController");
 function InvoicesFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
@@ -24,7 +24,7 @@ function InvoicesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_TO, ...register('issueDateTo') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesSearch_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false })),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: InvoicesController_1.contractsRepository, name: '_contract', typesToInclude: 'our', showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(CommonFormComponents_1.InvoiceStatusSelectFormElement, { showValidationInfo: false }))));
 }

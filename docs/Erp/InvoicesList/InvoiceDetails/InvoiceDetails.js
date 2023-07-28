@@ -32,16 +32,16 @@ const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
-const InvoicesSearch_1 = require("../InvoicesSearch");
+const InvoicesController_1 = require("../InvoicesController");
 const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 function InvoiceDetails() {
-    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesSearch_1.invoicesRepository.currentItems[0] || InvoicesSearch_1.invoicesRepository.getItemFromRouter());
+    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0] || InvoicesController_1.invoicesRepository.getItemFromRouter());
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
     (0, react_1.useEffect)(() => {
         const fetchInvoiceItems = async () => {
-            const items = await InvoicesSearch_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
+            const items = await InvoicesController_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
             setInvoiceItems(items);
         };
         fetchInvoiceItems();
@@ -111,7 +111,7 @@ function InvoiceDetails() {
                             "Opis: ",
                             invoice.description)))),
                 invoiceItems ?
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'invoiceItems', title: '', initialObjects: invoiceItems, repository: InvoicesSearch_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
+                    react_1.default.createElement(FilterableTable_1.default, { id: 'invoiceItems', title: '', initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
                             { header: 'Opis', objectAttributeToShow: 'description' },
                             { header: 'Netto', objectAttributeToShow: '_netValue' },
                             { header: 'Brutto', objectAttributeToShow: '_grossValue' },

@@ -8,19 +8,19 @@ const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const InvoiceModalBody_1 = require("./InvoiceModalBody");
 const InvoiceValidationSchema_1 = require("./InvoiceValidationSchema");
-const InvoicesSearch_1 = require("../InvoicesSearch");
 const InvoiceDetails_1 = require("../InvoiceDetails/InvoiceDetails");
 const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const InvoiceIssueModalBody_1 = require("./InvoiceIssueModalBody");
 const InvoiceSetAsSentModalBody_1 = require("./InvoiceSetAsSentModalBody");
+const InvoicesController_1 = require("../InvoicesController");
 /** przycisk i modal edycji Invoice */
 function InvoiceEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Edycja faktury",
-            repository: InvoicesSearch_1.invoicesRepository,
+            repository: InvoicesController_1.invoicesRepository,
             initialData: initialData,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
         }, buttonProps: {
@@ -34,7 +34,7 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
             onAddNew: onAddNew,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Rejestruj fakturę",
-            repository: InvoicesSearch_1.invoicesRepository,
+            repository: InvoicesController_1.invoicesRepository,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
         }, buttonProps: {
             buttonCaption: "Rejestruj fakturę",
@@ -45,7 +45,7 @@ exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
 function CopyButton() {
     const { invoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleClick() {
-        await InvoicesSearch_1.invoicesRepository.addNewItemNodeJS(invoice, 'copyInvoice');
+        await InvoicesController_1.invoicesRepository.copyItem(invoice);
     }
     return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Kopiuj`, variant: 'outline-secondary', size: 'sm', onClick: handleClick }, `Kopiuj`));
 }
@@ -53,7 +53,7 @@ exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {
-        const editedInvoice = await InvoicesSearch_1.invoicesRepository.editItemNodeJS(invoice, specialActionRoute);
+        const editedInvoice = await InvoicesController_1.invoicesRepository.editItem(invoice, specialActionRoute);
         setInvoice(editedInvoice);
     }
     return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Ustaw jako ${newStatus}`, variant: 'primary', size: 'sm', onClick: handleChangeStatus }, `Ustaw jako ${newStatus}`));
@@ -66,7 +66,7 @@ function InvoiceIssueModalButton() {
             specialActionRoute: 'issueInvoice',
             ModalBodyComponent: InvoiceIssueModalBody_1.InvoiceIssueModalBody,
             modalTitle: "Wystaw fakturę",
-            repository: InvoicesSearch_1.invoicesRepository,
+            repository: InvoicesController_1.invoicesRepository,
             initialData: invoice,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceIssueValidationSchema
         }, buttonProps: {
@@ -82,7 +82,7 @@ function InvoiceSetAsSentModalButton() {
             specialActionRoute: 'setAsSentInvoice',
             ModalBodyComponent: InvoiceSetAsSentModalBody_1.InvoiceSetAsSentModalBody,
             modalTitle: "Ustaw jako Wysłana",
-            repository: InvoicesSearch_1.invoicesRepository,
+            repository: InvoicesController_1.invoicesRepository,
             initialData: invoice,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceSetAsSentValidationSchema
         }, buttonProps: {

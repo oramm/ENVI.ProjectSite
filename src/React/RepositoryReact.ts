@@ -97,8 +97,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
 
-    /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem: any | FormData, specialActionRoute?: string) {
+    /** Funkcja pomocnicza do dodawania nowych elementów */
+    async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
         const requestOptions: RequestInit = {
             method: 'POST',
             credentials: 'include',
@@ -107,7 +107,9 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         if (newItem instanceof FormData) {
             requestOptions.body = newItem;
         } else {
-            delete newItem.id;
+            if (deleteId) {
+                delete newItem.id;
+            }
             requestOptions.headers = {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
@@ -140,13 +142,24 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         return newItemFromServer as DataItemType;
     }
 
+    /** Dodaje obiekt do bazy danych i do repozytorium */
+    async addNewItem(newItem: any | FormData, specialActionRoute?: string) {
+        return this.addItem(newItem, true, specialActionRoute);
+    }
+
+    /** Kopiuje obiekt do bazy danych i do repozytorium */
+    async copyItem(newItem: any | FormData, specialActionRoute: string | undefined = this.actionRoutes.copyRoute) {
+        return this.addItem(newItem, false, specialActionRoute);
+    }
+
+
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium 
       * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
       * @param item obiekt do edycji
       * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute 
       *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
       */
-    async editItemNodeJS(item: DataItemType | FormData, specialActionRoute?: string) {
+    async editItem(item: DataItemType | FormData, specialActionRoute?: string) {
         const requestOptions: RequestInit = {
             method: 'PUT',
             credentials: 'include',
@@ -162,10 +175,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsDate.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify(item);
         }
-        let actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
-
-        //MainSetup.serverUrl + actionRoute + '/' + (item instanceof FormData ? item.get('id') : item.id),
 
         const resultRawResponse = await fetch(
             urlPath,
@@ -194,11 +205,6 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
      * usuwa te currentItemy, które mają ten sam id co usuwany obiekt
      * @param id id obiektu do usunięcia
-     * @returns obiekt usunięty z bazy danych
-     * @throws Error gdy nie znaleziono obiektu do usunięcia
-     * @throws Error gdy nie udało się usunąć obiektu z bazy danych
-     * @throws Error gdy nie udało się usunąć obiektu z Repozytorium
-     * @throws Error gdy nie udało się usunąć obiektu z currentItemów
      */
     async deleteItemNodeJS(id: number) {
         const oldItem = this.items.find((item) => item.id == id);

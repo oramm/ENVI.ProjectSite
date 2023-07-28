@@ -30,9 +30,9 @@ exports.InvoiceModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
-const InvoicesSearch_1 = require("../InvoicesSearch");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const InvoicesController_1 = require("../InvoicesController");
 function InvoiceModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
     const statuses = Object.entries(MainSetupReact_1.default.InvoiceStatuses).map(([key, value]) => value);
@@ -54,7 +54,7 @@ function InvoiceModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesSearch_1.contractsRepository, typesToInclude: 'our', readOnly: !isEditing })),
+            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: '_contract', repository: InvoicesController_1.contractsRepository, typesToInclude: 'our', readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
@@ -72,7 +72,7 @@ function InvoiceModalBody({ isEditing, initialData }) {
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'status' })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entity', labelKey: 'name', repository: InvoicesSearch_1.entitiesRepository, multiple: false })),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entity', labelKey: 'name', repository: InvoicesController_1.entitiesRepository, multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Osoba rejestruj\u0105ca', name: '_owner', repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },

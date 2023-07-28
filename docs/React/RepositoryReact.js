@@ -89,8 +89,8 @@ class RepositoryReact {
         console.log(this.name + ' NodeJS: %o', this.items);
         return this.items;
     }
-    /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItemNodeJS(newItem, specialActionRoute) {
+    /** Funkcja pomocnicza do dodawania nowych elementów */
+    async addItem(newItem, deleteId, specialActionRoute) {
         const requestOptions = {
             method: 'POST',
             credentials: 'include',
@@ -99,7 +99,9 @@ class RepositoryReact {
             requestOptions.body = newItem;
         }
         else {
-            delete newItem.id;
+            if (deleteId) {
+                delete newItem.id;
+            }
             requestOptions.headers = {
                 ...requestOptions.headers,
                 ['Content-Type']: 'application/json',
@@ -123,13 +125,21 @@ class RepositoryReact {
         console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
         return newItemFromServer;
     }
+    /** Dodaje obiekt do bazy danych i do repozytorium */
+    async addNewItem(newItem, specialActionRoute) {
+        return this.addItem(newItem, true, specialActionRoute);
+    }
+    /** Kopiuje obiekt do bazy danych i do repozytorium */
+    async copyItem(newItem, specialActionRoute = this.actionRoutes.copyRoute) {
+        return this.addItem(newItem, false, specialActionRoute);
+    }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
       * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
       * @param item obiekt do edycji
       * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
       *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
       */
-    async editItemNodeJS(item, specialActionRoute) {
+    async editItem(item, specialActionRoute) {
         const requestOptions = {
             method: 'PUT',
             credentials: 'include',
@@ -145,9 +155,8 @@ class RepositoryReact {
             ToolsDate_1.default.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify(item);
         }
-        let actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
-        //MainSetup.serverUrl + actionRoute + '/' + (item instanceof FormData ? item.get('id') : item.id),
         const resultRawResponse = await fetch(urlPath, requestOptions);
         const resultObject = await resultRawResponse.json();
         if (resultRawResponse.status >= 400) {
@@ -167,11 +176,6 @@ class RepositoryReact {
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
      * usuwa te currentItemy, które mają ten sam id co usuwany obiekt
      * @param id id obiektu do usunięcia
-     * @returns obiekt usunięty z bazy danych
-     * @throws Error gdy nie znaleziono obiektu do usunięcia
-     * @throws Error gdy nie udało się usunąć obiektu z bazy danych
-     * @throws Error gdy nie udało się usunąć obiektu z Repozytorium
-     * @throws Error gdy nie udało się usunąć obiektu z currentItemów
      */
     async deleteItemNodeJS(id) {
         const oldItem = this.items.find((item) => item.id == id);

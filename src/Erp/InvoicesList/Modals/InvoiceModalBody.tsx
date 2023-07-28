@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ContractSelectFormElement, ErrorMessage, MyAsyncTypeahead, PersonSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository, entitiesRepository } from '../InvoicesSearch';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import MainSetup from '../../../React/MainSetupReact';
 import { Invoice } from '../../../../Typings/bussinesTypes';
+import { contractsRepository, entitiesRepository } from '../InvoicesController';
 
 export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invoice>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();

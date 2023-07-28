@@ -6,16 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceItemAddNewModalButton = exports.InvoiceItemEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
-const InvoicesSearch_1 = require("../InvoicesSearch");
 const InvoiceItemModalBody_1 = require("./InvoiceItemModalBody");
 const InvoiceItemValidationSchema_1 = require("./InvoiceItemValidationSchema");
+const InvoicesController_1 = require("../InvoicesController");
 /** przycisk i modal edycji Invoice */
 function InvoiceItemEditModalButton({ modalProps: { onEdit, initialData, }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceItemModalBody_1.InvoiceItemModalBody,
             modalTitle: "Edycja pozycji faktury",
-            repository: InvoicesSearch_1.invoiceItemsRepository,
+            repository: InvoicesController_1.invoiceItemsRepository,
             initialData: initialData,
             makeValidationSchema: InvoiceItemValidationSchema_1.InvoiceItemValidationSchema
         }, buttonProps: {
@@ -28,7 +28,7 @@ function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
             onAddNew: onAddNew,
             ModalBodyComponent: InvoiceItemModalBody_1.InvoiceItemModalBody,
             modalTitle: "Dodaj pozycję faktury",
-            repository: InvoicesSearch_1.invoiceItemsRepository,
+            repository: InvoicesController_1.invoiceItemsRepository,
             makeValidationSchema: InvoiceItemValidationSchema_1.InvoiceItemValidationSchema
         }, buttonProps: {
             buttonCaption: "Dodaj pozycję",

@@ -1,9 +1,9 @@
 import React from 'react';
 import { ContractSelectFormElement, InvoiceStatusSelectFormElement } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
-import { contractsRepository } from './InvoicesSearch';
 import { useFormContext } from '../../View/Modals/FormContext';
 import MainSetup from '../../React/MainSetupReact';
+import { contractsRepository } from './InvoicesController';
 
 export function InvoicesFilterBody() {
     const { register } = useFormContext();

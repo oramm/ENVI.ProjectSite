@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { invoiceItemsRepository } from '../InvoicesSearch';
 import { InvoiceItem } from '../../../../Typings/bussinesTypes';
 import { InvoiceItemModalBody } from './InvoiceItemModalBody';
 import { InvoiceItemValidationSchema } from './InvoiceItemValidationSchema';
+import { invoiceItemsRepository } from '../InvoicesController';
 
 /** przycisk i modal edycji Invoice */
 export function InvoiceItemEditModalButton({

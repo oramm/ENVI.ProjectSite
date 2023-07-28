@@ -1,16 +1,10 @@
 import React from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
-import InvoicesController from './InvoicesController';
 import { InvoicesFilterBody } from './InvoiceFilterBody';
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from './Modals/InvoiceModalButtons';
 import { Invoice } from '../../../Typings/bussinesTypes';
 import { InvoiceStatusBadge } from '../../View/Resultsets/CommonComponents';
-
-export const invoicesRepository = InvoicesController.invoicesRepository;
-export const invoiceItemsRepository = InvoicesController.invoiceItemsRepository;
-export const entitiesRepository = InvoicesController.entitiesRepository;
-export const projectsRepository = InvoicesController.projectsRepository;
-export const contractsRepository = InvoicesController.contractsRepository;
+import { invoicesRepository } from './InvoicesController';
 
 export default function InvoicesSearch({ title }: { title: string }) {
     function makeEntityLabel(invoice: Invoice) {

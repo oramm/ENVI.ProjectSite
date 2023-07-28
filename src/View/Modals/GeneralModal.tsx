@@ -81,7 +81,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         data.append('id', currentDataItem.id.toString());
 
         appendContextData(currentDataItem, data);
-        const editedObject = await repository.editItemNodeJS(data as FormData, specialActionRoute);
+        const editedObject = await repository.editItem(data as FormData, specialActionRoute);
         if (onEdit) onEdit(editedObject);
     };
 
@@ -102,13 +102,13 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
         const objectToEdit = { ...currentDataItem, ...data } as DataItemType;
-        const editedObject = await repository.editItemNodeJS(objectToEdit, specialActionRoute);
+        const editedObject = await repository.editItem(objectToEdit, specialActionRoute);
         if (onEdit) onEdit(editedObject);
     };
 
 
     async function handleAdd(formData: FormData | FieldValues) {
-        newObject = await repository.addNewItemNodeJS(formData);
+        newObject = await repository.addNewItem(formData);
         if (onAddNew) onAddNew(newObject);
     };
 
