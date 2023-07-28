@@ -27,6 +27,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={InvoicesFilterBody}
             tableStructure={[
+                { header: 'Umowa', renderTdBody: (invoice: Invoice) => <>{invoice._contract.ourId}</> },
                 { header: 'Numer', objectAttributeToShow: 'number' },
                 { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
                 { header: 'Wysłano', objectAttributeToShow: 'sentDate' },

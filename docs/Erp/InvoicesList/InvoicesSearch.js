@@ -25,6 +25,7 @@ function InvoicesSearch({ title }) {
             react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: 'invoices', title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
+            { header: 'Umowa', renderTdBody: (invoice) => react_1.default.createElement(react_1.default.Fragment, null, invoice._contract.ourId) },
             { header: 'Numer', objectAttributeToShow: 'number' },
             { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
             { header: 'Wysłano', objectAttributeToShow: 'sentDate' },

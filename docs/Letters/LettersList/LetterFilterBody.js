@@ -45,22 +45,22 @@ function LettersFilterBody() {
     (0, react_1.useEffect)(() => {
         setValue('_case', undefined);
     }, [_contract]);
-    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 },
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 3, xs: 2 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono od"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_FROM, ...register('creationDateFrom') })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO, ...register('creationDateTo') })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { name: '_project', repository: LettersController_1.projectsRepository, showValidationInfo: false })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
             react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: LettersController_1.contractsRepository, name: '_contract', typesToInclude: 'all', showValidationInfo: false, _project: _project })),
-        _contract && react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
+        _contract && react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
             react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: '_case', repository: LettersController_1.casesRepository, showValidationInfo: false, _contract: _contract, multiple: false }))));
 }
