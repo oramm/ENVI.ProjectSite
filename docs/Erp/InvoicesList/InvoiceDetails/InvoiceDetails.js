@@ -80,7 +80,7 @@ function InvoiceDetails() {
                                 }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } }))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
-                            react_1.default.createElement("div", null, "Data wystawienia:"),
+                            react_1.default.createElement("div", null, "Data sprzeda\u017Cy:"),
                             invoice.issueDate
                                 ? react_1.default.createElement("h5", null,
                                     ToolsDate_1.default.dateYMDtoDMY(invoice.issueDate),
