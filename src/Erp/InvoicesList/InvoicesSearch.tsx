@@ -23,7 +23,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             tableStructure={[
                 { header: 'Umowa', renderTdBody: (invoice: Invoice) => <>{invoice._contract.ourId}</> },
                 { header: 'Numer', objectAttributeToShow: 'number' },
-                { header: 'Utworzono', objectAttributeToShow: 'issueDate' },
+                { header: 'Sprzedaż', objectAttributeToShow: 'issueDate' },
                 { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
                 { header: 'Odbiorca', renderTdBody: makeEntityLabel },
                 { header: 'Netto, zł', objectAttributeToShow: '_totalNetValue' },

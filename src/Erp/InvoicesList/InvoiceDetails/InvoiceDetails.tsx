@@ -63,7 +63,7 @@ export default function InvoiceDetails() {
                         </Row>
                         <Row>
                             <Col sm={4} md={2}>
-                                <div>Data wystawienia:</div>
+                                <div>Data sprzedaży:</div>
                                 {invoice.issueDate
                                     ? <h5>{ToolsDate.dateYMDtoDMY(invoice.issueDate)} </h5>
                                     : 'Jeszcze nie wystawiono'}
