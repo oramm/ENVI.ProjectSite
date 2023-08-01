@@ -19,7 +19,7 @@ export function InvoicesFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col}>
-                <Form.Label>Wystawiono od</Form.Label>
+                <Form.Label>Sprzedaż od</Form.Label>
                 <Form.Control
                     type="date"
                     defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM}
@@ -28,7 +28,7 @@ export function InvoicesFilterBody() {
 
             </Form.Group>
             <Form.Group as={Col}>
-                <Form.Label>Wystawiono do</Form.Label>
+                <Form.Label>Sprzedaż do</Form.Label>
                 <Form.Control
                     type="date"
                     defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO}
