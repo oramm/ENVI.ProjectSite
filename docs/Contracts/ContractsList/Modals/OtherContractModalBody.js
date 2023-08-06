@@ -61,7 +61,7 @@ function OtherContractModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', contextSearchParams: [
                     { key: 'projectId', value: _parent?.ourId },
-                    { key: 'onlyOurs', value: 'true' }
+                    { key: 'typesToInclude', value: 'our' }
                 ], repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",

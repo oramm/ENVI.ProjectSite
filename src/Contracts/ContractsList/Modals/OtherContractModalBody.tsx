@@ -53,7 +53,7 @@ export function OtherContractModalBody(props: ModalBodyProps) {
                     searchKey='contractOurId'
                     contextSearchParams={[
                         { key: 'projectId', value: _parent?.ourId },
-                        { key: 'onlyOurs', value: 'true' }
+                        { key: 'typesToInclude', value: 'our' }
                     ]}
                     repository={ourRelatedContractsRepository}
                     renderMenuItemChildren={(option: any) => (<div>{option.ourId} {option.name}</div>)}
