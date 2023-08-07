@@ -31,7 +31,8 @@ const commonFields = {
     _cases: Yup.array()
         .required('Wybierz sprawy'),
     description: Yup.string()
-        .max(1000, 'Opis może mieć maksymalnie 1000 znaków'),
+        .required('Opis jest wymagany')
+        .max(300, 'Opis może mieć maksymalnie 300 znaków'),
     creationDate: Yup.date()
         .required('Data utworzenia jest wymagana')
         .max(new Date(), 'Data utworzenia nie może być z przyszłości')
