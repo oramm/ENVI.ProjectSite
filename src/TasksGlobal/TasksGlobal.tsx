@@ -32,7 +32,8 @@ export default function TasksGlobal() {
 
             const [contractsWithChildren] = await Promise.all([
                 contractsWithChildrenRepository.loadItemsFromServer({
-                    _project: JSON.stringify(selectedProject)
+                    _project: JSON.stringify(selectedProject),
+                    statusType: 'active',
                 }),
                 caseTypesRepository.loadItemsFromServer(),
                 milestoneTypesRepository.loadItemsFromServer(),
@@ -110,13 +111,11 @@ export default function TasksGlobal() {
                             title='Zadania'
                             showTableHeader={false}
                             repository={tasksRepository}
-                            //AddNewButtonComponents={[TaskAddNewModalButton]}
                             FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
                             EditButtonComponent={TaskEditModalButton}
                             initialSections={buildTree(contractsWithChildren)}
                             tableStructure={makeTasksTableStructure()}
                             externalUpdate={externalUpdate}
-
                         />
                         :
                         <LoadingMessage selectedProject={selectedProject} />
@@ -183,7 +182,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
         for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
             const milestoneNode = {
                 id: 'milestone' + milestone.id,
-                isInAccordion: false,
+                isInAccordion: true,
                 level: 2,
                 type: 'milestone',
                 childrenNodesType: 'case',

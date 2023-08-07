@@ -54,7 +54,8 @@ function TasksGlobal() {
             setDataLoaded(false);
             const [contractsWithChildren] = await Promise.all([
                 TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServer({
-                    _project: JSON.stringify(selectedProject)
+                    _project: JSON.stringify(selectedProject),
+                    statusType: 'active',
                 }),
                 ContractsController_1.caseTypesRepository.loadItemsFromServer(),
                 ContractsController_1.milestoneTypesRepository.loadItemsFromServer(),
@@ -102,9 +103,7 @@ function TasksGlobal() {
                     react_1.default.createElement("div", { onClick: handleShowProjects },
                         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
                 tasksLoaded ?
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, 
-                        //AddNewButtonComponents={[TaskAddNewModalButton]}
-                        FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })
+                    react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })
                     :
                         react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))));
 }
@@ -157,7 +156,7 @@ function buildTree(contractsWithChildrenInput) {
         for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
             const milestoneNode = {
                 id: 'milestone' + milestone.id,
-                isInAccordion: false,
+                isInAccordion: true,
                 level: 2,
                 type: 'milestone',
                 childrenNodesType: 'case',

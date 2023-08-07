@@ -72,7 +72,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         setObjects([...objects, object]);
     }
     function handleEditObject(object) {
-        if (!sections)
+        if (!sections.length)
             setObjects(objects.map((o) => (o.id === object.id ? object : o)));
         else
             setSections(editNode(sections, activeSectionId, object));
