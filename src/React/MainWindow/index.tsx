@@ -98,7 +98,8 @@ function AppRoutes() {
 export async function renderApp() {
     const root = document.getElementById("root");
 
-    if (root) {
+    if (!root) return;
+    if (process.env.MODE === 'development')
         ReactDOM.createRoot(root).render(
             <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
                 <StrictMode>
@@ -106,7 +107,12 @@ export async function renderApp() {
                 </StrictMode>
             </GoogleOAuthProvider>
         );
-    }
+    else
+        ReactDOM.createRoot(root).render(
+            <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
+                <App />
+            </GoogleOAuthProvider>
+        );
 }
-
+console.log(process.env.MODE);
 renderApp();

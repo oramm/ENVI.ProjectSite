@@ -108,11 +108,16 @@ function AppRoutes() {
 }
 async function renderApp() {
     const root = document.getElementById("root");
-    if (root) {
+    if (!root)
+        return;
+    if (process.env.MODE === 'development')
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(react_1.StrictMode, null,
                 react_1.default.createElement(App, null))));
-    }
+    else
+        client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
+            react_1.default.createElement(App, null)));
 }
 exports.renderApp = renderApp;
+console.log(process.env.MODE);
 renderApp();

@@ -133,7 +133,7 @@ function makeMilestoneTitleLabel(milestone) {
     return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    return `S: ${caseItem._type.name} ${caseItem.name || ''}`;
+    return `${caseItem._typeFolderNumber_TypeName_Number_Name || ''}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];

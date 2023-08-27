@@ -239,6 +239,10 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         }
     }
 
+    clearData() {
+        this.items = [];
+        this.currentItems = [];
+    }
 
     private makeRequestHeaders() {
         let myHeaders = new Headers();

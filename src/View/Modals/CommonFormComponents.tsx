@@ -543,7 +543,7 @@ export function MyAsyncTypeahead({
                     <AsyncTypeahead
                         renderMenu={renderMenu ? renderMenu : undefined}
                         filterBy={filterBy}
-                        id="async-example"
+                        id={`${name}-asyncTypeahead`}
                         isLoading={isLoading}
                         labelKey={labelKey}
                         minLength={2}
@@ -638,7 +638,7 @@ interface CaseSelectMenuElementProps {
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
  * @param readOnly czy pole jest tylko do odczytu  
  */
-export function CaseSelectMenuElement({
+export function CaseSelectMenuElementOLD({
     name = '_case',
     readonly = false,
     _project,
@@ -675,6 +675,70 @@ export function CaseSelectMenuElement({
         readOnly={readonly}
         showValidationInfo={showValidationInfo}
     />;
+}
+
+export function CaseSelectMenuElement({
+    name = '_case',
+    readonly = false,
+    _contract,
+    repository,
+    showValidationInfo = true,
+    multiple = true
+}: CaseSelectMenuElementProps) {
+    const [options, setOptions] = useState<any[]>([]);
+
+    const { control, setValue, formState: { errors } } = useFormContext();
+
+    useEffect(() => {
+        console.log('caseSelect _contract: ', _contract?._ourIdOrNumber_Alias);
+        const fetchData = async () => {
+            if (_contract) {
+                await repository.loadItemsFromServer({ 'contractId': JSON.stringify(_contract.id) });
+                setOptions(repository.items);
+            } else {
+                repository.clearData();
+            }
+        };
+        fetchData();
+    }, [_contract]);
+
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+            <Typeahead
+                id={`${name}-typeahead`}
+                labelKey='_typeFolderNumber_TypeName_Number_Name'
+                multiple={multiple}
+                options={options}
+                onChange={(items) => handleOnChange(items, field)}
+                renderMenu={(results, menuProps, state) => {
+                    const groupedResults = groupByMilestone(results as Case[]);
+                    const milestoneNames = Object.keys(groupedResults).sort();
+                    return renderCaseMenu(results as Case[], menuProps, state, groupedResults, milestoneNames);
+                }}
+                selected={field.value ? multiple ? field.value : [field.value] : []}
+                placeholder="-- Wybierz sprawę --"
+                isValid={showValidationInfo ? !(errors?.[name]) : undefined}
+                isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
+                renderMenuItemChildren={(option, props, index) => {
+                    const myOption = option as Case;
+                    return (
+                        <div>
+                            <span>{myOption._typeFolderNumber_TypeName_Number_Name}</span>
+                            <div className="text-muted small">{myOption.description}</div>
+                        </div>);
+                }}
+            />
+        )}
+    />
 }
 
 type ValueInPLNInputProps = {

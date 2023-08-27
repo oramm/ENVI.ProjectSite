@@ -206,6 +206,10 @@ class RepositoryReact {
             this.deleteFromCurrentItemsById(oldItem.id);
         }
     }
+    clearData() {
+        this.items = [];
+        this.currentItems = [];
+    }
     makeRequestHeaders() {
         let myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");

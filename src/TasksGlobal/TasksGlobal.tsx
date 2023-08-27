@@ -156,7 +156,7 @@ function makeMilestoneTitleLabel(milestone: Milestone) {
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
-    return `S: ${caseItem._type.name} ${caseItem.name || ''}`;
+    return `${caseItem._typeFolderNumber_TypeName_Number_Name || ''}`
 }
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
@@ -200,9 +200,9 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     id: 'case' + caseItem.id,
                     level: 3,
                     type: 'case',
-                    repository: casesRepository, // Dostosuj do Twojego repozytorium spraw
+                    repository: casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem), // Dostosuj do Twojej metody
+                    titleLabel: makeCaseTitleLabel(caseItem),
                     children: [],
                     leaves: [] as Task[],
                     isDeletable: true,

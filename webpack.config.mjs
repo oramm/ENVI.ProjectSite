@@ -1,5 +1,8 @@
 import * as path from 'path';
 import * as os from 'os';
+import webpack from 'webpack';
+import dotenv from 'dotenv';
+dotenv.config();
 
 let __dirname = path.dirname(new URL(import.meta.url).pathname);
 if (os.platform() === 'win32') {
@@ -14,6 +17,7 @@ export default {
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
+
     },
     module: {
         rules: [
@@ -54,5 +58,10 @@ export default {
     mode: 'development',
     experiments: {
         topLevelAwait: true
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env.MODE': JSON.stringify(process.env.MODE || 'production')
+        })
+    ],
 };

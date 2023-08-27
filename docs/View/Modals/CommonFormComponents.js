@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.CaseSelectMenuElementOLD = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -280,7 +280,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
             setValue(name, valueToBeSent);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: "async-example", isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined })) }),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && (react_1.default.createElement("input", { type: "hidden", ...register(name) }))));
 }
@@ -327,7 +327,7 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
  * @param readOnly czy pole jest tylko do odczytu
  */
-function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true, multiple = true }) {
+function CaseSelectMenuElementOLD({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true, multiple = true }) {
     function makeContextSearchParams() {
         const contextSearchParams = [];
         if (_project)
@@ -343,6 +343,39 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _project, _co
             const milestoneNames = Object.keys(groupedResults).sort();
             return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
         }, multiple: multiple, readOnly: readonly, showValidationInfo: showValidationInfo });
+}
+exports.CaseSelectMenuElementOLD = CaseSelectMenuElementOLD;
+function CaseSelectMenuElement({ name = '_case', readonly = false, _contract, repository, showValidationInfo = true, multiple = true }) {
+    const [options, setOptions] = (0, react_1.useState)([]);
+    const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        console.log('caseSelect _contract: ', _contract?._ourIdOrNumber_Alias);
+        const fetchData = async () => {
+            if (_contract) {
+                await repository.loadItemsFromServer({ 'contractId': JSON.stringify(_contract.id) });
+                setOptions(repository.items);
+            }
+            else {
+                repository.clearData();
+            }
+        };
+        fetchData();
+    }, [_contract]);
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    return react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: '_typeFolderNumber_TypeName_Number_Name', multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), renderMenu: (results, menuProps, state) => {
+                const groupedResults = groupByMilestone(results);
+                const milestoneNames = Object.keys(groupedResults).sort();
+                return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
+            }, selected: field.value ? multiple ? field.value : [field.value] : [], placeholder: "-- Wybierz spraw\u0119 --", isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined, renderMenuItemChildren: (option, props, index) => {
+                const myOption = option;
+                return (react_1.default.createElement("div", null,
+                    react_1.default.createElement("span", null, myOption._typeFolderNumber_TypeName_Number_Name),
+                    react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+            } })) });
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 /**
