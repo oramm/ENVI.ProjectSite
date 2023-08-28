@@ -14,6 +14,7 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
 
     useEffect(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue('_entitiesCc', initialData?._entitiesCc, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -27,7 +28,7 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
                 />
             }
             <Form.Group>
-                <Form.Label>Odbiorca</Form.Label>
+                <Form.Label>Odbiorcy</Form.Label>
                 <MyAsyncTypeahead
                     name='_entitiesMain'
                     labelKey='name'
@@ -35,6 +36,16 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLet
                     multiple={true}
                 />
                 <ErrorMessage errors={errors} name='_entitiesMain' />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label>Do wiadomości</Form.Label>
+                <MyAsyncTypeahead
+                    name='_entitiesCc'
+                    labelKey='name'
+                    repository={entitiesRepository}
+                    multiple={true}
+                />
+                <ErrorMessage errors={errors} name='_entitiesCc' />
             </Form.Group>
             <input type="hidden" {...register('isOur')} value='true' />
         </>

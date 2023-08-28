@@ -11,15 +11,26 @@ const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function LettersSearch({ title }) {
-    function makeEntitiesLabel(letter) {
-        const entities = letter._entitiesMain;
+    function buildLabelFromEntities(entities) {
+        if (!entities || entities.length === 0)
+            return '';
         let label = '';
-        for (var i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + ', ';
+        for (let i = 0; i < entities.length - 1; i++) {
+            label += entities[i].name + '\n ';
         }
-        if (entities[i])
-            label += entities[i].name;
-        return react_1.default.createElement(react_1.default.Fragment, null, label);
+        label += entities[entities.length - 1].name;
+        return label;
+    }
+    function makeEntitiesLabel(letter) {
+        const mainEntitiesLabel = buildLabelFromEntities(letter._entitiesMain);
+        const ccEntitiesLabel = buildLabelFromEntities(letter._entitiesCc);
+        if (!mainEntitiesLabel)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        let label = mainEntitiesLabel;
+        if (ccEntitiesLabel?.length > 0) {
+            label += '\n\nDW: ' + ccEntitiesLabel;
+        }
+        return react_1.default.createElement("div", { style: { whiteSpace: 'pre-line' } }, label);
     }
     function renderIconTdBody(letter) {
         letter = letter;
@@ -32,7 +43,7 @@ function LettersSearch({ title }) {
             { header: 'Wysłano &nbs', objectAttributeToShow: 'registrationDate' },
             { header: 'Numer', objectAttributeToShow: 'number' },
             { header: 'Dotyczy', objectAttributeToShow: 'description' },
-            { header: 'Odbiorca', renderTdBody: makeEntitiesLabel },
+            { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: '/letter/' }));
 }
 exports.default = LettersSearch;

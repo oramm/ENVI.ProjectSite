@@ -36,15 +36,20 @@ function OurLetterModalBody(props) {
     const _cases = watch('_cases');
     (0, react_1.useEffect)(() => {
         setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue('_entitiesCc', initialData?._entitiesCc, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         !isEditing &&
             react_1.default.createElement(CommonFormComponents_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesMain', labelKey: 'name', repository: LettersController_1.entitiesRepository, multiple: true }),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_entitiesMain' })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Do wiadomo\u015Bci"),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entitiesCc', labelKey: 'name', repository: LettersController_1.entitiesRepository, multiple: true }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_entitiesCc' })),
         react_1.default.createElement("input", { type: "hidden", ...register('isOur'), value: 'true' })));
 }
 exports.OurLetterModalBody = OurLetterModalBody;

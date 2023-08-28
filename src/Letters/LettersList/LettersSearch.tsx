@@ -3,21 +3,37 @@ import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTab
 import { lettersRepository } from './LettersController';
 import { LettersFilterBody } from './LetterFilterBody';
 import { LetterEditModalButton, IncomingLetterAddNewModalButton, OurLetterAddNewModalButton } from './Modals/LetterModalButtons';
-import { IncomingLetter, OurLetter, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { Entity, IncomingLetter, OurLetter } from '../../../Typings/bussinesTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function LettersSearch({ title }: { title: string }) {
-    function makeEntitiesLabel(letter: OurLetter | IncomingLetter) {
-        const entities = letter._entitiesMain;
+    function buildLabelFromEntities(entities: Entity[]): string {
+        if (!entities || entities.length === 0) return '';
+
         let label = '';
-        for (var i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + ', '
+        for (let i = 0; i < entities.length - 1; i++) {
+            label += entities[i].name + '\n ';
         }
-        if (entities[i])
-            label += entities[i].name;
-        return <>{label}</>;
+        label += entities[entities.length - 1].name;
+
+        return label;
+    }
+
+    function makeEntitiesLabel(letter: OurLetter | IncomingLetter) {
+        const mainEntitiesLabel = buildLabelFromEntities(letter._entitiesMain);
+        const ccEntitiesLabel = buildLabelFromEntities(letter._entitiesCc);
+
+        if (!mainEntitiesLabel) return <></>;
+
+        let label = mainEntitiesLabel;
+        if (ccEntitiesLabel?.length > 0) {
+            label += '\n\nDW: ' + ccEntitiesLabel;
+        }
+
+        return <div style={{ whiteSpace: 'pre-line' }}>{label}</div>;
+
     }
 
     function renderIconTdBody(letter: OurLetter | IncomingLetter) {
@@ -38,7 +54,7 @@ export default function LettersSearch({ title }: { title: string }) {
                 { header: 'Wysłano &nbs', objectAttributeToShow: 'registrationDate' },
                 { header: 'Numer', objectAttributeToShow: 'number' },
                 { header: 'Dotyczy', objectAttributeToShow: 'description' },
-                { header: 'Odbiorca', renderTdBody: makeEntitiesLabel },
+                { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
