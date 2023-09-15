@@ -1,5 +1,4 @@
 *.driveupload
-tsconfig.json
 node_modules/
 Server/
 yarn-error.log
