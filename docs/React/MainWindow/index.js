@@ -47,7 +47,7 @@ require("react-toastify/dist/ReactToastify.css");
 const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
-const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
+const rootPath = isGithubPages ? '/React/' : '/'; //'/envi.projectsite/docs/React/';
 console.log('rootPath', rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 function App() {
@@ -95,7 +95,7 @@ function App() {
         return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
 }
 function AppRoutes() {
-    return (react_1.default.createElement(react_router_dom_1.BrowserRouter, { basename: rootPath },
+    return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
         react_1.default.createElement(react_router_dom_1.Routes, null,
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(react_1.default.Fragment, null) }),

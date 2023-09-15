@@ -2,7 +2,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
@@ -20,7 +20,7 @@ import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDeta
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
-const rootPath = isGithubPages ? '/React/' : '/envi.projectsite/docs/React/';
+const rootPath = isGithubPages ? '/React/' : '/';//'/envi.projectsite/docs/React/';
 console.log('rootPath', rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 
@@ -78,7 +78,7 @@ function App() {
 
 function AppRoutes() {
     return (
-        <BrowserRouter basename={rootPath}>
+        <HashRouter basename={rootPath}>
             <MainMenu />
             <Routes>
                 <Route path="/" element={<></>} />
@@ -90,7 +90,7 @@ function AppRoutes() {
                 <Route path="/tasksGlobal" element={<TasksGlobal />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 
