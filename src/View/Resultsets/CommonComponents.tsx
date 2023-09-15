@@ -7,7 +7,7 @@ import '../../Css/styles.css';
 import MainSetup from '../../React/MainSetupReact';
 import { Color } from 'react-bootstrap/esm/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faBars, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 export function ProgressBar() {
     return (
@@ -95,6 +95,29 @@ export function GDDocFileIconLink({ folderUrl, layout = 'vertical' }: IconProps)
         <a href={folderUrl} target="_blank">
             <img src={GDDocFileIcon} alt="Dysk Google" className={className} />
         </a>
+    );
+}
+
+export type IconButtonProps = {
+    icon: IconDefinition;
+    layout: 'horizontal' | 'vertical';
+    onClick: () => void;
+}
+
+export function IconButton({ icon, layout, onClick }: IconButtonProps) {
+    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+
+    return (
+        <span
+            onClick={(e) => {
+                e.preventDefault();
+                onClick();
+            }}
+            className={`${className} text-general`}
+            style={{ cursor: 'pointer' }}
+        >
+            <FontAwesomeIcon icon={icon} size="lg" />
+        </span>
     );
 }
 
