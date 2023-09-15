@@ -20,12 +20,12 @@ const commonFields = {
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
         .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie',
             function (value: Date) {
-                return this.parent.endDate > value;
+                return this.parent.endDate >= value;
             }),
     endDate: Yup.date().required('Data zakończenia jest wymagana')
         .test('endDateValidation', 'Koniec musi być późniejszy niż początek',
             function (value: Date) {
-                return value > this.parent.startDate;
+                return value >= this.parent.startDate;
             }),
 };
 

@@ -43,11 +43,11 @@ const commonFields = {
     status: Yup.string().required('Status jest wymagany'),
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
         .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
-        return this.parent.endDate > value;
+        return this.parent.endDate >= value;
     }),
     endDate: Yup.date().required('Data zakończenia jest wymagana')
         .test('endDateValidation', 'Koniec musi być późniejszy niż początek', function (value) {
-        return value > this.parent.startDate;
+        return value >= this.parent.startDate;
     }),
 };
 function ourContractValidationSchema(isEditing) {
