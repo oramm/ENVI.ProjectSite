@@ -7,6 +7,7 @@ import { GeneralModal } from "./GeneralModal";
 import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { IconButton } from "../Resultsets/CommonComponents";
 
 export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
     buttonProps,
@@ -70,10 +71,18 @@ function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick
     }
     if (!buttonCaption) {
         const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+        return <IconButton icon={faPencil} layout={layout} onClick={onClick} />
         return (
-            <a href='#' onClick={onClick} className={`${className} text-general`}>
+            <span
+                onClick={(e) => {
+                    e.preventDefault();
+                    onClick();
+                }}
+                className={`${className} text-general`}
+                style={{ cursor: 'pointer' }}
+            >
                 <FontAwesomeIcon icon={faPencil} size="lg" />
-            </a>)
+            </span>)
     }
     else
         return (<Button
