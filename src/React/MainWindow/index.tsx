@@ -20,7 +20,8 @@ import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDeta
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
-const rootPath = isGithubPages ? '/React/' : '/';//'/envi.projectsite/docs/React/';
+//const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
+const rootPath = '/';
 console.log('rootPath', rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 
