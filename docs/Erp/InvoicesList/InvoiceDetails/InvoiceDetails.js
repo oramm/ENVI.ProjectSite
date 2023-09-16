@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useInvoice = exports.InvoiceProvider = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_router_dom_1 = require("react-router-dom");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
@@ -37,14 +38,28 @@ const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 function InvoiceDetails() {
-    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0] || InvoicesController_1.invoicesRepository.getItemFromRouter());
+    const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
+    const { id } = (0, react_router_dom_1.useParams)();
     (0, react_1.useEffect)(() => {
-        const fetchInvoiceItems = async () => {
-            const items = await InvoicesController_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
-            setInvoiceItems(items);
+        if (!id)
+            throw new Error('Nie znaleziono id w adresie url');
+        const idNumber = Number(id);
+        const fetchData = async () => {
+            const fetchInvoice = InvoicesController_1.invoicesRepository.loadItemFromRouter(idNumber);
+            const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: id });
+            try {
+                const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
+                if (invoiceData)
+                    setInvoice(invoiceData);
+                setInvoiceItems(itemsData);
+            }
+            catch (error) {
+                console.error("Error fetching data", error);
+                // Handle error as you see fit
+            }
         };
-        fetchInvoiceItems();
+        fetchData();
     }, []);
     if (!invoice) {
         return react_1.default.createElement("div", null,

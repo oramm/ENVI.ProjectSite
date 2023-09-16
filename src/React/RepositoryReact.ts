@@ -51,13 +51,30 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     saveToSessionStorage() {
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    /**pobiera obiekt z repozytorim na podstawie Id w adresie */
-    getItemFromRouter() {
-        const { id } = useParams();
-        const itemId = Number(id);
-        const item = this.items.find(item => item.id === itemId);
+    /**pobiera obiekt z repozytorim na podstawie Id w adresie url
+     * - jeżeli nie ma obiektów w repozytorium, to ładuje je z sessionstorage
+     * - jeżeli nie ma obiektów w sessionstorage, to ładuje je z serwera
+     */
+    async loadItemFromRouter(id: number) {
+        if (!id) throw new Error('Nie podano id obiektu do załadowania');
+
+        if (this.items.length === 0)
+            this.loadFromSessionStorage();
+        if (this.items.length === 0) {
+            const params = { id: id.toString() };
+            await this.loadItemsFromServer(params);
+        }
+        if (this.items.length === 0)
+            throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
+
+        // Znajdź i zwróć żądany element
+        const item = this.items.find(item => item.id === id);
+        if (!item) {
+            throw new Error('Nie znaleziono obiektu z podanym id: ' + id);
+        }
         return item;
     }
+
 
 
     /**Ładuje items z sessionstorage i resetuje currentitems */

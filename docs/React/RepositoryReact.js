@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
 const ToolsDate_1 = __importDefault(require("./ToolsDate"));
 class RepositoryReact {
@@ -46,11 +45,26 @@ class RepositoryReact {
     saveToSessionStorage() {
         sessionStorage.setItem(this.name, JSON.stringify(this));
     }
-    /**pobiera obiekt z repozytorim na podstawie Id w adresie */
-    getItemFromRouter() {
-        const { id } = (0, react_router_dom_1.useParams)();
-        const itemId = Number(id);
-        const item = this.items.find(item => item.id === itemId);
+    /**pobiera obiekt z repozytorim na podstawie Id w adresie url
+     * - jeżeli nie ma obiektów w repozytorium, to ładuje je z sessionstorage
+     * - jeżeli nie ma obiektów w sessionstorage, to ładuje je z serwera
+     */
+    async loadItemFromRouter(id) {
+        if (!id)
+            throw new Error('Nie podano id obiektu do załadowania');
+        if (this.items.length === 0)
+            this.loadFromSessionStorage();
+        if (this.items.length === 0) {
+            const params = { id: id.toString() };
+            await this.loadItemsFromServer(params);
+        }
+        if (this.items.length === 0)
+            throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
+        // Znajdź i zwróć żądany element
+        const item = this.items.find(item => item.id === id);
+        if (!item) {
+            throw new Error('Nie znaleziono obiektu z podanym id: ' + id);
+        }
         return item;
     }
     /**Ładuje items z sessionstorage i resetuje currentitems */

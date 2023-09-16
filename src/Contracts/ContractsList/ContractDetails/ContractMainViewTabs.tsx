@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs } from 'react-bootstrap';
+import { useParams } from "react-router-dom";
 import { Case, CaseType, Milestone, MilestoneType, Task } from "../../../../Typings/bussinesTypes";
+import { SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
 import { ContractProvider } from "../ContractContext";
 import { casesRepository, caseTypesRepository, contractsRepository, milestonesRepository, milestoneTypesRepository, tasksRepository } from "../ContractsController";
 import ContractDetails from "./ContractDetails";
@@ -8,16 +10,19 @@ import { MainContractDetailsHeader } from "./ContractMainHeader";
 import Tasks from "./Tasks/Tasks";
 
 export function ContractMainViewTabs() {
-    const [contract, setContract] = useState(contractsRepository.currentItems[0] || contractsRepository.getItemFromRouter());
+    const [contract, setContract] = useState(contractsRepository.currentItems[0]);
     const [miletonesTypes, setMiletonesTypes] = useState(undefined as MilestoneType[] | undefined);
     const [caseTypes, setCaseTypes] = useState(undefined as CaseType[] | undefined);
     const [milestones, setMilestones] = useState(undefined as Milestone[] | undefined);
     const [cases, setCases] = useState(undefined as Case[] | undefined);
     const [tasks, setTasks] = useState(undefined as Task[] | undefined);
-
+    let { id } = useParams();
     useEffect(() => {
         async function fetchData() {
-            const params = { contractId: contract.id.toString() }
+            if (!id) throw new Error('Nie znaleziono id w adresie url');
+            const idNumber = Number(id);
+            const params = { contractId: id }
+            const fetchContract = contract ? undefined : contractsRepository.loadItemFromRouter(idNumber);
             const fetchMilestonesTypes = milestoneTypesRepository.loadItemsFromServer(params);
             const fetchCaseTypes = caseTypesRepository.loadItemsFromServer(params);
             const fetchMilestones = milestonesRepository.loadItemsFromServer(params);
@@ -26,19 +31,21 @@ export function ContractMainViewTabs() {
 
             try {
                 const [
+                    contractData,
                     milestonesTypesData,
                     caseTypesData,
                     milestonesData,
                     casesData,
                     tasksData
                 ] = await Promise.all([
+                    fetchContract,
                     fetchMilestonesTypes,
                     fetchCaseTypes,
                     fetchMilestones,
                     fetchCases,
                     fetchTasks
                 ]);
-
+                if (contractData) setContract(contractData);
                 setMiletonesTypes(milestonesTypesData);
                 setCaseTypes(caseTypesData);
                 setMilestones(milestonesData);
@@ -54,7 +61,9 @@ export function ContractMainViewTabs() {
         fetchData();
     }, []);
 
-
+    if (!contract) {
+        return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
+    }
     return (
         <ContractProvider
             contract={contract}

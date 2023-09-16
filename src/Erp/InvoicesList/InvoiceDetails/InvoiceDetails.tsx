@@ -11,16 +11,28 @@ import { ActionButton, CopyButton, InvoiceEditModalButton } from '../Modals/Invo
 import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
 
 export default function InvoiceDetails() {
-    const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0] || invoicesRepository.getItemFromRouter());
+    const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
+    const { id } = useParams();
 
     useEffect(() => {
-        const fetchInvoiceItems = async () => {
-            const items = await invoiceItemsRepository.loadItemsFromServer({ invoiceId: invoice.id.toString() });
-            setInvoiceItems(items);
+        if (!id) throw new Error('Nie znaleziono id w adresie url');
+        const idNumber = Number(id);
+
+        const fetchData = async () => {
+            const fetchInvoice = invoicesRepository.loadItemFromRouter(idNumber);
+            const fetchItems = invoiceItemsRepository.loadItemsFromServer({ invoiceId: id });
+            try {
+                const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
+                if (invoiceData) setInvoice(invoiceData);
+                setInvoiceItems(itemsData);
+            } catch (error) {
+                console.error("Error fetching data", error);
+                // Handle error as you see fit
+            }
         };
 
-        fetchInvoiceItems();
+        fetchData();
     }, []);
     if (!invoice) {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;

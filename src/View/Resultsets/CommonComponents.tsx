@@ -7,7 +7,7 @@ import '../../Css/styles.css';
 import MainSetup from '../../React/MainSetupReact';
 import { Color } from 'react-bootstrap/esm/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faBars, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faBars, IconDefinition, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export function ProgressBar() {
     return (
@@ -98,14 +98,18 @@ export function GDDocFileIconLink({ folderUrl, layout = 'vertical' }: IconProps)
     );
 }
 
-export type IconButtonProps = {
+type GeneralIconButtonProps = SpecificIconButtonProps & {
     icon: IconDefinition;
+    className: string;
+};
+
+export type SpecificIconButtonProps = {
     layout: 'horizontal' | 'vertical';
     onClick: () => void;
 }
 
-export function IconButton({ icon, layout, onClick }: IconButtonProps) {
-    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+function IconButton({ icon, layout, onClick, className }: GeneralIconButtonProps) {
+    className += layout === 'vertical' ? ' icon icon-vertical' : ' icon icon-horizontal';
 
     return (
         <span
@@ -113,12 +117,21 @@ export function IconButton({ icon, layout, onClick }: IconButtonProps) {
                 e.preventDefault();
                 onClick();
             }}
-            className={`${className} text-general`}
+            className={`${className}`}
             style={{ cursor: 'pointer' }}
         >
             <FontAwesomeIcon icon={icon} size="lg" />
         </span>
     );
+}
+
+export function EditIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faPencil} layout={layout} onClick={onClick} className='text-primary' />
+}
+
+//delete icon button
+export function DeleteIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faTrash} layout={layout} onClick={onClick} className='text-danger' />
 }
 
 export function InvoiceStatusBadge({ status }: { status: string }) {

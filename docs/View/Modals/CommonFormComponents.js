@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.CaseSelectMenuElementOLD = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -316,35 +316,11 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
  * Pole wyboru sprawy z repozytorium pogrupowane po Milestonach
  * @param name nazwa pola formularza (musi być zgodna z nazwą pola w obiekcie)
  * @param repository repozytorium z którego pobierane są dane
- * @param labelKey nazwa pola w obiekcie które ma być wyświetlane w polu wyboru
- * @param searchKey nazwa pola w obiekcie które ma być wyszukiwane (domyślnie labelKey)
- * @param contextSearchParams parametry wyszukiwania które mają być wysyłane do serwera (np. parametry kontekstowe)
- * @param specialSerwerSearchActionRoute nazwa akcji wyszukiwania na serwerze (domyślnie search)
- * @param renderMenuItemChildren funkcja renderująca elementy menu
- * @param renderMenu funkcja renderująca menu
  * @param multiple czy można wybrać wiele opcji
- * @param required czy pole jest wymagane
- * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji
- * @param readOnly czy pole jest tylko do odczytu
- */
-function CaseSelectMenuElementOLD({ name = '_case', readonly = false, _project, _contract, _milestone, repository, showValidationInfo = true, multiple = true }) {
-    function makeContextSearchParams() {
-        const contextSearchParams = [];
-        if (_project)
-            contextSearchParams.push({ key: 'projectId', value: _project?.ourId });
-        if (_contract)
-            contextSearchParams.push({ key: 'contractId', value: _contract.id.toString() });
-        if (_milestone)
-            contextSearchParams.push({ key: 'milestoneId', value: _milestone?.ourId });
-        return contextSearchParams;
-    }
-    return react_1.default.createElement(MyAsyncTypeahead, { contextSearchParams: makeContextSearchParams(), name: name, repository: repository, labelKey: '_typeFolderNumber_TypeName_Number_Name', searchKey: 'searchText', renderMenu: (results, menuProps, state) => {
-            const groupedResults = groupByMilestone(results);
-            const milestoneNames = Object.keys(groupedResults).sort();
-            return renderCaseMenu(results, menuProps, state, groupedResults, milestoneNames);
-        }, multiple: multiple, readOnly: readonly, showValidationInfo: showValidationInfo });
-}
-exports.CaseSelectMenuElementOLD = CaseSelectMenuElementOLD;
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
+ * @param readOnly czy pole jest tylko do odczytu (domyślnie false)
+ * @param _contract kontrakt do którego należy wybrana sprawa
+*/
 function CaseSelectMenuElement({ name = '_case', readonly = false, _contract, repository, showValidationInfo = true, multiple = true }) {
     const [options, setOptions] = (0, react_1.useState)([]);
     const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
