@@ -5,8 +5,9 @@ import { Case, CaseType, Milestone, MilestoneType, Task } from "../../../../Typi
 import { SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
 import { ContractProvider } from "../ContractContext";
 import { casesRepository, caseTypesRepository, contractsRepository, milestonesRepository, milestoneTypesRepository, tasksRepository } from "../ContractsController";
-import ContractDetails from "./ContractDetails";
 import { MainContractDetailsHeader } from "./ContractMainHeader";
+import ContractOtherDetails from "./ContractOtherDetails";
+import ContractOurDetails from "./ContractOurDetails";
 import Tasks from "./Tasks/Tasks";
 
 export function ContractMainViewTabs() {
@@ -83,7 +84,10 @@ export function ContractMainViewTabs() {
                 <MainContractDetailsHeader />
                 <Tabs defaultActiveKey="general" id="uncontrolled-tab-example">
                     <Tab eventKey="general" title="Dane ogólne">
-                        <ContractDetails />
+                        {contract.ourId
+                            ? <ContractOurDetails />
+                            : <ContractOtherDetails />
+                        }
                     </Tab>
                     <Tab eventKey="tasks" title="Zadania">
                         <Tasks />

@@ -61,6 +61,14 @@ export interface OtherContract extends Contract {
     _ourContract: OurContract;
 }
 
+export interface ContractsSettlementData {
+    id: number,
+    ourId: string,
+    value: number,
+    totalIssuedValue: number,
+    remainingValue: number
+}
+
 export interface Milestone extends RepositoryDataItem {
     name: string;
     description: string;

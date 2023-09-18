@@ -5,6 +5,7 @@ import { InvoiceEditModalButton, InvoiceAddNewModalButton } from './Modals/Invoi
 import { Invoice } from '../../../Typings/bussinesTypes';
 import { InvoiceStatusBadge } from '../../View/Resultsets/CommonComponents';
 import { invoicesRepository } from './InvoicesController';
+import Tools from '../../React/Tools';
 
 export default function InvoicesSearch({ title }: { title: string }) {
     function makeEntityLabel(invoice: Invoice) {
@@ -13,6 +14,10 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 {invoice._entity.name} {' '} <InvoiceStatusBadge status={invoice.status} />
             </>
         );
+    }
+
+    function renderInvoiceTotaValue(invoice: Invoice) {
+        return <>{invoice._totalNetValue && <div className="text-end">{Tools.formatNumber(invoice._totalNetValue)}</div>}</>
     }
 
     return (
@@ -26,7 +31,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 { header: 'Sprzedaż', objectAttributeToShow: 'issueDate' },
                 { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
                 { header: 'Odbiorca', renderTdBody: makeEntityLabel },
-                { header: 'Netto, zł', objectAttributeToShow: '_totalNetValue' },
+                { header: 'Netto, zł', renderTdBody: renderInvoiceTotaValue },
                 { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
             ]}
             AddNewButtonComponents={[InvoiceAddNewModalButton]}

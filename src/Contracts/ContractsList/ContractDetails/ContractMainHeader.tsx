@@ -9,7 +9,7 @@ export function MainContractDetailsHeader() {
     if (!contract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
     return (
         <Container>
-            <Row>
+            <Row className='mt-3'>
                 <Col sm={1} lg='1'>
                     {contract._gdFolderUrl && (
                         <GDFolderIconLink folderUrl={contract._gdFolderUrl} />

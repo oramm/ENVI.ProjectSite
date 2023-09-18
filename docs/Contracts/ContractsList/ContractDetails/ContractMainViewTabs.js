@@ -33,8 +33,9 @@ const react_router_dom_1 = require("react-router-dom");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const ContractContext_1 = require("../ContractContext");
 const ContractsController_1 = require("../ContractsController");
-const ContractDetails_1 = __importDefault(require("./ContractDetails"));
 const ContractMainHeader_1 = require("./ContractMainHeader");
+const ContractOtherDetails_1 = __importDefault(require("./ContractOtherDetails"));
+const ContractOurDetails_1 = __importDefault(require("./ContractOurDetails"));
 const Tasks_1 = __importDefault(require("./Tasks/Tasks"));
 function ContractMainViewTabs() {
     const [contract, setContract] = (0, react_1.useState)(ContractsController_1.contractsRepository.currentItems[0]);
@@ -91,8 +92,9 @@ function ContractMainViewTabs() {
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(ContractMainHeader_1.MainContractDetailsHeader, null),
             react_1.default.createElement(react_bootstrap_1.Tabs, { defaultActiveKey: "general", id: "uncontrolled-tab-example" },
-                react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" },
-                    react_1.default.createElement(ContractDetails_1.default, null)),
+                react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" }, contract.ourId
+                    ? react_1.default.createElement(ContractOurDetails_1.default, null)
+                    : react_1.default.createElement(ContractOtherDetails_1.default, null)),
                 react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Zadania" },
                     react_1.default.createElement(Tasks_1.default, null))))));
 }

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Spinner, Alert, Badge } from "react-bootstrap";
+import React, { ComponentProps, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { Spinner, Alert, Badge, Tooltip, OverlayTrigger } from "react-bootstrap";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import GDFolderIcon from '../../Resources/View/Google-Drive-icon.png';
 import GDDocFileIcon from '../../Resources/View/Google-Docs-icon.png';
@@ -8,6 +8,7 @@ import MainSetup from '../../React/MainSetupReact';
 import { Color } from 'react-bootstrap/esm/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faBars, IconDefinition, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { OverlayInjectedProps } from 'react-bootstrap/esm/OverlayTrigger';
 
 export function ProgressBar() {
     return (
@@ -232,5 +233,25 @@ export function TaskStatusBadge({ status }: { status: string }) {
         <Badge bg={variant} text={textMode}>
             {status}
         </Badge>
+    );
+}
+
+type MyTooltipProps = {
+    children: JSX.Element;
+    content: string;
+    rest?: ComponentProps<typeof OverlayTrigger>;
+    placement?: 'top' | 'right' | 'bottom' | 'left';
+}
+
+export function MyTooltip({ children, content: tooltipContent, placement = 'right', ...rest }: MyTooltipProps) {
+    return (
+        <OverlayTrigger
+            placement={placement}
+            delay={{ show: 250, hide: 400 }}
+            overlay={(props) => <Tooltip id="button-tooltip" {...props}>{tooltipContent}</Tooltip>}
+            {...rest}
+        >
+            {children}
+        </OverlayTrigger>
     );
 }

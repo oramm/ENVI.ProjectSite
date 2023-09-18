@@ -9,6 +9,13 @@ class Tools {
         }
         return label;
     }
+    static formatNumber(number, digits = 2) {
+        const formatter = new Intl.NumberFormat('pl-PL', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        return formatter.format(number);
+    }
     //retrieves GET variables from URL
     static getUrlVars() {
         const vars = {};

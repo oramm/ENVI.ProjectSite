@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.projectsRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
+exports.invoicesRepository = exports.contractsSettlementRepository = exports.projectsRepository = exports.entitiesRepository = exports.caseTypesRepository = exports.milestoneTypesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -76,4 +76,23 @@ exports.projectsRepository = new RepositoryReact_1.default({
         deleteRoute: 'project'
     },
     name: 'projects'
+});
+exports.contractsSettlementRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'contractsSettlementData',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'contractsSettlement'
+});
+exports.invoicesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: 'invoices',
+        addNewRoute: 'invoice',
+        editRoute: 'invoice',
+        copyRoute: 'copyInvoice',
+        deleteRoute: 'invoice'
+    },
+    name: 'invoices'
 });

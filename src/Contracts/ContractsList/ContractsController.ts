@@ -1,4 +1,4 @@
-import { Case, CaseType, Entity, Milestone, MilestoneType, OtherContract, OurContract, Project, Task } from "../../../Typings/bussinesTypes";
+import { Case, CaseType, ContractsSettlementData, Entity, Invoice, Milestone, MilestoneType, OtherContract, OurContract, Project, Task } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
 
@@ -81,4 +81,25 @@ export const projectsRepository = new RepositoryReact<Project>({
         deleteRoute: 'project'
     },
     name: 'projects'
+});
+
+export const contractsSettlementRepository = new RepositoryReact<ContractsSettlementData>({
+    actionRoutes: {
+        getRoute: 'contractsSettlementData',
+        addNewRoute: '',
+        editRoute: '',
+        deleteRoute: ''
+    },
+    name: 'contractsSettlement'
+});
+
+export const invoicesRepository = new RepositoryReact<Invoice>({
+    actionRoutes: {
+        getRoute: 'invoices',
+        addNewRoute: 'invoice',
+        editRoute: 'invoice',
+        copyRoute: 'copyInvoice',
+        deleteRoute: 'invoice'
+    },
+    name: 'invoices'
 });

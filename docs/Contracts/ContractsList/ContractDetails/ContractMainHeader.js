@@ -14,7 +14,7 @@ function MainContractDetailsHeader() {
     if (!contract)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: '1' }, contract._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: contract._gdFolderUrl }))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                 react_1.default.createElement("div", null, "Nr umowy:"),
