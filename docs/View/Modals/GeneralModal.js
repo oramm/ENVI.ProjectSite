@@ -104,8 +104,8 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             onEdit(editedObject);
     }
     ;
-    async function handleAdd(formData) {
-        newObject = await repository.addNewItem(formData);
+    async function handleAdd(data) {
+        newObject = await repository.addNewItem(data);
         if (onAddNew)
             onAddNew(newObject);
     }

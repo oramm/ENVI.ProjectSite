@@ -219,3 +219,20 @@ export interface InvoiceItem extends RepositoryDataItem {
     _netValue: number;
     _vatValue: number;
 }
+
+export interface Security extends RepositoryDataItem {
+    description: string,
+    value: number,
+    returnedValue: number,
+    _remainingValue: number,
+    deductionValue: number,
+    firstPartRate: number,
+    secondPartRate: number,
+    firstPartExpiryDate: Date,
+    secondPartExpiryDate: Date,
+    isCash: boolean;
+    gdFolderId: string;
+    _contract: ContractOur
+    _lastUpdated: Date;
+    _editor: Person;
+}

@@ -107,8 +107,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     };
 
 
-    async function handleAdd(formData: FormData | FieldValues) {
-        newObject = await repository.addNewItem(formData);
+    async function handleAdd(data: FormData | FieldValues) {
+        newObject = await repository.addNewItem(data);
         if (onAddNew) onAddNew(newObject);
     };
 

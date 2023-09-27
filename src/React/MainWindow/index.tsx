@@ -18,6 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
+import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -84,6 +85,7 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<></>} />
                 <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
+                <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
                 <Route path="/contract/:id" element={<ContractMainViewTabs />} />
                 <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                 <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />

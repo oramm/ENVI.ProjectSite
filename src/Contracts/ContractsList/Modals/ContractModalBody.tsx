@@ -116,7 +116,7 @@ type ProjectSelectorProps = ModalBodyProps & {
 };
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
  * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
+ * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Other lub OurContractModalBody
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * 
  */

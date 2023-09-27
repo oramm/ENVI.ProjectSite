@@ -372,7 +372,7 @@ function ValueInPLNInput({ showValidationInfo = true, keyLabel = 'value', }) {
     }, [watchedValue, setValue]);
     const classNames = ['form-control'];
     if (showValidationInfo) {
-        classNames.push(errors.value ? 'is-invalid' : 'is-valid');
+        classNames.push(errors[keyLabel] ? 'is-invalid' : 'is-valid');
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },

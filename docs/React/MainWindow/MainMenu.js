@@ -19,7 +19,9 @@ function MainMenu() {
                 react_1.default.createElement(react_bootstrap_1.Navbar.Toggle, { "aria-controls": "basic-navbar-nav" }),
                 react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/contracts", className: isActive('/contracts') }, "Kontrakty"),
+                        react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive('/contracts') },
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts" }, "Wszystkie Kontrakty"),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu" }, "ZNWU")),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters') }, "Pisma"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) &&
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive('/invoices') }, "Faktury"),

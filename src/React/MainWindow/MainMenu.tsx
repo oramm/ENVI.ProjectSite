@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Container, Button, Offcanvas } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Offcanvas, NavDropdown } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import MainSetup from '../MainSetupReact';
 
@@ -18,9 +18,14 @@ export default function MainMenu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link as={Link} to="/contracts" className={isActive('/contracts')}>
-                                Kontrakty
-                            </Nav.Link>
+                            <NavDropdown title="Kontrakty" id="basic-nav-dropdown" className={isActive('/contracts')}>
+                                <NavDropdown.Item as={Link} to="/contracts">
+                                    Wszystkie Kontrakty
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/contracts/znwu">
+                                    ZNWU
+                                </NavDropdown.Item>
+                            </NavDropdown>
                             <Nav.Link as={Link} to="/letters" className={isActive('/letters')}>
                                 Pisma
                             </Nav.Link>
@@ -32,7 +37,6 @@ export default function MainMenu() {
                             <Nav.Link as={Link} to="/tasksGlobal" className={isActive('/tasksGlobal')}>
                                 Zadania
                             </Nav.Link>
-
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

@@ -725,7 +725,7 @@ export function ValueInPLNInput({
 
     const classNames = ['form-control'];
     if (showValidationInfo) {
-        classNames.push(errors.value ? 'is-invalid' : 'is-valid');
+        classNames.push(errors[keyLabel] ? 'is-invalid' : 'is-valid');
     }
 
     return (
