@@ -30,7 +30,7 @@ function renderFirstPartExpiryDate(security: Security) {
 }
 
 function renderSecondPartExpiryDate(security: Security) {
-    if (!security.secondPartExpiryDate) return <>{'Sprawdź w umowie'}</>;
+    if (!security.secondPartExpiryDate) return <>{security._contract.guaranteeEndDate || 'Sprawdź w umowie'}</>;
     const daysLeft = countDaysLeftTo(security.secondPartExpiryDate);
 
     return <>

@@ -1,11 +1,19 @@
 import React from 'react';
 import { OtherContract, OurContract, Task } from '../../../Typings/bussinesTypes';
-import { TaskStatusBadge } from '../../View/Resultsets/CommonComponents';
+import { ContractStatusBadge } from '../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import { contractsRepository } from './ContractsController';
 import { ContractsFilterBody } from './ContractsFilterBody';
 import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
 
+
+//rendern name witch COntrctStatusBadge
+function renderName(contract: OurContract | OtherContract) {
+    return <>
+        {contract.name}
+        <ContractStatusBadge status={contract.status} />
+    </>;
+}
 
 export default function ContractsSearch({ title }: { title: string }) {
     return (
@@ -17,9 +25,10 @@ export default function ContractsSearch({ title }: { title: string }) {
                 { header: 'Projekt', renderTdBody: (contract: OurContract | OtherContract) => <>{contract._parent.ourId}</> },
                 { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
                 { header: 'Numer', objectAttributeToShow: 'number' },
-                { header: 'Nazwa', objectAttributeToShow: 'name' },
+                { header: 'Nazwa', renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
                 { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
                 { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
+                { header: 'Gwarancja do', objectAttributeToShow: 'guaranteeEndDate' },
             ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}

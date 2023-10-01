@@ -36,6 +36,7 @@ export interface Contract extends RepositoryDataItem {
     comment: string;
     startDate: string;
     endDate: string;
+    guaranteeEndDate: string;
     _parent: Project;
     status: string;
     gdFolderId: string;
@@ -232,7 +233,7 @@ export interface Security extends RepositoryDataItem {
     secondPartExpiryDate: string,
     isCash: boolean;
     gdFolderId: string;
-    _contract: ContractOur
+    _contract: OurContract;
     _lastUpdated: string;
     _editor: Person;
 }

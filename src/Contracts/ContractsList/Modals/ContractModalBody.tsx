@@ -5,19 +5,37 @@ import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
 import { Project } from '../../../../Typings/bussinesTypes';
 import { projectsRepository } from '../ContractsController';
+import ToolsDate from '../../../React/ToolsDate';
+import ToolsForm from '../../../React/ToolsForms';
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
     const { register, setValue, watch, formState: { errors }, trigger } = useFormContext();
+    const watchAllFields = watch();
+    let startDateSugestion: string;
+    let endDateSugestion: string;
+    let guaranteeEndDateSugestion: string;
 
+    if (isEditing) {
+        startDateSugestion = initialData?.startDate;
+        endDateSugestion = initialData?.endDate;
+        guaranteeEndDateSugestion = initialData?.guaranteeEndDate;
+    } else {
+        startDateSugestion = new Date().toISOString().slice(0, 10);
+        endDateSugestion = ToolsDate.addDays(startDateSugestion, 365).toISOString().slice(0, 10);
+        guaranteeEndDateSugestion = ToolsDate.addDays(endDateSugestion, 365 * 2).toISOString().slice(0, 10);
+
+    }
     useEffect(() => {
+
         setValue('name', initialData?.name || '', { shouldValidate: true });
         setValue('number', initialData?.number || '', { shouldValidate: true });
         setValue('alias', initialData?.alias || '', { shouldValidate: true });
         setValue('comment', initialData?.comment || '', { shouldValidate: true });
         setValue('value', initialData?.value || '', { shouldValidate: true });
         setValue('status', initialData?.status || '', { shouldValidate: true });
-        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('startDate', startDateSugestion, { shouldValidate: true });
+        setValue('endDate', endDateSugestion, { shouldValidate: true });
+        setValue('guaranteeEndDate', guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -84,6 +102,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                         isValid={!errors.startDate}
                         isInvalid={!!errors.startDate}
                         {...register('startDate')}
+                        className={!isEditing ? ToolsForm.getSuggestedClass('startDate', watchAllFields, startDateSugestion) : ''}
                         onChange={(e) => {
                             register("startDate").onChange(e); // wywołaj standardowe zachowanie
                             trigger("endDate");
@@ -98,12 +117,29 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
                         isValid={!errors.endDate}
                         isInvalid={!!errors.endDate}
                         {...register('endDate')}
+                        className={!isEditing ? ToolsForm.getSuggestedClass('endDate', watchAllFields, endDateSugestion) : ''}
                         onChange={(e) => {
                             register("endDate").onChange(e); // wywołaj standardowe zachowanie
                             trigger("startDate");
+                            trigger("guaranteeEndDate");
                         }}
                     />
                     <ErrorMessage errors={errors} name='endDate' />
+                </Form.Group>
+                <Form.Group as={Col} controlId="guaranteeEndDate">
+                    <Form.Label>Gwarancja</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!errors.guaranteeEndDate}
+                        isInvalid={!!errors.guaranteeEndDate}
+                        {...register('guaranteeEndDate')}
+                        className={!isEditing ? ToolsForm.getSuggestedClass('guaranteeEndDate', watchAllFields, guaranteeEndDateSugestion) : ''}
+                        onChange={(e) => {
+                            register("guaranteeEndDate").onChange(e); // wywołaj standardowe zachowanie
+                            //trigger("startDate");
+                        }}
+                    />
+                    <ErrorMessage errors={errors} name='guaranteeEndDate' />
                 </Form.Group>
             </Row>
             <ContractStatusSelectFormElement />

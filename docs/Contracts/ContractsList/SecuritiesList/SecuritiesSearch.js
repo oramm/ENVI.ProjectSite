@@ -30,7 +30,7 @@ function renderFirstPartExpiryDate(security) {
 }
 function renderSecondPartExpiryDate(security) {
     if (!security.secondPartExpiryDate)
-        return react_1.default.createElement(react_1.default.Fragment, null, 'Sprawdź w umowie');
+        return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || 'Sprawdź w umowie');
     const daysLeft = countDaysLeftTo(security.secondPartExpiryDate);
     return react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null, security.secondPartExpiryDate),

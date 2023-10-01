@@ -47,6 +47,7 @@ require("react-toastify/dist/ReactToastify.css");
 const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch"));
+const MainContent_1 = __importDefault(require("./Content/MainContent"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = '/';
@@ -100,7 +101,7 @@ function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
         react_1.default.createElement(react_router_dom_1.Routes, null,
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(react_1.default.Fragment, null) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(MainContent_1.default, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),

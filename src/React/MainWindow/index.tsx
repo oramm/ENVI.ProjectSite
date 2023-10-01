@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
+import MainContent from "./Content/MainContent";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -83,7 +84,7 @@ function AppRoutes() {
         <HashRouter basename={rootPath}>
             <MainMenu />
             <Routes>
-                <Route path="/" element={<></>} />
+                <Route path="/" element={<MainContent />} />
                 <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
                 <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
                 <Route path="/contract/:id" element={<ContractMainViewTabs />} />

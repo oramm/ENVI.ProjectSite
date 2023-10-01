@@ -22,6 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
@@ -29,8 +32,24 @@ const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponent
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const ContractsController_1 = require("../ContractsController");
+const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsForms_1 = __importDefault(require("../../../React/ToolsForms"));
 function ContractModalBody({ isEditing, initialData }) {
     const { register, setValue, watch, formState: { errors }, trigger } = (0, FormContext_1.useFormContext)();
+    const watchAllFields = watch();
+    let startDateSugestion;
+    let endDateSugestion;
+    let guaranteeEndDateSugestion;
+    if (isEditing) {
+        startDateSugestion = initialData?.startDate;
+        endDateSugestion = initialData?.endDate;
+        guaranteeEndDateSugestion = initialData?.guaranteeEndDate;
+    }
+    else {
+        startDateSugestion = new Date().toISOString().slice(0, 10);
+        endDateSugestion = ToolsDate_1.default.addDays(startDateSugestion, 365).toISOString().slice(0, 10);
+        guaranteeEndDateSugestion = ToolsDate_1.default.addDays(endDateSugestion, 365 * 2).toISOString().slice(0, 10);
+    }
     (0, react_1.useEffect)(() => {
         setValue('name', initialData?.name || '', { shouldValidate: true });
         setValue('number', initialData?.number || '', { shouldValidate: true });
@@ -38,8 +57,9 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue('comment', initialData?.comment || '', { shouldValidate: true });
         setValue('value', initialData?.value || '', { shouldValidate: true });
         setValue('status', initialData?.status || '', { shouldValidate: true });
-        setValue('startDate', initialData?.startDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
-        setValue('endDate', initialData?.endDate || new Date().toISOString().slice(0, 10), { shouldValidate: true });
+        setValue('startDate', startDateSugestion, { shouldValidate: true });
+        setValue('endDate', endDateSugestion, { shouldValidate: true });
+        setValue('guaranteeEndDate', guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
@@ -64,18 +84,26 @@ function ContractModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.startDate, isInvalid: !!errors.startDate, ...register('startDate'), onChange: (e) => {
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.startDate, isInvalid: !!errors.startDate, ...register('startDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('startDate', watchAllFields, startDateSugestion) : '', onChange: (e) => {
                         register("startDate").onChange(e); // wywołaj standardowe zachowanie
                         trigger("endDate");
                     } }),
                 react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'startDate' })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "endDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register('endDate'), onChange: (e) => {
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register('endDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('endDate', watchAllFields, endDateSugestion) : '', onChange: (e) => {
                         register("endDate").onChange(e); // wywołaj standardowe zachowanie
                         trigger("startDate");
+                        trigger("guaranteeEndDate");
                     } }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'endDate' }))),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'endDate' })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "guaranteeEndDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Gwarancja"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.guaranteeEndDate, isInvalid: !!errors.guaranteeEndDate, ...register('guaranteeEndDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('guaranteeEndDate', watchAllFields, guaranteeEndDateSugestion) : '', onChange: (e) => {
+                        register("guaranteeEndDate").onChange(e); // wywołaj standardowe zachowanie
+                        //trigger("startDate");
+                    } }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'guaranteeEndDate' }))),
         react_1.default.createElement(CommonFormComponents_1.ContractStatusSelectFormElement, null)));
 }
 exports.ContractModalBody = ContractModalBody;

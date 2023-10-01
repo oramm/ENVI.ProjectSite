@@ -49,6 +49,12 @@ const commonFields = {
         .test('endDateValidation', 'Koniec musi być późniejszy niż początek', function (value) {
         return value >= this.parent.startDate;
     }),
+    guaranteeEndDate: Yup.date().test('guaranteeEndDateValidation', 'Gwarancja ma kończyć się zakończeniu umowy', function (value) {
+        if (!value || !this.parent.endDate) {
+            return true; // albo 'true' jeśli chcesz zezwolić na brakujące daty
+        }
+        return value > this.parent.endDate;
+    }),
 };
 function ourContractValidationSchema(isEditing) {
     return (Yup.object().shape({

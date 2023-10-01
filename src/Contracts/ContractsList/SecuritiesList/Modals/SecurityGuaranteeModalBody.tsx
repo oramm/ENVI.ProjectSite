@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import { ErrorMessage } from '../../../../View/Modals/CommonFormComponents';
 import { SecurityModalBody } from './SecurityModalBody';
-import { entitiesRepository } from '../../ContractsController';
 import { useFormContext } from '../../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
 
