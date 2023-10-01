@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecurityGuarantyAddNewModalButton = exports.SecurityGuarantyAddNewModalButtonGeneric = exports.SecurityCashAddNewModalButton = exports.SecurityCashAddNewModalButtonGeneric = exports.SecurityEditModalButton = exports.SecurityEditModalButtonGeneric = void 0;
+exports.SecurityGuaranteeAddNewModalButton = exports.SecurityGuaranteeAddNewModalButtonGeneric = exports.SecurityCashAddNewModalButton = exports.SecurityCashAddNewModalButtonGeneric = exports.SecurityEditModalButton = exports.SecurityEditModalButtonGeneric = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
 const ContractsController_1 = require("../../ContractsController");
 const SecurityCashModalBody_1 = require("./SecurityCashModalBody");
-const SecurityGuarantyModalBody_1 = require("./SecurityGuarantyModalBody");
+const SecurityGuaranteeModalBody_1 = require("./SecurityGuaranteeModalBody");
 const SecurityModalBody_1 = require("./SecurityModalBody");
 const SecurityValidationSchema_1 = require("./SecurityValidationSchema");
 /** przycisk i modal edycji SecurityCash */
@@ -29,11 +29,11 @@ function SecurityEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             } })
         : react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
                 onEdit: onEdit,
-                ModalBodyComponent: SecurityGuarantyModalBody_1.SecurityGuarantyModalBody,
+                ModalBodyComponent: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody,
                 modalTitle: "Edycja ZNWU",
                 repository: repository,
                 initialData: initialData,
-                makeValidationSchema: SecurityValidationSchema_1.SecurityGuarantyValidationSchema
+                makeValidationSchema: SecurityValidationSchema_1.SecurityGuaranteeValidationSchema
             }, buttonProps: { ...buttonProps } }));
 }
 exports.SecurityEditModalButtonGeneric = SecurityEditModalButtonGeneric;
@@ -69,25 +69,25 @@ function SecurityCashAddNewModalButton({ modalProps: { onAddNew }, buttonProps }
         }, buttonProps: buttonProps }));
 }
 exports.SecurityCashAddNewModalButton = SecurityCashAddNewModalButton;
-function SecurityGuarantyAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
+function SecurityGuaranteeAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
     if (!repository)
         throw new Error('repository is required');
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: SecurityModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuarantyModalBody_1.SecurityGuarantyModalBody, },
+            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody, },
             modalTitle: "Nowa gwarancja ZNWU",
             repository: repository,
-            makeValidationSchema: SecurityValidationSchema_1.SecurityGuarantyValidationSchema
+            makeValidationSchema: SecurityValidationSchema_1.SecurityGuaranteeValidationSchema
         }, buttonProps: {
             buttonCaption: "Dodaj ZNWU",
         } }));
 }
-exports.SecurityGuarantyAddNewModalButtonGeneric = SecurityGuarantyAddNewModalButtonGeneric;
-function SecurityGuarantyAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
-    return (react_1.default.createElement(SecurityGuarantyAddNewModalButtonGeneric, { modalProps: {
+exports.SecurityGuaranteeAddNewModalButtonGeneric = SecurityGuaranteeAddNewModalButtonGeneric;
+function SecurityGuaranteeAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+    return (react_1.default.createElement(SecurityGuaranteeAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.securitiesRepository
         }, buttonProps: buttonProps }));
 }
-exports.SecurityGuarantyAddNewModalButton = SecurityGuarantyAddNewModalButton;
+exports.SecurityGuaranteeAddNewModalButton = SecurityGuaranteeAddNewModalButton;

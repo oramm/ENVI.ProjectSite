@@ -125,7 +125,7 @@ export default class ToolsDate {
     private static addZero(num: number): string {
         return num.toString().padStart(2, '0');
     }
-
+    /**odejmuje pierwszą datę od drugiej */
     static dateDiff(first: number, second: number) {
         return Math.round((second - first) / (1000 * 60 * 60 * 24));
     }

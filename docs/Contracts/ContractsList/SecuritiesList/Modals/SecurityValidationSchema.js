@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecurityGuarantyValidationSchema = exports.securityCashValidationSchema = void 0;
+exports.SecurityGuaranteeValidationSchema = exports.securityCashValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
 function getCommonFields(isEditing) {
@@ -39,11 +39,11 @@ function securityCashValidationSchema(isEditing) {
     return Yup.object().shape(getCommonFields(isEditing));
 }
 exports.securityCashValidationSchema = securityCashValidationSchema;
-function SecurityGuarantyValidationSchema(isEditing) {
+function SecurityGuaranteeValidationSchema(isEditing) {
     return Yup.object().shape({
         ...getCommonFields(isEditing),
         firstPartExpiryDate: Yup.date().required('Data jest wymagana'),
         secondPartExpiryDate: Yup.date().required('Data jest wymagana')
     });
 }
-exports.SecurityGuarantyValidationSchema = SecurityGuarantyValidationSchema;
+exports.SecurityGuaranteeValidationSchema = SecurityGuaranteeValidationSchema;

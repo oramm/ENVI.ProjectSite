@@ -4,9 +4,9 @@ import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../../Vi
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../../../View/Modals/ModalsTypes';
 import { securitiesRepository } from '../../ContractsController';
 import { SecurityCashModalBody } from './SecurityCashModalBody';
-import { SecurityGuarantyModalBody } from './SecurityGuarantyModalBody';
+import { SecurityGuaranteeModalBody } from './SecurityGuaranteeModalBody';
 import { ProjectSelectorModalBody } from './SecurityModalBody';
-import { securityCashValidationSchema, SecurityGuarantyValidationSchema } from './SecurityValidationSchema';
+import { securityCashValidationSchema, SecurityGuaranteeValidationSchema } from './SecurityValidationSchema';
 
 /** przycisk i modal edycji SecurityCash */
 export function SecurityEditModalButtonGeneric({
@@ -33,11 +33,11 @@ export function SecurityEditModalButtonGeneric({
             : <GeneralEditModalButton<Security>
                 modalProps={{
                     onEdit: onEdit,
-                    ModalBodyComponent: SecurityGuarantyModalBody,
+                    ModalBodyComponent: SecurityGuaranteeModalBody,
                     modalTitle: "Edycja ZNWU",
                     repository: repository,
                     initialData: initialData,
-                    makeValidationSchema: SecurityGuarantyValidationSchema
+                    makeValidationSchema: SecurityGuaranteeValidationSchema
                 }}
                 buttonProps={{ ...buttonProps }}
             />
@@ -100,7 +100,7 @@ export function SecurityCashAddNewModalButton({
     );
 }
 
-export function SecurityGuarantyAddNewModalButtonGeneric({
+export function SecurityGuaranteeAddNewModalButtonGeneric({
     modalProps: { onAddNew, repository },
 }: SpecificAddNewModalButtonProps<Security>) {
     if (!repository) throw new Error('repository is required');
@@ -109,10 +109,10 @@ export function SecurityGuarantyAddNewModalButtonGeneric({
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
-                additionalModalBodyProps: { SpecificContractModalBody: SecurityGuarantyModalBody, },// additional props for ProjectSelectorModalBody
+                additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa gwarancja ZNWU",
                 repository: repository,
-                makeValidationSchema: SecurityGuarantyValidationSchema
+                makeValidationSchema: SecurityGuaranteeValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Dodaj ZNWU",
@@ -121,12 +121,12 @@ export function SecurityGuarantyAddNewModalButtonGeneric({
     );
 }
 
-export function SecurityGuarantyAddNewModalButton({
+export function SecurityGuaranteeAddNewModalButton({
     modalProps: { onAddNew },
     buttonProps
 }: SpecificAddNewModalButtonProps<Security>) {
     return (
-        <SecurityGuarantyAddNewModalButtonGeneric
+        <SecurityGuaranteeAddNewModalButtonGeneric
             modalProps={{
                 onAddNew,
                 repository: securitiesRepository

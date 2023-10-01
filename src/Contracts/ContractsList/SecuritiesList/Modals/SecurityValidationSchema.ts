@@ -15,7 +15,7 @@ export function securityCashValidationSchema(isEditing: boolean) {
     return Yup.object().shape(getCommonFields(isEditing));
 }
 
-export function SecurityGuarantyValidationSchema(isEditing: boolean) {
+export function SecurityGuaranteeValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...getCommonFields(isEditing),
         firstPartExpiryDate: Yup.date().required('Data jest wymagana'),

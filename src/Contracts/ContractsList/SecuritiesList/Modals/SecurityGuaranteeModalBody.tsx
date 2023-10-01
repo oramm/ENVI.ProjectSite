@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
-import { ContractTypeSelectFormElement, ErrorMessage, MyAsyncTypeahead } from '../../../../View/Modals/CommonFormComponents';
+import { ErrorMessage } from '../../../../View/Modals/CommonFormComponents';
 import { SecurityModalBody } from './SecurityModalBody';
 import { entitiesRepository } from '../../ContractsController';
 import { useFormContext } from '../../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
 
 /**Wywoływana w ProjectsSelector jako props  */
-export function SecurityGuarantyModalBody(props: ModalBodyProps) {
+export function SecurityGuaranteeModalBody(props: ModalBodyProps) {
     const { initialData, isEditing, additionalProps, contextData } = props;
 
     const { register, setValue, watch, formState: { errors }, control } = useFormContext();

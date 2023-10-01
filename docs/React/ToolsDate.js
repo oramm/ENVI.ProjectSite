@@ -113,6 +113,7 @@ class ToolsDate {
     static addZero(num) {
         return num.toString().padStart(2, '0');
     }
+    /**odejmuje pierwszą datę od drugiej */
     static dateDiff(first, second) {
         return Math.round((second - first) / (1000 * 60 * 60 * 24));
     }

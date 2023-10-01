@@ -228,11 +228,11 @@ export interface Security extends RepositoryDataItem {
     deductionValue: number,
     firstPartRate: number,
     secondPartRate: number,
-    firstPartExpiryDate: Date,
-    secondPartExpiryDate: Date,
+    firstPartExpiryDate: string,
+    secondPartExpiryDate: string,
     isCash: boolean;
     gdFolderId: string;
     _contract: ContractOur
-    _lastUpdated: Date;
+    _lastUpdated: string;
     _editor: Person;
 }
