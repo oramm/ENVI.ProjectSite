@@ -255,3 +255,22 @@ export function MyTooltip({ children, content: tooltipContent, placement = 'righ
         </OverlayTrigger>
     );
 }
+
+export function DaysLeftBadge({ daysLeft }: { daysLeft: number }) {
+    let variant;
+    let textMode: Color = 'light';
+    if (daysLeft < 10) {
+        variant = 'danger';
+    } else if (daysLeft < 20) {
+        variant = 'warning';
+        textMode = 'dark';
+    } else {
+        variant = 'success';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {daysLeft} dni
+        </Badge>
+    )
+}

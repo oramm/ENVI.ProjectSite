@@ -11,7 +11,7 @@ function MyData() {
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Moje Dane"),
-            react_1.default.createElement(react_bootstrap_1.Card.Text, null,
+            react_1.default.createElement("div", null,
                 react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.userName),
                 react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.systemEmail),
                 react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.systemRoleName)))));

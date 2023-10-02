@@ -4,6 +4,7 @@ import { Color } from 'react-bootstrap/esm/types';
 import { Security } from '../../../../Typings/bussinesTypes';
 import Tools from '../../../React/Tools';
 import ToolsDate from '../../../React/ToolsDate';
+import { DaysLeftBadge } from '../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../View/Resultsets/FilterableTable/FilterableTable';
 import { securitiesRepository } from '../ContractsController';
 import { SecurityCashAddNewModalButton, SecurityEditModalButton, SecurityGuaranteeAddNewModalButton } from './Modals/SecurityModalButtons';
@@ -21,53 +22,27 @@ function renderType(isCash: boolean) {
 
 function renderFirstPartExpiryDate(security: Security) {
     if (!security.firstPartExpiryDate) return <>{security._contract.startDate}</>;
-    const daysLeft = countDaysLeftTo(security.firstPartExpiryDate);
+    const daysLeft = ToolsDate.countDaysLeftTo(security.firstPartExpiryDate);
 
     return <>
         <div>{security.firstPartExpiryDate}</div>
-        {daysLeft < 30 ? <div>{makeBadge(daysLeft)}</div> : ''}
+        {daysLeft < 30 ? <div><DaysLeftBadge daysLeft={daysLeft} /></div> : ''}
     </>;
 }
 
 function renderSecondPartExpiryDate(security: Security) {
     if (!security.secondPartExpiryDate) return <>{security._contract.guaranteeEndDate || 'Sprawdź w umowie'}</>;
-    const daysLeft = countDaysLeftTo(security.secondPartExpiryDate);
+    const daysLeft = ToolsDate.countDaysLeftTo(security.secondPartExpiryDate);
 
     return <>
         <div>{security.secondPartExpiryDate}</div>
-        {daysLeft < 30 ? <div>{makeBadge(daysLeft)}</div> : ''}
+        {daysLeft < 30 ? <div><DaysLeftBadge daysLeft={daysLeft} /></div> : ''}
     </>;
-}
-
-function countDaysLeftTo(expiryDate: string) {
-    const today = new Date();
-    const expiryDateParsed = new Date(expiryDate);
-    const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
-    return diffDays;
 }
 
 function renderDescription(security: Security) {
     if (!security.description) return <></>;
     return <>{security.description}</>;
-}
-
-function makeBadge(daysLeft: number) {
-    let variant;
-    let textMode: Color = 'light';
-    if (daysLeft < 10) {
-        variant = 'danger';
-    } else if (daysLeft < 20) {
-        variant = 'warning';
-        textMode = 'dark';
-    } else {
-        variant = 'success';
-    }
-
-    return (
-        <Badge bg={variant} text={textMode}>
-            {daysLeft} dni
-        </Badge>
-    )
 }
 
 export default function SecuritiesSearch({ title }: { title: string }) {

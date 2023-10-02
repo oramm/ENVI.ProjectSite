@@ -129,4 +129,11 @@ export default class ToolsDate {
     static dateDiff(first: number, second: number) {
         return Math.round((second - first) / (1000 * 60 * 60 * 24));
     }
+
+    static countDaysLeftTo(expiryDate: string) {
+        const today = new Date();
+        const expiryDateParsed = new Date(expiryDate);
+        const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
+        return diffDays;
+    }
 }

@@ -117,5 +117,11 @@ class ToolsDate {
     static dateDiff(first, second) {
         return Math.round((second - first) / (1000 * 60 * 60 * 24));
     }
+    static countDaysLeftTo(expiryDate) {
+        const today = new Date();
+        const expiryDateParsed = new Date(expiryDate);
+        const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
+        return diffDays;
+    }
 }
 exports.default = ToolsDate;

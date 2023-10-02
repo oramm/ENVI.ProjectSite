@@ -8,11 +8,11 @@ export default function MyData() {
         <Card>
             <Card.Body>
                 <Card.Title>Moje Dane</Card.Title>
-                <Card.Text>
+                <div>
                     <div>{MainSetup.currentUser.userName}</div>
                     <div>{MainSetup.currentUser.systemEmail}</div>
                     <div>{MainSetup.currentUser.systemRoleName}</div>
-                </Card.Text>
+                </div>
             </Card.Body>
         </Card>
     );

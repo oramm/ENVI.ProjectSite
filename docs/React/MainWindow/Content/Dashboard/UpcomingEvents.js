@@ -31,6 +31,8 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../View/Resultsets/FilterableTable/FilterableTable"));
+const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
+const Tools_1 = __importDefault(require("../../../Tools"));
 const ToolsDate_1 = __importDefault(require("../../../ToolsDate"));
 const MainWindowController_1 = require("../../MainWindowController");
 function UpcomingEvents() {
@@ -43,7 +45,10 @@ function UpcomingEvents() {
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
             const [contracts] = await Promise.all([
                 MainWindowController_1.contractsRepository.loadItemsFromServer({
-                    statusType: 'active',
+                    status: JSON.stringify([
+                        MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
+                        MainSetupReact_1.default.ContractStatuses.NOT_STARTED
+                    ]),
                     endDateTo: endDateTo.toISOString().slice(0, 10),
                 }),
             ]);
@@ -59,23 +64,71 @@ function UpcomingEvents() {
             contract.name,
             react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
-            react_1.default.createElement(react_bootstrap_1.Card.Text, null,
-                react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: '', 
-                    //FilterBodyComponent={ContractsFilterBody}
-                    tableStructure: [
+    function renderEndDate(endDate) {
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null, endDate),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })));
+    }
+    function renderValue(value) {
+        if (value === undefined)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        const formatedValue = Tools_1.default.formatNumber(value);
+        return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
+    }
+    function renderType(isCash) {
+        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? 'Gotówka' : 'Gwarancja');
+    }
+    function renderFirstPartExpiryDate(security) {
+        if (!security.firstPartExpiryDate)
+            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.startDate);
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.firstPartExpiryDate);
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null, security.firstPartExpiryDate),
+            daysLeft < 30 ? react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+    }
+    function renderSecondPartExpiryDate(security) {
+        if (!security.secondPartExpiryDate)
+            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || 'Sprawdź w umowie');
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.secondPartExpiryDate);
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null, security.secondPartExpiryDate),
+            daysLeft < 30 ? react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+    }
+    function renderDescription(security) {
+        if (!security.description)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        return react_1.default.createElement(react_1.default.Fragment, null, security.description);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
+                react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: '', tableStructure: [
                         { header: 'Projekt', renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._parent.ourId) },
                         { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
                         { header: 'Numer', objectAttributeToShow: 'number' },
                         { header: 'Nazwa', renderTdBody: (contract) => renderName(contract) },
                         { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
-                        { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
-                        { header: 'Gwarancja do', objectAttributeToShow: 'guaranteeEndDate' },
+                        { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract.endDate) },
                     ], 
-                    //AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
                     //EditButtonComponent={ContractEditModalButton}
-                    isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: '/contract/', externalUpdate: externalUpdate })))));
+                    isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: '/contract/', initialObjects: contracts, externalUpdate: externalUpdate }))),
+        react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "ZNWu do zwrotu"),
+                react_1.default.createElement(FilterableTable_1.default, { id: 'securities', title: '', tableStructure: [
+                        { header: 'Typ', renderTdBody: (security) => renderType(security.isCash) },
+                        { header: 'Oznaczenie', renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId) },
+                        { header: 'Wartość', renderTdBody: (security) => renderValue(security.value) },
+                        { header: 'Zwrócono', renderTdBody: (security) => renderValue(security.returnedValue) },
+                        { header: 'Do zwrotu', renderTdBody: (security) => renderValue(security._remainingValue) },
+                        { header: '70% Wygasa', renderTdBody: (security) => renderFirstPartExpiryDate(security) },
+                        { header: '30% Wygasa', renderTdBody: (security) => renderSecondPartExpiryDate(security) },
+                        { header: 'Uwagi', renderTdBody: (security) => renderDescription(security) },
+                    ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: '/contract/' })))));
 }
 exports.default = UpcomingEvents;

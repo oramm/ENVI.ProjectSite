@@ -1,4 +1,4 @@
-import { Case, Contract, Entity, IncomingLetter, Milestone, OtherContract, OurContract, OurLetter, Project, Task } from "../../../Typings/bussinesTypes";
+import { Case, Contract, Entity, IncomingLetter, Milestone, OtherContract, OurContract, OurLetter, Project, Security, Task } from "../../../Typings/bussinesTypes";
 
 import RepositoryReact from "../RepositoryReact";
 
@@ -12,6 +12,16 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
         deleteRoute: ''
     },
     name: 'contracts'
+});
+
+export const securitiesRepository = new RepositoryReact<Security>({
+    actionRoutes: {
+        getRoute: 'securities',
+        addNewRoute: 'security',
+        editRoute: 'security',
+        deleteRoute: 'security'
+    },
+    name: 'securities'
 });
 
 export const milestonesRepository = new RepositoryReact<Milestone>({
