@@ -8,7 +8,7 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
     actionRoutes: {
         getRoute: 'contracts',
         addNewRoute: '',
-        editRoute: '',
+        editRoute: 'contract',
         deleteRoute: ''
     },
     name: 'contracts'

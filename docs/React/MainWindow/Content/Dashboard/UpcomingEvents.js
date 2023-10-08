@@ -29,6 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // UpcomingEventsCard.tsx
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const ContractModalBodiesPartial_1 = require("../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial");
+const ContractModalButtons_1 = require("../../../../Contracts/ContractsList/Modals/ContractModalButtons");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
@@ -59,10 +61,22 @@ function UpcomingEvents() {
         ;
         fetchData();
     }, []);
+    function handleEditObject(object) {
+        setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
+        setExternalUpdate(prevState => prevState + 1);
+    }
     function renderName(contract) {
         return react_1.default.createElement(react_1.default.Fragment, null,
             contract.name,
-            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }));
+            react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+                    initialData: contract,
+                    modalTitle: 'Edycja statusu',
+                    repository: MainWindowController_1.contractsRepository,
+                    ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['status'],
+                } },
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
     }
     function renderEndDate(endDate) {
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);

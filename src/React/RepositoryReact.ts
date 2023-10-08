@@ -176,7 +176,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
       * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute 
       *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
       */
-    async editItem(item: DataItemType | FormData, specialActionRoute?: string) {
+    async editItem(item: DataItemType | FormData, specialActionRoute?: string, fieldsToUpdate?: string[]) {
         const requestOptions: RequestInit = {
             method: 'PUT',
             credentials: 'include',
@@ -190,7 +190,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ['Content-Type']: 'application/json',
             };
             ToolsDate.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify(item);
+            requestOptions.body = JSON.stringify({ item, fieldsToUpdate }); // <--- przesyłamy zarówno obiekt, jak i pola do aktualizacji
         }
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
@@ -218,6 +218,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         console.log('obiekt po edycji z serwera: %o', resultObject);
         return resultObject;
     }
+
 
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
      * usuwa te currentItemy, które mają ten sam id co usuwany obiekt

@@ -1,7 +1,8 @@
-import React from 'react';
-import { OtherContract, OurContract } from '../../../../Typings/bussinesTypes';
-import { GeneralAddNewModalButton, GeneralDeleteModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
-import { SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
+import React, { useState } from 'react';
+import { OtherContract, OurContract, RepositoryDataItem } from '../../../../Typings/bussinesTypes';
+import { GeneralModal } from '../../../View/Modals/GeneralModal';
+import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
+import { GeneralEditModalButtonProps, SpecificAddNewModalButtonProps, SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { contractsRepository } from '../ContractsController';
 import { ProjectSelectorModalBody } from './ContractModalBody';
 import { otherContractValidationSchema, ourContractValidationSchema } from './ContractValidationSchema';
@@ -58,6 +59,55 @@ export function ContractEditModalButton({
             }}
             buttonProps={buttonProps}
         />
+    );
+}
+
+export function ContractPartialEditTrigger<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
+    modalProps: {
+        onEdit,
+        specialActionRoute,
+        ModalBodyComponent,
+        additionalModalBodyProps,
+        modalTitle,
+        initialData,
+        repository,
+        makeValidationSchema,
+        fieldsToUpdate,
+    },
+    children
+}: GeneralEditModalButtonProps<DataItemType> & { children: JSX.Element }) {
+    const [showForm, setShowForm] = useState(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+
+    return (
+        <>
+            <span onClick={handleOpen} style={{ cursor: 'pointer' }}>
+                {children}
+            </span>
+            <GeneralModal<DataItemType>
+                onClose={handleClose}
+                show={showForm}
+                isEditing={true}
+                title={modalTitle}
+                repository={repository}
+                onEdit={onEdit}
+                specialActionRoute={specialActionRoute}
+                ModalBodyComponent={ModalBodyComponent}
+                makeValidationSchema={makeValidationSchema}
+                modalBodyProps={{
+                    isEditing: true,
+                    initialData: initialData,
+                    additionalProps: additionalModalBodyProps,
+                }}
+                fieldsToUpdate={fieldsToUpdate}
+            />
+        </>
     );
 }
 

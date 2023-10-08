@@ -44,7 +44,7 @@ function ContractOurDetails() {
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             if (!contract?.id)
-                throw new Error('Nie kontraktu');
+                throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
             const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServer({ id: contractIdString }))[0];
             const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServer({ contractId: contractIdString }));

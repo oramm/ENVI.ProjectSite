@@ -35,7 +35,7 @@ const CommonComponentsController_1 = require("../Resultsets/CommonComponentsCont
 const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
-function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, }) {
+function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate }) {
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const formMethods = (0, react_hook_form_1.useForm)({
@@ -77,7 +77,7 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         const currentDataItem = { ...repository.currentItems[0] };
         data.append('id', currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
-        const editedObject = await repository.editItem(data, specialActionRoute);
+        const editedObject = await repository.editItem(data, specialActionRoute, fieldsToUpdate);
         if (onEdit)
             onEdit(editedObject);
     }
@@ -99,7 +99,7 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
     async function handleEditWithoutFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
         const objectToEdit = { ...currentDataItem, ...data };
-        const editedObject = await repository.editItem(objectToEdit, specialActionRoute);
+        const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
         if (onEdit)
             onEdit(editedObject);
     }

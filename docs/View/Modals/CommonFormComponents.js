@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractNameFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -75,6 +75,15 @@ function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
     return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
+;
+function ContractNameFormElement({ showValidationInfo = true, name }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    return react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),
+        react_1.default.createElement(ErrorMessage, { errors: errors, name: 'name' }));
+}
+exports.ContractNameFormElement = ContractNameFormElement;
 ;
 function TaksStatusSelectFormElement({ showValidationInfo = true, name }) {
     let statuses = Object.entries(MainSetupReact_1.default.TaskStatuses).map(([key, value]) => value);

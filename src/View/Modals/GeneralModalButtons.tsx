@@ -20,6 +20,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
         initialData,
         repository,
         makeValidationSchema,
+        fieldsToUpdate
     }
 }: GeneralEditModalButtonProps<DataItemTpe>) {
     const [showForm, setShowForm] = useState(false);
@@ -52,10 +53,12 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
                     initialData: initialData,
                     additionalProps: additionalModalBodyProps,
                 }}
+                fieldsToUpdate={fieldsToUpdate}
             />
         </>
     );
 }
+
 /**wyświelta ikonę albo przycisk */
 function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void }) {
     const {

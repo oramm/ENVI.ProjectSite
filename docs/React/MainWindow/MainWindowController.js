@@ -9,7 +9,7 @@ exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: 'contracts',
         addNewRoute: '',
-        editRoute: '',
+        editRoute: 'contract',
         deleteRoute: ''
     },
     name: 'contracts'

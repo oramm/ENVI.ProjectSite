@@ -108,6 +108,23 @@ export function ContractStatusSelectFormElement({ showValidationInfo = true, nam
     />
 };
 
+export function ContractNameFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    const { register, formState: { errors } } = useFormContext();
+
+    return <Form.Group controlId="name">
+        <Form.Label>Nazwa kontraktu</Form.Label>
+        <Form.Control
+            as="textarea"
+            rows={2}
+            placeholder="Podaj nazwę"
+            isInvalid={!!errors?.name}
+            isValid={!errors?.name}
+            {...register('name')}
+        />
+        <ErrorMessage errors={errors} name='name' />
+    </Form.Group>
+};
+
 export function TaksStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
     let statuses = Object.entries(MainSetup.TaskStatuses).map(([key, value]) => value);
     return <StatusSelectFormElement

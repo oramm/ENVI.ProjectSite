@@ -66,8 +66,10 @@ function ContractMainViewTabs() {
                     fetchCases,
                     fetchTasks
                 ]);
-                if (contractData)
+                if (contractData) {
                     setContract(contractData);
+                    initContractRepository(contractData);
+                }
                 setMiletonesTypes(milestonesTypesData);
                 setCaseTypes(caseTypesData);
                 setMilestones(milestonesData);
@@ -82,6 +84,11 @@ function ContractMainViewTabs() {
         ;
         fetchData();
     }, []);
+    function initContractRepository(contractData) {
+        if (!ContractsController_1.contractsRepository.currentItems.find(c => c.id === contractData.id))
+            ContractsController_1.contractsRepository.items.push(contractData);
+        ContractsController_1.contractsRepository.addToCurrentItems(contractData.id);
+    }
     if (!contract) {
         return react_1.default.createElement("div", null,
             "\u0141aduj\u0119 dane... ",

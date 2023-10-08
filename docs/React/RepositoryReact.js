@@ -153,7 +153,7 @@ class RepositoryReact {
       * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
       *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
       */
-    async editItem(item, specialActionRoute) {
+    async editItem(item, specialActionRoute, fieldsToUpdate) {
         const requestOptions = {
             method: 'PUT',
             credentials: 'include',
@@ -167,7 +167,7 @@ class RepositoryReact {
                 ['Content-Type']: 'application/json',
             };
             ToolsDate_1.default.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify(item);
+            requestOptions.body = JSON.stringify({ item, fieldsToUpdate }); // <--- przesyłamy zarówno obiekt, jak i pola do aktualizacji
         }
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;

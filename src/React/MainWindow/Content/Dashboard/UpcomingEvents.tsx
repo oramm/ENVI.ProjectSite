@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { OurContract, OtherContract, Security } from '../../../../../Typings/bussinesTypes';
+import { ContractModalBodyStatus } from '../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
+import { ContractPartialEditTrigger } from '../../../../Contracts/ContractsList/Modals/ContractModalButtons';
 import { ContractStatusBadge, DaysLeftBadge } from '../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../View/Resultsets/FilterableTable/FilterableTable';
+import { useFilterableTableContext } from '../../../../View/Resultsets/FilterableTable/FilterableTableContext';
 import MainSetup from '../../../MainSetupReact';
 import Tools from '../../../Tools';
 import ToolsDate from '../../../ToolsDate';
@@ -35,10 +38,26 @@ export default function UpcomingEvents() {
         fetchData();
     }, []);
 
+    function handleEditObject(object: OurContract | OtherContract) {
+        setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
+        setExternalUpdate(prevState => prevState + 1);
+    }
+
     function renderName(contract: OurContract | OtherContract) {
         return <>
             {contract.name}
-            <ContractStatusBadge status={contract.status} />
+            <ContractPartialEditTrigger
+                modalProps={{
+                    initialData: contract,
+                    modalTitle: 'Edycja statusu',
+                    repository: contractsRepository,
+                    ModalBodyComponent: ContractModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['status'],
+
+                }} >
+                <ContractStatusBadge status={contract.status} />
+            </ContractPartialEditTrigger >
         </>;
     }
 

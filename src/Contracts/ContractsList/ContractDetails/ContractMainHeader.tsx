@@ -3,10 +3,13 @@ import { Alert, Col, Container, Row } from "react-bootstrap";
 import ToolsDate from "../../../React/ToolsDate";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
 import { useContract } from "../ContractContext";
+import { contractsRepository } from "../ContractsController";
+import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from "../Modals/ContractModalBodiesPartial";
+import { ContractPartialEditTrigger } from "../Modals/ContractModalButtons";
 
 export function MainContractDetailsHeader() {
-    const { contract } = useContract();
-    if (!contract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
+    const { contract, setContract } = useContract();
+    if (!contract || !setContract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
     return (
         <Container>
             <Row className='mt-3'>
@@ -20,13 +23,21 @@ export function MainContractDetailsHeader() {
                     <h5>{contract.number}</h5>
                 </Col>
                 <Col sm='auto'>
-                    {contract.name}
+                    <ContractPartialEditTrigger
+                        modalProps={{
+                            initialData: contract,
+                            modalTitle: 'Edycja nazwy',
+                            repository: contractsRepository,
+                            ModalBodyComponent: ContractModalBodyName,
+                            onEdit: (contract) => { setContract(contract) },
+                            fieldsToUpdate: ['name'],
+                        }} >
+                        <>{contract?.name}</>
+                    </ContractPartialEditTrigger >
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Data podpisania:</div>
-                    {contract.startDate
-                        ? <h5>{ToolsDate.dateYMDtoDMY(contract.startDate)} </h5>
-                        : 'Jeszcze nie podpisano'}
+                    <DateEditTrigger date={contract.startDate} />
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Termin zakończenia:</div>
@@ -35,9 +46,47 @@ export function MainContractDetailsHeader() {
                         : 'Jeszcze nie ustalono'}
                 </Col>
                 <Col sm={1}>
-                    <ContractStatusBadge status={contract.status} />
+                    <ContractPartialEditTrigger
+                        modalProps={{
+                            initialData: contract,
+                            modalTitle: 'Edycja statusu',
+                            repository: contractsRepository,
+                            ModalBodyComponent: ContractModalBodyStatus,
+                            onEdit: (contract) => { setContract(contract) },
+                            fieldsToUpdate: ['status'],
+                        }} >
+                        <ContractStatusBadge status={contract?.status} />
+                    </ContractPartialEditTrigger >
                 </Col>
             </Row >
         </Container >
     )
+}
+
+type DateEditTriggerProps = {
+    date: string;
+};
+
+
+function DateEditTrigger({ date }: DateEditTriggerProps) {
+    const { contract, setContract } = useContract();
+    if (!contract || !setContract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
+
+    return (
+        <ContractPartialEditTrigger
+            modalProps={{
+                initialData: contract,
+                modalTitle: 'Edycja dat',
+                repository: contractsRepository,
+                ModalBodyComponent: ContractModalBodyDates,
+                onEdit: (contract) => { setContract(contract) },
+                fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+            }}
+        >
+            {date
+                ? <h5>{ToolsDate.dateYMDtoDMY(contract.endDate)}</h5>
+                : <>{'Jeszcze nie ustalono'}</>
+            }
+        </ContractPartialEditTrigger>
+    );
 }

@@ -23,6 +23,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     modalBodyProps: ModalBodyProps<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
+    fieldsToUpdate?: string[];
 };
 
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -37,10 +38,10 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     ModalBodyComponent,
     modalBodyProps,
     makeValidationSchema: validationSchema,
+    fieldsToUpdate
 }: GeneralModalProps<DataItemType>) {
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
-
     const formMethods = useForm({
         defaultValues: {},
         mode: 'onChange',
@@ -81,7 +82,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         data.append('id', currentDataItem.id.toString());
 
         appendContextData(currentDataItem, data);
-        const editedObject = await repository.editItem(data as FormData, specialActionRoute);
+        const editedObject = await repository.editItem(data as FormData, specialActionRoute, fieldsToUpdate);
         if (onEdit) onEdit(editedObject);
     };
 
@@ -102,7 +103,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] }
         const objectToEdit = { ...currentDataItem, ...data } as DataItemType;
-        const editedObject = await repository.editItem(objectToEdit, specialActionRoute);
+        const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
         if (onEdit) onEdit(editedObject);
     };
 

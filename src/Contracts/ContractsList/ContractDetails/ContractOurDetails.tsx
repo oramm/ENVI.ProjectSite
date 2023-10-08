@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Container, Card, Col, Row, Button, Alert, Placeholder } from 'react-bootstrap';
-import { ContractsSettlementData, Entity, Invoice } from '../../../../Typings/bussinesTypes';
+import { ContractsSettlementData, Invoice } from '../../../../Typings/bussinesTypes';
 import Tools from '../../../React/Tools';
 import ToolsDate from '../../../React/ToolsDate';
 import { InvoiceStatusBadge, MyTooltip } from '../../../View/Resultsets/CommonComponents';
@@ -18,7 +18,7 @@ export default function ContractOurDetails() {
     //fetch data
     useEffect(() => {
         async function fetchData() {
-            if (!contract?.id) throw new Error('Nie kontraktu');
+            if (!contract?.id) throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
             const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServer({ id: contractIdString }))[0];
             const fetchInvoicesData = (await invoicesRepository.loadItemsFromServer({ contractId: contractIdString }));
@@ -79,7 +79,6 @@ export default function ContractOurDetails() {
                                     ? <h5>{Tools.formatNumber(settlemenData.remainingValue)}</h5>
                                     : 'Jeszcze nie określono'
                                 }
-
                             </Col>
                         </MyTooltip>
                     </Row>

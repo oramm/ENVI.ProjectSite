@@ -59,6 +59,7 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
     onEdit: (object: DataItemType) => void;
     specialActionRoute?: string;
     initialData: DataItemType;
+    fieldsToUpdate?: string[];
 };
 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {

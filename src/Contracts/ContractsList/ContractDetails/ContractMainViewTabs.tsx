@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs } from 'react-bootstrap';
 import { useParams } from "react-router-dom";
-import { Case, CaseType, Milestone, MilestoneType, Task } from "../../../../Typings/bussinesTypes";
+import { Case, CaseType, Milestone, MilestoneType, OtherContract, OurContract, Task } from "../../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
 import { ContractProvider } from "../ContractContext";
 import { casesRepository, caseTypesRepository, contractsRepository, milestonesRepository, milestoneTypesRepository, tasksRepository } from "../ContractsController";
@@ -18,6 +18,7 @@ export function ContractMainViewTabs() {
     const [cases, setCases] = useState(undefined as Case[] | undefined);
     const [tasks, setTasks] = useState(undefined as Task[] | undefined);
     let { id } = useParams();
+
     useEffect(() => {
         async function fetchData() {
             if (!id) throw new Error('Nie znaleziono id w adresie url');
@@ -46,7 +47,10 @@ export function ContractMainViewTabs() {
                     fetchCases,
                     fetchTasks
                 ]);
-                if (contractData) setContract(contractData);
+                if (contractData) {
+                    setContract(contractData);
+                    initContractRepository(contractData);
+                }
                 setMiletonesTypes(milestonesTypesData);
                 setCaseTypes(caseTypesData);
                 setMilestones(milestonesData);
@@ -61,6 +65,12 @@ export function ContractMainViewTabs() {
 
         fetchData();
     }, []);
+
+    function initContractRepository(contractData: OurContract | OtherContract) {
+        if (!contractsRepository.currentItems.find(c => c.id === contractData.id))
+            contractsRepository.items.push(contractData);
+        contractsRepository.addToCurrentItems(contractData.id);
+    }
 
     if (!contract) {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
