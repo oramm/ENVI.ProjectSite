@@ -12,6 +12,7 @@ const ContractContext_1 = require("../ContractContext");
 const ContractsController_1 = require("../ContractsController");
 const ContractModalBodiesPartial_1 = require("../Modals/ContractModalBodiesPartial");
 const ContractModalButtons_1 = require("../Modals/ContractModalButtons");
+const ContractValidationSchema_1 = require("../Modals/ContractValidationSchema");
 function MainContractDetailsHeader() {
     const { contract, setContract } = (0, ContractContext_1.useContract)();
     if (!contract || !setContract)
@@ -30,6 +31,7 @@ function MainContractDetailsHeader() {
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
                         onEdit: (contract) => { setContract(contract); },
                         fieldsToUpdate: ['name'],
+                        makeValidationSchema: ContractValidationSchema_1.contractNameValidationSchema,
                     } },
                     react_1.default.createElement(react_1.default.Fragment, null, contract?.name))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
@@ -48,6 +50,7 @@ function MainContractDetailsHeader() {
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
                         onEdit: (contract) => { setContract(contract); },
                         fieldsToUpdate: ['status'],
+                        makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema,
                     } },
                     react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract?.status }))))));
 }
@@ -63,7 +66,8 @@ function DateEditTrigger({ date }) {
             ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
             onEdit: (contract) => { setContract(contract); },
             fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+            makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
         } }, date
-        ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(contract.endDate))
+        ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(date))
         : react_1.default.createElement(react_1.default.Fragment, null, 'Jeszcze nie ustalono')));
 }

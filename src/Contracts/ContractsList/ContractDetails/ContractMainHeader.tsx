@@ -6,6 +6,7 @@ import { useContract } from "../ContractContext";
 import { contractsRepository } from "../ContractsController";
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from "../Modals/ContractModalBodiesPartial";
 import { ContractPartialEditTrigger } from "../Modals/ContractModalButtons";
+import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from "../Modals/ContractValidationSchema";
 
 export function MainContractDetailsHeader() {
     const { contract, setContract } = useContract();
@@ -31,6 +32,7 @@ export function MainContractDetailsHeader() {
                             ModalBodyComponent: ContractModalBodyName,
                             onEdit: (contract) => { setContract(contract) },
                             fieldsToUpdate: ['name'],
+                            makeValidationSchema: contractNameValidationSchema,
                         }} >
                         <>{contract?.name}</>
                     </ContractPartialEditTrigger >
@@ -54,6 +56,7 @@ export function MainContractDetailsHeader() {
                             ModalBodyComponent: ContractModalBodyStatus,
                             onEdit: (contract) => { setContract(contract) },
                             fieldsToUpdate: ['status'],
+                            makeValidationSchema: contractStatusValidationSchema,
                         }} >
                         <ContractStatusBadge status={contract?.status} />
                     </ContractPartialEditTrigger >
@@ -81,10 +84,11 @@ function DateEditTrigger({ date }: DateEditTriggerProps) {
                 ModalBodyComponent: ContractModalBodyDates,
                 onEdit: (contract) => { setContract(contract) },
                 fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+                makeValidationSchema: contractDatesValidationSchema,
             }}
         >
             {date
-                ? <h5>{ToolsDate.dateYMDtoDMY(contract.endDate)}</h5>
+                ? <h5>{ToolsDate.dateYMDtoDMY(date)}</h5>
                 : <>{'Jeszcze nie ustalono'}</>
             }
         </ContractPartialEditTrigger>

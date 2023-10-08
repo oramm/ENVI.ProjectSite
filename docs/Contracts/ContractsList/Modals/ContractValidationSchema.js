@@ -23,24 +23,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.otherContractValidationSchema = exports.ourContractValidationSchema = void 0;
+exports.contractDatesValidationSchema = exports.contractStatusValidationSchema = exports.contractNameValidationSchema = exports.otherContractValidationSchema = exports.ourContractValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
-const commonFields = {
-    _type: Yup.object().required('Typ kontraktu jest wymagany'),
-    number: Yup.string()
-        .required('Numer jest wymagany')
-        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+const nameField = {
     name: Yup.string()
         .required('Nazwa jest wymagana')
         .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
         .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
-    alias: Yup.string()
-        .max(30, 'Alias może mieć maksymalnie 30 znaków'),
-    comment: Yup.string()
-        .max(1000, 'Komentarz może mieć maksymalnie 1000 znaków'),
-    value: CommonFormComponents_1.valueValidation,
+};
+const statusField = {
     status: Yup.string().required('Status jest wymagany'),
+};
+const valueField = {
+    value: CommonFormComponents_1.valueValidation,
+};
+const dateFields = {
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
         .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
         return this.parent.endDate >= value;
@@ -55,6 +53,21 @@ const commonFields = {
         }
         return value > this.parent.endDate;
     }),
+};
+const commonFields = {
+    ...nameField,
+    ...statusField,
+    ...valueField,
+    ...dateFields,
+    _type: Yup.object()
+        .required('Typ kontraktu jest wymagany'),
+    number: Yup.string()
+        .required('Numer jest wymagany')
+        .max(50, 'Numer może mieć maksymalnie 50 znaków'),
+    alias: Yup.string()
+        .max(30, 'Alias może mieć maksymalnie 30 znaków'),
+    comment: Yup.string()
+        .max(1000, 'Komentarz może mieć maksymalnie 1000 znaków'),
 };
 function ourContractValidationSchema(isEditing) {
     return (Yup.object().shape({
@@ -88,3 +101,21 @@ function otherContractValidationSchema(isEditing) {
     }));
 }
 exports.otherContractValidationSchema = otherContractValidationSchema;
+function contractNameValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...nameField,
+    }));
+}
+exports.contractNameValidationSchema = contractNameValidationSchema;
+function contractStatusValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...statusField,
+    }));
+}
+exports.contractStatusValidationSchema = contractStatusValidationSchema;
+function contractDatesValidationSchema(isEditing) {
+    return (Yup.object().shape({
+        ...dateFields,
+    }));
+}
+exports.contractDatesValidationSchema = contractDatesValidationSchema;

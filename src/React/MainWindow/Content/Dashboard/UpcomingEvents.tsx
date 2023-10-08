@@ -1,12 +1,12 @@
 // UpcomingEventsCard.tsx
 import React, { useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Alert, Card } from 'react-bootstrap';
 import { OurContract, OtherContract, Security } from '../../../../../Typings/bussinesTypes';
-import { ContractModalBodyStatus } from '../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
+import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from '../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
 import { ContractPartialEditTrigger } from '../../../../Contracts/ContractsList/Modals/ContractModalButtons';
+import { contractStatusValidationSchema, contractDatesValidationSchema, contractNameValidationSchema } from '../../../../Contracts/ContractsList/Modals/ContractValidationSchema';
 import { ContractStatusBadge, DaysLeftBadge } from '../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../View/Resultsets/FilterableTable/FilterableTable';
-import { useFilterableTableContext } from '../../../../View/Resultsets/FilterableTable/FilterableTableContext';
 import MainSetup from '../../../MainSetupReact';
 import Tools from '../../../Tools';
 import ToolsDate from '../../../ToolsDate';
@@ -45,7 +45,19 @@ export default function UpcomingEvents() {
 
     function renderName(contract: OurContract | OtherContract) {
         return <>
-            {contract.name}
+            <ContractPartialEditTrigger
+                modalProps={{
+                    initialData: contract,
+                    modalTitle: 'Edycja nazwy',
+                    repository: contractsRepository,
+                    ModalBodyComponent: ContractModalBodyName,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['name'],
+                    makeValidationSchema: contractNameValidationSchema,
+                }} >
+                <>{contract.name}</>
+            </ContractPartialEditTrigger >
+            {' '}
             <ContractPartialEditTrigger
                 modalProps={{
                     initialData: contract,
@@ -54,6 +66,7 @@ export default function UpcomingEvents() {
                     ModalBodyComponent: ContractModalBodyStatus,
                     onEdit: handleEditObject,
                     fieldsToUpdate: ['status'],
+                    makeValidationSchema: contractStatusValidationSchema
 
                 }} >
                 <ContractStatusBadge status={contract.status} />
@@ -61,13 +74,31 @@ export default function UpcomingEvents() {
         </>;
     }
 
-    function renderEndDate(endDate: string) {
+    function renderEndDate(contract: OurContract | OtherContract) {
+        const { endDate } = contract;
         const daysLeft = ToolsDate.countDaysLeftTo(endDate);
 
         return <>
-            <div>{endDate}</div>
+            <div>
+                <DateEditTrigger
+                    contract={contract}
+                    date={endDate}
+                    onEdit={handleEditObject}
+                />
+            </div>
             <div><DaysLeftBadge daysLeft={daysLeft} /></div>
         </>;
+    }
+
+    function renderStartDate(contract: OurContract | OtherContract) {
+        const { startDate } = contract;
+        return <div>
+            <DateEditTrigger
+                contract={contract}
+                date={startDate}
+                onEdit={handleEditObject}
+            />
+        </div>
     }
 
     function renderValue(value: number) {
@@ -118,8 +149,8 @@ export default function UpcomingEvents() {
                             { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
                             { header: 'Numer', objectAttributeToShow: 'number' },
                             { header: 'Nazwa', renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
-                            { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
-                            { header: 'Zakończenie', renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract.endDate) },
+                            { header: 'Rozpoczęcie', renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract) },
+                            { header: 'Zakończenie', renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract) },
                         ]}
                         //EditButtonComponent={ContractEditModalButton}
                         isDeletable={false}
@@ -153,5 +184,35 @@ export default function UpcomingEvents() {
                 </Card.Body>
             </Card>
         </>
+    );
+}
+
+type DateEditTriggerProps = {
+    date: string,
+    contract: OurContract | OtherContract
+    onEdit: (contract: OurContract | OtherContract) => void
+}
+
+function DateEditTrigger({ date, contract, onEdit }: DateEditTriggerProps) {
+    return (
+        <ContractPartialEditTrigger
+            modalProps={{
+                initialData: contract,
+                modalTitle: 'Edycja dat',
+                repository: contractsRepository,
+                ModalBodyComponent: ContractModalBodyDates,
+                onEdit: onEdit,
+                fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+                makeValidationSchema: contractDatesValidationSchema,
+            }}
+        >
+            {<>
+                {date
+                    ? ToolsDate.dateYMDtoDMY(date)
+                    : 'Jeszcze nie ustalono'
+                }
+            </>
+            }
+        </ContractPartialEditTrigger>
     );
 }

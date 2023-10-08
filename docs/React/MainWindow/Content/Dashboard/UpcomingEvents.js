@@ -31,6 +31,7 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ContractModalBodiesPartial_1 = require("../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial");
 const ContractModalButtons_1 = require("../../../../Contracts/ContractsList/Modals/ContractModalButtons");
+const ContractValidationSchema_1 = require("../../../../Contracts/ContractsList/Modals/ContractValidationSchema");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
@@ -67,7 +68,17 @@ function UpcomingEvents() {
     }
     function renderName(contract) {
         return react_1.default.createElement(react_1.default.Fragment, null,
-            contract.name,
+            react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+                    initialData: contract,
+                    modalTitle: 'Edycja nazwy',
+                    repository: MainWindowController_1.contractsRepository,
+                    ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['name'],
+                    makeValidationSchema: ContractValidationSchema_1.contractNameValidationSchema,
+                } },
+                react_1.default.createElement(react_1.default.Fragment, null, contract.name)),
+            ' ',
             react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
                     initialData: contract,
                     modalTitle: 'Edycja statusu',
@@ -75,15 +86,23 @@ function UpcomingEvents() {
                     ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
                     onEdit: handleEditObject,
                     fieldsToUpdate: ['status'],
+                    makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema
                 } },
                 react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
     }
-    function renderEndDate(endDate) {
+    function renderEndDate(contract) {
+        const { endDate } = contract;
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
         return react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, endDate),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(DateEditTrigger, { contract: contract, date: endDate, onEdit: handleEditObject })),
             react_1.default.createElement("div", null,
                 react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })));
+    }
+    function renderStartDate(contract) {
+        const { startDate } = contract;
+        return react_1.default.createElement("div", null,
+            react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject }));
     }
     function renderValue(value) {
         if (value === undefined)
@@ -126,8 +145,8 @@ function UpcomingEvents() {
                         { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
                         { header: 'Numer', objectAttributeToShow: 'number' },
                         { header: 'Nazwa', renderTdBody: (contract) => renderName(contract) },
-                        { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
-                        { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract.endDate) },
+                        { header: 'Rozpoczęcie', renderTdBody: (contract) => renderStartDate(contract) },
+                        { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract) },
                     ], 
                     //EditButtonComponent={ContractEditModalButton}
                     isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: '/contract/', initialObjects: contracts, externalUpdate: externalUpdate }))),
@@ -146,3 +165,16 @@ function UpcomingEvents() {
                     ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: '/contract/' })))));
 }
 exports.default = UpcomingEvents;
+function DateEditTrigger({ date, contract, onEdit }) {
+    return (react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+            initialData: contract,
+            modalTitle: 'Edycja dat',
+            repository: MainWindowController_1.contractsRepository,
+            ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
+            onEdit: onEdit,
+            fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+            makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
+        } }, react_1.default.createElement(react_1.default.Fragment, null, date
+        ? ToolsDate_1.default.dateYMDtoDMY(date)
+        : 'Jeszcze nie ustalono')));
+}
