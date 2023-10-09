@@ -190,7 +190,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ['Content-Type']: 'application/json',
             };
             ToolsDate.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify({ item, fieldsToUpdate }); // <--- przesyłamy zarówno obiekt, jak i pola do aktualizacji
+            requestOptions.body = JSON.stringify({ item, fieldsToUpdate });
         }
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
