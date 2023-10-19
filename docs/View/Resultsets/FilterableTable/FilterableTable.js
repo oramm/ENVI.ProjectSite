@@ -53,6 +53,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
             initialObjects = objectsFromStorage;
+            repository.items = objectsFromStorage;
             return objectsFromStorage;
         }
         return [];

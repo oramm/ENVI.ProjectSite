@@ -47,6 +47,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
             initialObjects = objectsFromStorage;
+            repository.items = objectsFromStorage;
             return objectsFromStorage;
         }
         return [];

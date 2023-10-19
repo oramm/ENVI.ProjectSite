@@ -75,8 +75,6 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         return item;
     }
 
-
-
     /**Ładuje items z sessionstorage i resetuje currentitems */
     loadFromSessionStorage() {
         const JSONFromSessionStorage = sessionStorage.getItem(this.name);

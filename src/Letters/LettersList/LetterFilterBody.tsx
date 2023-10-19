@@ -21,8 +21,8 @@ export function LettersFilterBody() {
     }, [_contract]);
 
     return (
-        <Row xl={12} md={3} xs={2}>
-            <Form.Group as={Col} xl={2}>
+        <Row xl={12} md={6} xs={12}>
+            <Form.Group as={Col} md={2}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control
                     type="text"
@@ -30,7 +30,7 @@ export function LettersFilterBody() {
                     {...register('searchText')}
                 />
             </Form.Group>
-            <Form.Group as={Col} xl={2}>
+            <Form.Group as={Col} md={2}>
                 <Form.Label>Utworzono od</Form.Label>
                 <Form.Control
                     type="date"
@@ -39,7 +39,7 @@ export function LettersFilterBody() {
                 />
 
             </Form.Group>
-            <Form.Group as={Col} xl={2}>
+            <Form.Group as={Col} md={2}>
                 <Form.Label>Utworzono do</Form.Label>
                 <Form.Control
                     type="date"
@@ -47,14 +47,14 @@ export function LettersFilterBody() {
                     {...register('creationDateTo')}
                 />
             </Form.Group>
-            <Form.Group as={Col} xl={2}>
+            <Form.Group as={Col} md={6}>
                 <ProjectSelector
                     name='_project'
                     repository={projectsRepository}
                     showValidationInfo={false}
                 />
             </Form.Group>
-            <Form.Group as={Col} xl={4}>
+            <Form.Group as={Col} md={12}>
                 <Form.Label>Kontrakt</Form.Label>
                 <ContractSelectFormElement
                     repository={contractsRepository}

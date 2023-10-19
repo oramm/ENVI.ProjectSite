@@ -51,7 +51,7 @@ export default function LettersSearch({ title }: { title: string }) {
             tableStructure={[
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody },
                 { header: 'Utworzono', objectAttributeToShow: 'creationDate' },
-                { header: 'Wysłano &nbs', objectAttributeToShow: 'registrationDate' },
+                { header: 'Wysłano', objectAttributeToShow: 'registrationDate' },
                 { header: 'Numer', objectAttributeToShow: 'number' },
                 { header: 'Dotyczy', objectAttributeToShow: 'description' },
                 { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },

@@ -40,7 +40,7 @@ function LettersSearch({ title }) {
     return (react_1.default.createElement(FilterableTable_1.default, { id: 'letters', title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
             { header: 'Utworzono', objectAttributeToShow: 'creationDate' },
-            { header: 'Wysłano &nbs', objectAttributeToShow: 'registrationDate' },
+            { header: 'Wysłano', objectAttributeToShow: 'registrationDate' },
             { header: 'Numer', objectAttributeToShow: 'number' },
             { header: 'Dotyczy', objectAttributeToShow: 'description' },
             { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },

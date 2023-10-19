@@ -46,11 +46,16 @@ const ContractsController_1 = require("../../Contracts/ContractsList/ContractsCo
  */
 function ProjectSelector({ name = '_parent', repository, showValidationInfo = true, disabled = false }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, option.ourId),
+            react_1.default.createElement("div", { className: "text-muted small" }, option.alias)));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, 
             //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
-            showValidationInfo: showValidationInfo, multiple: false })));
+            showValidationInfo: showValidationInfo, renderMenuItemChildren: renderOption, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
 function StatusSelectFormElement({ statusNames, showValidationInfo = true, name = 'status' }) {
@@ -106,8 +111,13 @@ function ContractSelectFormElement({ name = '_contract', showValidationInfo = tr
             params.push({ key: 'projectId', value: _project.ourId });
         return params;
     }
+    function renderOption(option) {
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, option.ourId || option.number),
+            react_1.default.createElement("div", { className: "text-muted small" }, option.alias || option.name)));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null, option._ourIdOrNumber_Name)), multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.ContractSelectFormElement = ContractSelectFormElement;
 /**

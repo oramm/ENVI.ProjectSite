@@ -36,6 +36,15 @@ export function ProjectSelector({
     disabled = false
 }: ProjectSelectorProps) {
     const { formState: { errors } } = useFormContext();
+
+    function renderOption(option: any) {
+        return (
+            <div>
+                <span>{option.ourId}</span>
+                <div className="text-muted small">{option.alias}</div>
+            </div>);
+    }
+
     return (
         <>
             <Form.Label>Projekt</Form.Label>
@@ -45,6 +54,7 @@ export function ProjectSelector({
                 repository={repository}
                 //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                 showValidationInfo={showValidationInfo}
+                renderMenuItemChildren={renderOption}
                 multiple={false}
             />
         </>
@@ -171,6 +181,14 @@ export function ContractSelectFormElement({
         return params;
     }
 
+    function renderOption(option: any) {
+        return (
+            <div>
+                <span>{option.ourId || option.number}</span>
+                <div className="text-muted small">{option.alias || option.name}</div>
+            </div>);
+    }
+
     return (
         <>
             <MyAsyncTypeahead
@@ -179,7 +197,7 @@ export function ContractSelectFormElement({
                 searchKey='searchText'
                 contextSearchParams={makeContextSearchParams()}
                 repository={repository}
-                renderMenuItemChildren={(option: any) => (<div>{option._ourIdOrNumber_Name}</div>)}
+                renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 showValidationInfo={showValidationInfo}
                 readOnly={readOnly}
