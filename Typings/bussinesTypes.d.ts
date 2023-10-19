@@ -48,6 +48,9 @@ export interface Contract extends RepositoryDataItem {
     _ourIdOrNumber_Alias: string;
     _ourIdOrNumber_Name: string;
     _lastUpdated: string;
+    _contractors?: Entity[];
+    _engineers?: Entity[];
+    _employers?: Entity[];
 }
 
 export interface OurContract extends Contract {

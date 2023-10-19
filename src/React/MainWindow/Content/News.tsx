@@ -8,13 +8,7 @@ export default function News() {
         <Card>
             <Card.Header>Nowości w PS</Card.Header>
             <ListGroup variant="flush">
-                <ListGroup.Item>
-                    <a
-                        target={'_blank'}
-                        href='https://youtu.be/CYdTj3je_s8'>
-                        Dodano ZNWU
-                    </a>
-                </ListGroup.Item>
+                <ListGroup.Item>Dodano ZNWU</ListGroup.Item>
                 <ListGroup.Item>Dodano panel główny</ListGroup.Item>
             </ListGroup>
         </Card>

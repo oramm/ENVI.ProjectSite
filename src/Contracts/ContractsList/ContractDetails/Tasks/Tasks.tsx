@@ -12,11 +12,16 @@ import { TasksFilterBody } from './TasksFilterBody';
 export default function Tasks() {
     const { contract, caseTypes, miletonesTypes, milestones, cases, tasks, } = useContract();
 
+    const [externalUpdate, setExternalUpdate] = useState(0);
 
+    useEffect(() => {
+        setExternalUpdate(prevState => prevState + 1);
+    }, [contract, tasks]);
 
     if (!contract) {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
     }
+
     return (
         <Card >
             <Card.Body >
@@ -36,6 +41,8 @@ export default function Tasks() {
                             { header: 'Status', renderTdBody: (task: Task) => <TaskStatusBadge status={task.status} /> },
                             { header: 'Właściciel', renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</> },
                         ]}
+                        externalUpdate={externalUpdate}
+
                     />
                     : <>"Ładowanie zadań..." <SpinnerBootstrap /></>
                 }

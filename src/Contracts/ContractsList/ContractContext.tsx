@@ -79,8 +79,6 @@ export function ContractProvider({
     );
 }
 
-
-
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury
 export function useContract() {
     return useContext(ContractContext);

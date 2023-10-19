@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Col, Container, Row } from "react-bootstrap";
+import { Entity } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/ToolsDate";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
 import { useContract } from "../ContractContext";
@@ -11,41 +12,49 @@ import { contractDatesValidationSchema, contractNameValidationSchema, contractSt
 export function MainContractDetailsHeader() {
     const { contract, setContract } = useContract();
     if (!contract || !setContract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
+
+    function renderEntityDetails() {
+        if (!contract) return <></>;
+        if (contract.ourId) {
+            return (<>
+                <div>Zamawiający</div>
+                <h5>{renderEntityData(contract._employers || [])}</h5>
+            </>)
+        }
+        else
+            return (<>
+                <div>Wykonawca</div>
+                <h5>{renderEntityData(contract._contractors || [])}</h5>
+            </>)
+    };
+
+    function renderEntityData(entities: Entity[]) {
+        return entities.map(entity => {
+            return (
+                <div key={entity.id}>
+                    <div>{entity.name}</div>
+                    <div>{entity.address}</div>
+                    <div>{entity.nip}</div>
+                </div>
+            )
+        });
+    }
+
     return (
         <Container>
             <Row className='mt-3'>
-                <Col sm={1} lg='1'>
-                    {contract._gdFolderUrl && (
-                        <GDFolderIconLink folderUrl={contract._gdFolderUrl} />
-                    )}
+                <Col sm={11} md={6} >
+                    {renderEntityDetails()}
                 </Col>
+                {contract.ourId &&
+                    <Col sm={4} md={2}>
+                        <div>Oznaczenie:</div>
+                        <h5>{contract.ourId}</h5>
+                    </Col>
+                }
                 <Col sm={4} md={2}>
                     <div>Nr umowy:</div>
                     <h5>{contract.number}</h5>
-                </Col>
-                <Col sm='auto'>
-                    <ContractPartialEditTrigger
-                        modalProps={{
-                            initialData: contract,
-                            modalTitle: 'Edycja nazwy',
-                            repository: contractsRepository,
-                            ModalBodyComponent: ContractModalBodyName,
-                            onEdit: (contract) => { setContract(contract) },
-                            fieldsToUpdate: ['name'],
-                            makeValidationSchema: contractNameValidationSchema,
-                        }} >
-                        <>{contract?.name}</>
-                    </ContractPartialEditTrigger >
-                </Col>
-                <Col sm={4} md={2}>
-                    <div>Data podpisania:</div>
-                    <DateEditTrigger date={contract.startDate} />
-                </Col>
-                <Col sm={4} md={2}>
-                    <div>Termin zakończenia:</div>
-                    {contract.endDate
-                        ? <h5>{ToolsDate.dateYMDtoDMY(contract.endDate)}</h5>
-                        : 'Jeszcze nie ustalono'}
                 </Col>
                 <Col sm={1}>
                     <ContractPartialEditTrigger
@@ -60,6 +69,40 @@ export function MainContractDetailsHeader() {
                         }} >
                         <ContractStatusBadge status={contract?.status} />
                     </ContractPartialEditTrigger >
+                </Col>
+                <Col sm={1}>
+                    {contract._gdFolderUrl && (
+                        <GDFolderIconLink folderUrl={contract._gdFolderUrl} />
+                    )}
+                </Col>
+                <Col sm={12} md={6}>
+                    <ContractPartialEditTrigger
+                        modalProps={{
+                            initialData: contract,
+                            modalTitle: 'Edycja nazwy',
+                            repository: contractsRepository,
+                            ModalBodyComponent: ContractModalBodyName,
+                            onEdit: (contract) => { setContract(contract) },
+                            fieldsToUpdate: ['name'],
+                            makeValidationSchema: contractNameValidationSchema,
+                        }} >
+                        <>
+                            <div>Nazwa:</div>
+                            <h5>{contract?.name}</h5>
+                        </>
+                    </ContractPartialEditTrigger >
+                </Col>
+                <Col sm={4} md={2}>
+                    <div>Data podpisania:</div>
+                    <DateEditTrigger date={contract.startDate} />
+                </Col>
+                <Col sm={4} md={2}>
+                    <div>Termin zakończenia:</div>
+                    <DateEditTrigger date={contract.endDate} />
+                </Col>
+                <Col sm={4} md={2}>
+                    <div>Gwarancja:</div>
+                    <DateEditTrigger date={contract.guaranteeEndDate} />
                 </Col>
             </Row >
         </Container >

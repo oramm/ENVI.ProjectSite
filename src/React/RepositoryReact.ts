@@ -183,6 +183,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         };
 
         if (item instanceof FormData) {
+            if (fieldsToUpdate) item.append('fieldsToUpdate', JSON.stringify(fieldsToUpdate))
             requestOptions.body = item;
         } else {
             requestOptions.headers = {
@@ -190,7 +191,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ['Content-Type']: 'application/json',
             };
             ToolsDate.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify({ item, fieldsToUpdate });
+            requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
         }
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;

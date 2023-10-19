@@ -33,9 +33,10 @@ const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponent
 const ContractModalBody_1 = require("./ContractModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
+const ContractsController_1 = require("../ContractsController");
 function OurContractModalBody(props) {
     const { initialData, isEditing } = props;
-    const { register, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { register, trigger, setValue, watch, formState: { errors }, control } = (0, FormContext_1.useFormContext)();
     const _type = watch('_type');
     (0, react_1.useEffect)(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
@@ -49,13 +50,17 @@ function OurContractModalBody(props) {
             : null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!formState.errors?.ourId, isValid: !formState.errors?.ourId, disabled: _type === undefined, ...register('ourId') }),
-            formState.errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, formState.errors.ourId.message))),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!errors?.ourId, isValid: !errors?.ourId, disabled: _type === undefined, ...register('ourId') }),
+            errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.ourId.message))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
                 react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Koordynator', name: '_manager', repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository })))));
+                react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
+                react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_employers', labelKey: 'name', repository: ContractsController_1.entitiesRepository, multiple: true }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_employers' })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

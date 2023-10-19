@@ -1,0 +1,160 @@
+import React, { useEffect, useState } from 'react';
+import { Card } from 'react-bootstrap';
+import { OurContract, OtherContract } from '../../../../../../Typings/bussinesTypes';
+import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from '../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
+import { ContractPartialEditTrigger } from '../../../../../Contracts/ContractsList/Modals/ContractModalButtons';
+import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from '../../../../../Contracts/ContractsList/Modals/ContractValidationSchema';
+import { ContractStatusBadge, DaysLeftBadge } from '../../../../../View/Resultsets/CommonComponents';
+import FilterableTable from '../../../../../View/Resultsets/FilterableTable/FilterableTable';
+import MainSetup from '../../../../MainSetupReact';
+import ToolsDate from '../../../../ToolsDate';
+import { contractsRepository } from '../../../MainWindowController';
+
+export default function ContractsList() {
+    const [contracts, setContracts] = useState([] as (OurContract | OtherContract)[]);
+    const [externalUpdate, setExternalUpdate] = useState(0);
+    const [dataLoaded, setDataLoaded] = useState(false);
+
+    useEffect(() => {
+        async function fetchData() {
+            setDataLoaded(false);
+            const endDateTo = ToolsDate.addDays(new Date(), 30);
+            const [contracts] = await Promise.all([
+                contractsRepository.loadItemsFromServer({
+                    status: JSON.stringify([
+                        MainSetup.ContractStatuses.IN_PROGRESS,
+                        MainSetup.ContractStatuses.NOT_STARTED
+                    ]),
+                    endDateTo: endDateTo.toISOString().slice(0, 10),
+                }),
+            ]);
+            setContracts(contracts);
+            setExternalUpdate(prevState => prevState + 1);
+            setDataLoaded(true);
+        };
+
+        fetchData();
+    }, []);
+
+
+
+    function renderName(contract: OurContract | OtherContract) {
+        return <>
+            <ContractPartialEditTrigger
+                modalProps={{
+                    initialData: contract,
+                    modalTitle: 'Edycja nazwy',
+                    repository: contractsRepository,
+                    ModalBodyComponent: ContractModalBodyName,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['name'],
+                    makeValidationSchema: contractNameValidationSchema,
+                }} >
+                <>{contract.name}</>
+            </ContractPartialEditTrigger >
+            {' '}
+            <ContractPartialEditTrigger
+                modalProps={{
+                    initialData: contract,
+                    modalTitle: 'Edycja statusu',
+                    repository: contractsRepository,
+                    ModalBodyComponent: ContractModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ['status'],
+                    makeValidationSchema: contractStatusValidationSchema
+
+                }} >
+                <ContractStatusBadge status={contract.status} />
+            </ContractPartialEditTrigger >
+        </>;
+    }
+
+    function renderEndDate(contract: OurContract | OtherContract) {
+        const { endDate } = contract;
+        const daysLeft = ToolsDate.countDaysLeftTo(endDate);
+
+        return <>
+            <div>
+                <DateEditTrigger
+                    contract={contract}
+                    date={endDate}
+                    onEdit={handleEditObject}
+                />
+            </div>
+            <div><DaysLeftBadge daysLeft={daysLeft} /></div>
+        </>;
+    }
+
+    function renderStartDate(contract: OurContract | OtherContract) {
+        const { startDate } = contract;
+        return <div>
+            <DateEditTrigger
+                contract={contract}
+                date={startDate}
+                onEdit={handleEditObject}
+            />
+        </div>
+    }
+
+    function handleEditObject(object: OurContract | OtherContract) {
+        setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
+        setExternalUpdate(prevState => prevState + 1);
+    }
+
+    return (
+        <Card>
+            <Card.Body>
+                <Card.Title>Kończące się Kontrakty</Card.Title>
+                <FilterableTable<OurContract | OtherContract>
+                    id='contracts'
+                    title={''}
+                    tableStructure={[
+                        { header: 'Projekt', renderTdBody: (contract: OurContract | OtherContract) => <>{contract._parent.ourId}</> },
+                        { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
+                        { header: 'Numer', objectAttributeToShow: 'number' },
+                        { header: 'Nazwa', renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
+                        { header: 'Rozpoczęcie', renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract) },
+                        { header: 'Zakończenie', renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract) },
+                    ]}
+                    //EditButtonComponent={ContractEditModalButton}
+                    isDeletable={false}
+                    repository={contractsRepository}
+                    selectedObjectRoute={'/contract/'}
+                    initialObjects={contracts}
+                    externalUpdate={externalUpdate}
+                />
+            </Card.Body>
+        </Card>
+    );
+}
+
+
+type DateEditTriggerProps = {
+    date: string,
+    contract: OurContract | OtherContract
+    onEdit: (contract: OurContract | OtherContract) => void
+}
+
+function DateEditTrigger({ date, contract, onEdit }: DateEditTriggerProps) {
+    return (
+        <ContractPartialEditTrigger
+            modalProps={{
+                initialData: contract,
+                modalTitle: 'Edycja dat',
+                repository: contractsRepository,
+                ModalBodyComponent: ContractModalBodyDates,
+                onEdit: onEdit,
+                fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+                makeValidationSchema: contractDatesValidationSchema,
+            }}
+        >
+            {<>
+                {date
+                    ? ToolsDate.dateYMDtoDMY(date)
+                    : 'Jeszcze nie ustalono'
+                }
+            </>
+            }
+        </ContractPartialEditTrigger>
+    );
+}
