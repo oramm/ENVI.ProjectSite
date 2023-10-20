@@ -14,7 +14,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columStructure, dataObject) {
         if (columStructure.objectAttributeToShow !== undefined)
             return dataObject[columStructure.objectAttributeToShow];
@@ -24,7 +24,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
     }
     return (react_1.default.createElement("tr", { onClick: (e) => (onRowClick(dataObject.id)), onDoubleClick: () => {
             if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataObject.id);
+                navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
         }, className: isActive ? 'active' : '' },
         tableStructure.map((column, index) => (react_1.default.createElement("td", { key: column.objectAttributeToShow || index }, tdBodyRender(column, dataObject)))),
         isActive &&

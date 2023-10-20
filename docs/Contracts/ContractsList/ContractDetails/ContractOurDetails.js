@@ -32,10 +32,10 @@ const Tools_1 = __importDefault(require("../../../React/Tools"));
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
-const ContractContext_1 = require("../ContractContext");
 const ContractsController_1 = require("../ContractsController");
+const ContractDetailsContext_1 = require("./ContractDetailsContext");
 function ContractOurDetails() {
-    const { contract, setContract } = (0, ContractContext_1.useContract)();
+    const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     const [settlemenData, setSettlemenData] = (0, react_1.useState)(undefined);
     const [invoices, setInvoices] = (0, react_1.useState)([]);
     if (!contract)
@@ -43,6 +43,7 @@ function ContractOurDetails() {
     //fetch data
     (0, react_1.useEffect)(() => {
         async function fetchData() {
+            console.log(`ContracOurDetails: fetchData():: contract.id: ${contract?.id}`);
             if (!contract?.id)
                 throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();

@@ -344,7 +344,6 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _contract, re
     const [options, setOptions] = (0, react_1.useState)([]);
     const { control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        console.log('caseSelect _contract: ', _contract?._ourIdOrNumber_Alias);
         const fetchData = async () => {
             if (_contract) {
                 await repository.loadItemsFromServer({ 'contractId': JSON.stringify(_contract.id) });

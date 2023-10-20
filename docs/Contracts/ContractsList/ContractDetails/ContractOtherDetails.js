@@ -29,10 +29,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
-const ContractContext_1 = require("../ContractContext");
 const ContractsController_1 = require("../ContractsController");
+const ContractDetailsContext_1 = require("./ContractDetailsContext");
 function ContractOtherDetails() {
-    const { contract, setContract } = (0, ContractContext_1.useContract)();
+    const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     const [settlemenData, setSettlemenData] = (0, react_1.useState)(undefined);
     const [invoices, setInvoices] = (0, react_1.useState)(undefined);
     if (!contract)

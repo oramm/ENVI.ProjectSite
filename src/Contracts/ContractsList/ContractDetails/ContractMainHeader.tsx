@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Col, Container, Row } from "react-bootstrap";
-import { Entity } from "../../../../Typings/bussinesTypes";
+import { Entity, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/ToolsDate";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
-import { useContract } from "../ContractContext";
-import { contractsRepository } from "../ContractsController";
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from "../Modals/ContractModalBodiesPartial";
 import { ContractPartialEditTrigger } from "../Modals/ContractModalButtons";
 import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from "../Modals/ContractValidationSchema";
+import { useContractDetails } from "./ContractDetailsContext";
 
-export function MainContractDetailsHeader() {
-    const { contract, setContract } = useContract();
+export function ContractMainHeader() {
+    const { contract, setContract, contractsRepository } = useContractDetails();
     if (!contract || !setContract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
+    if (!contractsRepository) return <Alert variant='danger'>Nie znaleziono repozytorium</Alert>;
 
     function renderEntityDetails() {
         if (!contract) return <></>;
@@ -40,6 +40,14 @@ export function MainContractDetailsHeader() {
         });
     }
 
+    function handleEditObject(contract: OurContract | OtherContract) {
+        if (setContract)
+            setContract(contract);
+        const newItems = contractsRepository?.items.map((o) => (o.id === contract.id ? contract : o)) || [];
+        if (contractsRepository)
+            contractsRepository.items = newItems;
+    }
+
     return (
         <Container>
             <Row className='mt-3'>
@@ -63,7 +71,7 @@ export function MainContractDetailsHeader() {
                             modalTitle: 'Edycja statusu',
                             repository: contractsRepository,
                             ModalBodyComponent: ContractModalBodyStatus,
-                            onEdit: (contract) => { setContract(contract) },
+                            onEdit: handleEditObject,
                             fieldsToUpdate: ['status'],
                             makeValidationSchema: contractStatusValidationSchema,
                         }} >
@@ -115,8 +123,9 @@ type DateEditTriggerProps = {
 
 
 function DateEditTrigger({ date }: DateEditTriggerProps) {
-    const { contract, setContract } = useContract();
+    const { contract, setContract, contractsRepository } = useContractDetails();
     if (!contract || !setContract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
+    if (!contractsRepository) return <Alert variant='danger'>Nie znaleziono repozytorium</Alert>;
 
     return (
         <ContractPartialEditTrigger

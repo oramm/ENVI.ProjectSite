@@ -5,11 +5,11 @@ import Tools from '../../../React/Tools';
 import ToolsDate from '../../../React/ToolsDate';
 import { InvoiceStatusBadge, MyTooltip } from '../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../View/Resultsets/FilterableTable/FilterableTable';
-import { useContract } from '../ContractContext';
 import { contractsSettlementRepository, invoicesRepository } from '../ContractsController';
+import { useContractDetails } from './ContractDetailsContext';
 
 export default function ContractOurDetails() {
-    const { contract, setContract } = useContract();
+    const { contract, setContract, contractsRepository } = useContractDetails();
     const [settlemenData, setSettlemenData] = useState(undefined as ContractsSettlementData | undefined);
     const [invoices, setInvoices] = useState([] as Invoice[]);
     if (!contract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
@@ -18,6 +18,7 @@ export default function ContractOurDetails() {
     //fetch data
     useEffect(() => {
         async function fetchData() {
+            console.log(`ContracOurDetails: fetchData():: contract.id: ${contract?.id}`);
             if (!contract?.id) throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
             const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServer({ id: contractIdString }))[0];

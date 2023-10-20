@@ -3,20 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MainContractDetailsHeader = void 0;
+exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
-const ContractContext_1 = require("../ContractContext");
-const ContractsController_1 = require("../ContractsController");
 const ContractModalBodiesPartial_1 = require("../Modals/ContractModalBodiesPartial");
 const ContractModalButtons_1 = require("../Modals/ContractModalButtons");
 const ContractValidationSchema_1 = require("../Modals/ContractValidationSchema");
-function MainContractDetailsHeader() {
-    const { contract, setContract } = (0, ContractContext_1.useContract)();
+const ContractDetailsContext_1 = require("./ContractDetailsContext");
+function ContractMainHeader() {
+    const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
+    if (!contractsRepository)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie znaleziono repozytorium");
     function renderEntityDetails() {
         if (!contract)
             return react_1.default.createElement(react_1.default.Fragment, null);
@@ -39,6 +40,13 @@ function MainContractDetailsHeader() {
                 react_1.default.createElement("div", null, entity.nip)));
         });
     }
+    function handleEditObject(contract) {
+        if (setContract)
+            setContract(contract);
+        const newItems = contractsRepository?.items.map((o) => (o.id === contract.id ? contract : o)) || [];
+        if (contractsRepository)
+            contractsRepository.items = newItems;
+    }
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
         react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 11, md: 6 }, renderEntityDetails()),
@@ -53,9 +61,9 @@ function MainContractDetailsHeader() {
                 react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
                         initialData: contract,
                         modalTitle: 'Edycja statusu',
-                        repository: ContractsController_1.contractsRepository,
+                        repository: contractsRepository,
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
-                        onEdit: (contract) => { setContract(contract); },
+                        onEdit: handleEditObject,
                         fieldsToUpdate: ['status'],
                         makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema,
                     } },
@@ -65,7 +73,7 @@ function MainContractDetailsHeader() {
                 react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
                         initialData: contract,
                         modalTitle: 'Edycja nazwy',
-                        repository: ContractsController_1.contractsRepository,
+                        repository: contractsRepository,
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
                         onEdit: (contract) => { setContract(contract); },
                         fieldsToUpdate: ['name'],
@@ -84,15 +92,17 @@ function MainContractDetailsHeader() {
                 react_1.default.createElement("div", null, "Gwarancja:"),
                 react_1.default.createElement(DateEditTrigger, { date: contract.guaranteeEndDate })))));
 }
-exports.MainContractDetailsHeader = MainContractDetailsHeader;
+exports.ContractMainHeader = ContractMainHeader;
 function DateEditTrigger({ date }) {
-    const { contract, setContract } = (0, ContractContext_1.useContract)();
+    const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
+    if (!contractsRepository)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie znaleziono repozytorium");
     return (react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
             initialData: contract,
             modalTitle: 'Edycja dat',
-            repository: ContractsController_1.contractsRepository,
+            repository: contractsRepository,
             ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
             onEdit: (contract) => { setContract(contract); },
             fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],

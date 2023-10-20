@@ -1,70 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs } from 'react-bootstrap';
-import { useParams } from "react-router-dom";
-import { Case, CaseType, Milestone, MilestoneType, OtherContract, OurContract, Task } from "../../../../Typings/bussinesTypes";
+import { useLocation, useParams } from "react-router-dom";
+import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import RepositoryReact from "../../../React/RepositoryReact";
 import { SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
-import { ContractProvider } from "../ContractContext";
-import { casesRepository, caseTypesRepository, contractsRepository, milestonesRepository, milestoneTypesRepository, tasksRepository } from "../ContractsController";
-import { MainContractDetailsHeader } from "./ContractMainHeader";
+import { ContractDetailsProvider } from "./ContractDetailsContext";
+import { ContractMainHeader } from "./ContractMainHeader";
 import ContractOtherDetails from "./ContractOtherDetails";
 import ContractOurDetails from "./ContractOurDetails";
 import Tasks from "./Tasks/Tasks";
 
 export function ContractMainViewTabs() {
+    const location = useLocation();
+    const contractsRepository = createContractRepository();
+
     const [contract, setContract] = useState(contractsRepository.currentItems[0]);
-    const [miletonesTypes, setMiletonesTypes] = useState(undefined as MilestoneType[] | undefined);
-    const [caseTypes, setCaseTypes] = useState(undefined as CaseType[] | undefined);
-    const [milestones, setMilestones] = useState(undefined as Milestone[] | undefined);
-    const [cases, setCases] = useState(undefined as Case[] | undefined);
-    const [tasks, setTasks] = useState(undefined as Task[] | undefined);
     let { id } = useParams();
+
+    useEffect(() => {
+        console.log(`ContractMainViewTabs: useEffect(() => { id: ${contract?.id}`);
+    }, [contract]
+    );
 
     useEffect(() => {
         async function fetchData() {
             if (!id) throw new Error('Nie znaleziono id w adresie url');
+            if (contract) return;
+
             const idNumber = Number(id);
-            const params = { contractId: id }
-            const fetchContract = contract ? undefined : contractsRepository.loadItemFromRouter(idNumber);
-            const fetchMilestonesTypes = milestoneTypesRepository.loadItemsFromServer(params);
-            const fetchCaseTypes = caseTypesRepository.loadItemsFromServer(params);
-            const fetchMilestones = milestonesRepository.loadItemsFromServer(params);
-            const fetchCases = casesRepository.loadItemsFromServer(params);
-            const fetchTasks = tasksRepository.loadItemsFromServer(params);
-
-            try {
-                const [
-                    contractData,
-                    milestonesTypesData,
-                    caseTypesData,
-                    milestonesData,
-                    casesData,
-                    tasksData
-                ] = await Promise.all([
-                    fetchContract,
-                    fetchMilestonesTypes,
-                    fetchCaseTypes,
-                    fetchMilestones,
-                    fetchCases,
-                    fetchTasks
-                ]);
-                if (contractData) {
-                    setContract(contractData);
-                    initContractRepository(contractData);
-                }
-                setMiletonesTypes(milestonesTypesData);
-                setCaseTypes(caseTypesData);
-                setMilestones(milestonesData);
-                setCases(casesData);
-                setTasks(tasksData);
-
-            } catch (error) {
-                console.error("Error fetching data", error);
-                // Handle error as you see fit
-            }
+            const contractData = await contractsRepository.loadItemFromRouter(idNumber);
+            setContract(contractData);
+            initContractRepository(contractData);
         };
 
         fetchData();
     }, []);
+
+    function createContractRepository() {
+        const repository = new RepositoryReact<OurContract | OtherContract>({
+            actionRoutes: {
+                getRoute: 'contracts',
+                addNewRoute: 'contractReact',
+                editRoute: 'contract',
+                deleteRoute: 'contract'
+            },
+            name: 'contracts',
+        });
+        let repositoryDataFromRoute = location?.state?.repository as RepositoryReact<OurContract | OtherContract>;
+        if (repositoryDataFromRoute) {
+            repository.items = repositoryDataFromRoute.items;
+            repository.currentItems = repositoryDataFromRoute.currentItems;
+        }
+        return repository;
+    }
 
     function initContractRepository(contractData: OurContract | OtherContract) {
         if (!contractsRepository.currentItems.find(c => c.id === contractData.id))
@@ -76,22 +64,13 @@ export function ContractMainViewTabs() {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
     }
     return (
-        <ContractProvider
+        <ContractDetailsProvider
             contract={contract}
             setContract={setContract}
-            caseTypes={caseTypes}
-            setCaseTypes={setCaseTypes}
-            miletonesTypes={miletonesTypes}
-            setMiletonesTypes={setMiletonesTypes}
-            milestones={milestones}
-            setMilestones={setMilestones}
-            cases={cases}
-            setCases={setCases}
-            tasks={tasks}
-            setTasks={setTasks}
+            contractsRepository={contractsRepository}
         >
             <>
-                <MainContractDetailsHeader />
+                <ContractMainHeader />
                 <Tabs defaultActiveKey="general" id="uncontrolled-tab-example">
                     <Tab eventKey="general" title="Dane ogólne">
                         {contract.ourId
@@ -104,7 +83,7 @@ export function ContractMainViewTabs() {
                     </Tab>
                 </Tabs>
             </>
-        </ContractProvider>
+        </ContractDetailsProvider>
 
     );
 };

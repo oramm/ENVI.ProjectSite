@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContractTypeSelectFormElement, ProjectSelector } from '../../View/Modals/CommonFormComponents';
+import { ContractStatusSelectFormElement, ContractTypeSelectFormElement, ProjectSelector } from '../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../View/Modals/FormContext';
 import ToolsDate from '../../React/ToolsDate';
@@ -63,6 +63,12 @@ export function ContractsFilterBody() {
                     type="date"
                     defaultValue={undefined}
                     {...register('endDateTo')}
+                />
+            </Form.Group>
+            <Form.Group as={Col} xl={2}>
+                <ContractStatusSelectFormElement
+                    name='status'
+                    showValidationInfo={false}
                 />
             </Form.Group>
         </Row>

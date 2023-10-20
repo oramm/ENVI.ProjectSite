@@ -2,11 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Container, Card, Col, Row, Button, Alert } from 'react-bootstrap';
 import { ContractsSettlementData, Entity, Invoice } from '../../../../Typings/bussinesTypes';
 import ToolsDate from '../../../React/ToolsDate';
-import { useContract } from '../ContractContext';
 import { contractsSettlementRepository, invoicesRepository } from '../ContractsController';
+import { useContractDetails } from './ContractDetailsContext';
 
 export default function ContractOtherDetails() {
-    const { contract, setContract } = useContract();
+    const { contract, setContract, contractsRepository } = useContractDetails();
     const [settlemenData, setSettlemenData] = useState(undefined as ContractsSettlementData | undefined);
     const [invoices, setInvoices] = useState(undefined as Invoice[] | undefined);
     if (!contract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;

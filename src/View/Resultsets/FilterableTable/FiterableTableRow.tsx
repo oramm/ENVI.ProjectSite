@@ -29,7 +29,8 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
         handleEditObject,
         handleDeleteObject,
         EditButtonComponent,
-        isDeletable
+        isDeletable,
+        repository
     } = useFilterableTableContext<DataItemType>();
 
     function tdBodyRender(columStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
@@ -44,7 +45,11 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
         <tr
             onClick={(e) => (onRowClick(dataObject.id))}
             onDoubleClick={() => {
-                if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id)
+                if (selectedObjectRoute)
+                    navigate(
+                        selectedObjectRoute + dataObject.id,
+                        { state: { repository } }
+                    );
             }}
             className={isActive ? 'active' : ''}
         >
