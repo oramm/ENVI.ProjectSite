@@ -1,4 +1,4 @@
-import { CaseType, ContractType, DocumentTemplate, Person, Project, User } from "../../Typings/bussinesTypes";
+import { CaseType, ContractType, DocumentTemplate, Person, Project, SystemRole, SystemRoleName, User } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
 import ToolsDate from "./ToolsDate";
 
@@ -73,5 +73,32 @@ export default class MainSetup {
     static LettersFilterInitState = {
         CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
         CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
+    }
+
+    static readonly SystemRoles: Record<SystemRoleName, SystemRole> = {
+        ADMIN: {
+            id: 1,
+            systemName: 'ADMIN',
+        },
+        ENVI_MANAGER: {
+            id: 2,
+            systemName: 'ENVI_MANAGER',
+        },
+        ENVI_EMPLOYEE: {
+            id: 3,
+            systemName: 'ENVI_EMPLOYEE',
+        },
+        ENVI_COOPERATOR: {
+            id: 4,
+            systemName: 'ENVI_COOPERATOR',
+        },
+        EXTERNAL_USER: {
+            id: 5,
+            systemName: 'EXTERNAL_USER',
+        }
+    };
+
+    static isRoleAllowed(roles: SystemRoleName[]) {
+        return roles.includes(this.currentUser.systemRoleName);
     }
 }

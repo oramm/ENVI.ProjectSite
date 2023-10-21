@@ -1,11 +1,19 @@
 import { number } from "yup";
+import MainSetup from "../src/React/MainSetupReact";
+
+export type SystemRoleName = 'ADMIN' | 'ENVI_MANAGER' | 'ENVI_EMPLOYEE' | 'ENVI_COOPERATOR' | 'EXTERNAL_USER';
+
+export type SystemRole = {
+    id: number;
+    systemName: SystemRoleName;
+};
 
 export interface User {
     googleId: string;
     picture: string;
     systemEmail: string;
     systemRoleId: number;
-    systemRoleName: 'ADMIN' | 'ENVI_MANAGER' | 'ENVI_EMPLOYEE' | 'ENVI_COOPERATOR' | 'EXTERNAL_USER';
+    systemRoleName: SystemRoleName;
     userName: string;
 }
 
@@ -43,6 +51,7 @@ export interface Contract extends RepositoryDataItem {
     meetingProtocolsGdFolderId: string;
     _type: ContractType;
     value: number;
+    _remainingValue: number;
     _folderName: string;
     _gdFolderUrl: string;
     _ourIdOrNumber_Alias: string;

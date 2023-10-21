@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import { OurContract, OtherContract } from '../../../../../../Typings/bussinesTypes';
+import { OurContract, OtherContract, SystemRoleName } from '../../../../../../Typings/bussinesTypes';
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from '../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
 import { ContractPartialEditTrigger } from '../../../../../Contracts/ContractsList/Modals/ContractModalButtons';
 import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from '../../../../../Contracts/ContractsList/Modals/ContractValidationSchema';
 import { ContractStatusBadge, DaysLeftBadge } from '../../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../../View/Resultsets/FilterableTable/FilterableTable';
 import MainSetup from '../../../../MainSetupReact';
+import Tools from '../../../../Tools';
 import ToolsDate from '../../../../ToolsDate';
 import { contractsRepository } from '../../../MainWindowController';
 
@@ -26,6 +27,7 @@ export default function ContractsList() {
                         MainSetup.ContractStatuses.NOT_STARTED
                     ]),
                     endDateTo: endDateTo.toISOString().slice(0, 10),
+                    getRemainingValue: true.toString(),
                 }),
             ]);
             setContracts(contracts);
@@ -101,6 +103,33 @@ export default function ContractsList() {
         setExternalUpdate(prevState => prevState + 1);
     }
 
+    function renderRemainingValue(contract: OurContract | OtherContract) {
+        if (!contract.ourId || contract._remainingValue === undefined)
+            return <></>;
+        const formatedValue = Tools.formatNumber(contract._remainingValue);
+        return <div className="text-end">{formatedValue}</div>;
+    }
+
+    function makeTablestructure() {
+        const tableStructure = [
+            { header: 'Projekt', renderTdBody: (contract: OurContract | OtherContract) => <>{contract._parent.ourId}</> },
+            { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
+            { header: 'Numer', objectAttributeToShow: 'number' },
+            { header: 'Nazwa', renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
+            { header: 'Rozpoczęcie', renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract) },
+            { header: 'Zakończenie', renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract) },
+        ];
+
+        const allowedRoles = [
+            MainSetup.SystemRoles.ADMIN.systemName,
+            MainSetup.SystemRoles.ENVI_MANAGER.systemName,
+        ];
+
+        if (MainSetup.isRoleAllowed(allowedRoles)) {
+            tableStructure.push({ header: 'Do rozliczenia', renderTdBody: (contract) => renderRemainingValue(contract) });
+        }
+        return tableStructure;
+    }
     return (
         <Card>
             <Card.Body>
@@ -108,14 +137,7 @@ export default function ContractsList() {
                 <FilterableTable<OurContract | OtherContract>
                     id='contracts'
                     title={''}
-                    tableStructure={[
-                        { header: 'Projekt', renderTdBody: (contract: OurContract | OtherContract) => <>{contract._parent.ourId}</> },
-                        { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
-                        { header: 'Numer', objectAttributeToShow: 'number' },
-                        { header: 'Nazwa', renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
-                        { header: 'Rozpoczęcie', renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract) },
-                        { header: 'Zakończenie', renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract) },
-                    ]}
+                    tableStructure={makeTablestructure()}
                     //EditButtonComponent={ContractEditModalButton}
                     isDeletable={false}
                     repository={contractsRepository}

@@ -34,6 +34,7 @@ const ContractValidationSchema_1 = require("../../../../../Contracts/ContractsLi
 const CommonComponents_1 = require("../../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../../MainSetupReact"));
+const Tools_1 = __importDefault(require("../../../../Tools"));
 const ToolsDate_1 = __importDefault(require("../../../../ToolsDate"));
 const MainWindowController_1 = require("../../../MainWindowController");
 function ContractsList() {
@@ -51,6 +52,7 @@ function ContractsList() {
                         MainSetupReact_1.default.ContractStatuses.NOT_STARTED
                     ]),
                     endDateTo: endDateTo.toISOString().slice(0, 10),
+                    getRemainingValue: true.toString(),
                 }),
             ]);
             setContracts(contracts);
@@ -102,17 +104,34 @@ function ContractsList() {
         setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
         setExternalUpdate(prevState => prevState + 1);
     }
+    function renderRemainingValue(contract) {
+        if (!contract.ourId || contract._remainingValue === undefined)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        const formatedValue = Tools_1.default.formatNumber(contract._remainingValue);
+        return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
+    }
+    function makeTablestructure() {
+        const tableStructure = [
+            { header: 'Projekt', renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._parent.ourId) },
+            { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
+            { header: 'Numer', objectAttributeToShow: 'number' },
+            { header: 'Nazwa', renderTdBody: (contract) => renderName(contract) },
+            { header: 'Rozpoczęcie', renderTdBody: (contract) => renderStartDate(contract) },
+            { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract) },
+        ];
+        const allowedRoles = [
+            MainSetupReact_1.default.SystemRoles.ADMIN.systemName,
+            MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName,
+        ];
+        if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
+            tableStructure.push({ header: 'Do rozliczenia', renderTdBody: (contract) => renderRemainingValue(contract) });
+        }
+        return tableStructure;
+    }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
-            react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: '', tableStructure: [
-                    { header: 'Projekt', renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._parent.ourId) },
-                    { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
-                    { header: 'Numer', objectAttributeToShow: 'number' },
-                    { header: 'Nazwa', renderTdBody: (contract) => renderName(contract) },
-                    { header: 'Rozpoczęcie', renderTdBody: (contract) => renderStartDate(contract) },
-                    { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract) },
-                ], 
+            react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: '', tableStructure: makeTablestructure(), 
                 //EditButtonComponent={ContractEditModalButton}
                 isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: '/contract/', initialObjects: contracts, externalUpdate: externalUpdate }))));
 }

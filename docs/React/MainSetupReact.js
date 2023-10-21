@@ -21,6 +21,9 @@ class MainSetup {
     static get currentContract() {
         return JSON.parse(sessionStorage.getItem('Contracts repository')).currentItems[0];
     }
+    static isRoleAllowed(roles) {
+        return roles.includes(this.currentUser.systemRoleName);
+    }
 }
 exports.default = MainSetup;
 MainSetup.CLIENT_ID = '386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com'; //ENVI - nowy test
@@ -60,4 +63,26 @@ MainSetup.InvoicesFilterInitState = {
 MainSetup.LettersFilterInitState = {
     CREATION_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
     CREATION_DATE_TO: ToolsDate_1.default.addDays(new Date(), +5).toISOString().slice(0, 10),
+};
+MainSetup.SystemRoles = {
+    ADMIN: {
+        id: 1,
+        systemName: 'ADMIN',
+    },
+    ENVI_MANAGER: {
+        id: 2,
+        systemName: 'ENVI_MANAGER',
+    },
+    ENVI_EMPLOYEE: {
+        id: 3,
+        systemName: 'ENVI_EMPLOYEE',
+    },
+    ENVI_COOPERATOR: {
+        id: 4,
+        systemName: 'ENVI_COOPERATOR',
+    },
+    EXTERNAL_USER: {
+        id: 5,
+        systemName: 'EXTERNAL_USER',
+    }
 };
