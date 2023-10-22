@@ -1,3 +1,4 @@
+import MainSetup from "./MainSetupReact";
 import { renderApp } from "./MainWindow/index";
 
 declare const google: any;
@@ -5,7 +6,7 @@ declare const google: any;
 export class GAuth {
     static async mainWindowInitialise(): Promise<void> {
         await google.accounts.id.initialize({
-            client_id: CLIENT_ID,
+            client_id: MainSetup.CLIENT_ID,
             callback: this.mainWindowLoadHandler,
         });
 
@@ -36,7 +37,7 @@ export class GAuth {
 
             console.log(result);
             MainSetup.currentUser = result.userData;
-            console.log('Name: ' + MainSetup.currentUser.name);
+            console.log('Name: ' + MainSetup.currentUser.userName);
             console.log('Email: ' + MainSetup.currentUser.systemEmail); // This is null if the 'email' scope is not present.
             renderApp();
         } catch (error) {

@@ -1,11 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GAuth = void 0;
+const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
 const index_1 = require("./MainWindow/index");
 class GAuth {
     static async mainWindowInitialise() {
         await google.accounts.id.initialize({
-            client_id: CLIENT_ID,
+            client_id: MainSetupReact_1.default.CLIENT_ID,
             callback: this.mainWindowLoadHandler,
         });
         // Display the One Tap prompt
@@ -18,7 +22,7 @@ class GAuth {
         try {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            const rawResult = await fetch(MainSetup.serverUrl + 'login', {
+            const rawResult = await fetch(MainSetupReact_1.default.serverUrl + 'login', {
                 method: 'POST',
                 headers: myHeaders,
                 credentials: 'include',
@@ -26,9 +30,9 @@ class GAuth {
             });
             const result = await rawResult.json();
             console.log(result);
-            MainSetup.currentUser = result.userData;
-            console.log('Name: ' + MainSetup.currentUser.name);
-            console.log('Email: ' + MainSetup.currentUser.systemEmail); // This is null if the 'email' scope is not present.
+            MainSetupReact_1.default.currentUser = result.userData;
+            console.log('Name: ' + MainSetupReact_1.default.currentUser.userName);
+            console.log('Email: ' + MainSetupReact_1.default.currentUser.systemEmail); // This is null if the 'email' scope is not present.
             (0, index_1.renderApp)();
         }
         catch (error) {
