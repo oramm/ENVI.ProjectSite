@@ -51,7 +51,8 @@ export interface Contract extends RepositoryDataItem {
     meetingProtocolsGdFolderId: string;
     _type: ContractType;
     value: number;
-    _remainingValue: number;
+    _remainingNotScheduledValue?: number;
+    _remainingNotIssuedValue?: number;
     _folderName: string;
     _gdFolderUrl: string;
     _ourIdOrNumber_Alias: string;

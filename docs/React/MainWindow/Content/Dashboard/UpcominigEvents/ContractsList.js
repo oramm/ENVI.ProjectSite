@@ -105,10 +105,16 @@ function ContractsList() {
         setExternalUpdate(prevState => prevState + 1);
     }
     function renderRemainingValue(contract) {
-        if (!contract.ourId || contract._remainingValue === undefined)
+        if (!contract.ourId ||
+            (!contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue))
             return react_1.default.createElement(react_1.default.Fragment, null);
-        const formatedValue = Tools_1.default.formatNumber(contract._remainingValue);
-        return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
+        const formatedNotScheduledValue = Tools_1.default.formatNumber(contract._remainingNotScheduledValue || 0, 0);
+        const formatedNotIssuedValue = Tools_1.default.formatNumber(contract._remainingNotIssuedValue || 0, 0);
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wys\u0142anych faktur a warto\u015Bci\u0105 umowy', placement: 'right' },
+                react_1.default.createElement("div", { className: "text-end text-success" }, formatedNotIssuedValue)),
+            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy', placement: 'right' },
+                react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue)));
     }
     function makeTablestructure() {
         const tableStructure = [

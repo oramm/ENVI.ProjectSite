@@ -11,8 +11,8 @@ class Tools {
     }
     static formatNumber(number, digits = 2) {
         const formatter = new Intl.NumberFormat('pl-PL', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: digits,
+            maximumFractionDigits: digits,
         });
         return formatter.format(number);
     }

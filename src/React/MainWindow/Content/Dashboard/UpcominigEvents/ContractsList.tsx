@@ -4,7 +4,7 @@ import { OurContract, OtherContract, SystemRoleName } from '../../../../../../Ty
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from '../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
 import { ContractPartialEditTrigger } from '../../../../../Contracts/ContractsList/Modals/ContractModalButtons';
 import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from '../../../../../Contracts/ContractsList/Modals/ContractValidationSchema';
-import { ContractStatusBadge, DaysLeftBadge } from '../../../../../View/Resultsets/CommonComponents';
+import { ContractStatusBadge, DaysLeftBadge, MyTooltip } from '../../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../../View/Resultsets/FilterableTable/FilterableTable';
 import MainSetup from '../../../../MainSetupReact';
 import Tools from '../../../../Tools';
@@ -104,10 +104,19 @@ export default function ContractsList() {
     }
 
     function renderRemainingValue(contract: OurContract | OtherContract) {
-        if (!contract.ourId || contract._remainingValue === undefined)
+        if (!contract.ourId ||
+            (!contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue))
             return <></>;
-        const formatedValue = Tools.formatNumber(contract._remainingValue);
-        return <div className="text-end">{formatedValue}</div>;
+        const formatedNotScheduledValue = Tools.formatNumber(contract._remainingNotScheduledValue || 0, 0);
+        const formatedNotIssuedValue = Tools.formatNumber(contract._remainingNotIssuedValue || 0, 0);
+        return <>
+            <MyTooltip content='Różnica pomiędzy wartością wysłanych faktur a wartością umowy' placement='right'>
+                <div className="text-end text-success">{formatedNotIssuedValue}</div>
+            </MyTooltip>
+            <MyTooltip content='Różnica pomiędzy wartością wszystkich  faktur w witrynie a wartością umowy' placement='right'>
+                <div className="text-end text-danger">{formatedNotScheduledValue}</div>
+            </MyTooltip>
+        </>;
     }
 
     function makeTablestructure() {
