@@ -3,7 +3,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { ContractStatusSelectFormElement, ErrorMessage } from '../../../View/Modals/CommonFormComponents';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
-import ToolsForm from '../../../React/ToolsForms';
+import ToolsForms from '../../../React/ToolsForms';
 import ToolsDate from '../../../React/ToolsDate';
 
 export function ContractModalBodyStatus({ initialData }: ModalBodyProps) {
@@ -82,7 +82,7 @@ export function ContractModalBodyDates({ initialData, isEditing, additionalProps
                     isValid={!errors.startDate}
                     isInvalid={!!errors.startDate}
                     {...register('startDate')}
-                    className={!isEditing ? ToolsForm.getSuggestedClass('startDate', watchAllFields, startDateSugestion) : ''}
+                    className={!isEditing ? ToolsForms.getSuggestedClass('startDate', watchAllFields, startDateSugestion) : ''}
                     onChange={(e) => {
                         register("startDate").onChange(e); // wywołaj standardowe zachowanie
                         trigger("endDate");
@@ -97,7 +97,7 @@ export function ContractModalBodyDates({ initialData, isEditing, additionalProps
                     isValid={!errors.endDate}
                     isInvalid={!!errors.endDate}
                     {...register('endDate')}
-                    className={!isEditing ? ToolsForm.getSuggestedClass('endDate', watchAllFields, endDateSugestion) : ''}
+                    className={!isEditing ? ToolsForms.getSuggestedClass('endDate', watchAllFields, endDateSugestion) : ''}
                     onChange={(e) => {
                         register("endDate").onChange(e); // wywołaj standardowe zachowanie
                         trigger("startDate");
@@ -113,7 +113,7 @@ export function ContractModalBodyDates({ initialData, isEditing, additionalProps
                     isValid={!errors.guaranteeEndDate}
                     isInvalid={!!errors.guaranteeEndDate}
                     {...register('guaranteeEndDate')}
-                    className={!isEditing ? ToolsForm.getSuggestedClass('guaranteeEndDate', watchAllFields, guaranteeEndDateSugestion) : ''}
+                    className={!isEditing ? ToolsForms.getSuggestedClass('guaranteeEndDate', watchAllFields, guaranteeEndDateSugestion) : ''}
                     onChange={(e) => {
                         register("guaranteeEndDate").onChange(e); // wywołaj standardowe zachowanie
                         //trigger("startDate");

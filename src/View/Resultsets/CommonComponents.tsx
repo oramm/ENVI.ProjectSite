@@ -201,6 +201,40 @@ export function ContractStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function SecurityStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = 'light';
+    switch (status) {
+        case MainSetup.SecurityStatus.NOT_ISSUED:
+            variant = 'secondary';
+            break;
+        case MainSetup.SecurityStatus.ISSUED:
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetup.SecurityStatus.TO_PROLONG:
+            variant = 'danger';
+            break;
+        case MainSetup.SecurityStatus.PROLONGED:
+            variant = 'success';
+            break;
+        case MainSetup.SecurityStatus.RETURNED_1ST_PART:
+            variant = 'info';
+            break;
+        case MainSetup.SecurityStatus.RETURNED_2ND_PART:
+            variant = 'success';
+            break;
+        default:
+            variant = 'secondary';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 export function TaskStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = 'light';

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Alert, Col, Container, Row } from "react-bootstrap";
 import { Entity, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/ToolsDate";
+import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from "../Modals/ContractModalBodiesPartial";
-import { ContractPartialEditTrigger } from "../Modals/ContractModalButtons";
 import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from "../Modals/ContractValidationSchema";
 import { useContractDetails } from "./ContractDetailsContext";
 
@@ -65,7 +65,7 @@ export function ContractMainHeader() {
                     <h5>{contract.number}</h5>
                 </Col>
                 <Col sm={1}>
-                    <ContractPartialEditTrigger
+                    <PartialEditTrigger
                         modalProps={{
                             initialData: contract,
                             modalTitle: 'Edycja statusu',
@@ -76,7 +76,7 @@ export function ContractMainHeader() {
                             makeValidationSchema: contractStatusValidationSchema,
                         }} >
                         <ContractStatusBadge status={contract?.status} />
-                    </ContractPartialEditTrigger >
+                    </PartialEditTrigger >
                 </Col>
                 <Col sm={1}>
                     {contract._gdFolderUrl && (
@@ -84,7 +84,7 @@ export function ContractMainHeader() {
                     )}
                 </Col>
                 <Col sm={12} md={6}>
-                    <ContractPartialEditTrigger
+                    <PartialEditTrigger
                         modalProps={{
                             initialData: contract,
                             modalTitle: 'Edycja nazwy',
@@ -98,7 +98,7 @@ export function ContractMainHeader() {
                             <div>Nazwa:</div>
                             <h5>{contract?.name}</h5>
                         </>
-                    </ContractPartialEditTrigger >
+                    </PartialEditTrigger >
                 </Col>
                 <Col sm={4} md={2}>
                     <div>Data podpisania:</div>
@@ -128,7 +128,7 @@ function DateEditTrigger({ date }: DateEditTriggerProps) {
     if (!contractsRepository) return <Alert variant='danger'>Nie znaleziono repozytorium</Alert>;
 
     return (
-        <ContractPartialEditTrigger
+        <PartialEditTrigger
             modalProps={{
                 initialData: contract,
                 modalTitle: 'Edycja dat',
@@ -143,6 +143,6 @@ function DateEditTrigger({ date }: DateEditTriggerProps) {
                 ? <h5>{ToolsDate.dateYMDtoDMY(date)}</h5>
                 : <>{'Jeszcze nie ustalono'}</>
             }
-        </ContractPartialEditTrigger>
+        </PartialEditTrigger>
     );
 }

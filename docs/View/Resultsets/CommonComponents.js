@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysLeftBadge = exports.MyTooltip = exports.TaskStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.DaysLeftBadge = exports.MyTooltip = exports.TaskStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -157,6 +157,35 @@ function ContractStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
+function SecurityStatusBadge({ status }) {
+    let variant;
+    let textMode = 'light';
+    switch (status) {
+        case MainSetupReact_1.default.SecurityStatus.NOT_ISSUED:
+            variant = 'secondary';
+            break;
+        case MainSetupReact_1.default.SecurityStatus.ISSUED:
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetupReact_1.default.SecurityStatus.TO_PROLONG:
+            variant = 'danger';
+            break;
+        case MainSetupReact_1.default.SecurityStatus.PROLONGED:
+            variant = 'success';
+            break;
+        case MainSetupReact_1.default.SecurityStatus.RETURNED_1ST_PART:
+            variant = 'info';
+            break;
+        case MainSetupReact_1.default.SecurityStatus.RETURNED_2ND_PART:
+            variant = 'success';
+            break;
+        default:
+            variant = 'secondary';
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.SecurityStatusBadge = SecurityStatusBadge;
 function TaskStatusBadge({ status }) {
     let variant;
     let textMode = 'light';

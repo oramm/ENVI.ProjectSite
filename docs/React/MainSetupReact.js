@@ -48,6 +48,14 @@ MainSetup.ContractStatuses = {
     FINISHED: 'Zakończony',
     ARCHIVAL: 'Archiwalny',
 };
+MainSetup.SecurityStatus = {
+    NOT_ISSUED: 'Nie wydana',
+    ISSUED: 'Wydana',
+    TO_PROLONG: 'Do przedłużenia',
+    PROLONGED: 'Przedłużona',
+    RETURNED_1ST_PART: 'Zwrócona 70%',
+    RETURNED_2ND_PART: 'Zwrócona 100%',
+};
 MainSetup.TaskStatuses = {
     BACKLOG: 'Backlog',
     NOT_STARTED: 'Nie rozpoczęty',

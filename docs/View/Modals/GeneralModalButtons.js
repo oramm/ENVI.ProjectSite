@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = void 0;
+exports.PartialEditTrigger = exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
@@ -106,3 +106,20 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
+function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, }, children }) {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("span", { onClick: handleOpen, style: { cursor: 'pointer' } }, children),
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+                isEditing: true,
+                initialData: initialData,
+                additionalProps: additionalModalBodyProps,
+            }, fieldsToUpdate: fieldsToUpdate })));
+}
+exports.PartialEditTrigger = PartialEditTrigger;

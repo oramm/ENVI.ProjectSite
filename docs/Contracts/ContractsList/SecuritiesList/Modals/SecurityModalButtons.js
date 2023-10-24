@@ -33,7 +33,7 @@ function SecurityEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
                 modalTitle: "Edycja ZNWU",
                 repository: repository,
                 initialData: initialData,
-                makeValidationSchema: SecurityValidationSchema_1.SecurityGuaranteeValidationSchema
+                makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema
             }, buttonProps: { ...buttonProps } }));
 }
 exports.SecurityEditModalButtonGeneric = SecurityEditModalButtonGeneric;
@@ -78,7 +78,7 @@ function SecurityGuaranteeAddNewModalButtonGeneric({ modalProps: { onAddNew, rep
             additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody, },
             modalTitle: "Nowa gwarancja ZNWU",
             repository: repository,
-            makeValidationSchema: SecurityValidationSchema_1.SecurityGuaranteeValidationSchema
+            makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema
         }, buttonProps: {
             buttonCaption: "Dodaj ZNWU",
         } }));

@@ -1,20 +1,13 @@
 import * as Yup from 'yup';
 import { valueValidation } from '../../../View/Modals/CommonFormComponents';
 
-const nameField = {
-    name: Yup.string()
-        .required('Nazwa jest wymagana')
-        .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
-        .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
-};
+const name = Yup.string()
+    .required('Nazwa jest wymagana')
+    .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
+    .max(500, 'Nazwa może mieć maksymalnie 150 znaków');
 
-const statusField = {
-    status: Yup.string().required('Status jest wymagany'),
-};
-
-const valueField = {
-    value: valueValidation,
-};
+const status = Yup.string().required('Status jest wymagany');
+const value = valueValidation;
 
 const dateFields = {
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
@@ -38,9 +31,9 @@ const dateFields = {
 };
 
 const commonFields = {
-    ...nameField,
-    ...statusField,
-    ...valueField,
+    name,
+    status,
+    value,
     ...dateFields,
     _type: Yup.object()
         .required('Typ kontraktu jest wymagany'), //przy walidacji jest wpsólny, ale w formularzu jest osobno dla każdego typu
@@ -105,7 +98,7 @@ export function otherContractValidationSchema(isEditing: boolean) {
 export function contractNameValidationSchema(isEditing: boolean) {
     return (
         Yup.object().shape({
-            ...nameField,
+            name,
         })
     )
 }
@@ -113,7 +106,7 @@ export function contractNameValidationSchema(isEditing: boolean) {
 export function contractStatusValidationSchema(isEditing: boolean) {
     return (
         Yup.object().shape({
-            ...statusField,
+            status,
         })
     )
 }

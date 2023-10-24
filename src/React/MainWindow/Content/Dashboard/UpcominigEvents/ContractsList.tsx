@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { OurContract, OtherContract, SystemRoleName } from '../../../../../../Typings/bussinesTypes';
 import { ContractModalBodyDates, ContractModalBodyName, ContractModalBodyStatus } from '../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial';
-import { ContractPartialEditTrigger } from '../../../../../Contracts/ContractsList/Modals/ContractModalButtons';
 import { contractDatesValidationSchema, contractNameValidationSchema, contractStatusValidationSchema } from '../../../../../Contracts/ContractsList/Modals/ContractValidationSchema';
+import { PartialEditTrigger } from '../../../../../View/Modals/GeneralModalButtons';
 import { ContractStatusBadge, DaysLeftBadge, MyTooltip } from '../../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../../View/Resultsets/FilterableTable/FilterableTable';
 import MainSetup from '../../../../MainSetupReact';
@@ -42,7 +42,7 @@ export default function ContractsList() {
 
     function renderName(contract: OurContract | OtherContract) {
         return <>
-            <ContractPartialEditTrigger
+            <PartialEditTrigger
                 modalProps={{
                     initialData: contract,
                     modalTitle: 'Edycja nazwy',
@@ -53,9 +53,9 @@ export default function ContractsList() {
                     makeValidationSchema: contractNameValidationSchema,
                 }} >
                 <>{contract.name}</>
-            </ContractPartialEditTrigger >
+            </PartialEditTrigger >
             {' '}
-            <ContractPartialEditTrigger
+            <PartialEditTrigger
                 modalProps={{
                     initialData: contract,
                     modalTitle: 'Edycja statusu',
@@ -67,7 +67,7 @@ export default function ContractsList() {
 
                 }} >
                 <ContractStatusBadge status={contract.status} />
-            </ContractPartialEditTrigger >
+            </PartialEditTrigger >
         </>;
     }
 
@@ -168,7 +168,7 @@ type DateEditTriggerProps = {
 
 function DateEditTrigger({ date, contract, onEdit }: DateEditTriggerProps) {
     return (
-        <ContractPartialEditTrigger
+        <PartialEditTrigger
             modalProps={{
                 initialData: contract,
                 modalTitle: 'Edycja dat',
@@ -186,6 +186,6 @@ function DateEditTrigger({ date, contract, onEdit }: DateEditTriggerProps) {
                 }
             </>
             }
-        </ContractPartialEditTrigger>
+        </PartialEditTrigger>
     );
 }

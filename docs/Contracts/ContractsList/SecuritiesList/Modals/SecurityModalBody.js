@@ -38,6 +38,7 @@ function SecurityModalBody({ isEditing, initialData }) {
             description: initialData?.description || '',
             value: initialData?.value || '',
             returnedValue: initialData?.returnedValue || '',
+            status: initialData?.status || '',
         };
         if (!isEditing)
             resetData._project = _project;
@@ -58,7 +59,8 @@ function SecurityModalBody({ isEditing, initialData }) {
             react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, null)),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "returnedValue" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zwr\u00F3cono"),
-            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'returnedValue' }))));
+            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'returnedValue' })),
+        react_1.default.createElement(CommonFormComponents_1.SecurityStatusSelectFormElement, { name: 'status', showValidationInfo: true })));
 }
 exports.SecurityModalBody = SecurityModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

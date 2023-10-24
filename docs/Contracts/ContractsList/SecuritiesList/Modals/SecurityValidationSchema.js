@@ -23,27 +23,64 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecurityGuaranteeValidationSchema = exports.securityCashValidationSchema = void 0;
+exports.suecurityDatesValidationSchema = exports.securityReturnedValueValidationSchema = exports.securityValueValidationSchema = exports.securityDescriptionValidationSchema = exports.securityStatusValidationSchema = exports.securityGuaranteeValidationSchema = exports.securityCashValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
+const status = Yup.string().required('Status jest wymagany');
+const description = Yup.string().max(300, 'Komentarz może mieć maksymalnie 300 znaków');
+const value = CommonFormComponents_1.valueValidation;
+const returnedValue = CommonFormComponents_1.valueValidation;
 function getCommonFields(isEditing) {
     return {
         _contract: !isEditing ? Yup.object().required('Umowa jest wymagana') : Yup.object(),
-        description: Yup.string()
-            .max(300, 'Komentarz może mieć maksymalnie 300 znaków'),
-        value: CommonFormComponents_1.valueValidation,
-        returnedValue: CommonFormComponents_1.valueValidation,
+        description,
+        value,
+        returnedValue,
+        status
     };
 }
+const dateFields = {
+    firstPartExpiryDate: Yup.date().required('Data jest wymagana'),
+    secondPartExpiryDate: Yup.date().required('Data jest wymagana')
+};
 function securityCashValidationSchema(isEditing) {
     return Yup.object().shape(getCommonFields(isEditing));
 }
 exports.securityCashValidationSchema = securityCashValidationSchema;
-function SecurityGuaranteeValidationSchema(isEditing) {
+function securityGuaranteeValidationSchema(isEditing) {
     return Yup.object().shape({
         ...getCommonFields(isEditing),
-        firstPartExpiryDate: Yup.date().required('Data jest wymagana'),
-        secondPartExpiryDate: Yup.date().required('Data jest wymagana')
+        ...dateFields
     });
 }
-exports.SecurityGuaranteeValidationSchema = SecurityGuaranteeValidationSchema;
+exports.securityGuaranteeValidationSchema = securityGuaranteeValidationSchema;
+function securityStatusValidationSchema(isEditing) {
+    return Yup.object().shape({
+        status
+    });
+}
+exports.securityStatusValidationSchema = securityStatusValidationSchema;
+function securityDescriptionValidationSchema(isEditing) {
+    return Yup.object().shape({
+        description
+    });
+}
+exports.securityDescriptionValidationSchema = securityDescriptionValidationSchema;
+function securityValueValidationSchema(isEditing) {
+    return Yup.object().shape({
+        value
+    });
+}
+exports.securityValueValidationSchema = securityValueValidationSchema;
+function securityReturnedValueValidationSchema(isEditing) {
+    return Yup.object().shape({
+        returnedValue
+    });
+}
+exports.securityReturnedValueValidationSchema = securityReturnedValueValidationSchema;
+function suecurityDatesValidationSchema(isEditing) {
+    return Yup.object().shape({
+        ...dateFields
+    });
+}
+exports.suecurityDatesValidationSchema = suecurityDatesValidationSchema;

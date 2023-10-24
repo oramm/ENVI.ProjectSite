@@ -75,7 +75,7 @@ export function StatusSelectFormElement({
     const { register, formState: { errors } } = useFormContext();
 
     return (
-        <Form.Group controlId="status">
+        <Form.Group controlId={name}>
             <Form.Label>Status</Form.Label>
             <Form.Control
                 as="select"
@@ -111,6 +111,15 @@ export function ProjectStatusSelectFormElement({ showValidationInfo = true, name
 
 export function ContractStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
     const statuses = Object.entries(MainSetup.ContractStatuses).map(([key, value]) => value);
+    return <StatusSelectFormElement
+        statusNames={statuses}
+        showValidationInfo={showValidationInfo}
+        name={name}
+    />
+};
+
+export function SecurityStatusSelectFormElement({ showValidationInfo = true, name }: SpecificStatusProps) {
+    const statuses = Object.entries(MainSetup.SecurityStatus).map(([key, value]) => value);
     return <StatusSelectFormElement
         statusNames={statuses}
         showValidationInfo={showValidationInfo}

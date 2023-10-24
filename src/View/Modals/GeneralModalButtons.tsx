@@ -189,3 +189,52 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
         </>
     );
 }
+
+export function PartialEditTrigger<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
+    modalProps: {
+        onEdit,
+        specialActionRoute,
+        ModalBodyComponent,
+        additionalModalBodyProps,
+        modalTitle,
+        initialData,
+        repository,
+        makeValidationSchema,
+        fieldsToUpdate,
+    },
+    children
+}: GeneralEditModalButtonProps<DataItemType> & { children: JSX.Element }) {
+    const [showForm, setShowForm] = useState(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+
+    return (
+        <>
+            <span onClick={handleOpen} style={{ cursor: 'pointer' }}>
+                {children}
+            </span>
+            <GeneralModal<DataItemType>
+                onClose={handleClose}
+                show={showForm}
+                isEditing={true}
+                title={modalTitle}
+                repository={repository}
+                onEdit={onEdit}
+                specialActionRoute={specialActionRoute}
+                ModalBodyComponent={ModalBodyComponent}
+                makeValidationSchema={makeValidationSchema}
+                modalBodyProps={{
+                    isEditing: true,
+                    initialData: initialData,
+                    additionalProps: additionalModalBodyProps,
+                }}
+                fieldsToUpdate={fieldsToUpdate}
+            />
+        </>
+    );
+}

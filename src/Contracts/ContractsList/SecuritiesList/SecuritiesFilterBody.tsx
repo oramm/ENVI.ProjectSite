@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import ToolsDate from '../../../React/ToolsDate';
-import { ProjectSelector, ContractTypeSelectFormElement } from '../../../View/Modals/CommonFormComponents';
+import { ProjectSelector, ContractTypeSelectFormElement, SecurityStatusSelectFormElement } from '../../../View/Modals/CommonFormComponents';
 import { useFormContext } from '../../../View/Modals/FormContext';
 import { projectsRepository } from '../ContractsController';
 
@@ -83,6 +83,10 @@ export function SecuritiesFilterBody() {
                     {...register('secondPartExpiryDateTo')}
                 />
             </Form.Group>
+            <SecurityStatusSelectFormElement
+                name='status'
+                showValidationInfo={false}
+            />
         </Row>
     );
 }

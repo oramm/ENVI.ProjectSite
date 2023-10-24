@@ -7,9 +7,9 @@ exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const ContractModalBodiesPartial_1 = require("../Modals/ContractModalBodiesPartial");
-const ContractModalButtons_1 = require("../Modals/ContractModalButtons");
 const ContractValidationSchema_1 = require("../Modals/ContractValidationSchema");
 const ContractDetailsContext_1 = require("./ContractDetailsContext");
 function ContractMainHeader() {
@@ -58,7 +58,7 @@ function ContractMainHeader() {
                 react_1.default.createElement("div", null, "Nr umowy:"),
                 react_1.default.createElement("h5", null, contract.number)),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 1 },
-                react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+                react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: contract,
                         modalTitle: 'Edycja statusu',
                         repository: contractsRepository,
@@ -70,7 +70,7 @@ function ContractMainHeader() {
                     react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract?.status }))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 1 }, contract._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: contract._gdFolderUrl }))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 6 },
-                react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+                react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: contract,
                         modalTitle: 'Edycja nazwy',
                         repository: contractsRepository,
@@ -99,7 +99,7 @@ function DateEditTrigger({ date }) {
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
     if (!contractsRepository)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie znaleziono repozytorium");
-    return (react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+    return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
             initialData: contract,
             modalTitle: 'Edycja dat',
             repository: contractsRepository,

@@ -37,6 +37,7 @@ function SecuritiesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10), ...register('secondPartExpiryDateFrom') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "30% wygasa do"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: undefined, ...register('secondPartExpiryDateTo') }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: undefined, ...register('secondPartExpiryDateTo') })),
+        react_1.default.createElement(CommonFormComponents_1.SecurityStatusSelectFormElement, { name: 'status', showValidationInfo: false })));
 }
 exports.SecuritiesFilterBody = SecuritiesFilterBody;

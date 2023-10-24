@@ -6,7 +6,7 @@ import { securitiesRepository } from '../../ContractsController';
 import { SecurityCashModalBody } from './SecurityCashModalBody';
 import { SecurityGuaranteeModalBody } from './SecurityGuaranteeModalBody';
 import { ProjectSelectorModalBody } from './SecurityModalBody';
-import { securityCashValidationSchema, SecurityGuaranteeValidationSchema } from './SecurityValidationSchema';
+import { securityCashValidationSchema, securityGuaranteeValidationSchema } from './SecurityValidationSchema';
 
 /** przycisk i modal edycji SecurityCash */
 export function SecurityEditModalButtonGeneric({
@@ -37,7 +37,7 @@ export function SecurityEditModalButtonGeneric({
                     modalTitle: "Edycja ZNWU",
                     repository: repository,
                     initialData: initialData,
-                    makeValidationSchema: SecurityGuaranteeValidationSchema
+                    makeValidationSchema: securityGuaranteeValidationSchema
                 }}
                 buttonProps={{ ...buttonProps }}
             />
@@ -112,7 +112,7 @@ export function SecurityGuaranteeAddNewModalButtonGeneric({
                 additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody, },// additional props for ProjectSelectorModalBody
                 modalTitle: "Nowa gwarancja ZNWU",
                 repository: repository,
-                makeValidationSchema: SecurityGuaranteeValidationSchema
+                makeValidationSchema: securityGuaranteeValidationSchema
             }}
             buttonProps={{
                 buttonCaption: "Dodaj ZNWU",

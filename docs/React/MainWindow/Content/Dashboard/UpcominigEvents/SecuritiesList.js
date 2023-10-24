@@ -28,6 +28,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const SecurityModalBodiesPartial_1 = require("../../../../../Contracts/ContractsList/SecuritiesList/Modals/SecurityModalBodiesPartial");
+const SecurityValidationSchema_1 = require("../../../../../Contracts/ContractsList/SecuritiesList/Modals/SecurityValidationSchema");
+const GeneralModalButtons_1 = require("../../../../../View/Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../../MainSetupReact"));
@@ -88,7 +91,21 @@ function SecuritiesList() {
     function renderDescription(security) {
         if (!security.description)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        return react_1.default.createElement(react_1.default.Fragment, null, security.description);
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                security.description,
+                " ",
+                ' ',
+                react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                        initialData: security,
+                        ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyStatus,
+                        makeValidationSchema: SecurityValidationSchema_1.securityDescriptionValidationSchema,
+                        repository: MainWindowController_1.securitiesRepository,
+                        modalTitle: 'Edycja statusu',
+                        onEdit: handleEditObject,
+                        fieldsToUpdate: ['description']
+                    } },
+                    react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status }))));
     }
     function handleEditObject(object) {
         setSecurities(securities.map((o) => (o.id === object.id ? object : o)));

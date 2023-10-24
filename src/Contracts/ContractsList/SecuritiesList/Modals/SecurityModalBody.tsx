@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ContractSelectFormElement, ErrorMessage, ProjectSelector, ValueInPLNInput } from '../../../../View/Modals/CommonFormComponents';
+import { ContractSelectFormElement, ErrorMessage, ProjectSelector, SecurityStatusSelectFormElement, ValueInPLNInput } from '../../../../View/Modals/CommonFormComponents';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useFormContext } from '../../../../View/Modals/FormContext';
 import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
@@ -15,6 +15,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
             description: initialData?.description || '',
             value: initialData?.value || '',
             returnedValue: initialData?.returnedValue || '',
+            status: initialData?.status || '',
         };
 
         if (!isEditing) resetData._project = _project;
@@ -57,6 +58,10 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
                 <Form.Label>Zwrócono</Form.Label>
                 <ValueInPLNInput keyLabel='returnedValue' />
             </Form.Group>
+            <SecurityStatusSelectFormElement
+                name='status'
+                showValidationInfo={true}
+            />
         </>
     );
 }

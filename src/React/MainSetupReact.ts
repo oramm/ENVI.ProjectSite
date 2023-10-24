@@ -55,6 +55,14 @@ export default class MainSetup {
         ARCHIVAL: 'Archiwalny',
     };
 
+    static SecurityStatus = {
+        NOT_ISSUED: 'Nie wydana',
+        ISSUED: 'Wydana',
+        TO_PROLONG: 'Do przedłużenia',
+        PROLONGED: 'Przedłużona',
+        RETURNED_1ST_PART: 'Zwrócona 70%',
+        RETURNED_2ND_PART: 'Zwrócona 100%',
+    }
 
     static TaskStatuses = {
         BACKLOG: 'Backlog',

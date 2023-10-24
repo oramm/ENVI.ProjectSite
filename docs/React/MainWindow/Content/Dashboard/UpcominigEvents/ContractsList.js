@@ -29,8 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ContractModalBodiesPartial_1 = require("../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial");
-const ContractModalButtons_1 = require("../../../../../Contracts/ContractsList/Modals/ContractModalButtons");
 const ContractValidationSchema_1 = require("../../../../../Contracts/ContractsList/Modals/ContractValidationSchema");
+const GeneralModalButtons_1 = require("../../../../../View/Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../../MainSetupReact"));
@@ -64,7 +64,7 @@ function ContractsList() {
     }, []);
     function renderName(contract) {
         return react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+            react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: contract,
                     modalTitle: 'Edycja nazwy',
                     repository: MainWindowController_1.contractsRepository,
@@ -75,7 +75,7 @@ function ContractsList() {
                 } },
                 react_1.default.createElement(react_1.default.Fragment, null, contract.name)),
             ' ',
-            react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+            react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: contract,
                     modalTitle: 'Edycja statusu',
                     repository: MainWindowController_1.contractsRepository,
@@ -143,7 +143,7 @@ function ContractsList() {
 }
 exports.default = ContractsList;
 function DateEditTrigger({ date, contract, onEdit }) {
-    return (react_1.default.createElement(ContractModalButtons_1.ContractPartialEditTrigger, { modalProps: {
+    return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
             initialData: contract,
             modalTitle: 'Edycja dat',
             repository: MainWindowController_1.contractsRepository,

@@ -26,18 +26,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.contractDatesValidationSchema = exports.contractStatusValidationSchema = exports.contractNameValidationSchema = exports.otherContractValidationSchema = exports.ourContractValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
-const nameField = {
-    name: Yup.string()
-        .required('Nazwa jest wymagana')
-        .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
-        .max(500, 'Nazwa może mieć maksymalnie 150 znaków'),
-};
-const statusField = {
-    status: Yup.string().required('Status jest wymagany'),
-};
-const valueField = {
-    value: CommonFormComponents_1.valueValidation,
-};
+const name = Yup.string()
+    .required('Nazwa jest wymagana')
+    .min(3, 'Nazwa musi mieć przynajmniej 3 znaki')
+    .max(500, 'Nazwa może mieć maksymalnie 150 znaków');
+const status = Yup.string().required('Status jest wymagany');
+const value = CommonFormComponents_1.valueValidation;
 const dateFields = {
     startDate: Yup.date().required('Data rozpoczęcia jest wymagana')
         .test('startDateValidation', 'Początek musi być wcześniejszy niż zakończenie', function (value) {
@@ -55,9 +49,9 @@ const dateFields = {
     }),
 };
 const commonFields = {
-    ...nameField,
-    ...statusField,
-    ...valueField,
+    name,
+    status,
+    value,
     ...dateFields,
     _type: Yup.object()
         .required('Typ kontraktu jest wymagany'),
@@ -103,13 +97,13 @@ function otherContractValidationSchema(isEditing) {
 exports.otherContractValidationSchema = otherContractValidationSchema;
 function contractNameValidationSchema(isEditing) {
     return (Yup.object().shape({
-        ...nameField,
+        name,
     }));
 }
 exports.contractNameValidationSchema = contractNameValidationSchema;
 function contractStatusValidationSchema(isEditing) {
     return (Yup.object().shape({
-        ...statusField,
+        status,
     }));
 }
 exports.contractStatusValidationSchema = contractStatusValidationSchema;

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { Security } from '../../../../../../Typings/bussinesTypes';
-import { DaysLeftBadge } from '../../../../../View/Resultsets/CommonComponents';
+import { SecurityModalBodyStatus } from '../../../../../Contracts/ContractsList/SecuritiesList/Modals/SecurityModalBodiesPartial';
+import { securityDescriptionValidationSchema } from '../../../../../Contracts/ContractsList/SecuritiesList/Modals/SecurityValidationSchema';
+import { PartialEditTrigger } from '../../../../../View/Modals/GeneralModalButtons';
+import { DaysLeftBadge, SecurityStatusBadge } from '../../../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../../../View/Resultsets/FilterableTable/FilterableTable';
 import MainSetup from '../../../../MainSetupReact';
 import Tools from '../../../../Tools';
@@ -66,7 +69,22 @@ export default function SecuritiesList() {
 
     function renderDescription(security: Security) {
         if (!security.description) return <></>;
-        return <>{security.description}</>;
+        return <>
+            <div>
+                {security.description} {' '}
+                <PartialEditTrigger
+                    modalProps={{
+                        initialData: security,
+                        ModalBodyComponent: SecurityModalBodyStatus,
+                        makeValidationSchema: securityDescriptionValidationSchema,
+                        repository: securitiesRepository,
+                        modalTitle: 'Edycja statusu',
+                        onEdit: handleEditObject,
+                        fieldsToUpdate: ['description']
+                    }} >
+                    <SecurityStatusBadge status={security.status} />
+                </PartialEditTrigger >
+            </div></>;
     }
 
     function handleEditObject(object: Security) {

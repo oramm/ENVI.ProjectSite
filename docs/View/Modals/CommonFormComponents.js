@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractNameFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.ContractNameFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.StatusSelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -60,7 +60,7 @@ function ProjectSelector({ name = '_parent', repository, showValidationInfo = tr
 exports.ProjectSelector = ProjectSelector;
 function StatusSelectFormElement({ statusNames, showValidationInfo = true, name = 'status' }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
-    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
@@ -80,6 +80,12 @@ function ContractStatusSelectFormElement({ showValidationInfo = true, name }) {
     return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
 }
 exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
+;
+function SecurityStatusSelectFormElement({ showValidationInfo = true, name }) {
+    const statuses = Object.entries(MainSetupReact_1.default.SecurityStatus).map(([key, value]) => value);
+    return react_1.default.createElement(StatusSelectFormElement, { statusNames: statuses, showValidationInfo: showValidationInfo, name: name });
+}
+exports.SecurityStatusSelectFormElement = SecurityStatusSelectFormElement;
 ;
 function ContractNameFormElement({ showValidationInfo = true, name }) {
     const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();

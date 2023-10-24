@@ -1,31 +1,10 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OtherContractAddNewModalButton = exports.OtherContractAddNewModalButtonGeneric = exports.OurContractAddNewModalButton = exports.OurContractAddNewModalButtonGeneric = exports.ContractPartialEditTrigger = exports.ContractEditModalButton = exports.ContractEditModalButtonGeneric = void 0;
-const react_1 = __importStar(require("react"));
-const GeneralModal_1 = require("../../../View/Modals/GeneralModal");
+exports.OtherContractAddNewModalButton = exports.OtherContractAddNewModalButtonGeneric = exports.OurContractAddNewModalButton = exports.OurContractAddNewModalButtonGeneric = exports.ContractEditModalButton = exports.ContractEditModalButtonGeneric = void 0;
+const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ContractsController_1 = require("../ContractsController");
 const ContractModalBody_1 = require("./ContractModalBody");
@@ -66,23 +45,6 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
         }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function ContractPartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, }, children }) {
-    const [showForm, setShowForm] = (0, react_1.useState)(false);
-    function handleOpen() {
-        setShowForm(true);
-    }
-    function handleClose() {
-        setShowForm(false);
-    }
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("span", { onClick: handleOpen, style: { cursor: 'pointer' } }, children),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
-                isEditing: true,
-                initialData: initialData,
-                additionalProps: additionalModalBodyProps,
-            }, fieldsToUpdate: fieldsToUpdate })));
-}
-exports.ContractPartialEditTrigger = ContractPartialEditTrigger;
 function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps }) {
     if (!repository)
         throw new Error('repository is required');
