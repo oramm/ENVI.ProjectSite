@@ -62,7 +62,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             this.loadFromSessionStorage();
         if (this.items.length === 0) {
             const params = { id: id.toString() };
-            await this.loadItemsFromServer(params);
+            await this.loadItemsFromServerGET(params);
         }
         if (this.items.length === 0)
             throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
@@ -91,7 +91,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServer(params?: Record<string, string>, specialActionRoute?: string) {
+    async loadItemsFromServerGET(params?: Record<string, string>, specialActionRoute?: string) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
         if (params)
@@ -110,6 +110,34 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         console.log(this.name + ' NodeJS: %o', this.items);
         return this.items;
     }
+
+    /**
+     * Ładuje items z serwera i resetuje currentitems
+     * @param formData - klucze i wartości do wysłania w ciele żądania jako JSON (np. dla filtrowania)
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
+     */
+    async loadItemsFromServerPOST(orConditions: any[], specialActionRoute?: string) {
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetup.serverUrl + actionRoute);
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                ...this.makeRequestHeaders(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orConditions }),
+            credentials: 'include',
+        });
+        if (!response.ok) throw new Error(response.statusText);
+        const loadedItems = await response.json();
+        this.items = loadedItems;
+        this.currentItems = [];
+
+        console.log(this.name + ' NodeJS: %o', this.items);
+        return this.items;
+    }
+
 
 
     /** Funkcja pomocnicza do dodawania nowych elementów */

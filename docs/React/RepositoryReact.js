@@ -56,7 +56,7 @@ class RepositoryReact {
             this.loadFromSessionStorage();
         if (this.items.length === 0) {
             const params = { id: id.toString() };
-            await this.loadItemsFromServer(params);
+            await this.loadItemsFromServerGET(params);
         }
         if (this.items.length === 0)
             throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
@@ -84,7 +84,7 @@ class RepositoryReact {
      * @param formData - klucze i wartości do wysłania w urlu jako parametry get (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServer(params, specialActionRoute) {
+    async loadItemsFromServerGET(params, specialActionRoute) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         if (params)
@@ -93,6 +93,31 @@ class RepositoryReact {
         const response = await fetch(url, {
             method: 'GET',
             headers: this.makeRequestHeaders(),
+            credentials: 'include',
+        });
+        if (!response.ok)
+            throw new Error(response.statusText);
+        const loadedItems = await response.json();
+        this.items = loadedItems;
+        this.currentItems = [];
+        console.log(this.name + ' NodeJS: %o', this.items);
+        return this.items;
+    }
+    /**
+     * Ładuje items z serwera i resetuje currentitems
+     * @param formData - klucze i wartości do wysłania w ciele żądania jako JSON (np. dla filtrowania)
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
+     */
+    async loadItemsFromServerPOST(orConditions, specialActionRoute) {
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                ...this.makeRequestHeaders(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orConditions }),
             credentials: 'include',
         });
         if (!response.ok)

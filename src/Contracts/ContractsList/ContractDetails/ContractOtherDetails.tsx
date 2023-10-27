@@ -17,8 +17,8 @@ export default function ContractOtherDetails() {
         async function fetchData() {
             if (!contract?.id) throw new Error('Nie kontraktu');
             const params = { id: contract.id.toString() }
-            const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServer(params))[0];
-            const fetchInvoicesData = (await invoicesRepository.loadItemsFromServer(params));
+            const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServerGET(params))[0];
+            const fetchInvoicesData = (await invoicesRepository.loadItemsFromServerGET(params));
             try {
                 const [
                     settlementData,

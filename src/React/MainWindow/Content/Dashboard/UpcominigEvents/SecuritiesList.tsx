@@ -19,16 +19,29 @@ export default function SecuritiesList() {
     useEffect(() => {
         async function fetchData() {
             setDataLoaded(false);
-            const firstPartExpiryDateTo = ToolsDate.addDays(new Date(), 30);
-            const [securities] = await Promise.all([
-                securitiesRepository.loadItemsFromServer({
-                    status: JSON.stringify([
-                        MainSetup.ContractStatuses.IN_PROGRESS,
-                        MainSetup.ContractStatuses.NOT_STARTED
-                    ]),
-                    firstPartExpiryDateTo: firstPartExpiryDateTo.toISOString().slice(0, 10),
-                }),
+            const expiryDateTo = ToolsDate.addDays(new Date(), 30);
+            const securities = await securitiesRepository.loadItemsFromServerPOST([
+                {
+                    status: [
+                        MainSetup.SecurityStatus.NOT_ISSUED,
+                        MainSetup.SecurityStatus.ISSUED,
+                        MainSetup.SecurityStatus.PROLONGED,
+                        MainSetup.SecurityStatus.TO_PROLONG,
+                    ],
+                    firstPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
+                },
+                {
+                    status: [
+                        MainSetup.SecurityStatus.NOT_ISSUED,
+                        MainSetup.SecurityStatus.ISSUED,
+                        MainSetup.SecurityStatus.PROLONGED,
+                        MainSetup.SecurityStatus.TO_PROLONG,
+                        MainSetup.SecurityStatus.RETURNED_1ST_PART,
+                    ],
+                    secondPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
+                }
             ]);
+
             setSecurities(securities);
             setExternalUpdate(prevState => prevState + 1);
             setDataLoaded(true);

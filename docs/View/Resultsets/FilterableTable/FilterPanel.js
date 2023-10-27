@@ -47,7 +47,7 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
     async function handleSubmitSearch(data) {
         onIsReadyChange(false);
         const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
-        const result = await repository.loadItemsFromServer(formData);
+        const result = await repository.loadItemsFromServerPOST([data]);
         setObjects(result);
         saveSnapshotToStorage(result);
         onIsReadyChange(true);

@@ -288,7 +288,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
             [searchKey]: query,
             ...Object.fromEntries(contextSearchParams.map(param => [param.key, param.value]))
         };
-        repository.loadItemsFromServer(params, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServerGET(params, specialSerwerSearchActionRoute)
             .then((items) => {
             setOptions(items);
             setIsLoading(false);
@@ -352,7 +352,7 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _contract, re
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServer({ 'contractId': JSON.stringify(_contract.id) });
+                await repository.loadItemsFromServerGET({ 'contractId': JSON.stringify(_contract.id) });
                 setOptions(repository.items);
             }
             else {

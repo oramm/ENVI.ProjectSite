@@ -44,15 +44,27 @@ function SecuritiesList() {
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             setDataLoaded(false);
-            const firstPartExpiryDateTo = ToolsDate_1.default.addDays(new Date(), 30);
-            const [securities] = await Promise.all([
-                MainWindowController_1.securitiesRepository.loadItemsFromServer({
-                    status: JSON.stringify([
-                        MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
-                        MainSetupReact_1.default.ContractStatuses.NOT_STARTED
-                    ]),
-                    firstPartExpiryDateTo: firstPartExpiryDateTo.toISOString().slice(0, 10),
-                }),
+            const expiryDateTo = ToolsDate_1.default.addDays(new Date(), 30);
+            const securities = await MainWindowController_1.securitiesRepository.loadItemsFromServerPOST([
+                {
+                    status: [
+                        MainSetupReact_1.default.SecurityStatus.NOT_ISSUED,
+                        MainSetupReact_1.default.SecurityStatus.ISSUED,
+                        MainSetupReact_1.default.SecurityStatus.PROLONGED,
+                        MainSetupReact_1.default.SecurityStatus.TO_PROLONG,
+                    ],
+                    firstPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
+                },
+                {
+                    status: [
+                        MainSetupReact_1.default.SecurityStatus.NOT_ISSUED,
+                        MainSetupReact_1.default.SecurityStatus.ISSUED,
+                        MainSetupReact_1.default.SecurityStatus.PROLONGED,
+                        MainSetupReact_1.default.SecurityStatus.TO_PROLONG,
+                        MainSetupReact_1.default.SecurityStatus.RETURNED_1ST_PART,
+                    ],
+                    secondPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
+                }
             ]);
             setSecurities(securities);
             setExternalUpdate(prevState => prevState + 1);

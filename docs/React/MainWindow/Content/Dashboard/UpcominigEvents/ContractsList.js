@@ -46,14 +46,14 @@ function ContractsList() {
             setDataLoaded(false);
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
             const [contracts] = await Promise.all([
-                MainWindowController_1.contractsRepository.loadItemsFromServer({
-                    status: JSON.stringify([
-                        MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
-                        MainSetupReact_1.default.ContractStatuses.NOT_STARTED
-                    ]),
-                    endDateTo: endDateTo.toISOString().slice(0, 10),
-                    getRemainingValue: true.toString(),
-                }),
+                MainWindowController_1.contractsRepository.loadItemsFromServerPOST([{
+                        status: [
+                            MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
+                            MainSetupReact_1.default.ContractStatuses.NOT_STARTED
+                        ],
+                        endDateTo: endDateTo.toISOString().slice(0, 10),
+                        getRemainingValue: true,
+                    }]),
             ]);
             setContracts(contracts);
             setExternalUpdate(prevState => prevState + 1);

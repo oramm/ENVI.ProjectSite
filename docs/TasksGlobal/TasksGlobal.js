@@ -53,12 +53,12 @@ function TasksGlobal() {
         async function fetchData() {
             setDataLoaded(false);
             const [contractsWithChildren] = await Promise.all([
-                TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServer({
+                TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerGET({
                     _project: JSON.stringify(selectedProject),
                     statusType: 'active',
                 }),
-                ContractsController_1.caseTypesRepository.loadItemsFromServer(),
-                ContractsController_1.milestoneTypesRepository.loadItemsFromServer(),
+                ContractsController_1.caseTypesRepository.loadItemsFromServerGET(),
+                ContractsController_1.milestoneTypesRepository.loadItemsFromServerGET(),
             ]);
             setContractsWithCildren(contractsWithChildren);
             setExternalUpdate(prevState => prevState + 1);

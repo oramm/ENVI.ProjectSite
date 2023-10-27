@@ -21,14 +21,14 @@ export default function ContractsList() {
             setDataLoaded(false);
             const endDateTo = ToolsDate.addDays(new Date(), 30);
             const [contracts] = await Promise.all([
-                contractsRepository.loadItemsFromServer({
-                    status: JSON.stringify([
+                contractsRepository.loadItemsFromServerPOST([{
+                    status: [
                         MainSetup.ContractStatuses.IN_PROGRESS,
                         MainSetup.ContractStatuses.NOT_STARTED
-                    ]),
+                    ],
                     endDateTo: endDateTo.toISOString().slice(0, 10),
-                    getRemainingValue: true.toString(),
-                }),
+                    getRemainingValue: true,
+                }]),
             ]);
             setContracts(contracts);
             setExternalUpdate(prevState => prevState + 1);

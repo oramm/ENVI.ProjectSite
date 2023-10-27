@@ -559,7 +559,7 @@ export function MyAsyncTypeahead({
             [searchKey]: query,
             ...Object.fromEntries(contextSearchParams.map(param => [param.key, param.value]))
         };
-        repository.loadItemsFromServer(params, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServerGET(params, specialSerwerSearchActionRoute)
             .then((items) => {
                 setOptions(items);
                 setIsLoading(false);
@@ -692,7 +692,7 @@ export function CaseSelectMenuElement({
     useEffect(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServer({ 'contractId': JSON.stringify(_contract.id) });
+                await repository.loadItemsFromServerGET({ 'contractId': JSON.stringify(_contract.id) });
                 setOptions(repository.items);
             } else {
                 repository.clearData();

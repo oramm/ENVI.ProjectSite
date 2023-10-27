@@ -47,7 +47,7 @@ function InvoiceDetails() {
         const idNumber = Number(id);
         const fetchData = async () => {
             const fetchInvoice = InvoicesController_1.invoicesRepository.loadItemFromRouter(idNumber);
-            const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServer({ invoiceId: id });
+            const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerGET({ invoiceId: id });
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData)

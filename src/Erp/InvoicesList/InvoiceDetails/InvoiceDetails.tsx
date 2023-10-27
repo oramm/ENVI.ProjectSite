@@ -21,7 +21,7 @@ export default function InvoiceDetails() {
 
         const fetchData = async () => {
             const fetchInvoice = invoicesRepository.loadItemFromRouter(idNumber);
-            const fetchItems = invoiceItemsRepository.loadItemsFromServer({ invoiceId: id });
+            const fetchItems = invoiceItemsRepository.loadItemsFromServerGET({ invoiceId: id });
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData) setInvoice(invoiceData);

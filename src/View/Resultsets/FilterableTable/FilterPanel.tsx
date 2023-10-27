@@ -30,7 +30,7 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
     async function handleSubmitSearch(data: FieldValues) {
         onIsReadyChange(false);
         const formData = parseFieldValuesToParams(data);
-        const result = await repository.loadItemsFromServer(formData) as DataItemType[];
+        const result = await repository.loadItemsFromServerPOST([data]) as DataItemType[];
         setObjects(result);
         saveSnapshotToStorage(result);
         onIsReadyChange(true);

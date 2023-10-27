@@ -21,8 +21,8 @@ export default function ContractOurDetails() {
             console.log(`ContracOurDetails: fetchData():: contract.id: ${contract?.id}`);
             if (!contract?.id) throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
-            const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServer({ id: contractIdString }))[0];
-            const fetchInvoicesData = (await invoicesRepository.loadItemsFromServer({ contractId: contractIdString }));
+            const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServerGET({ id: contractIdString }))[0];
+            const fetchInvoicesData = (await invoicesRepository.loadItemsFromServerGET({ contractId: contractIdString }));
             try {
                 const [
                     settlementData,
