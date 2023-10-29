@@ -47,7 +47,7 @@ function InvoiceDetails() {
         const idNumber = Number(id);
         const fetchData = async () => {
             const fetchInvoice = InvoicesController_1.invoicesRepository.loadItemFromRouter(idNumber);
-            const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerGET({ invoiceId: id });
+            const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData)
@@ -72,7 +72,6 @@ function InvoiceDetails() {
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 react_1.default.createElement(react_bootstrap_1.Container, null,
                     react_1.default.createElement(react_bootstrap_1.Row, null,
-                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: 'auto' }, invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl }))),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Nr faktury:"),
                             react_1.default.createElement("h5", null, invoice.number)),
@@ -92,7 +91,8 @@ function InvoiceDetails() {
                                     onEdit: setInvoice,
                                     initialData: invoice,
                                     makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
-                                }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } }))),
+                                }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } })),
+                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: 'auto' }, invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl })))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Data sprzeda\u017Cy:"),
@@ -120,7 +120,8 @@ function InvoiceDetails() {
                             react_1.default.createElement("h5", null, invoice._netValue)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
                             react_1.default.createElement("div", null, "Odbiorca"),
-                            react_1.default.createElement("h5", null, invoice._entity.name))),
+                            react_1.default.createElement("h5", null, invoice._entity.name),
+                            react_1.default.createElement("h5", null, invoice._entity.address))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && react_1.default.createElement("p", null,
                             "Opis: ",

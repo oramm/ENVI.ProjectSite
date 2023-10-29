@@ -47,8 +47,8 @@ function ContractOurDetails() {
             if (!contract?.id)
                 throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
-            const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerGET({ id: contractIdString }))[0];
-            const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServerGET({ contractId: contractIdString }));
+            const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }]))[0];
+            const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }]));
             try {
                 const [settlementData,] = await Promise.all([
                     fetchSettlementData,

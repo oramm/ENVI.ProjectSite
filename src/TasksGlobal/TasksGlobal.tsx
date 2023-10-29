@@ -31,12 +31,12 @@ export default function TasksGlobal() {
             setDataLoaded(false);
 
             const [contractsWithChildren] = await Promise.all([
-                contractsWithChildrenRepository.loadItemsFromServerGET({
-                    _project: JSON.stringify(selectedProject),
+                contractsWithChildrenRepository.loadItemsFromServerPOST([{
+                    _project: selectedProject,
                     statusType: 'active',
-                }),
-                caseTypesRepository.loadItemsFromServerGET(),
-                milestoneTypesRepository.loadItemsFromServerGET(),
+                }]),
+                caseTypesRepository.loadItemsFromServerPOST(),
+                milestoneTypesRepository.loadItemsFromServerPOST(),
             ]);
             setContractsWithCildren(contractsWithChildren);
             setExternalUpdate(prevState => prevState + 1);

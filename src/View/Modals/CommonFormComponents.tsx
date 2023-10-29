@@ -184,9 +184,10 @@ export function ContractSelectFormElement({
     const { formState: { errors } } = useFormContext();
 
     function makeContextSearchParams() {
-        const params = [] as { key: string, value: string }[];
-        params.push({ key: 'typesToInclude', value: typesToInclude });
-        if (_project) params.push({ key: 'projectId', value: _project.ourId });
+        const params = {
+            typesToInclude: typesToInclude,
+            _project: _project
+        };
         return params;
     }
 
@@ -204,7 +205,10 @@ export function ContractSelectFormElement({
                 name={name}
                 labelKey='_ourIdOrNumber_Name'
                 searchKey='searchText'
-                contextSearchParams={makeContextSearchParams()}
+                contextSearchParams={{
+                    typesToInclude: typesToInclude,
+                    _project: _project
+                }}
                 repository={repository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
@@ -519,7 +523,7 @@ type MyAsyncTypeaheadProps = {
     repository: RepositoryReact,
     labelKey: string
     searchKey?: string,
-    contextSearchParams?: { key: string, value: string }[],
+    contextSearchParams?: any,
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
     showValidationInfo?: boolean,
@@ -541,7 +545,7 @@ export function MyAsyncTypeahead({
     repository,
     labelKey,
     searchKey = labelKey,
-    contextSearchParams = [],
+    contextSearchParams = {},
     specialSerwerSearchActionRoute,
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     renderMenu,
@@ -557,9 +561,9 @@ export function MyAsyncTypeahead({
         setIsLoading(true);
         const params = {
             [searchKey]: query,
-            ...Object.fromEntries(contextSearchParams.map(param => [param.key, param.value]))
+            ...contextSearchParams
         };
-        repository.loadItemsFromServerGET(params, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute)
             .then((items) => {
                 setOptions(items);
                 setIsLoading(false);
@@ -576,8 +580,8 @@ export function MyAsyncTypeahead({
         field.onChange(valueToBeSent);
         if (readOnly)
             setValue(name, valueToBeSent);
-
     }
+
     return (
         <>
             <Controller
@@ -692,7 +696,7 @@ export function CaseSelectMenuElement({
     useEffect(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServerGET({ 'contractId': JSON.stringify(_contract.id) });
+                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
                 setOptions(repository.items);
             } else {
                 repository.clearData();

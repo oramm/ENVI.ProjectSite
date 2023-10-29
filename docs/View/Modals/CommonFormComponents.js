@@ -111,10 +111,10 @@ exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
 function ContractSelectFormElement({ name = '_contract', showValidationInfo = true, multiple = false, repository, typesToInclude = 'all', _project, readOnly = false, }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     function makeContextSearchParams() {
-        const params = [];
-        params.push({ key: 'typesToInclude', value: typesToInclude });
-        if (_project)
-            params.push({ key: 'projectId', value: _project.ourId });
+        const params = {
+            typesToInclude: typesToInclude,
+            _project: _project
+        };
         return params;
     }
     function renderOption(option) {
@@ -123,7 +123,10 @@ function ContractSelectFormElement({ name = '_contract', showValidationInfo = tr
             react_1.default.createElement("div", { className: "text-muted small" }, option.alias || option.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: makeContextSearchParams(), repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: '_ourIdOrNumber_Name', searchKey: 'searchText', contextSearchParams: {
+                typesToInclude: typesToInclude,
+                _project: _project
+            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.ContractSelectFormElement = ContractSelectFormElement;
 /**
@@ -278,7 +281,7 @@ exports.ErrorMessage = ErrorMessage;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = [], specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), renderMenu, multiple = false, showValidationInfo = true, readOnly = false }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = {}, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), renderMenu, multiple = false, showValidationInfo = true, readOnly = false }) {
     const { register, control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -286,9 +289,9 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         setIsLoading(true);
         const params = {
             [searchKey]: query,
-            ...Object.fromEntries(contextSearchParams.map(param => [param.key, param.value]))
+            ...contextSearchParams
         };
-        repository.loadItemsFromServerGET(params, specialSerwerSearchActionRoute)
+        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute)
             .then((items) => {
             setOptions(items);
             setIsLoading(false);
@@ -352,7 +355,7 @@ function CaseSelectMenuElement({ name = '_case', readonly = false, _contract, re
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServerGET({ 'contractId': JSON.stringify(_contract.id) });
+                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
                 setOptions(repository.items);
             }
             else {

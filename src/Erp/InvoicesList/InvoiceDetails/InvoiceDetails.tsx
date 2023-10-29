@@ -21,7 +21,7 @@ export default function InvoiceDetails() {
 
         const fetchData = async () => {
             const fetchInvoice = invoicesRepository.loadItemFromRouter(idNumber);
-            const fetchItems = invoiceItemsRepository.loadItemsFromServerGET({ invoiceId: id });
+            const fetchItems = invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData) setInvoice(invoiceData);
@@ -43,11 +43,6 @@ export default function InvoiceDetails() {
                 <Card.Body >
                     <Container>
                         <Row>
-                            <Col sm={1} lg='auto'>
-                                {invoice._documentOpenUrl && (
-                                    <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />
-                                )}
-                            </Col>
                             <Col sm={4} md={2}>
                                 <div>Nr faktury:</div>
                                 <h5>{invoice.number}</h5>
@@ -71,7 +66,11 @@ export default function InvoiceDetails() {
                                     buttonProps={{ buttonCaption: 'Edytuj Fakturę' }}
                                 />
                             </Col>
-
+                            <Col sm={1} lg='auto'>
+                                {invoice._documentOpenUrl && (
+                                    <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />
+                                )}
+                            </Col>
                         </Row>
                         <Row>
                             <Col sm={4} md={2}>
@@ -106,6 +105,7 @@ export default function InvoiceDetails() {
                             <Col sm={12} md={8}>
                                 <div>Odbiorca</div>
                                 <h5>{invoice._entity.name}</h5>
+                                <h5>{invoice._entity.address}</h5>
                             </Col>
 
                         </Row>

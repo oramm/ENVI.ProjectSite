@@ -42,9 +42,9 @@ function ContractOtherDetails() {
         async function fetchData() {
             if (!contract?.id)
                 throw new Error('Nie kontraktu');
-            const params = { id: contract.id.toString() };
-            const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerGET(params))[0];
-            const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServerGET(params));
+            const params = [{ id: contract.id }];
+            const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerPOST(params))[0];
+            const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServerPOST(params));
             try {
                 const [settlementData,] = await Promise.all([
                     fetchSettlementData,
