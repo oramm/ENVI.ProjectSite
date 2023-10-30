@@ -51,7 +51,7 @@ export default function ContractOurDetails() {
 
         let coordinatorName = contract?._manager ? `${contract._manager.name} ${contract._manager.surname}` : 'Nie określono';
         return (
-            <>Koordynator(ka): {`${contract._manager.name} ${contract._manager.surname}`}</>
+            <>{`Koordynator(ka): ${coordinatorName}`}</>
         );
     }
 

@@ -73,9 +73,7 @@ function ContractOurDetails() {
             return (react_1.default.createElement(react_bootstrap_1.Placeholder, { as: 'div', animation: "glow" },
                 react_1.default.createElement(react_bootstrap_1.Placeholder, { xs: 6 })));
         let coordinatorName = contract?._manager ? `${contract._manager.name} ${contract._manager.surname}` : 'Nie określono';
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            "Koordynator(ka): ",
-            `${contract._manager.name} ${contract._manager.surname}`));
+        return (react_1.default.createElement(react_1.default.Fragment, null, `Koordynator(ka): ${coordinatorName}`));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
