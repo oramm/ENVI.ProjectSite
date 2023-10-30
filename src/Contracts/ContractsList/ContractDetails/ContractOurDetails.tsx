@@ -46,6 +46,15 @@ export default function ContractOurDetails() {
         return <>{invoice._totalNetValue && <div className="text-end">{Tools.formatNumber(invoice._totalNetValue)}</div>}</>
     }
 
+    function renderCoordinatorData() {
+        if (!contract) return (<Placeholder as='div' animation="glow"><Placeholder xs={6} /></Placeholder>);
+
+        let coordinatorName = contract?._manager ? `${contract._manager.name} ${contract._manager.surname}` : 'Nie określono';
+        return (
+            <>Koordynator(ka): {`${contract._manager.name} ${contract._manager.surname}`}</>
+        );
+    }
+
     return (
         <Card >
             <Card.Body >
@@ -110,7 +119,7 @@ export default function ContractOurDetails() {
 
 
                 <p className='tekst-muted small'>
-                    Koordynator(ka): {`${contract._manager.name} ${contract._manager.surname}`}<br />
+                    Koordynator(ka): {renderCoordinatorData()}<br />
                     Aktualizacja: {ToolsDate.timestampToString(contract._lastUpdated)}
                 </p>
             </Card.Body >

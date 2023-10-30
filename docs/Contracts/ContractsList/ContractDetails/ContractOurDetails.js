@@ -68,6 +68,15 @@ function ContractOurDetails() {
     function renderInvoiceTotaValue(invoice) {
         return react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue)));
     }
+    function renderCoordinatorData() {
+        if (!contract)
+            return (react_1.default.createElement(react_bootstrap_1.Placeholder, { as: 'div', animation: "glow" },
+                react_1.default.createElement(react_bootstrap_1.Placeholder, { xs: 6 })));
+        let coordinatorName = contract?._manager ? `${contract._manager.name} ${contract._manager.surname}` : 'Nie określono';
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            "Koordynator(ka): ",
+            `${contract._manager.name} ${contract._manager.surname}`));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Container, null,
@@ -107,7 +116,7 @@ function ContractOurDetails() {
                             ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: '/invoice/', isDeletable: false, externalUpdate: invoices.length })))),
             react_1.default.createElement("p", { className: 'tekst-muted small' },
                 "Koordynator(ka): ",
-                `${contract._manager.name} ${contract._manager.surname}`,
+                renderCoordinatorData(),
                 react_1.default.createElement("br", null),
                 "Aktualizacja: ",
                 ToolsDate_1.default.timestampToString(contract._lastUpdated)))));
