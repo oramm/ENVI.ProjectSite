@@ -1,10 +1,12 @@
 import React from 'react';
+import { render } from 'react-dom';
+import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from '../../../React/RepositoryReact';
 import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
 import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
-import { GDDocFileIconLink, GDFolderIconLink } from "../CommonComponents";
+import { GDDocFileIconLink, GDFolderIconLink, SpinnerBootstrap } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from './FilterableTableTypes';
 
@@ -30,7 +32,8 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
         handleDeleteObject,
         EditButtonComponent,
         isDeletable,
-        repository
+        repository,
+        shouldRetrieveDataBeforeEdit
     } = useFilterableTableContext<DataItemType>();
 
     function tdBodyRender(columStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
@@ -66,6 +69,7 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
                         EditButtonComponent={EditButtonComponent}
                         handleDeleteObject={handleDeleteObject}
                         isDeletable={isDeletable}
+                        shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
                     />
                 </td>
             }
@@ -81,6 +85,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     handleDeleteObject?: (objectId: number) => void
     isDeletable: boolean
     layout?: 'vertical' | 'horizontal'
+    shouldRetrieveDataBeforeEdit?: boolean
 }
 
 export function RowActionMenu<DataItemType extends RepositoryDataItem>({
@@ -90,15 +95,11 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     handleDeleteObject,
     isDeletable,
     layout = 'vertical',
-    sectionRepository
+    sectionRepository,
+    shouldRetrieveDataBeforeEdit = false
 }: RowActionMenuProps<DataItemType>) {
 
-    function setRepository() {
-        if (sectionRepository)
-            return sectionRepository;
-        else
-            return useFilterableTableContext<DataItemType>().repository;
-    }
+    const repository = sectionRepository || useFilterableTableContext<DataItemType>().repository;
 
     return (
         <>
@@ -110,13 +111,13 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
             )}
             {EditButtonComponent && handleEditObject && (
                 <EditButtonComponent
-                    modalProps={{ onEdit: handleEditObject, initialData: dataObject, }}
+                    modalProps={{ onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }}
                     buttonProps={{ layout }}
                 />
             )}
             {isDeletable && handleDeleteObject && (
                 <DeleteModalButton
-                    modalProps={{ onDelete: handleDeleteObject, initialData: dataObject, repository: setRepository() }}
+                    modalProps={{ onDelete: handleDeleteObject, initialData: dataObject, repository }}
                     buttonProps={{ layout }}
                 />
             )}

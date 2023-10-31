@@ -19,7 +19,7 @@ export default function InvoiceDetails() {
         if (!id) throw new Error('Nie znaleziono id w adresie url');
         const idNumber = Number(id);
 
-        const fetchData = async () => {
+        async function fetchData() {
             const fetchInvoice = invoicesRepository.loadItemFromRouter(idNumber);
             const fetchItems = invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {

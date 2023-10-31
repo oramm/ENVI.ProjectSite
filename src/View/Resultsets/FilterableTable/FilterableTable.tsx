@@ -34,7 +34,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     initialObjects = [],
     onRowClick,
     externalUpdate = 0,
-    localFilter: locaFilter = false,
+    shouldRetrieveDataBeforeEdit = false
 }: FilterableTableProps<LeafDataItemType>) {
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
@@ -131,6 +131,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             EditButtonComponent={EditButtonComponent}
             isDeletable={isDeletable}
             externalUpdate={externalUpdate}
+            shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
         >
             <Container>
                 <Row>

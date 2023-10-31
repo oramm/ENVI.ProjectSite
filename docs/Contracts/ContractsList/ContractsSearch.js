@@ -9,7 +9,7 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const ContractsController_1 = require("./ContractsController");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
-//rendern name witch COntrctStatusBadge
+/**render name witch ContractStatusBadge */
 function renderName(contract) {
     return react_1.default.createElement(react_1.default.Fragment, null,
         contract.name,
@@ -24,6 +24,6 @@ function ContractsSearch({ title }) {
             { header: 'Rozpoczęcie', objectAttributeToShow: 'startDate' },
             { header: 'Zakończenie', objectAttributeToShow: 'endDate' },
             { header: 'Gwarancja do', objectAttributeToShow: 'guaranteeEndDate' },
-        ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: ContractsController_1.contractsRepository, selectedObjectRoute: '/contract/' }));
+        ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: ContractsController_1.contractsRepository, selectedObjectRoute: '/contract/', shouldRetrieveDataBeforeEdit: true }));
 }
 exports.default = ContractsSearch;

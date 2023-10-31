@@ -35,7 +35,11 @@ const CommonComponentsController_1 = require("../Resultsets/CommonComponentsCont
 const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
-function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate }) {
+const CommonComponents_1 = require("../Resultsets/CommonComponents");
+function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
+    const [dataObjectFromServer, setDataObjectFromServer] = react_1.default.useState(undefined);
+    const [isLoadingData, setIsLoadingData] = react_1.default.useState(false);
+    const [dataLoaded, setDataLoaded] = react_1.default.useState(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const formMethods = (0, react_hook_form_1.useForm)({
@@ -44,6 +48,21 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined
     });
     let newObject;
+    (0, react_1.useEffect)(() => {
+        async function fetchData() {
+            await loadDataObject();
+        }
+        fetchData();
+    }, []);
+    async function loadDataObject() {
+        if (dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing)
+            return;
+        setIsLoadingData(true);
+        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
+        setDataObjectFromServer(dataObjectFromServer);
+        setIsLoadingData(false);
+        setDataLoaded(true);
+    }
     async function handleSubmitRepository(data) {
         try {
             setErrorMessage('');
@@ -110,16 +129,23 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             onAddNew(newObject);
     }
     ;
+    function renderFormBody() {
+        if (isLoadingData) {
+            return (react_1.default.createElement("div", { className: "text-center m-5" },
+                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
+                react_1.default.createElement("div", { className: "m-3" }, "\u0141aduj\u0119 dane...")));
+        }
+        return react_1.default.createElement(react_bootstrap_1.Container, null,
+            react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
+                react_1.default.createElement(ModalBodyComponent, { ...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData } }),
+                errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: 'lg', show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
                     react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
-                react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
-                    react_1.default.createElement(react_bootstrap_1.Container, null,
-                        react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
-                            react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps }),
-                            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))))),
+                react_1.default.createElement(react_bootstrap_1.Modal.Body, null, renderFormBody()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending },
@@ -128,3 +154,5 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
                         requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })))))));
 }
 exports.GeneralModal = GeneralModal;
+function ModalFooter() {
+}

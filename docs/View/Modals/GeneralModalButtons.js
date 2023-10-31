@@ -32,9 +32,9 @@ const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate } }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, } }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
-    function handleOpen() {
+    async function handleOpen() {
         setShowForm(true);
     }
     function handleClose() {
@@ -46,7 +46,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
-            }, fieldsToUpdate: fieldsToUpdate })));
+            }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })));
 }
 exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */

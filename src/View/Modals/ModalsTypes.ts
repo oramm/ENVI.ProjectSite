@@ -60,11 +60,16 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
     specialActionRoute?: string;
     initialData: DataItemType;
     fieldsToUpdate?: string[];
+    shouldRetrieveDataBeforeEdit?: boolean;
 };
 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;
-    buttonProps?: GeneralModalButtonButtonProps;
+    buttonProps?: GeneralEditModalButtonButtonProps;
+};
+
+export type GeneralEditModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    onClick?: () => void;
 };
 
 type GeneralDeleteModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<

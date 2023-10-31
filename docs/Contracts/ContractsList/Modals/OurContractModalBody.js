@@ -43,6 +43,7 @@ function OurContractModalBody(props) {
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
+        setValue('_employers', initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         (!isEditing) ?

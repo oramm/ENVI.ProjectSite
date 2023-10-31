@@ -12,7 +12,7 @@ import { OurContractModalBody } from './OurContractModalBody';
 
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 export function ContractEditModalButtonGeneric({
-    modalProps: { onEdit, initialData, repository },
+    modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     if (!repository) throw new Error('repository is required');
@@ -25,7 +25,8 @@ export function ContractEditModalButtonGeneric({
                     modalTitle: "Edycja umowy",
                     repository: repository,
                     initialData: initialData,
-                    makeValidationSchema: ourContractValidationSchema
+                    makeValidationSchema: ourContractValidationSchema,
+                    shouldRetrieveDataBeforeEdit
                 }}
                 buttonProps={{
                     ...buttonProps,
@@ -47,7 +48,7 @@ export function ContractEditModalButtonGeneric({
 }
 
 export function ContractEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
@@ -55,7 +56,8 @@ export function ContractEditModalButton({
             modalProps={{
                 onEdit,
                 initialData,
-                repository: contractsRepository
+                repository: contractsRepository,
+                shouldRetrieveDataBeforeEdit
             }}
             buttonProps={buttonProps}
         />

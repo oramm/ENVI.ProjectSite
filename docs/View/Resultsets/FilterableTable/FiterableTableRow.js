@@ -14,7 +14,7 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
         throw new Error('onIsReadyChange is not defined');
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columStructure, dataObject) {
         if (columStructure.objectAttributeToShow !== undefined)
             return dataObject[columStructure.objectAttributeToShow];
@@ -29,21 +29,16 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick }
         tableStructure.map((column, index) => (react_1.default.createElement("td", { key: column.objectAttributeToShow || index }, tdBodyRender(column, dataObject)))),
         isActive &&
             react_1.default.createElement("td", { align: 'center' },
-                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable }))));
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit }))));
 }
 exports.FiterableTableRow = FiterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = 'vertical', sectionRepository }) {
-    function setRepository() {
-        if (sectionRepository)
-            return sectionRepository;
-        else
-            return (0, FilterableTableContext_1.useFilterableTableContext)().repository;
-    }
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = 'vertical', sectionRepository, shouldRetrieveDataBeforeEdit = false }) {
+    const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     return (react_1.default.createElement(react_1.default.Fragment, null,
         dataObject._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl })),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
-        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, }, buttonProps: { layout } })),
-        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject, repository: setRepository() }, buttonProps: { layout } }))));
+        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }, buttonProps: { layout } })),
+        isDeletable && handleDeleteObject && (react_1.default.createElement(DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject, repository }, buttonProps: { layout } }))));
 }
 exports.RowActionMenu = RowActionMenu;
 function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, buttonProps }) {

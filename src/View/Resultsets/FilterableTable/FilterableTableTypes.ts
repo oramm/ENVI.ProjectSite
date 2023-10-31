@@ -19,7 +19,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     initialObjects?: DataItemType[];
     onRowClick?: (object: DataItemType) => void;
     externalUpdate?: number;
-    localFilter?: boolean;
+    shouldRetrieveDataBeforeEdit?: boolean;
 }
 
 export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {

@@ -45,8 +45,9 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     EditButtonComponent: undefined,
     isDeletable: true,
     externalUpdate: 0,
+    shouldRetrieveDataBeforeEdit: false,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -68,6 +69,7 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             EditButtonComponent,
             isDeletable,
             externalUpdate,
+            shouldRetrieveDataBeforeEdit,
         } }, children);
 }
 exports.FilterableTableProvider = FilterableTableProvider;

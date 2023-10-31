@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form, Alert, Spinner, Container } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Modal, Button, Form, Alert, Spinner, Container, Placeholder } from 'react-bootstrap';
 import { useForm, FieldValues } from 'react-hook-form';
 import RepositoryReact from '../../React/RepositoryReact';
 import { FormProvider } from './FormContext';
@@ -10,6 +10,7 @@ import '../../Css/styles.css';
 import { ModalBodyProps } from './ModalsTypes';
 import { RepositoryDataItem } from '../../../Typings/bussinesTypes';
 import ErrorBoundary from './ErrorBoundary';
+import { SpinnerBootstrap } from '../Resultsets/CommonComponents';
 
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
@@ -24,6 +25,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     modalBodyProps: ModalBodyProps<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     fieldsToUpdate?: string[];
+    shouldRetrieveDataBeforeEdit?: boolean;
 };
 
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -38,8 +40,13 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     ModalBodyComponent,
     modalBodyProps,
     makeValidationSchema: validationSchema,
-    fieldsToUpdate
+    fieldsToUpdate,
+    shouldRetrieveDataBeforeEdit = false,
 }: GeneralModalProps<DataItemType>) {
+    const [dataObjectFromServer, setDataObjectFromServer] = React.useState<DataItemType | undefined>(undefined);
+    const [isLoadingData, setIsLoadingData] = React.useState(false);
+    const [dataLoaded, setDataLoaded] = React.useState(false);
+
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
     const formMethods = useForm({
@@ -47,8 +54,24 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         mode: 'onChange',
         resolver: validationSchema ? yupResolver(validationSchema(isEditing)) : undefined
     });
-
     let newObject: DataItemType;
+
+    useEffect(() => {
+        async function fetchData() {
+            await loadDataObject();
+        }
+        fetchData();
+    }, []);
+
+    async function loadDataObject() {
+        if (dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing) return;
+        setIsLoadingData(true);
+        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
+
+        setDataObjectFromServer(dataObjectFromServer as DataItemType);
+        setIsLoadingData(false);
+        setDataLoaded(true);
+    }
 
     async function handleSubmitRepository(data: FieldValues) {
         try {
@@ -113,6 +136,28 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         if (onAddNew) onAddNew(newObject);
     };
 
+    function renderFormBody() {
+        if (isLoadingData) {
+            return (
+                <div className="text-center m-5">
+                    <SpinnerBootstrap />
+                    <div className="m-3">Ładuję dane...</div>
+                </div>
+            );
+        }
+
+        return <Container>
+            <FormProvider value={formMethods}>
+                <ModalBodyComponent {...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData }} />
+                {errorMessage && (
+                    <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                        {errorMessage}
+                    </Alert>
+                )}
+            </FormProvider>
+        </Container>
+    }
+
     return (
         <Modal size='lg' show={show} onHide={onClose} onClick={(e: any) => e.stopPropagation()} onDoubleClick={(e: any) => e.stopPropagation()}>
             <ErrorBoundary>
@@ -121,16 +166,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Container>
-                            <FormProvider value={formMethods}>
-                                <ModalBodyComponent {...modalBodyProps} />
-                                {errorMessage && (
-                                    <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
-                                        {errorMessage}
-                                    </Alert>
-                                )}
-                            </FormProvider>
-                        </Container>
+                        {renderFormBody()}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={onClose}>
@@ -151,4 +187,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             </ErrorBoundary>
         </Modal >
     );
+}
+
+function ModalFooter() {
+
 }

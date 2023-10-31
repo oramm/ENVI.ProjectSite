@@ -7,7 +7,7 @@ import { ContractsFilterBody } from './ContractsFilterBody';
 import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAddNewModalButton } from './Modals/ContractModalButtons';
 
 
-//rendern name witch COntrctStatusBadge
+/**render name witch ContractStatusBadge */
 function renderName(contract: OurContract | OtherContract) {
     return <>
         {contract.name}
@@ -35,6 +35,7 @@ export default function ContractsSearch({ title }: { title: string }) {
             isDeletable={true}
             repository={contractsRepository}
             selectedObjectRoute={'/contract/'}
+            shouldRetrieveDataBeforeEdit={true}
         />
     );
 }

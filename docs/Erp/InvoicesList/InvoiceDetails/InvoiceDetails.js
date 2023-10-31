@@ -45,7 +45,7 @@ function InvoiceDetails() {
         if (!id)
             throw new Error('Nie znaleziono id w adresie url');
         const idNumber = Number(id);
-        const fetchData = async () => {
+        async function fetchData() {
             const fetchInvoice = InvoicesController_1.invoicesRepository.loadItemFromRouter(idNumber);
             const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
@@ -58,7 +58,8 @@ function InvoiceDetails() {
                 console.error("Error fetching data", error);
                 // Handle error as you see fit
             }
-        };
+        }
+        ;
         fetchData();
     }, []);
     if (!invoice) {

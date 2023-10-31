@@ -19,13 +19,13 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     handleEditSection: (sectionObject: RepositoryDataItem) => void;
     handleDeleteSection: (sectionObjectId: number) => void;
     setSections: React.Dispatch<React.SetStateAction<SectionNode<DataItemType>[]>>;
-
     selectedObjectRoute: string,
     activeRowId: number,
     activeSectionId: string,
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>,
     isDeletable: boolean,
     externalUpdate: number,
+    shouldRetrieveDataBeforeEdit?: boolean,
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
@@ -48,6 +48,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     EditButtonComponent: undefined,
     isDeletable: true,
     externalUpdate: 0,
+    shouldRetrieveDataBeforeEdit: false,
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -70,6 +71,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     EditButtonComponent,
     isDeletable = true,
     externalUpdate,
+    shouldRetrieveDataBeforeEdit = false,
     children, }: React.PropsWithChildren<FilterableTableContextProps<Item>>
 ) {
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>;
@@ -94,6 +96,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
         EditButtonComponent,
         isDeletable,
         externalUpdate,
+        shouldRetrieveDataBeforeEdit,
     }}>
         {children}
     </FilterableTableContextGeneric.Provider>;

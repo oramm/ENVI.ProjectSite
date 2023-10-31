@@ -18,6 +18,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
 
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
+        setValue('_employers', initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (

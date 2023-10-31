@@ -12,7 +12,7 @@ const ContractValidationSchema_1 = require("./ContractValidationSchema");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
+function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     if (!repository)
         throw new Error('repository is required');
     return (initialData.ourId
@@ -22,7 +22,8 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
                 modalTitle: "Edycja umowy",
                 repository: repository,
                 initialData: initialData,
-                makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema
+                makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema,
+                shouldRetrieveDataBeforeEdit
             }, buttonProps: {
                 ...buttonProps,
                 buttonVariant: "outline-success",
@@ -37,11 +38,12 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             }, buttonProps: { ...buttonProps } }));
 }
 exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     return (react_1.default.createElement(ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
             initialData,
-            repository: ContractsController_1.contractsRepository
+            repository: ContractsController_1.contractsRepository,
+            shouldRetrieveDataBeforeEdit
         }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;

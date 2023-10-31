@@ -4,12 +4,10 @@ import { Button } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
-import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
 import { DeleteIconButton, EditIconButton } from "../Resultsets/CommonComponents";
 
-export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = RepositoryDataItem>({
+export function GeneralEditModalButton<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     buttonProps,
     modalProps: {
         onEdit,
@@ -20,12 +18,13 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
         initialData,
         repository,
         makeValidationSchema,
-        fieldsToUpdate
+        fieldsToUpdate,
+        shouldRetrieveDataBeforeEdit,
     }
-}: GeneralEditModalButtonProps<DataItemTpe>) {
+}: GeneralEditModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
 
-    function handleOpen() {
+    async function handleOpen() {
         setShowForm(true);
     }
     function handleClose() {
@@ -38,7 +37,7 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
                 {...buttonProps}
                 onClick={handleOpen}
             />
-            <GeneralModal<DataItemTpe>
+            <GeneralModal<DataItemType>
                 onClose={handleClose}
                 show={showForm}
                 isEditing={true}
@@ -54,13 +53,15 @@ export function GeneralEditModalButton<DataItemTpe extends RepositoryDataItem = 
                     additionalProps: additionalModalBodyProps,
                 }}
                 fieldsToUpdate={fieldsToUpdate}
+                shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
             />
         </>
     );
 }
 
 /**wyświelta ikonę albo przycisk */
-function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void }) {
+function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void },
+) {
     const {
         buttonCaption,
         buttonIsActive,
