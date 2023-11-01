@@ -67,7 +67,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing) return;
         setIsLoadingData(true);
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
-
+        repository.addToCurrentItems(dataObjectFromServer.id);
         setDataObjectFromServer(dataObjectFromServer as DataItemType);
         setIsLoadingData(false);
         setDataLoaded(true);

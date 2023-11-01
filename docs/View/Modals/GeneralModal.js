@@ -59,6 +59,7 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             return;
         setIsLoadingData(true);
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
+        repository.addToCurrentItems(dataObjectFromServer.id);
         setDataObjectFromServer(dataObjectFromServer);
         setIsLoadingData(false);
         setDataLoaded(true);
