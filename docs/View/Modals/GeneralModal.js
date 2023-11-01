@@ -58,8 +58,11 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
         setIsLoadingData(true);
+        //TODO: w RepositoryReactdorobić funkckę która:
+        const oldItems = repository.items;
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
         repository.addToCurrentItems(dataObjectFromServer.id);
+        repository.items = oldItems.map(item => item.id === repository.currentItems[0].id ? repository.currentItems[0] : item);
         setDataObjectFromServer(dataObjectFromServer);
         setIsLoadingData(false);
         setDataLoaded(true);
