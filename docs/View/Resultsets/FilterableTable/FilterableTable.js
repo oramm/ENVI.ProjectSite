@@ -41,14 +41,14 @@ const Section_1 = require("./Section");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = [], onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)('');
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
     function initObjects() {
-        if (initialObjects.length > 0)
+        if (initialObjects)
             return initialObjects;
         const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
@@ -67,7 +67,9 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         return storedObjects;
     }
     (0, react_1.useEffect)(() => {
-        setObjects(initialObjects);
+        if (initialObjects)
+            setObjects(initialObjects);
+        console.log("Aktualizacja obiektów:", initialObjects);
     }, [externalUpdate]);
     function handleAddObject(object) {
         setObjects([...objects, object]);

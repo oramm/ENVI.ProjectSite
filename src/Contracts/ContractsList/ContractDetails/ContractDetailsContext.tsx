@@ -6,13 +6,13 @@ import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 // Utwórz kontekst
 const ContractDetailsContext = createContext<{
     contract?: OurContract | OtherContract,
-    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>,
+    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract | undefined>>,
     contractsRepository?: RepositoryReact<OurContract | OtherContract>,
 }>({});
 
 type ContractDetailsProviderProps = {
     contract?: OurContract | OtherContract,
-    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>,
+    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract | undefined>>,
     contractsRepository?: RepositoryReact<OurContract | OtherContract>,
 }
 

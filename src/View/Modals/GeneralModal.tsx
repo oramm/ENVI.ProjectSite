@@ -61,10 +61,10 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             await loadDataObject();
         }
         fetchData();
-    }, []);
+    }, [show]);
 
     async function loadDataObject() {
-        if (dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing) return;
+        if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing) return;
         setIsLoadingData(true);
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
 
@@ -172,7 +172,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                         <Button variant="secondary" onClick={onClose}>
                             Anuluj
                         </Button>
-                        <Button type="submit" variant="primary" disabled={!formMethods.formState.isValid || requestPending}>
+                        <Button type="submit" variant="primary" disabled={!formMethods.formState.isValid || requestPending || isLoadingData}>
                             Zatwierdź {' '}
                             {requestPending && <Spinner
                                 as="span"

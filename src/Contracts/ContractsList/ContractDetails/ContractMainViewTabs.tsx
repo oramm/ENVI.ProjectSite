@@ -14,7 +14,7 @@ export function ContractMainViewTabs() {
     const location = useLocation();
     const contractsRepository = createContractRepository();
 
-    const [contract, setContract] = useState(contractsRepository.currentItems[0]);
+    const [contract, setContract] = useState(undefined as OurContract | OtherContract | undefined);
     let { id } = useParams();
 
     useEffect(() => {
@@ -25,10 +25,8 @@ export function ContractMainViewTabs() {
     useEffect(() => {
         async function fetchData() {
             if (!id) throw new Error('Nie znaleziono id w adresie url');
-            if (contract) return;
-
             const idNumber = Number(id);
-            const contractData = await contractsRepository.loadItemFromRouter(idNumber);
+            const contractData = (await contractsRepository.loadItemsFromServerPOST([{ id }]))[0];
             setContract(contractData);
             initContractRepository(contractData);
         };
@@ -62,28 +60,28 @@ export function ContractMainViewTabs() {
 
     if (!contract) {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
-    }
-    return (
-        <ContractDetailsProvider
-            contract={contract}
-            setContract={setContract}
-            contractsRepository={contractsRepository}
-        >
-            <>
-                <ContractMainHeader />
-                <Tabs defaultActiveKey="general" id="uncontrolled-tab-example">
-                    <Tab eventKey="general" title="Dane ogólne">
-                        {contract.ourId
-                            ? <ContractOurDetails />
-                            : <ContractOtherDetails />
-                        }
-                    </Tab>
-                    <Tab eventKey="tasks" title="Zadania">
-                        <Tasks />
-                    </Tab>
-                </Tabs>
-            </>
-        </ContractDetailsProvider>
+    } else
+        return (
+            <ContractDetailsProvider
+                contract={contract}
+                setContract={setContract}
+                contractsRepository={contractsRepository}
+            >
+                <>
+                    <ContractMainHeader />
+                    <Tabs defaultActiveKey="general" id="uncontrolled-tab-example">
+                        <Tab eventKey="general" title="Dane ogólne">
+                            {contract.ourId
+                                ? <ContractOurDetails />
+                                : <ContractOtherDetails />
+                            }
+                        </Tab>
+                        <Tab eventKey="tasks" title="Zadania">
+                            <Tasks />
+                        </Tab>
+                    </Tabs>
+                </>
+            </ContractDetailsProvider>
 
-    );
+        );
 };

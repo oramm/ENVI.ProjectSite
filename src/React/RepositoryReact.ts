@@ -61,8 +61,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         if (this.items.length === 0)
             this.loadFromSessionStorage();
         if (this.items.length === 0) {
-            const params = [{ id: id.toString() }];
-            await this.loadItemsFromServerPOST(params);
+            await this.loadItemsFromServerPOST([{ id }]);
         }
         if (this.items.length === 0)
             throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);

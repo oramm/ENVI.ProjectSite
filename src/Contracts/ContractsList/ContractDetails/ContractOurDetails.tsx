@@ -12,13 +12,13 @@ export default function ContractOurDetails() {
     const { contract, setContract, contractsRepository } = useContractDetails();
     const [settlemenData, setSettlemenData] = useState(undefined as ContractsSettlementData | undefined);
     const [invoices, setInvoices] = useState([] as Invoice[]);
+    const [externalUpdate, setExternalUpdate] = useState(0);
     if (!contract) return <Alert variant='danger'>Nie wybrano umowy</Alert>;
 
 
     //fetch data
     useEffect(() => {
         async function fetchData() {
-            console.log(`ContracOurDetails: fetchData():: contract.id: ${contract?.id}`);
             if (!contract?.id) throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
             const fetchSettlementData = (await contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }]))[0];
@@ -32,6 +32,7 @@ export default function ContractOurDetails() {
                 ]);
                 setSettlemenData(settlementData);
                 setInvoices(fetchInvoicesData);
+                setExternalUpdate(prevState => prevState + 1);
 
             } catch (error) {
                 console.error("Error fetching data", error);
@@ -111,7 +112,7 @@ export default function ContractOurDetails() {
                                 repository={invoicesRepository}
                                 selectedObjectRoute={'/invoice/'}
                                 isDeletable={false}
-                                externalUpdate={invoices.length}
+                                externalUpdate={externalUpdate}
                             />
                         </Col>
                     </Row>

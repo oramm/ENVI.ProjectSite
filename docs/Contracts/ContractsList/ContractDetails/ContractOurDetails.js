@@ -38,12 +38,12 @@ function ContractOurDetails() {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     const [settlemenData, setSettlemenData] = (0, react_1.useState)(undefined);
     const [invoices, setInvoices] = (0, react_1.useState)([]);
+    const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     if (!contract)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
     //fetch data
     (0, react_1.useEffect)(() => {
         async function fetchData() {
-            console.log(`ContracOurDetails: fetchData():: contract.id: ${contract?.id}`);
             if (!contract?.id)
                 throw new Error('Nie wybrano kontraktu');
             const contractIdString = contract.id.toString();
@@ -56,6 +56,7 @@ function ContractOurDetails() {
                 ]);
                 setSettlemenData(settlementData);
                 setInvoices(fetchInvoicesData);
+                setExternalUpdate(prevState => prevState + 1);
             }
             catch (error) {
                 console.error("Error fetching data", error);
@@ -111,7 +112,7 @@ function ContractOurDetails() {
                                 { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
                                 { header: 'Netto, zł', renderTdBody: renderInvoiceTotaValue },
                                 { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
-                            ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: '/invoice/', isDeletable: false, externalUpdate: invoices.length })))),
+                            ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: '/invoice/', isDeletable: false, externalUpdate: externalUpdate })))),
             react_1.default.createElement("p", { className: 'tekst-muted small' },
                 "Koordynator(ka): ",
                 renderCoordinatorData(),

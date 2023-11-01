@@ -40,7 +40,7 @@ const Tasks_1 = __importDefault(require("./Tasks/Tasks"));
 function ContractMainViewTabs() {
     const location = (0, react_router_dom_1.useLocation)();
     const contractsRepository = createContractRepository();
-    const [contract, setContract] = (0, react_1.useState)(contractsRepository.currentItems[0]);
+    const [contract, setContract] = (0, react_1.useState)(undefined);
     let { id } = (0, react_router_dom_1.useParams)();
     (0, react_1.useEffect)(() => {
         console.log(`ContractMainViewTabs: useEffect(() => { id: ${contract?.id}`);
@@ -49,10 +49,8 @@ function ContractMainViewTabs() {
         async function fetchData() {
             if (!id)
                 throw new Error('Nie znaleziono id w adresie url');
-            if (contract)
-                return;
             const idNumber = Number(id);
-            const contractData = await contractsRepository.loadItemFromRouter(idNumber);
+            const contractData = (await contractsRepository.loadItemsFromServerPOST([{ id }]))[0];
             setContract(contractData);
             initContractRepository(contractData);
         }
@@ -87,15 +85,16 @@ function ContractMainViewTabs() {
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
             " ");
     }
-    return (react_1.default.createElement(ContractDetailsContext_1.ContractDetailsProvider, { contract: contract, setContract: setContract, contractsRepository: contractsRepository },
-        react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(ContractMainHeader_1.ContractMainHeader, null),
-            react_1.default.createElement(react_bootstrap_1.Tabs, { defaultActiveKey: "general", id: "uncontrolled-tab-example" },
-                react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" }, contract.ourId
-                    ? react_1.default.createElement(ContractOurDetails_1.default, null)
-                    : react_1.default.createElement(ContractOtherDetails_1.default, null)),
-                react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Zadania" },
-                    react_1.default.createElement(Tasks_1.default, null))))));
+    else
+        return (react_1.default.createElement(ContractDetailsContext_1.ContractDetailsProvider, { contract: contract, setContract: setContract, contractsRepository: contractsRepository },
+            react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(ContractMainHeader_1.ContractMainHeader, null),
+                react_1.default.createElement(react_bootstrap_1.Tabs, { defaultActiveKey: "general", id: "uncontrolled-tab-example" },
+                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "general", title: "Dane og\u00F3lne" }, contract.ourId
+                        ? react_1.default.createElement(ContractOurDetails_1.default, null)
+                        : react_1.default.createElement(ContractOtherDetails_1.default, null)),
+                    react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "tasks", title: "Zadania" },
+                        react_1.default.createElement(Tasks_1.default, null))))));
 }
 exports.ContractMainViewTabs = ContractMainViewTabs;
 ;

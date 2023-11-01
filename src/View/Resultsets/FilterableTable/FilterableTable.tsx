@@ -31,7 +31,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     isDeletable = true,
     FilterBodyComponent,
     selectedObjectRoute = '',
-    initialObjects = [],
+    initialObjects = undefined,
     onRowClick,
     externalUpdate = 0,
     shouldRetrieveDataBeforeEdit = false
@@ -43,7 +43,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const [objects, setObjects] = useState(initObjects());
 
     function initObjects() {
-        if (initialObjects.length > 0) return initialObjects;
+        if (initialObjects) return initialObjects;
         const objectsFromStorage = getObjectsFromStorage();
         if (objectsFromStorage) {
             initialObjects = objectsFromStorage;
@@ -63,8 +63,11 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     useEffect(() => {
-        setObjects(initialObjects);
+        if (initialObjects)
+            setObjects(initialObjects);
+        console.log("Aktualizacja obiektów:", initialObjects);
     }, [externalUpdate]);
+
 
     function handleAddObject(object: LeafDataItemType) {
         setObjects([...objects, object]);

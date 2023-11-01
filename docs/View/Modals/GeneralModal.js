@@ -53,9 +53,9 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             await loadDataObject();
         }
         fetchData();
-    }, []);
+    }, [show]);
     async function loadDataObject() {
-        if (dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing)
+        if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
         setIsLoadingData(true);
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
@@ -148,7 +148,7 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
                 react_1.default.createElement(react_bootstrap_1.Modal.Body, null, renderFormBody()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending },
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
                         "Zatwierd\u017A ",
                         ' ',
                         requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })))))));
