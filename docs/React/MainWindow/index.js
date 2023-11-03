@@ -48,6 +48,8 @@ const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDe
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch"));
 const MainContent_1 = __importDefault(require("./Content/MainContent"));
+const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
+const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = '/';
@@ -108,7 +110,9 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

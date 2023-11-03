@@ -173,10 +173,12 @@ export interface IncomingLetter extends Letter {
 }
 
 export interface Entity extends RepositoryDataItem {
-    name: string;
-    address: string;
-    description: string;
+    name?: string;
+    address?: string;
     taxNumber?: string;
+    www?: string;
+    email?: string;
+    phone?: string;
 }
 
 export interface Person extends RepositoryDataItem {

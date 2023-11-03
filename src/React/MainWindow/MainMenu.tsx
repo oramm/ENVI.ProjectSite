@@ -37,6 +37,12 @@ export default function MainMenu() {
                             <Nav.Link as={Link} to="/tasksGlobal" className={isActive('/tasksGlobal')}>
                                 Zadania
                             </Nav.Link>
+                            <Nav.Link as={Link} to="/entities" className={isActive('/entities')}>
+                                Podmioty
+                            </Nav.Link>
+                            <Nav.Link as={Link} to="/persons" className={isActive('/persons')}>
+                                Osoby
+                            </Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

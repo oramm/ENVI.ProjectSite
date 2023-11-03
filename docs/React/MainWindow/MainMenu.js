@@ -25,6 +25,8 @@ function MainMenu() {
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive('/letters') }, "Pisma"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) &&
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive('/invoices') }, "Faktury"),
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive('/tasksGlobal') }, "Zadania")))))));
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive('/tasksGlobal') }, "Zadania"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive('/entities') }, "Podmioty"),
+                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive('/persons') }, "Osoby")))))));
 }
 exports.default = MainMenu;

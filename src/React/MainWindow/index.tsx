@@ -20,6 +20,8 @@ import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDeta
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
 import MainContent from "./Content/MainContent";
+import EntitiesSearch from "../../Entities/EntitiesSearch";
+import PersonsSearch from "../../Persons/PersonsSearch";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -92,6 +94,8 @@ function AppRoutes() {
                 <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
                 <Route path="/invoice/:id" element={<InvoiceDetails />} />
                 <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
+                <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </HashRouter>
