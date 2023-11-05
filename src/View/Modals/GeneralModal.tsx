@@ -154,7 +154,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             <FormProvider value={formMethods}>
                 <ModalBodyComponent {...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData }} />
                 {errorMessage && (
-                    <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                    <Alert className='mt-3' variant="danger" onClose={() => setErrorMessage('')} dismissible>
                         {errorMessage}
                     </Alert>
                 )}

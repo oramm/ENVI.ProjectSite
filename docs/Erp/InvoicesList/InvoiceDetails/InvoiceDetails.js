@@ -40,6 +40,7 @@ const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const { id } = (0, react_router_dom_1.useParams)();
     (0, react_1.useEffect)(() => {
         if (!id)
@@ -56,12 +57,33 @@ function InvoiceDetails() {
             }
             catch (error) {
                 console.error("Error fetching data", error);
-                // Handle error as you see fit
+                if (error instanceof Error)
+                    setErrorMessage(error.message);
             }
         }
         ;
         fetchData();
     }, []);
+    function handleError(error) {
+        setErrorMessage(error.message || 'An error occurred while copying the invoice.');
+    }
+    ;
+    function renderAvtionsMenu() {
+        if (errorMessage)
+            return (react_1.default.createElement(react_bootstrap_1.Alert, { className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage));
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
+            " ",
+            ' ',
+            " ",
+            react_1.default.createElement(InvoiceModalButtons_1.CopyButton, { onError: handleError }),
+            ' ',
+            react_1.default.createElement(InvoiceModalButtons_1.InvoiceEditModalButton, { modalProps: {
+                    onEdit: setInvoice,
+                    initialData: invoice,
+                    makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
+                }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } }));
+    }
     if (!invoice) {
         return react_1.default.createElement("div", null,
             "\u0141aduj\u0119 dane... ",
@@ -81,18 +103,7 @@ function InvoiceDetails() {
                             react_1.default.createElement("h5", null, invoice._contract.ourId)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 2 },
                             react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
-                        react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
-                            react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
-                            " ",
-                            ' ',
-                            " ",
-                            react_1.default.createElement(InvoiceModalButtons_1.CopyButton, null),
-                            ' ',
-                            react_1.default.createElement(InvoiceModalButtons_1.InvoiceEditModalButton, { modalProps: {
-                                    onEdit: setInvoice,
-                                    initialData: invoice,
-                                    makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
-                                }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } })),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderAvtionsMenu()),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: 'auto' }, invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl })))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },

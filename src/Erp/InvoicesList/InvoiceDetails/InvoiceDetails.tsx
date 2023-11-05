@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Container, Card, Col, Row, Button } from 'react-bootstrap';
+import { Container, Card, Col, Row, Button, Alert } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
 import ToolsDate from '../../../React/ToolsDate';
+import ErrorBoundary from '../../../View/Modals/ErrorBoundary';
 import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../../View/Resultsets/FilterableTable/FilterableTable';
 import { invoiceItemsRepository, invoicesRepository } from '../InvoicesController';
@@ -13,6 +14,8 @@ import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
+    const [errorMessage, setErrorMessage] = useState('');
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -28,15 +31,41 @@ export default function InvoiceDetails() {
                 setInvoiceItems(itemsData);
             } catch (error) {
                 console.error("Error fetching data", error);
-                // Handle error as you see fit
+                if (error instanceof Error)
+                    setErrorMessage(error.message);
             }
         };
 
         fetchData();
     }, []);
+
+    function handleError(error: Error) {
+        setErrorMessage(error.message || 'An error occurred while copying the invoice.');
+    };
+
+    function renderAvtionsMenu() {
+        if (errorMessage)
+            return (
+                <Alert className='mt-3' variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                    {errorMessage}
+                </Alert>
+            );
+        return <><ActionButton /> {' '} <CopyButton onError={handleError} />{' '}
+            <InvoiceEditModalButton
+                modalProps={{
+                    onEdit: setInvoice,
+                    initialData: invoice,
+                    makeValidationSchema: makeInvoiceValidationSchema
+                }}
+                buttonProps={{ buttonCaption: 'Edytuj Fakturę' }}
+            />
+        </>
+    }
+
     if (!invoice) {
         return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
     }
+
     return (
         <InvoiceProvider invoice={invoice} setInvoice={setInvoice} >
             <Card >
@@ -55,16 +84,7 @@ export default function InvoiceDetails() {
                                 <InvoiceStatusBadge status={invoice.status} />
                             </Col>
                             <Col md="auto">
-                                <ActionButton /> {' '} <CopyButton />{' '}
-                                <InvoiceEditModalButton
-                                    modalProps={{
-                                        onEdit: setInvoice,
-                                        initialData: invoice,
-                                        makeValidationSchema: makeInvoiceValidationSchema
-                                    }
-                                    }
-                                    buttonProps={{ buttonCaption: 'Edytuj Fakturę' }}
-                                />
+                                {renderAvtionsMenu()}
                             </Col>
                             <Col sm={1} lg='auto'>
                                 {invoice._documentOpenUrl && (

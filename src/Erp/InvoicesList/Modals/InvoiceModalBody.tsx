@@ -10,12 +10,13 @@ import { contractsRepository, entitiesRepository } from '../InvoicesController';
 export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invoice>) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
     const statuses = [];
-    if (initialData?.status) statuses.push(initialData.status)
     statuses.push(
         MainSetup.InvoiceStatuses.FOR_LATER,
         MainSetup.InvoiceStatuses.TO_CORRECT,
         MainSetup.InvoiceStatuses.WITHDRAWN
     );
+    if (initialData?.status && !statuses.includes(initialData.status)) statuses.push(initialData.status)
+
     const status = watch('status');
 
     useEffect(() => {

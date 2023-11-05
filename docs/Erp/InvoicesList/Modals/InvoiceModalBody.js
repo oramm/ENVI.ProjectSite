@@ -36,9 +36,9 @@ const InvoicesController_1 = require("../InvoicesController");
 function InvoiceModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
     const statuses = [];
-    if (initialData?.status)
-        statuses.push(initialData.status);
     statuses.push(MainSetupReact_1.default.InvoiceStatuses.FOR_LATER, MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT, MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN);
+    if (initialData?.status && !statuses.includes(initialData.status))
+        statuses.push(initialData.status);
     const status = watch('status');
     (0, react_1.useEffect)(() => {
         console.log('InvoiceModalBody useEffect', initialData);

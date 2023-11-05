@@ -16,7 +16,7 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_entities', labelKey: 'name', repository: PersonsController_1.entitiesRepository, multiple: true, showValidationInfo: false }),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_entities' }))));
 }

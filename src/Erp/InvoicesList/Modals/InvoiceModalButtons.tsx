@@ -55,22 +55,29 @@ export function InvoiceAddNewModalButton({
     );
 }
 
-export function CopyButton() {
+export function CopyButton({ onError }: { onError: (error: Error) => void }) {
     const { invoice } = useInvoice();
 
     async function handleClick() {
-        await invoicesRepository.copyItem(invoice);
+        try {
+            await invoicesRepository.copyItem(invoice);
+        } catch (error) {
+            if (error instanceof Error) {
+                onError(error);
+            }
+        }
     }
 
     return (
         <Button
-            key={`Kopiuj`}
-            variant='outline-secondary'
-            size='sm'
+            key="Kopiuj"
+            variant="outline-secondary"
+            size="sm"
             onClick={handleClick}
         >
-            {`Kopiuj`}
-        </Button>);
+            Kopiuj
+        </Button>
+    );
 }
 
 export function ChangeStatusButton({ specialActionRoute, newStatus }: { specialActionRoute: string, newStatus: string }) {

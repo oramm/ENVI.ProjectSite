@@ -18,7 +18,7 @@ export function PersonsFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={8}>
-                <Form.Label>Odbiorcy</Form.Label>
+                <Form.Label>Podmiot</Form.Label>
                 <MyAsyncTypeahead
                     name='_entities'
                     labelKey='name'

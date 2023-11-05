@@ -42,12 +42,19 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
-function CopyButton() {
+function CopyButton({ onError }) {
     const { invoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleClick() {
-        await InvoicesController_1.invoicesRepository.copyItem(invoice);
+        try {
+            await InvoicesController_1.invoicesRepository.copyItem(invoice);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                onError(error);
+            }
+        }
     }
-    return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Kopiuj`, variant: 'outline-secondary', size: 'sm', onClick: handleClick }, `Kopiuj`));
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick }, "Kopiuj"));
 }
 exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus }) {
