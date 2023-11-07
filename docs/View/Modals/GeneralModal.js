@@ -142,7 +142,7 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         return react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
                 react_1.default.createElement(ModalBodyComponent, { ...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData } }),
-                errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))));
+                errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: 'pre-wrap' }, className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))));
     }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: 'lg', show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
