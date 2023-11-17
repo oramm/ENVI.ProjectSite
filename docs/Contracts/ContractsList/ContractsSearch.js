@@ -13,6 +13,8 @@ const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 function renderName(contract) {
     return react_1.default.createElement(react_1.default.Fragment, null,
         contract.name,
+        " ",
+        ' ',
         react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }));
 }
 function ContractsSearch({ title }) {

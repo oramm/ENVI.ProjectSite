@@ -50,6 +50,7 @@ const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsLis
 const MainContent_1 = __importDefault(require("./Content/MainContent"));
 const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
 const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
+const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = '/';
@@ -112,7 +113,8 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

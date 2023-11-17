@@ -22,9 +22,6 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element
     */
     addToCurrentItems(id: number) {
-        const wasItemAlreadySelected = this.currentItems.find(existingDataItem => existingDataItem.id == id);
-        if (wasItemAlreadySelected) return;
-
         const itemSelected = this.items.find(item => item.id === id);
         if (!itemSelected) throw new Error('Nie znaleziono elementu o id: ' + id);
         if (this.isMultiSelect)

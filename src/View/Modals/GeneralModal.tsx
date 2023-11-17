@@ -45,7 +45,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 }: GeneralModalProps<DataItemType>) {
     const [dataObjectFromServer, setDataObjectFromServer] = React.useState<DataItemType | undefined>(undefined);
     const [isLoadingData, setIsLoadingData] = React.useState(false);
-    const [dataLoaded, setDataLoaded] = React.useState(false);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [requestPending, setRequestPending] = useState(false);
@@ -64,18 +63,20 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     }, [show]);
 
     async function loadDataObject() {
-        if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing) return;
+        if (!show || !shouldRetrieveDataBeforeEdit || !isEditing) return;
         setIsLoadingData(true);
-        //TODO: w RepositoryReactdorobić funkckę która:
-        const oldItems = repository.items;
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
-        repository.addToCurrentItems(dataObjectFromServer.id);
-        repository.items = oldItems.map(item => item.id === repository.currentItems[0].id ? repository.currentItems[0] : item)
+        if (dataObjectFromServer) {
+            repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+            repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+        } else {
+            throw new Error('Nie znaleziono obiektu');
+        }
 
         setDataObjectFromServer(dataObjectFromServer as DataItemType);
         setIsLoadingData(false);
-        setDataLoaded(true);
     }
+
 
     async function handleSubmitRepository(data: FieldValues) {
         try {

@@ -70,7 +70,7 @@ function InvoiceDetails() {
     ;
     function renderAvtionsMenu() {
         if (errorMessage)
-            return (react_1.default.createElement(react_bootstrap_1.Alert, { className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage));
+            return (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: 'pre-wrap' }, className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage));
         return react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
             " ",

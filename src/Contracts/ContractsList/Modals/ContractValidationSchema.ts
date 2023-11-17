@@ -52,6 +52,7 @@ export function ourContractValidationSchema(isEditing: boolean) {
     return (
         Yup.object().shape({
             ...commonFields,
+            //_city: Yup.object(),
             ourId: Yup.string()
                 .required('Oznaczenie jest wymagane')
                 .min(9, 'Oznaczenie musi mieć przynajmniej 9 znaków z kropkami')
@@ -80,6 +81,8 @@ export function ourContractValidationSchema(isEditing: boolean) {
                         return parts.length === 3;
                     }
                 ),
+            _employers: Yup.array()
+                .required('Wybierz Zamawiającego'),
         })
     )
 }

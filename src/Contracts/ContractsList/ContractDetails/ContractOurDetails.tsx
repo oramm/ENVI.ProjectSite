@@ -68,7 +68,7 @@ export default function ContractOurDetails() {
                     <Row className='mt-3 text-end'>
                         <Col sm={4} md={2}>
                             <div>Wartość netto, zł:</div>
-                            {settlemenData?.value
+                            {settlemenData && Tools.isNumber(settlemenData.value)
                                 ? <h5 >{Tools.formatNumber(settlemenData.value)}</h5>
                                 : 'Jeszcze nie określono'
                             }
@@ -76,7 +76,7 @@ export default function ContractOurDetails() {
                         <MyTooltip content='Na podstawie faktur wysłanych' placement='top'>
                             <Col sm={4} md={2}>
                                 <div>Rozliczono, zł:</div>
-                                {settlemenData?.totalIssuedValue
+                                {settlemenData && Tools.isNumber(settlemenData?.totalIssuedValue)
                                     ? <h5>{Tools.formatNumber(settlemenData.totalIssuedValue)}</h5>
                                     : 'Jeszcze nie wysłano faktur'
                                 }
@@ -86,7 +86,7 @@ export default function ContractOurDetails() {
                         <MyTooltip content='Na podstawie faktur wysłanych' placement='top'>
                             <Col sm={4} md={2}>
                                 <div>Do rozliczenia, zł:</div>
-                                {settlemenData?.remainingValue
+                                {settlemenData && Tools.isNumber(settlemenData.remainingValue)
                                     ? <h5>{Tools.formatNumber(settlemenData.remainingValue)}</h5>
                                     : 'Jeszcze nie określono'
                                 }

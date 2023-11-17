@@ -86,19 +86,19 @@ function ContractOurDetails() {
                 react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3 text-end' },
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                         react_1.default.createElement("div", null, "Warto\u015B\u0107 netto, z\u0142:"),
-                        settlemenData?.value
+                        settlemenData && Tools_1.default.isNumber(settlemenData.value)
                             ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.value))
                             : 'Jeszcze nie określono'),
                     react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'Na podstawie faktur wys\u0142anych', placement: 'top' },
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Rozliczono, z\u0142:"),
-                            settlemenData?.totalIssuedValue
+                            settlemenData && Tools_1.default.isNumber(settlemenData?.totalIssuedValue)
                                 ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.totalIssuedValue))
                                 : 'Jeszcze nie wysłano faktur')),
                     react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'Na podstawie faktur wys\u0142anych', placement: 'top' },
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Do rozliczenia, z\u0142:"),
-                            settlemenData?.remainingValue
+                            settlemenData && Tools_1.default.isNumber(settlemenData.remainingValue)
                                 ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.remainingValue))
                                 : 'Jeszcze nie określono'))),
                 react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },

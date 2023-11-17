@@ -41,14 +41,23 @@ function OurContractModalBody(props) {
     (0, react_1.useEffect)(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
+        console.log('OurContractModalBody _city:', initialData?._city?.name);
+        if (initialData?._city?.id) {
+            setValue('_city', initialData?._city, { shouldValidate: true });
+        }
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
         setValue('_employers', initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
+    console.log('OurContractModalBody _city:', initialData?._city?.name);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        (!isEditing) ?
-            react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' })
-            : null,
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "city" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
+                react_1.default.createElement(CommonFormComponents_1.CitySelectFormElement, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
+            !isEditing &&
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
+                    react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!errors?.ourId, isValid: !errors?.ourId, disabled: _type === undefined, ...register('ourId') }),
@@ -61,7 +70,6 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(CommonFormComponents_1.PersonSelectFormElement, { label: 'Administrator', name: '_admin', repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
-                react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_employers', labelKey: 'name', repository: ContractsController_1.entitiesRepository, multiple: true }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: '_employers' })))));
+                react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_employers', labelKey: 'name', repository: ContractsController_1.entitiesRepository, multiple: true })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

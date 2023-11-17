@@ -13,8 +13,9 @@ import { Controller } from 'react-hook-form';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import * as Yup from 'yup';
 import { TypeaheadManagerChildProps } from 'react-bootstrap-typeahead/types/types';
-import { Case, CaseType, Contract, DocumentTemplate, Milestone, MilestoneType, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
+import { Case, CaseType, City, Contract, DocumentTemplate, Milestone, MilestoneType, Project, RepositoryDataItem } from '../../../Typings/bussinesTypes';
 import { caseTypesRepository } from '../../Contracts/ContractsList/ContractsController';
+import ErrorBoundary from './ErrorBoundary';
 
 type ProjectSelectorProps = {
     repository: RepositoryReact,
@@ -38,10 +39,12 @@ export function ProjectSelector({
     const { formState: { errors } } = useFormContext();
 
     function renderOption(option: any) {
+
+        const city = option as City;
         return (
             <div>
-                <span>{option.ourId}</span>
-                <div className="text-muted small">{option.alias}</div>
+                <span>{city.ourId}</span>
+                <div className="text-muted small">{city.alias}</div>
             </div>);
     }
 
@@ -163,6 +166,46 @@ export function InvoiceStatusSelectFormElement({ showValidationInfo = true, name
     />
 };
 
+export type CitySelectFormElementProps = {
+    name?: string,
+    showValidationInfo?: boolean,
+    multiple?: boolean,
+    repository: RepositoryReact,
+}
+
+export function CitySelectFormElement({
+    name = '_city',
+    showValidationInfo = true,
+    multiple = false,
+    repository
+}: CitySelectFormElementProps) {
+    const { formState: { errors } } = useFormContext();
+
+    function renderOption(option: any) {
+        //console.log("renderOption - Option: ", option); // Log the option being rendered
+
+        return (
+            <div>
+                <span>{option.name}</span>
+                <div className="text-muted small">{option.code}</div>
+            </div>);
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey='name'
+                searchKey='searchText'
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    )
+}
+
 export type ContractSelectFormElementProps = {
     name?: string,
     showValidationInfo?: boolean,
@@ -172,6 +215,7 @@ export type ContractSelectFormElementProps = {
     _project?: Project,
     readOnly?: boolean,
 }
+
 export function ContractSelectFormElement({
     name = '_contract',
     showValidationInfo = true,
@@ -470,7 +514,9 @@ export function PersonSelectFormElement({
     }
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        const valueToBeSent = selectedOptions.length > 0
+            ? (multiple ? selectedOptions : selectedOptions[0])
+            : null;
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
     }
@@ -558,6 +604,7 @@ export function MyAsyncTypeahead({
     const [options, setOptions] = useState<any[]>([]);
 
     function handleSearch(query: string) {
+        //console.log("handleSearch - Query: ", query); // Log the search query
         setIsLoading(true);
         const params = {
             [searchKey]: query,
@@ -575,11 +622,16 @@ export function MyAsyncTypeahead({
     const filterBy = () => true;
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        //console.log("handleOnChange - Selected Options: ", selectedOptions);
+        const valueToBeSent = selectedOptions.length > 0
+            ? (multiple ? selectedOptions : selectedOptions[0])
+            : null;
+        //console.log("handleOnChange - Value to be sent: ", valueToBeSent);
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
-        if (readOnly)
+        if (readOnly) {
             setValue(name, valueToBeSent);
+        }
     }
 
     return (
@@ -587,8 +639,9 @@ export function MyAsyncTypeahead({
             <Controller
                 name={name}
                 control={control}
-                render={({ field }) => (
-                    <AsyncTypeahead
+                render={({ field }) => {
+                    //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
+                    return (<AsyncTypeahead
                         renderMenu={renderMenu ? renderMenu : undefined}
                         filterBy={filterBy}
                         id={`${name}-asyncTypeahead`}
@@ -607,7 +660,8 @@ export function MyAsyncTypeahead({
                         isValid={showValidationInfo ? !(errors?.[name]) : undefined}
                         isInvalid={showValidationInfo ? !!(errors?.[name]) : undefined}
                     />
-                )}
+                    )
+                }}
             />
             <ErrorMessage errors={errors} name={name} />
             {readOnly && (
@@ -793,7 +847,6 @@ export function ValueInPLNInput({
                             displayType="input"
                             allowNegative={false}
                             onValueChange={(values: NumberFormatValues) => {
-                                console.log('values: ', values);
                                 setValue(keyLabel, values.floatValue)
                                 //field.onChange(values.floatValue);
                             }}

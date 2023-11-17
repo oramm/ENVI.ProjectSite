@@ -122,5 +122,8 @@ class Tools {
             return true;
         return false;
     }
+    static isNumber(value) {
+        return typeof value === 'number' && !isNaN(value);
+    }
 }
 exports.default = Tools;

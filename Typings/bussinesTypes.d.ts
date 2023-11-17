@@ -252,3 +252,8 @@ export interface Security extends RepositoryDataItem {
     _lastUpdated: string;
     _editor: Person;
 }
+
+export interface City extends RepositoryDataItem {
+    name: string;
+    code: string;
+}

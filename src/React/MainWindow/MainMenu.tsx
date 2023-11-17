@@ -43,6 +43,11 @@ export default function MainMenu() {
                             <Nav.Link as={Link} to="/persons" className={isActive('/persons')}>
                                 Osoby
                             </Nav.Link>
+                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetup.currentUser.systemRoleName) &&
+                                <Nav.Link as={Link} to="/admin/cities" className={isActive('/admin/cities')}>
+                                    Miasta
+                                </Nav.Link>
+                            }
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

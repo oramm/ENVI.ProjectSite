@@ -129,4 +129,9 @@ export default class Tools {
         for (const element in object) return true;
         return false;
     }
+
+    static isNumber(value: unknown): value is number {
+        return typeof value === 'number' && !isNaN(value);
+    }
+
 }

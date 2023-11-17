@@ -10,7 +10,7 @@ import { ContractEditModalButton, OtherContractAddNewModalButton, OurContractAdd
 /**render name witch ContractStatusBadge */
 function renderName(contract: OurContract | OtherContract) {
     return <>
-        {contract.name}
+        {contract.name} {' '}
         <ContractStatusBadge status={contract.status} />
     </>;
 }

@@ -39,7 +39,6 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
 function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
     const [dataObjectFromServer, setDataObjectFromServer] = react_1.default.useState(undefined);
     const [isLoadingData, setIsLoadingData] = react_1.default.useState(false);
-    const [dataLoaded, setDataLoaded] = react_1.default.useState(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const formMethods = (0, react_hook_form_1.useForm)({
@@ -55,17 +54,19 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         fetchData();
     }, [show]);
     async function loadDataObject() {
-        if (!show || dataLoaded || !shouldRetrieveDataBeforeEdit || !isEditing)
+        if (!show || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
         setIsLoadingData(true);
-        //TODO: w RepositoryReactdorobić funkckę która:
-        const oldItems = repository.items;
         const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
-        repository.addToCurrentItems(dataObjectFromServer.id);
-        repository.items = oldItems.map(item => item.id === repository.currentItems[0].id ? repository.currentItems[0] : item);
+        if (dataObjectFromServer) {
+            repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+            repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+        }
+        else {
+            throw new Error('Nie znaleziono obiektu');
+        }
         setDataObjectFromServer(dataObjectFromServer);
         setIsLoadingData(false);
-        setDataLoaded(true);
     }
     async function handleSubmitRepository(data) {
         try {
