@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FilterableTable from '../View/Resultsets/FilterableTable/FilterableTable';
 import { Entity } from '../../Typings/bussinesTypes';
 import { EntityAddNewModalButton, EntityEditModalButton } from './Modals/EntityModalButtons';
@@ -6,6 +6,10 @@ import { entitiesRepository } from './EntitiesController';
 import { EntitiesFilterBody } from './EntityFilterBody';
 
 export default function EntitiesSearch({ title }: { title: string }) {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+
     function buildLabelFromEntities(entities: Entity[]): string {
         if (!entities || entities.length === 0) return '';
 

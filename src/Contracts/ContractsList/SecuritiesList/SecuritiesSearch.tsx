@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Security } from '../../../../Typings/bussinesTypes';
 import Tools from '../../../React/Tools';
 import ToolsDate from '../../../React/ToolsDate';
@@ -15,6 +15,9 @@ export default function SecuritiesSearch({ title }: { title: string }) {
     const [securities, setSecurities] = useState([] as Security[]);
     const [externalUpdate, setExternalUpdate] = useState(0);
 
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
 
     function renderValueGeneric(security: Security, value: number, fieldsToUpdate: string[]) {
         if (security.value === undefined) return <></>

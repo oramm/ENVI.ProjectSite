@@ -40,6 +40,9 @@ const SecuritiesFilterBody_1 = require("./SecuritiesFilterBody");
 function SecuritiesSearch({ title }) {
     const [securities, setSecurities] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
+    (0, react_1.useEffect)(() => {
+        document.title = title;
+    }, [title]);
     function renderValueGeneric(security, value, fieldsToUpdate) {
         if (security.value === undefined)
             return react_1.default.createElement(react_1.default.Fragment, null);

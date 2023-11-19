@@ -54,6 +54,7 @@ function InvoiceDetails() {
                 if (invoiceData)
                     setInvoice(invoiceData);
                 setInvoiceItems(itemsData);
+                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ''}`;
             }
             catch (error) {
                 console.error("Error fetching data", error);

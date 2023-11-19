@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { OtherContract, OurContract, Task } from '../../../Typings/bussinesTypes';
 import { ContractStatusBadge } from '../../View/Resultsets/CommonComponents';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
@@ -16,6 +16,10 @@ function renderName(contract: OurContract | OtherContract) {
 }
 
 export default function ContractsSearch({ title }: { title: string }) {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+
     return (
         <FilterableTable<OurContract | OtherContract>
             id='contracts'

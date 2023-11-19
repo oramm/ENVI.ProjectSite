@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import { InvoicesFilterBody } from './InvoiceFilterBody';
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from './Modals/InvoiceModalButtons';
@@ -8,6 +8,10 @@ import { invoicesRepository } from './InvoicesController';
 import Tools from '../../React/Tools';
 
 export default function InvoicesSearch({ title }: { title: string }) {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+
     function makeEntityLabel(invoice: Invoice) {
         return (
             <>

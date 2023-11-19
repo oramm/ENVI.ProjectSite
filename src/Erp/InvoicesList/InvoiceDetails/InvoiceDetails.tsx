@@ -29,6 +29,7 @@ export default function InvoiceDetails() {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData) setInvoice(invoiceData);
                 setInvoiceItems(itemsData);
+                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ''}`
             } catch (error) {
                 console.error("Error fetching data", error);
                 if (error instanceof Error)

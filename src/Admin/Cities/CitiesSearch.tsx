@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
 import { City } from '../../../Typings/bussinesTypes';
 import { CityAddNewModalButton, CityEditModalButton } from './Modals/CityModalButtons';
@@ -6,6 +6,10 @@ import { citiesRepository } from './CitiesController';
 import { CitiesFilterBody } from './CityFilterBody';
 
 export default function CitiesSearch({ title }: { title: string }) {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+
     function buildLabelFromCities(cities: City[]): string {
         if (!cities || cities.length === 0) return '';
 
