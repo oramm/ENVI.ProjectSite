@@ -53,7 +53,7 @@ function ContractMainViewTabs() {
             const contractData = (await contractsRepository.loadItemsFromServerPOST([{ id }]))[0];
             setContract(contractData);
             initContractRepository(contractData);
-            document.title = `Umowa  ${contractData.ourId || contractData.number || idNumber}`;
+            document.title = `Umowa ${contractData.ourId || contractData.number || idNumber}`;
         }
         ;
         fetchData();

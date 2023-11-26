@@ -16,10 +16,9 @@ export function OurContractModalBody(props: ModalBodyProps) {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
         console.log('OurContractModalBody _city:', initialData?._city?.name);
-        if (initialData?._city?.id) {
-
-            setValue('_city', initialData?._city, { shouldValidate: true });
-        }
+        //if (initialData?._city?.id) {
+        setValue('_city', initialData?._city, { shouldValidate: true });
+        //}
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
         setValue('_employers', initialData?._employers, { shouldValidate: true });
@@ -29,7 +28,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
 
     return (<>
         <Row>
-            <Form.Group as={Col} controlId="city">
+            <Form.Group as={Col} controlId="_city">
                 <Form.Label>Miasto</Form.Label>
                 <CitySelectFormElement
                     repository={citiesRepository}
@@ -44,22 +43,6 @@ export function OurContractModalBody(props: ModalBodyProps) {
                 </Form.Group>
             }
         </Row>
-        <Form.Group controlId="ourId">
-            <Form.Label>Oznaczenie ENVI</Form.Label>
-            <Form.Control
-                type="text"
-                placeholder="Oznaczenie ENVI"
-                isInvalid={!!errors?.ourId}
-                isValid={!errors?.ourId}
-                disabled={_type === undefined}
-                {...register('ourId')}
-            />
-            {errors?.ourId && (
-                <Form.Text className="text-danger">
-                    {errors.ourId.message as string}
-                </Form.Text>
-            )}
-        </Form.Group>
         <ContractModalBody
             {...props}
         />

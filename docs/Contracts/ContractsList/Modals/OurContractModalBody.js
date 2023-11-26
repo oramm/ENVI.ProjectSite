@@ -42,9 +42,9 @@ function OurContractModalBody(props) {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
         console.log('OurContractModalBody _city:', initialData?._city?.name);
-        if (initialData?._city?.id) {
-            setValue('_city', initialData?._city, { shouldValidate: true });
-        }
+        //if (initialData?._city?.id) {
+        setValue('_city', initialData?._city, { shouldValidate: true });
+        //}
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
         setValue('_employers', initialData?._employers, { shouldValidate: true });
@@ -52,16 +52,12 @@ function OurContractModalBody(props) {
     console.log('OurContractModalBody _city:', initialData?._city?.name);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "city" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_city" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
                 react_1.default.createElement(CommonFormComponents_1.CitySelectFormElement, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
             !isEditing &&
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
                     react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' }))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "ourId" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie ENVI"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Oznaczenie ENVI", isInvalid: !!errors?.ourId, isValid: !errors?.ourId, disabled: _type === undefined, ...register('ourId') }),
-            errors?.ourId && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors.ourId.message))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
