@@ -41,10 +41,7 @@ function OurContractModalBody(props) {
     (0, react_1.useEffect)(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
-        console.log('OurContractModalBody _city:', initialData?._city?.name);
-        //if (initialData?._city?.id) {
         setValue('_city', initialData?._city, { shouldValidate: true });
-        //}
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
         setValue('_employers', initialData?._employers, { shouldValidate: true });
@@ -54,7 +51,7 @@ function OurContractModalBody(props) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_city" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
-                react_1.default.createElement(CommonFormComponents_1.CitySelectFormElement, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
+                react_1.default.createElement(CommonFormComponents_1.CitySelectFormElement, { repository: ContractsController_1.citiesRepository, showValidationInfo: true, allowNew: true })),
             !isEditing &&
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
                     react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'our' }))),

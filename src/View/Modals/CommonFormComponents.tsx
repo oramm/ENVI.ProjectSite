@@ -171,13 +171,15 @@ export type CitySelectFormElementProps = {
     showValidationInfo?: boolean,
     multiple?: boolean,
     repository: RepositoryReact,
+    allowNew?: boolean,
 }
 
 export function CitySelectFormElement({
     name = '_city',
     showValidationInfo = true,
     multiple = false,
-    repository
+    repository,
+    allowNew = false,
 }: CitySelectFormElementProps) {
     const { formState: { errors } } = useFormContext();
 
@@ -200,6 +202,7 @@ export function CitySelectFormElement({
                 repository={repository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
+                allowNew={allowNew}
                 showValidationInfo={showValidationInfo}
             />
         </>
@@ -572,6 +575,7 @@ type MyAsyncTypeaheadProps = {
     contextSearchParams?: any,
     specialSerwerSearchActionRoute?: string
     multiple?: boolean,
+    allowNew?: boolean,
     showValidationInfo?: boolean,
     renderMenuItemChildren?: RenderMenuItemChildren,
     renderMenu?: (results: any[], menuProps: any, state: TypeaheadManagerChildProps) => JSX.Element,
@@ -596,6 +600,7 @@ export function MyAsyncTypeahead({
     renderMenuItemChildren = (option: any) => <>{option[labelKey]}</>,
     renderMenu,
     multiple = false,
+    allowNew = false,
     showValidationInfo = true,
     readOnly = false
 }: MyAsyncTypeaheadProps) {
@@ -621,17 +626,21 @@ export function MyAsyncTypeahead({
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
 
-    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
-        //console.log("handleOnChange - Selected Options: ", selectedOptions);
-        const valueToBeSent = selectedOptions.length > 0
-            ? (multiple ? selectedOptions : selectedOptions[0])
-            : null;
-        //console.log("handleOnChange - Value to be sent: ", valueToBeSent);
+    function handleOnChange(selectedOptions: any[], field: ControllerRenderProps<any, string>) {
+        let valueToBeSent;
+        if (selectedOptions.length > 0) {
+            if (selectedOptions[0].customOption) {
+                // Nowa wartość wprowadzona przez użytkownika
+                valueToBeSent = multiple ? selectedOptions.map(opt => opt[labelKey]) : selectedOptions[0][labelKey];
+            } else {
+                // Wybrana wartość z listy
+                valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+            }
+        } else {
+            valueToBeSent = null;
+        }
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
-        if (readOnly) {
-            setValue(name, valueToBeSent);
-        }
     }
 
     return (
@@ -645,6 +654,7 @@ export function MyAsyncTypeahead({
                         renderMenu={renderMenu ? renderMenu : undefined}
                         filterBy={filterBy}
                         id={`${name}-asyncTypeahead`}
+                        allowNew={allowNew}
                         isLoading={isLoading}
                         labelKey={labelKey}
                         minLength={2}

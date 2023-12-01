@@ -109,7 +109,7 @@ function InvoiceStatusSelectFormElement({ showValidationInfo = true, name }) {
 }
 exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
 ;
-function CitySelectFormElement({ name = '_city', showValidationInfo = true, multiple = false, repository }) {
+function CitySelectFormElement({ name = '_city', showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     const { formState: { errors } } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         //console.log("renderOption - Option: ", option); // Log the option being rendered
@@ -118,7 +118,7 @@ function CitySelectFormElement({ name = '_city', showValidationInfo = true, mult
             react_1.default.createElement("div", { className: "text-muted small" }, option.code)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: 'name', searchKey: 'searchText', repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: 'name', searchKey: 'searchText', repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.CitySelectFormElement = CitySelectFormElement;
 function ContractSelectFormElement({ name = '_contract', showValidationInfo = true, multiple = false, repository, typesToInclude = 'all', _project, readOnly = false, }) {
@@ -296,7 +296,7 @@ exports.ErrorMessage = ErrorMessage;
  * @param multiple czy pole wyboru ma być wielokrotnego wyboru
  * @param renderMenuItemChildren funkcja renderująca elementy listy wyboru (domyślnie wyświetla tylko labelKey)
 */
-function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = {}, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), renderMenu, multiple = false, showValidationInfo = true, readOnly = false }) {
+function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, contextSearchParams = {}, specialSerwerSearchActionRoute, renderMenuItemChildren = (option) => react_1.default.createElement(react_1.default.Fragment, null, option[labelKey]), renderMenu, multiple = false, allowNew = false, showValidationInfo = true, readOnly = false }) {
     const { register, control, setValue, formState: { errors } } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -317,21 +317,27 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     // filtered by the search endpoint, so no need to do it again.
     const filterBy = () => true;
     function handleOnChange(selectedOptions, field) {
-        //console.log("handleOnChange - Selected Options: ", selectedOptions);
-        const valueToBeSent = selectedOptions.length > 0
-            ? (multiple ? selectedOptions : selectedOptions[0])
-            : null;
-        //console.log("handleOnChange - Value to be sent: ", valueToBeSent);
+        let valueToBeSent;
+        if (selectedOptions.length > 0) {
+            if (selectedOptions[0].customOption) {
+                // Nowa wartość wprowadzona przez użytkownika
+                valueToBeSent = multiple ? selectedOptions.map(opt => opt[labelKey]) : selectedOptions[0][labelKey];
+            }
+            else {
+                // Wybrana wartość z listy
+                valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+            }
+        }
+        else {
+            valueToBeSent = null;
+        }
         setValue(name, valueToBeSent);
         field.onChange(valueToBeSent);
-        if (readOnly) {
-            setValue(name, valueToBeSent);
-        }
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined }));
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? multiple ? field.value : [field.value] : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(errors?.[name]) : undefined, isInvalid: showValidationInfo ? !!(errors?.[name]) : undefined }));
             } }),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && (react_1.default.createElement("input", { type: "hidden", ...register(name) }))));

@@ -15,10 +15,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
     useEffect(() => {
         setValue('_type', initialData?._type, { shouldValidate: true });
         setValue('ourId', initialData?.ourId || '', { shouldValidate: true });
-        console.log('OurContractModalBody _city:', initialData?._city?.name);
-        //if (initialData?._city?.id) {
         setValue('_city', initialData?._city, { shouldValidate: true });
-        //}
         setValue('_admin', initialData?._admin, { shouldValidate: true });
         setValue('_manager', initialData?._manager, { shouldValidate: true });
         setValue('_employers', initialData?._employers, { shouldValidate: true });
@@ -33,6 +30,7 @@ export function OurContractModalBody(props: ModalBodyProps) {
                 <CitySelectFormElement
                     repository={citiesRepository}
                     showValidationInfo={true}
+                    allowNew={true}
                 />
             </Form.Group>
             {!isEditing &&
