@@ -23,6 +23,7 @@ import MainContent from "./Content/MainContent";
 import EntitiesSearch from "../../Entities/EntitiesSearch";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
+import OffersSearch from "../../Offers/OffersSearch";
 
 const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -98,6 +99,7 @@ function AppRoutes() {
                 <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                 <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                 <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                <Route path="/offers" element={<OffersSearch title="Oferty" />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </HashRouter>

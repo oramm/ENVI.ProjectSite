@@ -1,7 +1,7 @@
 import { number } from "yup";
 import MainSetup from "../src/React/MainSetupReact";
 
-export type SystemRoleName = 'ADMIN' | 'ENVI_MANAGER' | 'ENVI_EMPLOYEE' | 'ENVI_COOPERATOR' | 'EXTERNAL_USER';
+export type SystemRoleName = "ADMIN" | "ENVI_MANAGER" | "ENVI_EMPLOYEE" | "ENVI_COOPERATOR" | "EXTERNAL_USER";
 
 export type SystemRole = {
     id: number;
@@ -20,7 +20,7 @@ export interface User {
 export interface RepositoryDataItem {
     id: number;
     [key: string]: any;
-};
+}
 
 export interface Project extends RepositoryDataItem {
     name: string;
@@ -45,7 +45,7 @@ export interface Contract extends RepositoryDataItem {
     startDate: string;
     endDate: string;
     guaranteeEndDate: string;
-    _parent: Project;
+    _project: Project;
     status: string;
     gdFolderId: string;
     meetingProtocolsGdFolderId: string;
@@ -67,7 +67,6 @@ export interface OurContract extends Contract {
     _admin: Person;
     _manager: Person;
     ourId: string;
-
 }
 
 export interface OtherContract extends Contract {
@@ -76,11 +75,11 @@ export interface OtherContract extends Contract {
 }
 
 export interface ContractsSettlementData {
-    id: number,
-    ourId: string,
-    value: number,
-    totalIssuedValue: number,
-    remainingValue: number
+    id: number;
+    ourId: string;
+    value: number;
+    totalIssuedValue: number;
+    remainingValue: number;
 }
 
 export interface Milestone extends RepositoryDataItem {
@@ -144,8 +143,7 @@ export interface CaseType extends RepositoryDataItem {
     isUniquePerMilestone: boolean;
     _milestoneType: MilestoneType;
     isDefault: boolean;
-};
-
+}
 
 export interface Letter extends RepositoryDataItem {
     number: string;
@@ -169,7 +167,6 @@ export interface OurLetter extends Letter {
 
 export interface IncomingLetter extends Letter {
     isOur: false;
-
 }
 
 export interface Entity extends RepositoryDataItem {
@@ -237,15 +234,15 @@ export interface InvoiceItem extends RepositoryDataItem {
 }
 
 export interface Security extends RepositoryDataItem {
-    description: string,
-    value: number,
-    returnedValue: number,
-    _remainingValue: number,
-    deductionValue: number,
-    firstPartRate: number,
-    secondPartRate: number,
-    firstPartExpiryDate: string,
-    secondPartExpiryDate: string,
+    description: string;
+    value: number;
+    returnedValue: number;
+    _remainingValue: number;
+    deductionValue: number;
+    firstPartRate: number;
+    secondPartRate: number;
+    firstPartExpiryDate: string;
+    secondPartExpiryDate: string;
     isCash: boolean;
     gdFolderId: string;
     _contract: OurContract;
@@ -257,3 +254,24 @@ export interface City extends RepositoryDataItem {
     name: string;
     code: string;
 }
+
+interface Offer extends RepositoryDataItem {
+    alias: string;
+    description: string;
+    submissionDeadline: string;
+    _type: ContractType;
+    _city: City;
+    typeId: number;
+    form: string;
+    isOur: boolean;
+    bidProcedure: string;
+    editorId: number;
+    _lastUpdated: string;
+    employerName: string;
+    status: string;
+    gdFolderId: string;
+}
+
+export interface OurOffer extends Offer {}
+
+export interface ExternalOffer extends Offer {}

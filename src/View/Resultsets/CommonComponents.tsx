@@ -235,28 +235,64 @@ export function SecurityStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function OfferStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = 'light';
+
+    switch (status) {
+        case MainSetup.OfferStatus.TO_DO:
+            variant = 'primary'; // Choose appropriate color
+            break;
+        case MainSetup.OfferStatus.DONE:
+            variant = 'info'; // Choose appropriate color
+            break;
+        case MainSetup.OfferStatus.AWARDED:
+            variant = 'success';
+            break;
+        case MainSetup.OfferStatus.LOST:
+            variant = 'danger';
+            break;
+        case MainSetup.OfferStatus.WITHDRAWN:
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetup.OfferStatus.NOT_INTERESTED:
+            variant = 'secondary';
+            break;
+        default:
+            variant = 'light';
+            textMode = 'dark';
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+};
+
 export function TaskStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = 'light';
     switch (status) {
-        case MainSetup.TaskStatuses.BACKLOG:
+        case MainSetup.TaskStatus.BACKLOG:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetup.TaskStatuses.NOT_STARTED:
+        case MainSetup.TaskStatus.NOT_STARTED:
             variant = 'secondary';
             break;
-        case MainSetup.TaskStatuses.IN_PROGRESS:
+        case MainSetup.TaskStatus.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetup.TaskStatuses.TO_CORRECT:
+        case MainSetup.TaskStatus.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetup.TaskStatuses.AWAITING_RESPONSE:
+        case MainSetup.TaskStatus.AWAITING_RESPONSE:
             variant = 'info';
             break;
-        case MainSetup.TaskStatuses.DONE:
+        case MainSetup.TaskStatus.DONE:
             variant = 'success';
             break;
         default:

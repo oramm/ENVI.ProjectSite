@@ -27,7 +27,6 @@ const dateFields = {
             }
             return value > this.parent.endDate;
         }),
-
 };
 
 const commonFields = {
@@ -52,6 +51,8 @@ export function ourContractValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         _city: Yup.object().required('Wybierz miasto'),
+        _admin: Yup.object().required('Wybierz administratora'),
+        _manager: Yup.object().required('Wybierz koordynatora'),
         _employers: Yup.array().required('Wybierz Zamawiającego'),
     });
 }

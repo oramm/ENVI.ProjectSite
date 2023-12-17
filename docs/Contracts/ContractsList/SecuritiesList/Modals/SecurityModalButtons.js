@@ -14,47 +14,45 @@ const SecurityValidationSchema_1 = require("./SecurityValidationSchema");
 /** przycisk i modal edycji SecurityCash */
 function SecurityEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     if (!repository)
-        throw new Error('repository is required');
-    return (initialData.gdFolderId
-        ? react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-                onEdit: onEdit,
-                ModalBodyComponent: SecurityCashModalBody_1.SecurityCashModalBody,
-                modalTitle: "Edycja ZNWU",
-                repository: repository,
-                initialData: initialData,
-                makeValidationSchema: SecurityValidationSchema_1.securityCashValidationSchema
-            }, buttonProps: {
-                ...buttonProps,
-                buttonVariant: "outline-success",
-            } })
-        : react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-                onEdit: onEdit,
-                ModalBodyComponent: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody,
-                modalTitle: "Edycja ZNWU",
-                repository: repository,
-                initialData: initialData,
-                makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema
-            }, buttonProps: { ...buttonProps } }));
+        throw new Error("repository is required");
+    return initialData.isCash ? (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: SecurityCashModalBody_1.SecurityCashModalBody,
+            modalTitle: "Edycja ZNWU",
+            repository: repository,
+            initialData: initialData,
+            makeValidationSchema: SecurityValidationSchema_1.securityCashValidationSchema,
+        }, buttonProps: {
+            ...buttonProps,
+            buttonVariant: "outline-success",
+        } })) : (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody,
+            modalTitle: "Edycja ZNWU",
+            repository: repository,
+            initialData: initialData,
+            makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema,
+        }, buttonProps: { ...buttonProps } }));
 }
 exports.SecurityEditModalButtonGeneric = SecurityEditModalButtonGeneric;
 function SecurityEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(SecurityEditModalButtonGeneric, { modalProps: {
             onEdit,
             initialData,
-            repository: ContractsController_1.securitiesRepository
+            repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
 exports.SecurityEditModalButton = SecurityEditModalButton;
-function SecurityCashAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps }) {
+function SecurityCashAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps, }) {
     if (!repository)
-        throw new Error('repository is required');
+        throw new Error("repository is required");
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: SecurityModalBody_1.ProjectSelectorModalBody,
             additionalModalBodyProps: { SpecificContractModalBody: SecurityCashModalBody_1.SecurityCashModalBody },
             modalTitle: "Nowe ZNWU - gotówka",
             repository: repository,
-            makeValidationSchema: SecurityValidationSchema_1.securityCashValidationSchema
+            makeValidationSchema: SecurityValidationSchema_1.securityCashValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj ZNWU - gotówka",
             buttonVariant: "outline-success",
@@ -62,32 +60,32 @@ function SecurityCashAddNewModalButtonGeneric({ modalProps: { onAddNew, reposito
         } }));
 }
 exports.SecurityCashAddNewModalButtonGeneric = SecurityCashAddNewModalButtonGeneric;
-function SecurityCashAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function SecurityCashAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(SecurityCashAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: ContractsController_1.securitiesRepository
+            repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
 exports.SecurityCashAddNewModalButton = SecurityCashAddNewModalButton;
 function SecurityGuaranteeAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
     if (!repository)
-        throw new Error('repository is required');
+        throw new Error("repository is required");
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: SecurityModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody, },
+            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody },
             modalTitle: "Nowa gwarancja ZNWU",
             repository: repository,
-            makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema
+            makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj ZNWU",
         } }));
 }
 exports.SecurityGuaranteeAddNewModalButtonGeneric = SecurityGuaranteeAddNewModalButtonGeneric;
-function SecurityGuaranteeAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function SecurityGuaranteeAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(SecurityGuaranteeAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: ContractsController_1.securitiesRepository
+            repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
 exports.SecurityGuaranteeAddNewModalButton = SecurityGuaranteeAddNewModalButton;

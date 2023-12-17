@@ -64,13 +64,34 @@ export default class MainSetup {
         RETURNED_2ND_PART: 'Zwrócona 100%',
     }
 
-    static TaskStatuses = {
+    static TaskStatus = {
         BACKLOG: 'Backlog',
         NOT_STARTED: 'Nie rozpoczęty',
         IN_PROGRESS: 'W trakcie',
         TO_CORRECT: 'Do poprawy',
         AWAITING_RESPONSE: 'Oczekiwanie na odpowiedź',
         DONE: 'Zrobione',
+    };
+
+    static OfferStatus = {
+        TO_DO: 'Do złożenia',
+        DONE: 'Czekamy na wynik',
+        AWARDED: 'Wygrana',
+        LOST: 'Przegrana',
+        WITHDRAWN: 'Wycofana',
+        NOT_INTERESTED: 'Nie składamy',
+    };
+
+    static OfferBidProcedure = {
+        X: 'Zapytanie ofertowe',
+        TENDER_PL: 'Przetarg BZP',
+        TENDER_EU: 'Przetarg DUUE',
+    };
+
+    static OfferForm = {
+        EMAIL: 'Email',
+        PLATFORM: 'Platforma',
+        PAPER: 'Papier',
     };
 
     static InvoicesFilterInitState = {
@@ -81,6 +102,11 @@ export default class MainSetup {
     static LettersFilterInitState = {
         CREATION_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
         CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
+    }
+
+    static OffersFilterInitState = {
+        SUBMISSION_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
+        SUBMISSION_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
     }
 
     static readonly SystemRoles: Record<SystemRoleName, SystemRole> = {

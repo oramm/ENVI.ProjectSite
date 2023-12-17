@@ -34,6 +34,11 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
     const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
     const snapshotName = `filtersableTableSnapshot_${id}`;
+    const { watch, reset } = formMethods;
+    const allValues = watch();
+    (0, react_1.useEffect)(() => {
+        console.log('Zaktualizowany stan formularza:', allValues);
+    }, [allValues]);
     //odtwórz stan z sessionStorage
     (0, react_1.useEffect)(() => {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
@@ -61,11 +66,21 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
         sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
         console.log('Saved snapshot: ', filterableTableSnapshot.storedObjects);
     }
+    const handleReset = () => {
+        const allFields = formMethods.getValues();
+        const resetValues = Object.keys(allFields).reduce((acc, curr) => {
+            acc[curr] = '';
+            return acc;
+        }, {});
+        console.log('Wartości po resecie:', resetValues);
+        reset(resetValues);
+    };
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
-            react_1.default.createElement(react_bootstrap_1.Row, { xl: 1 },
+            react_1.default.createElement(react_bootstrap_1.Row, { xl: 1, className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit" }, "Szukaj"))))));
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", className: "me-2" }, "Szukaj"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: handleReset }, "Wyczy\u015B\u0107"))))));
 }
 exports.FilterPanel = FilterPanel;

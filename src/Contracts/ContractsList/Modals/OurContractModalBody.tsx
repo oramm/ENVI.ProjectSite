@@ -30,7 +30,6 @@ export function OurContractModalBody(props: ModalBodyProps) {
                 <CitySelectFormElement
                     repository={citiesRepository}
                     showValidationInfo={true}
-                    allowNew={true}
                 />
             </Form.Group>
             {!isEditing &&

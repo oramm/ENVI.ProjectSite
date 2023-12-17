@@ -46,112 +46,113 @@ function ContractsList() {
             setDataLoaded(false);
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
             const [contracts] = await Promise.all([
-                MainWindowController_1.contractsRepository.loadItemsFromServerPOST([{
-                        status: [
-                            MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
-                            MainSetupReact_1.default.ContractStatuses.NOT_STARTED
-                        ],
+                MainWindowController_1.contractsRepository.loadItemsFromServerPOST([
+                    {
+                        status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
                         endDateTo: endDateTo.toISOString().slice(0, 10),
                         getRemainingValue: true,
-                    }]),
+                    },
+                ]),
             ]);
             setContracts(contracts);
-            setExternalUpdate(prevState => prevState + 1);
+            setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
-        ;
         fetchData();
     }, []);
     function renderName(contract) {
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: contract,
-                    modalTitle: 'Edycja nazwy',
+                    modalTitle: "Edycja nazwy",
                     repository: MainWindowController_1.contractsRepository,
                     ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
                     onEdit: handleEditObject,
-                    fieldsToUpdate: ['name'],
+                    fieldsToUpdate: ["name"],
                     makeValidationSchema: ContractValidationSchema_1.contractNameValidationSchema,
                 } },
                 react_1.default.createElement(react_1.default.Fragment, null, contract.name)),
-            ' ',
+            " ",
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: contract,
-                    modalTitle: 'Edycja statusu',
+                    modalTitle: "Edycja statusu",
                     repository: MainWindowController_1.contractsRepository,
                     ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
                     onEdit: handleEditObject,
-                    fieldsToUpdate: ['status'],
-                    makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema
+                    fieldsToUpdate: ["status"],
+                    makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema,
                 } },
-                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))));
     }
     function renderEndDate(contract) {
         const { endDate } = contract;
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
                 react_1.default.createElement(DateEditTrigger, { contract: contract, date: endDate, onEdit: handleEditObject })),
             react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })));
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))));
     }
     function renderStartDate(contract) {
         const { startDate } = contract;
-        return react_1.default.createElement("div", null,
-            react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject }));
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject })));
     }
     function handleEditObject(object) {
         setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate(prevState => prevState + 1);
+        setExternalUpdate((prevState) => prevState + 1);
     }
     function renderRemainingValue(contract) {
-        if (!contract.ourId ||
-            (!contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue))
+        if (!contract.ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
             return react_1.default.createElement(react_1.default.Fragment, null);
         const formatedNotScheduledValue = Tools_1.default.formatNumber(contract._remainingNotScheduledValue || 0, 0);
         const formatedNotIssuedValue = Tools_1.default.formatNumber(contract._remainingNotIssuedValue || 0, 0);
-        return react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wys\u0142anych faktur a warto\u015Bci\u0105 umowy', placement: 'right' },
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wys\u0142anych faktur a warto\u015Bci\u0105 umowy", placement: "right" },
                 react_1.default.createElement("div", { className: "text-end text-success" }, formatedNotIssuedValue)),
-            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy', placement: 'right' },
-                react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue)));
+            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy", placement: "right" },
+                react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue))));
     }
     function makeTablestructure() {
         const tableStructure = [
-            { header: 'Projekt', renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._parent.ourId) },
-            { header: 'Oznaczenie', objectAttributeToShow: 'ourId' },
-            { header: 'Numer', objectAttributeToShow: 'number' },
-            { header: 'Nazwa', renderTdBody: (contract) => renderName(contract) },
-            { header: 'Rozpoczęcie', renderTdBody: (contract) => renderStartDate(contract) },
-            { header: 'Zakończenie', renderTdBody: (contract) => renderEndDate(contract) },
+            {
+                header: "Projekt",
+                renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
+            },
+            { header: "Oznaczenie", objectAttributeToShow: "ourId" },
+            { header: "Numer", objectAttributeToShow: "number" },
+            { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
+            {
+                header: "Rozpoczęcie",
+                renderTdBody: (contract) => renderStartDate(contract),
+            },
+            { header: "Zakończenie", renderTdBody: (contract) => renderEndDate(contract) },
         ];
-        const allowedRoles = [
-            MainSetupReact_1.default.SystemRoles.ADMIN.systemName,
-            MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName,
-        ];
+        const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
-            tableStructure.push({ header: 'Do rozliczenia', renderTdBody: (contract) => renderRemainingValue(contract) });
+            tableStructure.push({
+                header: "Do rozliczenia",
+                renderTdBody: (contract) => renderRemainingValue(contract),
+            });
         }
         return tableStructure;
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
-            react_1.default.createElement(FilterableTable_1.default, { id: 'contracts', title: '', tableStructure: makeTablestructure(), 
+            react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: "", tableStructure: makeTablestructure(), 
                 //EditButtonComponent={ContractEditModalButton}
-                isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: '/contract/', initialObjects: contracts, externalUpdate: externalUpdate }))));
+                isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: "/contract/", initialObjects: contracts, externalUpdate: externalUpdate }))));
 }
 exports.default = ContractsList;
 function DateEditTrigger({ date, contract, onEdit }) {
     return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
             initialData: contract,
-            modalTitle: 'Edycja dat',
+            modalTitle: "Edycja dat",
             repository: MainWindowController_1.contractsRepository,
             ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
             onEdit: onEdit,
-            fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+            fieldsToUpdate: ["startDate", "endDate", "guaranteeEndDate"],
             makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
-        } }, react_1.default.createElement(react_1.default.Fragment, null, date
-        ? ToolsDate_1.default.dateYMDtoDMY(date)
-        : 'Jeszcze nie ustalono')));
+        } }, react_1.default.createElement(react_1.default.Fragment, null, date ? ToolsDate_1.default.dateYMDtoDMY(date) : "Jeszcze nie ustalono")));
 }

@@ -38,30 +38,28 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
     const ourRelatedContractsRepository = new RepositoryReact_1.default({
-        name: 'OurRelatedContractsRepository',
-        actionRoutes: { addNewRoute: '', editRoute: '', deleteRoute: '', getRoute: 'contracts' },
+        name: "OurRelatedContractsRepository",
+        actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
     });
     const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
-    const _parent = watch('_parent');
+    const _project = watch("_project");
     (0, react_1.useEffect)(() => {
-        setValue('_type', initialData?._type, { shouldValidate: true });
-        setValue('_contractors', initialData?._contractors || [], { shouldValidate: true });
-        setValue('_ourContract', initialData?._ourContract, { shouldValidate: true });
+        setValue("_type", initialData?._type, { shouldValidate: true });
+        setValue("_contractors", initialData?._contractors || [], { shouldValidate: true });
+        setValue("_ourContract", initialData?._ourContract, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
-        (!props.isEditing) ?
-            react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: 'other' })
-            : null,
+        !props.isEditing ? react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: "other" }) : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_contractors', labelKey: 'name', repository: ContractsController_1.entitiesRepository, multiple: true })),
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: "_contractors", labelKey: "name", repository: ContractsController_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: '_ourContract', labelKey: 'ourId', searchKey: 'contractOurId', contextSearchParams: {
-                    _parent,
-                    typesToInclude: 'our'
+            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: "_ourContract", labelKey: "ourId", searchKey: "contractOurId", contextSearchParams: {
+                    _project,
+                    typesToInclude: "our",
                 }, repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                     option.ourId,
                     " ",

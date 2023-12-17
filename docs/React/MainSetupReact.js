@@ -56,13 +56,31 @@ MainSetup.SecurityStatus = {
     RETURNED_1ST_PART: 'Zwrócona 70%',
     RETURNED_2ND_PART: 'Zwrócona 100%',
 };
-MainSetup.TaskStatuses = {
+MainSetup.TaskStatus = {
     BACKLOG: 'Backlog',
     NOT_STARTED: 'Nie rozpoczęty',
     IN_PROGRESS: 'W trakcie',
     TO_CORRECT: 'Do poprawy',
     AWAITING_RESPONSE: 'Oczekiwanie na odpowiedź',
     DONE: 'Zrobione',
+};
+MainSetup.OfferStatus = {
+    TO_DO: 'Do złożenia',
+    DONE: 'Czekamy na wynik',
+    AWARDED: 'Wygrana',
+    LOST: 'Przegrana',
+    WITHDRAWN: 'Wycofana',
+    NOT_INTERESTED: 'Nie składamy',
+};
+MainSetup.OfferBidProcedure = {
+    X: 'Zapytanie ofertowe',
+    TENDER_PL: 'Przetarg BZP',
+    TENDER_EU: 'Przetarg DUUE',
+};
+MainSetup.OfferForm = {
+    EMAIL: 'Email',
+    PLATFORM: 'Platforma',
+    PAPER: 'Papier',
 };
 MainSetup.InvoicesFilterInitState = {
     ISSUE_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -90).toISOString().slice(0, 10),
@@ -71,6 +89,10 @@ MainSetup.InvoicesFilterInitState = {
 MainSetup.LettersFilterInitState = {
     CREATION_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
     CREATION_DATE_TO: ToolsDate_1.default.addDays(new Date(), +5).toISOString().slice(0, 10),
+};
+MainSetup.OffersFilterInitState = {
+    SUBMISSION_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    SUBMISSION_TO: ToolsDate_1.default.addDays(new Date(), +5).toISOString().slice(0, 10),
 };
 MainSetup.SystemRoles = {
     ADMIN: {

@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysLeftBadge = exports.MyTooltip = exports.TaskStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.DaysLeftBadge = exports.MyTooltip = exports.TaskStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -186,28 +186,59 @@ function SecurityStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.SecurityStatusBadge = SecurityStatusBadge;
+function OfferStatusBadge({ status }) {
+    let variant;
+    let textMode = 'light';
+    switch (status) {
+        case MainSetupReact_1.default.OfferStatus.TO_DO:
+            variant = 'primary'; // Choose appropriate color
+            break;
+        case MainSetupReact_1.default.OfferStatus.DONE:
+            variant = 'info'; // Choose appropriate color
+            break;
+        case MainSetupReact_1.default.OfferStatus.AWARDED:
+            variant = 'success';
+            break;
+        case MainSetupReact_1.default.OfferStatus.LOST:
+            variant = 'danger';
+            break;
+        case MainSetupReact_1.default.OfferStatus.WITHDRAWN:
+            variant = 'warning';
+            textMode = 'dark';
+            break;
+        case MainSetupReact_1.default.OfferStatus.NOT_INTERESTED:
+            variant = 'secondary';
+            break;
+        default:
+            variant = 'light';
+            textMode = 'dark';
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.OfferStatusBadge = OfferStatusBadge;
+;
 function TaskStatusBadge({ status }) {
     let variant;
     let textMode = 'light';
     switch (status) {
-        case MainSetupReact_1.default.TaskStatuses.BACKLOG:
+        case MainSetupReact_1.default.TaskStatus.BACKLOG:
             variant = 'light';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.TaskStatuses.NOT_STARTED:
+        case MainSetupReact_1.default.TaskStatus.NOT_STARTED:
             variant = 'secondary';
             break;
-        case MainSetupReact_1.default.TaskStatuses.IN_PROGRESS:
+        case MainSetupReact_1.default.TaskStatus.IN_PROGRESS:
             variant = 'warning';
             textMode = 'dark';
             break;
-        case MainSetupReact_1.default.TaskStatuses.TO_CORRECT:
+        case MainSetupReact_1.default.TaskStatus.TO_CORRECT:
             variant = 'danger';
             break;
-        case MainSetupReact_1.default.TaskStatuses.AWAITING_RESPONSE:
+        case MainSetupReact_1.default.TaskStatus.AWAITING_RESPONSE:
             variant = 'info';
             break;
-        case MainSetupReact_1.default.TaskStatuses.DONE:
+        case MainSetupReact_1.default.TaskStatus.DONE:
             variant = 'success';
             break;
         default:

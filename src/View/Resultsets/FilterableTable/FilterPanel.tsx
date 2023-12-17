@@ -16,6 +16,15 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 
     const formMethods = useForm({ defaultValues: {}, mode: 'onChange' });
     const snapshotName = `filtersableTableSnapshot_${id}`;
+
+    const { watch, reset } = formMethods;
+    const allValues = watch();
+
+    useEffect(() => {
+        console.log('Zaktualizowany stan formularza:', allValues);
+    }, [allValues]);
+
+
     //odtwórz stan z sessionStorage
     useEffect(() => {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
@@ -45,13 +54,25 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         console.log('Saved snapshot: ', filterableTableSnapshot.storedObjects);
     }
 
+    const handleReset = () => {
+        const allFields = formMethods.getValues();
+        const resetValues = Object.keys(allFields).reduce((acc: any, curr) => {
+            acc[curr] = '';
+            return acc;
+        }, {});
+
+        console.log('Wartości po resecie:', resetValues);
+        reset(resetValues);
+    };
+
     return (
         <FormProvider value={formMethods}>
             <Form onSubmit={formMethods.handleSubmit(handleSubmitSearch)}>
                 <FilterBodyComponent />
-                <Row xl={1}>
+                <Row xl={1} className="mt-2">
                     <Form.Group as={Col} >
-                        <Button type="submit">Szukaj</Button>
+                        <Button type="submit" className="me-2">Szukaj</Button>
+                        <Button variant="outline-secondary" onClick={handleReset}>Wyczyść</Button>
                     </Form.Group>
                 </Row>
             </Form>

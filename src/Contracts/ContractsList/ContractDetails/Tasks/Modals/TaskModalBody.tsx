@@ -18,7 +18,7 @@ export function TaskModalBody({ isEditing, initialData, contextData }: ModalBody
             description: initialData?.description || '',
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
             daysToPay: initialData?.daysToPay,
-            status: initialData?.status || MainSetup.TaskStatuses.BACKLOG,
+            status: initialData?.status || MainSetup.TaskStatus.BACKLOG,
             _owner: initialData?._owner || MainSetup.getCurrentUserAsPerson(),
         };
         reset(resetData);
