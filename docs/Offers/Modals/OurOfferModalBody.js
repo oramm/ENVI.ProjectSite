@@ -29,11 +29,12 @@ const OfferModalBody_1 = require("./OfferModalBody");
 const FormContext_1 = require("../../View/Modals/FormContext");
 function OurOfferModalBody(props) {
     const { initialData, isEditing } = props;
-    const { setValue, watch, register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const { setValue, watch, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
+        setValue("isOur", true);
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(OfferModalBody_1.OfferModalBody, { ...props }),
-        react_1.default.createElement("input", { type: "hidden", ...register('isOur'), value: 'true' })));
+        react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "true" })));
 }
 exports.OurOfferModalBody = OurOfferModalBody;

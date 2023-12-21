@@ -9,7 +9,7 @@ import { entitiesRepository } from "../OffersController";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function ExternalOfferModalBody(props: ModalBodyProps<OurOffer | ExternalOffer>) {
-    const initialData = props.initialData;
+    const { initialData, isEditing } = props;
     const {
         register,
         setValue,
@@ -19,40 +19,12 @@ export function ExternalOfferModalBody(props: ModalBodyProps<OurOffer | External
     } = useFormContext();
 
     useEffect(() => {
-        setValue("_entitiesMain", initialData?._entitiesMain, {
-            shouldDirty: false,
-            shouldValidate: true,
-        });
-        setValue("number", initialData?.number || "", {
-            shouldDirty: false,
-            shouldValidate: true,
-        });
+        setValue("isOur", false);
     }, [initialData, setValue]);
 
     return (
         <>
-            <Form.Group controlId="number">
-                <Form.Label>Numer pisma</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Podaj numer"
-                    isInvalid={!!errors?.number}
-                    isValid={!errors?.number}
-                    {...register("number")}
-                />
-                <ErrorMessage errors={errors} name={"number"} />
-            </Form.Group>
             <OfferModalBody {...props} />
-            <Form.Group>
-                <Form.Label>Nadawca</Form.Label>
-                <MyAsyncTypeahead
-                    name="_entitiesMain"
-                    labelKey="name"
-                    repository={entitiesRepository}
-                    multiple={true}
-                />
-                <ErrorMessage errors={errors} name={"_entitiesMain"} />
-            </Form.Group>
         </>
     );
 }
