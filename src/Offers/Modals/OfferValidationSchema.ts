@@ -1,6 +1,8 @@
 import * as Yup from "yup";
 
 function makecommonFields(isEditing: boolean) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     return {
         _city: Yup.mixed()
             .test(
@@ -17,6 +19,10 @@ function makecommonFields(isEditing: boolean) {
         _type: Yup.object().required("Wybierz typ kontaktu"),
         alias: Yup.string().required("Nazwa jest wymagana").max(20, "Nazwa może mieć maksymalnie 20 znaków"),
         description: Yup.string().max(500, "Opis może mieć maksymalnie 500 znaków"),
+        comment: Yup.string().max(500, "Uwagi mogą mieć maksymalnie 500 znaków"),
+        creationDate: isEditing
+            ? Yup.date().required("Podaj datę utworzenia")
+            : Yup.date().required("Podaj datę utworzenia").max(tomorrow, "Data utworzenia nie może być z przyszłości"),
         submissionDeadline: isEditing
             ? Yup.date().required("Podaj termin składania")
             : Yup.date()

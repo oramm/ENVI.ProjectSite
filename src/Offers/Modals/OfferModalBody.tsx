@@ -35,7 +35,8 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             _employer: initialData?.employerName || "",
             alias: initialData?.alias || "",
             description: initialData?.description || "",
-            submissionDeadline: initialData?.submissionDeadline || new Date().toISOString().slice(0, 10),
+            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
+            submissionDeadline: initialData?.submissionDeadline,
             status: initialData?.status || "",
             bidProcedure: initialData?.bidProcedure || "",
             form: initialData?.form || "",
@@ -87,18 +88,40 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                 />
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
-
-            <Form.Group as={Col} controlId="submissionDeadline">
-                <Form.Label>Termin składania</Form.Label>
+            <Form.Group controlId="comment">
+                <Form.Label>Uwagi</Form.Label>
                 <Form.Control
-                    type="date"
-                    isValid={!errors.submissionDeadline}
-                    isInvalid={!!errors.submissionDeadline}
-                    {...register("submissionDeadline")}
+                    as="textarea"
+                    rows={3}
+                    placeholder="Dodaj uwagi"
+                    isValid={!errors?.comment}
+                    isInvalid={!!errors?.comment}
+                    {...register("comment")}
                 />
-                <ErrorMessage name="submissionDeadline" errors={errors} />
+                <ErrorMessage name="comment" errors={errors} />
             </Form.Group>
-
+            <Row>
+                <Form.Group as={Col} controlId="creationDate">
+                    <Form.Label>Data utworzenia</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!errors.creationDate}
+                        isInvalid={!!errors.creationDate}
+                        {...register("creationDate")}
+                    />
+                    <ErrorMessage name="creationDate" errors={errors} />
+                </Form.Group>
+                <Form.Group as={Col} controlId="submissionDeadline">
+                    <Form.Label>Termin składania</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!errors.submissionDeadline}
+                        isInvalid={!!errors.submissionDeadline}
+                        {...register("submissionDeadline")}
+                    />
+                    <ErrorMessage name="submissionDeadline" errors={errors} />
+                </Form.Group>
+            </Row>
             <Row>
                 <OfferBidProcedureSelectFormElement as={Col} />
                 <OfferFormSelectFormElement as={Col} />

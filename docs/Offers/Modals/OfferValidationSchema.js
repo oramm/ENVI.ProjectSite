@@ -26,6 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeOtherOfferValidationSchema = exports.makeOurOfferValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 function makecommonFields(isEditing) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     return {
         _city: Yup.mixed()
             .test("is-object-or-string", "Wybierz lub dodaj Miasto", (value) => typeof value === "object" || typeof value === "string")
@@ -34,6 +36,10 @@ function makecommonFields(isEditing) {
         _type: Yup.object().required("Wybierz typ kontaktu"),
         alias: Yup.string().required("Nazwa jest wymagana").max(20, "Nazwa może mieć maksymalnie 20 znaków"),
         description: Yup.string().max(500, "Opis może mieć maksymalnie 500 znaków"),
+        comment: Yup.string().max(500, "Uwagi mogą mieć maksymalnie 500 znaków"),
+        creationDate: isEditing
+            ? Yup.date().required("Podaj datę utworzenia")
+            : Yup.date().required("Podaj datę utworzenia").max(tomorrow, "Data utworzenia nie może być z przyszłości"),
         submissionDeadline: isEditing
             ? Yup.date().required("Podaj termin składania")
             : Yup.date()
