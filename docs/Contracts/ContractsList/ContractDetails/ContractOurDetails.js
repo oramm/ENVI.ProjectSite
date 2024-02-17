@@ -40,80 +40,85 @@ function ContractOurDetails() {
     const [invoices, setInvoices] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     if (!contract)
-        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie wybrano umowy");
     //fetch data
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             if (!contract?.id)
-                throw new Error('Nie wybrano kontraktu');
+                throw new Error("Nie wybrano kontraktu");
             const contractIdString = contract.id.toString();
             const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }]))[0];
-            const fetchInvoicesData = (await ContractsController_1.invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }]));
+            const fetchInvoicesData = await ContractsController_1.invoicesRepository.loadItemsFromServerPOST([
+                { contractId: contractIdString },
+            ]);
             try {
-                const [settlementData,] = await Promise.all([
-                    fetchSettlementData,
-                    fetchInvoicesData
-                ]);
+                const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
                 setSettlemenData(settlementData);
                 setInvoices(fetchInvoicesData);
-                setExternalUpdate(prevState => prevState + 1);
+                setExternalUpdate((prevState) => prevState + 1);
             }
             catch (error) {
                 console.error("Error fetching data", error);
                 // Handle error as you see fit
             }
         }
-        ;
         fetchData();
     }, []);
     function renderInvoiceTotaValue(invoice) {
-        return react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue)));
+        return (react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue))));
     }
     function renderCoordinatorData() {
         if (!contract)
-            return (react_1.default.createElement(react_bootstrap_1.Placeholder, { as: 'div', animation: "glow" },
+            return (react_1.default.createElement(react_bootstrap_1.Placeholder, { as: "div", animation: "glow" },
                 react_1.default.createElement(react_bootstrap_1.Placeholder, { xs: 6 })));
-        let coordinatorName = contract?._manager ? `${contract._manager.name} ${contract._manager.surname}` : 'Nie określono';
-        return (react_1.default.createElement(react_1.default.Fragment, null, `Koordynator(ka): ${coordinatorName}`));
+        let coordinatorName = contract?._manager
+            ? `${contract._manager.name} ${contract._manager.surname}`
+            : "Nie określono";
+        return react_1.default.createElement(react_1.default.Fragment, null, `Koordynator(ka): ${coordinatorName}`);
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Container, null,
-                react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
                     react_1.default.createElement(react_bootstrap_1.Col, null, contract.description && react_1.default.createElement("p", null,
                         "Opis: ",
                         contract.description))),
-                react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3 text-end' },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                         react_1.default.createElement("div", null, "Warto\u015B\u0107 netto, z\u0142:"),
-                        settlemenData && Tools_1.default.isNumber(settlemenData.value)
-                            ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.value))
-                            : 'Jeszcze nie określono'),
-                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'Na podstawie faktur wys\u0142anych', placement: 'top' },
+                        settlemenData && Tools_1.default.isNumber(settlemenData.value) ? (react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.value))) : ("Jeszcze nie określono")),
+                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "Na podstawie faktur wys\u0142anych", placement: "top" },
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Rozliczono, z\u0142:"),
-                            settlemenData && Tools_1.default.isNumber(settlemenData?.totalIssuedValue)
-                                ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.totalIssuedValue))
-                                : 'Jeszcze nie wysłano faktur')),
-                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: 'Na podstawie faktur wys\u0142anych', placement: 'top' },
+                            settlemenData && Tools_1.default.isNumber(settlemenData?.totalIssuedValue) ? (react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.totalIssuedValue))) : ("Jeszcze nie wysłano faktur"))),
+                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "Na podstawie faktur wys\u0142anych", placement: "top" },
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Do rozliczenia, z\u0142:"),
-                            settlemenData && Tools_1.default.isNumber(settlemenData.remainingValue)
-                                ? react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.remainingValue))
-                                : 'Jeszcze nie określono'))),
-                react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },
+                            settlemenData && Tools_1.default.isNumber(settlemenData.remainingIssuedValue) ? (react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.remainingIssuedValue))) : ("Jeszcze nie określono"))),
+                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "Na podstawie faktur zarejestrowanych", placement: "top" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2, className: "text-muted" },
+                            react_1.default.createElement("div", null, "Zarejestrowano, z\u0142:"),
+                            settlemenData && Tools_1.default.isNumber(settlemenData?.totalRegisteredValue) ? (react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.totalRegisteredValue))) : ("Jeszcze nie wysłano faktur"))),
+                    react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "Na podstawie faktur zarejestrowanych", placement: "top" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2, className: "text-muted" },
+                            react_1.default.createElement("div", null, "Do zarejestrowania, z\u0142:"),
+                            settlemenData && Tools_1.default.isNumber(settlemenData.remainingRegisteredValue) ? (react_1.default.createElement("h5", null, Tools_1.default.formatNumber(settlemenData.remainingRegisteredValue))) : ("Jeszcze nie określono")))),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 12 },
                         react_1.default.createElement("div", null, "Faktury")),
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 12 },
-                        react_1.default.createElement(FilterableTable_1.default, { id: 'invoices', title: '', tableStructure: [
-                                { header: 'Numer', objectAttributeToShow: 'number' },
-                                { header: 'Sprzedaż', objectAttributeToShow: 'issueDate' },
-                                { header: 'status', renderTdBody: (invoice) => react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status }) },
-                                { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
-                                { header: 'Netto, zł', renderTdBody: renderInvoiceTotaValue },
-                                { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
-                            ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: '/invoice/', isDeletable: false, externalUpdate: externalUpdate })))),
-            react_1.default.createElement("p", { className: 'tekst-muted small' },
+                        react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: "", tableStructure: [
+                                { header: "Numer", objectAttributeToShow: "number" },
+                                { header: "Sprzedaż", objectAttributeToShow: "issueDate" },
+                                {
+                                    header: "status",
+                                    renderTdBody: (invoice) => (react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
+                                },
+                                { header: "Wysłano", objectAttributeToShow: "sentDate" },
+                                { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue },
+                                { header: "Termin płatności", objectAttributeToShow: "paymentDeadline" },
+                            ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: "/invoice/", isDeletable: false, externalUpdate: externalUpdate })))),
+            react_1.default.createElement("p", { className: "tekst-muted small" },
                 "Koordynator(ka): ",
                 renderCoordinatorData(),
                 react_1.default.createElement("br", null),

@@ -79,7 +79,9 @@ export interface ContractsSettlementData {
     ourId: string;
     value: number;
     totalIssuedValue: number;
-    remainingValue: number;
+    totalRegisteredValue: number;
+    remainingRegisteredValue: number;
+    remainingIssuedValue: number;
 }
 
 export interface Milestone extends RepositoryDataItem {
