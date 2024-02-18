@@ -39,6 +39,8 @@ const ToolsDate_1 = __importDefault(require("../../../../ToolsDate"));
 const MainWindowController_1 = require("../../../MainWindowController");
 function ContractsList() {
     const [contracts, setContracts] = (0, react_1.useState)([]);
+    const [ourContracts, setOurContracts] = (0, react_1.useState)([]);
+    const [otherContracts, setOtherContracts] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
     (0, react_1.useEffect)(() => {
@@ -51,15 +53,25 @@ function ContractsList() {
                         status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
                         endDateTo: endDateTo.toISOString().slice(0, 10),
                         getRemainingValue: true,
+                        _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
             ]);
             setContracts(contracts);
+            setOurContracts(contracts.filter((c) => c._type.isOur));
+            setOtherContracts(contracts.filter((c) => !c._type.isOur));
             setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
         fetchData();
     }, []);
+    /**
+     * Filtrowanie będzie tylko dla użytkowników z uprawnieniami poniżej ENVI_MANAGER i ADMIN
+     */
+    function filterByCurrentUser() {
+        const privilegedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
+        return !privilegedRoles.includes(MainSetupReact_1.default.currentUser.systemRoleName);
+    }
     function renderName(contract) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
@@ -140,9 +152,7 @@ function ContractsList() {
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
-            react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: "", tableStructure: makeTablestructure(), 
-                //EditButtonComponent={ContractEditModalButton}
-                isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: "/contract/", initialObjects: contracts, externalUpdate: externalUpdate }))));
+            react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: "", initialSections: buildTree(ourContracts, otherContracts), tableStructure: makeTablestructure(), isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: "/contract/", externalUpdate: externalUpdate }))));
 }
 exports.default = ContractsList;
 function DateEditTrigger({ date, contract, onEdit }) {
@@ -155,4 +165,35 @@ function DateEditTrigger({ date, contract, onEdit }) {
             fieldsToUpdate: ["startDate", "endDate", "guaranteeEndDate"],
             makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
         } }, react_1.default.createElement(react_1.default.Fragment, null, date ? ToolsDate_1.default.dateYMDtoDMY(date) : "Jeszcze nie ustalono")));
+}
+function buildTree(ourContracts, otherContracts) {
+    const contractGroupNodes = [
+        {
+            id: "contractGroupOur",
+            isInAccordion: true,
+            level: 1,
+            type: "contractGroup",
+            childrenNodesType: "contract",
+            repository: MainWindowController_1.contractsRepository,
+            dataItem: { id: 1 },
+            titleLabel: "Kontrakty ENVI",
+            children: [],
+            leaves: [...ourContracts],
+            isDeletable: false,
+        },
+        {
+            id: "contractGroupOther",
+            isInAccordion: true,
+            level: 1,
+            type: "contractGroup",
+            childrenNodesType: "contract",
+            repository: MainWindowController_1.contractsRepository,
+            dataItem: { id: 2 },
+            titleLabel: "Pozostałe kontrakty",
+            children: [],
+            leaves: [...otherContracts],
+            isDeletable: false,
+        },
+    ];
+    return contractGroupNodes;
 }

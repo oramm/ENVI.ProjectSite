@@ -18,9 +18,13 @@ import MainSetup from "../../../../MainSetupReact";
 import Tools from "../../../../Tools";
 import ToolsDate from "../../../../ToolsDate";
 import { contractsRepository } from "../../../MainWindowController";
+import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Section";
 
 export default function ContractsList() {
     const [contracts, setContracts] = useState([] as (OurContract | OtherContract)[]);
+    const [ourContracts, setOurContracts] = useState<OurContract[]>([]);
+    const [otherContracts, setOtherContracts] = useState<OtherContract[]>([]);
+
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(false);
 
@@ -34,16 +38,26 @@ export default function ContractsList() {
                         status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
                         endDateTo: endDateTo.toISOString().slice(0, 10),
                         getRemainingValue: true,
+                        _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
             ]);
             setContracts(contracts);
+            setOurContracts(contracts.filter((c) => c._type.isOur) as OurContract[]);
+            setOtherContracts(contracts.filter((c) => !c._type.isOur) as OtherContract[]);
             setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
 
         fetchData();
     }, []);
+    /**
+     * Filtrowanie będzie tylko dla użytkowników z uprawnieniami poniżej ENVI_MANAGER i ADMIN
+     */
+    function filterByCurrentUser() {
+        const privilegedRoles = [MainSetup.SystemRoles.ADMIN.systemName, MainSetup.SystemRoles.ENVI_MANAGER.systemName];
+        return !privilegedRoles.includes(MainSetup.currentUser.systemRoleName);
+    }
 
     function renderName(contract: OurContract | OtherContract) {
         return (
@@ -154,6 +168,7 @@ export default function ContractsList() {
         }
         return tableStructure;
     }
+
     return (
         <Card>
             <Card.Body>
@@ -161,12 +176,11 @@ export default function ContractsList() {
                 <FilterableTable<OurContract | OtherContract>
                     id="contracts"
                     title={""}
+                    initialSections={buildTree(ourContracts, otherContracts)}
                     tableStructure={makeTablestructure()}
-                    //EditButtonComponent={ContractEditModalButton}
                     isDeletable={false}
                     repository={contractsRepository}
                     selectedObjectRoute={"/contract/"}
-                    initialObjects={contracts}
                     externalUpdate={externalUpdate}
                 />
             </Card.Body>
@@ -196,4 +210,40 @@ function DateEditTrigger({ date, contract, onEdit }: DateEditTriggerProps) {
             {<>{date ? ToolsDate.dateYMDtoDMY(date) : "Jeszcze nie ustalono"}</>}
         </PartialEditTrigger>
     );
+}
+
+function buildTree(
+    ourContracts: OurContract[],
+    otherContracts: OtherContract[]
+): SectionNode<OurContract | OtherContract>[] {
+    const contractGroupNodes: SectionNode<OurContract | OtherContract>[] = [
+        {
+            id: "contractGroupOur",
+            isInAccordion: true,
+            level: 1,
+            type: "contractGroup",
+            childrenNodesType: "contract",
+            repository: contractsRepository,
+            dataItem: { id: 1 },
+            titleLabel: "Kontrakty ENVI",
+            children: [],
+            leaves: [...ourContracts] as (OurContract | OtherContract)[],
+            isDeletable: false,
+        },
+        {
+            id: "contractGroupOther",
+            isInAccordion: true,
+            level: 1,
+            type: "contractGroup",
+            childrenNodesType: "contract",
+            repository: contractsRepository,
+            dataItem: { id: 2 },
+            titleLabel: "Pozostałe kontrakty",
+            children: [],
+            leaves: [...otherContracts] as (OurContract | OtherContract)[],
+            isDeletable: false,
+        },
+    ];
+
+    return contractGroupNodes;
 }

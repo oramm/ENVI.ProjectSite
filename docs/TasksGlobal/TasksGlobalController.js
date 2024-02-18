@@ -7,64 +7,64 @@ exports.projectsRepository = exports.entitiesRepository = exports.tasksRepositor
 const RepositoryReact_1 = __importDefault(require("../React/RepositoryReact"));
 exports.contractsWithChildrenRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'contractsWithChildren',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "contractsWithChildren",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'contractsWithChildren'
+    name: "contractsWithChildren",
 });
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'contractsWitchChildren',
-        addNewRoute: 'contractReact',
-        editRoute: 'contract',
-        deleteRoute: 'contract'
+        getRoute: "contractsWitchChildren",
+        addNewRoute: "contractReact",
+        editRoute: "contract",
+        deleteRoute: "contract",
     },
-    name: 'contracts'
+    name: "contracts",
 });
 exports.milestonesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'milestones',
-        addNewRoute: 'milestone',
-        editRoute: 'milestone',
-        deleteRoute: 'milestone'
+        getRoute: "milestones",
+        addNewRoute: "milestone",
+        editRoute: "milestone",
+        deleteRoute: "milestone",
     },
-    name: 'milestones'
+    name: "milestones",
 });
 exports.casesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'cases',
-        addNewRoute: 'case',
-        editRoute: 'case',
-        deleteRoute: 'case'
+        getRoute: "cases",
+        addNewRoute: "case",
+        editRoute: "case",
+        deleteRoute: "case",
     },
-    name: 'cases'
+    name: "cases",
 });
 exports.tasksRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'tasks',
-        addNewRoute: 'task',
-        editRoute: 'task',
-        deleteRoute: 'task'
+        getRoute: "tasks",
+        addNewRoute: "task",
+        editRoute: "task",
+        deleteRoute: "task",
     },
-    name: 'tasks'
+    name: "tasks",
 });
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'entities',
-        addNewRoute: 'entity',
-        editRoute: 'entity',
-        deleteRoute: 'entity'
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
     },
-    name: 'entities'
+    name: "entities",
 });
 exports.projectsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'projects',
-        addNewRoute: 'project',
-        editRoute: 'project',
-        deleteRoute: 'project'
+        getRoute: "projects",
+        addNewRoute: "project",
+        editRoute: "project",
+        deleteRoute: "project",
     },
-    name: 'projects'
+    name: "projects",
 });

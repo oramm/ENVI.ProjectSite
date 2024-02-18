@@ -41,11 +41,11 @@ const Section_1 = require("./Section");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = '', initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, }) {
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
-    const [activeSectionId, setActiveSectionId] = (0, react_1.useState)('');
+    const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
     function initObjects() {
         if (initialObjects)
@@ -67,9 +67,14 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         return storedObjects;
     }
     (0, react_1.useEffect)(() => {
-        if (initialObjects)
+        if (initialObjects) {
             setObjects(initialObjects);
-        console.log("Aktualizacja obiektów:", initialObjects);
+            //console.log("Aktualizacja obiektów:", initialObjects);
+        }
+        if (initialSections.length > 0) {
+            setSections(initialSections);
+            //console.log("Aktualizacja sekcji:", initialSections);
+        }
     }, [externalUpdate]);
     function handleAddObject(object) {
         setObjects([...objects, object]);
@@ -95,52 +100,52 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
         setActiveSectionId(sectionNode.id);
-        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
+        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
         repository.addToCurrentItems(sectionNode.dataItem.id);
-        console.log('handleHeaderClick', repository.currentItems);
+        console.log("handleHeaderClick", repository.currentItems);
     }
     function handleRowClick(id) {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
-        console.log('handleRowClick', repository.currentItems);
+        console.log("handleRowClick", repository.currentItems);
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }
     }
+    console.log("Render FilterableTable: initialSections", initialSections);
     return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
-                AddNewButtonComponents &&
-                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
-                        react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
-                        index < AddNewButtonComponents.length - 1 && ' '))))),
-            FilterBodyComponent &&
-                react_1.default.createElement(react_bootstrap_1.Row, null,
-                    react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
-                            setIsReady(isReady);
-                        } })),
-            !isReady && react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement("progress", { style: { height: "5px" } })),
+                AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
+                    react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
+                    index < AddNewButtonComponents.length - 1 && " ")))))),
+            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
+                        setIsReady(isReady);
+                    } }))),
+            !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement("progress", { style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null,
-                    react_1.default.createElement("p", { className: 'tekst-muted small' }, objects && `Znaleziono: ${objects.length} pozycji`),
-                    (initialSections?.length > 0 ?
-                        react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
-                                showTableHeader: showTableHeader,
-                                onRowClick: handleRowClick,
-                                onIsReadyChange: (isReady) => { setIsReady(isReady); }
-                            } })
-                        :
-                            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => { setIsReady(isReady); } })))))));
+                react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                        showTableHeader: showTableHeader,
+                        onRowClick: handleRowClick,
+                        onIsReadyChange: (isReady) => {
+                            setIsReady(isReady);
+                        },
+                    } })) : (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("p", { className: "tekst-muted small" }, objects && `Znaleziono: ${objects.length} pozycji`),
+                    react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => {
+                            setIsReady(isReady);
+                        } }))))))));
 }
 exports.default = FilterableTable;
-function Sections({ resulsetTableProps, onClick }) {
+function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: 'light', border: 'light', style: { marginTop: '10px' } },
+        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
 }
@@ -150,7 +155,7 @@ function TableTitle({ title }) {
 exports.TableTitle = TableTitle;
 // Funkcja do aktualizacji węzłów
 function editNode(nodes, sectionId, newData) {
-    return nodes.map(node => {
+    return nodes.map((node) => {
         if (node.id === sectionId) {
             // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
             const newSectionNode = { ...node };
@@ -171,7 +176,7 @@ function editNode(nodes, sectionId, newData) {
 }
 // Funkcja do aktualizacji liści
 function editLeafDataItem(leaves, id, newData) {
-    return leaves.map(leaf => leaf.id === id
+    return leaves.map((leaf) => leaf.id === id
         ? {
             ...leaf,
             ...newData,
@@ -180,7 +185,7 @@ function editLeafDataItem(leaves, id, newData) {
 }
 // Funkcja do dodawania nowych węzłów i liści
 function addNode(nodes, parentId, newData) {
-    return nodes.map(node => {
+    return nodes.map((node) => {
         if (node.id === parentId) {
             // Jeśli rodzic ma już liście, dodajemy nowe dane jako liść
             if (node.leaves) {
@@ -190,7 +195,7 @@ function addNode(nodes, parentId, newData) {
                     leaves: [...node.leaves, newLeaf],
                 };
             }
-            const newNodeType = node.childrenNodesType || '';
+            const newNodeType = node.childrenNodesType || "";
             // W przeciwnym razie dodajemy nowe dane jako węzeł
             const newChild = {
                 id: newNodeType + newData.id,
@@ -199,7 +204,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: 'nowy tytuł',
+                titleLabel: "nowy tytuł",
                 children: [],
                 leaves: [],
             };
@@ -227,7 +232,7 @@ function deleteNode(nodes, nodeId) {
             // Jeśli id nie pasuje, przeszukujemy dzieci
             const newNode = {
                 ...node,
-                children: deleteNode(node.children, nodeId)
+                children: deleteNode(node.children, nodeId),
             };
             return [...newNodes, newNode];
         }
