@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.CitySelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -124,15 +124,30 @@ function CitySelectFormElement({ name = "_city", showValidationInfo = true, mult
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.CitySelectFormElement = CitySelectFormElement;
+function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, multiple = false, repository, readOnly = false, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        const typedOption = option;
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null,
+                typedOption._type.name,
+                " ",
+                ` `,
+                typedOption._city.name,
+                " ",
+                ` | `,
+                typedOption.alias,
+                " ",
+                ` | `,
+                typedOption.submissionDeadline),
+            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.employerName)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
+}
+exports.OfferSelectFormElement = OfferSelectFormElement;
 function ContractSelectFormElement({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    function makeContextSearchParams() {
-        const params = {
-            typesToInclude: typesToInclude,
-            _project: _project,
-        };
-        return params;
-    }
     function renderOption(option) {
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, option.ourId || option.number),
@@ -346,10 +361,11 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
-        if (!groups[item._parent._FolderNumber_TypeName_Name]) {
-            groups[item._parent._FolderNumber_TypeName_Name] = [];
+        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        if (!groups[key]) {
+            groups[key] = [];
         }
-        groups[item._parent._FolderNumber_TypeName_Name].push(item);
+        groups[key].push(item);
         return groups;
     }, {});
 }
@@ -379,13 +395,19 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
  * @param readOnly czy pole jest tylko do odczytu (domyślnie false)
  * @param _contract kontrakt do którego należy wybrana sprawa
  */
-function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, repository, showValidationInfo = true, multiple = true, }) {
+function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _offer, repository, showValidationInfo = true, multiple = true, }) {
     const [options, setOptions] = (0, react_1.useState)([]);
     const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                await repository.loadItemsFromServerPOST([
+                    { contractId: _contract.id, milestoneParentType: "CONTRACT" },
+                ]);
+                setOptions(repository.items);
+            }
+            else if (_offer) {
+                await repository.loadItemsFromServerPOST([{ offerId: _offer.id, milestoneParentType: "OFFER" }]);
                 setOptions(repository.items);
             }
             else {
@@ -393,7 +415,7 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, re
             }
         };
         fetchData();
-    }, [_contract]);
+    }, [_contract, _offer]);
     function handleOnChange(selectedOptions, field) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
         setValue(name, valueToBeSent);

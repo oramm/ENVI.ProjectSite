@@ -51,16 +51,17 @@ const MainContent_1 = __importDefault(require("./Content/MainContent"));
 const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
 const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
-const OffersSearch_1 = __importDefault(require("../../Offers/OffersSearch"));
-const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
+const OffersSearch_1 = __importDefault(require("../../Offers/OffersList/OffersSearch"));
+const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
+const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
-const rootPath = '/';
-console.log('rootPath', rootPath);
+const rootPath = "/";
+console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             try {
@@ -84,7 +85,7 @@ function App() {
             setIsLoggedIn(true);
         }
         else {
-            console.log('Authentication failed:', response.error);
+            console.log("Authentication failed:", response.error);
         }
     };
     if (errorMessage)
@@ -116,13 +117,15 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
     if (!root)
         return;
-    if (process.env.MODE === 'development')
+    if (process.env.MODE === "development")
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(react_1.StrictMode, null,
                 react_1.default.createElement(App, null))));

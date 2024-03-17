@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
+import { Alert, Card } from "react-bootstrap";
 import { OurContract, OtherContract, SystemRoleName } from "../../../../../../Typings/bussinesTypes";
 import {
     ContractModalBodyDates,
@@ -94,6 +94,7 @@ export default function ContractsList() {
 
     function renderEndDate(contract: OurContract | OtherContract) {
         const { endDate } = contract;
+        if (!endDate) return <Alert variant="danger">Brak daty zakończenia</Alert>;
         const daysLeft = ToolsDate.countDaysLeftTo(endDate);
 
         return (
@@ -110,6 +111,7 @@ export default function ContractsList() {
 
     function renderStartDate(contract: OurContract | OtherContract) {
         const { startDate } = contract;
+        if (!startDate) return <Alert variant="danger">Brak daty rozpoczęcia</Alert>;
         return (
             <div>
                 <DateEditTrigger contract={contract} date={startDate} onEdit={handleEditObject} />
@@ -125,8 +127,8 @@ export default function ContractsList() {
     function renderRemainingValue(contract: OurContract | OtherContract) {
         if (!contract.ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
             return <></>;
-        const formatedNotScheduledValue = Tools.formatNumber(contract._remainingNotScheduledValue || 0, 0);
-        const formatedNotIssuedValue = Tools.formatNumber(contract._remainingNotIssuedValue || 0, 0);
+        const formatedNotScheduledValue = Tools.formatNumber((contract._remainingNotScheduledValue as number) || 0, 0);
+        const formatedNotIssuedValue = Tools.formatNumber((contract._remainingNotIssuedValue as number) || 0, 0);
         return (
             <>
                 <MyTooltip content="Różnica pomiędzy wartością wysłanych faktur a wartością umowy" placement="right">

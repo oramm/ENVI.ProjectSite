@@ -98,6 +98,8 @@ function ContractsList() {
     }
     function renderEndDate(contract) {
         const { endDate } = contract;
+        if (!endDate)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty zako\u0144czenia");
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
@@ -107,6 +109,8 @@ function ContractsList() {
     }
     function renderStartDate(contract) {
         const { startDate } = contract;
+        if (!startDate)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty rozpocz\u0119cia");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject })));
     }

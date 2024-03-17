@@ -53,59 +53,62 @@ function TasksGlobal() {
         async function fetchData() {
             setDataLoaded(false);
             const [contractsWithChildren] = await Promise.all([
-                TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerPOST([{
+                TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerPOST([
+                    {
                         _project: selectedProject,
-                        statusType: 'active',
-                    }]),
+                        statusType: "active",
+                    },
+                ]),
                 ContractsController_1.caseTypesRepository.loadItemsFromServerPOST(),
                 ContractsController_1.milestoneTypesRepository.loadItemsFromServerPOST(),
             ]);
             setContractsWithCildren(contractsWithChildren);
-            setExternalUpdate(prevState => prevState + 1);
+            setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
-        ;
         fetchData();
     }, [selectedProject]);
     function handleShowProjects() {
         setShowProjects(!showProjects);
         setContractsWithCildren([]);
-        setExternalUpdate(prevState => prevState + 1);
+        setExternalUpdate((prevState) => prevState + 1);
     }
     function makeTaskParentsLabel(task) {
-        const _contract = task._parent._parent._parent;
+        const _contract = task._parent._parent._contract;
         const _milestone = task._parent._parent;
         const _case = task._parent;
-        return `${_contract.ourId || ''} ${_contract.alias || ''} ${_contract.number || ''} | ` +
-            `${_milestone._FolderNumber_TypeName_Name || ''} |` +
-            `${_case._type.name || ''} | ${_case.name || ''}`;
+        return (`${_contract.ourId || ""} ${_contract.alias || ""} ${_contract.number || ""} | ` +
+            `${_milestone._FolderNumber_TypeName_Name || ""} |` +
+            `${_case._type.name || ""} | ${_case.name || ""}`);
     }
     function makeTasksTableStructure() {
         const tableStructure = [];
         if (!showProjects) {
-            tableStructure.push({ header: 'Kamień|Sprawa', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, makeTaskParentsLabel(task)) });
+            tableStructure.push({
+                header: "Kamień|Sprawa",
+                renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, makeTaskParentsLabel(task)),
+            });
         }
-        tableStructure.push({ header: 'Nazwa i opis', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null,
+        tableStructure.push({
+            header: "Nazwa i opis",
+            renderTdBody: (task) => (react_1.default.createElement(react_1.default.Fragment, null,
                 task.name,
                 react_1.default.createElement("br", null),
-                task.description) }, { header: 'Termin', objectAttributeToShow: 'deadline' }, { header: 'Status', renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, { header: 'Właściciel', renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`) });
+                task.description)),
+        }, { header: "Termin", objectAttributeToShow: "deadline" }, { header: "Status", renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, { header: "Właściciel", renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`) });
         return tableStructure;
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            showProjects &&
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'projects', title: 'Projekty', repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                            { header: 'Nazwa', renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
-                        ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? '9' : '12' },
+            showProjects && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                        { header: "Nazwa", renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
+                    ], onRowClick: setSelectedProject }))),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? "9" : "12" },
                 react_1.default.createElement("div", { className: "d-flex justify-content-end" },
                     react_1.default.createElement("div", { onClick: handleShowProjects },
                         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
-                tasksLoaded ?
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'tasks', title: 'Zadania', showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })
-                    :
-                        react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))));
+                tasksLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
 }
 exports.default = TasksGlobal;
 function LoadingMessage({ selectedProject }) {
@@ -117,10 +120,10 @@ function LoadingMessage({ selectedProject }) {
 }
 function makeContractTitleLabel(contract) {
     const manager = contract._manager;
-    let label = 'K: ';
-    label += contract.ourId ? `${contract.ourId || ''}` : `${contract._type.name} ${contract.number}`;
+    let label = "K: ";
+    label += contract.ourId ? `${contract.ourId || ""}` : `${contract._type.name} ${contract.number}`;
     if (contract.alias)
-        label += ` [${contract.alias || ''}] `;
+        label += ` [${contract.alias || ""}] `;
     if (manager)
         label += ` ${manager.name} ${manager.surname}`;
     return label;
@@ -130,20 +133,20 @@ function contractNodeEditHandler(node) {
     node.titleLabel = makeContractTitleLabel(contract);
 }
 function makeMilestoneTitleLabel(milestone) {
-    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ''}`;
+    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    return `${caseItem._typeFolderNumber_TypeName_Number_Name || ''}`;
+    return `${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
     for (const { contract, milestonesWithCases: milestonesWitchCases } of contractsWithChildrenInput) {
         const contractNode = {
-            id: 'contract' + contract.id,
+            id: "contract" + contract.id,
             isInAccordion: true,
             level: 1,
-            type: 'contract',
-            childrenNodesType: 'milestone',
+            type: "contract",
+            childrenNodesType: "milestone",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),
@@ -155,11 +158,11 @@ function buildTree(contractsWithChildrenInput) {
         contractNodes.push(contractNode);
         for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
             const milestoneNode = {
-                id: 'milestone' + milestone.id,
+                id: "milestone" + milestone.id,
                 isInAccordion: true,
                 level: 2,
-                type: 'milestone',
-                childrenNodesType: 'case',
+                type: "milestone",
+                childrenNodesType: "case",
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
                 titleLabel: makeMilestoneTitleLabel(milestone),
@@ -170,9 +173,9 @@ function buildTree(contractsWithChildrenInput) {
             contractNode.children.push(milestoneNode);
             for (const { caseItem, tasks } of casesWithTasks || []) {
                 const caseNode = {
-                    id: 'case' + caseItem.id,
+                    id: "case" + caseItem.id,
                     level: 3,
-                    type: 'case',
+                    type: "case",
                     repository: TasksGlobalController_1.casesRepository,
                     dataItem: caseItem,
                     titleLabel: makeCaseTitleLabel(caseItem),
@@ -181,7 +184,9 @@ function buildTree(contractsWithChildrenInput) {
                     isDeletable: true,
                     AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
                     EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
-                    editHandler: (node) => { node.titleLabel = makeCaseTitleLabel(node.dataItem); }, // Dostosuj do Twojej metody
+                    editHandler: (node) => {
+                        node.titleLabel = makeCaseTitleLabel(node.dataItem);
+                    }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);
                 for (const task of tasks || []) {
@@ -193,6 +198,6 @@ function buildTree(contractsWithChildrenInput) {
             }
         }
     }
-    console.log('contractNodes', contractNodes);
+    console.log("contractNodes", contractNodes);
     return contractNodes;
 }

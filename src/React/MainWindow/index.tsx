@@ -13,8 +13,8 @@ import Footer from "./Footer";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
@@ -23,18 +23,19 @@ import MainContent from "./Content/MainContent";
 import EntitiesSearch from "../../Entities/EntitiesSearch";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
-import OffersSearch from "../../Offers/OffersSearch";
+import OffersSearch from "../../Offers/OffersList/OffersSearch";
+import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
 
-const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
+const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
-const rootPath = '/';
-console.log('rootPath', rootPath);
+const rootPath = "/";
+console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isReady, setIsReady] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('' as string | null);
+    const [errorMessage, setErrorMessage] = useState("" as string | null);
 
     useEffect(() => {
         async function fetchData() {
@@ -57,7 +58,7 @@ function App() {
             MainSetup.currentUser = response.userData;
             setIsLoggedIn(true);
         } else {
-            console.log('Authentication failed:', response.error);
+            console.log("Authentication failed:", response.error);
         }
     };
 
@@ -67,20 +68,17 @@ function App() {
                 <h1>Ups! mamy błąd</h1>
                 <Alert variant="danger"> {errorMessage}</Alert>
             </div>
-        )
+        );
     else if (isReady) {
         return isLoggedIn ? (
             <>
                 <AppRoutes />
                 <Footer />
             </>
-
         ) : (
             <GoogleButton onServerResponse={handleServerResponse} />
         );
-    }
-    else
-        return <SpinnerBootstrap />
+    } else return <SpinnerBootstrap />;
 }
 
 function AppRoutes() {
@@ -100,18 +98,19 @@ function AppRoutes() {
                 <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                 <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
                 <Route path="/offers" element={<OffersSearch title="Oferty" />} />
+                <Route path="/offers/list" element={<OffersSearch title="Oferty" />} />
+                <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </HashRouter>
     );
 }
 
-
 export async function renderApp() {
     const root = document.getElementById("root");
 
     if (!root) return;
-    if (process.env.MODE === 'development')
+    if (process.env.MODE === "development")
         ReactDOM.createRoot(root).render(
             <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
                 <StrictMode>

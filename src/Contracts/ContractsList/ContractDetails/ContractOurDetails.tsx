@@ -13,7 +13,9 @@ export default function ContractOurDetails() {
     const [settlemenData, setSettlemenData] = useState(undefined as ContractsSettlementData | undefined);
     const [invoices, setInvoices] = useState([] as Invoice[]);
     const [externalUpdate, setExternalUpdate] = useState(0);
+
     if (!contract) return <Alert variant="danger">Nie wybrano umowy</Alert>;
+    if (!contract._lastUpdated) return <Alert variant="danger">Umowa nie ma daty aktualizacji</Alert>;
 
     //fetch data
     useEffect(() => {

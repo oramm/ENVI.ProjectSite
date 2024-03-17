@@ -7,55 +7,55 @@ exports.entitiesRepository = exports.casesRepository = exports.milestonesReposit
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.lettersRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'letters',
-        addNewRoute: 'letterReact',
-        editRoute: 'letter',
-        deleteRoute: 'letter'
+        getRoute: "contractsLetters",
+        addNewRoute: "letterReact",
+        editRoute: "letter",
+        deleteRoute: "letter",
     },
-    name: 'letters'
+    name: "contractsLetters",
 });
 exports.projectsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'projects',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "projects",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'projects'
+    name: "projects",
 });
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'contracts',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "contracts",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'contracts'
+    name: "contracts",
 });
 exports.milestonesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'milestones',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "milestones",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'milestones'
+    name: "milestones",
 });
 exports.casesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'cases',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "cases",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'cases'
+    name: "cases",
 });
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'entities',
-        addNewRoute: 'entity',
-        editRoute: 'entity',
-        deleteRoute: 'entity'
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
     },
-    name: 'entities'
+    name: "entities",
 });

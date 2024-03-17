@@ -41,6 +41,8 @@ function ContractOurDetails() {
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     if (!contract)
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie wybrano umowy");
+    if (!contract._lastUpdated)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Umowa nie ma daty aktualizacji");
     //fetch data
     (0, react_1.useEffect)(() => {
         async function fetchData() {

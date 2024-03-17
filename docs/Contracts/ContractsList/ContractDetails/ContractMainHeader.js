@@ -15,9 +15,15 @@ const ContractDetailsContext_1 = require("./ContractDetailsContext");
 function ContractMainHeader() {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)
-        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie wybrano umowy");
     if (!contractsRepository)
-        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie znaleziono repozytorium");
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie znaleziono repozytorium");
+    if (!contract.startDate)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Umowa nie ma daty rozpocz\u0119cia");
+    if (!contract.endDate)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Umowa nie ma daty zako\u0144czenia");
+    if (!contract.guaranteeEndDate)
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Umowa nie ma daty gwarancji");
     function renderEntityDetails() {
         if (!contract)
             return react_1.default.createElement(react_1.default.Fragment, null);
@@ -31,9 +37,8 @@ function ContractMainHeader() {
                 react_1.default.createElement("div", null, "Wykonawca"),
                 react_1.default.createElement("h5", null, renderEntityData(contract._contractors || []))));
     }
-    ;
     function renderEntityData(entities) {
-        return entities.map(entity => {
+        return entities.map((entity) => {
             return (react_1.default.createElement("div", { key: entity.id },
                 react_1.default.createElement("div", null, entity.name),
                 react_1.default.createElement("div", null, entity.address),
@@ -48,35 +53,36 @@ function ContractMainHeader() {
             contractsRepository.items = newItems;
     }
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
-        react_1.default.createElement(react_bootstrap_1.Row, { className: 'mt-3' },
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 11, md: 6 }, renderEntityDetails()),
-            contract.ourId &&
-                react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
-                    react_1.default.createElement("div", null, "Oznaczenie:"),
-                    react_1.default.createElement("h5", null, contract.ourId)),
+            contract.ourId && (react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
+                react_1.default.createElement("div", null, "Oznaczenie:"),
+                react_1.default.createElement("h5", null, contract.ourId))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                 react_1.default.createElement("div", null, "Nr umowy:"),
                 react_1.default.createElement("h5", null, contract.number)),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 1 },
                 react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: contract,
-                        modalTitle: 'Edycja statusu',
+                        modalTitle: "Edycja statusu",
                         repository: contractsRepository,
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
                         onEdit: handleEditObject,
-                        fieldsToUpdate: ['status'],
+                        fieldsToUpdate: ["status"],
                         makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema,
                     } },
                     react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract?.status }))),
-            react_1.default.createElement(react_bootstrap_1.Col, { sm: 1 }, contract._gdFolderUrl && (react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: contract._gdFolderUrl }))),
+            react_1.default.createElement(react_bootstrap_1.Col, { sm: 1 }, contract._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { folderUrl: contract._gdFolderUrl })),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 6 },
                 react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: contract,
-                        modalTitle: 'Edycja nazwy',
+                        modalTitle: "Edycja nazwy",
                         repository: contractsRepository,
                         ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
-                        onEdit: (contract) => { setContract(contract); },
-                        fieldsToUpdate: ['name'],
+                        onEdit: (contract) => {
+                            setContract(contract);
+                        },
+                        fieldsToUpdate: ["name"],
                         makeValidationSchema: ContractValidationSchema_1.contractNameValidationSchema,
                     } },
                     react_1.default.createElement(react_1.default.Fragment, null,
@@ -96,18 +102,18 @@ exports.ContractMainHeader = ContractMainHeader;
 function DateEditTrigger({ date }) {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)
-        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie wybrano umowy");
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie wybrano umowy");
     if (!contractsRepository)
-        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: 'danger' }, "Nie znaleziono repozytorium");
+        return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Nie znaleziono repozytorium");
     return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
             initialData: contract,
-            modalTitle: 'Edycja dat',
+            modalTitle: "Edycja dat",
             repository: contractsRepository,
             ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
-            onEdit: (contract) => { setContract(contract); },
-            fieldsToUpdate: ['startDate', 'endDate', 'guaranteeEndDate'],
+            onEdit: (contract) => {
+                setContract(contract);
+            },
+            fieldsToUpdate: ["startDate", "endDate", "guaranteeEndDate"],
             makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
-        } }, date
-        ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(date))
-        : react_1.default.createElement(react_1.default.Fragment, null, 'Jeszcze nie ustalono')));
+        } }, date ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(date)) : react_1.default.createElement(react_1.default.Fragment, null, "Jeszcze nie ustalono")));
 }

@@ -19,8 +19,10 @@ import {
     City,
     Contract,
     DocumentTemplate,
+    ExternalOffer,
     Milestone,
     MilestoneType,
+    OurOffer,
     Project,
     RepositoryDataItem,
 } from "../../../Typings/bussinesTypes";
@@ -269,6 +271,56 @@ export function CitySelectFormElement({
     );
 }
 
+export type OfferSelectFormElementProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    readOnly?: boolean;
+};
+
+export function OfferSelectFormElement({
+    name = "_offer",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    readOnly = false,
+}: OfferSelectFormElementProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const typedOption = option as OurOffer | ExternalOffer;
+        return (
+            <div>
+                <span>
+                    {typedOption._type.name} {` `}
+                    {typedOption._city.name} {` | `}
+                    {typedOption.alias} {` | `}
+                    {typedOption.submissionDeadline}
+                </span>
+                <div className="text-muted small">{typedOption.employerName}</div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="alias"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                showValidationInfo={showValidationInfo}
+                readOnly={readOnly}
+            />
+        </>
+    );
+}
+
 export type ContractSelectFormElementProps = {
     name?: string;
     showValidationInfo?: boolean;
@@ -291,14 +343,6 @@ export function ContractSelectFormElement({
     const {
         formState: { errors },
     } = useFormContext();
-
-    function makeContextSearchParams() {
-        const params = {
-            typesToInclude: typesToInclude,
-            _project: _project,
-        };
-        return params;
-    }
 
     function renderOption(option: any) {
         return (
@@ -765,10 +809,11 @@ export function MyAsyncTypeahead({
 
 function groupByMilestone(cases: Case[]) {
     return cases.reduce<Record<string, Case[]>>((groups, item) => {
-        if (!groups[item._parent._FolderNumber_TypeName_Name]) {
-            groups[item._parent._FolderNumber_TypeName_Name] = [];
+        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        if (!groups[key]) {
+            groups[key] = [];
         }
-        groups[item._parent._FolderNumber_TypeName_Name].push(item);
+        groups[key].push(item);
         return groups;
     }, {});
 }
@@ -807,6 +852,7 @@ interface CaseSelectMenuElementProps {
     repository: RepositoryReact<Case>;
     _project?: Project;
     _contract?: Contract;
+    _offer?: OurOffer | ExternalOffer;
     _milestone?: Milestone;
     readonly?: boolean;
     showValidationInfo?: boolean;
@@ -827,6 +873,7 @@ export function CaseSelectMenuElement({
     name = "_case",
     readonly = false,
     _contract,
+    _offer,
     repository,
     showValidationInfo = true,
     multiple = true,
@@ -842,14 +889,19 @@ export function CaseSelectMenuElement({
     useEffect(() => {
         const fetchData = async () => {
             if (_contract) {
-                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                await repository.loadItemsFromServerPOST([
+                    { contractId: _contract.id, milestoneParentType: "CONTRACT" },
+                ]);
+                setOptions(repository.items);
+            } else if (_offer) {
+                await repository.loadItemsFromServerPOST([{ offerId: _offer.id, milestoneParentType: "OFFER" }]);
                 setOptions(repository.items);
             } else {
                 repository.clearData();
             }
         };
         fetchData();
-    }, [_contract]);
+    }, [_contract, _offer]);
 
     function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
         const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];

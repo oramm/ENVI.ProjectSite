@@ -42,36 +42,37 @@ export interface Contract extends RepositoryDataItem {
     number: string;
     alias: string;
     comment: string;
-    startDate: string;
-    endDate: string;
-    guaranteeEndDate: string;
+    startDate?: string;
+    endDate?: string;
+    guaranteeEndDate?: string;
     _project: Project;
     status: string;
-    gdFolderId: string;
-    meetingProtocolsGdFolderId: string;
+    gdFolderId?: string;
+    meetingProtocolsGdFolderId?: string;
     _type: ContractType;
-    value: number;
-    _remainingNotScheduledValue?: number;
-    _remainingNotIssuedValue?: number;
-    _folderName: string;
-    _gdFolderUrl: string;
-    _ourIdOrNumber_Alias: string;
-    _ourIdOrNumber_Name: string;
-    _lastUpdated: string;
+    value?: string | number;
+    _remainingNotScheduledValue?: string | number;
+    _remainingNotIssuedValue?: string | number;
+    _folderName?: string;
+    _gdFolderUrl?: string;
+    _ourIdOrNumber_Alias?: string;
+    _ourIdOrNumber_Name?: string;
+    _lastUpdated?: string;
     _contractors?: Entity[];
     _engineers?: Entity[];
     _employers?: Entity[];
 }
 
 export interface OurContract extends Contract {
-    _admin: Person;
-    _manager: Person;
+    _admin?: Person;
+    _manager?: Person;
     ourId: string;
 }
 
 export interface OtherContract extends Contract {
-    _contractors: Entity[];
-    _ourContract: OurContract;
+    _contractors?: Entity[];
+    _ourContract?: OurContract;
+    materialCardsGdFolderId?: string;
 }
 
 export interface ContractsSettlementData {
@@ -86,28 +87,36 @@ export interface ContractsSettlementData {
 
 export interface Milestone extends RepositoryDataItem {
     name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    gdFolderId: string;
+    number?: number;
+    description?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    gdFolderId?: string;
     _type: MilestoneType;
-    _parent: OurContract | OtherContract;
-    _FolderNumber_TypeName_Name: string;
-    _folderName: string;
-    _gdFolderUrl: string;
+    _contract?: OurContract | OtherContract;
+    _offer?: OurOffer | ExternalOffer;
+    contractId?: number;
+    offerId?: number;
+    _FolderNumber_TypeName_Name?: string;
+    _folderNumber?: string;
+    _folderName?: string;
+    _gdFolderUrl?: string;
 }
 
 export interface Case extends RepositoryDataItem {
-    name: string;
-    number: number;
-    description: string;
-    gdFolderId: string;
+    name?: string | null;
+    number?: number;
+    description?: string;
+    gdFolderId?: string;
     _parent: Milestone;
     _type: CaseType;
-    _folderName: string;
-    _displayNumber: string;
-    _gdFolderUrl: string;
-    _typeFolderNumber_TypeName_Number_Name: string;
+    _folderName?: string;
+    _displayNumber?: string;
+    _gdFolderUrl?: string;
+    _typeFolderNumber_TypeName_Number_Name?: string;
+    _risk?: any;
+    _processesInstances?: any[];
 }
 
 export interface Task extends RepositoryDataItem {
@@ -121,9 +130,9 @@ export interface Task extends RepositoryDataItem {
 
 export interface ContractType extends RepositoryDataItem {
     name: string;
-    description: string;
+    description?: string;
     isOur: boolean;
-    status: string;
+    status?: string;
 }
 
 export interface MilestoneType extends RepositoryDataItem {
@@ -258,22 +267,31 @@ export interface City extends RepositoryDataItem {
 }
 
 interface Offer extends RepositoryDataItem {
+    creationDate?: string;
     alias: string;
-    description: string;
-    submissionDeadline: string;
+    description?: string;
+    comment?: string;
+    submissionDeadline?: string;
     _type: ContractType;
     _city: City;
-    typeId: number;
+    typeId?: number;
+    cityId?: number;
     form: string;
     isOur: boolean;
     bidProcedure: string;
-    editorId: number;
-    _lastUpdated: string;
-    employerName: string;
-    status: string;
-    gdFolderId: string;
+    editorId?: number;
+    _lastUpdated?: string;
+    employerName?: string;
+    _employer?: Entity;
+    _editor?: Person;
+    status?: string;
+    gdFolderId?: string;
+    _gdFolderUrl?: string;
 }
 
-export interface OurOffer extends Offer {}
+export interface OurOffer extends Offer {
+    gdDocumentId?: string;
+    resourcesGdFolderId?: string;
+}
 
 export interface ExternalOffer extends Offer {}
