@@ -63,7 +63,7 @@ function OffersLettersSearch({ title }) {
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "letters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "offersLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
             { header: "Utworzono", objectAttributeToShow: "creationDate" },
             { header: "Wysłano", objectAttributeToShow: "registrationDate" },

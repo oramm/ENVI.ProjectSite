@@ -20,7 +20,7 @@ export const lettersRepository = new RepositoryReact<OurLetter | IncomingLetter>
         editRoute: "letter",
         deleteRoute: "letter",
     },
-    name: "letters",
+    name: "offersLetters",
 });
 
 export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({

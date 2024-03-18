@@ -51,7 +51,7 @@ export default function OffersLettersSearch({ title }: { title: string }) {
 
     return (
         <FilterableTable<OurLetter | IncomingLetter>
-            id="letters"
+            id="offersLetters"
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[

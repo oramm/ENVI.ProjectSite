@@ -39,10 +39,10 @@ function LettersSearch({ title }) {
     }, [title]);
     function buildLabelFromEntities(entities) {
         if (!entities || entities.length === 0)
-            return '';
-        let label = '';
+            return "";
+        let label = "";
         for (let i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + '\n ';
+            label += entities[i].name + "\n ";
         }
         label += entities[entities.length - 1].name;
         return label;
@@ -54,22 +54,22 @@ function LettersSearch({ title }) {
             return react_1.default.createElement(react_1.default.Fragment, null);
         let label = mainEntitiesLabel;
         if (ccEntitiesLabel?.length > 0) {
-            label += '\n\nDW: ' + ccEntitiesLabel;
+            label += "\n\nDW: " + ccEntitiesLabel;
         }
-        return react_1.default.createElement("div", { style: { whiteSpace: 'pre-line' } }, label);
+        return react_1.default.createElement("div", { style: { whiteSpace: "pre-line" } }, label);
     }
     function renderIconTdBody(letter) {
         letter = letter;
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: 'letters', title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "contractsLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
-            { header: 'Utworzono', objectAttributeToShow: 'creationDate' },
-            { header: 'Wysłano', objectAttributeToShow: 'registrationDate' },
-            { header: 'Numer', objectAttributeToShow: 'number' },
-            { header: 'Dotyczy', objectAttributeToShow: 'description' },
-            { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },
-        ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: '/letter/' }));
+            { header: "Utworzono", objectAttributeToShow: "creationDate" },
+            { header: "Wysłano", objectAttributeToShow: "registrationDate" },
+            { header: "Numer", objectAttributeToShow: "number" },
+            { header: "Dotyczy", objectAttributeToShow: "description" },
+            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
+        ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
 exports.default = LettersSearch;

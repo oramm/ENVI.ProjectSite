@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
-import FilterableTable from '../../View/Resultsets/FilterableTable/FilterableTable';
-import { lettersRepository } from './LettersController';
-import { LettersFilterBody } from './LetterFilterBody';
-import { LetterEditModalButton, IncomingLetterAddNewModalButton, OurLetterAddNewModalButton } from './Modals/LetterModalButtons';
-import { Entity, IncomingLetter, OurLetter } from '../../../Typings/bussinesTypes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-
+import React, { useEffect } from "react";
+import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
+import { lettersRepository } from "./LettersController";
+import { LettersFilterBody } from "./LetterFilterBody";
+import {
+    LetterEditModalButton,
+    IncomingLetterAddNewModalButton,
+    OurLetterAddNewModalButton,
+} from "./Modals/LetterModalButtons";
+import { Entity, IncomingLetter, OurLetter } from "../../../Typings/bussinesTypes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -14,11 +17,11 @@ export default function LettersSearch({ title }: { title: string }) {
     }, [title]);
 
     function buildLabelFromEntities(entities: Entity[]): string {
-        if (!entities || entities.length === 0) return '';
+        if (!entities || entities.length === 0) return "";
 
-        let label = '';
+        let label = "";
         for (let i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + '\n ';
+            label += entities[i].name + "\n ";
         }
         label += entities[entities.length - 1].name;
 
@@ -33,38 +36,37 @@ export default function LettersSearch({ title }: { title: string }) {
 
         let label = mainEntitiesLabel;
         if (ccEntitiesLabel?.length > 0) {
-            label += '\n\nDW: ' + ccEntitiesLabel;
+            label += "\n\nDW: " + ccEntitiesLabel;
         }
 
-        return <div style={{ whiteSpace: 'pre-line' }}>{label}</div>;
-
+        return <div style={{ whiteSpace: "pre-line" }}>{label}</div>;
     }
 
     function renderIconTdBody(letter: OurLetter | IncomingLetter) {
         letter = letter as OurLetter | IncomingLetter;
         const icon = letter.isOur ? faPaperPlane : faEnvelope;
 
-        return <FontAwesomeIcon icon={icon} size="lg" />
+        return <FontAwesomeIcon icon={icon} size="lg" />;
     }
 
     return (
         <FilterableTable<OurLetter | IncomingLetter>
-            id='letters'
+            id="contractsLetters"
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody },
-                { header: 'Utworzono', objectAttributeToShow: 'creationDate' },
-                { header: 'Wysłano', objectAttributeToShow: 'registrationDate' },
-                { header: 'Numer', objectAttributeToShow: 'number' },
-                { header: 'Dotyczy', objectAttributeToShow: 'description' },
-                { header: 'Odbiorcy', renderTdBody: makeEntitiesLabel },
+                { header: "Utworzono", objectAttributeToShow: "creationDate" },
+                { header: "Wysłano", objectAttributeToShow: "registrationDate" },
+                { header: "Numer", objectAttributeToShow: "number" },
+                { header: "Dotyczy", objectAttributeToShow: "description" },
+                { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}
             isDeletable={true}
             repository={lettersRepository}
-            selectedObjectRoute={'/letter/'}
+            selectedObjectRoute={"/letter/"}
         />
     );
 }
