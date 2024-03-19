@@ -27,14 +27,9 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
 
-    function getOfferFromCases(_cases: Case[] | undefined) {
-        if (!_cases || _cases.length === 0) return undefined;
-        return _cases[0]._parent?._offer as OurOffer | ExternalOffer;
-    }
-
     useEffect(() => {
         const resetData: any = {
-            _offer: getOfferFromCases(initialData?._cases),
+            _offer: initialData?._offer,
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),

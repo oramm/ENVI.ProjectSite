@@ -38,14 +38,9 @@ function LetterModalBody({ isEditing, initialData }) {
     const _offer = watch("_offer");
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
-    function getOfferFromCases(_cases) {
-        if (!_cases || _cases.length === 0)
-            return undefined;
-        return _cases[0]._parent?._offer;
-    }
     (0, react_1.useEffect)(() => {
         const resetData = {
-            _offer: getOfferFromCases(initialData?._cases),
+            _offer: initialData?._offer,
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
