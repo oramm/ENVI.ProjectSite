@@ -3,25 +3,15 @@ import {
     CitySelectFormElement,
     ContractTypeSelectFormElement,
     ErrorMessage,
-    FileInput,
     MyAsyncTypeahead,
     OfferBidProcedureSelectFormElement,
     OfferFormSelectFormElement,
     OfferStatusSelectFormElement,
-    PersonSelectFormElement,
-    ProjectSelector,
 } from "../../../View/Modals/CommonFormComponents";
 import { Col, Form, Placeholder, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import {
-    Case,
-    Contract,
-    ExternalOffer,
-    OurOffer,
-    Project,
-    RepositoryDataItem,
-} from "../../../../Typings/bussinesTypes";
+import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../OffersController";
 import { citiesRepository } from "../../../Admin/Cities/CitiesController";
 
