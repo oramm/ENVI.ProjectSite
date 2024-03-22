@@ -75,7 +75,7 @@ MainSetup.OfferStatus = {
     NOT_INTERESTED: "Nie składamy",
 };
 MainSetup.OfferBidProcedure = {
-    X: "Zapytanie ofertowe",
+    REQUEST_FOR_QUOTATION: "Zapytanie ofertowe",
     TENDER_PL: "Przetarg BZP",
     TENDER_EU: "Przetarg DUUE",
 };

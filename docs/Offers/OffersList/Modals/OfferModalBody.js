@@ -36,7 +36,7 @@ function OfferModalBody({ isEditing, initialData }) {
         const resetData = {
             _city: initialData?._city,
             _type: initialData?._type,
-            _employer: initialData?.employerName || "",
+            _employer: initialData?.employerName,
             alias: initialData?.alias || "",
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),

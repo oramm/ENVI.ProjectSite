@@ -31,6 +31,7 @@ function makecommonFields(isEditing: boolean) {
         bidProcedure: Yup.string().required("Wybierz procedurę"),
         form: Yup.string().required("Wybierz formę wysyłki"),
         _employer: Yup.mixed()
+            .required("Wybierz podmiot")
             .test(
                 "is-object-or-string",
                 "Wybierz podmiot lub podaj nazwę",
@@ -40,8 +41,8 @@ function makecommonFields(isEditing: boolean) {
                 "string-length",
                 "Nazwa może mieć maksymalnie 150 znaków",
                 (value) => typeof value !== "string" || value.length <= 150
-            )
-            .required("Wybierz podmiot"),
+            ),
+        status: Yup.string().required("Wybierz status oferty"),
     };
 }
 

@@ -48,9 +48,10 @@ function makecommonFields(isEditing) {
         bidProcedure: Yup.string().required("Wybierz procedurę"),
         form: Yup.string().required("Wybierz formę wysyłki"),
         _employer: Yup.mixed()
+            .required("Wybierz podmiot")
             .test("is-object-or-string", "Wybierz podmiot lub podaj nazwę", (value) => typeof value === "object" || typeof value === "string")
-            .test("string-length", "Nazwa może mieć maksymalnie 150 znaków", (value) => typeof value !== "string" || value.length <= 150)
-            .required("Wybierz podmiot"),
+            .test("string-length", "Nazwa może mieć maksymalnie 150 znaków", (value) => typeof value !== "string" || value.length <= 150),
+        status: Yup.string().required("Wybierz status oferty"),
     };
 }
 function makeOurOfferValidationSchema(isEditing) {

@@ -29,7 +29,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
         const resetData: any = {
             _city: initialData?._city,
             _type: initialData?._type,
-            _employer: initialData?.employerName || "",
+            _employer: initialData?.employerName,
             alias: initialData?.alias || "",
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
