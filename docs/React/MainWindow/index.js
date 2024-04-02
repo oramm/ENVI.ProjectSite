@@ -56,6 +56,7 @@ const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/
 const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch"));
 const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
 const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
+const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = "/";
@@ -123,8 +124,9 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Dotacje" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/applicationCalls", element: react_1.default.createElement(ApplicationCallsSearch_1.default, { title: "Nabory" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }))));
 }
 async function renderApp() {

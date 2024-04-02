@@ -74,6 +74,9 @@ export default function MainMenu() {
                                         <NavDropdown.Item as={Link} to="/financialAidProgrammes/focusAreas">
                                             Działania
                                         </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/applicationCalls">
+                                            Nabory
+                                        </NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/financialAidProgrammes/needs">
                                             Potrzeby klientów
                                         </NavDropdown.Item>

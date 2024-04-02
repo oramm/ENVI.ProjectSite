@@ -35,6 +35,7 @@ function MainMenu() {
                             react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Dotacje", id: "basic-nav-dropdown", className: isActive("/financialAidProgrammes") },
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes" }, "Programy"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/focusAreas" }, "Dzia\u0142ania"),
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/applicationCalls" }, "Nabory"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/needs" }, "Potrzeby klient\u00F3w"))))))))));
 }
 exports.default = MainMenu;

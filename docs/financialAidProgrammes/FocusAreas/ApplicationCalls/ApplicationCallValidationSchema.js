@@ -1,0 +1,53 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.makeApplicationCallValidationSchema = void 0;
+const Yup = __importStar(require("yup"));
+const applicationCallFields = {
+    description: Yup.string()
+        .required("Podaj opis")
+        .min(10, "Opis musi mieć co najmniej 10 znaków")
+        .max(1000, "Opis może mieć maksymalnie 1000 znaków"),
+    url: Yup.string()
+        .required("Podaj URL")
+        .url("Nieprawidłowy format URL")
+        .max(200, "URL może mieć maksymalnie 200 znaków"),
+    startDate: Yup.string()
+        .nullable()
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Nieprawidłowy format daty (wymagany format RRRR-MM-DD)"),
+    endDate: Yup.string()
+        .nullable()
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Nieprawidłowy format daty (wymagany format RRRR-MM-DD)"),
+    status: Yup.string()
+        .required("Podaj status")
+        .oneOf(["active", "pending", "completed", "cancelled"], "Nieprawidłowy status"),
+    focusAreaId: Yup.number().required("Wybierz obszar interwencji").positive("Nieprawidłowy obszar interwencji"),
+};
+function makeApplicationCallValidationSchema() {
+    return Yup.object().shape({
+        ...applicationCallFields,
+    });
+}
+exports.makeApplicationCallValidationSchema = makeApplicationCallValidationSchema;
