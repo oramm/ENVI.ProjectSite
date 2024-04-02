@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -146,6 +146,28 @@ function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, mu
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.OfferSelectFormElement = OfferSelectFormElement;
+function FinancialAidProgrammeSelector({ name = "_programme", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        const optionTyped = option;
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, optionTyped.name)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
+function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        const optionTyped = option;
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, optionTyped.name)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.FocusAreaSelector = FocusAreaSelector;
 function ContractSelectFormElement({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {

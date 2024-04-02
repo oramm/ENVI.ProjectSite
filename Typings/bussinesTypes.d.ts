@@ -295,3 +295,49 @@ export interface OurOffer extends Offer {
 }
 
 export interface ExternalOffer extends Offer {}
+
+export interface FinancialAidProgrammeData extends RepositoryDataItem {
+    name: string;
+    alias: string;
+    description: string;
+    url: string;
+    gdFolderId: string;
+    _gdFolderUrl?: string;
+}
+
+export interface FocusAreaData extends RepositoryDataItem {
+    programmeId?: number;
+    _programme: FinancialAidProgrammeData;
+    name: string;
+    alias: string;
+    description: string;
+    gdFolderId: string;
+    _gdFolderUrl?: string;
+}
+
+export interface ApplicationCallData extends RepositoryDataItem {
+    focusAreaId?: number;
+    _focusArea: FocusAreaData;
+    description: string;
+    url: string;
+    startDate: string | null;
+    endDate: string | null;
+    status: string;
+    gdFolderId: string;
+    _gdFolderUrl?: string;
+}
+export interface NeedData extends RepositoryDataItem {
+    clientId?: number;
+    _client: EntityData;
+    name: string;
+    description: string;
+    status: string;
+}
+
+export interface NeedsFocusAreasData {
+    needId?: number;
+    focusAreaId?: number;
+    _need: NeedData;
+    _focusArea: FocusAreaData;
+    comment: string;
+}

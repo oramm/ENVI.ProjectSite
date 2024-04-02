@@ -62,6 +62,22 @@ export default function MainMenu() {
                                             Pisma do ofert
                                         </NavDropdown.Item>
                                     </NavDropdown>
+
+                                    <NavDropdown
+                                        title="Dotacje"
+                                        id="basic-nav-dropdown"
+                                        className={isActive("/financialAidProgrammes")}
+                                    >
+                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes">
+                                            Programy
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/focusAreas">
+                                            Działania
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/financialAidProgrammes/needs">
+                                            Potrzeby klientów
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
                                 </>
                             )}
                         </Nav>

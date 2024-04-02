@@ -25,6 +25,9 @@ import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
 import OffersSearch from "../../Offers/OffersList/OffersSearch";
 import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
+import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
+import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
+import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 
 const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -100,6 +103,9 @@ function AppRoutes() {
                 <Route path="/offers" element={<OffersSearch title="Oferty" />} />
                 <Route path="/offers/list" element={<OffersSearch title="Oferty" />} />
                 <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
+                <Route path="/financialAidProgrammes" element={<FinancialAidProgrammesSearch title="Dotacje" />} />
+                <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
+                <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
                 {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
             </Routes>
         </HashRouter>

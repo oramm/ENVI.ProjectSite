@@ -53,6 +53,9 @@ const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
 const OffersSearch_1 = __importDefault(require("../../Offers/OffersList/OffersSearch"));
 const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
+const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch"));
+const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
+const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
 const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = "/";
@@ -119,7 +122,10 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Dotacje" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

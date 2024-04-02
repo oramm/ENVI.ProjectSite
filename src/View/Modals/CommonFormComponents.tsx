@@ -20,6 +20,8 @@ import {
     Contract,
     DocumentTemplate,
     ExternalOffer,
+    FinancialAidProgrammeData,
+    FocusAreaData,
     Milestone,
     MilestoneType,
     OurOffer,
@@ -316,6 +318,94 @@ export function OfferSelectFormElement({
                 multiple={multiple}
                 showValidationInfo={showValidationInfo}
                 readOnly={readOnly}
+            />
+        </>
+    );
+}
+
+export type FinancialAidProgrammeSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function FinancialAidProgrammeSelector({
+    name = "_programme",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: FinancialAidProgrammeSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as FinancialAidProgrammeData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type FocusAreaSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function FocusAreaSelector({
+    name = "_focusArea",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: FocusAreaSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as FocusAreaData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
             />
         </>
     );
