@@ -93,6 +93,29 @@ export default class MainSetup {
         NOT_INTERESTED: "Nie składamy",
     };
 
+    static ClientNeedStatus = {
+        URGENT: "Pilne",
+        IMPORTANT: "Ważne",
+        NICE_TO_HAVE: "Miło by było",
+        FOR_LATER: "Na później",
+        NOT_ACTUAL: "Nie aktualne",
+    };
+
+    static ApplicationCallStatus = {
+        UNKOWN: "Nieznany",
+        SCHEDULED: "Zaplanowany",
+        OPEN: "Otwarty",
+        CLOSED: "Zamknięty",
+    };
+
+    static ElementsNeededForApplication = {
+        EIA_DECISION: "DUŚ",
+        PFU: "PFU",
+        BUILDING_PERMIT: "Pozwolenie na budowę",
+        DECISION: "Decyzja lokalizacyjna",
+        MPZPT: "MPZPT",
+    };
+
     static OfferBidProcedure = {
         REQUEST_FOR_QUOTATION: "Zapytanie ofertowe",
         TENDER_PL: "Przetarg BZP",

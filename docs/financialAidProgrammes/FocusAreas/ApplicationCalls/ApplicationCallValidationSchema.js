@@ -34,16 +34,10 @@ const applicationCallFields = {
         .required("Podaj URL")
         .url("Nieprawidłowy format URL")
         .max(200, "URL może mieć maksymalnie 200 znaków"),
-    startDate: Yup.string()
-        .nullable()
-        .matches(/^\d{4}-\d{2}-\d{2}$/, "Nieprawidłowy format daty (wymagany format RRRR-MM-DD)"),
-    endDate: Yup.string()
-        .nullable()
-        .matches(/^\d{4}-\d{2}-\d{2}$/, "Nieprawidłowy format daty (wymagany format RRRR-MM-DD)"),
-    status: Yup.string()
-        .required("Podaj status")
-        .oneOf(["active", "pending", "completed", "cancelled"], "Nieprawidłowy status"),
-    focusAreaId: Yup.number().required("Wybierz obszar interwencji").positive("Nieprawidłowy obszar interwencji"),
+    startDate: Yup.date().required("Podaj datę początku naboru"),
+    endDate: Yup.date().required("Podaj datę zakończenia naboru"),
+    status: Yup.string().required("Podaj status"),
+    _focusArea: Yup.object().required("Wybierz obszar interwencji"),
 };
 function makeApplicationCallValidationSchema() {
     return Yup.object().shape({

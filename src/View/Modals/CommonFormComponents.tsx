@@ -227,6 +227,24 @@ export function InvoiceStatusSelectFormElement({
     );
 }
 
+export function ApplicationCallStatusSelector({
+    showValidationInfo = true,
+    name = "status",
+    as,
+}: SpecificTextOptionProps) {
+    const statuses = Object.entries(MainSetup.ApplicationCallStatus).map(([key, value]) => value);
+    return (
+        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    );
+}
+
+export function ClientNeedStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
+    const statuses = Object.entries(MainSetup.ClientNeedStatus).map(([key, value]) => value);
+    return (
+        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    );
+}
+
 export type CitySelectFormElementProps = {
     name?: string;
     showValidationInfo?: boolean;

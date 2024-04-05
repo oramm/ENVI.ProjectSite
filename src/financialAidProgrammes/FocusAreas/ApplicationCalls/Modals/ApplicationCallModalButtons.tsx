@@ -14,7 +14,7 @@ export function ApplicationCallEditModalButton({
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: ApplicationCallModalBody,
-                modalTitle: "Edycja wywołania aplikacji",
+                modalTitle: "Edycja naboru",
                 repository: applicationCallsRepository,
                 initialData: initialData,
                 makeValidationSchema: makeApplicationCallValidationSchema,
@@ -34,12 +34,12 @@ export function ApplicationCallAddNewModalButton({
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ApplicationCallModalBody,
-                modalTitle: "Dodaj wywołanie aplikacji",
+                modalTitle: "Dodaj nabór",
                 repository: applicationCallsRepository,
                 makeValidationSchema: makeApplicationCallValidationSchema,
             }}
             buttonProps={{
-                buttonCaption: "Dodaj wywołanie",
+                buttonCaption: "Dodaj nabór",
                 buttonVariant: "outline-success",
             }}
         />
