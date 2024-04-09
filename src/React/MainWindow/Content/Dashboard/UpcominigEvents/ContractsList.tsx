@@ -19,6 +19,7 @@ import Tools from "../../../../Tools";
 import ToolsDate from "../../../../ToolsDate";
 import { contractsRepository } from "../../../MainWindowController";
 import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Section";
+import { RowStructure } from "../../../../../View/Resultsets/FilterableTable/FilterableTableTypes";
 
 export default function ContractsList() {
     const [contracts, setContracts] = useState([] as (OurContract | OtherContract)[]);
@@ -125,8 +126,8 @@ export default function ContractsList() {
     }
 
     function renderRemainingValue(contract: OurContract | OtherContract) {
-        if (!contract.ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
-            return <></>;
+        const ourId = "ourId" in contract ? contract.ourId : "";
+        if (!ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue) return <></>;
         const formatedNotScheduledValue = Tools.formatNumber((contract._remainingNotScheduledValue as number) || 0, 0);
         const formatedNotIssuedValue = Tools.formatNumber((contract._remainingNotIssuedValue as number) || 0, 0);
         return (
@@ -145,12 +146,17 @@ export default function ContractsList() {
     }
 
     function makeTablestructure() {
-        const tableStructure = [
+        const tableStructure: RowStructure<OurContract | OtherContract>[] = [
             {
                 header: "Projekt",
                 renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
             },
-            { header: "Oznaczenie", objectAttributeToShow: "ourId" },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (contract: OurContract | OtherContract) => (
+                    <>{"ourId" in contract ? contract.ourId : ""}</>
+                ),
+            },
             { header: "Numer", objectAttributeToShow: "number" },
             { header: "Nazwa", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
             {

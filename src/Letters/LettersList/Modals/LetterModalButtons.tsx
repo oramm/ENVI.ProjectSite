@@ -1,49 +1,39 @@
-import React, { useEffect } from 'react';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
+import React, { useEffect } from "react";
+import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { ProjectSelectorModalBody } from './LetterModalBody';
-import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from './LetterValidationSchema';
-import { IncomingLetterModalBody } from './IncomingLetterModalBody';
-import { OurLetterModalBody } from './OurLetterModalBody';
-import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
-import { lettersRepository } from '../LettersController';
-
+import { ProjectSelectorModalBody } from "./LetterModalBody";
+import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from "./LetterValidationSchema";
+import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
+import { OurLetterModalBody } from "./OurLetterModalBody";
+import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { lettersRepository } from "../LettersController";
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
+    useEffect(() => {}, [initialData]);
 
-    useEffect(() => {
-        console.log("LetterEditModalButton initialData", initialData);
-    }, [initialData]);
-
-    return (
-        initialData.isOur
-            ? <OurLetterEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-            : <IncomingLetterEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
+    return initialData.isOur ? (
+        <OurLetterEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+    ) : (
+        <IncomingLetterEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
     );
 }
 
 export function OurLetterEditModalButton({
-    modalProps: { onEdit, initialData, },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+    modalProps: { onEdit, initialData },
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurLetterModalBody,
                 modalTitle: "Edycja pisma wychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                makeValidationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -54,16 +44,16 @@ export function OurLetterEditModalButton({
 
 export function OurLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody },
                 modalTitle: "Rejestruj pismo wychodzące",
                 repository: lettersRepository,
-                makeValidationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj wychodzące",
@@ -75,16 +65,16 @@ export function OurLetterAddNewModalButton({
 
 export function IncomingLetterEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: IncomingLetterModalBody,
                 modalTitle: "Edycja pisma przychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                makeValidationSchema: makeOtherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema,
             }}
             buttonProps={{}}
         />
@@ -93,16 +83,16 @@ export function IncomingLetterEditModalButton({
 
 export function IncomingLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
-                additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody, },// additional props for ProjectSelectorModalBody
+                additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody }, // additional props for ProjectSelectorModalBody
                 modalTitle: "Nowe pismo przychodzące",
                 repository: lettersRepository,
-                makeValidationSchema: makeOtherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj przychodzące",

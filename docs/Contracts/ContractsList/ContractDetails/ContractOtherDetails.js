@@ -66,9 +66,9 @@ function ContractOtherDetails() {
                     react_1.default.createElement("div", null, "Wykonawcy:"),
                     react_1.default.createElement("h5", null, contract._contractors.map((contractor) => (react_1.default.createElement("span", null, contractor.name))))))),
                 react_1.default.createElement(react_bootstrap_1.Row, null,
-                    react_1.default.createElement(react_bootstrap_1.Col, null, contract.description && react_1.default.createElement("p", null,
+                    react_1.default.createElement(react_bootstrap_1.Col, null, contract.comment && react_1.default.createElement("p", null,
                         "Opis: ",
-                        contract.description)))),
+                        contract.comment)))),
             react_1.default.createElement("p", { className: "tekst-muted small" },
                 "Aktualizacja: ",
                 ToolsDate_1.default.timestampToString(contract._lastUpdated)))));

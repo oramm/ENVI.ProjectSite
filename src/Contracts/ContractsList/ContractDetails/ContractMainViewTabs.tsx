@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Tab, Tabs } from 'react-bootstrap';
+import { Tab, Tabs } from "react-bootstrap";
 import { useLocation, useParams } from "react-router-dom";
 import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
@@ -19,18 +19,18 @@ export function ContractMainViewTabs() {
 
     useEffect(() => {
         console.log(`ContractMainViewTabs: useEffect(() => { id: ${contract?.id}`);
-    }, [contract]
-    );
+    }, [contract]);
 
     useEffect(() => {
         async function fetchData() {
-            if (!id) throw new Error('Nie znaleziono id w adresie url');
-            const idNumber = Number(id);
+            if (!id) throw new Error("Nie znaleziono id w adresie url");
             const contractData = (await contractsRepository.loadItemsFromServerPOST([{ id }]))[0];
             setContract(contractData);
             initContractRepository(contractData);
-            document.title = `Umowa ${contractData.ourId || contractData.number || idNumber}`;
-        };
+            const idNumber = Number(id);
+            const titleCOntractLabel = "ourId" in contractData ? contractData.ourId : contractData.number;
+            document.title = `Umowa ${titleCOntractLabel || idNumber}`;
+        }
 
         fetchData();
     }, []);
@@ -38,12 +38,12 @@ export function ContractMainViewTabs() {
     function createContractRepository() {
         const repository = new RepositoryReact<OurContract | OtherContract>({
             actionRoutes: {
-                getRoute: 'contracts',
-                addNewRoute: 'contractReact',
-                editRoute: 'contract',
-                deleteRoute: 'contract'
+                getRoute: "contracts",
+                addNewRoute: "contractReact",
+                editRoute: "contract",
+                deleteRoute: "contract",
             },
-            name: 'contracts',
+            name: "contracts",
         });
         let repositoryDataFromRoute = location?.state?.repository as RepositoryReact<OurContract | OtherContract>;
         if (repositoryDataFromRoute) {
@@ -54,13 +54,17 @@ export function ContractMainViewTabs() {
     }
 
     function initContractRepository(contractData: OurContract | OtherContract) {
-        if (!contractsRepository.currentItems.find(c => c.id === contractData.id))
+        if (!contractsRepository.currentItems.find((c) => c.id === contractData.id))
             contractsRepository.items.push(contractData);
         contractsRepository.addToCurrentItems(contractData.id);
     }
 
     if (!contract) {
-        return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
+        return (
+            <div>
+                Ładuję dane... <SpinnerBootstrap />{" "}
+            </div>
+        );
     } else
         return (
             <ContractDetailsProvider
@@ -72,10 +76,7 @@ export function ContractMainViewTabs() {
                     <ContractMainHeader />
                     <Tabs defaultActiveKey="general" id="uncontrolled-tab-example">
                         <Tab eventKey="general" title="Dane ogólne">
-                            {contract.ourId
-                                ? <ContractOurDetails />
-                                : <ContractOtherDetails />
-                            }
+                            {"ourId" in contract ? <ContractOurDetails /> : <ContractOtherDetails />}
                         </Tab>
                         <Tab eventKey="tasks" title="Zadania">
                             <Tasks />
@@ -83,6 +84,5 @@ export function ContractMainViewTabs() {
                     </Tabs>
                 </>
             </ContractDetailsProvider>
-
         );
-};
+}

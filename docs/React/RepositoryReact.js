@@ -17,26 +17,26 @@ class RepositoryReact {
     /**dodaje element domyślny wg jego Id
      * - jeżeli jest to lista wielokrotnego wyboru, to dodaje do listy
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element
-    */
+     */
     addToCurrentItems(id) {
-        const itemSelected = this.items.find(item => item.id === id);
+        const itemSelected = this.items.find((item) => item.id === id);
         if (!itemSelected)
-            throw new Error('Nie znaleziono elementu o id: ' + id);
+            throw new Error("Nie znaleziono elementu o id: " + id);
         if (this.isMultiSelect)
             this.currentItems.push(itemSelected);
         else
             this.currentItems[0] = itemSelected;
     }
     deleteFromCurrentItemsById(id) {
-        const index = this.currentItems.findIndex(item => item.id === id);
+        const index = this.currentItems.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1);
     }
     replaceCurrentItemById(id, editedItem) {
-        const index = this.currentItems.findIndex(item => item.id === id);
+        const index = this.currentItems.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1, editedItem);
     }
     replaceItemById(id, editedItem) {
-        const index = this.items.findIndex(item => item.id === id);
+        const index = this.items.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1, editedItem);
     }
     saveToSessionStorage() {
@@ -48,18 +48,18 @@ class RepositoryReact {
      */
     async loadItemFromRouter(id) {
         if (!id)
-            throw new Error('Nie podano id obiektu do załadowania');
+            throw new Error("Nie podano id obiektu do załadowania");
         if (this.items.length === 0)
             this.loadFromSessionStorage();
         if (this.items.length === 0) {
             await this.loadItemsFromServerPOST([{ id }]);
         }
         if (this.items.length === 0)
-            throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
+            throw new Error("Nie znaleziono elementów w repozytorium: " + this.name);
         // Znajdź i zwróć żądany element
-        const item = this.items.find(item => item.id === id);
+        const item = this.items.find((item) => item.id === id);
         if (!item) {
-            throw new Error('Nie znaleziono obiektu z podanym id: ' + id);
+            throw new Error("Nie znaleziono obiektu z podanym id: " + id);
         }
         return item;
     }
@@ -73,7 +73,7 @@ class RepositoryReact {
             this.items = data.items;
             this.currentItems = [];
         }
-        console.log(this.name + ' items from SessionStorage: %o', this.items);
+        console.log(this.name + " items from SessionStorage: %o", this.items);
     }
     /**
      * Ładuje items z serwera i resetuje currentitems
@@ -84,27 +84,27 @@ class RepositoryReact {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         const response = await fetch(url, {
-            method: 'POST',
+            method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ orConditions }),
-            credentials: 'include',
+            credentials: "include",
         });
         if (!response.ok)
             throw new Error(response.statusText);
         const loadedItems = await response.json();
         this.items = loadedItems;
         this.currentItems = [];
-        console.log(this.name + ' NodeJS: %o', this.items);
+        console.log(this.name + " NodeJS: %o", this.items);
         return this.items;
     }
     /** Funkcja pomocnicza do dodawania nowych elementów */
     async addItem(newItem, deleteId, specialActionRoute) {
         const requestOptions = {
-            method: 'POST',
-            credentials: 'include',
+            method: "POST",
+            credentials: "include",
         };
         if (newItem instanceof FormData) {
             requestOptions.body = newItem;
@@ -115,7 +115,7 @@ class RepositoryReact {
             }
             requestOptions.headers = {
                 ...requestOptions.headers,
-                ['Content-Type']: 'application/json',
+                ["Content-Type"]: "application/json",
             };
             requestOptions.body = JSON.stringify(newItem);
         }
@@ -123,17 +123,17 @@ class RepositoryReact {
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const resultRawResponse = await fetch(urlPath, requestOptions);
         const newItemFromServer = await resultRawResponse.json();
-        if (newItemFromServer.errorMessage) {
-            console.error('Error from server: %o', newItemFromServer.errorMessage);
+        if ("errorMessage" in newItemFromServer) {
+            console.error("Error from server: %o", newItemFromServer.errorMessage);
             throw new Error(`Błąd serwera: ${newItemFromServer.errorMessage}`);
         }
-        if (newItemFromServer.authorizeUrl)
+        if ("authorizeUrl" in newItemFromServer)
             window.open(newItemFromServer.authorizeUrl);
         const noBlobNewItem = { ...newItemFromServer };
-        delete noBlobNewItem._blobEnviObjects;
+        //delete noBlobNewItem._blobEnviObjects;
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
-        console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
+        console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
         return newItemFromServer;
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
@@ -145,45 +145,47 @@ class RepositoryReact {
         return this.addItem(newItem, false, specialActionRoute);
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
-      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
-      * @param item obiekt do edycji
-      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
-      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
-      */
+     * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
+     * @param item obiekt do edycji
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
+     *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
+     */
     async editItem(item, specialActionRoute, fieldsToUpdate) {
         const requestOptions = {
-            method: 'PUT',
-            credentials: 'include',
+            method: "PUT",
+            credentials: "include",
         };
         if (item instanceof FormData) {
             if (fieldsToUpdate)
-                item.append('fieldsToUpdate', JSON.stringify(fieldsToUpdate));
+                item.append("fieldsToUpdate", JSON.stringify(fieldsToUpdate));
             requestOptions.body = item;
         }
         else {
             requestOptions.headers = {
                 ...requestOptions.headers,
-                ['Content-Type']: 'application/json',
+                ["Content-Type"]: "application/json",
             };
             ToolsDate_1.default.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
         }
-        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
-        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
+        const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
+        const itemId = item instanceof FormData ? item.get("id") : item.id;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${itemId}`;
         const resultRawResponse = await fetch(urlPath, requestOptions);
-        const resultObject = await resultRawResponse.json();
         if (resultRawResponse.status >= 400) {
-            console.error('Error from server: %o', resultObject.errorMessage);
-            throw new Error(`Błąd serwera: ${resultObject.errorMessage}`);
+            const errorResponse = await resultRawResponse.json();
+            console.error("Error from server: %o", errorResponse.errorMessage);
+            throw new Error(`Błąd serwera: ${errorResponse.errorMessage}`);
         }
-        if (resultObject.authorizeUrl) {
+        const resultObject = (await resultRawResponse.json());
+        if ("authorizeUrl" in resultObject) {
             window.open(resultObject.authorizeUrl);
-            console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
+            console.log("konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
             return item;
         }
         this.replaceItemById(resultObject.id, resultObject);
         this.replaceCurrentItemById(resultObject.id, resultObject);
-        console.log('obiekt po edycji z serwera: %o', resultObject);
+        console.log("obiekt po edycji z serwera: %o", resultObject);
         return resultObject;
     }
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
@@ -193,17 +195,17 @@ class RepositoryReact {
     async deleteItemNodeJS(id) {
         const oldItem = this.items.find((item) => item.id == id);
         if (!oldItem)
-            throw new Error('Nie znaleziono obiektu do usunięcia');
+            throw new Error("Nie znaleziono obiektu do usunięcia");
         try {
-            const response = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
-                method: 'DELETE',
+            const response = await fetch(MainSetupReact_1.default.serverUrl + this.actionRoutes.deleteRoute + "/" + oldItem.id, {
+                method: "DELETE",
                 headers: this.makeRequestHeaders(),
-                credentials: 'include',
-                body: JSON.stringify(oldItem)
+                credentials: "include",
+                body: JSON.stringify(oldItem),
             });
             const result = await response.json();
             if (result.errorMessage) {
-                console.error('Error from server: %s', result.errorMessage);
+                console.error("Error from server: %s", result.errorMessage);
                 throw new Error(`Błąd serwera: ${result.errorMessage}`);
             }
             if (result.authorizeUrl) {
@@ -211,7 +213,7 @@ class RepositoryReact {
             }
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
-            console.log('%s:: usunięto obiekt: %o', this.name, oldItem);
+            console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
             return oldItem;
         }
         catch (err) {

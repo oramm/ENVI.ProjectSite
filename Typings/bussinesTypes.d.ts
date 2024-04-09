@@ -17,24 +17,38 @@ export interface User {
     userName: string;
 }
 
+export interface ErrorServerResponse {
+    errorMessage: string;
+    status: number;
+}
+
 export interface RepositoryDataItem {
     id: number;
-    [key: string]: any;
+    _gdFolderUrl?: string;
+    _documentOpenUrl?: string;
 }
 
 export interface Project extends RepositoryDataItem {
+    ourId: string;
     name: string;
     alias: string;
     comment: string;
     ourId: string;
     status: string;
-    dotationValue: number;
-    lettersGdFolderId: string;
-    startDate: string;
-    endDate: string;
-    gdFolderId: string;
-    _gdFolderUrl: string;
+    lettersGdFolderId?: string;
+    startDate?: string;
+    endDate?: string;
+    gdFolderId?: string;
+    _gdFolderUrl?: string;
     _ourId_Alias: string;
+    financialComment?: string;
+    totalValue?: string | number;
+    qualifiedValue?: string | number;
+    dotationValue?: string | number;
+    gdFolderId: string | undefined;
+    _lastUpdated?: string;
+    _engineers?: EntityData[];
+    _employers?: EntityData[];
 }
 
 export interface Contract extends RepositoryDataItem {
@@ -67,6 +81,9 @@ export interface OurContract extends Contract {
     _admin?: Person;
     _manager?: Person;
     ourId: string;
+    _ourType: string;
+    _admin?: Person;
+    _city?: City;
 }
 
 export interface OtherContract extends Contract {
@@ -123,7 +140,9 @@ export interface Task extends RepositoryDataItem {
     name: string;
     description: string;
     deadline: string;
+    status: string;
     _parent: Case;
+    _owner: Person;
     _editor: Person;
     _lastUpdated: string;
 }
@@ -148,6 +167,7 @@ export interface MilestoneType extends RepositoryDataItem {
 
 export interface CaseType extends RepositoryDataItem {
     name: string;
+    description: string;
     folderNumber: string;
     _folderName: string;
     isDefault: boolean;
@@ -156,28 +176,56 @@ export interface CaseType extends RepositoryDataItem {
     isDefault: boolean;
 }
 
-export interface Letter extends RepositoryDataItem {
-    number: string;
-    description: string;
-    creationDate: string;
-    registrationDate: string;
-    _project: Project;
-    _entitiesMain: Entity[];
-    _entitiesCc: Entity[];
-    _editor: Person;
-    _lastUpdated: string;
-    _cases: Case[];
-    _gdFolderUrl?: string;
-    letterFilesCount: number;
-}
-
-export interface OurLetter extends Letter {
-    isOur: true;
+export interface GenericDocument extends RepositoryDataItem {
+    description?: string;
+    creationDate?: string;
     _documentOpenUrl?: string;
+    gdDocumentId?: string | null;
+    _gdFolderUrl?: string;
+    gdFolderId?: string | null;
+    _lastUpdated?: string;
+    _entitiesMain?: EntityData[];
+    _entitiesCc?: EntityData[];
+    letterFilesCount?: number;
+    _editor?: PersonData;
+    _fileOrFolderChanged?: boolean;
+    editorId?: number;
+    _canUserChangeFileOrFolder?: boolean;
+    _documentEditUrl?: string;
 }
 
-export interface IncomingLetter extends Letter {
+export interface Letter extends GenericDocument {
+    number?: string | number;
+    registrationDate?: string;
+    _editor: Person;
+    _cases: Case[];
+}
+
+export interface OurLetter1 extends Letter {
+    _template?: DocumentTemplate;
+    isOur: true;
+}
+
+export interface IncomingLetter1 extends Letter {
     isOur: false;
+}
+
+export interface OurLetterContract extends OurLetter1 {
+    _project: Project;
+    projectId?: number;
+}
+
+export interface IncomingLetterContract extends IncomingLetter1 {
+    _project: Project;
+    projectId?: number;
+}
+
+export interface OurLetterOffer extends OurLetter1 {
+    _offer: OurOffer;
+}
+
+export interface IncomingLetterOffer extends IncomingLetter1 {
+    _offer: ExternalOffer;
 }
 
 export interface Entity extends RepositoryDataItem {
@@ -194,9 +242,12 @@ export interface Person extends RepositoryDataItem {
     surname: string;
     email: string;
     cellPhone: string;
+    phone: string;
+    comment: string;
     _alias: string;
     position: string;
     _entity: Entity;
+    _nameSurnameEmail: string;
 }
 
 export interface DocumentTemplate extends RepositoryDataItem {
@@ -213,21 +264,21 @@ export interface DocumentTemplate extends RepositoryDataItem {
 }
 
 export interface Invoice extends RepositoryDataItem {
-    number: string;
-    description: string;
+    number?: string | null;
+    description?: string;
     issueDate: string;
-    sentDate: string;
-    paymentDeadline: string;
+    sentDate?: string | null;
+    paymentDeadline?: string | null;
     daysToPay: number;
     status: string;
-    gdId: string;
+    gdId?: string | null;
     _contract: OurContract;
     _editor: Person;
     _owner: Person;
     _entity: Entity;
-    _lastUpdated: string;
+    _lastUpdated?: string;
     _documentOpenUrl?: string;
-    _totalGrossValue: number;
+    _totalGrossValue?: number;
     _totalNetValue?: number;
 }
 
@@ -255,7 +306,9 @@ export interface Security extends RepositoryDataItem {
     firstPartExpiryDate: string;
     secondPartExpiryDate: string;
     isCash: boolean;
+    status: string;
     gdFolderId: string;
+    gdFolderUrl?: string;
     _contract: OurContract;
     _lastUpdated: string;
     _editor: Person;
@@ -306,8 +359,8 @@ export interface FinancialAidProgrammeData extends RepositoryDataItem {
 }
 
 export interface FocusAreaData extends RepositoryDataItem {
-    programmeId?: number;
-    _programme: FinancialAidProgrammeData;
+    financialAidProgrammeId?: number;
+    _financialAidProgramme: FinancialAidProgrammeData;
     name: string;
     alias: string;
     description: string;

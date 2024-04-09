@@ -36,7 +36,7 @@ function FocusAreasSearch({ title }) {
         document.title = title;
     }, [title]);
     function renderProgramme(focusArea) {
-        return react_1.default.createElement(react_1.default.Fragment, null, focusArea._programme.name);
+        return react_1.default.createElement(react_1.default.Fragment, null, focusArea._financialAidProgramme.alias);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "focus-areas", title: title, FilterBodyComponent: FocusAreasFilterBody_1.FocusAreasFilterBody, tableStructure: [
             { header: "Nazwa", objectAttributeToShow: "name" },

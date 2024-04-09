@@ -50,7 +50,7 @@ export default function ContractOtherDetails() {
                         )}
                     </Row>
                     <Row>
-                        <Col>{contract.description && <p>Opis: {contract.description}</p>}</Col>
+                        <Col>{contract.comment && <p>Opis: {contract.comment}</p>}</Col>
                     </Row>
                 </Container>
 

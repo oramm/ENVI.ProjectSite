@@ -39,13 +39,13 @@ function parseFieldValuestoFormData(data) {
 }
 exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
 function processElement(element) {
-    let parsedValue = '';
+    let parsedValue = "";
     switch (typeof element) {
-        case 'string':
-        case 'number':
+        case "string":
+        case "number":
             parsedValue = element.toString();
             break;
-        case 'object':
+        case "object":
             if (element instanceof Date) {
                 parsedValue = ToolsDate_1.default.toUTC(element);
             }
@@ -63,7 +63,7 @@ function updateObject(formData, obj) {
     const updatedObj = { ...obj };
     formData.forEach((value, key) => {
         if (updatedObj.hasOwnProperty(key)) {
-            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
+            if (typeof value === "string" && (value.startsWith("{") || value.startsWith("[")))
                 try {
                     updatedObj[key] = JSON.parse(value);
                 }

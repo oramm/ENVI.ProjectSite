@@ -1,8 +1,16 @@
 import React from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
-import { ErrorMessage, FinancialAidProgrammeSelector, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents";
+import {
+    ApplicationCallSelector,
+    ErrorMessage,
+    FinancialAidProgrammeSelector,
+    FocusAreaSelector,
+    MyAsyncTypeahead,
+} from "../../View/Modals/CommonFormComponents";
 import { clientsRepository, financialAidProgrammesRepository } from "../FinancialAidProgrammesController";
+import { applicationCallsRepository } from "../FocusAreas/ApplicationCalls/ApplicationCallsController";
+import { focusAreasRepository } from "../FocusAreas/FocusAreasController";
 
 export function NeedsFilterBody() {
     const {
@@ -26,12 +34,20 @@ export function NeedsFilterBody() {
                 />
                 <ErrorMessage errors={errors} name={"_client"} />
             </Form.Group>
-            <Form.Group as={Col} md={6} controlId="_programme">
+            <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
                 <FinancialAidProgrammeSelector
                     repository={financialAidProgrammesRepository}
                     showValidationInfo={false}
                 />
+            </Form.Group>
+            <Form.Group as={Col} md={6} controlId="_focusArea">
+                <Form.Label>Obszar działania</Form.Label>
+                <FocusAreaSelector repository={focusAreasRepository} showValidationInfo={false} />
+            </Form.Group>
+            <Form.Group as={Col} md={6} controlId="_applicationCall">
+                <Form.Label>Nabór</Form.Label>
+                <ApplicationCallSelector repository={applicationCallsRepository} showValidationInfo={false} />
             </Form.Group>
         </Row>
     );

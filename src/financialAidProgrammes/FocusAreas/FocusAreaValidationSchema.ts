@@ -13,7 +13,7 @@ const commonFields = {
         .required("Podaj opis")
         .min(10, "Opis musi mieć co najmniej 10 znaków")
         .max(1000, "Opis może mieć maksymalnie 1000 znaków"),
-    _programme: Yup.object().required("Wybierz program"),
+    _financialAidProgramme: Yup.object().required("Wybierz program"),
 };
 
 export function makeFocusAreaValidationSchema() {

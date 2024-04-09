@@ -74,6 +74,26 @@ MainSetup.OfferStatus = {
     WITHDRAWN: "Wycofana",
     NOT_INTERESTED: "Nie składamy",
 };
+MainSetup.ClientNeedStatus = {
+    URGENT: "Pilne",
+    IMPORTANT: "Ważne",
+    NICE_TO_HAVE: "Miło by było",
+    FOR_LATER: "Na później",
+    NOT_ACTUAL: "Nie aktualne",
+};
+MainSetup.ApplicationCallStatus = {
+    UNKOWN: "Nieznany",
+    SCHEDULED: "Zaplanowany",
+    OPEN: "Otwarty",
+    CLOSED: "Zamknięty",
+};
+MainSetup.ElementsNeededForApplication = {
+    EIA_DECISION: "DUŚ",
+    PFU: "PFU",
+    BUILDING_PERMIT: "Pozwolenie na budowę",
+    DECISION: "Decyzja lokalizacyjna",
+    MPZPT: "MPZPT",
+};
 MainSetup.OfferBidProcedure = {
     REQUEST_FOR_QUOTATION: "Zapytanie ofertowe",
     TENDER_PL: "Przetarg BZP",

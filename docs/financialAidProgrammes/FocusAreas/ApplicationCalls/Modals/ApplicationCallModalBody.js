@@ -29,8 +29,10 @@ const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormCompon
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
 const FocusAreasController_1 = require("../../FocusAreasController");
+const FinancialAidProgrammesController_1 = require("../../../FinancialAidProgrammesController");
 function ApplicationCallModalBody({ isEditing, initialData }) {
-    const { register, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, reset, formState: { errors }, trigger, watch, } = (0, FormContext_1.useFormContext)();
+    const _financialAidProgramme = watch("_financialAidProgramme");
     (0, react_1.useEffect)(() => {
         const resetData = {
             _focusArea: initialData?._focusArea,
@@ -44,6 +46,12 @@ function ApplicationCallModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset, trigger]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_financialAidProgramme" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
+            react_1.default.createElement(CommonFormComponents_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true }))),
+        _financialAidProgramme && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusArea" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Obszar interwencji"),
+            react_1.default.createElement(CommonFormComponents_1.FocusAreaSelector, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: true }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
@@ -61,12 +69,6 @@ function ApplicationCallModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors?.endDate, ...register("endDate") }),
                 react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "endDate", errors: errors }))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj status", isInvalid: !!errors?.status, ...register("status") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "status", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusArea" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Obszar interwencji"),
-            react_1.default.createElement(CommonFormComponents_1.FocusAreaSelector, { repository: FocusAreasController_1.focusAreasRepository, showValidationInfo: true }))));
+        react_1.default.createElement(CommonFormComponents_1.ApplicationCallStatusSelector, { showValidationInfo: true })));
 }
 exports.ApplicationCallModalBody = ApplicationCallModalBody;

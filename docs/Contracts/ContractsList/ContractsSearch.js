@@ -32,23 +32,26 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const ContractsController_1 = require("./ContractsController");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
-/**render name witch ContractStatusBadge */
-function renderName(contract) {
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        contract.name,
-        " ",
-        react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
-}
 function ContractsSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
+    function renderName(contract) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            contract.name,
+            " ",
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
+    }
+    function renderOurId(contract) {
+        const ourId = "ourId" in contract ? contract.ourId : "";
+        return react_1.default.createElement(react_1.default.Fragment, null, ourId);
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: [
             {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
             },
-            { header: "Oznaczenie", objectAttributeToShow: "ourId" },
+            { header: "Oznaczenie", renderTdBody: (contract) => renderName(contract) },
             { header: "Numer", objectAttributeToShow: "number" },
             { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
             { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },

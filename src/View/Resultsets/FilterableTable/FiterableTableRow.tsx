@@ -1,30 +1,30 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { set } from 'react-hook-form';
+import React from "react";
+import { render } from "react-dom";
+import { set } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
-import RepositoryReact from '../../../React/RepositoryReact';
-import { GeneralDeleteModalButton } from '../../Modals/GeneralModalButtons';
-import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from '../../Modals/ModalsTypes';
+import RepositoryReact from "../../../React/RepositoryReact";
+import { GeneralDeleteModalButton } from "../../Modals/GeneralModalButtons";
+import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { GDDocFileIconLink, GDFolderIconLink, SpinnerBootstrap } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
-import { RowStructure } from './FilterableTableTypes';
+import { RowStructure } from "./FilterableTableTypes";
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
-    dataObject: DataItemType,
-    isActive: boolean,
-    onDoubleClick?: (object: DataItemType) => void
-    onIsReadyChange?: (isReady: boolean) => void,
-    onRowClick: (id: number) => void,
-}
+    dataObject: DataItemType;
+    isActive: boolean;
+    onDoubleClick?: (object: DataItemType) => void;
+    onIsReadyChange?: (isReady: boolean) => void;
+    onRowClick: (id: number) => void;
+};
 
 export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
     dataObject,
     isActive,
     onIsReadyChange,
-    onRowClick
+    onRowClick,
 }: FilterTableRowProps<DataItemType>): JSX.Element {
-    if (!onIsReadyChange) throw new Error('onIsReadyChange is not defined');
+    if (!onIsReadyChange) throw new Error("onIsReadyChange is not defined");
     const navigate = useNavigate();
     const { selectedObjectRoute, tableStructure } = useFilterableTableContext<DataItemType>();
     const {
@@ -33,36 +33,31 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
         EditButtonComponent,
         isDeletable,
         repository,
-        shouldRetrieveDataBeforeEdit
+        shouldRetrieveDataBeforeEdit,
     } = useFilterableTableContext<DataItemType>();
 
-    function tdBodyRender(columStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
-        if (columStructure.objectAttributeToShow !== undefined)
-            return dataObject[columStructure.objectAttributeToShow] as string;
-        if (columStructure.renderTdBody !== undefined)
-            return columStructure.renderTdBody(dataObject);
-        return '';
+    function tdBodyRender(columnStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
+        if (columnStructure.objectAttributeToShow !== undefined) {
+            const key = columnStructure.objectAttributeToShow;
+            return String(dataObject[key] ?? "");
+        }
+        if (columnStructure.renderTdBody !== undefined) return columnStructure.renderTdBody(dataObject);
+        return "";
     }
 
     return (
         <tr
-            onClick={(e) => (onRowClick(dataObject.id))}
+            onClick={(e) => onRowClick(dataObject.id)}
             onDoubleClick={() => {
-                if (selectedObjectRoute)
-                    navigate(
-                        selectedObjectRoute + dataObject.id,
-                        { state: { repository } }
-                    );
+                if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
             }}
-            className={isActive ? 'active' : ''}
+            className={isActive ? "active" : ""}
         >
             {tableStructure.map((column, index) => (
-                <td key={column.objectAttributeToShow || index}>
-                    {tdBodyRender(column, dataObject)}
-                </td>
+                <td key={String(column.objectAttributeToShow) || index}>{tdBodyRender(column, dataObject)}</td>
             ))}
-            {isActive &&
-                <td align='center'>
+            {isActive && (
+                <td align="center">
                     <RowActionMenu
                         dataObject={dataObject}
                         handleEditObject={handleEditObject}
@@ -72,7 +67,7 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
                         shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
                     />
                 </td>
-            }
+            )}
         </tr>
     );
 }
@@ -80,12 +75,12 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
 interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     dataObject: DataItemType;
     sectionRepository?: RepositoryReact;
-    handleEditObject?: (object: DataItemType) => void
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>
-    handleDeleteObject?: (objectId: number) => void
-    isDeletable: boolean
-    layout?: 'vertical' | 'horizontal'
-    shouldRetrieveDataBeforeEdit?: boolean
+    handleEditObject?: (object: DataItemType) => void;
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
+    handleDeleteObject?: (objectId: number) => void;
+    isDeletable: boolean;
+    layout?: "vertical" | "horizontal";
+    shouldRetrieveDataBeforeEdit?: boolean;
 }
 
 export function RowActionMenu<DataItemType extends RepositoryDataItem>({
@@ -94,18 +89,15 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     EditButtonComponent,
     handleDeleteObject,
     isDeletable,
-    layout = 'vertical',
+    layout = "vertical",
     sectionRepository,
-    shouldRetrieveDataBeforeEdit = false
+    shouldRetrieveDataBeforeEdit = false,
 }: RowActionMenuProps<DataItemType>) {
-
     const repository = sectionRepository || useFilterableTableContext<DataItemType>().repository;
 
     return (
         <>
-            {dataObject._gdFolderUrl && (
-                <GDFolderIconLink layout={layout} folderUrl={dataObject._gdFolderUrl} />
-            )}
+            {dataObject._gdFolderUrl && <GDFolderIconLink layout={layout} folderUrl={dataObject._gdFolderUrl} />}
             {dataObject._documentOpenUrl && (
                 <GDDocFileIconLink layout={layout} folderUrl={dataObject._documentOpenUrl} />
             )}
@@ -127,9 +119,10 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
 
 export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: { onDelete, initialData, repository },
-    buttonProps
+    buttonProps,
 }: SpecificDeleteModalButtonProps<DataItemType>) {
-    const modalTitle = 'Usuwanie ' + (initialData.name || 'wybranego elementu');
+    const name = "name" in initialData ? initialData.name : undefined;
+    const modalTitle = "Usuwanie " + (name || "wybranego elementu");
 
     return (
         <GeneralDeleteModalButton<DataItemType>

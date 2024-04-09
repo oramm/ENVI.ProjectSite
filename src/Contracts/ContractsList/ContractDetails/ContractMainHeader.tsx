@@ -26,7 +26,7 @@ export function ContractMainHeader() {
 
     function renderEntityDetails() {
         if (!contract) return <></>;
-        if (contract.ourId) {
+        if ("ourId" in contract) {
             return (
                 <>
                     <div>Zamawiający</div>
@@ -48,7 +48,7 @@ export function ContractMainHeader() {
                 <div key={entity.id}>
                     <div>{entity.name}</div>
                     <div>{entity.address}</div>
-                    <div>{entity.nip}</div>
+                    <div>{entity.taxNumber}</div>
                 </div>
             );
         });
@@ -66,7 +66,7 @@ export function ContractMainHeader() {
                 <Col sm={11} md={6}>
                     {renderEntityDetails()}
                 </Col>
-                {contract.ourId && (
+                {"ourId" in contract && (
                     <Col sm={4} md={2}>
                         <div>Oznaczenie:</div>
                         <h5>{contract.ourId}</h5>

@@ -43,6 +43,14 @@ function Tasks() {
     (0, react_1.useEffect)(() => {
         setExternalUpdate((prevState) => prevState + 1);
     }, [contract, tasks]);
+    function renderCoordinatorData() {
+        if (!contract || "_manager" in contract)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        const contractTyped = contract;
+        return react_1.default.createElement(react_1.default.Fragment, null,
+            "Koordynator(ka): ",
+            `${contractTyped._manager?.name} ${contractTyped._manager?.surname}`);
+    }
     if (!contract) {
         return (react_1.default.createElement("div", null,
             "\u0141aduj\u0119 dane... ",
@@ -67,8 +75,7 @@ function Tasks() {
                 "\"\u0141adowanie zada\u0144...\" ",
                 react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
             react_1.default.createElement("p", { className: "tekst-muted small" },
-                "Koordynator(ka): ",
-                `${contract._manager.name} ${contract._manager.surname}`,
+                renderCoordinatorData(),
                 react_1.default.createElement("br", null),
                 "Aktualizacja: ",
                 ToolsDate_1.default.timestampToString(contract._lastUpdated)))));

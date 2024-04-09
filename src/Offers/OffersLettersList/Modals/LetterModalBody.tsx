@@ -10,10 +10,10 @@ import { Alert, Col, Form, Placeholder, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
-import { Case, ExternalOffer, IncomingLetter, OurLetter, OurOffer } from "../../../../Typings/bussinesTypes";
+import { IncomingLetterOffer, OurLetterOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { casesRepository, offersRepository } from "../LettersController";
 
-export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
+export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetterOffer | IncomingLetterOffer>) {
     const {
         register,
         reset,

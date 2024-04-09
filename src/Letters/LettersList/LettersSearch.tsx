@@ -7,7 +7,7 @@ import {
     IncomingLetterAddNewModalButton,
     OurLetterAddNewModalButton,
 } from "./Modals/LetterModalButtons";
-import { Entity, IncomingLetter, OurLetter } from "../../../Typings/bussinesTypes";
+import { Entity, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +16,7 @@ export default function LettersSearch({ title }: { title: string }) {
         document.title = title;
     }, [title]);
 
-    function buildLabelFromEntities(entities: Entity[]): string {
+    function buildLabelFromEntities(entities: Entity[] | undefined): string {
         if (!entities || entities.length === 0) return "";
 
         let label = "";
@@ -28,7 +28,7 @@ export default function LettersSearch({ title }: { title: string }) {
         return label;
     }
 
-    function makeEntitiesLabel(letter: OurLetter | IncomingLetter) {
+    function makeEntitiesLabel(letter: OurLetterContract | IncomingLetterContract) {
         const mainEntitiesLabel = buildLabelFromEntities(letter._entitiesMain);
         const ccEntitiesLabel = buildLabelFromEntities(letter._entitiesCc);
 
@@ -42,15 +42,13 @@ export default function LettersSearch({ title }: { title: string }) {
         return <div style={{ whiteSpace: "pre-line" }}>{label}</div>;
     }
 
-    function renderIconTdBody(letter: OurLetter | IncomingLetter) {
-        letter = letter as OurLetter | IncomingLetter;
+    function renderIconTdBody(letter: OurLetterContract | IncomingLetterContract) {
         const icon = letter.isOur ? faPaperPlane : faEnvelope;
-
         return <FontAwesomeIcon icon={icon} size="lg" />;
     }
 
     return (
-        <FilterableTable<OurLetter | IncomingLetter>
+        <FilterableTable<OurLetterContract | IncomingLetterContract>
             id="contractsLetters"
             title={title}
             FilterBodyComponent={LettersFilterBody}

@@ -1,23 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ContractTypeSelectFormElement, PersonSelectFormElement } from '../../../../View/Modals/CommonFormComponents';
-import { SecurityModalBody } from './SecurityModalBody';
-import { useFormContext } from '../../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
+import React, { useEffect, useRef, useState } from "react";
+import { ContractTypeSelectFormElement, PersonSelectFormElement } from "../../../../View/Modals/CommonFormComponents";
+import { SecurityModalBody } from "./SecurityModalBody";
+import { useFormContext } from "../../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
+import { Security } from "../../../../../Typings/bussinesTypes";
 
-export function SecurityCashModalBody(props: ModalBodyProps) {
+export function SecurityCashModalBody(props: ModalBodyProps<Security>) {
     const { initialData, isEditing } = props;
     const { register, trigger, setValue, watch, formState, control } = useFormContext();
-    const _type = watch('_type');
+    const _type = watch("_type");
 
     useEffect(() => {
-        setValue('isCash', true);
+        setValue("isCash", true);
     }, [initialData, setValue]);
 
     return (
         <>
-            <SecurityModalBody
-                {...props}
-            />
+            <SecurityModalBody {...props} />
         </>
     );
 }

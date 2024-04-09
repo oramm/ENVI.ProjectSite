@@ -8,12 +8,12 @@ import {
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { Project } from "../../../../Typings/bussinesTypes";
+import { OtherContract, OurContract, Project } from "../../../../Typings/bussinesTypes";
 import { projectsRepository } from "../ContractsController";
 import ToolsDate from "../../../React/ToolsDate";
 import ToolsForms from "../../../React/ToolsForms";
 
-export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
+export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {
         register,
         setValue,
@@ -22,9 +22,9 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps) {
         trigger,
     } = useFormContext();
     const watchAllFields = watch();
-    let startDateSugestion: string;
-    let endDateSugestion: string;
-    let guaranteeEndDateSugestion: string;
+    let startDateSugestion: string | undefined;
+    let endDateSugestion: string | undefined;
+    let guaranteeEndDateSugestion: string | undefined;
 
     if (isEditing) {
         startDateSugestion = initialData?.startDate;

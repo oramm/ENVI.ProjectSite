@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents";
+import { ClientNeedStatusSelector, ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
@@ -61,17 +61,7 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
                 />
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
-            <Form.Group controlId="status">
-                <Form.Label>Status</Form.Label>
-                <Form.Control as="select" isInvalid={!!errors?.status} {...register("status")}>
-                    <option value="">Wybierz status</option>
-                    <option value="active">Aktywny</option>
-                    <option value="pending">Oczekujący</option>
-                    <option value="completed">Zakończony</option>
-                    <option value="cancelled">Anulowany</option>
-                </Form.Control>
-                <ErrorMessage name="status" errors={errors} />
-            </Form.Group>
+            <ClientNeedStatusSelector />
         </>
     );
 }

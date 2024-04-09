@@ -36,12 +36,15 @@ function FocusAreaModalBody({ isEditing, initialData }) {
             name: initialData?.name,
             alias: initialData?.alias,
             description: initialData?.description,
-            _programme: initialData?._programme,
+            _financialAidProgramme: initialData?._financialAidProgramme,
         };
         reset(resetData);
         trigger();
     }, [initialData, reset, trigger]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_financialAidProgramme" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
+            react_1.default.createElement(CommonFormComponents_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isValid: !errors?.name, isInvalid: !!errors?.name, ...register("name") }),
@@ -53,9 +56,6 @@ function FocusAreaModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "description", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_programme" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(CommonFormComponents_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true }))));
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
 exports.FocusAreaModalBody = FocusAreaModalBody;

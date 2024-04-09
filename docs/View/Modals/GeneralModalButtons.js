@@ -32,7 +32,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, } }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -51,8 +51,8 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
 exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */
 function GeneraEditButton(buttonProps) {
-    const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = 'sm', buttonVariant = 'outline-success', onClick, layout = 'vertical' } = {
-        ...buttonProps
+    const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = "sm", buttonVariant = "outline-success", onClick, layout = "vertical", } = {
+        ...buttonProps,
     };
     if (!buttonCaption) {
         return react_1.default.createElement(CommonComponents_1.EditIconButton, { layout: layout, onClick: onClick });
@@ -89,8 +89,8 @@ exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
 function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
-    const { layout = 'vertical' } = { ...buttonProps };
-    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+    const { layout = "vertical" } = { ...buttonProps };
+    const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     function handleOpen() {
         setShowForm(true);
     }
@@ -103,10 +103,10 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: layout, onClick: handleOpen }),
-        react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${initialData?.name}?` })));
+        react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
-function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, }, children }) {
+function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -115,7 +115,7 @@ function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBod
         setShowForm(false);
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("span", { onClick: handleOpen, style: { cursor: 'pointer' } }, children),
+        react_1.default.createElement("span", { onClick: handleOpen, style: { cursor: "pointer" } }, children),
         react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,

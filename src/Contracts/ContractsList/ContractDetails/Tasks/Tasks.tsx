@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert, Card } from "react-bootstrap";
-import { Task } from "../../../../../Typings/bussinesTypes";
+import { OurContract, Task } from "../../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../../React/ToolsDate";
 import { SpinnerBootstrap, TaskStatusBadge } from "../../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../../View/Resultsets/FilterableTable/FilterableTable";
@@ -18,6 +18,12 @@ export default function Tasks() {
     useEffect(() => {
         setExternalUpdate((prevState) => prevState + 1);
     }, [contract, tasks]);
+
+    function renderCoordinatorData() {
+        if (!contract || "_manager" in contract) return <></>;
+        const contractTyped = contract as OurContract;
+        return <>Koordynator(ka): {`${contractTyped._manager?.name} ${contractTyped._manager?.surname}`}</>;
+    }
 
     if (!contract) {
         return (
@@ -61,7 +67,7 @@ export default function Tasks() {
                 )}
 
                 <p className="tekst-muted small">
-                    Koordynator(ka): {`${contract._manager.name} ${contract._manager.surname}`}
+                    {renderCoordinatorData()}
                     <br />
                     Aktualizacja: {ToolsDate.timestampToString(contract._lastUpdated)}
                 </p>

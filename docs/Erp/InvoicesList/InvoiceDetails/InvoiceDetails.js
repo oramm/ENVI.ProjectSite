@@ -40,11 +40,11 @@ const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     const { id } = (0, react_router_dom_1.useParams)();
     (0, react_1.useEffect)(() => {
         if (!id)
-            throw new Error('Nie znaleziono id w adresie url');
+            throw new Error("Nie znaleziono id w adresie url");
         const idNumber = Number(id);
         async function fetchData() {
             const fetchInvoice = InvoicesController_1.invoicesRepository.loadItemFromRouter(idNumber);
@@ -54,7 +54,7 @@ function InvoiceDetails() {
                 if (invoiceData)
                     setInvoice(invoiceData);
                 setInvoiceItems(itemsData);
-                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ''}`;
+                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             }
             catch (error) {
                 console.error("Error fetching data", error);
@@ -62,34 +62,30 @@ function InvoiceDetails() {
                     setErrorMessage(error.message);
             }
         }
-        ;
         fetchData();
     }, []);
     function handleError(error) {
-        setErrorMessage(error.message || 'An error occurred while copying the invoice.');
+        setErrorMessage(error.message || "An error occurred while copying the invoice.");
     }
-    ;
     function renderAvtionsMenu() {
         if (errorMessage)
-            return (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: 'pre-wrap' }, className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage));
-        return react_1.default.createElement(react_1.default.Fragment, null,
+            return (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: "pre-wrap" }, className: "mt-3", variant: "danger", onClose: () => setErrorMessage(""), dismissible: true }, errorMessage));
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(InvoiceModalButtons_1.ActionButton, null),
             " ",
-            ' ',
-            " ",
             react_1.default.createElement(InvoiceModalButtons_1.CopyButton, { onError: handleError }),
-            ' ',
+            " ",
             react_1.default.createElement(InvoiceModalButtons_1.InvoiceEditModalButton, { modalProps: {
                     onEdit: setInvoice,
                     initialData: invoice,
-                    makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
-                }, buttonProps: { buttonCaption: 'Edytuj Fakturę' } }));
+                    makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
+                }, buttonProps: { buttonCaption: "Edytuj Fakturę" } })));
     }
     if (!invoice) {
-        return react_1.default.createElement("div", null,
+        return (react_1.default.createElement("div", null,
             "\u0141aduj\u0119 dane... ",
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
-            " ");
+            " "));
     }
     return (react_1.default.createElement(InvoiceProvider, { invoice: invoice, setInvoice: setInvoice },
         react_1.default.createElement(react_bootstrap_1.Card, null,
@@ -99,38 +95,32 @@ function InvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Nr faktury:"),
                             react_1.default.createElement("h5", null, invoice.number)),
-                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 3, lg: '3' },
+                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 3, lg: "3" },
                             react_1.default.createElement("div", null, "do Umowy:"),
                             react_1.default.createElement("h5", null, invoice._contract.ourId)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 2 },
                             react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
                         react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderAvtionsMenu()),
-                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: 'auto' }, invoice._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl })))),
+                        react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: "auto" }, invoice._documentOpenUrl && react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl }))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Data sprzeda\u017Cy:"),
-                            invoice.issueDate
-                                ? react_1.default.createElement("h5", null,
-                                    ToolsDate_1.default.dateYMDtoDMY(invoice.issueDate),
-                                    " ")
-                                : 'Jeszcze nie wystawiono'),
+                            invoice.issueDate ? (react_1.default.createElement("h5", null,
+                                ToolsDate_1.default.dateYMDtoDMY(invoice.issueDate),
+                                " ")) : ("Jeszcze nie wystawiono")),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Data wys\u0142ania:"),
-                            invoice.sentDate
-                                ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(invoice.sentDate))
-                                : 'Jeszcze nie wysłano'),
+                            invoice.sentDate ? (react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(invoice.sentDate))) : ("Jeszcze nie wysłano")),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Termin p\u0142atno\u015Bci:"),
-                            invoice.paymentDeadline
-                                ? react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(invoice.paymentDeadline))
-                                : 'Jeszcze nie okreśony')),
+                            invoice.paymentDeadline ? (react_1.default.createElement("h5", null, ToolsDate_1.default.dateYMDtoDMY(invoice.paymentDeadline))) : ("Jeszcze nie okreśony"))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Warto\u015B\u0107 Brutto:"),
-                            react_1.default.createElement("h5", null, invoice._grossValue)),
+                            react_1.default.createElement("h5", null, invoice._totalGrossValue)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Warto\u015B\u0107 Netto:"),
-                            react_1.default.createElement("h5", null, invoice._netValue)),
+                            react_1.default.createElement("h5", null, invoice._totalNetValue)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
                             react_1.default.createElement("div", null, "Odbiorca"),
                             react_1.default.createElement("h5", null, invoice._entity.name),
@@ -139,16 +129,14 @@ function InvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && react_1.default.createElement("p", null,
                             "Opis: ",
                             invoice.description)))),
-                invoiceItems ?
-                    react_1.default.createElement(FilterableTable_1.default, { id: 'invoiceItems', title: '', initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
-                            { header: 'Opis', objectAttributeToShow: 'description' },
-                            { header: 'Netto', objectAttributeToShow: '_netValue' },
-                            { header: 'Brutto', objectAttributeToShow: '_grossValue' },
-                        ] })
-                    : react_1.default.createElement(react_1.default.Fragment, null,
-                        "\"\u0141adowanie pozycji faktury...\" ",
-                        react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)),
-                react_1.default.createElement("p", { className: 'tekst-muted small' },
+                invoiceItems ? (react_1.default.createElement(FilterableTable_1.default, { id: "invoiceItems", title: "", initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
+                        { header: "Opis", objectAttributeToShow: "description" },
+                        { header: "Netto", objectAttributeToShow: "_netValue" },
+                        { header: "Brutto", objectAttributeToShow: "_grossValue" },
+                    ] })) : (react_1.default.createElement(react_1.default.Fragment, null,
+                    "\"\u0141adowanie pozycji faktury...\" ",
+                    react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
+                react_1.default.createElement("p", { className: "tekst-muted small" },
                     "Przygotowa\u0142(a): ",
                     `${invoice._owner.name} ${invoice._owner.surname}`,
                     react_1.default.createElement("br", null),
@@ -159,13 +147,13 @@ exports.default = InvoiceDetails;
 // Utwórz kontekst
 const InvoiceContext = (0, react_1.createContext)({
     invoice: {},
-    setInvoice: () => { }
+    setInvoice: () => { },
 });
 // Twórz dostawcę kontekstu, który przechowuje stan faktury
 function InvoiceProvider({ invoice, setInvoice, children }) {
     if (!invoice)
         throw new Error("Invoice not found");
-    return (react_1.default.createElement(InvoiceContext.Provider, { value: { invoice, setInvoice } }, children));
+    return react_1.default.createElement(InvoiceContext.Provider, { value: { invoice, setInvoice } }, children);
 }
 exports.InvoiceProvider = InvoiceProvider;
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury

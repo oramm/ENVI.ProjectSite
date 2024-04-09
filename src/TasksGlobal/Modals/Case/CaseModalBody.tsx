@@ -1,22 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Col, Form, Row } from 'react-bootstrap';
-import { Case, Milestone } from '../../../../Typings/bussinesTypes';
-import { CaseTypeSelectFormElement, ErrorMessage } from '../../../View/Modals/CommonFormComponents';
-import { useFormContext } from '../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, Col, Form, Row } from "react-bootstrap";
+import { Case, Milestone } from "../../../../Typings/bussinesTypes";
+import { CaseTypeSelectFormElement, ErrorMessage } from "../../../View/Modals/CommonFormComponents";
+import { useFormContext } from "../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 
 export function CaseModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Case>) {
-    const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
-    const _type = watch('_type');
-    const _milestone = (initialData?._milestone || contextData) as Milestone;
+    const {
+        register,
+        reset,
+        getValues,
+        watch,
+        formState: { dirtyFields, errors, isValid },
+        trigger,
+    } = useFormContext();
+    const _type = watch("_type");
+    const _parent = (initialData?._parent || contextData) as Milestone;
 
     useEffect(() => {
-        console.log('CaseModalBody useEffect', initialData);
+        console.log("CaseModalBody useEffect", initialData);
         const resetData = {
-            _milestone,
+            _parent,
             _type: initialData?._type,
             name: initialData?.name,
-            description: initialData?.description || '',
+            description: initialData?.description || "",
         };
         reset(resetData);
         trigger();
@@ -29,12 +36,9 @@ export function CaseModalBody({ isEditing, initialData, contextData }: ModalBody
     }
 
     return (
-        <>{!isEditing &&
-            <CaseTypeSelectFormElement
-                milestoneType={_milestone._type}
-            />
-        }
-            {shoulShowCaseNameField() &&
+        <>
+            {!isEditing && <CaseTypeSelectFormElement milestoneType={_parent._type} />}
+            {shoulShowCaseNameField() && (
                 <Form.Group controlId="name">
                     <Form.Label>Nazwa sprawy</Form.Label>
                     <Form.Control
@@ -43,11 +47,11 @@ export function CaseModalBody({ isEditing, initialData, contextData }: ModalBody
                         placeholder="Podaj nazwę"
                         isInvalid={!!errors?.name}
                         isValid={!errors?.name}
-                        {...register('name')}
+                        {...register("name")}
                     />
-                    <ErrorMessage name='name' errors={errors} />
+                    <ErrorMessage name="name" errors={errors} />
                 </Form.Group>
-            }
+            )}
             <Form.Group controlId="description">
                 <Form.Label>Uwagi</Form.Label>
                 <Form.Control
@@ -56,9 +60,9 @@ export function CaseModalBody({ isEditing, initialData, contextData }: ModalBody
                     placeholder="Dodaj komentarz"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
-                    {...register('description')}
+                    {...register("description")}
                 />
-                <ErrorMessage name='description' errors={errors} />
+                <ErrorMessage name="description" errors={errors} />
             </Form.Group>
         </>
     );

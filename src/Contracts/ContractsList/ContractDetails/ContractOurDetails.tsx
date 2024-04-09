@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert, Placeholder } from "react-bootstrap";
-import { ContractsSettlementData, Invoice } from "../../../../Typings/bussinesTypes";
+import { ContractsSettlementData, Invoice, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import Tools from "../../../React/Tools";
 import ToolsDate from "../../../React/ToolsDate";
 import { InvoiceStatusBadge, MyTooltip } from "../../../View/Resultsets/CommonComponents";
@@ -57,9 +57,9 @@ export default function ContractOurDetails() {
                     <Placeholder xs={6} />
                 </Placeholder>
             );
-
-        let coordinatorName = contract?._manager
-            ? `${contract._manager.name} ${contract._manager.surname}`
+        const contractTyped = contract as OurContract;
+        const coordinatorName = contractTyped._manager
+            ? `${contractTyped._manager.name} ${contractTyped._manager.surname}`
             : "Nie określono";
         return <>{`Koordynator(ka): ${coordinatorName}`}</>;
     }
@@ -69,7 +69,7 @@ export default function ContractOurDetails() {
             <Card.Body>
                 <Container>
                     <Row className="mt-3">
-                        <Col>{contract.description && <p>Opis: {contract.description}</p>}</Col>
+                        <Col>{contract.comment && <p>Opis: {contract.comment}</p>}</Col>
                     </Row>
                     <Row className="mt-3 text-end">
                         <Col sm={4} md={2}>

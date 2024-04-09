@@ -32,12 +32,12 @@ const FormContext_1 = require("../../../../View/Modals/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
 function SecurityGuaranteeModalBody(props) {
     const { initialData, isEditing, additionalProps, contextData } = props;
-    const { register, setValue, watch, formState: { errors }, control } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('isCash', false);
+        setValue("isCash", false);
         if (isEditing) {
-            setValue('firstPartExpiryDate', initialData?.firstPartExpiryDate || initialData?._contract.endDate || undefined, { shouldValidate: true });
-            setValue('secondPartExpiryDate', initialData?.secondPartExpiryDate || undefined, { shouldValidate: true });
+            setValue("firstPartExpiryDate", initialData?.firstPartExpiryDate || initialData?._contract.endDate || undefined, { shouldValidate: true });
+            setValue("secondPartExpiryDate", initialData?.secondPartExpiryDate || undefined, { shouldValidate: true });
         }
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -45,11 +45,11 @@ function SecurityGuaranteeModalBody(props) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "firstPartExpiryDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 70%"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.firstPartExpiryDate, isInvalid: !!errors.firstPartExpiryDate, ...register('firstPartExpiryDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'firstPartExpiryDate' })),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.firstPartExpiryDate, isInvalid: !!errors.firstPartExpiryDate, ...register("firstPartExpiryDate") }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "firstPartExpiryDate" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "secondPartExpiryDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 30%"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register('secondPartExpiryDate') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'secondPartExpiryDate' })))));
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register("secondPartExpiryDate") }),
+                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" })))));
 }
 exports.SecurityGuaranteeModalBody = SecurityGuaranteeModalBody;

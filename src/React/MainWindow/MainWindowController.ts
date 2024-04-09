@@ -1,55 +1,53 @@
-import { Case, Contract, Entity, IncomingLetter, Milestone, OtherContract, OurContract, OurLetter, Project, Security, Task } from "../../../Typings/bussinesTypes";
+import { Case, Milestone, OtherContract, OurContract, Security, Task } from "../../../Typings/bussinesTypes";
 
 import RepositoryReact from "../RepositoryReact";
 
-
-
 export const contractsRepository = new RepositoryReact<OurContract | OtherContract>({
     actionRoutes: {
-        getRoute: 'contracts',
-        addNewRoute: '',
-        editRoute: 'contract',
-        deleteRoute: ''
+        getRoute: "contracts",
+        addNewRoute: "",
+        editRoute: "contract",
+        deleteRoute: "",
     },
-    name: 'contracts'
+    name: "contracts",
 });
 
 export const securitiesRepository = new RepositoryReact<Security>({
     actionRoutes: {
-        getRoute: 'securities',
-        addNewRoute: 'security',
-        editRoute: 'security',
-        deleteRoute: 'security'
+        getRoute: "securities",
+        addNewRoute: "security",
+        editRoute: "security",
+        deleteRoute: "security",
     },
-    name: 'securities'
+    name: "securities",
 });
 
 export const milestonesRepository = new RepositoryReact<Milestone>({
     actionRoutes: {
-        getRoute: 'milestones',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "milestones",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'milestones'
+    name: "milestones",
 });
 
 export const tasksRepository = new RepositoryReact<Task>({
     actionRoutes: {
-        getRoute: 'tasks',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "tasks",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'tasks'
+    name: "tasks",
 });
 
 export const casesRepository = new RepositoryReact<Case>({
     actionRoutes: {
-        getRoute: 'cases',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "cases",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'cases'
+    name: "cases",
 });

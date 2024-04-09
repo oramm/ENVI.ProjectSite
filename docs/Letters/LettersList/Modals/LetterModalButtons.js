@@ -33,22 +33,18 @@ const OurLetterModalBody_1 = require("./OurLetterModalBody");
 const LettersController_1 = require("../LettersController");
 /** przycisk i modal edycji Letter */
 function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
-    (0, react_1.useEffect)(() => {
-        console.log("LetterEditModalButton initialData", initialData);
-    }, [initialData]);
-    return (initialData.isOur
-        ? react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })
-        : react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+    (0, react_1.useEffect)(() => { }, [initialData]);
+    return initialData.isOur ? (react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.LetterEditModalButton = LetterEditModalButton;
-function OurLetterEditModalButton({ modalProps: { onEdit, initialData, }, }) {
+function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurLetterModalBody_1.OurLetterModalBody,
             modalTitle: "Edycja pisma wychodzącego",
             repository: LettersController_1.lettersRepository,
             initialData: initialData,
-            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema,
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
@@ -61,7 +57,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody_1.OurLetterModalBody },
             modalTitle: "Rejestruj pismo wychodzące",
             repository: LettersController_1.lettersRepository,
-            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.ourLetterValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj wychodzące",
             buttonVariant: "outline-success",
@@ -75,7 +71,7 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             modalTitle: "Edycja pisma przychodzącego",
             repository: LettersController_1.lettersRepository,
             initialData: initialData,
-            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
         }, buttonProps: {} }));
 }
 exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
@@ -83,10 +79,10 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody, },
+            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody },
             modalTitle: "Nowe pismo przychodzące",
             repository: LettersController_1.lettersRepository,
-            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema
+            makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj przychodzące",
         } }));

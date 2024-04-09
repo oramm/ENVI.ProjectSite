@@ -39,12 +39,12 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
 function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
     const [dataObjectFromServer, setDataObjectFromServer] = react_1.default.useState(undefined);
     const [isLoadingData, setIsLoadingData] = react_1.default.useState(false);
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const formMethods = (0, react_hook_form_1.useForm)({
         defaultValues: {},
-        mode: 'onChange',
-        resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined
+        mode: "onChange",
+        resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined,
     });
     let newObject;
     (0, react_1.useEffect)(() => {
@@ -63,17 +63,17 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
         }
         else {
-            throw new Error('Nie znaleziono obiektu');
+            throw new Error("Nie znaleziono obiektu");
         }
         setDataObjectFromServer(dataObjectFromServer);
         setIsLoadingData(false);
     }
     async function handleSubmitRepository(data) {
         try {
-            setErrorMessage('');
+            setErrorMessage("");
             setRequestPending(true);
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
-            const hasFiles = Object.values(data).some(value => value instanceof FileList || value instanceof File);
+            const hasFiles = Object.values(data).some((value) => value instanceof FileList || value instanceof File);
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
             const requestData = hasFiles ? (0, CommonComponentsController_1.parseFieldValuestoFormData)(data) : data;
             if (isEditing) {
@@ -96,26 +96,30 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
             setRequestPending(false);
         }
     }
-    ;
     async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append('id', currentDataItem.id.toString());
+        data.append("id", currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
         const editedObject = await repository.editItem(data, specialActionRoute, fieldsToUpdate);
         if (onEdit)
             onEdit(editedObject);
     }
-    ;
     /** uzupełnij o dane z obiektu currentDataItem, które nie zostały przesłane w formularzu */
     function appendContextData(currentDataItem, data) {
         for (const key in currentDataItem) {
             if (!data.has(key)) {
-                // Przekształć obiekt JavaScript do formatu JSON jeżeli jest obiektem
-                if (typeof currentDataItem[key] === 'object' && currentDataItem[key] !== null) {
-                    data.append(key, JSON.stringify(currentDataItem[key]));
+                const value = currentDataItem[key];
+                // Check if the value is an object and not a Blob, then convert it to a JSON string
+                if (typeof value === "object" && value !== null && !(value instanceof Blob)) {
+                    data.append(key, JSON.stringify(value));
+                }
+                else if (typeof value === "string" || value instanceof Blob) {
+                    // Directly append strings and Blobs
+                    data.append(key, value);
                 }
                 else {
-                    data.append(key, currentDataItem[key]);
+                    // Convert other types to string
+                    data.append(key, String(value));
                 }
             }
         }
@@ -127,25 +131,23 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         if (onEdit)
             onEdit(editedObject);
     }
-    ;
     async function handleAdd(data) {
         newObject = await repository.addNewItem(data);
         if (onAddNew)
             onAddNew(newObject);
     }
-    ;
     function renderFormBody() {
         if (isLoadingData) {
             return (react_1.default.createElement("div", { className: "text-center m-5" },
                 react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
                 react_1.default.createElement("div", { className: "m-3" }, "\u0141aduj\u0119 dane...")));
         }
-        return react_1.default.createElement(react_bootstrap_1.Container, null,
+        return (react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
                 react_1.default.createElement(ModalBodyComponent, { ...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData } }),
-                errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: 'pre-wrap' }, className: 'mt-3', variant: "danger", onClose: () => setErrorMessage(''), dismissible: true }, errorMessage))));
+                errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: "pre-wrap" }, className: "mt-3", variant: "danger", onClose: () => setErrorMessage(""), dismissible: true }, errorMessage)))));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: 'lg', show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
@@ -154,10 +156,9 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
                     react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
-                        "Zatwierd\u017A ",
-                        ' ',
-                        requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })))))));
+                        "Zatwierd\u017A",
+                        " ",
+                        requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" }))))))));
 }
 exports.GeneralModal = GeneralModal;
-function ModalFooter() {
-}
+function ModalFooter() { }

@@ -14,17 +14,23 @@ import { NumberFormatValues, NumericFormat } from "react-number-format";
 import * as Yup from "yup";
 import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/types";
 import {
+    ApplicationCallData,
     Case,
     CaseType,
     City,
     Contract,
+    ContractType,
     DocumentTemplate,
     ExternalOffer,
     FinancialAidProgrammeData,
     FocusAreaData,
     Milestone,
     MilestoneType,
+    NeedData,
+    OtherContract,
+    OurContract,
     OurOffer,
+    Person,
     Project,
     RepositoryDataItem,
 } from "../../../Typings/bussinesTypes";
@@ -54,12 +60,12 @@ export function ProjectSelector({
         formState: { errors },
     } = useFormContext();
 
-    function renderOption(option: any) {
-        const city = option as City;
+    function renderOption(option: unknown) {
+        const optionTyped = option as Project;
         return (
             <div>
-                <span>{city.ourId}</span>
-                <div className="text-muted small">{city.alias}</div>
+                <span>{optionTyped.ourId}</span>
+                <div className="text-muted small">{optionTyped.alias}</div>
             </div>
         );
     }
@@ -350,7 +356,7 @@ export type FinancialAidProgrammeSelectorProps = {
 };
 
 export function FinancialAidProgrammeSelector({
-    name = "_programme",
+    name = "_financialAidProgramme",
     showValidationInfo = true,
     multiple = false,
     repository,
@@ -391,6 +397,7 @@ export type FocusAreaSelectorProps = {
     multiple?: boolean;
     repository: RepositoryReact;
     allowNew?: boolean;
+    _financialAidProgramme?: FinancialAidProgrammeData;
 };
 
 export function FocusAreaSelector({
@@ -399,6 +406,7 @@ export function FocusAreaSelector({
     multiple = false,
     repository,
     allowNew = false,
+    _financialAidProgramme,
 }: FocusAreaSelectorProps) {
     const {
         formState: { errors },
@@ -409,6 +417,112 @@ export function FocusAreaSelector({
         return (
             <div>
                 <span>{optionTyped.name}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                contextSearchParams={{
+                    _financialAidProgramme,
+                }}
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type ApplicationCallSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+    _financialAidProgramme?: FinancialAidProgrammeData;
+    _focusArea?: FocusAreaData;
+};
+
+export function ApplicationCallSelector({
+    name = "_applicationCall",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+    _financialAidProgramme,
+    _focusArea,
+}: ApplicationCallSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: unknown) {
+        const optionTyped = option as ApplicationCallData;
+        console.log("renderOption - Option: ", option); // Log the option being rendered
+        return (
+            <div>
+                <span>{optionTyped.description}</span>
+                <div className="text-muted small">
+                    {optionTyped.endDate} {optionTyped.status}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="description"
+                searchKey="searchText"
+                contextSearchParams={{
+                    _financialAidProgramme,
+                    _focusArea,
+                }}
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type ClientNeedSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function ClientNeedSelector({
+    name = "_need",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: ClientNeedSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as NeedData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+                <div className="text-muted small">
+                    {optionTyped._client?.name} | {optionTyped.status}
+                </div>
             </div>
         );
     }
@@ -452,11 +566,13 @@ export function ContractSelectFormElement({
         formState: { errors },
     } = useFormContext();
 
-    function renderOption(option: any) {
+    function renderOption(option: unknown) {
+        const optionTyped = option as OurContract | OtherContract;
+        const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
         return (
             <div>
-                <span>{option.ourId || option.number}</span>
-                <div className="text-muted small">{option.alias || option.name}</div>
+                <span>{mainLabel}</span>
+                <div className="text-muted small">{optionTyped.alias || optionTyped.name}</div>
             </div>
         );
     }
@@ -512,7 +628,7 @@ export function ContractTypeSelectFormElement({
     const label = "Typ Kontraktu";
     const repository = MainSetup.contractTypesRepository;
 
-    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
+    function makeoptions(repositoryDataItems: ContractType[]) {
         const filteredItems = repositoryDataItems.filter((item) => {
             if (typesToInclude === "all") return true;
             if (typesToInclude === "our" && item.isOur) return true;
@@ -548,11 +664,11 @@ export function ContractTypeSelectFormElement({
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                             renderMenuItemChildren={(option, props, index) => {
-                                const myOption = option as RepositoryDataItem;
+                                const optionTyped = option as ContractType;
                                 return (
                                     <div>
-                                        <span>{myOption.name}</span>
-                                        <div className="text-muted small">{myOption.description}</div>
+                                        <span>{optionTyped.name}</span>
+                                        <div className="text-muted small">{optionTyped.description}</div>
                                     </div>
                                 );
                             }}
@@ -678,7 +794,7 @@ export function OurLetterTemplateSelectFormElement({
         const filteredTemplates = templates.filter((template) => {
             return (
                 !template._contents.caseTypeId ||
-                _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId)
+                _cases.some((caseItem) => caseItem._type.id === template._contents.caseTypeId)
             );
         });
         return filteredTemplates;
@@ -729,7 +845,7 @@ export function OurLetterTemplateSelectFormElement({
 type PersonsSelectFormElementProps = {
     label: string;
     name: string;
-    repository: RepositoryReact;
+    repository: RepositoryReact<Person>;
     multiple?: boolean;
     showValidationInfo?: boolean;
 };
@@ -752,7 +868,7 @@ export function PersonSelectFormElement({
         formState: { errors },
     } = useFormContext();
 
-    function makeoptions(repositoryDataItems: RepositoryDataItem[]) {
+    function makeoptions(repositoryDataItems: (Person & { _nameSurname: string })[]) {
         repositoryDataItems.map((item) => (item._nameSurname = `${item.name} ${item.surname}`));
         return repositoryDataItems;
     }
@@ -764,7 +880,9 @@ export function PersonSelectFormElement({
     }
 
     function handleSelected(field: ControllerRenderProps<any, string>) {
-        const currentValue = (field.value ? (multiple ? field.value : [field.value]) : []) as RepositoryDataItem[];
+        const currentValue = (field.value ? (multiple ? field.value : [field.value]) : []) as (Person & {
+            _nameSurname: string;
+        })[];
         return makeoptions(currentValue);
     }
 
@@ -778,7 +896,7 @@ export function PersonSelectFormElement({
                     <Typeahead
                         id={`${label}-controlled`}
                         labelKey="_nameSurname"
-                        options={makeoptions(repository.items)}
+                        options={makeoptions(repository.items as (Person & { _nameSurname: string })[])}
                         onChange={(items) => handleOnChange(items, field)}
                         selected={handleSelected(field)}
                         placeholder="-- Wybierz osobę --"
@@ -854,6 +972,8 @@ export function MyAsyncTypeahead({
         repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute).then((items) => {
             setOptions(items);
             setIsLoading(false);
+            if (items.length > 0 && !(labelKey in items[0]))
+                throw new Error(`Nie znaleziono pola ${labelKey} w obiekcie zwróconym przez serwer`);
         });
     }
 

@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
-import { ErrorMessage, FocusAreaSelector } from "../../../../View/Modals/CommonFormComponents";
+import {
+    ApplicationCallStatusSelector,
+    ErrorMessage,
+    FinancialAidProgrammeSelector,
+    FocusAreaSelector,
+} from "../../../../View/Modals/CommonFormComponents";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
-import { ApplicationCallData, FocusAreaData } from "../../../../../Typings/bussinesTypes";
+import { ApplicationCallData, FinancialAidProgrammeData } from "../../../../../Typings/bussinesTypes";
 import { focusAreasRepository } from "../../FocusAreasController";
+import { financialAidProgrammesRepository } from "../../../FinancialAidProgrammesController";
 
 export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyProps<ApplicationCallData>) {
     const {
@@ -12,7 +18,10 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
         reset,
         formState: { errors },
         trigger,
+        watch,
     } = useFormContext();
+
+    const _financialAidProgramme = watch("_financialAidProgramme") as FinancialAidProgrammeData | undefined;
 
     useEffect(() => {
         const resetData: any = {
@@ -29,6 +38,25 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
 
     return (
         <>
+            {!isEditing && (
+                <Form.Group controlId="_financialAidProgramme">
+                    <Form.Label>Program wsparcia</Form.Label>
+                    <FinancialAidProgrammeSelector
+                        repository={financialAidProgrammesRepository}
+                        showValidationInfo={true}
+                    />
+                </Form.Group>
+            )}
+            {_financialAidProgramme && (
+                <Form.Group controlId="_focusArea">
+                    <Form.Label>Obszar interwencji</Form.Label>
+                    <FocusAreaSelector
+                        repository={focusAreasRepository}
+                        _financialAidProgramme={_financialAidProgramme}
+                        showValidationInfo={true}
+                    />
+                </Form.Group>
+            )}
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
@@ -41,7 +69,6 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
                 />
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
-
             <Form.Group controlId="url">
                 <Form.Label>URL</Form.Label>
                 <Form.Control
@@ -76,22 +103,7 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
                     <ErrorMessage name="endDate" errors={errors} />
                 </Form.Group>
             </Row>
-
-            <Form.Group controlId="status">
-                <Form.Label>Status</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Podaj status"
-                    isInvalid={!!errors?.status}
-                    {...register("status")}
-                />
-                <ErrorMessage name="status" errors={errors} />
-            </Form.Group>
-
-            <Form.Group controlId="_focusArea">
-                <Form.Label>Obszar interwencji</Form.Label>
-                <FocusAreaSelector repository={focusAreasRepository} showValidationInfo={true} />
-            </Form.Group>
+            <ApplicationCallStatusSelector showValidationInfo={true} />
         </>
     );
 }

@@ -4,25 +4,20 @@ import {
     ContractSelectFormElement,
     ErrorMessage,
     FileInput,
-    MyAsyncTypeahead,
     PersonSelectFormElement,
     ProjectSelector,
 } from "../../../View/Modals/CommonFormComponents";
-import { Alert, Col, Form, Placeholder, Row } from "react-bootstrap";
+import { Alert, Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
-import {
-    Case,
-    Contract,
-    IncomingLetter,
-    OurLetter,
-    Project,
-    RepositoryDataItem,
-} from "../../../../Typings/bussinesTypes";
+import { Case, Contract, IncomingLetterContract, OurLetterContract, Project } from "../../../../Typings/bussinesTypes";
 import { casesRepository, contractsRepository, projectsRepository } from "../LettersController";
 
-export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLetter | IncomingLetter>) {
+export function LetterModalBody({
+    isEditing,
+    initialData,
+}: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
     const {
         register,
         reset,

@@ -1,10 +1,16 @@
-
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
-import { GeneralAddNewModalButtonProps, GeneralDeleteModalButtonProps, GeneralEditModalButtonButtonProps, GeneralEditModalButtonProps, GeneralModalButtonButtonProps, GeneralModalButtonProps } from "./ModalsTypes";
+import {
+    GeneralAddNewModalButtonProps,
+    GeneralDeleteModalButtonProps,
+    GeneralEditModalButtonButtonProps,
+    GeneralEditModalButtonProps,
+    GeneralModalButtonButtonProps,
+    GeneralModalButtonProps,
+} from "./ModalsTypes";
 import { DeleteIconButton, EditIconButton } from "../Resultsets/CommonComponents";
 
 export function GeneralEditModalButton<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -20,7 +26,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
         makeValidationSchema,
         fieldsToUpdate,
         shouldRetrieveDataBeforeEdit,
-    }
+    },
 }: GeneralEditModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
 
@@ -33,10 +39,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
 
     return (
         <>
-            <GeneraEditButton
-                {...buttonProps}
-                onClick={handleOpen}
-            />
+            <GeneraEditButton {...buttonProps} onClick={handleOpen} />
             <GeneralModal<DataItemType>
                 onClose={handleClose}
                 show={showForm}
@@ -60,42 +63,42 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
 }
 
 /**wyświelta ikonę albo przycisk */
-function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void },
-) {
+function GeneraEditButton(buttonProps: GeneralModalButtonButtonProps & { onClick: () => void }) {
     const {
         buttonCaption,
         buttonIsActive,
         buttonIsDisabled,
-        buttonSize = 'sm',
-        buttonVariant = 'outline-success',
+        buttonSize = "sm",
+        buttonVariant = "outline-success",
         onClick,
-        layout = 'vertical'
+        layout = "vertical",
     } = {
-        ...buttonProps
-    }
+        ...buttonProps,
+    };
     if (!buttonCaption) {
-        return <EditIconButton layout={layout} onClick={onClick} />
-    }
-    else
-        return (<Button
-            key={buttonCaption}
-            variant={buttonVariant}
-            size={buttonSize}
-            active={buttonIsActive}
-            disabled={buttonIsDisabled}
-            onClick={onClick}
-        >
-            {buttonCaption}
-        </Button>)
+        return <EditIconButton layout={layout} onClick={onClick} />;
+    } else
+        return (
+            <Button
+                key={buttonCaption}
+                variant={buttonVariant}
+                size={buttonSize}
+                active={buttonIsActive}
+                disabled={buttonIsDisabled}
+                onClick={onClick}
+            >
+                {buttonCaption}
+            </Button>
+        );
 }
 
 /** Wyświetla przycisk i przypięty do niego modal
  * @param modalProps - właściwości modalu
  * - onAddNew - funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
- * - ModalBodyComponent - komponent wyświetlany w modalu 
+ * - ModalBodyComponent - komponent wyświetlany w modalu
  * - właściwości modalu
  * @param buttonProps - właściwości przycisku
- * 
+ *
  */
 export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem>({
     modalProps: {
@@ -138,7 +141,6 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
             </Button>
             <GeneralModal<DataItemType>
                 onClose={handleClose}
-
                 show={showForm}
                 isEditing={false}
                 title={modalTitle}
@@ -162,8 +164,8 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
     buttonProps,
 }: GeneralDeleteModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
-    const { layout = 'vertical' } = { ...buttonProps };
-    const className = layout === 'vertical' ? 'icon icon-vertical' : 'icon icon-horizontal';
+    const { layout = "vertical" } = { ...buttonProps };
+    const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     function handleOpen() {
         setShowForm(true);
     }
@@ -185,7 +187,7 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
                 show={showForm}
                 title={modalTitle}
                 onConfirm={handleDelete}
-                prompt={`Czy na pewno chcesz usunąć ${initialData?.name}?`}
+                prompt={`Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?`}
             />
         </>
     );
@@ -203,7 +205,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
         makeValidationSchema,
         fieldsToUpdate,
     },
-    children
+    children,
 }: GeneralEditModalButtonProps<DataItemType> & { children: JSX.Element }) {
     const [showForm, setShowForm] = useState(false);
 
@@ -216,7 +218,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
 
     return (
         <>
-            <span onClick={handleOpen} style={{ cursor: 'pointer' }}>
+            <span onClick={handleOpen} style={{ cursor: "pointer" }}>
                 {children}
             </span>
             <GeneralModal<DataItemType>

@@ -59,7 +59,6 @@ function LettersSearch({ title }) {
         return react_1.default.createElement("div", { style: { whiteSpace: "pre-line" } }, label);
     }
     function renderIconTdBody(letter) {
-        letter = letter;
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }

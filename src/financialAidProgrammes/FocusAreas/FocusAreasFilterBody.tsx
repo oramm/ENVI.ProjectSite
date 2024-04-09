@@ -13,7 +13,7 @@ export function FocusAreasFilterBody() {
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
             </Form.Group>
-            <Form.Group as={Col} md={6} controlId="_programme">
+            <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
                 <FinancialAidProgrammeSelector
                     repository={financialAidProgrammesRepository}

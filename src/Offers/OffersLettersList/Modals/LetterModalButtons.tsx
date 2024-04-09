@@ -4,14 +4,14 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from "./LetterValidationSchema";
 import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
 import { OurLetterModalBody } from "./OurLetterModalBody";
-import { IncomingLetter, OurLetter } from "../../../../Typings/bussinesTypes";
+import { IncomingLetterOffer, OurLetterOffer } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterOffer | IncomingLetterOffer>) {
     useEffect(() => {
         console.log("LetterEditModalButton initialData", initialData);
     }, [initialData]);
@@ -25,9 +25,9 @@ export function LetterEditModalButton({
 
 export function OurLetterEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterOffer | IncomingLetterOffer>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterOffer | IncomingLetterOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurLetterModalBody,
@@ -45,9 +45,9 @@ export function OurLetterEditModalButton({
 
 export function OurLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterOffer | IncomingLetterOffer>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterOffer | IncomingLetterOffer>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: OurLetterModalBody,
@@ -65,9 +65,9 @@ export function OurLetterAddNewModalButton({
 
 export function IncomingLetterEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterOffer | IncomingLetterOffer>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterOffer | IncomingLetterOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: IncomingLetterModalBody,
@@ -83,9 +83,9 @@ export function IncomingLetterEditModalButton({
 
 export function IncomingLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterOffer | IncomingLetterOffer>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterOffer | IncomingLetterOffer>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: IncomingLetterModalBody,

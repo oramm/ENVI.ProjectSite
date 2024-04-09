@@ -54,14 +54,6 @@ function NeedModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
             react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "description", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "status" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isInvalid: !!errors?.status, ...register("status") },
-                react_1.default.createElement("option", { value: "" }, "Wybierz status"),
-                react_1.default.createElement("option", { value: "active" }, "Aktywny"),
-                react_1.default.createElement("option", { value: "pending" }, "Oczekuj\u0105cy"),
-                react_1.default.createElement("option", { value: "completed" }, "Zako\u0144czony"),
-                react_1.default.createElement("option", { value: "cancelled" }, "Anulowany")),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "status", errors: errors }))));
+        react_1.default.createElement(CommonFormComponents_1.ClientNeedStatusSelector, null)));
 }
 exports.NeedModalBody = NeedModalBody;

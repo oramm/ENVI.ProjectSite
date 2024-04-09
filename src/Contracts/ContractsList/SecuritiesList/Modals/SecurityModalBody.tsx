@@ -1,21 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ContractSelectFormElement, ErrorMessage, ProjectSelector, SecurityStatusSelectFormElement, ValueInPLNInput } from '../../../../View/Modals/CommonFormComponents';
-import { Col, Form, Row } from 'react-bootstrap';
-import { useFormContext } from '../../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
-import { Project } from '../../../../../Typings/bussinesTypes';
-import { contractsRepository, projectsRepository } from '../../ContractsController';
+import React, { useEffect, useRef, useState } from "react";
+import {
+    ContractSelectFormElement,
+    ErrorMessage,
+    ProjectSelector,
+    SecurityStatusSelectFormElement,
+    ValueInPLNInput,
+} from "../../../../View/Modals/CommonFormComponents";
+import { Col, Form, Row } from "react-bootstrap";
+import { useFormContext } from "../../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
+import { Project, Security } from "../../../../../Typings/bussinesTypes";
+import { contractsRepository, projectsRepository } from "../../ContractsController";
 
-export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
-    const { register, reset, watch, formState: { errors }, trigger } = useFormContext();
-    const _project = watch('_project') as Project | undefined;
+export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Security>) {
+    const {
+        register,
+        reset,
+        watch,
+        formState: { errors },
+        trigger,
+    } = useFormContext();
+    const _project = watch("_project") as Project | undefined;
     useEffect(() => {
         const resetData: any = {
             _contract: initialData?._contract,
-            description: initialData?.description || '',
-            value: initialData?.value || '',
-            returnedValue: initialData?.returnedValue || '',
-            status: initialData?.status || '',
+            description: initialData?.description || "",
+            value: initialData?.value || "",
+            returnedValue: initialData?.returnedValue || "",
+            status: initialData?.status || "",
         };
 
         if (!isEditing) resetData._project = _project;
@@ -26,18 +38,18 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
 
     return (
         <>
-            {!isEditing &&
+            {!isEditing && (
                 <Form.Group controlId="_contract">
                     <Form.Label>Wybierz kontrakt</Form.Label>
                     <ContractSelectFormElement
-                        name='_contract'
-                        typesToInclude='our'
+                        name="_contract"
+                        typesToInclude="our"
                         repository={contractsRepository}
                         _project={_project}
                         readOnly={!isEditing}
                     />
                 </Form.Group>
-            }
+            )}
             <Form.Group controlId="description">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
@@ -46,9 +58,9 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
                     placeholder="Podaj opis"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
-                    {...register('description')}
+                    {...register("description")}
                 />
-                <ErrorMessage errors={errors} name='description' />
+                <ErrorMessage errors={errors} name="description" />
             </Form.Group>
             <Form.Group controlId="valueInPLN">
                 <Form.Label>Wartość</Form.Label>
@@ -56,12 +68,9 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps) {
             </Form.Group>
             <Form.Group controlId="returnedValue">
                 <Form.Label>Zwrócono</Form.Label>
-                <ValueInPLNInput keyLabel='returnedValue' />
+                <ValueInPLNInput keyLabel="returnedValue" />
             </Form.Group>
-            <SecurityStatusSelectFormElement
-                name='status'
-                showValidationInfo={true}
-            />
+            <SecurityStatusSelectFormElement name="status" showValidationInfo={true} />
         </>
     );
 }
@@ -73,11 +82,11 @@ type ProjectSelectorProps = ModalBodyProps & {
  * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
  * w tym przypadku jest additionalProps zawiera tylko parametr SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
- * 
+ *
  */
 export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState, reset, trigger } = useFormContext();
-    const project = (watch('_project') as Project | undefined);
+    const project = watch("_project") as Project | undefined;
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody: SpecificModalBody } = additionalProps;
@@ -89,16 +98,10 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
     return (
         <>
             {project ? (
-                <SpecificModalBody
-                    isEditing={isEditing}
-                    additionalProps={additionalProps}
-                />
+                <SpecificModalBody isEditing={isEditing} additionalProps={additionalProps} />
             ) : (
-                <ProjectSelector
-                    repository={projectsRepository}
-                    name='_project'
-                />
+                <ProjectSelector repository={projectsRepository} name="_project" />
             )}
         </>
     );
-};
+}

@@ -32,6 +32,7 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
+import { RowStructure } from "../View/Resultsets/FilterableTable/FilterableTableTypes";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -74,16 +75,16 @@ export default function TasksGlobal() {
         const _contract = task._parent._parent._contract as OurContract | OtherContract;
         const _milestone = task._parent._parent;
         const _case = task._parent;
-
+        const ourId = "ourId" in _contract ? _contract.ourId : undefined;
         return (
-            `${_contract.ourId || ""} ${_contract.alias || ""} ${_contract.number || ""} | ` +
+            `${ourId || ""} ${_contract.alias || ""} ${_contract.number || ""} | ` +
             `${_milestone._FolderNumber_TypeName_Name || ""} |` +
             `${_case._type.name || ""} | ${_case.name || ""}`
         );
     }
 
     function makeTasksTableStructure() {
-        const tableStructure = [];
+        const tableStructure: RowStructure<Task>[] = [];
         if (!showProjects) {
             tableStructure.push({
                 header: "Kamień|Sprawa",
@@ -167,10 +168,11 @@ function LoadingMessage({ selectedProject }: { selectedProject: Project | undefi
 }
 
 function makeContractTitleLabel(contract: OurContract | OtherContract) {
-    const manager = contract._manager as Person;
+    const manager = "ourId" in contract ? (contract._manager as Person) : undefined;
+    const ourId = "ourId" in contract ? contract.ourId : undefined;
 
     let label = "K: ";
-    label += contract.ourId ? `${contract.ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
     if (contract.alias) label += ` [${contract.alias || ""}] `;
     if (manager) label += ` ${manager.name} ${manager.surname}`;
     return label;

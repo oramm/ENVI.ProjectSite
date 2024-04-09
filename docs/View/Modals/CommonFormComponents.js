@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.CaseSelectMenuElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = exports.OfferStatusSelectFormElement = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = exports.SelectTextOptionFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -47,10 +47,10 @@ const ContractsController_1 = require("../../Contracts/ContractsList/ContractsCo
 function ProjectSelector({ name = "_project", repository, showValidationInfo = true, disabled = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
-        const city = option;
+        const optionTyped = option;
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement("span", null, city.ourId),
-            react_1.default.createElement("div", { className: "text-muted small" }, city.alias)));
+            react_1.default.createElement("span", null, optionTyped.ourId),
+            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -112,6 +112,16 @@ function InvoiceStatusSelectFormElement({ showValidationInfo = true, name = "sta
     return (react_1.default.createElement(SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
 }
 exports.InvoiceStatusSelectFormElement = InvoiceStatusSelectFormElement;
+function ApplicationCallStatusSelector({ showValidationInfo = true, name = "status", as, }) {
+    const statuses = Object.entries(MainSetupReact_1.default.ApplicationCallStatus).map(([key, value]) => value);
+    return (react_1.default.createElement(SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
+}
+exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
+function ClientNeedStatusSelector({ showValidationInfo = true, name = "status", as }) {
+    const statuses = Object.entries(MainSetupReact_1.default.ClientNeedStatus).map(([key, value]) => value);
+    return (react_1.default.createElement(SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
+}
+exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
 function CitySelectFormElement({ name = "_city", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
@@ -146,7 +156,7 @@ function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, mu
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.OfferSelectFormElement = OfferSelectFormElement;
-function FinancialAidProgrammeSelector({ name = "_programme", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
@@ -157,7 +167,7 @@ function FinancialAidProgrammeSelector({ name = "_programme", showValidationInfo
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
-function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, repository, allowNew = false, _financialAidProgramme, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
@@ -165,15 +175,53 @@ function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, mul
             react_1.default.createElement("span", null, optionTyped.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", contextSearchParams: {
+                _financialAidProgramme,
+            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.FocusAreaSelector = FocusAreaSelector;
+function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, repository, allowNew = false, _financialAidProgramme, _focusArea, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        const optionTyped = option;
+        console.log("renderOption - Option: ", option); // Log the option being rendered
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, optionTyped.description),
+            react_1.default.createElement("div", { className: "text-muted small" },
+                optionTyped.endDate,
+                " ",
+                optionTyped.status)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "description", searchKey: "searchText", contextSearchParams: {
+                _financialAidProgramme,
+                _focusArea,
+            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.ApplicationCallSelector = ApplicationCallSelector;
+function ClientNeedSelector({ name = "_need", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option) {
+        const optionTyped = option;
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, optionTyped.name),
+            react_1.default.createElement("div", { className: "text-muted small" },
+                optionTyped._client?.name,
+                " | ",
+                optionTyped.status)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.ClientNeedSelector = ClientNeedSelector;
 function ContractSelectFormElement({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
+        const optionTyped = option;
+        const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement("span", null, option.ourId || option.number),
-            react_1.default.createElement("div", { className: "text-muted small" }, option.alias || option.name)));
+            react_1.default.createElement("span", null, mainLabel),
+            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias || optionTyped.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(MyAsyncTypeahead, { name: name, labelKey: "_ourIdOrNumber_Name", searchKey: "searchText", contextSearchParams: {
@@ -214,10 +262,10 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ kontraktu" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
-                        const myOption = option;
+                        const optionTyped = option;
                         return (react_1.default.createElement("div", null,
-                            react_1.default.createElement("span", null, myOption.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                            react_1.default.createElement("span", null, optionTyped.name),
+                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
                     } })) }),
             react_1.default.createElement(ErrorMessage, { errors: errors, name: name }))));
 }
@@ -275,7 +323,7 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
     function makeoptions(templates) {
         const filteredTemplates = templates.filter((template) => {
             return (!template._contents.caseTypeId ||
-                _cases.some((caseItem) => caseItem._type._id === template._contents.caseTypeId));
+                _cases.some((caseItem) => caseItem._type.id === template._contents.caseTypeId));
         });
         return filteredTemplates;
     }
@@ -349,6 +397,8 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute).then((items) => {
             setOptions(items);
             setIsLoading(false);
+            if (items.length > 0 && !(labelKey in items[0]))
+                throw new Error(`Nie znaleziono pola ${labelKey} w obiekcie zwróconym przez serwer`);
         });
     }
     // Bypass client-side filtering by returning `true`. Results are already

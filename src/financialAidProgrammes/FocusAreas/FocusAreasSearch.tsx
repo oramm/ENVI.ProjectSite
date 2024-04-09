@@ -11,7 +11,7 @@ export default function FocusAreasSearch({ title }: { title: string }) {
     }, [title]);
 
     function renderProgramme(focusArea: FocusAreaData) {
-        return <>{focusArea._programme.name}</>;
+        return <>{focusArea._financialAidProgramme.alias}</>;
     }
 
     return (

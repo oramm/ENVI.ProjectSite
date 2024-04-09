@@ -77,7 +77,8 @@ function TasksGlobal() {
         const _contract = task._parent._parent._contract;
         const _milestone = task._parent._parent;
         const _case = task._parent;
-        return (`${_contract.ourId || ""} ${_contract.alias || ""} ${_contract.number || ""} | ` +
+        const ourId = "ourId" in _contract ? _contract.ourId : undefined;
+        return (`${ourId || ""} ${_contract.alias || ""} ${_contract.number || ""} | ` +
             `${_milestone._FolderNumber_TypeName_Name || ""} |` +
             `${_case._type.name || ""} | ${_case.name || ""}`);
     }
@@ -119,9 +120,10 @@ function LoadingMessage({ selectedProject }) {
         react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
 }
 function makeContractTitleLabel(contract) {
-    const manager = contract._manager;
+    const manager = "ourId" in contract ? contract._manager : undefined;
+    const ourId = "ourId" in contract ? contract.ourId : undefined;
     let label = "K: ";
-    label += contract.ourId ? `${contract.ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
     if (contract.alias)
         label += ` [${contract.alias || ""}] `;
     if (manager)

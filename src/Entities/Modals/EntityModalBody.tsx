@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react';
-import { ErrorMessage } from '../../View/Modals/CommonFormComponents';
-import { Form } from 'react-bootstrap';
-import { useFormContext } from '../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../View/Modals/ModalsTypes';
-import { Entity } from '../../../Typings/bussinesTypes';
+import React, { useEffect } from "react";
+import { ErrorMessage } from "../../View/Modals/CommonFormComponents";
+import { Form } from "react-bootstrap";
+import { useFormContext } from "../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
+import { Entity } from "../../../Typings/bussinesTypes";
 
 export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entity>) {
-    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
+    const {
+        register,
+        reset,
+        formState: { dirtyFields, errors, isValid },
+        trigger,
+    } = useFormContext();
 
     useEffect(() => {
         const resetData: any = {
@@ -16,7 +21,6 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
             www: initialData?.www,
             email: initialData?.email,
             phone: initialData?.phone,
-            fax: initialData?.fax,
         };
         reset(resetData);
         trigger();
@@ -32,9 +36,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj nazwę"
                     isInvalid={!!errors?.name}
                     isValid={!errors?.name}
-                    {...register('name')}
+                    {...register("name")}
                 />
-                <ErrorMessage name='name' errors={errors} />
+                <ErrorMessage name="name" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="address">
@@ -43,9 +47,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj adres"
                     isInvalid={!!errors?.address}
                     isValid={!errors?.address}
-                    {...register('address')}
+                    {...register("address")}
                 />
-                <ErrorMessage name='address' errors={errors} />
+                <ErrorMessage name="address" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="taxNumber">
@@ -54,9 +58,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj numer podatkowy"
                     isInvalid={!!errors?.taxNumber}
                     isValid={!errors?.taxNumber}
-                    {...register('taxNumber')}
+                    {...register("taxNumber")}
                 />
-                <ErrorMessage name='taxNumber' errors={errors} />
+                <ErrorMessage name="taxNumber" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="www">
@@ -65,9 +69,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj adres strony www"
                     isInvalid={!!errors?.www}
                     isValid={!errors?.www}
-                    {...register('www')}
+                    {...register("www")}
                 />
-                <ErrorMessage name='www' errors={errors} />
+                <ErrorMessage name="www" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="email">
@@ -77,9 +81,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj adres email"
                     isInvalid={!!errors?.email}
                     isValid={!errors?.email}
-                    {...register('email')}
+                    {...register("email")}
                 />
-                <ErrorMessage name='email' errors={errors} />
+                <ErrorMessage name="email" errors={errors} />
             </Form.Group>
 
             <Form.Group controlId="phone">
@@ -88,9 +92,9 @@ export function EntityModalBody({ isEditing, initialData }: ModalBodyProps<Entit
                     placeholder="Podaj numer telefonu"
                     isInvalid={!!errors?.phone}
                     isValid={!errors?.phone}
-                    {...register('phone')}
+                    {...register("phone")}
                 />
-                <ErrorMessage name='phone' errors={errors} />
+                <ErrorMessage name="phone" errors={errors} />
             </Form.Group>
         </>
     );

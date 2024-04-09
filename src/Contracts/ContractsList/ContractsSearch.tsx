@@ -10,19 +10,23 @@ import {
     OurContractAddNewModalButton,
 } from "./Modals/ContractModalButtons";
 
-/**render name witch ContractStatusBadge */
-function renderName(contract: OurContract | OtherContract) {
-    return (
-        <>
-            {contract.name} <ContractStatusBadge status={contract.status} />
-        </>
-    );
-}
-
 export default function ContractsSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
+
+    function renderName(contract: OurContract | OtherContract) {
+        return (
+            <>
+                {contract.name} <ContractStatusBadge status={contract.status} />
+            </>
+        );
+    }
+
+    function renderOurId(contract: OurContract | OtherContract) {
+        const ourId = "ourId" in contract ? (contract as OurContract).ourId : "";
+        return <>{ourId}</>;
+    }
 
     return (
         <FilterableTable<OurContract | OtherContract>
@@ -34,7 +38,7 @@ export default function ContractsSearch({ title }: { title: string }) {
                     header: "Projekt",
                     renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
                 },
-                { header: "Oznaczenie", objectAttributeToShow: "ourId" },
+                { header: "Oznaczenie", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
                 { header: "Numer", objectAttributeToShow: "number" },
                 { header: "Nazwa", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
                 { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },

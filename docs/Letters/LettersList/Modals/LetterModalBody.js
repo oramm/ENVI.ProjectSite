@@ -33,7 +33,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const LettersController_1 = require("../LettersController");
-function LetterModalBody({ isEditing, initialData }) {
+function LetterModalBody({ isEditing, initialData, }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _project = isEditing ? undefined : watch("_project");
     const _contract = watch("_contract");

@@ -19,7 +19,7 @@ export function FocusAreaModalBody({ isEditing, initialData }: ModalBodyProps<Fo
             name: initialData?.name,
             alias: initialData?.alias,
             description: initialData?.description,
-            _programme: initialData?._programme,
+            _financialAidProgramme: initialData?._financialAidProgramme,
         };
         reset(resetData);
         trigger();
@@ -27,6 +27,13 @@ export function FocusAreaModalBody({ isEditing, initialData }: ModalBodyProps<Fo
 
     return (
         <>
+            <Form.Group controlId="_financialAidProgramme">
+                <Form.Label>Program wsparcia</Form.Label>
+                <FinancialAidProgrammeSelector
+                    repository={financialAidProgrammesRepository}
+                    showValidationInfo={true}
+                />
+            </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Nazwa</Form.Label>
                 <Form.Control
@@ -60,14 +67,6 @@ export function FocusAreaModalBody({ isEditing, initialData }: ModalBodyProps<Fo
                     {...register("description")}
                 />
                 <ErrorMessage name="description" errors={errors} />
-            </Form.Group>
-
-            <Form.Group controlId="_programme">
-                <Form.Label>Program wsparcia</Form.Label>
-                <FinancialAidProgrammeSelector
-                    repository={financialAidProgrammesRepository}
-                    showValidationInfo={true}
-                />
             </Form.Group>
         </>
     );

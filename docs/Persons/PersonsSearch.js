@@ -35,34 +35,17 @@ function PersonsSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function buildLabelFromEntities(entities) {
-        if (!entities || entities.length === 0)
-            return '';
-        let label = '';
-        for (let i = 0; i < entities.length - 1; i++) {
-            label += entities[i].name + '\n ';
-        }
-        label += entities[entities.length - 1].name;
-        return label;
+    function renderEntityName(person) {
+        return react_1.default.createElement(react_1.default.Fragment, null, person._entity.name);
     }
-    function makeEntitiesLabel(entity) {
-        const mainEntitiesLabel = buildLabelFromEntities(entity._entitiesMain);
-        const ccEntitiesLabel = buildLabelFromEntities(entity._entitiesCc);
-        if (!mainEntitiesLabel)
-            return react_1.default.createElement(react_1.default.Fragment, null);
-        let label = mainEntitiesLabel;
-        if (ccEntitiesLabel?.length > 0) {
-            label += '\n\nDW: ' + ccEntitiesLabel;
-        }
-        return react_1.default.createElement("div", { style: { whiteSpace: 'pre-line' } }, label);
-    }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: 'persons', title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [
-            { header: 'Imię', objectAttributeToShow: 'name' },
-            { header: 'Nazwisko', objectAttributeToShow: 'surname' },
-            { header: 'Telefon', objectAttributeToShow: 'phone' },
-            { header: 'Email', objectAttributeToShow: 'email' },
-            { header: 'Stanowisko', objectAttributeToShow: 'position' },
-            { header: 'Opis', objectAttributeToShow: 'comment' }
-        ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: '/person/' }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [
+            { header: "Imię", objectAttributeToShow: "name" },
+            { header: "Nazwisko", objectAttributeToShow: "surname" },
+            { header: "Telefon", objectAttributeToShow: "phone" },
+            { header: "Email", objectAttributeToShow: "email" },
+            { header: "Firma", renderTdBody: (person) => renderEntityName(person) },
+            { header: "Stanowisko", objectAttributeToShow: "position" },
+            { header: "Opis", objectAttributeToShow: "comment" },
+        ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/" }));
 }
 exports.default = PersonsSearch;

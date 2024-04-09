@@ -3,17 +3,14 @@ import {
     Contract,
     Entity,
     ExternalOffer,
-    IncomingLetter,
+    IncomingLetterOffer,
     Milestone,
-    OtherContract,
-    OurContract,
-    OurLetter,
+    OurLetterOffer,
     OurOffer,
-    Project,
 } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
-export const lettersRepository = new RepositoryReact<OurLetter | IncomingLetter>({
+export const lettersRepository = new RepositoryReact<OurLetterOffer | IncomingLetterOffer>({
     actionRoutes: {
         getRoute: "offersLetters",
         addNewRoute: "letterReact",

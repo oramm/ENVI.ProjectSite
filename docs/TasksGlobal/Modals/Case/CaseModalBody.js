@@ -29,16 +29,16 @@ const react_bootstrap_1 = require("react-bootstrap");
 const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 function CaseModalBody({ isEditing, initialData, contextData }) {
-    const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
-    const _type = watch('_type');
-    const _milestone = (initialData?._milestone || contextData);
+    const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const _type = watch("_type");
+    const _parent = (initialData?._parent || contextData);
     (0, react_1.useEffect)(() => {
-        console.log('CaseModalBody useEffect', initialData);
+        console.log("CaseModalBody useEffect", initialData);
         const resetData = {
-            _milestone,
+            _parent,
             _type: initialData?._type,
             name: initialData?.name,
-            description: initialData?.description || '',
+            description: initialData?.description || "",
         };
         reset(resetData);
         trigger();
@@ -51,16 +51,14 @@ function CaseModalBody({ isEditing, initialData, contextData }) {
         return true;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        !isEditing &&
-            react_1.default.createElement(CommonFormComponents_1.CaseTypeSelectFormElement, { milestoneType: _milestone._type }),
-        shoulShowCaseNameField() &&
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa sprawy"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'name', errors: errors })),
+        !isEditing && react_1.default.createElement(CommonFormComponents_1.CaseTypeSelectFormElement, { milestoneType: _parent._type }),
+        shoulShowCaseNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa sprawy"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "name", errors: errors }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
 exports.CaseModalBody = CaseModalBody;

@@ -36,24 +36,24 @@ const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 function ContractModalBodyStatus({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('status', initialData?.status || '', { shouldValidate: true });
+        setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return (react_1.default.createElement(CommonFormComponents_1.ContractStatusSelectFormElement, null));
+    return react_1.default.createElement(CommonFormComponents_1.ContractStatusSelectFormElement, null);
 }
 exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function ContractModalBodyName({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        setValue('name', initialData?.name || '', { shouldValidate: true });
+        setValue("name", initialData?.name || "", { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register('name') }),
-        react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'name' })));
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
+        react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "name" })));
 }
 exports.ContractModalBodyName = ContractModalBodyName;
-function ContractModalBodyDates({ initialData, isEditing, additionalProps = {} }) {
-    const { setValue, register, formState: { errors }, trigger, watch } = (0, FormContext_1.useFormContext)();
+function ContractModalBodyDates({ initialData, isEditing, additionalProps = {}, }) {
+    const { setValue, register, formState: { errors }, trigger, watch, } = (0, FormContext_1.useFormContext)();
     let { watchAllFieldsExternal, startDateSugestion, endDateSugestion, guaranteeEndDateSugestion } = additionalProps;
     //jeśli nie ma watch w formularzu zewnętrznym to będzie tutaj
     const watchAllFields = watchAllFieldsExternal || watch();
@@ -65,35 +65,39 @@ function ContractModalBodyDates({ initialData, isEditing, additionalProps = {} }
     else {
         startDateSugestion = new Date().toISOString().slice(0, 10);
         endDateSugestion = ToolsDate_1.default.addDays(startDateSugestion, 365).toISOString().slice(0, 10);
-        guaranteeEndDateSugestion = ToolsDate_1.default.addDays(endDateSugestion, 365 * 2).toISOString().slice(0, 10);
+        guaranteeEndDateSugestion = ToolsDate_1.default.addDays(endDateSugestion, 365 * 2)
+            .toISOString()
+            .slice(0, 10);
     }
     (0, react_1.useEffect)(() => {
-        setValue('startDate', startDateSugestion, { shouldValidate: true });
-        setValue('endDate', endDateSugestion, { shouldValidate: true });
-        setValue('guaranteeEndDate', guaranteeEndDateSugestion, { shouldValidate: true });
+        setValue("startDate", startDateSugestion, { shouldValidate: true });
+        setValue("endDate", endDateSugestion, { shouldValidate: true });
+        setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_bootstrap_1.Row, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.startDate, isInvalid: !!errors.startDate, ...register('startDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('startDate', watchAllFields, startDateSugestion) : '', onChange: (e) => {
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.startDate, isInvalid: !!errors.startDate, ...register("startDate"), className: !isEditing ? ToolsForms_1.default.getSuggestedClass("startDate", watchAllFields, startDateSugestion) : "", onChange: (e) => {
                     register("startDate").onChange(e); // wywołaj standardowe zachowanie
                     trigger("endDate");
                 } }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'startDate' })),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "startDate" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "endDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register('endDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('endDate', watchAllFields, endDateSugestion) : '', onChange: (e) => {
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register("endDate"), className: !isEditing ? ToolsForms_1.default.getSuggestedClass("endDate", watchAllFields, endDateSugestion) : "", onChange: (e) => {
                     register("endDate").onChange(e); // wywołaj standardowe zachowanie
                     trigger("startDate");
                     trigger("guaranteeEndDate");
                 } }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'endDate' })),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "endDate" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "guaranteeEndDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Gwarancja"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.guaranteeEndDate, isInvalid: !!errors.guaranteeEndDate, ...register('guaranteeEndDate'), className: !isEditing ? ToolsForms_1.default.getSuggestedClass('guaranteeEndDate', watchAllFields, guaranteeEndDateSugestion) : '', onChange: (e) => {
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.guaranteeEndDate, isInvalid: !!errors.guaranteeEndDate, ...register("guaranteeEndDate"), className: !isEditing
+                    ? ToolsForms_1.default.getSuggestedClass("guaranteeEndDate", watchAllFields, guaranteeEndDateSugestion)
+                    : "", onChange: (e) => {
                     register("guaranteeEndDate").onChange(e); // wywołaj standardowe zachowanie
                     //trigger("startDate");
                 } }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: 'guaranteeEndDate' }))));
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))));
 }
 exports.ContractModalBodyDates = ContractModalBodyDates;

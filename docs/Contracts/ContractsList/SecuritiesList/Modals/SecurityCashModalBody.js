@@ -30,9 +30,9 @@ const FormContext_1 = require("../../../../View/Modals/FormContext");
 function SecurityCashModalBody(props) {
     const { initialData, isEditing } = props;
     const { register, trigger, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
-    const _type = watch('_type');
+    const _type = watch("_type");
     (0, react_1.useEffect)(() => {
-        setValue('isCash', true);
+        setValue("isCash", true);
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(SecurityModalBody_1.SecurityModalBody, { ...props })));

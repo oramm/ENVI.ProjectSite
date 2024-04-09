@@ -27,7 +27,7 @@ function ContractMainHeader() {
     function renderEntityDetails() {
         if (!contract)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        if (contract.ourId) {
+        if ("ourId" in contract) {
             return (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement("div", null, "Zamawiaj\u0105cy"),
                 react_1.default.createElement("h5", null, renderEntityData(contract._employers || []))));
@@ -42,7 +42,7 @@ function ContractMainHeader() {
             return (react_1.default.createElement("div", { key: entity.id },
                 react_1.default.createElement("div", null, entity.name),
                 react_1.default.createElement("div", null, entity.address),
-                react_1.default.createElement("div", null, entity.nip)));
+                react_1.default.createElement("div", null, entity.taxNumber)));
         });
     }
     function handleEditObject(contract) {
@@ -55,7 +55,7 @@ function ContractMainHeader() {
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
         react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 11, md: 6 }, renderEntityDetails()),
-            contract.ourId && (react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
+            "ourId" in contract && (react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                 react_1.default.createElement("div", null, "Oznaczenie:"),
                 react_1.default.createElement("h5", null, contract.ourId))),
             react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },

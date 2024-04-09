@@ -1,25 +1,25 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Container, Card, Col, Row, Button, Alert } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import { Invoice, InvoiceItem } from '../../../../Typings/bussinesTypes';
-import ToolsDate from '../../../React/ToolsDate';
-import ErrorBoundary from '../../../View/Modals/ErrorBoundary';
-import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from '../../../View/Resultsets/CommonComponents';
-import FilterableTable from '../../../View/Resultsets/FilterableTable/FilterableTable';
-import { invoiceItemsRepository, invoicesRepository } from '../InvoicesController';
-import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from '../Modals/InvoiceItemModalButtons';
-import { ActionButton, CopyButton, InvoiceEditModalButton } from '../Modals/InvoiceModalButtons';
-import { makeInvoiceValidationSchema } from '../Modals/InvoiceValidationSchema';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
+import ToolsDate from "../../../React/ToolsDate";
+import ErrorBoundary from "../../../View/Modals/ErrorBoundary";
+import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
+import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
+import { invoiceItemsRepository, invoicesRepository } from "../InvoicesController";
+import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from "../Modals/InvoiceItemModalButtons";
+import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/InvoiceModalButtons";
+import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
 
     const { id } = useParams();
 
     useEffect(() => {
-        if (!id) throw new Error('Nie znaleziono id w adresie url');
+        if (!id) throw new Error("Nie znaleziono id w adresie url");
         const idNumber = Number(id);
 
         async function fetchData() {
@@ -29,169 +29,175 @@ export default function InvoiceDetails() {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
                 if (invoiceData) setInvoice(invoiceData);
                 setInvoiceItems(itemsData);
-                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ''}`
+                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             } catch (error) {
                 console.error("Error fetching data", error);
-                if (error instanceof Error)
-                    setErrorMessage(error.message);
+                if (error instanceof Error) setErrorMessage(error.message);
             }
-        };
+        }
 
         fetchData();
     }, []);
 
     function handleError(error: Error) {
-        setErrorMessage(error.message || 'An error occurred while copying the invoice.');
-    };
+        setErrorMessage(error.message || "An error occurred while copying the invoice.");
+    }
 
     function renderAvtionsMenu() {
         if (errorMessage)
             return (
-                <Alert style={{ whiteSpace: 'pre-wrap' }} className='mt-3' variant="danger" onClose={() => setErrorMessage('')} dismissible>
+                <Alert
+                    style={{ whiteSpace: "pre-wrap" }}
+                    className="mt-3"
+                    variant="danger"
+                    onClose={() => setErrorMessage("")}
+                    dismissible
+                >
                     {errorMessage}
                 </Alert>
             );
-        return <><ActionButton /> {' '} <CopyButton onError={handleError} />{' '}
-            <InvoiceEditModalButton
-                modalProps={{
-                    onEdit: setInvoice,
-                    initialData: invoice,
-                    makeValidationSchema: makeInvoiceValidationSchema
-                }}
-                buttonProps={{ buttonCaption: 'Edytuj Fakturę' }}
-            />
-        </>
+        return (
+            <>
+                <ActionButton /> <CopyButton onError={handleError} />{" "}
+                <InvoiceEditModalButton
+                    modalProps={{
+                        onEdit: setInvoice,
+                        initialData: invoice,
+                        makeValidationSchema: makeInvoiceValidationSchema,
+                    }}
+                    buttonProps={{ buttonCaption: "Edytuj Fakturę" }}
+                />
+            </>
+        );
     }
 
     if (!invoice) {
-        return <div>Ładuję dane... <SpinnerBootstrap /> </div>;
+        return (
+            <div>
+                Ładuję dane... <SpinnerBootstrap />{" "}
+            </div>
+        );
     }
 
     return (
-        <InvoiceProvider invoice={invoice} setInvoice={setInvoice} >
-            <Card >
-                <Card.Body >
+        <InvoiceProvider invoice={invoice} setInvoice={setInvoice}>
+            <Card>
+                <Card.Body>
                     <Container>
                         <Row>
                             <Col sm={4} md={2}>
                                 <div>Nr faktury:</div>
                                 <h5>{invoice.number}</h5>
                             </Col>
-                            <Col sm={4} md={3} lg='3'>
+                            <Col sm={4} md={3} lg="3">
                                 <div>do Umowy:</div>
                                 <h5>{invoice._contract.ourId}</h5>
                             </Col>
                             <Col sm={2}>
                                 <InvoiceStatusBadge status={invoice.status} />
                             </Col>
-                            <Col md="auto">
-                                {renderAvtionsMenu()}
-                            </Col>
-                            <Col sm={1} lg='auto'>
-                                {invoice._documentOpenUrl && (
-                                    <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />
-                                )}
+                            <Col md="auto">{renderAvtionsMenu()}</Col>
+                            <Col sm={1} lg="auto">
+                                {invoice._documentOpenUrl && <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />}
                             </Col>
                         </Row>
                         <Row>
                             <Col sm={4} md={2}>
                                 <div>Data sprzedaży:</div>
-                                {invoice.issueDate
-                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.issueDate)} </h5>
-                                    : 'Jeszcze nie wystawiono'}
+                                {invoice.issueDate ? (
+                                    <h5>{ToolsDate.dateYMDtoDMY(invoice.issueDate)} </h5>
+                                ) : (
+                                    "Jeszcze nie wystawiono"
+                                )}
                             </Col>
                             <Col sm={4} md={2}>
                                 <div>Data wysłania:</div>
-                                {invoice.sentDate
-                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.sentDate)}</h5>
-                                    : 'Jeszcze nie wysłano'}
+                                {invoice.sentDate ? (
+                                    <h5>{ToolsDate.dateYMDtoDMY(invoice.sentDate)}</h5>
+                                ) : (
+                                    "Jeszcze nie wysłano"
+                                )}
                             </Col>
                             <Col sm={4} md={2}>
                                 <div>Termin płatności:</div>
-                                {invoice.paymentDeadline
-                                    ? <h5>{ToolsDate.dateYMDtoDMY(invoice.paymentDeadline)}</h5>
-                                    : 'Jeszcze nie okreśony'}
+                                {invoice.paymentDeadline ? (
+                                    <h5>{ToolsDate.dateYMDtoDMY(invoice.paymentDeadline)}</h5>
+                                ) : (
+                                    "Jeszcze nie okreśony"
+                                )}
                             </Col>
                         </Row>
                         <Row>
                             <Col sm={4} md={2}>
                                 <div>Wartość Brutto:</div>
-                                <h5>{invoice._grossValue}</h5>
+                                <h5>{invoice._totalGrossValue}</h5>
                             </Col>
 
                             <Col sm={4} md={2}>
                                 <div>Wartość Netto:</div>
-                                <h5>{invoice._netValue}</h5>
+                                <h5>{invoice._totalNetValue}</h5>
                             </Col>
                             <Col sm={12} md={8}>
                                 <div>Odbiorca</div>
                                 <h5>{invoice._entity.name}</h5>
                                 <h5>{invoice._entity.address}</h5>
                             </Col>
-
                         </Row>
                         <Row>
-                            <Col >
-                                {invoice.description && <p>Opis: {invoice.description}</p>}
-                            </Col>
+                            <Col>{invoice.description && <p>Opis: {invoice.description}</p>}</Col>
                         </Row>
-                    </Container >
+                    </Container>
 
-
-                    {invoiceItems ?
+                    {invoiceItems ? (
                         <FilterableTable<InvoiceItem>
-                            id='invoiceItems'
-                            title=''
+                            id="invoiceItems"
+                            title=""
                             initialObjects={invoiceItems}
                             repository={invoiceItemsRepository}
                             AddNewButtonComponents={[InvoiceItemAddNewModalButton]}
                             EditButtonComponent={InvoiceItemEditModalButton}
                             tableStructure={[
-                                { header: 'Opis', objectAttributeToShow: 'description' },
-                                { header: 'Netto', objectAttributeToShow: '_netValue' },
-                                { header: 'Brutto', objectAttributeToShow: '_grossValue' },
+                                { header: "Opis", objectAttributeToShow: "description" },
+                                { header: "Netto", objectAttributeToShow: "_netValue" },
+                                { header: "Brutto", objectAttributeToShow: "_grossValue" },
                             ]}
                         />
-                        : <>"Ładowanie pozycji faktury..." <SpinnerBootstrap /></>
-                    }
+                    ) : (
+                        <>
+                            "Ładowanie pozycji faktury..." <SpinnerBootstrap />
+                        </>
+                    )}
 
-                    <p className='tekst-muted small'>
-                        Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}<br />
-                        Aktualizacja: {ToolsDate.timestampToString(invoice._lastUpdated)}
+                    <p className="tekst-muted small">
+                        Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}
+                        <br />
+                        Aktualizacja: {ToolsDate.timestampToString(invoice._lastUpdated as string)}
                     </p>
                 </Card.Body>
-            </Card >
+            </Card>
         </InvoiceProvider>
     );
 }
 
 // Utwórz kontekst
 const InvoiceContext = createContext<{
-    invoice: Invoice,
-    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>
+    invoice: Invoice;
+    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>;
 }>({
     invoice: {} as Invoice,
-    setInvoice: () => { }
+    setInvoice: () => {},
 });
 
 type InvoiceProviderProps = {
-    invoice: Invoice,
-    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>
-}
+    invoice: Invoice;
+    setInvoice: React.Dispatch<React.SetStateAction<Invoice>>;
+};
 
 // Twórz dostawcę kontekstu, który przechowuje stan faktury
-export function InvoiceProvider({
-    invoice,
-    setInvoice,
-    children
-}: React.PropsWithChildren<InvoiceProviderProps>) {
+export function InvoiceProvider({ invoice, setInvoice, children }: React.PropsWithChildren<InvoiceProviderProps>) {
     if (!invoice) throw new Error("Invoice not found");
 
-    return (
-        <InvoiceContext.Provider value={{ invoice, setInvoice }}>
-            {children}
-        </InvoiceContext.Provider>
-    );
+    return <InvoiceContext.Provider value={{ invoice, setInvoice }}>{children}</InvoiceContext.Provider>;
 }
 
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury

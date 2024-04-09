@@ -73,8 +73,9 @@ function ContractOurDetails() {
         if (!contract)
             return (react_1.default.createElement(react_bootstrap_1.Placeholder, { as: "div", animation: "glow" },
                 react_1.default.createElement(react_bootstrap_1.Placeholder, { xs: 6 })));
-        let coordinatorName = contract?._manager
-            ? `${contract._manager.name} ${contract._manager.surname}`
+        const contractTyped = contract;
+        const coordinatorName = contractTyped._manager
+            ? `${contractTyped._manager.name} ${contractTyped._manager.surname}`
             : "Nie określono";
         return react_1.default.createElement(react_1.default.Fragment, null, `Koordynator(ka): ${coordinatorName}`);
     }
@@ -82,9 +83,9 @@ function ContractOurDetails() {
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Container, null,
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
-                    react_1.default.createElement(react_bootstrap_1.Col, null, contract.description && react_1.default.createElement("p", null,
+                    react_1.default.createElement(react_bootstrap_1.Col, null, contract.comment && react_1.default.createElement("p", null,
                         "Opis: ",
-                        contract.description))),
+                        contract.comment))),
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                         react_1.default.createElement("div", null, "Warto\u015B\u0107 netto, z\u0142:"),

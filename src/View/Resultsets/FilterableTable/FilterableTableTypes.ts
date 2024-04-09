@@ -5,13 +5,13 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { SectionNode } from "./Section";
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    id: string,
-    title: string,
-    showTableHeader?: boolean,
-    initialSections?: SectionNode<DataItemType>[],
-    tableStructure: RowStructure<DataItemType>[],
-    repository: RepositoryReact<DataItemType>,
-    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
+    id: string;
+    title: string;
+    showTableHeader?: boolean;
+    initialSections?: SectionNode<DataItemType>[];
+    tableStructure: RowStructure<DataItemType>[];
+    repository: RepositoryReact<DataItemType>;
+    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
     FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
@@ -20,25 +20,24 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     onRowClick?: (object: DataItemType) => void;
     externalUpdate?: number;
     shouldRetrieveDataBeforeEdit?: boolean;
-}
+};
 
 export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    criteria: FieldValues,
-    storedObjects: DataItemType[],
-}
+    criteria: FieldValues;
+    storedObjects: DataItemType[];
+};
 
 export type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
-    repository: RepositoryReact,
-    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
-}
+    repository: RepositoryReact;
+    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export type FilterBodyProps = {};
 
-
 export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    header?: string,
-    objectAttributeToShow?: string,
-    renderTdBody?: (dataItem: DataItemType) => JSX.Element
-    renderThBody?: () => JSX.Element
+    header?: string;
+    objectAttributeToShow?: keyof DataItemType;
+    renderTdBody?: (dataItem: DataItemType) => JSX.Element;
+    renderThBody?: () => JSX.Element;
 };

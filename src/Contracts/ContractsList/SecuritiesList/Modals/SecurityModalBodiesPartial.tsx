@@ -1,28 +1,37 @@
-import React, { useEffect } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
-import { ErrorMessage, SecurityStatusSelectFormElement, ValueInPLNInput } from '../../../../View/Modals/CommonFormComponents';
-import { useFormContext } from '../../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../../View/Modals/ModalsTypes';
+import React, { useEffect } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import {
+    ErrorMessage,
+    SecurityStatusSelectFormElement,
+    ValueInPLNInput,
+} from "../../../../View/Modals/CommonFormComponents";
+import { useFormContext } from "../../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
+import { Security } from "../../../../../Typings/bussinesTypes";
 
-
-export function SecurityModalBodyStatus({ initialData }: ModalBodyProps) {
-    const { setValue, register, formState: { errors }, } = useFormContext();
+export function SecurityModalBodyStatus({ initialData }: ModalBodyProps<Security>) {
+    const {
+        setValue,
+        register,
+        formState: { errors },
+    } = useFormContext();
 
     useEffect(() => {
-        setValue('status', initialData?.status || '', { shouldValidate: true });
+        setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
 
-    return (
-        <SecurityStatusSelectFormElement />
-    );
+    return <SecurityStatusSelectFormElement />;
 }
 
-export function SecurityModalBodyDescritpion({ initialData }: ModalBodyProps) {
-    const { setValue, register, formState: { errors }, } = useFormContext();
+export function SecurityModalBodyDescritpion({ initialData }: ModalBodyProps<Security>) {
+    const {
+        setValue,
+        register,
+        formState: { errors },
+    } = useFormContext();
 
     useEffect(() => {
-        setValue('description', initialData?.description || '', { shouldValidate: true });
-
+        setValue("description", initialData?.description || "", { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -34,19 +43,22 @@ export function SecurityModalBodyDescritpion({ initialData }: ModalBodyProps) {
                 placeholder="Podaj opis"
                 isValid={!errors?.description}
                 isInvalid={!!errors?.description}
-                {...register('description')}
+                {...register("description")}
             />
-            <ErrorMessage errors={errors} name='description' />
+            <ErrorMessage errors={errors} name="description" />
         </Form.Group>
     );
 }
 
-export function SecurityModalBodyValue({ initialData }: ModalBodyProps) {
-    const { setValue, register, formState: { errors }, } = useFormContext();
+export function SecurityModalBodyValue({ initialData }: ModalBodyProps<Security>) {
+    const {
+        setValue,
+        register,
+        formState: { errors },
+    } = useFormContext();
 
     useEffect(() => {
-        setValue('value', initialData?.value || '', { shouldValidate: true });
-
+        setValue("value", initialData?.value || "", { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -57,14 +69,22 @@ export function SecurityModalBodyValue({ initialData }: ModalBodyProps) {
     );
 }
 
-export function SecurityModalBodyDates({ initialData }:
-    ModalBodyProps
-) {
-    const { setValue, register, formState: { errors }, trigger, watch } = useFormContext();
+export function SecurityModalBodyDates({ initialData }: ModalBodyProps<Security>) {
+    const {
+        setValue,
+        register,
+        formState: { errors },
+        trigger,
+        watch,
+    } = useFormContext();
 
     useEffect(() => {
-        setValue('firstPartExpiryDate', initialData?.firstPartExpiryDate || initialData?._contract.endDate || undefined, { shouldValidate: true });
-        setValue('secondPartExpiryDate', initialData?.secondPartExpiryDate || undefined, { shouldValidate: true });
+        setValue(
+            "firstPartExpiryDate",
+            initialData?.firstPartExpiryDate || initialData?._contract.endDate || undefined,
+            { shouldValidate: true }
+        );
+        setValue("secondPartExpiryDate", initialData?.secondPartExpiryDate || undefined, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
@@ -75,9 +95,9 @@ export function SecurityModalBodyDates({ initialData }:
                     type="date"
                     isValid={!errors.firstPartExpiryDate}
                     isInvalid={!!errors.firstPartExpiryDate}
-                    {...register('firstPartExpiryDate')}
+                    {...register("firstPartExpiryDate")}
                 />
-                <ErrorMessage errors={errors} name='firstPartExpiryDate' />
+                <ErrorMessage errors={errors} name="firstPartExpiryDate" />
             </Form.Group>
             <Form.Group as={Col} controlId="secondPartExpiryDate">
                 <Form.Label>Termin wygaśnięcia 30%</Form.Label>
@@ -85,9 +105,9 @@ export function SecurityModalBodyDates({ initialData }:
                     type="date"
                     isValid={!errors.secondPartExpiryDate}
                     isInvalid={!!errors.secondPartExpiryDate}
-                    {...register('secondPartExpiryDate')}
+                    {...register("secondPartExpiryDate")}
                 />
-                <ErrorMessage errors={errors} name='secondPartExpiryDate' />
+                <ErrorMessage errors={errors} name="secondPartExpiryDate" />
             </Form.Group>
         </Row>
     );

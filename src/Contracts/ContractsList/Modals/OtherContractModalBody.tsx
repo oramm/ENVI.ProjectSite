@@ -6,12 +6,13 @@ import { ContractModalBody } from "./ContractModalBody";
 import { entitiesRepository } from "../ContractsController";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
+import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 
 /**Wywoływana w ProjectsSelector jako props  */
-export function OtherContractModalBody(props: ModalBodyProps) {
-    const initialData = props.initialData;
+export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
+    const initialData = props.initialData as OtherContract;
 
-    const ourRelatedContractsRepository = new RepositoryReact({
+    const ourRelatedContractsRepository = new RepositoryReact<OurContract>({
         name: "OurRelatedContractsRepository",
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
     });

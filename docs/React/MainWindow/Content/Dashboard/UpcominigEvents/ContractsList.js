@@ -119,7 +119,8 @@ function ContractsList() {
         setExternalUpdate((prevState) => prevState + 1);
     }
     function renderRemainingValue(contract) {
-        if (!contract.ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
+        const ourId = "ourId" in contract ? contract.ourId : "";
+        if (!ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
             return react_1.default.createElement(react_1.default.Fragment, null);
         const formatedNotScheduledValue = Tools_1.default.formatNumber(contract._remainingNotScheduledValue || 0, 0);
         const formatedNotIssuedValue = Tools_1.default.formatNumber(contract._remainingNotIssuedValue || 0, 0);
@@ -135,7 +136,10 @@ function ContractsList() {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
             },
-            { header: "Oznaczenie", objectAttributeToShow: "ourId" },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (contract) => (react_1.default.createElement(react_1.default.Fragment, null, "ourId" in contract ? contract.ourId : "")),
+            },
             { header: "Numer", objectAttributeToShow: "number" },
             { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
             {
