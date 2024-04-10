@@ -27,7 +27,7 @@ exports.Section = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-const FiterableTableRow_1 = require("./FiterableTableRow");
+const FilterableTableRow_1 = require("./FilterableTableRow");
 const ResultSetTable_1 = require("./ResultSetTable");
 require("./FilterableTable.css");
 const react_router_dom_1 = require("react-router-dom");
@@ -74,7 +74,7 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
         react_1.default.createElement("div", { className: isActive ? "active" : "", onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
         (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("div", { className: "ms-1 tekst-muted small" }, ` [${sectionNode.leaves?.length || sectionNode.children.length} pozycji]`)),
         isActive ? (react_1.default.createElement("div", { className: "section-action-menu" },
-            react_1.default.createElement(FiterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: "horizontal", sectionRepository: sectionNode.repository }),
+            react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,

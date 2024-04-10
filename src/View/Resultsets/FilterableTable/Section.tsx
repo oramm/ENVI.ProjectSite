@@ -4,7 +4,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { useFilterableTableContext } from "./FilterableTableContext";
-import { RowActionMenu } from "./FiterableTableRow";
+import { RowActionMenu } from "./FilterableTableRow";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import "./FilterableTable.css";
 import { useNavigate } from "react-router-dom";

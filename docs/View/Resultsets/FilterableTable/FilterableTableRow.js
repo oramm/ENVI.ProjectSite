@@ -3,13 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteModalButton = exports.RowActionMenu = exports.FiterableTableRow = void 0;
+exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
 const react_1 = __importDefault(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../../Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick, }) {
+function FilterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick, }) {
     if (!onIsReadyChange)
         throw new Error("onIsReadyChange is not defined");
     const navigate = (0, react_router_dom_1.useNavigate)();
@@ -28,11 +28,15 @@ function FiterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick, 
             if (selectedObjectRoute)
                 navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
         }, className: isActive ? "active" : "" },
-        tableStructure.map((column, index) => (react_1.default.createElement("td", { key: String(column.objectAttributeToShow) || index }, tdBodyRender(column, dataObject)))),
+        tableStructure.map((column, index) => {
+            const key = String(column.objectAttributeToShow || index);
+            console.log("column", column.objectAttributeToShow, index);
+            return react_1.default.createElement("td", { key: key }, tdBodyRender(column, dataObject));
+        }),
         isActive && (react_1.default.createElement("td", { align: "center" },
             react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })))));
 }
-exports.FiterableTableRow = FiterableTableRow;
+exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     return (react_1.default.createElement(react_1.default.Fragment, null,

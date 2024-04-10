@@ -1,6 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
-import { set } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
@@ -18,7 +16,7 @@ export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     onRowClick: (id: number) => void;
 };
 
-export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
+export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
     dataObject,
     isActive,
     onIsReadyChange,
@@ -53,9 +51,11 @@ export function FiterableTableRow<DataItemType extends RepositoryDataItem>({
             }}
             className={isActive ? "active" : ""}
         >
-            {tableStructure.map((column, index) => (
-                <td key={String(column.objectAttributeToShow) || index}>{tdBodyRender(column, dataObject)}</td>
-            ))}
+            {tableStructure.map((column, index) => {
+                const key = String(column.objectAttributeToShow || index);
+                console.log("column", column.objectAttributeToShow, index);
+                return <td key={key}>{tdBodyRender(column, dataObject)}</td>;
+            })}
             {isActive && (
                 <td align="center">
                     <RowActionMenu

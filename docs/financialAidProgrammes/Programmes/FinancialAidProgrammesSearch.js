@@ -35,7 +35,7 @@ function FinancialAidProgrammesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "entities", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [
             { header: "Nazwa", objectAttributeToShow: "name" },
             { header: "Opis", objectAttributeToShow: "description" },
             { header: "URL", objectAttributeToShow: "url" },

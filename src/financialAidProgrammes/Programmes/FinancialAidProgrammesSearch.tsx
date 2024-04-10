@@ -15,7 +15,7 @@ export default function FinancialAidProgrammesSearch({ title }: { title: string 
 
     return (
         <FilterableTable<FinancialAidProgrammeData>
-            id="entities"
+            id="financialAidProgrammes"
             title={title}
             FilterBodyComponent={FinancialAidProgrammesFilterBody}
             tableStructure={[
