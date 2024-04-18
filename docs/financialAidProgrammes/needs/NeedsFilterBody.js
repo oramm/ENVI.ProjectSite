@@ -12,7 +12,8 @@ const FinancialAidProgrammesController_1 = require("../FinancialAidProgrammesCon
 const ApplicationCallsController_1 = require("../FocusAreas/ApplicationCalls/ApplicationCallsController");
 const FocusAreasController_1 = require("../FocusAreas/FocusAreasController");
 function NeedsFilterBody() {
-    const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const { register, formState: { errors }, watch, } = (0, FormContext_1.useFormContext)();
+    const _focusAreas = watch("_focusArea");
     return (react_1.default.createElement(react_bootstrap_1.Row, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 4 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
@@ -29,6 +30,6 @@ function NeedsFilterBody() {
             react_1.default.createElement(CommonFormComponents_1.FocusAreaSelector, { repository: FocusAreasController_1.focusAreasRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_applicationCall" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nab\u00F3r"),
-            react_1.default.createElement(CommonFormComponents_1.ApplicationCallSelector, { repository: ApplicationCallsController_1.applicationCallsRepository, showValidationInfo: false }))));
+            react_1.default.createElement(CommonFormComponents_1.ApplicationCallSelector, { repository: ApplicationCallsController_1.applicationCallsRepository, showValidationInfo: false, _focusArea: _focusAreas }))));
 }
 exports.NeedsFilterBody = NeedsFilterBody;

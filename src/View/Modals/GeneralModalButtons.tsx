@@ -6,10 +6,8 @@ import { GeneralModal } from "./GeneralModal";
 import {
     GeneralAddNewModalButtonProps,
     GeneralDeleteModalButtonProps,
-    GeneralEditModalButtonButtonProps,
     GeneralEditModalButtonProps,
     GeneralModalButtonButtonProps,
-    GeneralModalButtonProps,
 } from "./ModalsTypes";
 import { DeleteIconButton, EditIconButton } from "../Resultsets/CommonComponents";
 

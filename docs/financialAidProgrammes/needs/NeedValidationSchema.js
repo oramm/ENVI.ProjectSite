@@ -36,6 +36,7 @@ const needFields = {
         .min(10, "Opis musi mieć co najmniej 10 znaków")
         .max(1000, "Opis może mieć maksymalnie 1000 znaków"),
     status: Yup.string().required("Podaj status"),
+    _focusArea: Yup.array(),
 };
 function makeNeedValidationSchema() {
     return Yup.object().shape({

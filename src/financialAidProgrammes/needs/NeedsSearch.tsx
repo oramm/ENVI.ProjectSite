@@ -30,6 +30,7 @@ export default function NeedsSearch({ title }: { title: string }) {
             isDeletable={true}
             repository={needsRepository}
             selectedObjectRoute={"/need/"}
+            shouldRetrieveDataBeforeEdit={true}
         />
     );
 }

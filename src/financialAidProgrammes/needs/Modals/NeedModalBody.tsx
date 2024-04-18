@@ -1,10 +1,18 @@
 import React, { useEffect } from "react";
-import { ClientNeedStatusSelector, ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents";
+import {
+    ApplicationCallSelector,
+    ClientNeedStatusSelector,
+    ErrorMessage,
+    FocusAreaSelector,
+    MyAsyncTypeahead,
+} from "../../../View/Modals/CommonFormComponents";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { NeedData } from "../../../../Typings/bussinesTypes";
+import { FocusAreaData, NeedData } from "../../../../Typings/bussinesTypes";
 import { clientsRepository } from "../../FinancialAidProgrammesController";
+import { focusAreasRepository } from "../../FocusAreas/FocusAreasController";
+import { applicationCallsRepository } from "../../FocusAreas/ApplicationCalls/ApplicationCallsController";
 
 export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedData>) {
     const {
@@ -12,6 +20,7 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
         reset,
         formState: { errors },
         trigger,
+        watch,
     } = useFormContext();
 
     useEffect(() => {
@@ -20,10 +29,14 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
             name: initialData?.name,
             description: initialData?.description,
             status: initialData?.status,
-        };
+            _focusAreas: initialData?._focusAreas,
+            _applicationCall: initialData?._applicationCall,
+        } as NeedData;
         reset(resetData);
         trigger();
     }, [initialData, reset, trigger]);
+
+    const _focusAreas = watch("_focusAreas") as FocusAreaData[] | undefined;
 
     return (
         <>
@@ -62,6 +75,21 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
                 <ErrorMessage name="description" errors={errors} />
             </Form.Group>
             <ClientNeedStatusSelector />
+            <Form.Group controlId="_focusAreas">
+                <Form.Label>Przypisz obszary działania</Form.Label>
+                <FocusAreaSelector name="_focusAreas" repository={focusAreasRepository} multiple={true} />
+            </Form.Group>
+            {_focusAreas && (
+                <Form.Group controlId="_applicationCalls">
+                    <Form.Label>Wybierz nabor</Form.Label>
+                    <ApplicationCallSelector
+                        name="_applicationCalls"
+                        repository={applicationCallsRepository}
+                        multiple={true}
+                        _focusArea={_focusAreas}
+                    />
+                </Form.Group>
+            )}
         </>
     );
 }

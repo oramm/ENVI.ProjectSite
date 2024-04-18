@@ -43,6 +43,6 @@ function NeedsSearch({ title }) {
             { header: "Opis", objectAttributeToShow: "description" },
             { header: "Klient", renderTdBody: renderClient },
             { header: "Status", objectAttributeToShow: "status" },
-        ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/" }));
+        ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }
 exports.default = NeedsSearch;

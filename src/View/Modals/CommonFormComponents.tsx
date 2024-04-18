@@ -447,7 +447,7 @@ export type ApplicationCallSelectorProps = {
     repository: RepositoryReact;
     allowNew?: boolean;
     _financialAidProgramme?: FinancialAidProgrammeData;
-    _focusArea?: FocusAreaData;
+    _focusArea?: FocusAreaData | FocusAreaData[];
 };
 
 export function ApplicationCallSelector({

@@ -6,7 +6,9 @@ import { NeedModalBody } from "./NeedModalBody";
 import { makeNeedValidationSchema } from "../NeedValidationSchema";
 import { needsRepository } from "../../FinancialAidProgrammesController";
 
-export function NeedEditModalButton({ modalProps: { onEdit, initialData } }: SpecificEditModalButtonProps<NeedData>) {
+export function NeedEditModalButton({
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit },
+}: SpecificEditModalButtonProps<NeedData>) {
     return (
         <GeneralEditModalButton<NeedData>
             modalProps={{
@@ -16,6 +18,7 @@ export function NeedEditModalButton({ modalProps: { onEdit, initialData } }: Spe
                 repository: needsRepository,
                 initialData: initialData,
                 makeValidationSchema: makeNeedValidationSchema,
+                shouldRetrieveDataBeforeEdit,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",

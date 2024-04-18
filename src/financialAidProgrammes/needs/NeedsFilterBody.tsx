@@ -16,8 +16,10 @@ export function NeedsFilterBody() {
     const {
         register,
         formState: { errors },
+        watch,
     } = useFormContext();
 
+    const _focusAreas = watch("_focusArea");
     return (
         <Row>
             <Form.Group as={Col} md={4}>
@@ -47,7 +49,11 @@ export function NeedsFilterBody() {
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_applicationCall">
                 <Form.Label>Nabór</Form.Label>
-                <ApplicationCallSelector repository={applicationCallsRepository} showValidationInfo={false} />
+                <ApplicationCallSelector
+                    repository={applicationCallsRepository}
+                    showValidationInfo={false}
+                    _focusArea={_focusAreas}
+                />
             </Form.Group>
         </Row>
     );
