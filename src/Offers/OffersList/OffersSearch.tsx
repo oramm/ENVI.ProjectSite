@@ -7,7 +7,7 @@ import {
     ExternalOfferAddNewModalButton,
     OurOfferAddNewModalButton,
 } from "./Modals/OfferModalButtons";
-import { Entity, ExternalOffer, OurOffer } from "../../../Typings/bussinesTypes";
+import { ExternalOffer, OurOffer } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileLines, faHome } from "@fortawesome/free-solid-svg-icons";
 import { OfferStatusBadge } from "../../View/Resultsets/CommonComponents";
@@ -37,11 +37,27 @@ export default function OffersSearch({ title }: { title: string }) {
     function renderNameDescription(offer: OurOffer | ExternalOffer) {
         return (
             <>
-                <div>{offer.alias}</div>
+                <div>
+                    {renderTenderLink(offer) ?? offer.alias} {renderStatus(offer)}
+                </div>
                 <div className="muted" style={{ whiteSpace: "pre-line" }}>
                     {offer.description}
                 </div>
             </>
+        );
+    }
+
+    function renderTenderLink(offer: OurOffer | ExternalOffer) {
+        if (!("tenderUrl" in offer) || !offer.tenderUrl) return null;
+        return (
+            <a
+                href={(offer as ExternalOffer).tenderUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none"
+            >
+                {offer.alias}
+            </a>
         );
     }
 
@@ -54,7 +70,7 @@ export default function OffersSearch({ title }: { title: string }) {
         );
     }
 
-    function renderstatus(offer: OurOffer | ExternalOffer) {
+    function renderStatus(offer: OurOffer | ExternalOffer) {
         if (!offer.status) return <Alert variant="danger">Brak statusu</Alert>;
         return <OfferStatusBadge status={offer.status} />;
     }
@@ -71,7 +87,6 @@ export default function OffersSearch({ title }: { title: string }) {
                 { header: "Odbiorcy", renderTdBody: renderEntityData },
                 { header: "Termin", objectAttributeToShow: "submissionDeadline" },
                 { header: "Wysyłka", objectAttributeToShow: "form" },
-                { header: "Status", renderTdBody: renderstatus },
             ]}
             AddNewButtonComponents={[OurOfferAddNewModalButton, ExternalOfferAddNewModalButton]}
             EditButtonComponent={OfferEditModalButton}

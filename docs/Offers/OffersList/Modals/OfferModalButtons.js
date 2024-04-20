@@ -51,7 +51,7 @@ function OurOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
         } }));
 }
 exports.OurOfferEditModalButton = OurOfferEditModalButton;
-function OurOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
+function OurOfferAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,

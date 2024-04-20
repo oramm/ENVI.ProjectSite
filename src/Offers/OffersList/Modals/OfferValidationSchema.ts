@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-function makecommonFields(isEditing: boolean) {
+function makeCommonFields(isEditing: boolean) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return {
@@ -48,12 +48,19 @@ function makecommonFields(isEditing: boolean) {
 
 export function makeOurOfferValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
-        ...makecommonFields(isEditing),
+        ...makeCommonFields(isEditing),
     });
 }
 
 export function makeOtherOfferValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
-        ...makecommonFields(isEditing),
+        ...makeCommonFields(isEditing),
+        tenderUrl: Yup.string()
+            .url("Podaj poprawny link")
+            .min(10, "Link jest za krótki")
+            .max(255, "Link jest za długi")
+            .matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z]{2,6})([\/\w \.-]*)*\/?$/, "Podaj poprawny link")
+            .nullable()
+            .notRequired(),
     });
 }

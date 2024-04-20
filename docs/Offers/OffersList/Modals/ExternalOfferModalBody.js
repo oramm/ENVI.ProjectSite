@@ -25,6 +25,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExternalOfferModalBody = void 0;
 const react_1 = __importStar(require("react"));
+const react_bootstrap_1 = require("react-bootstrap");
+const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const OfferModalBody_1 = require("./OfferModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 /**Wywoływana w ProjectsSelector jako props  */
@@ -33,8 +35,13 @@ function ExternalOfferModalBody(props) {
     const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue("isOur", false);
+        setValue("tenderUrl", initialData?.tenderUrl || null, { shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(OfferModalBody_1.OfferModalBody, { ...props })));
+        react_1.default.createElement(OfferModalBody_1.OfferModalBody, { ...props }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Link do og\u0142oszenia"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wklej link", isInvalid: !!errors?.tenderUrl, isValid: !errors?.tenderUrl, ...register("tenderUrl") }),
+            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "tenderUrl" }))));
 }
 exports.ExternalOfferModalBody = ExternalOfferModalBody;

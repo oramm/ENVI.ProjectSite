@@ -51,15 +51,23 @@ function OffersSearch({ title }) {
     }
     function renderNameDescription(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, offer.alias),
+            react_1.default.createElement("div", null,
+                renderTenderLink(offer) ?? offer.alias,
+                " ",
+                renderStatus(offer)),
             react_1.default.createElement("div", { className: "muted", style: { whiteSpace: "pre-line" } }, offer.description)));
+    }
+    function renderTenderLink(offer) {
+        if (!("tenderUrl" in offer) || !offer.tenderUrl)
+            return null;
+        return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
     }
     function renderType(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, offer._type.name),
             react_1.default.createElement("div", { className: "muted" }, offer._type.description)));
     }
-    function renderstatus(offer) {
+    function renderStatus(offer) {
         if (!offer.status)
             return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
         return react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: offer.status });
@@ -71,7 +79,6 @@ function OffersSearch({ title }) {
             { header: "Odbiorcy", renderTdBody: renderEntityData },
             { header: "Termin", objectAttributeToShow: "submissionDeadline" },
             { header: "Wysyłka", objectAttributeToShow: "form" },
-            { header: "Status", renderTdBody: renderstatus },
         ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.OffersRepository, selectedObjectRoute: "/offer/" }));
 }
 exports.default = OffersSearch;

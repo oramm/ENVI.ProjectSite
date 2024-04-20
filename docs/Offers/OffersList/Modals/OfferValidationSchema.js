@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeOtherOfferValidationSchema = exports.makeOurOfferValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
-function makecommonFields(isEditing) {
+function makeCommonFields(isEditing) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return {
@@ -56,13 +56,20 @@ function makecommonFields(isEditing) {
 }
 function makeOurOfferValidationSchema(isEditing) {
     return Yup.object().shape({
-        ...makecommonFields(isEditing),
+        ...makeCommonFields(isEditing),
     });
 }
 exports.makeOurOfferValidationSchema = makeOurOfferValidationSchema;
 function makeOtherOfferValidationSchema(isEditing) {
     return Yup.object().shape({
-        ...makecommonFields(isEditing),
+        ...makeCommonFields(isEditing),
+        tenderUrl: Yup.string()
+            .url("Podaj poprawny link")
+            .min(10, "Link jest za krótki")
+            .max(255, "Link jest za długi")
+            .matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z]{2,6})([\/\w \.-]*)*\/?$/, "Podaj poprawny link")
+            .nullable()
+            .notRequired(),
     });
 }
 exports.makeOtherOfferValidationSchema = makeOtherOfferValidationSchema;

@@ -25,9 +25,9 @@ export function OfferEditModalButton({
 
 export function OurOfferEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurOffer | ExternalOffer>) {
+}: SpecificEditModalButtonProps<OurOffer>) {
     return (
-        <GeneralEditModalButton<OurOffer | ExternalOffer>
+        <GeneralEditModalButton<OurOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurOfferModalBody,
@@ -43,11 +43,9 @@ export function OurOfferEditModalButton({
     );
 }
 
-export function OurOfferAddNewModalButton({
-    modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurOffer | ExternalOffer>) {
+export function OurOfferAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<OurOffer>) {
     return (
-        <GeneralAddNewModalButton<OurOffer | ExternalOffer>
+        <GeneralAddNewModalButton<OurOffer>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: OurOfferModalBody,
@@ -65,9 +63,9 @@ export function OurOfferAddNewModalButton({
 
 export function ExternalOfferEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurOffer | ExternalOffer>) {
+}: SpecificEditModalButtonProps<ExternalOffer>) {
     return (
-        <GeneralEditModalButton<OurOffer | ExternalOffer>
+        <GeneralEditModalButton<ExternalOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: ExternalOfferModalBody,
@@ -83,9 +81,9 @@ export function ExternalOfferEditModalButton({
 
 export function ExternalOfferAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurOffer | ExternalOffer>) {
+}: SpecificAddNewModalButtonProps<ExternalOffer>) {
     return (
-        <GeneralAddNewModalButton<OurOffer | ExternalOffer>
+        <GeneralAddNewModalButton<ExternalOffer>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ExternalOfferModalBody,

@@ -8,7 +8,7 @@ import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../OffersController";
 
 /**Wywoływana w ProjectsSelector jako props  */
-export function ExternalOfferModalBody(props: ModalBodyProps<OurOffer | ExternalOffer>) {
+export function ExternalOfferModalBody(props: ModalBodyProps<ExternalOffer>) {
     const { initialData, isEditing } = props;
     const {
         register,
@@ -20,11 +20,23 @@ export function ExternalOfferModalBody(props: ModalBodyProps<OurOffer | External
 
     useEffect(() => {
         setValue("isOur", false);
+        setValue("tenderUrl", initialData?.tenderUrl || null, { shouldValidate: true });
     }, [initialData, setValue]);
 
     return (
         <>
             <OfferModalBody {...props} />
+            <Form.Group>
+                <Form.Label>Link do ogłoszenia</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Wklej link"
+                    isInvalid={!!errors?.tenderUrl}
+                    isValid={!errors?.tenderUrl}
+                    {...register("tenderUrl")}
+                />
+                <ErrorMessage errors={errors} name="tenderUrl" />
+            </Form.Group>
         </>
     );
 }
