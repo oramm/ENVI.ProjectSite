@@ -191,16 +191,16 @@ function OfferStatusBadge({ status }) {
     let textMode = "light";
     switch (status) {
         case MainSetupReact_1.default.OfferStatus.TO_DO:
-            variant = "primary"; // Choose appropriate color
+            variant = "primary";
             break;
         case MainSetupReact_1.default.OfferStatus.DONE:
-            variant = "info"; // Choose appropriate color
+            variant = "info";
             break;
         case MainSetupReact_1.default.OfferStatus.AWARDED:
             variant = "success";
             break;
         case MainSetupReact_1.default.OfferStatus.LOST:
-            variant = "danger";
+            variant = "secondary";
             break;
         case MainSetupReact_1.default.OfferStatus.WITHDRAWN:
             variant = "warning";
@@ -208,6 +208,9 @@ function OfferStatusBadge({ status }) {
             break;
         case MainSetupReact_1.default.OfferStatus.NOT_INTERESTED:
             variant = "secondary";
+            break;
+        case MainSetupReact_1.default.OfferStatus.CANCELED:
+            variant = "danger";
             break;
         default:
             variant = "light";

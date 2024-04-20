@@ -233,16 +233,16 @@ export function OfferStatusBadge({ status }: { status: string }) {
 
     switch (status) {
         case MainSetup.OfferStatus.TO_DO:
-            variant = "primary"; // Choose appropriate color
+            variant = "primary";
             break;
         case MainSetup.OfferStatus.DONE:
-            variant = "info"; // Choose appropriate color
+            variant = "info";
             break;
         case MainSetup.OfferStatus.AWARDED:
             variant = "success";
             break;
         case MainSetup.OfferStatus.LOST:
-            variant = "danger";
+            variant = "secondary";
             break;
         case MainSetup.OfferStatus.WITHDRAWN:
             variant = "warning";
@@ -250,6 +250,9 @@ export function OfferStatusBadge({ status }: { status: string }) {
             break;
         case MainSetup.OfferStatus.NOT_INTERESTED:
             variant = "secondary";
+            break;
+        case MainSetup.OfferStatus.CANCELED:
+            variant = "danger";
             break;
         default:
             variant = "light";

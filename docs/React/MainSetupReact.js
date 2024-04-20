@@ -72,6 +72,7 @@ MainSetup.OfferStatus = {
     AWARDED: "Wygrana",
     LOST: "Przegrana",
     WITHDRAWN: "Wycofana",
+    CANCELED: "Unieważnione",
     NOT_INTERESTED: "Nie składamy",
 };
 MainSetup.ClientNeedStatus = {
