@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
+import { OfferStatusSelectFormElement } from "../../View/Modals/CommonFormComponents";
 
 export function OffersFilterBody() {
     const { register, watch, setValue } = useFormContext();
@@ -27,6 +28,9 @@ export function OffersFilterBody() {
                     defaultValue={MainSetup.OffersFilterInitState.SUBMISSION_TO}
                     {...register("submissionDeadlineTo")}
                 />
+            </Form.Group>
+            <Form.Group as={Col} md={2}>
+                <OfferStatusSelectFormElement showValidationInfo={false} />
             </Form.Group>
         </Row>
     );

@@ -8,6 +8,7 @@ const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents");
 function OffersFilterBody() {
     const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { md: 6, xs: 12 },
@@ -19,6 +20,8 @@ function OffersFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.OffersFilterInitState.SUBMISSION_FROM, ...register("submissionDeadlineFrom") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sk\u0142adanie do"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.OffersFilterInitState.SUBMISSION_TO, ...register("submissionDeadlineTo") }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.OffersFilterInitState.SUBMISSION_TO, ...register("submissionDeadlineTo") })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
+            react_1.default.createElement(CommonFormComponents_1.OfferStatusSelectFormElement, { showValidationInfo: false }))));
 }
 exports.OffersFilterBody = OffersFilterBody;
