@@ -18,16 +18,37 @@ export default function FinancialAidProgrammesSearch({ title }: { title: string 
             id="financialAidProgrammes"
             title={title}
             FilterBodyComponent={FinancialAidProgrammesFilterBody}
-            tableStructure={[
-                { header: "Nazwa", objectAttributeToShow: "name" },
-                { header: "Opis", objectAttributeToShow: "description" },
-                { header: "URL", objectAttributeToShow: "url" },
-            ]}
+            tableStructure={[{ header: "Program", renderTdBody: renderFinancialAidProgramme }]}
             AddNewButtonComponents={[FinancialAidProgrammeAddNewModalButton]}
             EditButtonComponent={FinancialAidProgrammeEditModalButton}
             isDeletable={true}
             repository={financialAidProgrammesRepository}
             selectedObjectRoute={"/FinancialAidProgramme/"}
         />
+    );
+}
+
+export function renderFinancialAidProgramme(financialAidProgramme: FinancialAidProgrammeData) {
+    if (!financialAidProgramme) return <></>;
+    return (
+        <>
+            <div>{renderfinancialAidProgrammeLink(financialAidProgramme)}</div>
+            <div>{financialAidProgramme.name}</div>
+            <div className="text-muted">{financialAidProgramme.description}</div>
+        </>
+    );
+}
+
+export function renderfinancialAidProgrammeLink(financialAidProgramme: FinancialAidProgrammeData) {
+    if (!financialAidProgramme.url) return <>{financialAidProgramme.alias}</>;
+    return (
+        <a
+            href={financialAidProgramme.url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary text-decoration-none"
+        >
+            {financialAidProgramme.alias}
+        </a>
     );
 }

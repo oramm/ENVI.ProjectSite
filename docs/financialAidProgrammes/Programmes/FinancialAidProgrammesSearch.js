@@ -26,6 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.renderfinancialAidProgrammeLink = exports.renderFinancialAidProgramme = void 0;
 const react_1 = __importStar(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const FinancialAidProgrammesController_1 = require("../FinancialAidProgrammesController");
@@ -35,10 +36,21 @@ function FinancialAidProgrammesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Opis", objectAttributeToShow: "description" },
-            { header: "URL", objectAttributeToShow: "url" },
-        ], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ header: "Program", renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
 }
 exports.default = FinancialAidProgrammesSearch;
+function renderFinancialAidProgramme(financialAidProgramme) {
+    if (!financialAidProgramme)
+        return react_1.default.createElement(react_1.default.Fragment, null);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("div", null, renderfinancialAidProgrammeLink(financialAidProgramme)),
+        react_1.default.createElement("div", null, financialAidProgramme.name),
+        react_1.default.createElement("div", { className: "text-muted" }, financialAidProgramme.description)));
+}
+exports.renderFinancialAidProgramme = renderFinancialAidProgramme;
+function renderfinancialAidProgrammeLink(financialAidProgramme) {
+    if (!financialAidProgramme.url)
+        return react_1.default.createElement(react_1.default.Fragment, null, financialAidProgramme.alias);
+    return (react_1.default.createElement("a", { href: financialAidProgramme.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, financialAidProgramme.alias));
+}
+exports.renderfinancialAidProgrammeLink = renderfinancialAidProgrammeLink;

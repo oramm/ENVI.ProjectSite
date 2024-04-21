@@ -4,30 +4,12 @@ import { FocusAreaData } from "../../../Typings/bussinesTypes";
 import { focusAreasRepository } from "./FocusAreasController";
 import { FocusAreasFilterBody } from "./FocusAreasFilterBody";
 import { FocusAreaAddNewModalButton, FocusAreaEditModalButton } from "./Modals/FocusAreaModalButtons";
+import { renderFinancialAidProgramme } from "../Programmes/FinancialAidProgrammesSearch";
 
 export default function FocusAreasSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
-
-    function renderProgramme(focusArea: FocusAreaData) {
-        return <>{renderProgrammeLink(focusArea) || focusArea._financialAidProgramme.alias}</>;
-    }
-
-    function renderProgrammeLink(focusArea: FocusAreaData) {
-        const { _financialAidProgramme } = focusArea;
-        if (!_financialAidProgramme.url) return null;
-        return (
-            <a
-                href={_financialAidProgramme.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary text-decoration-none"
-            >
-                {_financialAidProgramme.alias}
-            </a>
-        );
-    }
 
     return (
         <FilterableTable<FocusAreaData>
@@ -35,9 +17,11 @@ export default function FocusAreasSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={FocusAreasFilterBody}
             tableStructure={[
-                { header: "Program", renderTdBody: renderProgramme },
-                { header: "Nazwa", objectAttributeToShow: "name" },
-                { header: "Opis", objectAttributeToShow: "description" },
+                {
+                    header: "Program",
+                    renderTdBody: (focusArea) => renderFinancialAidProgramme(focusArea._financialAidProgramme),
+                },
+                { header: "Działanie", renderTdBody: renderFocusArea },
             ]}
             AddNewButtonComponents={[FocusAreaAddNewModalButton]}
             EditButtonComponent={FocusAreaEditModalButton}
@@ -45,5 +29,15 @@ export default function FocusAreasSearch({ title }: { title: string }) {
             repository={focusAreasRepository}
             selectedObjectRoute={"/focusArea/"}
         />
+    );
+}
+
+export function renderFocusArea(focusArea: FocusAreaData) {
+    if (!focusArea) return <></>;
+    return (
+        <>
+            <div>{focusArea.name}</div>
+            <div className="text-muted">{focusArea.description}</div>
+        </>
     );
 }

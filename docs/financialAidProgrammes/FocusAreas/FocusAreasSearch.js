@@ -26,28 +26,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.renderFocusArea = void 0;
 const react_1 = __importStar(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const FocusAreasController_1 = require("./FocusAreasController");
 const FocusAreasFilterBody_1 = require("./FocusAreasFilterBody");
 const FocusAreaModalButtons_1 = require("./Modals/FocusAreaModalButtons");
+const FinancialAidProgrammesSearch_1 = require("../Programmes/FinancialAidProgrammesSearch");
 function FocusAreasSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function renderProgramme(focusArea) {
-        return react_1.default.createElement(react_1.default.Fragment, null, renderProgrammeLink(focusArea) || focusArea._financialAidProgramme.alias);
-    }
-    function renderProgrammeLink(focusArea) {
-        const { _financialAidProgramme } = focusArea;
-        if (!_financialAidProgramme.url)
-            return null;
-        return (react_1.default.createElement("a", { href: _financialAidProgramme.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, _financialAidProgramme.alias));
-    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "focus-areas", title: title, FilterBodyComponent: FocusAreasFilterBody_1.FocusAreasFilterBody, tableStructure: [
-            { header: "Program", renderTdBody: renderProgramme },
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Opis", objectAttributeToShow: "description" },
+            {
+                header: "Program",
+                renderTdBody: (focusArea) => (0, FinancialAidProgrammesSearch_1.renderFinancialAidProgramme)(focusArea._financialAidProgramme),
+            },
+            { header: "Działanie", renderTdBody: renderFocusArea },
         ], AddNewButtonComponents: [FocusAreaModalButtons_1.FocusAreaAddNewModalButton], EditButtonComponent: FocusAreaModalButtons_1.FocusAreaEditModalButton, isDeletable: true, repository: FocusAreasController_1.focusAreasRepository, selectedObjectRoute: "/focusArea/" }));
 }
 exports.default = FocusAreasSearch;
+function renderFocusArea(focusArea) {
+    if (!focusArea)
+        return react_1.default.createElement(react_1.default.Fragment, null);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("div", null, focusArea.name),
+        react_1.default.createElement("div", { className: "text-muted" }, focusArea.description)));
+}
+exports.renderFocusArea = renderFocusArea;

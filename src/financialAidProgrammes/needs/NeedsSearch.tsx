@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
-import { ApplicationCallData, NeedData } from "../../../Typings/bussinesTypes";
+import { NeedData } from "../../../Typings/bussinesTypes";
 import { NeedsFilterBody } from "./NeedsFilterBody";
 import { NeedAddNewModalButton, NeedEditModalButton } from "./Modals/NeedModalButtons";
 import { needsRepository } from "../FinancialAidProgrammesController";
 import { ClientNeedStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { renderApplicationCall } from "../FocusAreas/ApplicationCalls/ApplicationCallsSearch";
+import { renderFinancialAidProgramme } from "../Programmes/FinancialAidProgrammesSearch";
+import { renderFocusArea } from "../FocusAreas/FocusAreasSearch";
 
 export default function NeedsSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -22,32 +25,19 @@ export default function NeedsSearch({ title }: { title: string }) {
         );
     }
 
-    function renderApplicationCallLink(applicationCall: ApplicationCallData) {
-        if (!applicationCall.url) return null;
-        return (
-            <a
-                href={applicationCall.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary text-decoration-none"
-            >
-                {applicationCall.description}
-            </a>
-        );
+    function renderClient(need: NeedData) {
+        return <>{need._client.name}</>;
     }
 
-    function renderApplicationCall(need: NeedData) {
+    function renderApplicationCallWithContext(need: NeedData) {
         if (!need._applicationCall) return <></>;
         return (
             <>
-                <div>{renderApplicationCallLink(need._applicationCall) || need._applicationCall.description}</div>
-                <div className="text-muted">{need._applicationCall?.endDate}</div>
+                {renderFinancialAidProgramme(need._applicationCall._focusArea._financialAidProgramme)}
+                {renderFocusArea(need._applicationCall._focusArea)}
+                {renderApplicationCall(need._applicationCall)}
             </>
         );
-    }
-
-    function renderClient(need: NeedData) {
-        return <>{need._client.name}</>;
     }
 
     return (
@@ -58,7 +48,10 @@ export default function NeedsSearch({ title }: { title: string }) {
             tableStructure={[
                 { header: "Potrzeba", renderTdBody: renderNeedData },
                 { header: "Klient", renderTdBody: renderClient },
-                { header: "Przypisany nabór", renderTdBody: renderApplicationCall },
+                {
+                    header: "Przypisany nabór",
+                    renderTdBody: renderApplicationCallWithContext,
+                },
             ]}
             AddNewButtonComponents={[NeedAddNewModalButton]}
             EditButtonComponent={NeedEditModalButton}

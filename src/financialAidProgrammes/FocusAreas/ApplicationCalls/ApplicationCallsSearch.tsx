@@ -5,38 +5,13 @@ import { applicationCallsRepository } from "./ApplicationCallsController";
 import { ApplicationCallsFilterBody } from "./ApplicationCallFilterBody";
 import { ApplicationCallAddNewModalButton, ApplicationCallEditModalButton } from "./Modals/ApplicationCallModalButtons";
 import { ApplicationCallStatusBadge } from "../../../View/Resultsets/CommonComponents";
+import { renderFinancialAidProgramme } from "../../Programmes/FinancialAidProgrammesSearch";
+import { renderFocusArea } from "../FocusAreasSearch";
 
 export default function ApplicationCallsSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
-
-    function renderFocusArea(applicationCall: ApplicationCallData) {
-        return <>{applicationCall._focusArea.name}</>;
-    }
-
-    function renderApplicationCallLink(applicationCall: ApplicationCallData) {
-        if (!applicationCall.url) return null;
-        return (
-            <a
-                href={applicationCall.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary text-decoration-none"
-            >
-                {applicationCall.description}
-            </a>
-        );
-    }
-
-    function renderApplicationCallDescritpion(applicationCall: ApplicationCallData) {
-        return (
-            <>
-                {renderApplicationCallLink(applicationCall) || applicationCall.description}{" "}
-                {ApplicationCallStatusBadge({ status: applicationCall.status })}
-            </>
-        );
-    }
 
     return (
         <FilterableTable<ApplicationCallData>
@@ -44,10 +19,13 @@ export default function ApplicationCallsSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={ApplicationCallsFilterBody}
             tableStructure={[
-                { header: "Działanie", renderTdBody: renderFocusArea },
-                { header: "Opis", renderTdBody: renderApplicationCallDescritpion },
-                { header: "Data rozpoczęcia", objectAttributeToShow: "startDate" },
-                { header: "Data zakończenia", objectAttributeToShow: "endDate" },
+                {
+                    header: "Program",
+                    renderTdBody: (applicationCall) =>
+                        renderFinancialAidProgramme(applicationCall._focusArea._financialAidProgramme),
+                },
+                { header: "Działanie", renderTdBody: (applicationCall) => renderFocusArea(applicationCall._focusArea) },
+                { header: "Nabór", renderTdBody: renderApplicationCall },
             ]}
             AddNewButtonComponents={[ApplicationCallAddNewModalButton]}
             EditButtonComponent={ApplicationCallEditModalButton}
@@ -55,5 +33,28 @@ export default function ApplicationCallsSearch({ title }: { title: string }) {
             repository={applicationCallsRepository}
             selectedObjectRoute={"/applicationCall/"}
         />
+    );
+}
+export function renderApplicationCall(applicationCall: ApplicationCallData) {
+    if (!applicationCall) return <></>;
+    return (
+        <>
+            <div>
+                {renderApplicationCallLink(applicationCall) || applicationCall.description}{" "}
+                {ApplicationCallStatusBadge({ status: applicationCall.status })}
+            </div>
+            <div className="text-muted">
+                Od: {applicationCall.startDate} do: {applicationCall.endDate}
+            </div>
+        </>
+    );
+}
+
+export function renderApplicationCallLink(applicationCall: ApplicationCallData) {
+    if (!applicationCall.url) return null;
+    return (
+        <a href={applicationCall.url} target="_blank" rel="noreferrer" className="text-primary text-decoration-none">
+            {applicationCall.description}
+        </a>
     );
 }
