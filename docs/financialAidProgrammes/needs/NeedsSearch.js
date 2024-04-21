@@ -31,18 +31,25 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const NeedsFilterBody_1 = require("./NeedsFilterBody");
 const NeedModalButtons_1 = require("./Modals/NeedModalButtons");
 const FinancialAidProgrammesController_1 = require("../FinancialAidProgrammesController");
+const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 function NeedsSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
+    function renderNeedData(need) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                need.name,
+                " ",
+                (0, CommonComponents_1.ClientNeedStatusBadge)({ status: need.status })),
+            react_1.default.createElement("div", { className: "text-muted" }, need.description)));
+    }
     function renderClient(need) {
         return react_1.default.createElement(react_1.default.Fragment, null, need._client.name);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "needs", title: title, FilterBodyComponent: NeedsFilterBody_1.NeedsFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Opis", objectAttributeToShow: "description" },
+            { header: "Potrzeba", renderTdBody: renderNeedData },
             { header: "Klient", renderTdBody: renderClient },
-            { header: "Status", objectAttributeToShow: "status" },
         ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }
 exports.default = NeedsSearch;

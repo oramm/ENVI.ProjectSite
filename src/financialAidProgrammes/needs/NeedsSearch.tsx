@@ -4,12 +4,23 @@ import { NeedData } from "../../../Typings/bussinesTypes";
 import { NeedsFilterBody } from "./NeedsFilterBody";
 import { NeedAddNewModalButton, NeedEditModalButton } from "./Modals/NeedModalButtons";
 import { needsRepository } from "../FinancialAidProgrammesController";
+import { ClientNeedStatusBadge } from "../../View/Resultsets/CommonComponents";
 
 export default function NeedsSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
 
+    function renderNeedData(need: NeedData) {
+        return (
+            <>
+                <div>
+                    {need.name} {ClientNeedStatusBadge({ status: need.status })}
+                </div>
+                <div className="text-muted">{need.description}</div>
+            </>
+        );
+    }
     function renderClient(need: NeedData) {
         return <>{need._client.name}</>;
     }
@@ -20,10 +31,8 @@ export default function NeedsSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={NeedsFilterBody}
             tableStructure={[
-                { header: "Nazwa", objectAttributeToShow: "name" },
-                { header: "Opis", objectAttributeToShow: "description" },
+                { header: "Potrzeba", renderTdBody: renderNeedData },
                 { header: "Klient", renderTdBody: renderClient },
-                { header: "Status", objectAttributeToShow: "status" },
             ]}
             AddNewButtonComponents={[NeedAddNewModalButton]}
             EditButtonComponent={NeedEditModalButton}

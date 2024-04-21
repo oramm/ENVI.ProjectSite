@@ -330,6 +330,43 @@ export function ApplicationCallStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function ClientNeedStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light"; // Default text mode to light for better contrast on darker badges
+
+    // Determine badge color and text color based on the status
+    switch (status) {
+        case MainSetup.ClientNeedStatus.URGENT:
+            variant = "danger"; // Red indicates urgency
+            break;
+        case MainSetup.ClientNeedStatus.IMPORTANT:
+            variant = "warning"; // Orange indicates importance
+            textMode = "dark";
+            break;
+        case MainSetup.ClientNeedStatus.NICE_TO_HAVE:
+            variant = "info"; // Blue indicates a nice to have but not critical
+            break;
+        case MainSetup.ClientNeedStatus.FOR_LATER:
+            variant = "secondary"; // Grey indicates low priority
+            break;
+        case MainSetup.ClientNeedStatus.NOT_ACTUAL:
+            variant = "dark"; // Dark to signify it's no longer relevant
+            textMode = "light";
+            break;
+        default:
+            variant = "light"; // Light for unknown or default status
+            textMode = "dark";
+            break;
+    }
+
+    // Return the Badge component with the appropriate styling
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 type MyTooltipProps = {
     children: JSX.Element;
     content: string;
