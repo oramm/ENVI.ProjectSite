@@ -44,7 +44,7 @@ export default function ApplicationCallsSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={ApplicationCallsFilterBody}
             tableStructure={[
-                { header: "Obszar interwencji", renderTdBody: renderFocusArea },
+                { header: "Działanie", renderTdBody: renderFocusArea },
                 { header: "Opis", renderTdBody: renderApplicationCallDescritpion },
                 { header: "Data rozpoczęcia", objectAttributeToShow: "startDate" },
                 { header: "Data zakończenia", objectAttributeToShow: "endDate" },

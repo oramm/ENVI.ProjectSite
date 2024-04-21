@@ -302,7 +302,7 @@ export function FocusAreaSelectorPrefilled({
     } = useFormContext();
     const [options, setOptions] = useState<any[]>([]);
 
-    const label = "Obszar interwencji";
+    const label = "Działanie";
 
     useEffect(() => {
         const fetchData = async () => {
@@ -327,7 +327,7 @@ export function FocusAreaSelectorPrefilled({
                 <Controller
                     name={name}
                     control={control}
-                    rules={{ required: { value: required, message: "Wybierz obszar" } }}
+                    rules={{ required: { value: required, message: "Wybierz działanie" } }}
                     render={({ field }) => (
                         <Typeahead
                             id={`${name}-controlled`}
@@ -336,7 +336,7 @@ export function FocusAreaSelectorPrefilled({
                             options={options}
                             onChange={(items) => handleOnChange(items, field)}
                             selected={field.value ? (multiple ? field.value : [field.value]) : []}
-                            placeholder="-- Wybierz obszar --"
+                            placeholder="-- Wybierz działanie --"
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                             renderMenuItemChildren={(option, props, index) => {

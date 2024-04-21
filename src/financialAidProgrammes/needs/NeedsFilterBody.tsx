@@ -43,7 +43,7 @@ export function NeedsFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_focusArea">
-                <Form.Label>Obszar działania</Form.Label>
+                <Form.Label>Działanie</Form.Label>
                 <FocusAreaSelector repository={focusAreasRepository} showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_applicationCall">

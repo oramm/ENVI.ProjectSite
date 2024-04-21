@@ -39,7 +39,7 @@ function getCommponFields(isEditing) {
         endDate: Yup.date().required("Podaj datę zakończenia naboru"),
         status: Yup.string().required("Podaj status"),
         _financialAidProgramme: isEditing ? Yup.object() : Yup.object().required("Wybierz program wsparcia"),
-        _focusArea: Yup.object().required("Wybierz obszar interwencji"),
+        _focusArea: Yup.object().required("Wybierz działanie"),
     };
 }
 function makeApplicationCallValidationSchema(isEditing) {

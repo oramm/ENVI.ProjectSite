@@ -44,12 +44,25 @@ function NeedsSearch({ title }) {
                 (0, CommonComponents_1.ClientNeedStatusBadge)({ status: need.status })),
             react_1.default.createElement("div", { className: "text-muted" }, need.description)));
     }
+    function renderApplicationCallLink(applicationCall) {
+        if (!applicationCall.url)
+            return null;
+        return (react_1.default.createElement("a", { href: applicationCall.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, applicationCall.description));
+    }
+    function renderApplicationCall(need) {
+        if (!need._applicationCall)
+            return react_1.default.createElement(react_1.default.Fragment, null);
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null, renderApplicationCallLink(need._applicationCall) || need._applicationCall.description),
+            react_1.default.createElement("div", { className: "text-muted" }, need._applicationCall?.endDate)));
+    }
     function renderClient(need) {
         return react_1.default.createElement(react_1.default.Fragment, null, need._client.name);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "needs", title: title, FilterBodyComponent: NeedsFilterBody_1.NeedsFilterBody, tableStructure: [
             { header: "Potrzeba", renderTdBody: renderNeedData },
             { header: "Klient", renderTdBody: renderClient },
+            { header: "Przypisany nabór", renderTdBody: renderApplicationCall },
         ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }
 exports.default = NeedsSearch;

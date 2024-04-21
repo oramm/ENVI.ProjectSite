@@ -14,7 +14,7 @@ export function FocusAreaEditModalButton({
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: FocusAreaModalBody,
-                modalTitle: "Edycja obszaru interwencji",
+                modalTitle: "Edycja działania",
                 repository: focusAreasRepository,
                 initialData: initialData,
                 makeValidationSchema: makeFocusAreaValidationSchema,
@@ -34,12 +34,12 @@ export function FocusAreaAddNewModalButton({
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: FocusAreaModalBody,
-                modalTitle: "Dodaj obszar interwencji",
+                modalTitle: "Dodaj działanie",
                 repository: focusAreasRepository,
                 makeValidationSchema: makeFocusAreaValidationSchema,
             }}
             buttonProps={{
-                buttonCaption: "Dodaj obszar",
+                buttonCaption: "Dodaj działanie",
                 buttonVariant: "outline-success",
             }}
         />

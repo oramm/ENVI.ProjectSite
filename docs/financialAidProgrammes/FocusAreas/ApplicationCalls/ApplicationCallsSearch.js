@@ -51,7 +51,7 @@ function ApplicationCallsSearch({ title }) {
             (0, CommonComponents_1.ApplicationCallStatusBadge)({ status: applicationCall.status })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "application-calls", title: title, FilterBodyComponent: ApplicationCallFilterBody_1.ApplicationCallsFilterBody, tableStructure: [
-            { header: "Obszar interwencji", renderTdBody: renderFocusArea },
+            { header: "Działanie", renderTdBody: renderFocusArea },
             { header: "Opis", renderTdBody: renderApplicationCallDescritpion },
             { header: "Data rozpoczęcia", objectAttributeToShow: "startDate" },
             { header: "Data zakończenia", objectAttributeToShow: "endDate" },

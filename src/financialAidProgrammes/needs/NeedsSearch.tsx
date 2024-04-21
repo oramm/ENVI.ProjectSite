@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
-import { NeedData } from "../../../Typings/bussinesTypes";
+import { ApplicationCallData, NeedData } from "../../../Typings/bussinesTypes";
 import { NeedsFilterBody } from "./NeedsFilterBody";
 import { NeedAddNewModalButton, NeedEditModalButton } from "./Modals/NeedModalButtons";
 import { needsRepository } from "../FinancialAidProgrammesController";
@@ -21,6 +21,31 @@ export default function NeedsSearch({ title }: { title: string }) {
             </>
         );
     }
+
+    function renderApplicationCallLink(applicationCall: ApplicationCallData) {
+        if (!applicationCall.url) return null;
+        return (
+            <a
+                href={applicationCall.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none"
+            >
+                {applicationCall.description}
+            </a>
+        );
+    }
+
+    function renderApplicationCall(need: NeedData) {
+        if (!need._applicationCall) return <></>;
+        return (
+            <>
+                <div>{renderApplicationCallLink(need._applicationCall) || need._applicationCall.description}</div>
+                <div className="text-muted">{need._applicationCall?.endDate}</div>
+            </>
+        );
+    }
+
     function renderClient(need: NeedData) {
         return <>{need._client.name}</>;
     }
@@ -33,6 +58,7 @@ export default function NeedsSearch({ title }: { title: string }) {
             tableStructure={[
                 { header: "Potrzeba", renderTdBody: renderNeedData },
                 { header: "Klient", renderTdBody: renderClient },
+                { header: "Przypisany nabór", renderTdBody: renderApplicationCall },
             ]}
             AddNewButtonComponents={[NeedAddNewModalButton]}
             EditButtonComponent={NeedEditModalButton}

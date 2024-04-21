@@ -125,7 +125,7 @@ exports.FocusAreaSelector = FocusAreaSelector;
 function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, required = false, showValidationInfo = true, multiple = false, name = "_focusArea", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
-    const label = "Obszar interwencji";
+    const label = "Działanie";
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_financialAidProgramme)
@@ -145,7 +145,7 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz obszar" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz obszar --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz działanie" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz dzia\u0142anie --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.alias),

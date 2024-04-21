@@ -29,7 +29,7 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
             description: initialData?.description,
             status: initialData?.status,
             _focusAreas: initialData?._focusAreas,
-            _applicationCall: initialData?._applicationCall,
+            _applicationCall: initialData?._applicationCall || null,
         } as NeedData;
         reset(resetData);
         trigger();
@@ -75,16 +75,16 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
             </Form.Group>
             <ClientNeedStatusSelector />
             <Form.Group controlId="_focusAreas">
-                <Form.Label>Przypisz obszary działania</Form.Label>
+                <Form.Label>Przypisz działania</Form.Label>
                 <FocusAreaSelector name="_focusAreas" repository={focusAreasRepository} multiple={true} />
             </Form.Group>
             {_focusAreas && (
-                <Form.Group controlId="_applicationCalls">
+                <Form.Group controlId="_applicationCall">
                     <Form.Label>Wybierz nabor</Form.Label>
                     <ApplicationCallSelector
-                        name="_applicationCalls"
+                        name="_applicationCall"
                         repository={applicationCallsRepository}
-                        multiple={true}
+                        multiple={false}
                         _focusArea={_focusAreas}
                     />
                 </Form.Group>

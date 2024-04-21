@@ -42,7 +42,7 @@ function NeedModalBody({ isEditing, initialData }) {
             description: initialData?.description,
             status: initialData?.status,
             _focusAreas: initialData?._focusAreas,
-            _applicationCall: initialData?._applicationCall,
+            _applicationCall: initialData?._applicationCall || null,
         };
         reset(resetData);
         trigger();
@@ -63,10 +63,10 @@ function NeedModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(StatusSelectors_1.ClientNeedStatusSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusAreas" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Przypisz obszary dzia\u0142ania"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Przypisz dzia\u0142ania"),
             react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelector, { name: "_focusAreas", repository: FocusAreasController_1.focusAreasRepository, multiple: true })),
-        _focusAreas && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_applicationCalls" },
+        _focusAreas && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_applicationCall" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz nabor"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { name: "_applicationCalls", repository: ApplicationCallsController_1.applicationCallsRepository, multiple: true, _focusArea: _focusAreas })))));
+            react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { name: "_applicationCall", repository: ApplicationCallsController_1.applicationCallsRepository, multiple: false, _focusArea: _focusAreas })))));
 }
 exports.NeedModalBody = NeedModalBody;

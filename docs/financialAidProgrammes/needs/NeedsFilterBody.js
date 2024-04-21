@@ -27,7 +27,7 @@ function NeedsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
             react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_focusArea" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Obszar dzia\u0142ania"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dzia\u0142anie"),
             react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelector, { repository: FocusAreasController_1.focusAreasRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_applicationCall" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nab\u00F3r"),

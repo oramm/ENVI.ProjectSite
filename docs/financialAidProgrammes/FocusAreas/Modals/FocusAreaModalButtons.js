@@ -13,7 +13,7 @@ function FocusAreaEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: FocusAreaModalBody_1.FocusAreaModalBody,
-            modalTitle: "Edycja obszaru interwencji",
+            modalTitle: "Edycja działania",
             repository: FocusAreasController_1.focusAreasRepository,
             initialData: initialData,
             makeValidationSchema: FocusAreaValidationSchema_1.makeFocusAreaValidationSchema,
@@ -26,11 +26,11 @@ function FocusAreaAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: FocusAreaModalBody_1.FocusAreaModalBody,
-            modalTitle: "Dodaj obszar interwencji",
+            modalTitle: "Dodaj działanie",
             repository: FocusAreasController_1.focusAreasRepository,
             makeValidationSchema: FocusAreaValidationSchema_1.makeFocusAreaValidationSchema,
         }, buttonProps: {
-            buttonCaption: "Dodaj obszar",
+            buttonCaption: "Dodaj działanie",
             buttonVariant: "outline-success",
         } }));
 }
