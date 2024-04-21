@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents";
 import { SecurityModalBody } from "./SecurityModalBody";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { Security } from "../../../../../Typings/bussinesTypes";
+import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function SecurityGuaranteeModalBody(props: ModalBodyProps<Security>) {

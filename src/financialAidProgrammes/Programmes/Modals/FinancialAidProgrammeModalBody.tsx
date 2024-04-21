@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { ErrorMessage } from "../../../View/Modals/CommonFormComponents";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { FinancialAidProgrammeData } from "../../../../Typings/bussinesTypes";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function FinancialAidProgrammeModalBody({ isEditing, initialData }: ModalBodyProps<FinancialAidProgrammeData>) {
     const {

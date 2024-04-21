@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysLeftBadge = exports.MyTooltip = exports.TaskStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.DaysLeftBadge = exports.MyTooltip = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -249,6 +249,30 @@ function TaskStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.TaskStatusBadge = TaskStatusBadge;
+function ApplicationCallStatusBadge({ status }) {
+    let variant;
+    let textMode = "light";
+    switch (status) {
+        case MainSetupReact_1.default.ApplicationCallStatus.CLOSED:
+            variant = "secondary";
+            break;
+        case MainSetupReact_1.default.ApplicationCallStatus.OPEN:
+            variant = "danger";
+            break;
+        case MainSetupReact_1.default.ApplicationCallStatus.SCHEDULED:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetupReact_1.default.ApplicationCallStatus.UNKOWN:
+            variant = "light";
+            textMode = "dark";
+            break;
+        default:
+            variant = "secondary";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.ApplicationCallStatusBadge = ApplicationCallStatusBadge;
 function MyTooltip({ children, content: tooltipContent, placement = "right", ...rest }) {
     return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: placement, delay: { show: 250, hide: 400 }, overlay: (props) => (react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "button-tooltip", ...props }, tooltipContent)), ...rest }, children));
 }

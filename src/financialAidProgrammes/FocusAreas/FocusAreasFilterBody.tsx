@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
-import { FinancialAidProgrammeSelector } from "../../View/Modals/CommonFormComponents";
+import { FinancialAidProgrammeSelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { financialAidProgrammesRepository } from "../FinancialAidProgrammesController";
 
 export function FocusAreasFilterBody() {

@@ -30,10 +30,11 @@ exports.OtherContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const RepositoryReact_1 = __importDefault(require("../../../React/RepositoryReact"));
-const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const ContractModalBody_1 = require("./ContractModalBody");
 const ContractsController_1 = require("../ContractsController");
 const FormContext_1 = require("../../../View/Modals/FormContext");
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
@@ -50,14 +51,14 @@ function OtherContractModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
-        !props.isEditing ? react_1.default.createElement(CommonFormComponents_1.ContractTypeSelectFormElement, { typesToInclude: "other" }) : null,
+        !props.isEditing ? react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "other" }) : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: "_contractors", labelKey: "name", repository: ContractsController_1.entitiesRepository, multiple: true })),
+            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_contractors", labelKey: "name", repository: ContractsController_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
-            react_1.default.createElement(CommonFormComponents_1.MyAsyncTypeahead, { name: "_ourContract", labelKey: "ourId", searchKey: "contractOurId", contextSearchParams: {
+            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_ourContract", labelKey: "ourId", searchKey: "contractOurId", contextSearchParams: {
                     _project,
                     typesToInclude: "our",
                 }, repository: ourRelatedContractsRepository, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,

@@ -2,18 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     CitySelectFormElement,
     ContractTypeSelectFormElement,
-    ErrorMessage,
-    MyAsyncTypeahead,
-    OfferBidProcedureSelectFormElement,
-    OfferFormSelectFormElement,
-    OfferStatusSelectFormElement,
-} from "../../../View/Modals/CommonFormComponents";
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Placeholder, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../OffersController";
 import { citiesRepository } from "../../../Admin/Cities/CitiesController";
+import {
+    OfferBidProcedureSelectFormElement,
+    OfferFormSelectFormElement,
+} from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
+import { OfferStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOffer | ExternalOffer>) {
     const {

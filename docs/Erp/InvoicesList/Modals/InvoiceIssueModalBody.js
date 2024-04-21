@@ -25,13 +25,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceIssueModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function InvoiceIssueModalBody({ initialData }) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        console.log('InvoiceModalBody useEffect', initialData);
+        console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             number: initialData?.number,
         };
@@ -41,10 +41,10 @@ function InvoiceIssueModalBody({ initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "input", isValid: !errors?.number, isInvalid: !!errors?.number, ...register('number') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'number', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "input", isValid: !errors?.number, isInvalid: !!errors?.number, ...register("number") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "number", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(CommonFormComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register('file'), multiple: false }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register("file"), multiple: false }))));
 }
 exports.InvoiceIssueModalBody = InvoiceIssueModalBody;

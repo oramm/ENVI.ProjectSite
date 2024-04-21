@@ -7,7 +7,7 @@ exports.FocusAreasFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
-const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const FinancialAidProgrammesController_1 = require("../FinancialAidProgrammesController");
 function FocusAreasFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
@@ -17,6 +17,6 @@ function FocusAreasFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(CommonFormComponents_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false }))));
 }
 exports.FocusAreasFilterBody = FocusAreasFilterBody;

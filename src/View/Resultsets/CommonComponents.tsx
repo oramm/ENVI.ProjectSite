@@ -301,6 +301,35 @@ export function TaskStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function ApplicationCallStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+    switch (status) {
+        case MainSetup.ApplicationCallStatus.CLOSED:
+            variant = "secondary";
+            break;
+        case MainSetup.ApplicationCallStatus.OPEN:
+            variant = "danger";
+            break;
+        case MainSetup.ApplicationCallStatus.SCHEDULED:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetup.ApplicationCallStatus.UNKOWN:
+            variant = "light";
+            textMode = "dark";
+            break;
+        default:
+            variant = "secondary";
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 type MyTooltipProps = {
     children: JSX.Element;
     content: string;

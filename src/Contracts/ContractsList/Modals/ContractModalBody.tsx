@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-    ContractStatusSelectFormElement,
-    ErrorMessage,
-    ProjectSelector,
-    ValueInPLNInput,
-} from "../../../View/Modals/CommonFormComponents";
+import { ProjectSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
@@ -12,6 +7,8 @@ import { OtherContract, OurContract, Project } from "../../../../Typings/bussine
 import { projectsRepository } from "../ContractsController";
 import ToolsDate from "../../../React/ToolsDate";
 import ToolsForms from "../../../React/ToolsForms";
+import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { ContractStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {

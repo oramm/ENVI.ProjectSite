@@ -4,11 +4,9 @@ import { Task } from "../../../../../../Typings/bussinesTypes";
 import { ModalBodyProps } from "../../../../../View/Modals/ModalsTypes";
 import { useFormContext } from "../../../../../View/Modals/FormContext";
 import MainSetup from "../../../../../React/MainSetupReact";
-import {
-    ErrorMessage,
-    PersonSelectFormElement,
-    TaksStatusSelectFormElement,
-} from "../../../../../View/Modals/CommonFormComponents";
+import { PersonSelectFormElement } from "../../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { TaksStatusSelectFormElement } from "../../../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage } from "../../../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function TaskModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
     const {

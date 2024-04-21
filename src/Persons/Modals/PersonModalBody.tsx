@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { Person } from "../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../PersonsController";
+import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Person>) {
     const {

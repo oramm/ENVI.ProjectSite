@@ -26,14 +26,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityModalBodyDates = exports.SecurityModalBodyValue = exports.SecurityModalBodyDescritpion = exports.SecurityModalBodyStatus = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
+const StatusSelectors_1 = require("../../../../View/Modals/CommonFormComponents/StatusSelectors");
+const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
 function SecurityModalBodyStatus({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return react_1.default.createElement(CommonFormComponents_1.SecurityStatusSelectFormElement, null);
+    return react_1.default.createElement(StatusSelectors_1.SecurityStatusSelectFormElement, null);
 }
 exports.SecurityModalBodyStatus = SecurityModalBodyStatus;
 function SecurityModalBodyDescritpion({ initialData }) {
@@ -44,7 +45,7 @@ function SecurityModalBodyDescritpion({ initialData }) {
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
-        react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "description" })));
+        react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "description" })));
 }
 exports.SecurityModalBodyDescritpion = SecurityModalBodyDescritpion;
 function SecurityModalBodyValue({ initialData }) {
@@ -54,7 +55,7 @@ function SecurityModalBodyValue({ initialData }) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107"),
-        react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, null)));
+        react_1.default.createElement(GenericComponents_1.ValueInPLNInput, null)));
 }
 exports.SecurityModalBodyValue = SecurityModalBodyValue;
 function SecurityModalBodyDates({ initialData }) {
@@ -67,10 +68,10 @@ function SecurityModalBodyDates({ initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "firstPartExpiryDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 70%"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.firstPartExpiryDate, isInvalid: !!errors.firstPartExpiryDate, ...register("firstPartExpiryDate") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "firstPartExpiryDate" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "firstPartExpiryDate" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "secondPartExpiryDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 30%"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register("secondPartExpiryDate") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" }))));
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" }))));
 }
 exports.SecurityModalBodyDates = SecurityModalBodyDates;

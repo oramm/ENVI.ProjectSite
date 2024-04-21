@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { ErrorMessage, FinancialAidProgrammeSelector } from "../../../View/Modals/CommonFormComponents";
+import { FinancialAidProgrammeSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { FocusAreaData } from "../../../../Typings/bussinesTypes";
 import { financialAidProgrammesRepository } from "../../FinancialAidProgrammesController";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function FocusAreaModalBody({ isEditing, initialData }: ModalBodyProps<FocusAreaData>) {
     const {

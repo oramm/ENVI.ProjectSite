@@ -4,6 +4,7 @@ import { ApplicationCallData } from "../../../../Typings/bussinesTypes";
 import { applicationCallsRepository } from "./ApplicationCallsController";
 import { ApplicationCallsFilterBody } from "./ApplicationCallFilterBody";
 import { ApplicationCallAddNewModalButton, ApplicationCallEditModalButton } from "./Modals/ApplicationCallModalButtons";
+import { ApplicationCallStatusBadge } from "../../../View/Resultsets/CommonComponents";
 
 export default function ApplicationCallsSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -14,18 +15,39 @@ export default function ApplicationCallsSearch({ title }: { title: string }) {
         return <>{applicationCall._focusArea.name}</>;
     }
 
+    function renderApplicationCallLink(applicationCall: ApplicationCallData) {
+        if (!applicationCall.url) return null;
+        return (
+            <a
+                href={applicationCall.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none"
+            >
+                {applicationCall.description}
+            </a>
+        );
+    }
+
+    function renderApplicationCallDescritpion(applicationCall: ApplicationCallData) {
+        return (
+            <>
+                {renderApplicationCallLink(applicationCall) || applicationCall.description}{" "}
+                {ApplicationCallStatusBadge({ status: applicationCall.status })}
+            </>
+        );
+    }
+
     return (
         <FilterableTable<ApplicationCallData>
             id="application-calls"
             title={title}
             FilterBodyComponent={ApplicationCallsFilterBody}
             tableStructure={[
-                { header: "Opis", objectAttributeToShow: "description" },
-                { header: "URL", objectAttributeToShow: "url" },
+                { header: "Obszar interwencji", renderTdBody: renderFocusArea },
+                { header: "Opis", renderTdBody: renderApplicationCallDescritpion },
                 { header: "Data rozpoczęcia", objectAttributeToShow: "startDate" },
                 { header: "Data zakończenia", objectAttributeToShow: "endDate" },
-                { header: "Status", objectAttributeToShow: "status" },
-                { header: "Obszar interwencji", renderTdBody: renderFocusArea },
             ]}
             AddNewButtonComponents={[ApplicationCallAddNewModalButton]}
             EditButtonComponent={ApplicationCallEditModalButton}

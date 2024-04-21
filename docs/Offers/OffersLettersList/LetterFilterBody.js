@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LettersFilterBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
@@ -54,10 +54,10 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oferta"),
-                react_1.default.createElement(CommonFormComponents_1.OfferSelectFormElement, { repository: LettersController_1.offersRepository, name: "_offer", showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.OfferSelectFormElement, { repository: LettersController_1.offersRepository, name: "_offer", showValidationInfo: false }))),
         _offer && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
-                react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _offer: _offer, multiple: false }))))));
+                react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _offer: _offer, multiple: false }))))));
 }
 exports.LettersFilterBody = LettersFilterBody;

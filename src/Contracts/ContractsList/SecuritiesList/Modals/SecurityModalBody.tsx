@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     ContractSelectFormElement,
-    ErrorMessage,
     ProjectSelector,
-    SecurityStatusSelectFormElement,
-    ValueInPLNInput,
-} from "../../../../View/Modals/CommonFormComponents";
+} from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { Project, Security } from "../../../../../Typings/bussinesTypes";
 import { contractsRepository, projectsRepository } from "../../ContractsController";
+import { ErrorMessage, ValueInPLNInput } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
+import { SecurityStatusSelectFormElement } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Security>) {
     const {

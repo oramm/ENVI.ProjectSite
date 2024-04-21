@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
 import {
-    ApplicationCallStatusSelector,
-    ErrorMessage,
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
-} from "../../../../View/Modals/CommonFormComponents";
+    FocusAreaSelectorPrefilled,
+} from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { ApplicationCallData, FinancialAidProgrammeData } from "../../../../../Typings/bussinesTypes";
 import { focusAreasRepository } from "../../FocusAreasController";
 import { financialAidProgrammesRepository } from "../../../FinancialAidProgrammesController";
+import { ApplicationCallStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyProps<ApplicationCallData>) {
     const {
@@ -49,8 +50,7 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
             )}
             {_financialAidProgramme && (
                 <Form.Group controlId="_focusArea">
-                    <Form.Label>Obszar interwencji</Form.Label>
-                    <FocusAreaSelector
+                    <FocusAreaSelectorPrefilled
                         repository={focusAreasRepository}
                         _financialAidProgramme={_financialAidProgramme}
                         showValidationInfo={true}

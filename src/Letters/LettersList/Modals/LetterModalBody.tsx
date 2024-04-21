@@ -2,17 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     CaseSelectMenuElement,
     ContractSelectFormElement,
-    ErrorMessage,
-    FileInput,
     PersonSelectFormElement,
     ProjectSelector,
-} from "../../../View/Modals/CommonFormComponents";
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Alert, Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import { Case, Contract, IncomingLetterContract, OurLetterContract, Project } from "../../../../Typings/bussinesTypes";
 import { casesRepository, contractsRepository, projectsRepository } from "../LettersController";
+import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function LetterModalBody({
     isEditing,

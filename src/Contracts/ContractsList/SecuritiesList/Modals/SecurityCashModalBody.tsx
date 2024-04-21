@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ContractTypeSelectFormElement, PersonSelectFormElement } from "../../../../View/Modals/CommonFormComponents";
+import {
+    ContractTypeSelectFormElement,
+    PersonSelectFormElement,
+} from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { SecurityModalBody } from "./SecurityModalBody";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";

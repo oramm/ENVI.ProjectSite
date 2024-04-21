@@ -2,12 +2,13 @@ import React from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import {
-    ApplicationCallStatusSelector,
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
-} from "../../../View/Modals/CommonFormComponents";
+    FocusAreaSelectorPrefilled,
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { focusAreasRepository } from "../FocusAreasController";
 import { financialAidProgrammesRepository } from "../../FinancialAidProgrammesController";
+import { ApplicationCallStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function ApplicationCallsFilterBody() {
     const { register, watch } = useFormContext();
@@ -26,8 +27,7 @@ export function ApplicationCallsFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_focusArea">
-                <Form.Label>Obszar interwencji</Form.Label>
-                <FocusAreaSelector
+                <FocusAreaSelectorPrefilled
                     repository={focusAreasRepository}
                     _financialAidProgramme={_financialAidProgramme}
                     showValidationInfo={false}

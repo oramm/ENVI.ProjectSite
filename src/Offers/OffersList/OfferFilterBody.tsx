@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
-import { OfferStatusSelectFormElement } from "../../View/Modals/CommonFormComponents";
+import { OfferStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function OffersFilterBody() {
     const { register, watch, setValue } = useFormContext();

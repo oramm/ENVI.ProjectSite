@@ -11,7 +11,22 @@ export default function FocusAreasSearch({ title }: { title: string }) {
     }, [title]);
 
     function renderProgramme(focusArea: FocusAreaData) {
-        return <>{focusArea._financialAidProgramme.alias}</>;
+        return <>{renderProgrammeLink(focusArea) || focusArea._financialAidProgramme.alias}</>;
+    }
+
+    function renderProgrammeLink(focusArea: FocusAreaData) {
+        const { _financialAidProgramme } = focusArea;
+        if (!_financialAidProgramme.url) return null;
+        return (
+            <a
+                href={_financialAidProgramme.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none"
+            >
+                {_financialAidProgramme.alias}
+            </a>
+        );
     }
 
     return (
@@ -20,9 +35,9 @@ export default function FocusAreasSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={FocusAreasFilterBody}
             tableStructure={[
+                { header: "Program", renderTdBody: renderProgramme },
                 { header: "Nazwa", objectAttributeToShow: "name" },
                 { header: "Opis", objectAttributeToShow: "description" },
-                { header: "Program", renderTdBody: renderProgramme },
             ]}
             AddNewButtonComponents={[FocusAreaAddNewModalButton]}
             EditButtonComponent={FocusAreaEditModalButton}

@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import RepositoryReact from "../../../React/RepositoryReact";
-import { ContractTypeSelectFormElement, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents";
+import { ContractTypeSelectFormElement } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
 import { entitiesRepository } from "../ContractsController";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {

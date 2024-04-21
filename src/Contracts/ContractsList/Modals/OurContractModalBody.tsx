@@ -3,15 +3,15 @@ import MainSetup from "../../../React/MainSetupReact";
 import {
     CitySelectFormElement,
     ContractTypeSelectFormElement,
-    MyAsyncTypeahead,
     PersonSelectFormElement,
-} from "../../../View/Modals/CommonFormComponents";
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { Col, Form, Row } from "react-bootstrap";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { citiesRepository, entitiesRepository } from "../ContractsController";
 import { OurContract } from "../../../../Typings/bussinesTypes";
+import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
     const { initialData, isEditing } = props;

@@ -25,10 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectSelectorModalBody = exports.SecurityModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
 const ContractsController_1 = require("../../ContractsController");
+const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
+const StatusSelectors_1 = require("../../../../View/Modals/CommonFormComponents/StatusSelectors");
 function SecurityModalBody({ isEditing, initialData }) {
     const { register, reset, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
@@ -48,18 +50,18 @@ function SecurityModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { name: "_contract", typesToInclude: "our", repository: ContractsController_1.contractsRepository, _project: _project, readOnly: !isEditing }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", typesToInclude: "our", repository: ContractsController_1.contractsRepository, _project: _project, readOnly: !isEditing }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "description" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "description" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107"),
-            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, null)),
+            react_1.default.createElement(GenericComponents_1.ValueInPLNInput, null)),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "returnedValue" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zwr\u00F3cono"),
-            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: "returnedValue" })),
-        react_1.default.createElement(CommonFormComponents_1.SecurityStatusSelectFormElement, { name: "status", showValidationInfo: true })));
+            react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { keyLabel: "returnedValue" })),
+        react_1.default.createElement(StatusSelectors_1.SecurityStatusSelectFormElement, { name: "status", showValidationInfo: true })));
 }
 exports.SecurityModalBody = SecurityModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
@@ -79,6 +81,6 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
         reset({ _project: undefined });
         trigger();
     }, [reset]);
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, name: "_project" }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, name: "_project" }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;

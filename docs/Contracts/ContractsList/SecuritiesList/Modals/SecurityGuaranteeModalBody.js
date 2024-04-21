@@ -26,9 +26,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityGuaranteeModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
 const SecurityModalBody_1 = require("./SecurityModalBody");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
+const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
 /**Wywoływana w ProjectsSelector jako props  */
 function SecurityGuaranteeModalBody(props) {
     const { initialData, isEditing, additionalProps, contextData } = props;
@@ -46,10 +46,10 @@ function SecurityGuaranteeModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "firstPartExpiryDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 70%"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.firstPartExpiryDate, isInvalid: !!errors.firstPartExpiryDate, ...register("firstPartExpiryDate") }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "firstPartExpiryDate" })),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "firstPartExpiryDate" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "secondPartExpiryDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin wyga\u015Bni\u0119cia 30%"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register("secondPartExpiryDate") }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" })))));
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" })))));
 }
 exports.SecurityGuaranteeModalBody = SecurityGuaranteeModalBody;

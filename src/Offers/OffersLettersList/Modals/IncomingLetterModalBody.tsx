@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents";
 import { LetterModalBody } from "./LetterModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { IncomingLetterOffer, OurLetterOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../LettersController";
+import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | IncomingLetterOffer>) {

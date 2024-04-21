@@ -25,23 +25,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.suecurityDatesValidationSchema = exports.securityReturnedValueValidationSchema = exports.securityValueValidationSchema = exports.securityDescriptionValidationSchema = exports.securityStatusValidationSchema = exports.securityGuaranteeValidationSchema = exports.securityCashValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
-const CommonFormComponents_1 = require("../../../../View/Modals/CommonFormComponents");
-const status = Yup.string().required('Status jest wymagany');
-const description = Yup.string().max(300, 'Komentarz może mieć maksymalnie 300 znaków');
-const value = CommonFormComponents_1.valueValidation;
-const returnedValue = CommonFormComponents_1.valueValidation;
+const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
+const status = Yup.string().required("Status jest wymagany");
+const description = Yup.string().max(300, "Komentarz może mieć maksymalnie 300 znaków");
+const value = GenericComponents_1.valueValidation;
+const returnedValue = GenericComponents_1.valueValidation;
 function getCommonFields(isEditing) {
     return {
-        _contract: !isEditing ? Yup.object().required('Umowa jest wymagana') : Yup.object(),
+        _contract: !isEditing ? Yup.object().required("Umowa jest wymagana") : Yup.object(),
         description,
         value,
         returnedValue,
-        status
+        status,
     };
 }
 const dateFields = {
-    firstPartExpiryDate: Yup.date().required('Data jest wymagana'),
-    secondPartExpiryDate: Yup.date().required('Data jest wymagana')
+    firstPartExpiryDate: Yup.date().required("Data jest wymagana"),
+    secondPartExpiryDate: Yup.date().required("Data jest wymagana"),
 };
 function securityCashValidationSchema(isEditing) {
     return Yup.object().shape(getCommonFields(isEditing));
@@ -50,37 +50,37 @@ exports.securityCashValidationSchema = securityCashValidationSchema;
 function securityGuaranteeValidationSchema(isEditing) {
     return Yup.object().shape({
         ...getCommonFields(isEditing),
-        ...dateFields
+        ...dateFields,
     });
 }
 exports.securityGuaranteeValidationSchema = securityGuaranteeValidationSchema;
 function securityStatusValidationSchema(isEditing) {
     return Yup.object().shape({
-        status
+        status,
     });
 }
 exports.securityStatusValidationSchema = securityStatusValidationSchema;
 function securityDescriptionValidationSchema(isEditing) {
     return Yup.object().shape({
-        description
+        description,
     });
 }
 exports.securityDescriptionValidationSchema = securityDescriptionValidationSchema;
 function securityValueValidationSchema(isEditing) {
     return Yup.object().shape({
-        value
+        value,
     });
 }
 exports.securityValueValidationSchema = securityValueValidationSchema;
 function securityReturnedValueValidationSchema(isEditing) {
     return Yup.object().shape({
-        returnedValue
+        returnedValue,
     });
 }
 exports.securityReturnedValueValidationSchema = securityReturnedValueValidationSchema;
 function suecurityDatesValidationSchema(isEditing) {
     return Yup.object().shape({
-        ...dateFields
+        ...dateFields,
     });
 }
 exports.suecurityDatesValidationSchema = suecurityDatesValidationSchema;

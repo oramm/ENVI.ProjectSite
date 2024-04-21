@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LettersFilterBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
@@ -57,14 +57,14 @@ function LettersFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono do"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO, ...register("creationDateTo") })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6 },
-                react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(CommonFormComponents_1.ContractSelectFormElement, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
         _contract && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
-                react_1.default.createElement(CommonFormComponents_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _contract: _contract, multiple: false }))))));
+                react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _contract: _contract, multiple: false }))))));
 }
 exports.LettersFilterBody = LettersFilterBody;

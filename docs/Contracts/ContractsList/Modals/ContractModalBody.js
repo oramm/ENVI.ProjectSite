@@ -28,12 +28,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const ContractsController_1 = require("../ContractsController");
 const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 const ToolsForms_1 = __importDefault(require("../../../React/ToolsForms"));
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
+const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 function ContractModalBody({ isEditing, initialData }) {
     const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const watchAllFields = watch();
@@ -67,22 +69,22 @@ function ContractModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer kontraktu"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register("number") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "number" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa kontraktu"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "name" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "name" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "alias" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "alias" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.comment, isInvalid: !!errors?.comment, ...register("comment") }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "comment" })),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "comment" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "valueInPLN" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
-            react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, null)),
+            react_1.default.createElement(GenericComponents_1.ValueInPLNInput, null)),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "startDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Pocz\u0105tek"),
@@ -92,7 +94,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         register("startDate").onChange(e); // wywołaj standardowe zachowanie
                         trigger("endDate");
                     } }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "startDate" })),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "startDate" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "endDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.endDate, isInvalid: !!errors.endDate, ...register("endDate"), className: !isEditing ? ToolsForms_1.default.getSuggestedClass("endDate", watchAllFields, endDateSugestion) : "", onChange: (e) => {
@@ -100,7 +102,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                         trigger("guaranteeEndDate");
                     } }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "endDate" })),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "endDate" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "guaranteeEndDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Gwarancja"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.guaranteeEndDate, isInvalid: !!errors.guaranteeEndDate, ...register("guaranteeEndDate"), className: !isEditing
@@ -109,8 +111,8 @@ function ContractModalBody({ isEditing, initialData }) {
                         register("guaranteeEndDate").onChange(e); // wywołaj standardowe zachowanie
                         //trigger("startDate");
                     } }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))),
-        react_1.default.createElement(CommonFormComponents_1.ContractStatusSelectFormElement, null)));
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))),
+        react_1.default.createElement(StatusSelectors_1.ContractStatusSelectFormElement, null)));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
@@ -126,6 +128,6 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificContractModalBody } = additionalProps;
     if (!SpecificContractModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(CommonFormComponents_1.ProjectSelector, { repository: ContractsController_1.projectsRepository }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;

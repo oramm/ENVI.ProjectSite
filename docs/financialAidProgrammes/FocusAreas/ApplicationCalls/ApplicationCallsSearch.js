@@ -31,6 +31,7 @@ const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/Filt
 const ApplicationCallsController_1 = require("./ApplicationCallsController");
 const ApplicationCallFilterBody_1 = require("./ApplicationCallFilterBody");
 const ApplicationCallModalButtons_1 = require("./Modals/ApplicationCallModalButtons");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 function ApplicationCallsSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -38,13 +39,22 @@ function ApplicationCallsSearch({ title }) {
     function renderFocusArea(applicationCall) {
         return react_1.default.createElement(react_1.default.Fragment, null, applicationCall._focusArea.name);
     }
+    function renderApplicationCallLink(applicationCall) {
+        if (!applicationCall.url)
+            return null;
+        return (react_1.default.createElement("a", { href: applicationCall.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, applicationCall.description));
+    }
+    function renderApplicationCallDescritpion(applicationCall) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            renderApplicationCallLink(applicationCall) || applicationCall.description,
+            " ",
+            (0, CommonComponents_1.ApplicationCallStatusBadge)({ status: applicationCall.status })));
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "application-calls", title: title, FilterBodyComponent: ApplicationCallFilterBody_1.ApplicationCallsFilterBody, tableStructure: [
-            { header: "Opis", objectAttributeToShow: "description" },
-            { header: "URL", objectAttributeToShow: "url" },
+            { header: "Obszar interwencji", renderTdBody: renderFocusArea },
+            { header: "Opis", renderTdBody: renderApplicationCallDescritpion },
             { header: "Data rozpoczęcia", objectAttributeToShow: "startDate" },
             { header: "Data zakończenia", objectAttributeToShow: "endDate" },
-            { header: "Status", objectAttributeToShow: "status" },
-            { header: "Obszar interwencji", renderTdBody: renderFocusArea },
         ], AddNewButtonComponents: [ApplicationCallModalButtons_1.ApplicationCallAddNewModalButton], EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, isDeletable: true, repository: ApplicationCallsController_1.applicationCallsRepository, selectedObjectRoute: "/applicationCall/" }));
 }
 exports.default = ApplicationCallsSearch;

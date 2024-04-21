@@ -28,19 +28,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceItemModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const InvoiceDetails_1 = require("../InvoiceDetails/InvoiceDetails");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function InvoiceItemModalBody({ initialData }) {
-    const { register, reset, formState: { errors }, trigger } = (0, FormContext_1.useFormContext)();
+    const { register, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const { invoice } = (0, InvoiceDetails_1.useInvoice)();
     (0, react_1.useEffect)(() => {
-        console.log('InvoiceModalBody useEffect', initialData);
+        console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             _parent: initialData?._parent || invoice,
-            description: initialData?.description || '',
+            description: initialData?.description || "",
             quantity: initialData?.quantity || 1,
             unitPrice: initialData?.unitPrice,
             vatTax: initialData?.vatTax || 23,
@@ -52,19 +52,19 @@ function InvoiceItemModalBody({ initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 4, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register('description') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'description', errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 4, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "quantity" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Ilo\u015B\u0107"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.quantity, isInvalid: !!errors?.quantity, ...register('quantity') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'quantity', errors: errors })),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.quantity, isInvalid: !!errors?.quantity, ...register("quantity") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "quantity", errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "unitPrice" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Cena jedn."),
-                react_1.default.createElement(CommonFormComponents_1.ValueInPLNInput, { keyLabel: 'unitPrice' })),
+                react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { keyLabel: "unitPrice" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "vatTax" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stawka VAT"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.vatTax, isInvalid: !!errors?.vatTax, ...register('vatTax') }),
-                react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'vatTax', errors: errors })))));
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.vatTax, isInvalid: !!errors?.vatTax, ...register("vatTax") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "vatTax", errors: errors })))));
 }
 exports.InvoiceItemModalBody = InvoiceItemModalBody;

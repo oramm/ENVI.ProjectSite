@@ -36,12 +36,18 @@ function FocusAreasSearch({ title }) {
         document.title = title;
     }, [title]);
     function renderProgramme(focusArea) {
-        return react_1.default.createElement(react_1.default.Fragment, null, focusArea._financialAidProgramme.alias);
+        return react_1.default.createElement(react_1.default.Fragment, null, renderProgrammeLink(focusArea) || focusArea._financialAidProgramme.alias);
+    }
+    function renderProgrammeLink(focusArea) {
+        const { _financialAidProgramme } = focusArea;
+        if (!_financialAidProgramme.url)
+            return null;
+        return (react_1.default.createElement("a", { href: _financialAidProgramme.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, _financialAidProgramme.alias));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "focus-areas", title: title, FilterBodyComponent: FocusAreasFilterBody_1.FocusAreasFilterBody, tableStructure: [
+            { header: "Program", renderTdBody: renderProgramme },
             { header: "Nazwa", objectAttributeToShow: "name" },
             { header: "Opis", objectAttributeToShow: "description" },
-            { header: "Program", renderTdBody: renderProgramme },
         ], AddNewButtonComponents: [FocusAreaModalButtons_1.FocusAreaAddNewModalButton], EditButtonComponent: FocusAreaModalButtons_1.FocusAreaEditModalButton, isDeletable: true, repository: FocusAreasController_1.focusAreasRepository, selectedObjectRoute: "/focusArea/" }));
 }
 exports.default = FocusAreasSearch;

@@ -1,22 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ErrorMessage, ValueInPLNInput } from '../../../View/Modals/CommonFormComponents';
-import { Col, Form, Row } from 'react-bootstrap';
-import { useFormContext } from '../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
-import { InvoiceItem } from '../../../../Typings/bussinesTypes';
-import { useInvoice } from '../InvoiceDetails/InvoiceDetails';
-import MainSetup from '../../../React/MainSetupReact';
-
+import React, { useEffect, useRef, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import { useFormContext } from "../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
+import { InvoiceItem } from "../../../../Typings/bussinesTypes";
+import { useInvoice } from "../InvoiceDetails/InvoiceDetails";
+import MainSetup from "../../../React/MainSetupReact";
+import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem>) {
-    const { register, reset, formState: { errors }, trigger } = useFormContext();
+    const {
+        register,
+        reset,
+        formState: { errors },
+        trigger,
+    } = useFormContext();
     const { invoice } = useInvoice();
     useEffect(() => {
-
-        console.log('InvoiceModalBody useEffect', initialData);
+        console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             _parent: initialData?._parent || invoice,
-            description: initialData?.description || '',
+            description: initialData?.description || "",
             quantity: initialData?.quantity || 1,
             unitPrice: initialData?.unitPrice,
             vatTax: initialData?.vatTax || 23,
@@ -36,11 +39,11 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
                     placeholder="Dodaj komentarz"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
-                    {...register('description')}
+                    {...register("description")}
                 />
-                <ErrorMessage name='description' errors={errors} />
+                <ErrorMessage name="description" errors={errors} />
             </Form.Group>
-            <Row >
+            <Row>
                 <Form.Group as={Col} controlId="quantity">
                     <Form.Label>Ilość</Form.Label>
                     <Form.Control
@@ -48,13 +51,13 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
                         min="1"
                         isValid={!errors?.quantity}
                         isInvalid={!!errors?.quantity}
-                        {...register('quantity')}
+                        {...register("quantity")}
                     />
-                    <ErrorMessage name='quantity' errors={errors} />
+                    <ErrorMessage name="quantity" errors={errors} />
                 </Form.Group>
                 <Form.Group as={Col} controlId="unitPrice">
                     <Form.Label>Cena jedn.</Form.Label>
-                    <ValueInPLNInput keyLabel='unitPrice' />
+                    <ValueInPLNInput keyLabel="unitPrice" />
                 </Form.Group>
                 <Form.Group as={Col} controlId="vatTax">
                     <Form.Label>Stawka VAT</Form.Label>
@@ -63,9 +66,9 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
                         min="1"
                         isValid={!errors?.vatTax}
                         isInvalid={!!errors?.vatTax}
-                        {...register('vatTax')}
+                        {...register("vatTax")}
                     />
-                    <ErrorMessage name='vatTax' errors={errors} />
+                    <ErrorMessage name="vatTax" errors={errors} />
                 </Form.Group>
             </Row>
         </>

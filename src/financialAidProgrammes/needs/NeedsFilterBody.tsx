@@ -3,14 +3,13 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import {
     ApplicationCallSelector,
-    ErrorMessage,
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
-    MyAsyncTypeahead,
-} from "../../View/Modals/CommonFormComponents";
+} from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { clientsRepository, financialAidProgrammesRepository } from "../FinancialAidProgrammesController";
 import { applicationCallsRepository } from "../FocusAreas/ApplicationCalls/ApplicationCallsController";
 import { focusAreasRepository } from "../FocusAreas/FocusAreasController";
+import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function NeedsFilterBody() {
     const {

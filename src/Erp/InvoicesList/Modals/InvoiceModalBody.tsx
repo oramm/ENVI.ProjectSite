@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     ContractSelectFormElement,
-    ErrorMessage,
-    MyAsyncTypeahead,
     PersonSelectFormElement,
-} from "../../../View/Modals/CommonFormComponents";
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import { Invoice } from "../../../../Typings/bussinesTypes";
 import { contractsRepository, entitiesRepository } from "../InvoicesController";
+import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invoice>) {
     const {

@@ -2,13 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, Col, Form, Row } from "react-bootstrap";
 import { Task } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
-import {
-    ErrorMessage,
-    PersonSelectFormElement,
-    TaksStatusSelectFormElement,
-} from "../../View/Modals/CommonFormComponents";
+import { PersonSelectFormElement } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
+import { TaksStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function TaskGlobalModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
     const {

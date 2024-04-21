@@ -4,12 +4,12 @@ import { useFormContext } from "../../../../View/Modals/FormContext";
 import {
     CaseSelectMenuElement,
     PersonSelectFormElement,
-    TaksStatusSelectFormElement,
-} from "../../../../View/Modals/CommonFormComponents";
+} from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useContract } from "../../ContractContext";
 import ToolsDate from "../../../../React/ToolsDate";
 import { casesRepository } from "../../ContractsController";
 import MainSetup from "../../../../React/MainSetupReact";
+import { TaksStatusSelectFormElement } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function TasksFilterBody() {
     const { register } = useFormContext();

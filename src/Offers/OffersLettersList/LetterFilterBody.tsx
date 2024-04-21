@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
-import { CaseSelectMenuElement, OfferSelectFormElement } from "../../View/Modals/CommonFormComponents";
+import {
+    CaseSelectMenuElement,
+    OfferSelectFormElement,
+} from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";

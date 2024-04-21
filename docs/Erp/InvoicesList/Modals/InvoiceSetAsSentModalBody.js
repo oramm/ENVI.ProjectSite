@@ -25,13 +25,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceSetAsSentModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const CommonFormComponents_1 = require("../../../View/Modals/CommonFormComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function InvoiceSetAsSentModalBody({ initialData }) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = (0, FormContext_1.useFormContext)();
+    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        console.log('InvoiceModalBody useEffect', initialData);
+        console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             sentDate: initialData?.sentDate || new Date().toISOString().slice(0, 10),
         };
@@ -41,7 +41,7 @@ function InvoiceSetAsSentModalBody({ initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "sentDate" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data nadania"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.sentDate, isInvalid: !!errors.sentDate, ...register('sentDate') }),
-            react_1.default.createElement(CommonFormComponents_1.ErrorMessage, { name: 'sentDate', errors: errors }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.sentDate, isInvalid: !!errors.sentDate, ...register("sentDate") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "sentDate", errors: errors }))));
 }
 exports.InvoiceSetAsSentModalBody = InvoiceSetAsSentModalBody;

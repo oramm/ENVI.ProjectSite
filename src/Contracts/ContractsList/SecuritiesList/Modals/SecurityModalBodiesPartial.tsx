@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import {
-    ErrorMessage,
-    SecurityStatusSelectFormElement,
-    ValueInPLNInput,
-} from "../../../../View/Modals/CommonFormComponents";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { Security } from "../../../../../Typings/bussinesTypes";
+import { SecurityStatusSelectFormElement } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage, ValueInPLNInput } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function SecurityModalBodyStatus({ initialData }: ModalBodyProps<Security>) {
     const {
