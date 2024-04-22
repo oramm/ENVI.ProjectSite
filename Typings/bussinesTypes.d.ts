@@ -387,9 +387,10 @@ export interface NeedData extends RepositoryDataItem {
     name: string;
     description: string;
     status: string;
+    applicationCallId?: number | null;
+    _applicationCall?: ApplicationCallData | null;
     _focusAreas?: FocusAreaData[];
-    applicationCallId?: number;
-    _applicationCall?: ApplicationCallData;
+    _focusAreasNames?: string[] | undefined;
 }
 
 export interface NeedsFocusAreasData {

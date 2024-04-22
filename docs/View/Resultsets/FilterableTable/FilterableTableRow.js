@@ -30,7 +30,6 @@ function FilterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick,
         }, className: isActive ? "active" : "" },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
-            console.log("column", column.objectAttributeToShow, index);
             return react_1.default.createElement("td", { key: key }, tdBodyRender(column, dataObject));
         }),
         isActive && (react_1.default.createElement("td", { align: "center" },

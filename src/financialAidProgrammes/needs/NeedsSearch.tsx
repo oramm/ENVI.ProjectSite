@@ -40,6 +40,28 @@ export default function NeedsSearch({ title }: { title: string }) {
         );
     }
 
+    function renderFocusAreas(need: NeedData) {
+        if (need._focusAreas && need._focusAreas.length > 0) {
+            return (
+                <ul>
+                    {need._focusAreas.map((focusArea, index) => (
+                        <li key={index}>{renderFocusArea(focusArea)}</li>
+                    ))}
+                </ul>
+            );
+        }
+        if (need._focusAreasNames && need._focusAreasNames.length > 0) {
+            return (
+                <ul>
+                    {need._focusAreasNames.map((focusAreaName, index) => (
+                        <li key={index}>{focusAreaName}</li>
+                    ))}
+                </ul>
+            );
+        }
+        return <></>;
+    }
+
     return (
         <FilterableTable<NeedData>
             id="needs"
@@ -48,6 +70,7 @@ export default function NeedsSearch({ title }: { title: string }) {
             tableStructure={[
                 { header: "Potrzeba", renderTdBody: renderNeedData },
                 { header: "Klient", renderTdBody: renderClient },
+                { header: "Przypisane działania", renderTdBody: renderFocusAreas },
                 {
                     header: "Przypisany nabór",
                     renderTdBody: renderApplicationCallWithContext,

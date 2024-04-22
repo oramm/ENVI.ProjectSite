@@ -53,7 +53,6 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         >
             {tableStructure.map((column, index) => {
                 const key = String(column.objectAttributeToShow || index);
-                console.log("column", column.objectAttributeToShow, index);
                 return <td key={key}>{tdBodyRender(column, dataObject)}</td>;
             })}
             {isActive && (

@@ -58,9 +58,19 @@ function NeedsSearch({ title }) {
             (0, FocusAreasSearch_1.renderFocusArea)(need._applicationCall._focusArea),
             (0, ApplicationCallsSearch_1.renderApplicationCall)(need._applicationCall)));
     }
+    function renderFocusAreas(need) {
+        if (need._focusAreas && need._focusAreas.length > 0) {
+            return (react_1.default.createElement("ul", null, need._focusAreas.map((focusArea, index) => (react_1.default.createElement("li", { key: index }, (0, FocusAreasSearch_1.renderFocusArea)(focusArea))))));
+        }
+        if (need._focusAreasNames && need._focusAreasNames.length > 0) {
+            return (react_1.default.createElement("ul", null, need._focusAreasNames.map((focusAreaName, index) => (react_1.default.createElement("li", { key: index }, focusAreaName)))));
+        }
+        return react_1.default.createElement(react_1.default.Fragment, null);
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "needs", title: title, FilterBodyComponent: NeedsFilterBody_1.NeedsFilterBody, tableStructure: [
             { header: "Potrzeba", renderTdBody: renderNeedData },
             { header: "Klient", renderTdBody: renderClient },
+            { header: "Przypisane działania", renderTdBody: renderFocusAreas },
             {
                 header: "Przypisany nabór",
                 renderTdBody: renderApplicationCallWithContext,
