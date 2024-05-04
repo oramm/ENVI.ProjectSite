@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
-import { OfferStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { OfferBondStatusSelector, OfferStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function OffersFilterBody() {
     const { register, watch, setValue } = useFormContext();
@@ -30,7 +30,10 @@ export function OffersFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={2}>
-                <OfferStatusSelectFormElement showValidationInfo={false} />
+                <OfferStatusSelector showValidationInfo={false} />
+            </Form.Group>
+            <Form.Group as={Col} md={2}>
+                <OfferBondStatusSelector showValidationInfo={false} name="_offerBond.status" />
             </Form.Group>
         </Row>
     );

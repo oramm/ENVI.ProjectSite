@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -219,6 +219,32 @@ function OfferStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.OfferStatusBadge = OfferStatusBadge;
+function OfferBondStatusBadge({ status }) {
+    let variant;
+    let textMode = "light";
+    switch (status) {
+        case MainSetupReact_1.default.OfferBondStatus.TO_DO:
+            variant = "primary";
+            break;
+        case MainSetupReact_1.default.OfferBondStatus.DONE:
+            variant = "info";
+            break;
+        case MainSetupReact_1.default.OfferBondStatus.TO_RENEW:
+            variant = "danger";
+            break;
+        case MainSetupReact_1.default.OfferBondStatus.TO_BE_RETURNED:
+            variant = "warning";
+            break;
+        case MainSetupReact_1.default.OfferBondStatus.RETURNED:
+            variant = "success";
+            break;
+        default:
+            variant = "light";
+            textMode = "dark";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.OfferBondStatusBadge = OfferBondStatusBadge;
 function TaskStatusBadge({ status }) {
     let variant;
     let textMode = "light";

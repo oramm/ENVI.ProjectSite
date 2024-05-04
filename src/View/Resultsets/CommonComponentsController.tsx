@@ -1,4 +1,4 @@
-import { FieldValues } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ToolsDate from "../../React/ToolsDate";
 
@@ -73,4 +73,28 @@ export function updateObject(formData: FormData, obj: any) {
         } else console.log(`Form data key ${key} does not match any attribute in current object`);
     });
     return updatedObj;
+}
+
+interface NestedFieldErrors extends FieldErrors {
+    [key: string]: NestedFieldErrors | any;
+}
+
+/**
+ * Zwraca true jeśli w obiekcie errors jest błąd dla podanej ścieżki
+ * @param errors obiekt błędów
+ * @param path ścieżka do sprawdzenia
+ * @returns true jeśli błąd istnieje
+ * @example hasError(errors, "_offerBond.paymentData")
+ */
+export function hasError(errors: NestedFieldErrors, path: string) {
+    const keys = path.split(".");
+    let current: any = errors;
+    for (let key of keys) {
+        if (current && current[key]) {
+            current = current[key];
+        } else {
+            return false; // No error at this path
+        }
+    }
+    return current && current.type ? true : false;
 }

@@ -129,6 +129,19 @@ export default class MainSetup {
         PAPER: "Papier",
     };
 
+    static OfferBondStatus = {
+        TO_DO: "Do zapłacenia",
+        TO_RENEW: "Do przedłużenia",
+        DONE: "Złożone",
+        TO_BE_RETURNED: "Do zwrotu",
+        RETURNED: "Zwrócone",
+    };
+
+    static OfferBondForm = {
+        CASH: "Gotówka",
+        GUARANTEE: "Gwarancja",
+    };
+
     static InvoicesFilterInitState = {
         ISSUE_DATE_FROM: ToolsDate.addDays(new Date(), -90).toISOString().slice(0, 10),
         ISSUE_DATE_TO: ToolsDate.addDays(new Date(), +10).toISOString().slice(0, 10),

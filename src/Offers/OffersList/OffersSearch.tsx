@@ -10,8 +10,14 @@ import {
 import { ExternalOffer, OurOffer } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileLines, faHome } from "@fortawesome/free-solid-svg-icons";
-import { OfferStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { OfferBondStatusBadge, OfferStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { Alert } from "react-bootstrap";
+import {
+    OfferBondAddNewModalButton,
+    OfferBondDeleteModalButton,
+    OfferBondEditModalButton,
+} from "./OfferBonds/Modals/OfferBondModalButtons";
+import Tools from "../../React/Tools";
 
 export default function OffersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -43,7 +49,34 @@ export default function OffersSearch({ title }: { title: string }) {
                 <div className="muted" style={{ whiteSpace: "pre-line" }}>
                     {offer.description}
                 </div>
+                {renderOfferBond(offer)}
             </>
+        );
+    }
+
+    function renderOfferBond(offer: ExternalOffer) {
+        if (offer.isOur) return null;
+        if (!offer._offerBond)
+            return (
+                <OfferBondAddNewModalButton modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }} />
+            );
+        return (
+            <div className="muted" style={{ whiteSpace: "pre-line" }}>
+                <strong>Wadium:</strong> {Tools.formatNumber(offer._offerBond.value)} {offer._offerBond.form}{" "}
+                <OfferBondStatusBadge status={offer._offerBond.status} /> {offer._offerBond.expiryDate} {""}
+                <div>{offer._offerBond.paymentData}</div>
+                <div>{offer._offerBond.comment} </div>
+                <div>
+                    <OfferBondEditModalButton
+                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                        buttonProps={{ layout: "horizontal" }}
+                    />{" "}
+                    <OfferBondDeleteModalButton
+                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                        buttonProps={{ layout: "horizontal" }}
+                    />
+                </div>
+            </div>
         );
     }
 

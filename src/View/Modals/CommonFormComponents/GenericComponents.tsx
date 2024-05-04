@@ -4,7 +4,6 @@ import { AsyncTypeahead, Menu, MenuItem, Typeahead } from "react-bootstrap-typea
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "../../../Css/styles.css";
 
-import MainSetup from "../../../React/MainSetupReact";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { useFormContext } from "../FormContext";
 import { Controller, ControllerRenderProps, FieldErrors } from "react-hook-form";
@@ -12,10 +11,31 @@ import { NumberFormatValues, NumericFormat } from "react-number-format";
 import * as Yup from "yup";
 import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/types";
 import { RenderMenuItemChildren } from "react-bootstrap-typeahead/types/components/TypeaheadMenu";
+import { hasError } from "../../Resultsets/CommonComponentsController";
 
 export type ErrorMessageProps = { errors: FieldErrors<any>; name: string };
-export function ErrorMessage({ errors, name }: ErrorMessageProps) {
+export function ErrorMessage1({ errors, name }: ErrorMessageProps) {
     return <>{errors[name] && <Form.Text className="text-danger">{errors[name]?.message as string}</Form.Text>}</>;
+}
+
+export function ErrorMessage({ errors, name }: ErrorMessageProps) {
+    // Function to access nested properties
+    const getNestedError = (errors: any, path: string): any => {
+        const keys = path.split("."); // Split the path into keys
+        let current = errors;
+        for (let key of keys) {
+            if (current[key]) {
+                current = current[key];
+            } else {
+                return null; // If the path does not exist, return null
+            }
+        }
+        return current;
+    };
+
+    const error = getNestedError(errors, name);
+
+    return <>{error && <Form.Text className="text-danger">{error.message}</Form.Text>}</>;
 }
 
 type MyAsyncTypeaheadProps = {
@@ -166,8 +186,8 @@ export function SelectTextOptionFormElement({
             <Form.Label>{makeLabel()}</Form.Label>
             <Form.Control
                 as="select"
-                isValid={showValidationInfo ? !errors[name] : undefined}
-                isInvalid={showValidationInfo ? !!errors[name] : undefined}
+                isValid={showValidationInfo ? !hasError(errors, name) : undefined}
+                isInvalid={showValidationInfo ? hasError(errors, name) : undefined}
                 {...register(name)}
             >
                 <option value="">-- Wybierz opcję --</option>
@@ -191,6 +211,7 @@ export type SpecificTextOptionProps = {
 type ValueInPLNInputProps = {
     showValidationInfo?: boolean;
     keyLabel?: string;
+    name?: string;
 };
 
 /**
@@ -198,26 +219,26 @@ type ValueInPLNInputProps = {
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-export function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value" }: ValueInPLNInputProps) {
+export function ValueInPLNInput({
+    showValidationInfo = true,
+    keyLabel = "value",
+    name = "value",
+}: ValueInPLNInputProps) {
     const {
         control,
         setValue,
         watch,
         formState: { errors },
     } = useFormContext();
-    const watchedValue = watch(keyLabel);
+    const watchedValue = watch(name);
 
     useEffect(() => {
-        if (watchedValue !== undefined) {
-            setValue(keyLabel, watchedValue, { shouldValidate: true });
-        } else {
-            setValue(keyLabel, "", { shouldValidate: true });
-        }
+        setValue(name, watchedValue ?? "", { shouldValidate: true });
     }, [watchedValue, setValue]);
 
     const classNames = ["form-control"];
     if (showValidationInfo) {
-        classNames.push(errors[keyLabel] ? "is-invalid" : "is-valid");
+        classNames.push(hasError(errors, name) ? "is-invalid" : "is-valid");
     }
 
     return (
@@ -225,7 +246,7 @@ export function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value" 
             <InputGroup className="mb-3">
                 <Controller
                     control={control}
-                    name={keyLabel}
+                    name={name}
                     render={({ field }) => (
                         <NumericFormat
                             {...field}
@@ -238,7 +259,7 @@ export function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value" 
                             displayType="input"
                             allowNegative={false}
                             onValueChange={(values: NumberFormatValues) => {
-                                setValue(keyLabel, values.floatValue);
+                                setValue(name, values.floatValue);
                                 //field.onChange(values.floatValue);
                             }}
                             className={classNames.join(" ")}
@@ -248,7 +269,7 @@ export function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value" 
                 />
                 <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
             </InputGroup>
-            <ErrorMessage name={keyLabel} errors={errors} />
+            <ErrorMessage name={name} errors={errors} />
         </>
     );
 }

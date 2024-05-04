@@ -35,6 +35,8 @@ const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
+const OfferBondModalButtons_1 = require("./OfferBonds/Modals/OfferBondModalButtons");
+const Tools_1 = __importDefault(require("../../React/Tools"));
 function OffersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -55,7 +57,34 @@ function OffersSearch({ title }) {
                 renderTenderLink(offer) ?? offer.alias,
                 " ",
                 renderStatus(offer)),
-            react_1.default.createElement("div", { className: "muted", style: { whiteSpace: "pre-line" } }, offer.description)));
+            react_1.default.createElement("div", { className: "muted", style: { whiteSpace: "pre-line" } }, offer.description),
+            renderOfferBond(offer)));
+    }
+    function renderOfferBond(offer) {
+        if (offer.isOur)
+            return null;
+        if (!offer._offerBond)
+            return (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } }));
+        return (react_1.default.createElement("div", { className: "muted", style: { whiteSpace: "pre-line" } },
+            react_1.default.createElement("strong", null, "Wadium:"),
+            " ",
+            Tools_1.default.formatNumber(offer._offerBond.value),
+            " ",
+            offer._offerBond.form,
+            " ",
+            react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }),
+            " ",
+            offer._offerBond.expiryDate,
+            " ",
+            "",
+            react_1.default.createElement("div", null, offer._offerBond.paymentData),
+            react_1.default.createElement("div", null,
+                offer._offerBond.comment,
+                " "),
+            react_1.default.createElement("div", null,
+                react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }),
+                " ",
+                react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }))));
     }
     function renderTenderLink(offer) {
         if (!("tenderUrl" in offer) || !offer.tenderUrl)

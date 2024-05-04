@@ -13,7 +13,7 @@ import {
     OfferBidProcedureSelectFormElement,
     OfferFormSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
-import { OfferStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { OfferStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOffer | ExternalOffer>) {
@@ -124,7 +124,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                 <OfferBidProcedureSelectFormElement as={Col} />
                 <OfferFormSelectFormElement as={Col} />
             </Row>
-            <OfferStatusSelectFormElement />
+            <OfferStatusSelector />
         </>
     );
 }

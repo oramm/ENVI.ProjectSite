@@ -266,6 +266,38 @@ export function OfferStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function OfferBondStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+
+    switch (status) {
+        case MainSetup.OfferBondStatus.TO_DO:
+            variant = "primary";
+            break;
+        case MainSetup.OfferBondStatus.DONE:
+            variant = "info";
+            break;
+        case MainSetup.OfferBondStatus.TO_RENEW:
+            variant = "danger";
+            break;
+        case MainSetup.OfferBondStatus.TO_BE_RETURNED:
+            variant = "warning";
+            break;
+        case MainSetup.OfferBondStatus.RETURNED:
+            variant = "success";
+            break;
+        default:
+            variant = "light";
+            textMode = "dark";
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 export function TaskStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = "light";

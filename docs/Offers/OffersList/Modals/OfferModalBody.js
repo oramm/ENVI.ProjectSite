@@ -87,6 +87,6 @@ function OfferModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(OtherAttributesSelectors_1.OfferBidProcedureSelectFormElement, { as: react_bootstrap_1.Col }),
             react_1.default.createElement(OtherAttributesSelectors_1.OfferFormSelectFormElement, { as: react_bootstrap_1.Col })),
-        react_1.default.createElement(StatusSelectors_1.OfferStatusSelectFormElement, null)));
+        react_1.default.createElement(StatusSelectors_1.OfferStatusSelector, null)));
 }
 exports.OfferModalBody = OfferModalBody;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.entitiesRepository = exports.OffersRepository = void 0;
+exports.entitiesRepository = exports.offerBondsRepository = exports.OffersRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.OffersRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -13,6 +13,15 @@ exports.OffersRepository = new RepositoryReact_1.default({
         deleteRoute: "offer",
     },
     name: "offers",
+});
+exports.offerBondsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "offerBonds",
+        addNewRoute: "offerBond",
+        editRoute: "offerBond",
+        deleteRoute: "offerBond",
+    },
+    name: "offerBonds",
 });
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {

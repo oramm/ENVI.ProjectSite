@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.SelectTextOptionFormElement = exports.MyAsyncTypeahead = exports.ErrorMessage = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.SelectTextOptionFormElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.ErrorMessage1 = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -33,8 +33,28 @@ const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
-function ErrorMessage({ errors, name }) {
+const CommonComponentsController_1 = require("../../Resultsets/CommonComponentsController");
+function ErrorMessage1({ errors, name }) {
     return react_1.default.createElement(react_1.default.Fragment, null, errors[name] && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message));
+}
+exports.ErrorMessage1 = ErrorMessage1;
+function ErrorMessage({ errors, name }) {
+    // Function to access nested properties
+    const getNestedError = (errors, path) => {
+        const keys = path.split("."); // Split the path into keys
+        let current = errors;
+        for (let key of keys) {
+            if (current[key]) {
+                current = current[key];
+            }
+            else {
+                return null; // If the path does not exist, return null
+            }
+        }
+        return current;
+    };
+    const error = getNestedError(errors, name);
+    return react_1.default.createElement(react_1.default.Fragment, null, error && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, error.message));
 }
 exports.ErrorMessage = ErrorMessage;
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
@@ -101,7 +121,7 @@ function SelectTextOptionFormElement({ options, showValidationInfo = true, name,
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name, as: as },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, makeLabel()),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !errors[name] : undefined, isInvalid: showValidationInfo ? !!errors[name] : undefined, ...register(name) },
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
             options.map((option, index) => (react_1.default.createElement("option", { key: index, value: option }, option)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
@@ -112,29 +132,24 @@ exports.SelectTextOptionFormElement = SelectTextOptionFormElement;
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value" }) {
+function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value", name = "value", }) {
     const { control, setValue, watch, formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    const watchedValue = watch(keyLabel);
+    const watchedValue = watch(name);
     (0, react_1.useEffect)(() => {
-        if (watchedValue !== undefined) {
-            setValue(keyLabel, watchedValue, { shouldValidate: true });
-        }
-        else {
-            setValue(keyLabel, "", { shouldValidate: true });
-        }
+        setValue(name, watchedValue ?? "", { shouldValidate: true });
     }, [watchedValue, setValue]);
     const classNames = ["form-control"];
     if (showValidationInfo) {
-        classNames.push(errors[keyLabel] ? "is-invalid" : "is-valid");
+        classNames.push((0, CommonComponentsController_1.hasError)(errors, name) ? "is-invalid" : "is-valid");
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: keyLabel, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
-                        setValue(keyLabel, values.floatValue);
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
+                        setValue(name, values.floatValue);
                         //field.onChange(values.floatValue);
                     }, className: classNames.join(" "), valueIsNumericString: false })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
-        react_1.default.createElement(ErrorMessage, { name: keyLabel, errors: errors })));
+        react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
 exports.ValueInPLNInput = ValueInPLNInput;
 exports.valueValidation = Yup.string()

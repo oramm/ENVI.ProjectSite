@@ -39,15 +39,23 @@ export function SecurityStatusSelectFormElement({
     );
 }
 
-export function OfferStatusSelectFormElement({
-    showValidationInfo = true,
-    name = "status",
-    as,
-}: SpecificTextOptionProps) {
+export function OfferStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
     const statuses = Object.entries(MainSetup.OfferStatus).map(([key, value]) => value);
     return (
         <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
     );
+}
+
+export function OfferBondStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
+    const statuses = Object.entries(MainSetup.OfferBondStatus).map(([key, value]) => value);
+    return (
+        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    );
+}
+
+export function OfferBondFormSelector({ showValidationInfo = true, name = "form", as }: SpecificTextOptionProps) {
+    const forms = Object.entries(MainSetup.OfferBondForm).map(([key, value]) => value);
+    return <SelectTextOptionFormElement options={forms} showValidationInfo={showValidationInfo} name={name} as={as} />;
 }
 
 export function TaksStatusSelectFormElement({

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
+exports.hasError = exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
 const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
 function parseFieldValuesToParams(data) {
@@ -79,3 +79,24 @@ function updateObject(formData, obj) {
     return updatedObj;
 }
 exports.updateObject = updateObject;
+/**
+ * Zwraca true jeśli w obiekcie errors jest błąd dla podanej ścieżki
+ * @param errors obiekt błędów
+ * @param path ścieżka do sprawdzenia
+ * @returns true jeśli błąd istnieje
+ * @example hasError(errors, "_offerBond.paymentData")
+ */
+function hasError(errors, path) {
+    const keys = path.split(".");
+    let current = errors;
+    for (let key of keys) {
+        if (current && current[key]) {
+            current = current[key];
+        }
+        else {
+            return false; // No error at this path
+        }
+    }
+    return current && current.type ? true : false;
+}
+exports.hasError = hasError;

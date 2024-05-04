@@ -349,6 +349,17 @@ export interface OurOffer extends Offer {
 
 export interface ExternalOffer extends Offer {
     tenderUrl?: string;
+    _offerBond?: OfferBondData | null;
+}
+
+export interface OfferBondData extends RepositoryDataItem {
+    _offer?: OfferData;
+    value: number;
+    form: string;
+    paymentData: string;
+    comment?: string | null;
+    status: string;
+    expiryDate?: string | null;
 }
 
 export interface FinancialAidProgrammeData extends RepositoryDataItem {

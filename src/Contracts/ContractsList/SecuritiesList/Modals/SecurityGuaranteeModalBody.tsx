@@ -8,7 +8,7 @@ import { ErrorMessage } from "../../../../View/Modals/CommonFormComponents/Gener
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function SecurityGuaranteeModalBody(props: ModalBodyProps<Security>) {
-    const { initialData, isEditing, additionalProps, contextData } = props;
+    const { initialData, isEditing } = props;
 
     const {
         register,

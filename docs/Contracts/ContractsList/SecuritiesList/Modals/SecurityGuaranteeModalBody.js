@@ -31,7 +31,7 @@ const FormContext_1 = require("../../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
 /**Wywoływana w ProjectsSelector jako props  */
 function SecurityGuaranteeModalBody(props) {
-    const { initialData, isEditing, additionalProps, contextData } = props;
+    const { initialData, isEditing } = props;
     const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue("isCash", false);

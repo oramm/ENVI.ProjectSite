@@ -105,6 +105,17 @@ MainSetup.OfferForm = {
     PLATFORM: "Platforma",
     PAPER: "Papier",
 };
+MainSetup.OfferBondStatus = {
+    TO_DO: "Do zapłacenia",
+    TO_RENEW: "Do przedłużenia",
+    DONE: "Złożone",
+    TO_BE_RETURNED: "Do zwrotu",
+    RETURNED: "Zwrócone",
+};
+MainSetup.OfferBondForm = {
+    CASH: "Gotówka",
+    GUARANTEE: "Gwarancja",
+};
 MainSetup.InvoicesFilterInitState = {
     ISSUE_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -90).toISOString().slice(0, 10),
     ISSUE_DATE_TO: ToolsDate_1.default.addDays(new Date(), +10).toISOString().slice(0, 10),

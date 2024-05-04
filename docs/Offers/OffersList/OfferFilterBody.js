@@ -22,6 +22,8 @@ function OffersFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sk\u0142adanie do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.OffersFilterInitState.SUBMISSION_TO, ...register("submissionDeadlineTo") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
-            react_1.default.createElement(StatusSelectors_1.OfferStatusSelectFormElement, { showValidationInfo: false }))));
+            react_1.default.createElement(StatusSelectors_1.OfferStatusSelector, { showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
+            react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { showValidationInfo: false, name: "_offerBond.status" }))));
 }
 exports.OffersFilterBody = OffersFilterBody;
