@@ -57,7 +57,7 @@ export function InvoiceItemModalBody({ initialData }: ModalBodyProps<InvoiceItem
                 </Form.Group>
                 <Form.Group as={Col} controlId="unitPrice">
                     <Form.Label>Cena jedn.</Form.Label>
-                    <ValueInPLNInput keyLabel="unitPrice" />
+                    <ValueInPLNInput name="unitPrice" />
                 </Form.Group>
                 <Form.Group as={Col} controlId="vatTax">
                     <Form.Label>Stawka VAT</Form.Label>

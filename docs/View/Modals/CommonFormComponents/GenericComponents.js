@@ -132,7 +132,9 @@ exports.SelectTextOptionFormElement = SelectTextOptionFormElement;
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-function ValueInPLNInput({ showValidationInfo = true, keyLabel = "value", name = "value", }) {
+function ValueInPLNInput({ showValidationInfo = true, 
+//keyLabel = "value",
+name = "value", }) {
     const { control, setValue, watch, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(name);
     (0, react_1.useEffect)(() => {

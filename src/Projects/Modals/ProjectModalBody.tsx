@@ -89,15 +89,15 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
             <Row>
                 <Form.Group as={Col} controlId="totalValue">
                     <Form.Label>Wartość całkowita</Form.Label>
-                    <ValueInPLNInput keyLabel="totalValue" />
+                    <ValueInPLNInput name="totalValue" />
                 </Form.Group>
                 <Form.Group as={Col} controlId="qualifiedValue">
                     <Form.Label>Wartość kwalifikowana</Form.Label>
-                    <ValueInPLNInput keyLabel="qualifiedValue" />
+                    <ValueInPLNInput name="qualifiedValue" />
                 </Form.Group>
                 <Form.Group as={Col} controlId="dotationValue">
                     <Form.Label>Wartość dofinansowania</Form.Label>
-                    <ValueInPLNInput keyLabel="dotationValue" />
+                    <ValueInPLNInput name="dotationValue" />
                 </Form.Group>
             </Row>
             <Row>

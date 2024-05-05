@@ -61,7 +61,7 @@ function InvoiceItemModalBody({ initialData }) {
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "quantity", errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "unitPrice" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Cena jedn."),
-                react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { keyLabel: "unitPrice" })),
+                react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { name: "unitPrice" })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "vatTax" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stawka VAT"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.vatTax, isInvalid: !!errors?.vatTax, ...register("vatTax") }),

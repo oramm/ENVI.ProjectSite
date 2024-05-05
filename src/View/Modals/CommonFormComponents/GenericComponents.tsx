@@ -210,7 +210,6 @@ export type SpecificTextOptionProps = {
 
 type ValueInPLNInputProps = {
     showValidationInfo?: boolean;
-    keyLabel?: string;
     name?: string;
 };
 
@@ -219,11 +218,7 @@ type ValueInPLNInputProps = {
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-export function ValueInPLNInput({
-    showValidationInfo = true,
-    keyLabel = "value",
-    name = "value",
-}: ValueInPLNInputProps) {
+export function ValueInPLNInput({ showValidationInfo = true, name = "value" }: ValueInPLNInputProps) {
     const {
         control,
         setValue,

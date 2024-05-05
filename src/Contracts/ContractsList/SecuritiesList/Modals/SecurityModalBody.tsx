@@ -67,7 +67,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Sec
             </Form.Group>
             <Form.Group controlId="returnedValue">
                 <Form.Label>Zwrócono</Form.Label>
-                <ValueInPLNInput keyLabel="returnedValue" />
+                <ValueInPLNInput name="returnedValue" />
             </Form.Group>
             <SecurityStatusSelectFormElement name="status" showValidationInfo={true} />
         </>
