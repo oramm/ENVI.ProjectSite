@@ -51,7 +51,10 @@ function ContractsSearch({ title }) {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
             },
-            { header: "Oznaczenie", renderTdBody: (contract) => renderName(contract) },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (contract) => renderOurId(contract),
+            },
             { header: "Numer", objectAttributeToShow: "number" },
             { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
             { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },

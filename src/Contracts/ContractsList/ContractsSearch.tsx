@@ -38,7 +38,10 @@ export default function ContractsSearch({ title }: { title: string }) {
                     header: "Projekt",
                     renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
                 },
-                { header: "Oznaczenie", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
+                {
+                    header: "Oznaczenie",
+                    renderTdBody: (contract: OurContract | OtherContract) => renderOurId(contract),
+                },
                 { header: "Numer", objectAttributeToShow: "number" },
                 { header: "Nazwa", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
                 { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
