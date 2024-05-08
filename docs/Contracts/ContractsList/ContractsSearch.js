@@ -38,25 +38,30 @@ function ContractsSearch({ title }) {
     }, [title]);
     function renderName(contract) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("strong", null, ourIdLabel(contract)),
+            " ",
+            numberLabel(contract),
+            " ",
             contract.name,
             " ",
             react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
     }
-    function renderOurId(contract) {
-        const ourId = "ourId" in contract ? contract.ourId : "";
-        return react_1.default.createElement(react_1.default.Fragment, null, ourId);
+    function numberLabel(contract) {
+        if ("ourId" in contract && contract.number === contract.ourId)
+            return null;
+        return `[${contract.number}]` ?? null;
+    }
+    function ourIdLabel(contract) {
+        if (!("ourId" in contract))
+            return null;
+        return contract.ourId;
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: title, FilterBodyComponent: ContractsFilterBody_1.ContractsFilterBody, tableStructure: [
             {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
             },
-            {
-                header: "Oznaczenie",
-                renderTdBody: (contract) => renderOurId(contract),
-            },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
+            { header: "Oznaczenie", renderTdBody: (contract) => renderName(contract) },
             { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
             { header: "Zakończenie", objectAttributeToShow: "endDate" },
             { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate" },

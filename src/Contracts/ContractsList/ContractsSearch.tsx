@@ -18,14 +18,19 @@ export default function ContractsSearch({ title }: { title: string }) {
     function renderName(contract: OurContract | OtherContract) {
         return (
             <>
-                {contract.name} <ContractStatusBadge status={contract.status} />
+                <strong>{ourIdLabel(contract)}</strong> {numberLabel(contract)} {contract.name}{" "}
+                <ContractStatusBadge status={contract.status} />
             </>
         );
     }
+    function numberLabel(contract: OurContract | OtherContract) {
+        if ("ourId" in contract && contract.number === contract.ourId) return null;
+        return `[${contract.number}]` ?? null;
+    }
 
-    function renderOurId(contract: OurContract | OtherContract) {
-        const ourId = "ourId" in contract ? (contract as OurContract).ourId : "";
-        return <>{ourId}</>;
+    function ourIdLabel(contract: OurContract | OtherContract) {
+        if (!("ourId" in contract)) return null;
+        return (contract as OurContract).ourId;
     }
 
     return (
@@ -38,12 +43,7 @@ export default function ContractsSearch({ title }: { title: string }) {
                     header: "Projekt",
                     renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
                 },
-                {
-                    header: "Oznaczenie",
-                    renderTdBody: (contract: OurContract | OtherContract) => renderOurId(contract),
-                },
-                { header: "Numer", objectAttributeToShow: "number" },
-                { header: "Nazwa", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
+                { header: "Oznaczenie", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
                 { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
                 { header: "Zakończenie", objectAttributeToShow: "endDate" },
                 { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate" },
