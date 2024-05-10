@@ -40,4 +40,5 @@ export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDat
     objectAttributeToShow?: keyof DataItemType;
     renderTdBody?: (dataItem: DataItemType) => JSX.Element;
     renderThBody?: () => JSX.Element;
+    submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];
 };

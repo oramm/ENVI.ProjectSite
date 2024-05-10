@@ -7,7 +7,15 @@ import "../../Css/styles.css";
 import MainSetup from "../../React/MainSetupReact";
 import { Color } from "react-bootstrap/esm/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy, faBars, IconDefinition, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCopy,
+    faBars,
+    IconDefinition,
+    faPencil,
+    faTrash,
+    faEllipsisV,
+    faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function ProgressBar() {
     return <progress style={{ height: "5px" }} />;
@@ -122,9 +130,13 @@ export function EditIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faPencil} layout={layout} onClick={onClick} className="text-primary" />;
 }
 
-//delete icon button
 export function DeleteIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faTrash} layout={layout} onClick={onClick} className="text-danger" />;
+}
+
+export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    const icon = layout === "vertical" ? faEllipsisV : faEllipsisH;
+    return <IconButton icon={icon} layout={layout} onClick={onClick} className="text-secondary" />;
 }
 
 export function InvoiceStatusBadge({ status }: { status: string }) {

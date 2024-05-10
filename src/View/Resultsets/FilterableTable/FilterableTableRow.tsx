@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { GeneralDeleteModalButton } from "../../Modals/GeneralModalButtons";
 import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { GDDocFileIconLink, GDFolderIconLink, SpinnerBootstrap } from "../CommonComponents";
+import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton, SpinnerBootstrap } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 
@@ -80,6 +80,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     isDeletable: boolean;
     layout?: "vertical" | "horizontal";
     shouldRetrieveDataBeforeEdit?: boolean;
+    submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];
 }
 
 export function RowActionMenu<DataItemType extends RepositoryDataItem>({
@@ -91,8 +92,14 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     layout = "vertical",
     sectionRepository,
     shouldRetrieveDataBeforeEdit = false,
+    submenuItems = [],
 }: RowActionMenuProps<DataItemType>) {
     const repository = sectionRepository || useFilterableTableContext<DataItemType>().repository;
+    const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+
+    function toggleMenu() {
+        setIsMenuExpanded((prevState) => !prevState);
+    }
 
     return (
         <>
@@ -107,10 +114,31 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                 />
             )}
             {isDeletable && handleDeleteObject && (
-                <DeleteModalButton
-                    modalProps={{ onDelete: handleDeleteObject, initialData: dataObject, repository }}
-                    buttonProps={{ layout }}
-                />
+                <>
+                    <MenuExpandIconButton layout={layout} onClick={toggleMenu} />
+                    {isMenuExpanded && (
+                        <>
+                            <DeleteModalButton
+                                modalProps={{ onDelete: handleDeleteObject, initialData: dataObject, repository }}
+                                buttonProps={{ layout }}
+                            />
+                            {submenuItems.map(
+                                (SubmenuItem, index) =>
+                                    handleEditObject && (
+                                        <SubmenuItem
+                                            key={index}
+                                            modalProps={{
+                                                onEdit: handleEditObject,
+                                                initialData: dataObject,
+                                                repository: repository as RepositoryReact<DataItemType>,
+                                            }}
+                                            buttonProps={{ layout, buttonCaption: "Edytuj" }}
+                                        />
+                                    )
+                            )}
+                        </>
+                    )}
+                </>
             )}
         </>
     );

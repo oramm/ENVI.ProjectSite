@@ -57,10 +57,16 @@ export function makeOtherOfferValidationSchema(isEditing: boolean) {
         ...makeCommonFields(isEditing),
         tenderUrl: Yup.string()
             .url("Podaj poprawny link")
-            .min(10, "Link jest za krótki")
             .max(255, "Link jest za długi")
-            .matches(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z]{2,6})([\/\w \.-]*)*\/?$/, "Podaj poprawny link")
+            .matches(
+                /^(https?:\/\/)?([\da-z.-]+\.)+[a-z]{2,}(\/[\w ,.-]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[\w]*)?$/,
+                "Podaj poprawny link"
+            )
             .nullable()
-            .notRequired(),
+            .notRequired()
+            .test("ignore-min-if-empty", "Link jest za krótki", (value) => {
+                if (!value) return true; // Skip the test if value is empty or null
+                return value.length >= 10;
+            }),
     });
 }
