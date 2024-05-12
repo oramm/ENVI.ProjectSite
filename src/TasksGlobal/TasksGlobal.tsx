@@ -194,7 +194,7 @@ function makeCaseTitleLabel(caseItem: Case) {
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
     const contractNodes: SectionNode<Task>[] = [];
 
-    for (const { contract, milestonesWithCases: milestonesWitchCases } of contractsWithChildrenInput) {
+    for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
         const contractNode = {
             id: "contract" + contract.id,
             isInAccordion: true,
@@ -213,7 +213,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
         };
         contractNodes.push(contractNode);
 
-        for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
+        for (const { milestone, casesWithTasks } of milestonesWithCases || []) {
             const milestoneNode = {
                 id: "milestone" + milestone.id,
                 isInAccordion: true,
