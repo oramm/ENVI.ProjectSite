@@ -21,6 +21,7 @@ function OfferBondEditModalButton({ modalProps: { initialData } }) {
             makeValidationSchema: OfferBondValidationSchema_1.default,
             specialActionRoute: "editOfferBond",
         }, buttonProps: {
+            buttonCaption: "Edytuj wadium",
             buttonVariant: "outline-success",
         } }));
 }

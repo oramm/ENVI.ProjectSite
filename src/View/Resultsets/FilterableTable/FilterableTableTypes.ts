@@ -38,7 +38,7 @@ export type FilterBodyProps = {};
 export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     header?: string;
     objectAttributeToShow?: keyof DataItemType;
-    renderTdBody?: (dataItem: DataItemType) => JSX.Element;
+    renderTdBody?: (dataItem: DataItemType, isActive?: boolean) => JSX.Element;
     renderThBody?: () => JSX.Element;
     submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];
 };

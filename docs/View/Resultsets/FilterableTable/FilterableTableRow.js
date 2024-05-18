@@ -41,7 +41,7 @@ function FilterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick,
             return String(dataObject[key] ?? "");
         }
         if (columnStructure.renderTdBody !== undefined)
-            return columnStructure.renderTdBody(dataObject);
+            return columnStructure.renderTdBody(dataObject, isActive);
         return "";
     }
     return (react_1.default.createElement("tr", { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {

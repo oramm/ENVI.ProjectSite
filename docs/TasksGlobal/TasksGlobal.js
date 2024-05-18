@@ -142,7 +142,7 @@ function makeCaseTitleLabel(caseItem) {
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
-    for (const { contract, milestonesWithCases: milestonesWitchCases } of contractsWithChildrenInput) {
+    for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
         const contractNode = {
             id: "contract" + contract.id,
             isInAccordion: true,
@@ -158,7 +158,7 @@ function buildTree(contractsWithChildrenInput) {
             isDeletable: false,
         };
         contractNodes.push(contractNode);
-        for (const { milestone, casesWithTasks } of milestonesWitchCases || []) {
+        for (const { milestone, casesWithTasks } of milestonesWithCases || []) {
             const milestoneNode = {
                 id: "milestone" + milestone.id,
                 isInAccordion: true,

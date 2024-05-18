@@ -27,6 +27,7 @@ export function OfferBondEditModalButton({ modalProps: { initialData } }: Specif
                 specialActionRoute: "editOfferBond",
             }}
             buttonProps={{
+                buttonCaption: "Edytuj wadium",
                 buttonVariant: "outline-success",
             }}
         />

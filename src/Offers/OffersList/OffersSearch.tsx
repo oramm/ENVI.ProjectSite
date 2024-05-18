@@ -40,42 +40,56 @@ export default function OffersSearch({ title }: { title: string }) {
         return <FontAwesomeIcon icon={icon} size="lg" />;
     }
 
-    function renderNameDescription(offer: OurOffer | ExternalOffer) {
+    function renderNameDescription(offer: OurOffer | ExternalOffer, isActive: boolean = false) {
         return (
             <>
                 <div>
-                    {renderTenderLink(offer) ?? offer.alias} {renderStatus(offer)}
+                    {offer._type.name} | {renderTenderLink(offer) ?? offer.alias} {renderStatus(offer)}
                 </div>
-                <div className="muted" style={{ whiteSpace: "pre-line" }}>
+                <div className="text-muted" style={{ whiteSpace: "pre-line" }}>
                     {offer.description}
                 </div>
-                {renderOfferBond(offer)}
+                {renderOfferBond(offer, isActive)}
             </>
         );
     }
 
-    function renderOfferBond(offer: ExternalOffer) {
+    function renderOfferBond(offer: ExternalOffer, isActive: boolean) {
         if (offer.isOur) return null;
         if (!offer._offerBond)
             return (
-                <OfferBondAddNewModalButton modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }} />
+                isActive && (
+                    <OfferBondAddNewModalButton
+                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                    />
+                )
             );
         return (
-            <div className="muted" style={{ whiteSpace: "pre-line" }}>
-                <strong>Wadium:</strong> {Tools.formatNumber(offer._offerBond.value)} {offer._offerBond.form}{" "}
-                <OfferBondStatusBadge status={offer._offerBond.status} /> {offer._offerBond.expiryDate} {""}
+            <div className="mt-4 mb-4" style={{ whiteSpace: "pre-line" }}>
+                <h6>
+                    Wadium {Tools.formatNumber(offer._offerBond.value)}{" "}
+                    <OfferBondStatusBadge status={offer._offerBond.status} />
+                </h6>
+                {offer._offerBond.form}{" "}
+                {offer._offerBond.form === "Gwarancja" && <>ważna do: {offer._offerBond.expiryDate}</>}
                 <div>{offer._offerBond.paymentData}</div>
-                <div>{offer._offerBond.comment} </div>
-                <div>
-                    <OfferBondEditModalButton
-                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
-                        buttonProps={{ layout: "horizontal" }}
-                    />{" "}
-                    <OfferBondDeleteModalButton
-                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
-                        buttonProps={{ layout: "horizontal" }}
-                    />
-                </div>
+                <div>{offer._offerBond.comment}</div>
+                {isActive && renderOfferBondMenu(offer)}
+            </div>
+        );
+    }
+
+    function renderOfferBondMenu(offer: ExternalOffer) {
+        return (
+            <div>
+                <OfferBondEditModalButton
+                    modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                    buttonProps={{ layout: "horizontal" }}
+                />{" "}
+                <OfferBondDeleteModalButton
+                    modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                    buttonProps={{ layout: "horizontal" }}
+                />
             </div>
         );
     }
@@ -94,15 +108,6 @@ export default function OffersSearch({ title }: { title: string }) {
         );
     }
 
-    function renderType(offer: OurOffer | ExternalOffer) {
-        return (
-            <>
-                <div>{offer._type.name}</div>
-                <div className="muted">{offer._type.description}</div>
-            </>
-        );
-    }
-
     function renderStatus(offer: OurOffer | ExternalOffer) {
         if (!offer.status) return <Alert variant="danger">Brak statusu</Alert>;
         return <OfferStatusBadge status={offer.status} />;
@@ -116,8 +121,7 @@ export default function OffersSearch({ title }: { title: string }) {
             tableStructure={[
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcon },
                 { header: "Nazwa", renderTdBody: renderNameDescription },
-                { header: "Typ", renderTdBody: renderType },
-                { header: "Odbiorcy", renderTdBody: renderEntityData },
+                { header: "Zamawiający", renderTdBody: renderEntityData },
                 { header: "Termin", objectAttributeToShow: "submissionDeadline" },
                 { header: "Wysyłka", objectAttributeToShow: "form" },
             ]}

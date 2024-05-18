@@ -39,7 +39,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
             const key = columnStructure.objectAttributeToShow;
             return String(dataObject[key] ?? "");
         }
-        if (columnStructure.renderTdBody !== undefined) return columnStructure.renderTdBody(dataObject);
+        if (columnStructure.renderTdBody !== undefined) return columnStructure.renderTdBody(dataObject, isActive);
         return "";
     }
 
