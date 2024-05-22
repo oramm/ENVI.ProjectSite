@@ -37,7 +37,7 @@ const ToolsForms_1 = __importDefault(require("../../../React/ToolsForms"));
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 function ContractModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, getValues, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const watchAllFields = watch();
     let startDateSugestion;
     let endDateSugestion;
@@ -58,6 +58,7 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
+        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
@@ -78,6 +79,7 @@ function ContractModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "alias" })),
+        react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.comment, isInvalid: !!errors?.comment, ...register("comment") }),

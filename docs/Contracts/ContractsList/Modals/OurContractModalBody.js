@@ -47,7 +47,6 @@ function OurContractModalBody(props) {
         setValue("_manager", initialData?._manager, { shouldValidate: true });
         setValue("_employers", initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
-    console.log("OurContractModalBody _city:", initialData?._city?.name);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_city" },

@@ -34,6 +34,8 @@ function ContractsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Koniec do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: undefined, ...register("endDateTo") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
-            react_1.default.createElement(StatusSelectors_1.ContractStatusSelectFormElement, { name: "status", showValidationInfo: false }))));
+            react_1.default.createElement(StatusSelectors_1.ContractStatusSelectFormElement, { name: "status", showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository, showValidationInfo: false }))));
 }
 exports.ContractsFilterBody = ContractsFilterBody;

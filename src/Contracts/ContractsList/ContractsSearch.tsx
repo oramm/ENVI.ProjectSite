@@ -9,6 +9,7 @@ import {
     OtherContractAddNewModalButton,
     OurContractAddNewModalButton,
 } from "./Modals/ContractModalButtons";
+import { Badge } from "react-bootstrap";
 
 export default function ContractsSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -20,9 +21,24 @@ export default function ContractsSearch({ title }: { title: string }) {
             <>
                 <strong>{ourIdLabel(contract)}</strong> {numberLabel(contract)} {contract.name}{" "}
                 <ContractStatusBadge status={contract.status} />
+                <div>{renderRangeNames(contract)}</div>
             </>
         );
     }
+
+    function renderRangeNames(contract: OurContract | OtherContract) {
+        if (!contract._contractRangesNames) return null;
+        return (
+            <div>
+                {contract._contractRangesNames.map((name, index) => (
+                    <Badge key={index} pill bg="light" className="mr-1 mt-2 mb-3 text-dark">
+                        {name}
+                    </Badge>
+                ))}
+            </div>
+        );
+    }
+
     function numberLabel(contract: OurContract | OtherContract) {
         if ("ourId" in contract && contract.number === contract.ourId) return null;
         return `[${contract.number}]` ?? null;

@@ -57,6 +57,7 @@ const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialA
 const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
 const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
 const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
+const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
 const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = "/";
@@ -121,6 +122,7 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),

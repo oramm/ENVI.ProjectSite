@@ -32,6 +32,7 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const ContractsController_1 = require("./ContractsController");
 const ContractsFilterBody_1 = require("./ContractsFilterBody");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
+const react_bootstrap_1 = require("react-bootstrap");
 function ContractsSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -44,7 +45,13 @@ function ContractsSearch({ title }) {
             " ",
             contract.name,
             " ",
-            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })));
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }),
+            react_1.default.createElement("div", null, renderRangeNames(contract))));
+    }
+    function renderRangeNames(contract) {
+        if (!contract._contractRangesNames)
+            return null;
+        return (react_1.default.createElement("div", null, contract._contractRangesNames.map((name, index) => (react_1.default.createElement(react_bootstrap_1.Badge, { key: index, pill: true, bg: "light", className: "mr-1 mt-2 mb-3 text-dark" }, name)))));
     }
     function numberLabel(contract) {
         if ("ourId" in contract && contract.number === contract.ourId)

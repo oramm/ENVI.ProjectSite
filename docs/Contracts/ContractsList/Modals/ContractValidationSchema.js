@@ -30,6 +30,7 @@ const name = Yup.string()
     .required("Nazwa jest wymagana")
     .min(3, "Nazwa musi mieć przynajmniej 3 znaki")
     .max(500, "Nazwa może mieć maksymalnie 150 znaków");
+const _contractRanges = Yup.array().min(1, "Zakresy są wymagane").required("Zakresy są wymagane");
 const status = Yup.string().required("Status jest wymagany");
 const value = GenericComponents_1.valueValidation;
 const dateFields = {
@@ -52,6 +53,7 @@ const dateFields = {
 };
 const commonFields = {
     name,
+    _contractRanges,
     status,
     value,
     ...dateFields,

@@ -16,6 +16,7 @@ import {
     CaseType,
     City,
     Contract,
+    ContractRangeData,
     ContractType,
     DocumentTemplate,
     ExternalOffer,
@@ -514,6 +515,89 @@ export function ContractSelectFormElement({
     );
 }
 
+interface ContractRangeSelectorProps {
+    repository: any;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    name?: string;
+}
+
+export function ContractRangeSelector({
+    repository,
+    showValidationInfo = true,
+    multiple = true,
+    name = "_contractRanges",
+}: ContractRangeSelectorProps) {
+    const {
+        control,
+        setValue,
+        getValues,
+        formState: { errors },
+    } = useFormContext();
+    const [options, setOptions] = useState<ContractRangeData[]>([]);
+
+    const label = "Zakresy";
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await repository.loadItemsFromServerPOST();
+            setOptions(repository.items);
+            const currentValue = getValues(name);
+            if (multiple) {
+                if (!Array.isArray(currentValue) || currentValue.length === 0) {
+                    setValue(name, []);
+                }
+            } else {
+                if (!currentValue) {
+                    setValue(name, null);
+                }
+            }
+        };
+        fetchData();
+    }, [repository, setValue, multiple, name]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${name}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={options}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz zakresy kontraktu --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const optionTyped = option as ContractRangeData;
+                                return (
+                                    <div>
+                                        <span>{optionTyped.name}</span>
+                                        <div className="text-muted small">{optionTyped.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
 type ContractTypeSelectFormElementProps = {
     typesToInclude?: "our" | "other" | "all";
     showValidationInfo?: boolean;
@@ -781,7 +865,6 @@ export function PersonSelectFormElement({
     const {
         control,
         setValue,
-        watch,
         formState: { errors },
     } = useFormContext();
 

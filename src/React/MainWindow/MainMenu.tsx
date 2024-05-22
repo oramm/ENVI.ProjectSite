@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Button, Offcanvas, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Container, Button, Offcanvas, NavDropdown, Badge } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import MainSetup from "../MainSetupReact";
 
 export default function MainMenu() {
     const location = useLocation();
 
-    const isActive = (path: string) => {
+    function isActive(path: string) {
         return location.pathname === path ? "active" : "";
-    };
+    }
 
     return (
         <>
@@ -51,9 +51,6 @@ export default function MainMenu() {
                                 MainSetup.currentUser.systemRoleName
                             ) && (
                                 <>
-                                    <Nav.Link as={Link} to="/admin/cities" className={isActive("/admin/cities")}>
-                                        Miasta
-                                    </Nav.Link>
                                     <NavDropdown title="Oferty" id="basic-nav-dropdown" className={isActive("/offers")}>
                                         <NavDropdown.Item as={Link} to="/offers/list">
                                             Oferty
@@ -79,6 +76,22 @@ export default function MainMenu() {
                                         </NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/financialAidProgrammes/needs">
                                             Potrzeby klientów
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                    <Nav.Item className="nav-separator">|</Nav.Item>
+                                    <NavDropdown
+                                        title="Słowniki"
+                                        id="parametry-nav-dropdown"
+                                        className={isActive("/admin")}
+                                    >
+                                        <NavDropdown.Item as={Link} to="/admin/cities">
+                                            Miasta
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/contractRanges">
+                                            Zakresy kontraktów{" "}
+                                            <Badge bg="primary" text="light">
+                                                nowe
+                                            </Badge>
                                         </NavDropdown.Item>
                                     </NavDropdown>
                                 </>

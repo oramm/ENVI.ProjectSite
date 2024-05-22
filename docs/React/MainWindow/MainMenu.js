@@ -9,9 +9,9 @@ const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
-    const isActive = (path) => {
+    function isActive(path) {
         return location.pathname === path ? "active" : "";
-    };
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Navbar, { sticky: "top", bg: "light", expand: "md" },
             react_1.default.createElement(react_bootstrap_1.Container, null,
@@ -28,7 +28,6 @@ function MainMenu() {
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive("/entities") }, "Podmioty"),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive("/persons") }, "Osoby"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
-                            react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/admin/cities", className: isActive("/admin/cities") }, "Miasta"),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Oferty", id: "basic-nav-dropdown", className: isActive("/offers") },
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/offers/list" }, "Oferty"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/offers/letters" }, "Pisma do ofert")),
@@ -36,6 +35,13 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes" }, "Programy"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/focusAreas" }, "Dzia\u0142ania"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/applicationCalls" }, "Nabory"),
-                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/needs" }, "Potrzeby klient\u00F3w"))))))))));
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/financialAidProgrammes/needs" }, "Potrzeby klient\u00F3w")),
+                            react_1.default.createElement(react_bootstrap_1.Nav.Item, { className: "nav-separator" }, "|"),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "S\u0142owniki", id: "parametry-nav-dropdown", className: isActive("/admin") },
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/cities" }, "Miasta"),
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/contractRanges" },
+                                    "Zakresy kontrakt\u00F3w",
+                                    " ",
+                                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "nowe")))))))))));
 }
 exports.default = MainMenu;

@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -204,6 +204,45 @@ function ContractSelectFormElement({ name = "_contract", showValidationInfo = tr
             }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.ContractSelectFormElement = ContractSelectFormElement;
+function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
+    const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const [options, setOptions] = (0, react_1.useState)([]);
+    const label = "Zakresy";
+    (0, react_1.useEffect)(() => {
+        const fetchData = async () => {
+            await repository.loadItemsFromServerPOST();
+            setOptions(repository.items);
+            const currentValue = getValues(name);
+            if (multiple) {
+                if (!Array.isArray(currentValue) || currentValue.length === 0) {
+                    setValue(name, []);
+                }
+            }
+            else {
+                if (!currentValue) {
+                    setValue(name, null);
+                }
+            }
+        };
+        fetchData();
+    }, [repository, setValue, multiple, name]);
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz zakresy kontraktu --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const optionTyped = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, optionTyped.name),
+                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
+                    } })) }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
+}
+exports.ContractRangeSelector = ContractRangeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -324,7 +363,7 @@ exports.OurLetterTemplateSelectFormElement = OurLetterTemplateSelectFormElement;
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 function PersonSelectFormElement({ label, name, repository, multiple = false, showValidationInfo = true, }) {
-    const { control, setValue, watch, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
         repositoryDataItems.map((item) => (item._nameSurname = `${item.name} ${item.surname}`));
         return repositoryDataItems;

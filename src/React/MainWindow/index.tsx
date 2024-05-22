@@ -29,6 +29,7 @@ import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programme
 import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
 import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
+import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 
 const isGithubPages = window.location.hostname === "ps.envi.com.pl";
 //const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
@@ -101,6 +102,7 @@ function AppRoutes() {
                 <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                 <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                 <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
                 <Route path="/offers" element={<OffersSearch title="Oferty" />} />
                 <Route path="/offers/list" element={<OffersSearch title="Oferty" />} />
                 <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />

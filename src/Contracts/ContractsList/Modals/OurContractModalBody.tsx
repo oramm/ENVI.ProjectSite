@@ -34,8 +34,6 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
         setValue("_employers", initialData?._employers, { shouldValidate: true });
     }, [initialData, setValue]);
 
-    console.log("OurContractModalBody _city:", initialData?._city?.name);
-
     return (
         <>
             <Row>

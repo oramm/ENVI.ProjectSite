@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ProjectSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import {
+    ContractRangeSelector,
+    ProjectSelector,
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { OtherContract, OurContract, Project } from "../../../../Typings/bussinesTypes";
-import { projectsRepository } from "../ContractsController";
+import { contractRangesRepository, projectsRepository } from "../ContractsController";
 import ToolsDate from "../../../React/ToolsDate";
 import ToolsForms from "../../../React/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
@@ -14,6 +17,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
     const {
         register,
         setValue,
+        getValues,
         watch,
         formState: { errors },
         trigger,
@@ -38,6 +42,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
+        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
@@ -59,7 +64,6 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 />
                 <ErrorMessage errors={errors} name="number" />
             </Form.Group>
-
             <Form.Group controlId="name">
                 <Form.Label>Nazwa kontraktu</Form.Label>
                 <Form.Control
@@ -84,7 +88,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 />
                 <ErrorMessage errors={errors} name="alias" />
             </Form.Group>
-
+            <ContractRangeSelector repository={contractRangesRepository} />
             <Form.Group controlId="comment">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control
