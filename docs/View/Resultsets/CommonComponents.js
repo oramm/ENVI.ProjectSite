@@ -235,6 +235,10 @@ function OfferBondStatusBadge({ status }) {
         case MainSetupReact_1.default.OfferBondStatus.TO_DO:
             variant = "primary";
             break;
+        case MainSetupReact_1.default.OfferBondStatus.PAID:
+            variant = "light";
+            textMode = "success";
+            break;
         case MainSetupReact_1.default.OfferBondStatus.DONE:
             variant = "info";
             break;

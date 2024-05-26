@@ -291,6 +291,10 @@ export function OfferBondStatusBadge({ status }: { status: string }) {
         case MainSetup.OfferBondStatus.TO_DO:
             variant = "primary";
             break;
+        case MainSetup.OfferBondStatus.PAID:
+            variant = "light";
+            textMode = "success";
+            break;
         case MainSetup.OfferBondStatus.DONE:
             variant = "info";
             break;
