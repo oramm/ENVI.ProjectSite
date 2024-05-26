@@ -194,6 +194,11 @@ function OfferStatusBadge({ status }) {
     let variant;
     let textMode = "light";
     switch (status) {
+        //DECISION_PENDING: 'Składamy czy nie?',
+        case MainSetupReact_1.default.OfferStatus.DECISION_PENDING:
+            variant = "warning";
+            textMode = "dark";
+            break;
         case MainSetupReact_1.default.OfferStatus.TO_DO:
             variant = "primary";
             break;

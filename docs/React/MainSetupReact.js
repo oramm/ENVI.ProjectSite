@@ -67,6 +67,7 @@ MainSetup.TaskStatus = {
     DONE: "Zrobione",
 };
 MainSetup.OfferStatus = {
+    DECISION_PENDING: "Składamy czy nie?",
     TO_DO: "Do złożenia",
     DONE: "Czekamy na wynik",
     AWARDED: "Wygrana",

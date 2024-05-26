@@ -244,6 +244,11 @@ export function OfferStatusBadge({ status }: { status: string }) {
     let textMode: Color = "light";
 
     switch (status) {
+        //DECISION_PENDING: 'Składamy czy nie?',
+        case MainSetup.OfferStatus.DECISION_PENDING:
+            variant = "warning";
+            textMode = "dark";
+            break;
         case MainSetup.OfferStatus.TO_DO:
             variant = "primary";
             break;
