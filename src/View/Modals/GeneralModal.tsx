@@ -3,7 +3,7 @@ import { Modal, Button, Form, Alert, Spinner, Container, Placeholder } from "rea
 import { useForm, FieldValues } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
 import { FormProvider } from "./FormContext";
-import { parseFieldValuestoFormData } from "../Resultsets/CommonComponentsController";
+import { parseFieldValuestoFormData as parseFieldValuesToFormData } from "../Resultsets/CommonComponentsController";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "../../Css/styles.css";
@@ -87,7 +87,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
             const hasFiles = Object.values(data).some((value) => value instanceof FileList || value instanceof File);
             // Jeśli data zawiera pliki, przetwórz go na FormData, w przeciwnym razie użyj data bezpośrednio
-            const requestData = hasFiles ? parseFieldValuestoFormData(data) : data;
+            const requestData = hasFiles ? parseFieldValuesToFormData(data) : data;
             if (isEditing) {
                 if (hasFiles) {
                     await handleEditWithFiles(requestData as FormData);

@@ -117,6 +117,7 @@ class RepositoryReact {
                 ...requestOptions.headers,
                 ["Content-Type"]: "application/json",
             };
+            ToolsDate_1.default.convertDatesToUTC(newItem);
             requestOptions.body = JSON.stringify(newItem);
         }
         let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;

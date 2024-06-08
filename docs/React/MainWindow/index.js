@@ -58,8 +58,6 @@ const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes
 const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
 const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
-const isGithubPages = window.location.hostname === "ps.envi.com.pl";
-//const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -94,18 +92,19 @@ function App() {
         }
     };
     if (errorMessage)
-        return (react_1.default.createElement("div", null,
+        return (react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement("h1", null, "Ups! mamy b\u0142\u0105d"),
             react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
                 " ",
                 errorMessage)));
     else if (isReady) {
-        return isLoggedIn ? (react_1.default.createElement(react_1.default.Fragment, null,
+        return isLoggedIn ? (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0" },
             react_1.default.createElement(AppRoutes, null),
             react_1.default.createElement(Footer_1.default, null))) : (react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }));
     }
     else
-        return react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null);
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
 }
 function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },

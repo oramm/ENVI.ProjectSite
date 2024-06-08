@@ -16,14 +16,21 @@ class ToolsDate {
      * @returns
      */
     static toUTC(date) {
-        let utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        return utcDate.toISOString().slice(0, 10);
+        const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        const parsedDate = utcDate.toISOString().slice(0, 10);
+        console.log(parsedDate);
+        return parsedDate;
     }
     /** Przetwarza wszystkie daty w obiekcie na UTC */
     static convertDatesToUTC(obj) {
+        if (!obj || typeof obj !== "object")
+            return;
         for (let key in obj) {
             if (obj[key] instanceof Date) {
                 obj[key] = this.toUTC(obj[key]);
+            }
+            else if (obj[key] && typeof obj[key] === "object") {
+                this.convertDatesToUTC(obj[key]);
             }
         }
     }
@@ -44,7 +51,7 @@ class ToolsDate {
     }
     //date może być {String || Date}
     static addDays(date, days) {
-        if (typeof date === 'string' && this.isStringADate(date)) {
+        if (typeof date === "string" && this.isStringADate(date)) {
             date = new Date(date);
         }
         if (this.isValidDate(date))
@@ -52,7 +59,7 @@ class ToolsDate {
         return date;
     }
     static getNextFridayDate() {
-        var curr = new Date; // get current date
+        var curr = new Date(); // get current date
         var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
         var last = first + 4; // last day is the first day + 6
         //var firstday = new Date(curr.setDate(first));
@@ -76,14 +83,14 @@ class ToolsDate {
             var dd = this.addZero(inputDate.getDate());
             var mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
             var yyyy = inputDate.getFullYear();
-            return dd + '-' + mm + '-' + yyyy;
+            return dd + "-" + mm + "-" + yyyy;
         }
     }
     static dateDMYtoYMD(inputDate) {
         if (inputDate) {
             var parts = inputDate.split("-");
             if (parts[2].length == 4)
-                return parts[2] + '-' + parts[1] + '-' + parts[0];
+                return parts[2] + "-" + parts[1] + "-" + parts[0];
             else
                 return inputDate;
         }
@@ -97,21 +104,21 @@ class ToolsDate {
         if (parts.length !== 3 || parts[0].length !== 4 || parts[1].length !== 2 || parts[2].length !== 2) {
             throw new Error("Invalid input date format. The input should be in YMD format.");
         }
-        return parts[2] + '-' + parts[1] + '-' + parts[0];
+        return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
     static timestampToString(timestamp) {
-        if (typeof timestamp === 'string')
+        if (typeof timestamp === "string")
             timestamp = new Date(timestamp);
         var day = this.addZero(timestamp.getUTCDate());
         var month = this.addZero(timestamp.getUTCMonth() + 1); // months are zero-indexed
         var year = timestamp.getUTCFullYear();
         var h = this.addZero(timestamp.getUTCHours());
         var m = this.addZero(timestamp.getUTCMinutes());
-        return day + '-' + month + '-' + year + ' ' + h + ':' + m;
+        return day + "-" + month + "-" + year + " " + h + ":" + m;
     }
     /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(num) {
-        return num.toString().padStart(2, '0');
+        return num.toString().padStart(2, "0");
     }
     /**odejmuje pierwszą datę od drugiej */
     static dateDiff(first, second) {

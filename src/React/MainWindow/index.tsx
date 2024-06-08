@@ -1,6 +1,6 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
@@ -31,8 +31,6 @@ import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 
-const isGithubPages = window.location.hostname === "ps.envi.com.pl";
-//const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -69,21 +67,26 @@ function App() {
 
     if (errorMessage)
         return (
-            <div>
+            <Container>
                 <h1>Ups! mamy błąd</h1>
                 <Alert variant="danger"> {errorMessage}</Alert>
-            </div>
+            </Container>
         );
     else if (isReady) {
         return isLoggedIn ? (
-            <>
+            <Container fluid className="d-flex flex-column min-vh-100 p-0">
                 <AppRoutes />
                 <Footer />
-            </>
+            </Container>
         ) : (
             <GoogleButton onServerResponse={handleServerResponse} />
         );
-    } else return <SpinnerBootstrap />;
+    } else
+        return (
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
+                <SpinnerBootstrap />
+            </Container>
+        );
 }
 
 function AppRoutes() {

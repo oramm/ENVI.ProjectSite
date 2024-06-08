@@ -122,6 +122,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ...requestOptions.headers,
                 ["Content-Type"]: "application/json",
             };
+            ToolsDate.convertDatesToUTC(newItem);
             requestOptions.body = JSON.stringify(newItem);
         }
         let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
