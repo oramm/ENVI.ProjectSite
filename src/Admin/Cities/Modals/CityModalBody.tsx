@@ -39,13 +39,15 @@ export function CityModalBody({ isEditing, initialData }: ModalBodyProps<City>) 
 
             <Form.Group controlId="code">
                 <Form.Label>Oznaczenie</Form.Label>
+
                 <Form.Control
-                    placeholder="Podaj adres"
+                    placeholder="Kod opcjonalnie"
                     isInvalid={!!errors?.code}
                     isValid={!errors?.code}
                     {...register("code")}
                 />
                 <ErrorMessage name="code" errors={errors} />
+                <Form.Text muted>Jeśli nie podasz, system wygeneruje automatycznie.</Form.Text>
             </Form.Group>
         </>
     );

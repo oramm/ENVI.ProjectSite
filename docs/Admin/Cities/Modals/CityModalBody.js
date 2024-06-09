@@ -45,7 +45,8 @@ function CityModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "code" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oznaczenie"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj adres", isInvalid: !!errors?.code, isValid: !errors?.code, ...register("code") }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "code", errors: errors }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Kod opcjonalnie", isInvalid: !!errors?.code, isValid: !errors?.code, ...register("code") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "code", errors: errors }),
+            react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true }, "Je\u015Bli nie podasz, system wygeneruje automatycznie."))));
 }
 exports.CityModalBody = CityModalBody;
