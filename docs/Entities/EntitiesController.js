@@ -7,10 +7,10 @@ exports.entitiesRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../React/RepositoryReact"));
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'entities',
-        addNewRoute: 'entity',
-        editRoute: 'entity',
-        deleteRoute: 'entity'
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
     },
-    name: 'entities'
+    name: "entities",
 });

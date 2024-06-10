@@ -7,7 +7,7 @@ import {
     IncomingLetterAddNewModalButton,
     OurLetterAddNewModalButton,
 } from "./Modals/LetterModalButtons";
-import { Entity, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
+import { EntityData, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +16,7 @@ export default function LettersSearch({ title }: { title: string }) {
         document.title = title;
     }, [title]);
 
-    function buildLabelFromEntities(entities: Entity[] | undefined): string {
+    function buildLabelFromEntities(entities: EntityData[] | undefined): string {
         if (!entities || entities.length === 0) return "";
 
         let label = "";

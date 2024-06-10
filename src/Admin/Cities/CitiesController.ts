@@ -1,12 +1,12 @@
-import { City } from "../../../Typings/bussinesTypes";
+import { CityData } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
-export const citiesRepository = new RepositoryReact<City>({
+export const citiesRepository = new RepositoryReact<CityData>({
     actionRoutes: {
-        getRoute: 'cities',
-        addNewRoute: 'city',
-        editRoute: 'city',
-        deleteRoute: 'city'
+        getRoute: "cities",
+        addNewRoute: "city",
+        editRoute: "city",
+        deleteRoute: "city",
     },
-    name: 'cities'
+    name: "cities",
 });

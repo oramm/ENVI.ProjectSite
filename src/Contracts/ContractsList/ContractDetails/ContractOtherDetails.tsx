@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
-import { ContractsSettlementData, Entity, Invoice } from "../../../../Typings/bussinesTypes";
+import { ContractsSettlementData, EntityData, Invoice } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/ToolsDate";
 import { contractsSettlementRepository, invoicesRepository } from "../ContractsController";
 import { useContractDetails } from "./ContractDetailsContext";
@@ -42,7 +42,7 @@ export default function ContractOtherDetails() {
                             <Col sm={12} md={8}>
                                 <div>Wykonawcy:</div>
                                 <h5>
-                                    {contract._contractors.map((contractor: Entity) => (
+                                    {contract._contractors.map((contractor: EntityData) => (
                                         <span>{contractor.name}</span>
                                     ))}
                                 </h5>

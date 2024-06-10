@@ -72,9 +72,9 @@ export interface Contract extends RepositoryDataItem {
     _ourIdOrNumber_Alias?: string;
     _ourIdOrNumber_Name?: string;
     _lastUpdated?: string;
-    _contractors?: Entity[];
-    _engineers?: Entity[];
-    _employers?: Entity[];
+    _contractors?: EntityData[];
+    _engineers?: EntityData[];
+    _employers?: EntityData[];
     _contractRanges?: ContractRangeData[];
     _contractRangesNames?: string[];
 }
@@ -85,11 +85,11 @@ export interface OurContract extends Contract {
     ourId: string;
     _ourType: string;
     _admin?: Person;
-    _city?: City;
+    _city?: CityData;
 }
 
 export interface OtherContract extends Contract {
-    _contractors?: Entity[];
+    _contractors?: EntityData[];
     _ourContract?: OurContract;
     materialCardsGdFolderId?: string;
 }
@@ -209,34 +209,34 @@ export interface Letter extends GenericDocument {
     _cases: Case[];
 }
 
-export interface OurLetter1 extends Letter {
+export interface OurLetter extends Letter {
     _template?: DocumentTemplate;
     isOur: true;
 }
 
-export interface IncomingLetter1 extends Letter {
+export interface IncomingLetter extends Letter {
     isOur: false;
 }
 
-export interface OurLetterContract extends OurLetter1 {
+export interface OurLetterContract extends OurLetter {
     _project: Project;
     projectId?: number;
 }
 
-export interface IncomingLetterContract extends IncomingLetter1 {
+export interface IncomingLetterContract extends IncomingLetter {
     _project: Project;
     projectId?: number;
 }
 
-export interface OurLetterOffer extends OurLetter1 {
+export interface OurLetterOffer extends OurLetter {
     _offer: OurOffer;
 }
 
-export interface IncomingLetterOffer extends IncomingLetter1 {
+export interface IncomingLetterOffer extends IncomingLetter {
     _offer: ExternalOffer;
 }
 
-export interface Entity extends RepositoryDataItem {
+export interface EntityData extends RepositoryDataItem {
     name?: string;
     address?: string;
     taxNumber?: string;
@@ -254,7 +254,7 @@ export interface Person extends RepositoryDataItem {
     comment: string;
     _alias: string;
     position: string;
-    _entity: Entity;
+    _entity: EntityData;
     _nameSurnameEmail: string;
 }
 
@@ -283,7 +283,7 @@ export interface Invoice extends RepositoryDataItem {
     _contract: OurContract;
     _editor: Person;
     _owner: Person;
-    _entity: Entity;
+    _entity: EntityData;
     _lastUpdated?: string;
     _documentOpenUrl?: string;
     _totalGrossValue?: number;
@@ -322,7 +322,7 @@ export interface Security extends RepositoryDataItem {
     _editor: Person;
 }
 
-export interface City extends RepositoryDataItem {
+export interface CityData extends RepositoryDataItem {
     name: string;
     code: string;
 }
@@ -334,7 +334,7 @@ interface Offer extends RepositoryDataItem {
     comment?: string;
     submissionDeadline?: string;
     _type: ContractType;
-    _city: City;
+    _city: CityData;
     typeId?: number;
     cityId?: number;
     form: string;
@@ -343,7 +343,7 @@ interface Offer extends RepositoryDataItem {
     editorId?: number;
     _lastUpdated?: string;
     employerName?: string;
-    _employer?: Entity;
+    _employer?: EntityData;
     _editor?: Person;
     status?: string;
     gdFolderId?: string;

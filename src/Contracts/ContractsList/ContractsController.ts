@@ -1,10 +1,10 @@
 import {
     Case,
     CaseType,
-    City,
+    CityData,
     ContractRangeData,
     ContractsSettlementData,
-    Entity,
+    EntityData,
     Invoice,
     Milestone,
     MilestoneType,
@@ -76,7 +76,7 @@ export const caseTypesRepository = new RepositoryReact<CaseType>({
     name: "caseTypes",
 });
 
-export const entitiesRepository = new RepositoryReact<Entity>({
+export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
         getRoute: "entities",
         addNewRoute: "entity",
@@ -138,7 +138,7 @@ export const securitiesRepository = new RepositoryReact<Security>({
 });
 
 //citiesRepository.getRoute = 'cities';
-export const citiesRepository = new RepositoryReact<City>({
+export const citiesRepository = new RepositoryReact<CityData>({
     actionRoutes: {
         getRoute: "cities",
         addNewRoute: "city",

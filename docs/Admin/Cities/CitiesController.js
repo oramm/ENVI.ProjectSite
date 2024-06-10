@@ -7,10 +7,10 @@ exports.citiesRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.citiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: 'cities',
-        addNewRoute: 'city',
-        editRoute: 'city',
-        deleteRoute: 'city'
+        getRoute: "cities",
+        addNewRoute: "city",
+        editRoute: "city",
+        deleteRoute: "city",
     },
-    name: 'cities'
+    name: "cities",
 });

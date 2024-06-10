@@ -7,7 +7,7 @@ import {
     IncomingLetterAddNewModalButton,
     OurLetterAddNewModalButton,
 } from "./Modals/LetterModalButtons";
-import { Entity, IncomingLetterOffer, OurLetterOffer } from "../../../Typings/bussinesTypes";
+import { EntityData, IncomingLetterOffer, OurLetterOffer } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +16,7 @@ export default function OffersLettersSearch({ title }: { title: string }) {
         document.title = title;
     }, [title]);
 
-    function buildLabelFromEntities(entities: Entity[]): string {
+    function buildLabelFromEntities(entities: EntityData[]): string {
         if (!entities || entities.length === 0) return "";
 
         let label = "";

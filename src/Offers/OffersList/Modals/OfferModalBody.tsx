@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    CitySelectFormElement,
+    CitySelector,
     ContractTypeSelectFormElement,
+    EntitySelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Placeholder, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
+import { CityData, ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../OffersController";
 import { citiesRepository } from "../../../Admin/Cities/CitiesController";
 import {
@@ -25,6 +26,8 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
+
+    const _city: CityData | string | undefined = watch("_city");
 
     useEffect(() => {
         const resetData: any = {
@@ -45,22 +48,29 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
         trigger();
     }, [initialData, reset]);
 
+    function renderCityText() {
+        if (typeof _city !== "string") return "";
+        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod.";
+    }
+
     return (
         <>
-            <Row>
-                <Form.Group as={Col} controlId="_city">
-                    <Form.Label>Miasto</Form.Label>
-                    <CitySelectFormElement repository={citiesRepository} showValidationInfo={true} allowNew={true} />
-                </Form.Group>
-                {!isEditing && (
+            {!isEditing && (
+                <Row>
+                    <Form.Group as={Col} controlId="_city">
+                        <Form.Label>Miasto</Form.Label>
+                        <CitySelector repository={citiesRepository} showValidationInfo={true} allowNew={true} />
+                        <Form.Text muted>{renderCityText()}</Form.Text>
+                    </Form.Group>
+
                     <Form.Group as={Col} controlId="_type">
                         <ContractTypeSelectFormElement typesToInclude="our" />
                     </Form.Group>
-                )}
-            </Row>
+                </Row>
+            )}
             <Form.Group>
                 <Form.Label>Zamawiający</Form.Label>
-                <MyAsyncTypeahead name="_employer" labelKey="name" repository={entitiesRepository} multiple={false} />
+                <EntitySelector name="_employer" repository={entitiesRepository} multiple={false} allowNew={true} />
                 <ErrorMessage errors={errors} name="_employer" />
             </Form.Group>
             <Form.Group controlId="alias">

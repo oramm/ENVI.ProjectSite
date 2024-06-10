@@ -1,4 +1,4 @@
-import { Entity, ExternalOffer, OfferBondData, OurOffer } from "../../../Typings/bussinesTypes";
+import { EntityData, ExternalOffer, OfferBondData, OurOffer } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
 export const OffersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
@@ -21,7 +21,7 @@ export const offerBondsRepository = new RepositoryReact<OfferBondData>({
     name: "offerBonds",
 });
 
-export const entitiesRepository = new RepositoryReact<Entity>({
+export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
         getRoute: "entities",
         addNewRoute: "entity",

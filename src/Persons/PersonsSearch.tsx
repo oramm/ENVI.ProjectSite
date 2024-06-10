@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
-import { Entity, Person } from "../../Typings/bussinesTypes";
+import { EntityData, Person } from "../../Typings/bussinesTypes";
 import { PersonsFilterBody } from "./PersonFilterBody";
 import { PersonAddNewModalButton, PersonEditModalButton } from "./Modals/PersonModalButtons";
 import { personsRepository } from "./PersonsController";

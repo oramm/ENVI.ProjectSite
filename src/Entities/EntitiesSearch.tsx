@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
-import { Entity } from "../../Typings/bussinesTypes";
+import { EntityData } from "../../Typings/bussinesTypes";
 import { EntityAddNewModalButton, EntityEditModalButton } from "./Modals/EntityModalButtons";
 import { entitiesRepository } from "./EntitiesController";
 import { EntitiesFilterBody } from "./EntityFilterBody";
@@ -11,7 +11,7 @@ export default function EntitiesSearch({ title }: { title: string }) {
     }, [title]);
 
     return (
-        <FilterableTable<Entity>
+        <FilterableTable<EntityData>
             id="entities"
             title={title}
             FilterBodyComponent={EntitiesFilterBody}

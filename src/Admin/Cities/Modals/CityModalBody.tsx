@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { City } from "../../../../Typings/bussinesTypes";
+import { CityData } from "../../../../Typings/bussinesTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function CityModalBody({ isEditing, initialData }: ModalBodyProps<City>) {
+export function CityModalBody({ isEditing, initialData }: ModalBodyProps<CityData>) {
     const {
         register,
         reset,

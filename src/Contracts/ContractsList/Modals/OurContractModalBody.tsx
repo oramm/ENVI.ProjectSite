@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import MainSetup from "../../../React/MainSetupReact";
 import {
-    CitySelectFormElement,
+    CitySelector,
     ContractTypeSelectFormElement,
     PersonSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -39,7 +39,7 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
             <Row>
                 <Form.Group as={Col} controlId="_city">
                     <Form.Label>Miasto</Form.Label>
-                    <CitySelectFormElement repository={citiesRepository} showValidationInfo={true} />
+                    <CitySelector repository={citiesRepository} showValidationInfo={true} />
                 </Form.Group>
                 {!isEditing && (
                     <Form.Group as={Col} controlId="_type">

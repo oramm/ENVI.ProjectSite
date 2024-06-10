@@ -1,4 +1,4 @@
-import { Entity, FinancialAidProgrammeData, NeedData } from "../../Typings/bussinesTypes";
+import { EntityData, FinancialAidProgrammeData, NeedData } from "../../Typings/bussinesTypes";
 import RepositoryReact from "../React/RepositoryReact";
 
 export const financialAidProgrammesRepository = new RepositoryReact<FinancialAidProgrammeData>({
@@ -11,7 +11,7 @@ export const financialAidProgrammesRepository = new RepositoryReact<FinancialAid
     name: "financialAidProgrammes",
 });
 
-export const clientsRepository = new RepositoryReact<Entity>({
+export const clientsRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
         getRoute: "entities",
         addNewRoute: "entity",

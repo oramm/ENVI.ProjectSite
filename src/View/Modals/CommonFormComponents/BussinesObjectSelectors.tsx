@@ -14,11 +14,12 @@ import {
     ApplicationCallData,
     Case,
     CaseType,
-    City,
+    CityData,
     Contract,
     ContractRangeData,
     ContractType,
     DocumentTemplate,
+    EntityData,
     ExternalOffer,
     FinancialAidProgrammeData,
     FocusAreaData,
@@ -83,7 +84,7 @@ export function ProjectSelector({
     );
 }
 
-export type CitySelectFormElementProps = {
+export type CitySelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
@@ -91,24 +92,65 @@ export type CitySelectFormElementProps = {
     allowNew?: boolean;
 };
 
-export function CitySelectFormElement({
+export function CitySelector({
     name = "_city",
     showValidationInfo = true,
     multiple = false,
     repository,
     allowNew = false,
-}: CitySelectFormElementProps) {
+}: CitySelectorProps) {
+    function renderOption(option: any) {
+        const typedOption = option as CityData;
+        return (
+            <div>
+                <span>{typedOption.name}</span>
+                <span className="text-muted small"> {typedOption.code}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type EntitySelectorProps = {
+    name: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function EntitySelector({
+    name,
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: EntitySelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
 
-    function renderOption(option: any) {
-        //console.log("renderOption - Option: ", option); // Log the option being rendered
+    function renderOption(option: any, props: any) {
+        const typedOption = option as EntityData;
 
         return (
             <div>
-                <span>{option.name}</span>
-                <div className="text-muted small">{option.code}</div>
+                <span>{typedOption.name}</span>
+                <div className="text-muted small">{typedOption.address}</div>
             </div>
         );
     }

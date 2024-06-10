@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Col, Container, Row } from "react-bootstrap";
-import { Entity, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
+import { EntityData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/ToolsDate";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, GDFolderIconLink } from "../../../View/Resultsets/CommonComponents";
@@ -42,7 +42,7 @@ export function ContractMainHeader() {
             );
     }
 
-    function renderEntityData(entities: Entity[]) {
+    function renderEntityData(entities: EntityData[]) {
         return entities.map((entity) => {
             return (
                 <div key={entity.id}>

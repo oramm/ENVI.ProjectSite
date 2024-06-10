@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.CitySelectFormElement = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -58,18 +58,31 @@ function ProjectSelector({ name = "_project", repository, showValidationInfo = t
             showValidationInfo: showValidationInfo, renderMenuItemChildren: renderOption, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
-function CitySelectFormElement({ name = "_city", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
-    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     function renderOption(option) {
-        //console.log("renderOption - Option: ", option); // Log the option being rendered
+        const typedOption = option;
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement("span", null, option.name),
-            react_1.default.createElement("div", { className: "text-muted small" }, option.code)));
+            react_1.default.createElement("span", null, typedOption.name),
+            react_1.default.createElement("span", { className: "text-muted small" },
+                " ",
+                typedOption.code)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
-exports.CitySelectFormElement = CitySelectFormElement;
+exports.CitySelector = CitySelector;
+function EntitySelector({ name, showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+    const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    function renderOption(option, props) {
+        const typedOption = option;
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("span", null, typedOption.name),
+            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.address)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.EntitySelector = EntitySelector;
 function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, multiple = false, repository, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {

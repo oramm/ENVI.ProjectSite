@@ -37,17 +37,17 @@ function CitiesSearch({ title }) {
     }, [title]);
     function buildLabelFromCities(cities) {
         if (!cities || cities.length === 0)
-            return '';
-        let label = '';
+            return "";
+        let label = "";
         for (let i = 0; i < cities.length - 1; i++) {
-            label += cities[i].name + '\n ';
+            label += cities[i].name + "\n ";
         }
         label += cities[cities.length - 1].name;
         return label;
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: 'cities', title: title, FilterBodyComponent: CityFilterBody_1.CitiesFilterBody, tableStructure: [
-            { header: 'Nazwa', objectAttributeToShow: 'name' },
-            { header: 'Oznaczenie', objectAttributeToShow: 'code' },
-        ], AddNewButtonComponents: [CityModalButtons_1.CityAddNewModalButton], EditButtonComponent: CityModalButtons_1.CityEditModalButton, isDeletable: true, repository: CitiesController_1.citiesRepository, selectedObjectRoute: '/city/' }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "cities", title: title, FilterBodyComponent: CityFilterBody_1.CitiesFilterBody, tableStructure: [
+            { header: "Nazwa", objectAttributeToShow: "name" },
+            { header: "Oznaczenie", objectAttributeToShow: "code" },
+        ], AddNewButtonComponents: [CityModalButtons_1.CityAddNewModalButton], EditButtonComponent: CityModalButtons_1.CityEditModalButton, isDeletable: true, repository: CitiesController_1.citiesRepository, selectedObjectRoute: "/city/" }));
 }
 exports.default = CitiesSearch;

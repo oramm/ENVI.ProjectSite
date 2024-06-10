@@ -1,7 +1,7 @@
 import {
     Case,
     CaseType,
-    Entity,
+    EntityData,
     Milestone,
     MilestoneType,
     OtherContract,
@@ -62,7 +62,7 @@ export const tasksRepository = new RepositoryReact<Task>({
     name: "tasks",
 });
 
-export const entitiesRepository = new RepositoryReact<Entity>({
+export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
         getRoute: "entities",
         addNewRoute: "entity",
