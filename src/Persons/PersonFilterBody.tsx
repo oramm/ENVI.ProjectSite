@@ -3,6 +3,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../View/Modals/FormContext";
 import { entitiesRepository } from "./PersonsController";
 import { ErrorMessage, MyAsyncTypeahead } from "../View/Modals/CommonFormComponents/GenericComponents";
+import { EntitySelector } from "../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 
 export function PersonsFilterBody() {
     const {
@@ -18,14 +19,12 @@ export function PersonsFilterBody() {
             </Form.Group>
             <Form.Group as={Col} md={8}>
                 <Form.Label>Podmiot</Form.Label>
-                <MyAsyncTypeahead
+                <EntitySelector
                     name="_entities"
-                    labelKey="name"
                     repository={entitiesRepository}
                     multiple={true}
                     showValidationInfo={false}
                 />
-                <ErrorMessage errors={errors} name="_entities" />
             </Form.Group>
         </Row>
     );

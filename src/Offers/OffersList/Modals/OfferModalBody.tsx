@@ -50,7 +50,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
 
     function renderCityText() {
         if (typeof _city !== "string") return "";
-        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod.";
+        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upwnij się, że podałaś nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
     }
 
     return (
@@ -71,7 +71,6 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             <Form.Group>
                 <Form.Label>Zamawiający</Form.Label>
                 <EntitySelector name="_employer" repository={entitiesRepository} multiple={false} allowNew={true} />
-                <ErrorMessage errors={errors} name="_employer" />
             </Form.Group>
             <Form.Group controlId="alias">
                 <Form.Label>Alias</Form.Label>

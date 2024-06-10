@@ -34,7 +34,6 @@ const ContractModalBody_1 = require("./ContractModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 const ContractsController_1 = require("../ContractsController");
-const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function OurContractModalBody(props) {
     const { initialData, isEditing } = props;
     const { register, trigger, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
@@ -62,6 +61,6 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Administrator", name: "_admin", repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
-                react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_employers", labelKey: "name", repository: ContractsController_1.entitiesRepository, multiple: true })))));
+                react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employers", repository: ContractsController_1.entitiesRepository, multiple: true })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

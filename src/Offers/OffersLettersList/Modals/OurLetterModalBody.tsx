@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { OurLetterTemplateSelectFormElement } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import {
+    EntitySelector,
+    OurLetterTemplateSelectFormElement,
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { LetterModalBody } from "./LetterModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { Col, Form, Row } from "react-bootstrap";
@@ -29,18 +32,11 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetterOffer | Incomi
             {!isEditing && <OurLetterTemplateSelectFormElement _cases={_cases || []} />}
             <Form.Group>
                 <Form.Label>Odbiorcy</Form.Label>
-                <MyAsyncTypeahead
-                    name="_entitiesMain"
-                    labelKey="name"
-                    repository={entitiesRepository}
-                    multiple={true}
-                />
-                <ErrorMessage errors={errors} name="_entitiesMain" />
+                <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Do wiadomości</Form.Label>
-                <MyAsyncTypeahead name="_entitiesCc" labelKey="name" repository={entitiesRepository} multiple={true} />
-                <ErrorMessage errors={errors} name="_entitiesCc" />
+                <EntitySelector name="_entitiesCc" repository={entitiesRepository} multiple={true} />
             </Form.Group>
             <input type="hidden" {...register("isOur")} value="true" />
         </>

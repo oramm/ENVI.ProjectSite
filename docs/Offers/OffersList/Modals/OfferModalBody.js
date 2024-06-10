@@ -56,7 +56,7 @@ function OfferModalBody({ isEditing, initialData }) {
     function renderCityText() {
         if (typeof _city !== "string")
             return "";
-        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod.";
+        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upwnij się, że podałaś nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -68,8 +68,7 @@ function OfferModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "our" })))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employer", repository: OffersController_1.entitiesRepository, multiple: false, allowNew: true }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "_employer" })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employer", repository: OffersController_1.entitiesRepository, multiple: false, allowNew: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),

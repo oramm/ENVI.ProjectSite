@@ -5,6 +5,7 @@ import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { Person } from "../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../PersonsController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntitySelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 
 export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Person>) {
     const {
@@ -37,8 +38,7 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
         <>
             <Form.Group>
                 <Form.Label>Odbiorcy</Form.Label>
-                <MyAsyncTypeahead name="_entity" labelKey="name" repository={entitiesRepository} multiple={false} />
-                <ErrorMessage errors={errors} name="_entity" />
+                <EntitySelector name="_entity" repository={entitiesRepository} multiple={true} />
             </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Imię</Form.Label>

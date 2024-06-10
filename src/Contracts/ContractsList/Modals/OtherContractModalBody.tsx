@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import RepositoryReact from "../../../React/RepositoryReact";
-import { ContractTypeSelectFormElement } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import {
+    ContractTypeSelectFormElement,
+    EntitySelector,
+} from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
 import { entitiesRepository } from "../ContractsController";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -34,7 +37,7 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
             <ContractModalBody {...props} />
             <Form.Group>
                 <Form.Label>Wykonawcy</Form.Label>
-                <MyAsyncTypeahead name="_contractors" labelKey="name" repository={entitiesRepository} multiple={true} />
+                <EntitySelector name="_contractors" repository={entitiesRepository} multiple={true} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Powiązana usługa IK lub PT</Form.Label>

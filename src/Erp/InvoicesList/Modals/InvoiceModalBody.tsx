@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     ContractSelectFormElement,
+    EntitySelector,
     PersonSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
@@ -99,7 +100,7 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
             </Form.Group>
             <Form.Group>
                 <Form.Label>Odbiorca</Form.Label>
-                <MyAsyncTypeahead name="_entity" labelKey="name" repository={entitiesRepository} multiple={false} />
+                <EntitySelector name="_entity" repository={entitiesRepository} multiple={false} />
             </Form.Group>
             <Form.Group controlId="_owner">
                 <PersonSelectFormElement

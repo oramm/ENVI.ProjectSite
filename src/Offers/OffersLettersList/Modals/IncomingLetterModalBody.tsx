@@ -6,6 +6,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { IncomingLetterOffer, OurLetterOffer } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../LettersController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | IncomingLetterOffer>) {
@@ -39,13 +40,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | I
             <LetterModalBody {...props} />
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
-                <MyAsyncTypeahead
-                    name="_entitiesMain"
-                    labelKey="name"
-                    repository={entitiesRepository}
-                    multiple={true}
-                />
-                <ErrorMessage errors={errors} name={"_entitiesMain"} />
+                <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
             </Form.Group>
         </>
     );

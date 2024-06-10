@@ -55,7 +55,7 @@ function OtherContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
-            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_contractors", labelKey: "name", repository: ContractsController_1.entitiesRepository, multiple: true })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_contractors", repository: ContractsController_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zana us\u0142uga IK lub PT"),
             react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_ourContract", labelKey: "ourId", searchKey: "contractOurId", contextSearchParams: {

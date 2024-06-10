@@ -29,6 +29,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const PersonsController_1 = require("../PersonsController");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
+const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 function PersonModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -52,8 +53,7 @@ function PersonModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
-            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_entity", labelKey: "name", repository: PersonsController_1.entitiesRepository, multiple: false }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "_entity" })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", repository: PersonsController_1.entitiesRepository, multiple: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Imi\u0119"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj imi\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),

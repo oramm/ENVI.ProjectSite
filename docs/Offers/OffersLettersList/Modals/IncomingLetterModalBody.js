@@ -30,6 +30,7 @@ const LetterModalBody_1 = require("./LetterModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const LettersController_1 = require("../LettersController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 /**Wywoływana w ProjectsSelector jako props  */
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
@@ -46,7 +47,6 @@ function IncomingLetterModalBody(props) {
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
-            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_entitiesMain", labelKey: "name", repository: LettersController_1.entitiesRepository, multiple: true }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "_entitiesMain" }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));
 }
 exports.IncomingLetterModalBody = IncomingLetterModalBody;

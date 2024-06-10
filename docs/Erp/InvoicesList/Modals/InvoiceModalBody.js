@@ -82,7 +82,7 @@ function InvoiceModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "status" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
-            react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: "_entity", labelKey: "name", repository: InvoicesController_1.entitiesRepository, multiple: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", repository: InvoicesController_1.entitiesRepository, multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Osoba rejestruj\u0105ca", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },

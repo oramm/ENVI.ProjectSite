@@ -3,6 +3,7 @@ import MainSetup from "../../../React/MainSetupReact";
 import {
     CitySelector,
     ContractTypeSelectFormElement,
+    EntitySelector,
     PersonSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
@@ -65,12 +66,7 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Zamawiający</Form.Label>
-                    <MyAsyncTypeahead
-                        name="_employers"
-                        labelKey="name"
-                        repository={entitiesRepository}
-                        multiple={true}
-                    />
+                    <EntitySelector name="_employers" repository={entitiesRepository} multiple={true} />
                 </Form.Group>
             </Row>
         </>
