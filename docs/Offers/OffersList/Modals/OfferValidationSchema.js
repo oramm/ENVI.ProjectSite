@@ -28,6 +28,8 @@ const Yup = __importStar(require("yup"));
 function makeCommonFields(isEditing) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     return {
         _city: Yup.mixed()
             .test("is-object-or-string", "Wybierz lub dodaj Miasto", (value) => typeof value === "object" || typeof value === "string")
@@ -44,7 +46,7 @@ function makeCommonFields(isEditing) {
             ? Yup.date().required("Podaj termin składania")
             : Yup.date()
                 .required("Podaj termin składania")
-                .min(new Date(), "Termin składania nie może być z przeszłości"),
+                .min(thirtyDaysAgo, "Termin składania nie może być z przeszłości"),
         bidProcedure: Yup.string().required("Wybierz procedurę"),
         form: Yup.string().required("Wybierz formę wysyłki"),
         _employer: Yup.mixed()
