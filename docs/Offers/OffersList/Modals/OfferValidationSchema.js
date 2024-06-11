@@ -46,7 +46,7 @@ function makeCommonFields(isEditing) {
             ? Yup.date().required("Podaj termin składania")
             : Yup.date()
                 .required("Podaj termin składania")
-                .min(thirtyDaysAgo, "Termin składania nie może być z przeszłości"),
+                .min(thirtyDaysAgo, "Termin składania nie może być starszy niż 30 dni"),
         bidProcedure: Yup.string().required("Wybierz procedurę"),
         form: Yup.string().required("Wybierz formę wysyłki"),
         _employer: Yup.mixed()

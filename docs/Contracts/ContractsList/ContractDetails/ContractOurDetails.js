@@ -34,6 +34,7 @@ const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const ContractsController_1 = require("../ContractsController");
 const ContractDetailsContext_1 = require("./ContractDetailsContext");
+const InvoiceModalButtons_1 = require("../../../Erp/InvoicesList/Modals/InvoiceModalButtons");
 function ContractOurDetails() {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     const [settlemenData, setSettlemenData] = (0, react_1.useState)(undefined);
@@ -45,27 +46,25 @@ function ContractOurDetails() {
         return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Umowa nie ma daty aktualizacji");
     //fetch data
     (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            if (!contract?.id)
-                throw new Error("Nie wybrano kontraktu");
-            const contractIdString = contract.id.toString();
-            const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }]))[0];
-            const fetchInvoicesData = await ContractsController_1.invoicesRepository.loadItemsFromServerPOST([
-                { contractId: contractIdString },
-            ]);
-            try {
-                const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
-                setSettlemenData(settlementData);
-                setInvoices(fetchInvoicesData);
-                setExternalUpdate((prevState) => prevState + 1);
-            }
-            catch (error) {
-                console.error("Error fetching data", error);
-                // Handle error as you see fit
-            }
-        }
         fetchData();
     }, []);
+    async function fetchData() {
+        if (!contract?.id)
+            throw new Error("Nie wybrano kontraktu");
+        const contractIdString = contract.id.toString();
+        const fetchSettlementData = (await ContractsController_1.contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }]))[0];
+        const fetchInvoicesData = await ContractsController_1.invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }]);
+        try {
+            const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
+            setSettlemenData(settlementData);
+            setInvoices(fetchInvoicesData);
+            setExternalUpdate((prevState) => prevState + 1);
+        }
+        catch (error) {
+            console.error("Error fetching data", error);
+            // Handle error as you see fit
+        }
+    }
     function renderInvoiceTotaValue(invoice) {
         return (react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue))));
     }
@@ -79,6 +78,15 @@ function ContractOurDetails() {
             : "Nie określono";
         return react_1.default.createElement(react_1.default.Fragment, null, `Koordynator(ka): ${coordinatorName}`);
     }
+    function renderActionsMenu() {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(InvoiceModalButtons_1.InvoiceAddNewModalButton, { modalProps: {
+                    onAddNew: async () => {
+                        await fetchData();
+                    },
+                    contextData: contract,
+                }, buttonProps: { buttonCaption: "Dodaj fakturę" } })));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Container, null,
@@ -86,6 +94,8 @@ function ContractOurDetails() {
                     react_1.default.createElement(react_bootstrap_1.Col, null, contract.comment && react_1.default.createElement("p", null,
                         "Opis: ",
                         contract.comment))),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
+                    react_1.default.createElement(react_bootstrap_1.Col, null, renderActionsMenu())),
                 react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                         react_1.default.createElement("div", null, "Warto\u015B\u0107 netto, z\u0142:"),

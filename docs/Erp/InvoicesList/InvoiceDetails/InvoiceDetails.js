@@ -67,7 +67,7 @@ function InvoiceDetails() {
     function handleError(error) {
         setErrorMessage(error.message || "An error occurred while copying the invoice.");
     }
-    function renderAvtionsMenu() {
+    function renderActionsMenu() {
         if (errorMessage)
             return (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: "pre-wrap" }, className: "mt-3", variant: "danger", onClose: () => setErrorMessage(""), dismissible: true }, errorMessage));
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -100,7 +100,7 @@ function InvoiceDetails() {
                             react_1.default.createElement("h5", null, invoice._contract.ourId)),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 2 },
                             react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
-                        react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderAvtionsMenu()),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderActionsMenu()),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 1, lg: "auto" }, invoice._documentOpenUrl && react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { folderUrl: invoice._documentOpenUrl }))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },

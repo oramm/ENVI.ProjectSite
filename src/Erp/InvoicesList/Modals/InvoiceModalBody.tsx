@@ -8,11 +8,11 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
-import { Invoice } from "../../../../Typings/bussinesTypes";
+import { Invoice, OurContract } from "../../../../Typings/bussinesTypes";
 import { contractsRepository, entitiesRepository } from "../InvoicesController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invoice>) {
+export function InvoiceModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Invoice>) {
     const {
         register,
         reset,
@@ -37,11 +37,13 @@ export function InvoiceModalBody({ isEditing, initialData }: ModalBodyProps<Invo
 
     useEffect(() => {
         console.log("InvoiceModalBody useEffect", initialData);
+        const typedContextData = contextData as OurContract | undefined;
+        const _entity = initialData?._entity || (typedContextData?._employers && typedContextData._employers[0]);
         const resetData = {
-            _contract: initialData?._contract,
+            _contract: initialData?._contract || contextData,
             issueDate: initialData?.issueDate || new Date().toISOString().slice(0, 10),
             daysToPay: initialData?.daysToPay,
-            _entity: initialData?._entity,
+            _entity,
             status: initialData?.status || "Na później",
             _owner: setInitialOwner(),
             _editor: MainSetup.getCurrentUserAsPerson(),

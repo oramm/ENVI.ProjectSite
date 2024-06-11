@@ -15,27 +15,28 @@ const InvoiceIssueModalBody_1 = require("./InvoiceIssueModalBody");
 const InvoiceSetAsSentModalBody_1 = require("./InvoiceSetAsSentModalBody");
 const InvoicesController_1 = require("../InvoicesController");
 /** przycisk i modal edycji Invoice */
-function InvoiceEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
+function InvoiceEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Edycja faktury",
             repository: InvoicesController_1.invoicesRepository,
             initialData: initialData,
-            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
+            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.InvoiceEditModalButton = InvoiceEditModalButton;
-function InvoiceAddNewModalButton({ modalProps: { onAddNew }, }) {
+function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Rejestruj fakturę",
             repository: InvoicesController_1.invoicesRepository,
-            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema
+            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
+            contextData,
         }, buttonProps: {
             buttonCaption: "Rejestruj fakturę",
             buttonVariant: "outline-success",
@@ -57,28 +58,28 @@ function CopyButton({ onError }) {
     return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick }, "Kopiuj"));
 }
 exports.CopyButton = CopyButton;
-function ChangeStatusButton({ specialActionRoute, newStatus }) {
+function ChangeStatusButton({ specialActionRoute, newStatus, }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {
         const editedInvoice = await InvoicesController_1.invoicesRepository.editItem(invoice, specialActionRoute);
         setInvoice(editedInvoice);
     }
-    return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Ustaw jako ${newStatus}`, variant: 'primary', size: 'sm', onClick: handleChangeStatus }, `Ustaw jako ${newStatus}`));
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Ustaw jako ${newStatus}`, variant: "primary", size: "sm", onClick: handleChangeStatus }, `Ustaw jako ${newStatus}`));
 }
 exports.ChangeStatusButton = ChangeStatusButton;
 function InvoiceIssueModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: setInvoice,
-            specialActionRoute: 'issueInvoice',
+            specialActionRoute: "issueInvoice",
             ModalBodyComponent: InvoiceIssueModalBody_1.InvoiceIssueModalBody,
             modalTitle: "Wystaw fakturę",
             repository: InvoicesController_1.invoicesRepository,
             initialData: invoice,
-            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceIssueValidationSchema
+            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceIssueValidationSchema,
         }, buttonProps: {
             buttonCaption: "Wystaw fakturę",
-            buttonVariant: "primary"
+            buttonVariant: "primary",
         } }));
 }
 exports.InvoiceIssueModalButton = InvoiceIssueModalButton;
@@ -86,15 +87,15 @@ function InvoiceSetAsSentModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: setInvoice,
-            specialActionRoute: 'setAsSentInvoice',
+            specialActionRoute: "setAsSentInvoice",
             ModalBodyComponent: InvoiceSetAsSentModalBody_1.InvoiceSetAsSentModalBody,
             modalTitle: "Ustaw jako Wysłana",
             repository: InvoicesController_1.invoicesRepository,
             initialData: invoice,
-            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceSetAsSentValidationSchema
+            makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceSetAsSentValidationSchema,
         }, buttonProps: {
             buttonCaption: "Ustaw jako 'Wysłana'",
-            buttonVariant: "primary"
+            buttonVariant: "primary",
         } }));
 }
 exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
@@ -102,13 +103,13 @@ function ActionButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     switch (invoice.status) {
         case MainSetupReact_1.default.InvoiceStatuses.FOR_LATER:
-            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsToMakeInvoice', newStatus: MainSetupReact_1.default.InvoiceStatuses.TO_DO }));
+            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: "setAsToMakeInvoice", newStatus: MainSetupReact_1.default.InvoiceStatuses.TO_DO }));
         case MainSetupReact_1.default.InvoiceStatuses.TO_DO:
             return react_1.default.createElement(InvoiceIssueModalButton, null);
         case MainSetupReact_1.default.InvoiceStatuses.DONE:
             return react_1.default.createElement(InvoiceSetAsSentModalButton, null);
         case MainSetupReact_1.default.InvoiceStatuses.SENT:
-            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: 'setAsPaidInvoice', newStatus: MainSetupReact_1.default.InvoiceStatuses.PAID }));
+            return (react_1.default.createElement(ChangeStatusButton, { specialActionRoute: "setAsPaidInvoice", newStatus: MainSetupReact_1.default.InvoiceStatuses.PAID }));
         case MainSetupReact_1.default.InvoiceStatuses.PAID:
         case MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT:
         case MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN:

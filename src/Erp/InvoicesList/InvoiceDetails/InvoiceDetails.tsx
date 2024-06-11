@@ -43,7 +43,7 @@ export default function InvoiceDetails() {
         setErrorMessage(error.message || "An error occurred while copying the invoice.");
     }
 
-    function renderAvtionsMenu() {
+    function renderActionsMenu() {
         if (errorMessage)
             return (
                 <Alert
@@ -96,7 +96,7 @@ export default function InvoiceDetails() {
                             <Col sm={2}>
                                 <InvoiceStatusBadge status={invoice.status} />
                             </Col>
-                            <Col md="auto">{renderAvtionsMenu()}</Col>
+                            <Col md="auto">{renderActionsMenu()}</Col>
                             <Col sm={1} lg="auto">
                                 {invoice._documentOpenUrl && <GDDocFileIconLink folderUrl={invoice._documentOpenUrl} />}
                             </Col>

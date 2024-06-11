@@ -7,6 +7,7 @@ import { InvoiceStatusBadge, MyTooltip } from "../../../View/Resultsets/CommonCo
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { contractsSettlementRepository, invoicesRepository } from "../ContractsController";
 import { useContractDetails } from "./ContractDetailsContext";
+import { InvoiceAddNewModalButton } from "../../../Erp/InvoicesList/Modals/InvoiceModalButtons";
 
 export default function ContractOurDetails() {
     const { contract, setContract, contractsRepository } = useContractDetails();
@@ -19,28 +20,26 @@ export default function ContractOurDetails() {
 
     //fetch data
     useEffect(() => {
-        async function fetchData() {
-            if (!contract?.id) throw new Error("Nie wybrano kontraktu");
-            const contractIdString = contract.id.toString();
-            const fetchSettlementData = (
-                await contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }])
-            )[0];
-            const fetchInvoicesData = await invoicesRepository.loadItemsFromServerPOST([
-                { contractId: contractIdString },
-            ]);
-            try {
-                const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
-                setSettlemenData(settlementData);
-                setInvoices(fetchInvoicesData);
-                setExternalUpdate((prevState) => prevState + 1);
-            } catch (error) {
-                console.error("Error fetching data", error);
-                // Handle error as you see fit
-            }
-        }
-
         fetchData();
     }, []);
+
+    async function fetchData() {
+        if (!contract?.id) throw new Error("Nie wybrano kontraktu");
+        const contractIdString = contract.id.toString();
+        const fetchSettlementData = (
+            await contractsSettlementRepository.loadItemsFromServerPOST([{ id: contractIdString }])
+        )[0];
+        const fetchInvoicesData = await invoicesRepository.loadItemsFromServerPOST([{ contractId: contractIdString }]);
+        try {
+            const [settlementData] = await Promise.all([fetchSettlementData, fetchInvoicesData]);
+            setSettlemenData(settlementData);
+            setInvoices(fetchInvoicesData);
+            setExternalUpdate((prevState) => prevState + 1);
+        } catch (error) {
+            console.error("Error fetching data", error);
+            // Handle error as you see fit
+        }
+    }
 
     function renderInvoiceTotaValue(invoice: Invoice) {
         return (
@@ -64,12 +63,30 @@ export default function ContractOurDetails() {
         return <>{`Koordynator(ka): ${coordinatorName}`}</>;
     }
 
+    function renderActionsMenu() {
+        return (
+            <>
+                <InvoiceAddNewModalButton
+                    modalProps={{
+                        onAddNew: async () => {
+                            await fetchData();
+                        },
+                        contextData: contract,
+                    }}
+                    buttonProps={{ buttonCaption: "Dodaj fakturę" }}
+                />
+            </>
+        );
+    }
     return (
         <Card>
             <Card.Body>
                 <Container>
                     <Row className="mt-3">
                         <Col>{contract.comment && <p>Opis: {contract.comment}</p>}</Col>
+                    </Row>
+                    <Row className="mt-3">
+                        <Col>{renderActionsMenu()}</Col>
                     </Row>
                     <Row className="mt-3 text-end">
                         <Col sm={4} md={2}>

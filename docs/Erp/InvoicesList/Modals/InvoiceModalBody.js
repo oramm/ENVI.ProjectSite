@@ -34,7 +34,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const InvoicesController_1 = require("../InvoicesController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
-function InvoiceModalBody({ isEditing, initialData }) {
+function InvoiceModalBody({ isEditing, initialData, contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const statuses = [];
     statuses.push(MainSetupReact_1.default.InvoiceStatuses.FOR_LATER, MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT, MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN);
@@ -48,11 +48,13 @@ function InvoiceModalBody({ isEditing, initialData }) {
     }
     (0, react_1.useEffect)(() => {
         console.log("InvoiceModalBody useEffect", initialData);
+        const typedContextData = contextData;
+        const _entity = initialData?._entity || (typedContextData?._employers && typedContextData._employers[0]);
         const resetData = {
-            _contract: initialData?._contract,
+            _contract: initialData?._contract || contextData,
             issueDate: initialData?.issueDate || new Date().toISOString().slice(0, 10),
             daysToPay: initialData?.daysToPay,
-            _entity: initialData?._entity,
+            _entity,
             status: initialData?.status || "Na później",
             _owner: setInitialOwner(),
             _editor: MainSetupReact_1.default.getCurrentUserAsPerson(),
