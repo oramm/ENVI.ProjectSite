@@ -87,7 +87,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
 
-        const response = await fetch(url, {
+        this.items = await this.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -96,13 +96,42 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             body: JSON.stringify({ orConditions }),
             credentials: "include",
         });
-        if (!response.ok) throw new Error(response.statusText);
-        const loadedItems = await response.json();
-        this.items = loadedItems;
         this.currentItems = [];
 
         console.log(this.name + " NodeJS: %o", this.items);
         return this.items;
+    }
+
+    /** Funkcja pomocnicza do ponawiania żądań */
+    async fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    // Serwer zwrócił odpowiedź, ale z błędem
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                if (i < retries - 1) {
+                    await new Promise((res) => setTimeout(res, delay));
+                    continue;
+                } else {
+                    // Obsługa różnych typów błędów
+                    console.error(error);
+                    if (error instanceof TypeError) {
+                        throw new Error(
+                            `Próbowałem ${retries} razy. Brak połączenia z serwerem, sprawdź połączenie internetowe`
+                        );
+                    } else if (error instanceof Error) {
+                        throw new Error(`Mimo ${retries} prób serwer zwrócił błąd: ${error.message}`);
+                    } else {
+                        throw new Error("Nieznany błąd po stronie klienta");
+                    }
+                }
+            }
+        }
     }
 
     /** Funkcja pomocnicza do dodawania nowych elementów */
@@ -127,9 +156,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         }
         let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
-        const resultRawResponse = await fetch(urlPath, requestOptions);
 
-        const newItemFromServer: DataItemType = await resultRawResponse.json();
+        const newItemFromServer: DataItemType = await this.fetchWithRetry(urlPath, requestOptions);
 
         if ("errorMessage" in newItemFromServer) {
             console.error("Error from server: %o", newItemFromServer.errorMessage);
@@ -139,8 +167,6 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         if ("authorizeUrl" in newItemFromServer) window.open(newItemFromServer.authorizeUrl as string);
 
         const noBlobNewItem = { ...newItemFromServer };
-        //delete noBlobNewItem._blobEnviObjects;
-
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
         console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
@@ -184,24 +210,23 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         const itemId = item instanceof FormData ? item.get("id") : item.id;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
 
-        const resultRawResponse = await fetch(urlPath, requestOptions);
+        try {
+            const resultObject = (await this.fetchWithRetry(urlPath, requestOptions)) as DataItemType;
 
-        if (resultRawResponse.status >= 400) {
-            const errorResponse: ErrorServerResponse = await resultRawResponse.json();
-            console.error("Error from server: %o", errorResponse.errorMessage);
-            throw new Error(`Błąd serwera: ${errorResponse.errorMessage}`);
-        }
-        const resultObject = (await resultRawResponse.json()) as DataItemType;
-        if ("authorizeUrl" in resultObject) {
-            window.open(resultObject.authorizeUrl as string);
-            console.log("konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
-            return item as DataItemType;
-        }
+            if ("authorizeUrl" in resultObject) {
+                window.open(resultObject.authorizeUrl as string);
+                console.log("Konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
+                return item as DataItemType;
+            }
 
-        this.replaceItemById(resultObject.id, resultObject);
-        this.replaceCurrentItemById(resultObject.id, resultObject);
-        console.log("obiekt po edycji z serwera: %o", resultObject);
-        return resultObject;
+            this.replaceItemById(resultObject.id, resultObject);
+            this.replaceCurrentItemById(resultObject.id, resultObject);
+            console.log("Obiekt po edycji z serwera: %o", resultObject);
+            return resultObject;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
