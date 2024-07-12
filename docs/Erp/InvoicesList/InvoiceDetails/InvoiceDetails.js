@@ -37,6 +37,7 @@ const InvoicesController_1 = require("../InvoicesController");
 const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
+const Tools_1 = __importDefault(require("../../../React/Tools"));
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -117,22 +118,28 @@ function InvoiceDetails() {
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
                             react_1.default.createElement("div", null, "Warto\u015B\u0107 Brutto:"),
-                            react_1.default.createElement("h5", null, invoice._totalGrossValue)),
+                            react_1.default.createElement("h5", null, invoice._totalGrossValue && Tools_1.default.formatNumber(invoice._totalGrossValue))),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, md: 2 },
-                            react_1.default.createElement("div", null, "Warto\u015B\u0107 Netto:"),
-                            react_1.default.createElement("h5", null, invoice._totalNetValue)),
+                            react_1.default.createElement("div", null, "Warto\u015B\u0107 netto:"),
+                            react_1.default.createElement("h5", null, invoice._totalNetValue && Tools_1.default.formatNumber(invoice._totalNetValue))),
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
                             react_1.default.createElement("div", null, "Odbiorca"),
                             react_1.default.createElement("h5", null, invoice._entity.name),
                             react_1.default.createElement("h5", null, invoice._entity.address))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
-                        react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && react_1.default.createElement("p", null,
-                            "Opis: ",
-                            invoice.description)))),
+                        react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "succes" },
+                            " ",
+                            react_1.default.createElement("p", null,
+                                "Opis: ",
+                                invoice.description),
+                            " "))))),
                 invoiceItems ? (react_1.default.createElement(FilterableTable_1.default, { id: "invoiceItems", title: "", initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
                         { header: "Opis", objectAttributeToShow: "description" },
-                        { header: "Netto", objectAttributeToShow: "_netValue" },
-                        { header: "Brutto", objectAttributeToShow: "_grossValue" },
+                        { header: "Netto", renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._netValue)) },
+                        {
+                            header: "Brutto",
+                            renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._grossValue)),
+                        },
                     ] })) : (react_1.default.createElement(react_1.default.Fragment, null,
                     "\"\u0141adowanie pozycji faktury...\" ",
                     react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),

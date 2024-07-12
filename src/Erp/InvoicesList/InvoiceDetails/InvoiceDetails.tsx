@@ -10,6 +10,7 @@ import { invoiceItemsRepository, invoicesRepository } from "../InvoicesControlle
 import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from "../Modals/InvoiceItemModalButtons";
 import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/InvoiceModalButtons";
 import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
+import Tools from "../../../React/Tools";
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
@@ -130,12 +131,12 @@ export default function InvoiceDetails() {
                         <Row>
                             <Col sm={4} md={2}>
                                 <div>Wartość Brutto:</div>
-                                <h5>{invoice._totalGrossValue}</h5>
+                                <h5>{invoice._totalGrossValue && Tools.formatNumber(invoice._totalGrossValue)}</h5>
                             </Col>
 
                             <Col sm={4} md={2}>
-                                <div>Wartość Netto:</div>
-                                <h5>{invoice._totalNetValue}</h5>
+                                <div>Wartość netto:</div>
+                                <h5>{invoice._totalNetValue && Tools.formatNumber(invoice._totalNetValue)}</h5>
                             </Col>
                             <Col sm={12} md={8}>
                                 <div>Odbiorca</div>
@@ -144,7 +145,14 @@ export default function InvoiceDetails() {
                             </Col>
                         </Row>
                         <Row>
-                            <Col>{invoice.description && <p>Opis: {invoice.description}</p>}</Col>
+                            <Col>
+                                {invoice.description && (
+                                    <Alert variant="succes">
+                                        {" "}
+                                        <p>Opis: {invoice.description}</p>{" "}
+                                    </Alert>
+                                )}
+                            </Col>
                         </Row>
                     </Container>
 
@@ -158,8 +166,11 @@ export default function InvoiceDetails() {
                             EditButtonComponent={InvoiceItemEditModalButton}
                             tableStructure={[
                                 { header: "Opis", objectAttributeToShow: "description" },
-                                { header: "Netto", objectAttributeToShow: "_netValue" },
-                                { header: "Brutto", objectAttributeToShow: "_grossValue" },
+                                { header: "Netto", renderTdBody: (item) => <>{Tools.formatNumber(item._netValue)}</> },
+                                {
+                                    header: "Brutto",
+                                    renderTdBody: (item) => <>{Tools.formatNumber(item._grossValue)}</>,
+                                },
                             ]}
                         />
                     ) : (
