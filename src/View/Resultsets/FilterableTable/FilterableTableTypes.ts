@@ -30,7 +30,6 @@ export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = Re
 export type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     repository: RepositoryReact;
-    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type FilterBodyProps = {};

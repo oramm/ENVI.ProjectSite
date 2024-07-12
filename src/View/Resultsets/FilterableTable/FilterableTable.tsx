@@ -155,18 +155,12 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                 </Row>
                 {FilterBodyComponent && (
                     <Row>
-                        <FilterPanel
-                            FilterBodyComponent={FilterBodyComponent}
-                            repository={repository}
-                            onIsReadyChange={(isReady) => {
-                                setIsReady(isReady);
-                            }}
-                        />
+                        <FilterPanel FilterBodyComponent={FilterBodyComponent} repository={repository} />
                     </Row>
                 )}
                 {!isReady && (
                     <Row>
-                        <progress style={{ height: "5px" }} />
+                        <progress className="mt-1 mb-1" style={{ height: "5px" }} />
                     </Row>
                 )}
                 <Row>
@@ -177,9 +171,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                                 resulsetTableProps={{
                                     showTableHeader: showTableHeader,
                                     onRowClick: handleRowClick,
-                                    onIsReadyChange: (isReady) => {
-                                        setIsReady(isReady);
-                                    },
                                 }}
                             />
                         ) : (
@@ -190,9 +181,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                                 <ResultSetTable<LeafDataItemType>
                                     showTableHeader={showTableHeader}
                                     onRowClick={handleRowClick}
-                                    onIsReadyChange={(isReady) => {
-                                        setIsReady(isReady);
-                                    }}
                                 />
                             </>
                         )}

@@ -30,14 +30,16 @@ const react_hook_form_1 = require("react-hook-form");
 const FormContext_1 = require("../../Modals/FormContext");
 const CommonComponentsController_1 = require("../CommonComponentsController");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
+function FilterPanel({ FilterBodyComponent, repository, }) {
+    const [error, setError] = (0, react_1.useState)(null);
+    const [isReady, setIsReady] = (0, react_1.useState)(true);
     const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: 'onChange' });
+    const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: "onChange" });
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const { watch, reset } = formMethods;
     const allValues = watch();
     (0, react_1.useEffect)(() => {
-        console.log('Zaktualizowany stan formularza:', allValues);
+        console.log("Zaktualizowany stan formularza:", allValues);
     }, [allValues]);
     //odtwórz stan z sessionStorage
     (0, react_1.useEffect)(() => {
@@ -50,37 +52,48 @@ function FilterPanel({ FilterBodyComponent, repository, onIsReadyChange, }) {
         }
     }, []);
     async function handleSubmitSearch(data) {
-        onIsReadyChange(false);
-        const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
-        const result = await repository.loadItemsFromServerPOST([data]);
-        setObjects(result);
-        saveSnapshotToStorage(result);
-        onIsReadyChange(true);
+        setIsReady(false);
+        setError(null); // Resetowanie stanu błędu przed nowym żądaniem
+        try {
+            const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
+            const result = (await repository.loadItemsFromServerPOST([data]));
+            setObjects(result);
+            saveSnapshotToStorage(result);
+        }
+        catch (err) {
+            if (err instanceof Error)
+                setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
+        }
+        finally {
+            setIsReady(true);
+        }
     }
-    ;
     function saveSnapshotToStorage(result) {
         const filterableTableSnapshot = {
             criteria: formMethods.getValues(),
             storedObjects: result,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
-        console.log('Saved snapshot: ', filterableTableSnapshot.storedObjects);
+        console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
     }
     const handleReset = () => {
         const allFields = formMethods.getValues();
         const resetValues = Object.keys(allFields).reduce((acc, curr) => {
-            acc[curr] = '';
+            acc[curr] = "";
             return acc;
         }, {});
-        console.log('Wartości po resecie:', resetValues);
+        console.log("Wartości po resecie:", resetValues);
         reset(resetValues);
     };
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
             react_1.default.createElement(FilterBodyComponent, null),
+            error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setError(null), dismissible: true }, error)),
             react_1.default.createElement(react_bootstrap_1.Row, { xl: 1, className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", className: "me-2" }, "Szukaj"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", className: "me-2" },
+                        "Szukaj ",
+                        !isReady && (react_1.default.createElement(react_bootstrap_1.Spinner, { className: "ml-1", as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" }))),
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: handleReset }, "Wyczy\u015B\u0107"))))));
 }
 exports.FilterPanel = FilterPanel;

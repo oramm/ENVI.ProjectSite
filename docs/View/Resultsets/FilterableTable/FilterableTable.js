@@ -123,23 +123,16 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
                     index < AddNewButtonComponents.length - 1 && " ")))))),
             FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository, onIsReadyChange: (isReady) => {
-                        setIsReady(isReady);
-                    } }))),
+                react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement("progress", { style: { height: "5px" } }))),
+                react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                         showTableHeader: showTableHeader,
                         onRowClick: handleRowClick,
-                        onIsReadyChange: (isReady) => {
-                            setIsReady(isReady);
-                        },
                     } })) : (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("p", { className: "tekst-muted small" }, objects && `Znaleziono: ${objects.length} pozycji`),
-                    react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick, onIsReadyChange: (isReady) => {
-                            setIsReady(isReady);
-                        } }))))))));
+                    react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick }))))))));
 }
 exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {

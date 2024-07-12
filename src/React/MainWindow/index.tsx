@@ -68,7 +68,7 @@ function App() {
     if (errorMessage)
         return (
             <Container>
-                <h1>Ups! mamy błąd</h1>
+                <h1>Błąd</h1>
                 <Alert variant="danger"> {errorMessage}</Alert>
             </Container>
         );

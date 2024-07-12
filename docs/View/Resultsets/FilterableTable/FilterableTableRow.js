@@ -29,9 +29,7 @@ const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../../Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-function FilterableTableRow({ dataObject, isActive, onIsReadyChange, onRowClick, }) {
-    if (!onIsReadyChange)
-        throw new Error("onIsReadyChange is not defined");
+function FilterableTableRow({ dataObject, isActive, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, } = (0, FilterableTableContext_1.useFilterableTableContext)();

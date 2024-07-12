@@ -4,7 +4,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { GeneralDeleteModalButton } from "../../Modals/GeneralModalButtons";
 import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton, SpinnerBootstrap } from "../CommonComponents";
+import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 
@@ -12,17 +12,14 @@ export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType;
     isActive: boolean;
     onDoubleClick?: (object: DataItemType) => void;
-    onIsReadyChange?: (isReady: boolean) => void;
     onRowClick: (id: number) => void;
 };
 
 export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
     dataObject,
     isActive,
-    onIsReadyChange,
     onRowClick,
 }: FilterTableRowProps<DataItemType>): JSX.Element {
-    if (!onIsReadyChange) throw new Error("onIsReadyChange is not defined");
     const navigate = useNavigate();
     const { selectedObjectRoute, tableStructure } = useFilterableTableContext<DataItemType>();
     const {

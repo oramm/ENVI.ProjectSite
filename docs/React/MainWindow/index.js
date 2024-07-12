@@ -93,7 +93,7 @@ function App() {
     };
     if (errorMessage)
         return (react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement("h1", null, "Ups! mamy b\u0142\u0105d"),
+            react_1.default.createElement("h1", null, "B\u0142\u0105d"),
             react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
                 " ",
                 errorMessage)));

@@ -8,14 +8,12 @@ import { FilterableTableRow } from "./FilterableTableRow";
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
     showTableHeader: boolean;
     onRowClick: (id: number) => void;
-    onIsReadyChange?: (isReady: boolean) => void;
     filteredObjects?: DataItemType[];
 };
 
 export function ResultSetTable<DataItemType extends RepositoryDataItem>({
     showTableHeader,
     onRowClick,
-    onIsReadyChange,
     filteredObjects,
 }: ResultSetTableProps<DataItemType>) {
     const { objects, activeRowId, tableStructure } = useFilterableTableContext<DataItemType>();
@@ -46,7 +44,6 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
                                 key={dataObject.id}
                                 dataObject={dataObject}
                                 isActive={isActive}
-                                onIsReadyChange={onIsReadyChange}
                                 onRowClick={onRowClick}
                             />
                         );
