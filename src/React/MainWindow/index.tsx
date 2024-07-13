@@ -48,7 +48,7 @@ function App() {
             } catch (error) {
                 if (error instanceof Error) {
                     console.error(error);
-                    setErrorMessage(`${error.name} ${error.message}`);
+                    setErrorMessage(`${error.message}`);
                 }
                 return;
             }
@@ -61,14 +61,14 @@ function App() {
             MainSetup.currentUser = response.userData;
             setIsLoggedIn(true);
         } else {
-            console.log("Authentication failed:", response.error);
+            console.error("Authentication failed:", response.error);
+            setErrorMessage(response.error);
         }
     };
 
     if (errorMessage)
         return (
-            <Container>
-                <h1>Błąd</h1>
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
                 <Alert variant="danger"> {errorMessage}</Alert>
             </Container>
         );

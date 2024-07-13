@@ -74,7 +74,7 @@ function App() {
             catch (error) {
                 if (error instanceof Error) {
                     console.error(error);
-                    setErrorMessage(`${error.name} ${error.message}`);
+                    setErrorMessage(`${error.message}`);
                 }
                 return;
             }
@@ -88,12 +88,12 @@ function App() {
             setIsLoggedIn(true);
         }
         else {
-            console.log("Authentication failed:", response.error);
+            console.error("Authentication failed:", response.error);
+            setErrorMessage(response.error);
         }
     };
     if (errorMessage)
-        return (react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement("h1", null, "B\u0142\u0105d"),
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
             react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
                 " ",
                 errorMessage)));
