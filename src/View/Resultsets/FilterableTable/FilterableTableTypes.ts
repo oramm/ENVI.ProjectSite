@@ -3,6 +3,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { SectionNode } from "./Section";
+import * as yup from "yup";
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     id: string;
@@ -30,6 +31,7 @@ export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = Re
 export type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
     repository: RepositoryReact;
+    validationSchema?: yup.ObjectSchema<any> | undefined;
 };
 
 export type FilterBodyProps = {};

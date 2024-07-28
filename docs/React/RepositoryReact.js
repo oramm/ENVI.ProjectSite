@@ -19,6 +19,8 @@ class RepositoryReact {
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element
      */
     addToCurrentItems(id) {
+        console.log("Current items before adding:", this.items);
+        console.log("Trying to add item with ID:", id);
         const itemSelected = this.items.find((item) => item.id === id);
         if (!itemSelected)
             throw new Error("Nie znaleziono elementu o id: " + id);
@@ -26,6 +28,7 @@ class RepositoryReact {
             this.currentItems.push(itemSelected);
         else
             this.currentItems[0] = itemSelected;
+        console.log("Current items after adding:", this.currentItems);
     }
     deleteFromCurrentItemsById(id) {
         const index = this.currentItems.findIndex((item) => item.id === id);
@@ -37,7 +40,7 @@ class RepositoryReact {
     }
     replaceItemById(id, editedItem) {
         const index = this.items.findIndex((item) => item.id === id);
-        this.currentItems.splice(index, 1, editedItem);
+        this.items.splice(index, 1, editedItem);
     }
     saveToSessionStorage() {
         sessionStorage.setItem(this.name, JSON.stringify(this));
@@ -93,6 +96,7 @@ class RepositoryReact {
             credentials: "include",
         });
         this.currentItems = [];
+        this.saveToSessionStorage();
         console.log(this.name + " NodeJS: %o", this.items);
         return this.items;
     }
@@ -161,6 +165,7 @@ class RepositoryReact {
         const noBlobNewItem = { ...newItemFromServer };
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
+        this.saveToSessionStorage();
         console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
         return newItemFromServer;
     }
@@ -208,6 +213,7 @@ class RepositoryReact {
             }
             this.replaceItemById(resultObject.id, resultObject);
             this.replaceCurrentItemById(resultObject.id, resultObject);
+            this.saveToSessionStorage();
             console.log("Obiekt po edycji z serwera: %o", resultObject);
             return resultObject;
         }
@@ -241,6 +247,7 @@ class RepositoryReact {
             }
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
+            this.saveToSessionStorage();
             console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
             return oldItem;
         }

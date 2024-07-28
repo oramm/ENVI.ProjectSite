@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { ErrorServerResponse, RepositoryDataItem } from "../../Typings/bussinesTypes";
 import MainSetup from "./MainSetupReact";
 import ToolsDate from "./ToolsDate";
@@ -40,7 +39,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
     replaceItemById(id: number, editedItem: DataItemType) {
         const index = this.items.findIndex((item) => item.id === id);
-        this.currentItems.splice(index, 1, editedItem);
+        this.items.splice(index, 1, editedItem);
     }
 
     saveToSessionStorage() {
@@ -97,7 +96,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             credentials: "include",
         });
         this.currentItems = [];
-
+        this.saveToSessionStorage();
         console.log(this.name + " NodeJS: %o", this.items);
         return this.items;
     }
@@ -169,6 +168,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         const noBlobNewItem = { ...newItemFromServer };
         this.items.push(noBlobNewItem);
         this.currentItems = [newItemFromServer];
+        this.saveToSessionStorage();
         console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
         return newItemFromServer as DataItemType;
     }
@@ -221,6 +221,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
             this.replaceItemById(resultObject.id, resultObject);
             this.replaceCurrentItemById(resultObject.id, resultObject);
+            this.saveToSessionStorage();
             console.log("Obiekt po edycji z serwera: %o", resultObject);
             return resultObject;
         } catch (error) {
@@ -257,6 +258,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
+            this.saveToSessionStorage();
             console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
 
             return oldItem;

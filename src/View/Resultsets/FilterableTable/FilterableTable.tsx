@@ -35,6 +35,8 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     externalUpdate = 0,
     shouldRetrieveDataBeforeEdit = false,
 }: FilterableTableProps<LeafDataItemType>) {
+    const snapshotName = `filtersableTableSnapshot_${id}`;
+
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
@@ -53,7 +55,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function getObjectsFromStorage() {
-        const snapshotName = `filtersableTableSnapshot_${id}`;
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot) return;
 
@@ -61,28 +62,41 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         return storedObjects;
     }
 
+    function updateSnapshot() {
+        const currentSnapshot = sessionStorage.getItem(snapshotName);
+        if (!currentSnapshot) return;
+
+        const updatedFilterableTableSnapshot: FilterableTableSnapShot<LeafDataItemType> = {
+            criteria: JSON.parse(currentSnapshot) as FilterableTableSnapShot<LeafDataItemType>,
+            storedObjects: repository.items,
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+    }
+
     useEffect(() => {
         if (initialObjects) {
             setObjects(initialObjects);
-            //console.log("Aktualizacja obiektów:", initialObjects);
         }
         if (initialSections.length > 0) {
             setSections(initialSections);
-            //console.log("Aktualizacja sekcji:", initialSections);
         }
     }, [externalUpdate]);
 
     function handleAddObject(object: LeafDataItemType) {
         setObjects([...objects, object]);
+        updateSnapshot();
     }
 
     function handleEditObject(object: LeafDataItemType) {
-        if (!sections.length) setObjects(objects.map((o) => (o.id === object.id ? object : o)));
-        else setSections(editNode(sections, activeSectionId, object));
+        if (!sections.length) {
+            setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+            updateSnapshot();
+        } else setSections(editNode(sections, activeSectionId, object));
     }
 
     function handleDeleteObject(objectId: number) {
         setObjects(objects.filter((o) => o.id !== objectId));
+        updateSnapshot();
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
@@ -107,15 +121,14 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         console.log("handleHeaderClick", repository.currentItems);
     }
 
-    function handleRowClick(id: number) {
+    const handleRowClick = (id: number) => {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
-        console.log("handleRowClick", repository.currentItems);
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }
-    }
-    console.log("Render FilterableTable: initialSections", initialSections);
+    };
+
     return (
         <FilterableTableProvider<LeafDataItemType>
             id={id}

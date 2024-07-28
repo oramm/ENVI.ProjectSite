@@ -30,11 +30,16 @@ const react_hook_form_1 = require("react-hook-form");
 const FormContext_1 = require("../../Modals/FormContext");
 const CommonComponentsController_1 = require("../CommonComponentsController");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-function FilterPanel({ FilterBodyComponent, repository, }) {
+const yup_1 = require("@hookform/resolvers/yup");
+function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
     const [error, setError] = (0, react_1.useState)(null);
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const formMethods = (0, react_hook_form_1.useForm)({ defaultValues: {}, mode: "onChange" });
+    const formMethods = (0, react_hook_form_1.useForm)({
+        resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined,
+        defaultValues: {},
+        mode: "onChange",
+    });
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const { watch, reset } = formMethods;
     const allValues = watch();

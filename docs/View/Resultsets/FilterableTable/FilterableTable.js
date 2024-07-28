@@ -42,6 +42,7 @@ const Section_1 = require("./Section");
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
 function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, }) {
+    const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
@@ -59,34 +60,45 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         return [];
     }
     function getObjectsFromStorage() {
-        const snapshotName = `filtersableTableSnapshot_${id}`;
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot)
             return;
         const { storedObjects } = JSON.parse(storedSnapshot);
         return storedObjects;
     }
+    function updateSnapshot() {
+        const currentSnapshot = sessionStorage.getItem(snapshotName);
+        if (!currentSnapshot)
+            return;
+        const updatedFilterableTableSnapshot = {
+            criteria: JSON.parse(currentSnapshot),
+            storedObjects: repository.items,
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+    }
     (0, react_1.useEffect)(() => {
         if (initialObjects) {
             setObjects(initialObjects);
-            //console.log("Aktualizacja obiektów:", initialObjects);
         }
         if (initialSections.length > 0) {
             setSections(initialSections);
-            //console.log("Aktualizacja sekcji:", initialSections);
         }
     }, [externalUpdate]);
     function handleAddObject(object) {
         setObjects([...objects, object]);
+        updateSnapshot();
     }
     function handleEditObject(object) {
-        if (!sections.length)
+        if (!sections.length) {
             setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+            updateSnapshot();
+        }
         else
             setSections(editNode(sections, activeSectionId, object));
     }
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));
+        updateSnapshot();
     }
     function handleAddSection(sectionDataObject) {
         setSections(addNode(sections, activeSectionId, sectionDataObject));
@@ -106,15 +118,13 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         repository.addToCurrentItems(sectionNode.dataItem.id);
         console.log("handleHeaderClick", repository.currentItems);
     }
-    function handleRowClick(id) {
+    const handleRowClick = (id) => {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
-        console.log("handleRowClick", repository.currentItems);
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }
-    }
-    console.log("Render FilterableTable: initialSections", initialSections);
+    };
     return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
