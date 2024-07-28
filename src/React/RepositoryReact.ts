@@ -102,7 +102,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 1000) {
+    async fetchWithRetry(url: string, options: RequestInit, retries = 1, delay = 1000) {
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await fetch(url, options);

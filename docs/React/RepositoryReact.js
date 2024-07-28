@@ -19,8 +19,6 @@ class RepositoryReact {
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element
      */
     addToCurrentItems(id) {
-        console.log("Current items before adding:", this.items);
-        console.log("Trying to add item with ID:", id);
         const itemSelected = this.items.find((item) => item.id === id);
         if (!itemSelected)
             throw new Error("Nie znaleziono elementu o id: " + id);
@@ -28,7 +26,6 @@ class RepositoryReact {
             this.currentItems.push(itemSelected);
         else
             this.currentItems[0] = itemSelected;
-        console.log("Current items after adding:", this.currentItems);
     }
     deleteFromCurrentItemsById(id) {
         const index = this.currentItems.findIndex((item) => item.id === id);
@@ -101,7 +98,7 @@ class RepositoryReact {
         return this.items;
     }
     /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url, options, retries = 3, delay = 1000) {
+    async fetchWithRetry(url, options, retries = 1, delay = 1000) {
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await fetch(url, options);
