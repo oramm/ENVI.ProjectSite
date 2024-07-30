@@ -8,6 +8,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     currentItems: DataItemType[] = [];
     name: string;
     isMultiSelect: boolean = false;
+    pendingRequests: Map<string, Promise<any>> = new Map();
 
     constructor(initParameter: { name: string; actionRoutes: ActionRoutes }) {
         //console.log('tworzę repozytorium: %o', initParameter);
@@ -85,8 +86,13 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     async loadItemsFromServerPOST(orConditions: any[] = [], specialActionRoute?: string) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
+        const requestKey = JSON.stringify({ url: url.toString(), body: orConditions });
 
-        this.items = await this.fetchWithRetry(url.toString(), {
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+
+        const fetchPromise = this.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -94,7 +100,12 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             },
             body: JSON.stringify({ orConditions }),
             credentials: "include",
+        }).finally(() => {
+            this.pendingRequests.delete(requestKey);
         });
+        this.pendingRequests.set(requestKey, fetchPromise);
+
+        this.items = (await fetchPromise) as DataItemType[];
         this.currentItems = [];
         this.saveToSessionStorage();
         console.log(this.name + " NodeJS: %o", this.items);
@@ -102,22 +113,21 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url: string, options: RequestInit, retries = 1, delay = 1000) {
+    async fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 1000) {
+        const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await fetch(url, options);
                 if (!response.ok) {
-                    // Serwer zwrócił odpowiedź, ale z błędem
                     const errorText = await response.text();
                     throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
                 }
                 return await response.json();
             } catch (error) {
                 if (i < retries - 1) {
-                    await new Promise((res) => setTimeout(res, delay));
-                    continue;
+                    await sleep(delay);
                 } else {
-                    // Obsługa różnych typów błędów
                     console.error(error);
                     if (error instanceof TypeError) {
                         throw new Error(
@@ -135,6 +145,15 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
     /** Funkcja pomocnicza do dodawania nowych elementów */
     async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
+        const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
+
+        const requestKey = JSON.stringify({ url: urlPath, body: newItem });
+
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+
         const requestOptions: RequestInit = {
             method: "POST",
             credentials: "include",
@@ -153,10 +172,13 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsDate.convertDatesToUTC(newItem);
             requestOptions.body = JSON.stringify(newItem);
         }
-        let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
 
-        const newItemFromServer: DataItemType = await this.fetchWithRetry(urlPath, requestOptions);
+        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+            this.pendingRequests.delete(requestKey);
+        });
+
+        this.pendingRequests.set(requestKey, fetchPromise);
+        const newItemFromServer: DataItemType = await fetchPromise;
 
         if ("errorMessage" in newItemFromServer) {
             console.error("Error from server: %o", newItemFromServer.errorMessage);
@@ -190,6 +212,14 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
      */
     async editItem(item: DataItemType | FormData, specialActionRoute?: string, fieldsToUpdate?: string[]) {
+        const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
+        const itemId = item instanceof FormData ? item.get("id") : item.id;
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
+        const requestKey = JSON.stringify({ url: urlPath, body: item });
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+
         const requestOptions: RequestInit = {
             method: "PUT",
             credentials: "include",
@@ -206,13 +236,13 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsDate.convertDatesToUTC(item);
             requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
         }
-        const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
-        const itemId = item instanceof FormData ? item.get("id") : item.id;
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
 
         try {
-            const resultObject = (await this.fetchWithRetry(urlPath, requestOptions)) as DataItemType;
-
+            const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const resultObject = await fetchPromise;
             if ("authorizeUrl" in resultObject) {
                 window.open(resultObject.authorizeUrl as string);
                 console.log("Konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
@@ -237,35 +267,48 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     async deleteItemNodeJS(id: number) {
         const oldItem = this.items.find((item) => item.id == id);
         if (!oldItem) throw new Error("Nie znaleziono obiektu do usunięcia");
+
+        let response;
         try {
-            const response = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + "/" + oldItem.id, {
+            response = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + "/" + oldItem.id, {
                 method: "DELETE",
                 headers: this.makeRequestHeaders(),
                 credentials: "include",
                 body: JSON.stringify(oldItem),
             });
+        } catch (networkError) {
+            console.error("Network error: ", networkError);
+            throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
+        }
 
-            const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            console.error("Failed to parse response: ", parseError);
+            throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
+        }
 
-            if (result.errorMessage) {
-                console.error("Error from server: %s", result.errorMessage);
-                throw new Error(`Błąd serwera: ${result.errorMessage}`);
-            }
+        if (result.errorMessage) {
+            console.error("Error from server: %s", result.errorMessage);
+            throw new Error(`Błąd serwera: ${result.errorMessage}`);
+        }
 
-            if (result.authorizeUrl) {
-                window.open(result.authorizeUrl);
-            }
+        if (result.authorizeUrl) {
+            window.open(result.authorizeUrl);
+        }
 
+        try {
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
             this.saveToSessionStorage();
             console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
-
-            return oldItem;
-        } catch (err) {
-            this.items.push(oldItem);
-            this.deleteFromCurrentItemsById(oldItem.id);
+        } catch (localUpdateError) {
+            console.error("Failed to update local state: ", localUpdateError);
+            throw new Error("Błąd podczas aktualizacji lokalnego stanu.");
         }
+
+        return oldItem;
     }
 
     clearData() {

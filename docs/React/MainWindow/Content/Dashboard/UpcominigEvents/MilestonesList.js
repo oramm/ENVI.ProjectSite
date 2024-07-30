@@ -44,7 +44,7 @@ function MilestonesList() {
         async function fetchData() {
             setDataLoaded(false);
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
-            const [milestones] = await Promise.all([
+            const milestones = (await Promise.all([
                 MainWindowController_1.milestonesRepository.loadItemsFromServerPOST([
                     {
                         status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
@@ -53,7 +53,7 @@ function MilestonesList() {
                         _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
-            ]);
+            ]));
             setMilestones(milestones);
             setOurMilestones(milestones.filter((m) => m._contract?._type.isOur));
             setOtherMilestones(milestones.filter((m) => !m._contract?._type.isOur));

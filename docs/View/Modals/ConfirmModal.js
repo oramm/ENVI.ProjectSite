@@ -29,21 +29,22 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
 function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
     const [isWaiting, setIsWaiting] = (0, react_1.useState)(false);
     const [isError, setIsError] = (0, react_1.useState)(false);
-    const [errorMessage, setErrorMessage] = (0, react_1.useState)('');
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     async function handleConfirmAndClose() {
         setIsWaiting(true);
         try {
+            setIsError(false);
             await onConfirm();
+            onClose();
         }
         catch (e) {
+            setIsError(true);
             if (e instanceof Error) {
-                setIsError(true);
                 setErrorMessage(e.message);
             }
             console.log(e);
         }
         setIsWaiting(false);
-        onClose();
     }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
@@ -54,6 +55,6 @@ function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleConfirmAndClose },
                 "Ok",
                 isWaiting && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "grow", size: "sm", role: "status", "aria-hidden": "true" })),
-            isError && (react_1.default.createElement(CommonComponents_1.AlertComponent, { message: errorMessage, type: 'danger', timeout: 5000 })))));
+            isError && react_1.default.createElement(CommonComponents_1.AlertComponent, { message: errorMessage, type: "danger" }))));
 }
 exports.default = ConfirmModal;

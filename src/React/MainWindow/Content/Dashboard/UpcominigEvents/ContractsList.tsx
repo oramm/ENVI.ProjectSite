@@ -33,7 +33,7 @@ export default function ContractsList() {
         async function fetchData() {
             setDataLoaded(false);
             const endDateTo = ToolsDate.addDays(new Date(), 30);
-            const [contracts] = await Promise.all([
+            const contracts = (await Promise.all([
                 contractsRepository.loadItemsFromServerPOST([
                     {
                         status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
@@ -42,7 +42,7 @@ export default function ContractsList() {
                         _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
-            ]);
+            ])) as (OurContract | OtherContract)[];
             setContracts(contracts);
             setOurContracts(contracts.filter((c) => c._type.isOur) as OurContract[]);
             setOtherContracts(contracts.filter((c) => !c._type.isOur) as OtherContract[]);

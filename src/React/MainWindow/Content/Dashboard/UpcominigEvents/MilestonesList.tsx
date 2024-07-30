@@ -24,7 +24,7 @@ export default function MilestonesList() {
         async function fetchData() {
             setDataLoaded(false);
             const endDateTo = ToolsDate.addDays(new Date(), 30);
-            const [milestones] = await Promise.all([
+            const milestones = (await Promise.all([
                 milestonesRepository.loadItemsFromServerPOST([
                     {
                         status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
@@ -33,7 +33,7 @@ export default function MilestonesList() {
                         _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
-            ]);
+            ])) as Milestone[];
             setMilestones(milestones);
             setOurMilestones(milestones.filter((m) => m._contract?._type.isOur));
             setOtherMilestones(milestones.filter((m) => !m._contract?._type.isOur));
