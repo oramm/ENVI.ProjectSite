@@ -154,6 +154,19 @@ export default class MainSetup {
         CREATION_DATE_TO: ToolsDate.addDays(new Date(), +5).toISOString().slice(0, 10),
     };
 
+    static ContractsFilterInitState = {
+        START_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
+        START_DATE_TO: ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10),
+        END_DATE_FROM: ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10),
+    };
+
+    static SecuritiesFilterInitState = {
+        START_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
+        START_DATE_TO: ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10),
+        FIRST_PART_EXPIRY_DATE_FROM: ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10),
+        SECOND_PART_EXPIRY_DATE_FROM: ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10),
+    };
+
     static OffersFilterInitState = {
         SUBMISSION_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
         SUBMISSION_TO: ToolsDate.addDays(new Date(), +14).toISOString().slice(0, 10),

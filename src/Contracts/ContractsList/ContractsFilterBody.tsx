@@ -9,6 +9,8 @@ import { useFormContext } from "../../View/Modals/FormContext";
 import ToolsDate from "../../React/ToolsDate";
 import { contractRangesRepository, projectsRepository } from "./ContractsController";
 import { ContractStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
+import MainSetup from "../../React/MainSetupReact";
 
 export function ContractsFilterBody() {
     const { register } = useFormContext();
@@ -26,34 +28,30 @@ export function ContractsFilterBody() {
                 <ContractTypeSelectFormElement name="_contractType" showValidationInfo={false} />
             </Form.Group>
 
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Początek od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)}
-                    {...register("startDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Początek do</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)}
-                    {...register("startDateTo")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Koniec od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10)}
-                    {...register("endDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Koniec do</Form.Label>
-                <Form.Control type="date" defaultValue={undefined} {...register("endDateTo")} />
-            </Form.Group>
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="Rozpoczęcie"
+                fromName="startDateFrom"
+                toName="startDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.ContractsFilterInitState.START_DATE_FROM}
+                defaultToValue={MainSetup.ContractsFilterInitState.START_DATE_TO}
+            />
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="Zakończenie"
+                fromName="endDateFrom"
+                toName="endDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.ContractsFilterInitState.END_DATE_FROM}
+            />
+
             <Form.Group as={Col} xl={2}>
                 <ContractStatusSelectFormElement name="status" showValidationInfo={false} />
             </Form.Group>

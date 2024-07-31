@@ -8,13 +8,14 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
 import { casesRepository, contractsRepository, projectsRepository } from "./LettersController";
+import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function LettersFilterBody() {
     const { register, watch, setValue } = useFormContext();
     const _project = watch("_project");
     const _contract = watch("_contract");
     const _case = watch("_case");
-
+    const allValues = watch();
     useEffect(() => {
         setValue("_contract", undefined);
         setValue("_case", undefined);
@@ -24,6 +25,9 @@ export function LettersFilterBody() {
         setValue("_case", undefined);
     }, [_contract]);
 
+    useEffect(() => {
+        console.log("Form updated state:", allValues);
+    }, [allValues]);
     return (
         <>
             <Row xl={12} md={6} xs={12}>
@@ -31,23 +35,19 @@ export function LettersFilterBody() {
                     <Form.Label>Szukana fraza</Form.Label>
                     <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
                 </Form.Group>
-                <Form.Group as={Col} md={2}>
-                    <Form.Label>Utworzono od</Form.Label>
-                    <Form.Control
-                        type="date"
-                        defaultValue={MainSetup.LettersFilterInitState.CREATION_DATE_FROM}
-                        {...register("creationDateFrom")}
-                    />
-                </Form.Group>
-                <Form.Group as={Col} md={2}>
-                    <Form.Label>Utworzono do</Form.Label>
-                    <Form.Control
-                        type="date"
-                        defaultValue={MainSetup.LettersFilterInitState.CREATION_DATE_TO}
-                        {...register("creationDateTo")}
-                    />
-                </Form.Group>
-                <Form.Group as={Col} md={6}>
+                <DateRangeInput
+                    as={Col}
+                    sm={12}
+                    md={6}
+                    lg={4}
+                    label="Data utworzenia"
+                    fromName="creationDateFrom"
+                    toName="creationDateTo"
+                    showValidationInfo={false}
+                    defaultFromValue={MainSetup.LettersFilterInitState.CREATION_DATE_FROM}
+                    defaultToValue={MainSetup.LettersFilterInitState.CREATION_DATE_TO}
+                />
+                <Form.Group as={Col} xs={12} sm={6} md={4} lg={3} xl={2}>
                     <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
                 </Form.Group>
             </Row>

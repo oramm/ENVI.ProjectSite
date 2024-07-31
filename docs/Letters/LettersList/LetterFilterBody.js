@@ -33,11 +33,13 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const LettersController_1 = require("./LettersController");
+const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
 function LettersFilterBody() {
     const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
     const _contract = watch("_contract");
     const _case = watch("_case");
+    const allValues = watch();
     (0, react_1.useEffect)(() => {
         setValue("_contract", undefined);
         setValue("_case", undefined);
@@ -45,18 +47,16 @@ function LettersFilterBody() {
     (0, react_1.useEffect)(() => {
         setValue("_case", undefined);
     }, [_contract]);
+    (0, react_1.useEffect)(() => {
+        console.log("Form updated state:", allValues);
+    }, [allValues]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 6, xs: 12 },
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono od"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_FROM, ...register("creationDateFrom") })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Utworzono do"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO, ...register("creationDateTo") })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6 },
+            react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Data utworzenia", fromName: "creationDateFrom", toName: "creationDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_FROM, defaultToValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO }),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4, lg: 3, xl: 2 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },

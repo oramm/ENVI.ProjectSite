@@ -6,24 +6,26 @@ import { FormProvider } from "../../Modals/FormContext";
 import { parseFieldValuesToParams } from "../CommonComponentsController";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { FilterableTableSnapShot, FilterPanelProps } from "./FilterableTableTypes";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 export function FilterPanel<DataItemType extends RepositoryDataItem>({
     FilterBodyComponent,
     repository,
+    validationSchema = undefined,
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
     const [isReady, setIsReady] = useState(true);
     const { setObjects, objects, id } = useFilterableTableContext<DataItemType>();
 
-    const formMethods = useForm({ defaultValues: {}, mode: "onChange" });
+    const formMethods = useForm({
+        resolver: validationSchema ? yupResolver(validationSchema) : undefined,
+        defaultValues: {},
+        mode: "onChange",
+    });
+
     const snapshotName = `filtersableTableSnapshot_${id}`;
 
-    const { watch, reset } = formMethods;
-    const allValues = watch();
-
-    useEffect(() => {
-        console.log("Zaktualizowany stan formularza:", allValues);
-    }, [allValues]);
+    const { reset } = formMethods;
 
     //odtwórz stan z sessionStorage
     useEffect(() => {
@@ -40,7 +42,6 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
-            const formData = parseFieldValuesToParams(data);
             const result = (await repository.loadItemsFromServerPOST([data])) as DataItemType[];
             setObjects(result);
             saveSnapshotToStorage(result);

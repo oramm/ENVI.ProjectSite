@@ -1,17 +1,19 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
+import React, { forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ButtonGroup, Col, Form, InputGroup, ToggleButton } from "react-bootstrap";
 import { AsyncTypeahead, Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "../../../Css/styles.css";
 
 import RepositoryReact from "../../../React/RepositoryReact";
 import { useFormContext } from "../FormContext";
-import { Controller, ControllerRenderProps, FieldErrors } from "react-hook-form";
+import { Controller, ControllerRenderProps, FieldErrors, useForm } from "react-hook-form";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
 import * as Yup from "yup";
 import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/types";
 import { RenderMenuItemChildren } from "react-bootstrap-typeahead/types/components/TypeaheadMenu";
 import { hasError } from "../../Resultsets/CommonComponentsController";
+import { ColProps } from "react-bootstrap";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 export type ErrorMessageProps = { errors: FieldErrors<any>; name: string };
 export function ErrorMessage1({ errors, name }: ErrorMessageProps) {
@@ -277,6 +279,84 @@ export const valueValidation = Yup.string()
         const parsedValue = parseFloat(value.replace(/[^0-9.]/g, "").replace(",", "."));
         return parsedValue < 9999999999;
     });
+
+type DateRangeInputProps = ColProps & {
+    showValidationInfo?: boolean;
+    fromName: string;
+    toName: string;
+    defaultFromValue?: string;
+    defaultToValue?: string;
+    label: string;
+};
+
+export const DateRangeInput = forwardRef<HTMLDivElement, DateRangeInputProps>(
+    ({ showValidationInfo = true, fromName, toName, label, defaultFromValue, defaultToValue, ...colProps }, ref) => {
+        const {
+            control,
+            setValue,
+            watch,
+            formState: { errors },
+        } = useFormContext();
+
+        const watchedFromValue = watch(fromName, defaultFromValue ?? "");
+        const watchedToValue = watch(toName, defaultToValue ?? "");
+
+        useEffect(() => {
+            setValue(fromName, watchedFromValue ?? "", { shouldValidate: true });
+            setValue(toName, watchedToValue ?? "", { shouldValidate: true });
+        }, [watchedFromValue, watchedToValue, setValue]);
+
+        const getClassName = (name: string) => {
+            const classNames = ["form-control"];
+            if (showValidationInfo) {
+                classNames.push(hasError(errors, name) ? "is-invalid" : "is-valid");
+            }
+            return classNames.join(" ");
+        };
+
+        const hasError = (errors: any, name: string) => {
+            return errors && errors[name];
+        };
+
+        return (
+            <Form.Group as={Col} ref={ref} {...colProps}>
+                <Form.Label>{label}</Form.Label>
+                <InputGroup>
+                    <InputGroup.Text id="date-from-label">Od</InputGroup.Text>
+                    <Controller
+                        control={control}
+                        name={fromName}
+                        render={({ field }) => (
+                            <Form.Control
+                                {...field}
+                                type="date"
+                                value={watchedFromValue}
+                                onChange={(e) => setValue(fromName, e.target.value, { shouldValidate: true })}
+                                className={getClassName(fromName)}
+                            />
+                        )}
+                    />
+                    <InputGroup.Text id="date-to-label">Do</InputGroup.Text>
+                    <Controller
+                        control={control}
+                        name={toName}
+                        render={({ field }) => (
+                            <Form.Control
+                                {...field}
+                                type="date"
+                                value={watchedToValue}
+                                onChange={(e) => setValue(toName, e.target.value, { shouldValidate: true })}
+                                className={getClassName(toName)}
+                            />
+                        )}
+                    />
+                </InputGroup>
+                <ErrorMessage name={fromName} errors={errors} />
+                <ErrorMessage name={toName} errors={errors} />
+            </Form.Group>
+        );
+    }
+);
 
 type FileInputProps = {
     name: string;

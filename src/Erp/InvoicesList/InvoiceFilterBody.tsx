@@ -5,33 +5,29 @@ import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
 import { contractsRepository } from "./InvoicesController";
 import { InvoiceStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoicesFilterBody() {
     const { register } = useFormContext();
 
     return (
-        <Row xl={5} md={3} xs={1}>
-            <Form.Group as={Col}>
+        <Row>
+            <Form.Group as={Col} sm={12} md={5}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
             </Form.Group>
-            <Form.Group as={Col}>
-                <Form.Label>Sprzedaż od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM}
-                    {...register("issueDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col}>
-                <Form.Label>Sprzedaż do</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO}
-                    {...register("issueDateTo")}
-                />
-            </Form.Group>
-            <Form.Group as={Col}>
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={7}
+                label="Data utworzenia"
+                fromName="issueDateFrom"
+                toName="issueDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_FROM}
+                defaultToValue={MainSetup.InvoicesFilterInitState.ISSUE_DATE_TO}
+            />
+            <Form.Group as={Col} sm={12} md={8}>
                 <Form.Label>Kontrakt</Form.Label>
                 <ContractSelectFormElement
                     repository={contractsRepository}
@@ -40,7 +36,7 @@ export function InvoicesFilterBody() {
                     showValidationInfo={false}
                 />
             </Form.Group>
-            <Form.Group as={Col}>
+            <Form.Group as={Col} sm={12} md={4}>
                 <InvoiceStatusSelectFormElement showValidationInfo={false} />
             </Form.Group>
         </Row>

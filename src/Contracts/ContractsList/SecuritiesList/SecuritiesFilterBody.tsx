@@ -8,12 +8,14 @@ import {
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { projectsRepository } from "../ContractsController";
 import { SecurityStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { DateRangeInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import MainSetup from "../../../React/MainSetupReact";
 
 export function SecuritiesFilterBody() {
     const { register } = useFormContext();
 
     return (
-        <Row xl={12} md={3} xs={1}>
+        <Row>
             <Form.Group as={Col} xl={2}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
@@ -24,47 +26,41 @@ export function SecuritiesFilterBody() {
             <Form.Group as={Col} xl={5}>
                 <ContractTypeSelectFormElement name="_contractType" showValidationInfo={false} />
             </Form.Group>
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="Rozpoczęcie"
+                fromName="startDateFrom"
+                toName="startDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.SecuritiesFilterInitState.START_DATE_FROM}
+                defaultToValue={MainSetup.SecuritiesFilterInitState.START_DATE_TO}
+            />
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="70% wygasa"
+                fromName="firstPartExpiryDateFrom"
+                toName="firstPartExpiryDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.SecuritiesFilterInitState.FIRST_PART_EXPIRY_DATE_FROM}
+            />
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="30% wygasa"
+                fromName="secondPartExpiryDateFrom"
+                toName="secondPartExpiryDateTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM}
+            />
 
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Początek od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10)}
-                    {...register("startDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>Początek do</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10)}
-                    {...register("startDateTo")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>70% wygasa od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10)}
-                    {...register("firstPartExpiryDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>70% wygasa do</Form.Label>
-                <Form.Control type="date" defaultValue={undefined} {...register("firstPartExpiryDateTo")} />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>30% wygasa od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10)}
-                    {...register("secondPartExpiryDateFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} xl={2}>
-                <Form.Label>30% wygasa do</Form.Label>
-                <Form.Control type="date" defaultValue={undefined} {...register("secondPartExpiryDateTo")} />
-            </Form.Group>
             <SecurityStatusSelectFormElement name="status" showValidationInfo={false} />
         </Row>
     );

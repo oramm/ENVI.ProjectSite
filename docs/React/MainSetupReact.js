@@ -126,6 +126,17 @@ MainSetup.LettersFilterInitState = {
     CREATION_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
     CREATION_DATE_TO: ToolsDate_1.default.addDays(new Date(), +5).toISOString().slice(0, 10),
 };
+MainSetup.ContractsFilterInitState = {
+    START_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    START_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
+    END_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10),
+};
+MainSetup.SecuritiesFilterInitState = {
+    START_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    START_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
+    FIRST_PART_EXPIRY_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10),
+    SECOND_PART_EXPIRY_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10),
+};
 MainSetup.OffersFilterInitState = {
     SUBMISSION_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
     SUBMISSION_TO: ToolsDate_1.default.addDays(new Date(), +14).toISOString().slice(0, 10),

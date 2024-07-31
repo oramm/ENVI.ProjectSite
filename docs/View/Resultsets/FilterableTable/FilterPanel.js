@@ -28,7 +28,6 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_hook_form_1 = require("react-hook-form");
 const FormContext_1 = require("../../Modals/FormContext");
-const CommonComponentsController_1 = require("../CommonComponentsController");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const yup_1 = require("@hookform/resolvers/yup");
 function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
@@ -41,11 +40,7 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         mode: "onChange",
     });
     const snapshotName = `filtersableTableSnapshot_${id}`;
-    const { watch, reset } = formMethods;
-    const allValues = watch();
-    (0, react_1.useEffect)(() => {
-        console.log("Zaktualizowany stan formularza:", allValues);
-    }, [allValues]);
+    const { reset } = formMethods;
     //odtwórz stan z sessionStorage
     (0, react_1.useEffect)(() => {
         const storedSnapshot = sessionStorage.getItem(snapshotName);
@@ -60,7 +55,6 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
-            const formData = (0, CommonComponentsController_1.parseFieldValuesToParams)(data);
             const result = (await repository.loadItemsFromServerPOST([data]));
             setObjects(result);
             saveSnapshotToStorage(result);

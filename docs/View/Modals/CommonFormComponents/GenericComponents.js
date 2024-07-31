@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.valueValidation = exports.ValueInPLNInput = exports.SelectTextOptionFormElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.ErrorMessage1 = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.DateRangeInput = exports.valueValidation = exports.ValueInPLNInput = exports.SelectTextOptionFormElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.ErrorMessage1 = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -160,6 +160,34 @@ exports.valueValidation = Yup.string()
         return false;
     const parsedValue = parseFloat(value.replace(/[^0-9.]/g, "").replace(",", "."));
     return parsedValue < 9999999999;
+});
+exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, fromName, toName, label, defaultFromValue, defaultToValue, ...colProps }, ref) => {
+    const { control, setValue, watch, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const watchedFromValue = watch(fromName, defaultFromValue ?? "");
+    const watchedToValue = watch(toName, defaultToValue ?? "");
+    (0, react_1.useEffect)(() => {
+        setValue(fromName, watchedFromValue ?? "", { shouldValidate: true });
+        setValue(toName, watchedToValue ?? "", { shouldValidate: true });
+    }, [watchedFromValue, watchedToValue, setValue]);
+    const getClassName = (name) => {
+        const classNames = ["form-control"];
+        if (showValidationInfo) {
+            classNames.push(hasError(errors, name) ? "is-invalid" : "is-valid");
+        }
+        return classNames.join(" ");
+    };
+    const hasError = (errors, name) => {
+        return errors && errors[name];
+    };
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, ref: ref, ...colProps },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_bootstrap_1.InputGroup, null,
+            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-from-label" }, "Od"),
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: fromName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedFromValue, onChange: (e) => setValue(fromName, e.target.value, { shouldValidate: true }), className: getClassName(fromName) })) }),
+            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-to-label" }, "Do"),
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: toName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedToValue, onChange: (e) => setValue(toName, e.target.value, { shouldValidate: true }), className: getClassName(toName) })) })),
+        react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
+        react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));
 });
 function FileInput({ name, required = false, acceptedFileTypes = "", multiple = true }) {
     const { control, formState: { errors }, } = (0, FormContext_1.useFormContext)();

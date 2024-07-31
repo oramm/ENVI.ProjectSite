@@ -3,32 +3,29 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
 import { OfferBondStatusSelector, OfferStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OffersFilterBody() {
-    const { register, watch, setValue } = useFormContext();
+    const { register } = useFormContext();
 
     return (
-        <Row md={6} xs={12}>
-            <Form.Group as={Col} md={4}>
+        <Row>
+            <Form.Group as={Col} md={3}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
             </Form.Group>
-            <Form.Group as={Col} md={2}>
-                <Form.Label>Składanie od</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={MainSetup.OffersFilterInitState.SUBMISSION_FROM}
-                    {...register("submissionDeadlineFrom")}
-                />
-            </Form.Group>
-            <Form.Group as={Col} md={2}>
-                <Form.Label>Składanie do</Form.Label>
-                <Form.Control
-                    type="date"
-                    defaultValue={MainSetup.OffersFilterInitState.SUBMISSION_TO}
-                    {...register("submissionDeadlineTo")}
-                />
-            </Form.Group>
+            <DateRangeInput
+                as={Col}
+                sm={12}
+                md={6}
+                lg={4}
+                label="Termin składania"
+                fromName="submissionDeadlineFrom"
+                toName="submissionDeadlineTo"
+                showValidationInfo={false}
+                defaultFromValue={MainSetup.OffersFilterInitState.SUBMISSION_FROM}
+                defaultToValue={MainSetup.OffersFilterInitState.SUBMISSION_TO}
+            />
             <Form.Group as={Col} md={2}>
                 <OfferStatusSelector showValidationInfo={false} />
             </Form.Group>
