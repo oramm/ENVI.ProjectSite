@@ -182,9 +182,8 @@ exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, f
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, ref: ref, ...colProps },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_bootstrap_1.InputGroup, null,
-            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-from-label" }, "Od"),
             react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: fromName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedFromValue, onChange: (e) => setValue(fromName, e.target.value, { shouldValidate: true }), className: getClassName(fromName) })) }),
-            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-to-label" }, "Do"),
+            react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-to-label" }, "-"),
             react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: toName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedToValue, onChange: (e) => setValue(toName, e.target.value, { shouldValidate: true }), className: getClassName(toName) })) })),
         react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
         react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));

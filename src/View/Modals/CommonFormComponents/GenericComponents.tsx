@@ -322,7 +322,6 @@ export const DateRangeInput = forwardRef<HTMLDivElement, DateRangeInputProps>(
             <Form.Group as={Col} ref={ref} {...colProps}>
                 <Form.Label>{label}</Form.Label>
                 <InputGroup>
-                    <InputGroup.Text id="date-from-label">Od</InputGroup.Text>
                     <Controller
                         control={control}
                         name={fromName}
@@ -336,7 +335,7 @@ export const DateRangeInput = forwardRef<HTMLDivElement, DateRangeInputProps>(
                             />
                         )}
                     />
-                    <InputGroup.Text id="date-to-label">Do</InputGroup.Text>
+                    <InputGroup.Text id="date-to-label">-</InputGroup.Text>
                     <Controller
                         control={control}
                         name={toName}
