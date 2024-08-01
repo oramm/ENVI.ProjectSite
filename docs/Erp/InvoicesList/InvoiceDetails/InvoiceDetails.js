@@ -125,6 +125,7 @@ function InvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Col, { sm: 12, md: 8 },
                             react_1.default.createElement("div", null, "Odbiorca"),
                             react_1.default.createElement("h5", null, invoice._entity.name),
+                            react_1.default.createElement("h5", null, invoice._entity.taxNumber),
                             react_1.default.createElement("h5", null, invoice._entity.address))),
                     react_1.default.createElement(react_bootstrap_1.Row, null,
                         react_1.default.createElement(react_bootstrap_1.Col, null, invoice.description && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "succes" },

@@ -141,6 +141,7 @@ export default function InvoiceDetails() {
                             <Col sm={12} md={8}>
                                 <div>Odbiorca</div>
                                 <h5>{invoice._entity.name}</h5>
+                                <h5>{invoice._entity.taxNumber}</h5>
                                 <h5>{invoice._entity.address}</h5>
                             </Col>
                         </Row>
