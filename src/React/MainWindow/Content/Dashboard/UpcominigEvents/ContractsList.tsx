@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Card } from "react-bootstrap";
-import { OurContract, OtherContract, SystemRoleName } from "../../../../../../Typings/bussinesTypes";
+import { OurContract, OtherContract, SystemRoleName, Contract } from "../../../../../../Typings/bussinesTypes";
 import {
     ContractModalBodyDates,
     ContractModalBodyName,
@@ -33,15 +33,13 @@ export default function ContractsList() {
         async function fetchData() {
             setDataLoaded(false);
             const endDateTo = ToolsDate.addDays(new Date(), 30);
-            const contracts = (await Promise.all([
-                contractsRepository.loadItemsFromServerPOST([
-                    {
-                        status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
-                        endDateTo: endDateTo.toISOString().slice(0, 10),
-                        getRemainingValue: true,
-                        _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
-                    },
-                ]),
+            const contracts = (await contractsRepository.loadItemsFromServerPOST([
+                {
+                    status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
+                    endDateTo: endDateTo.toISOString().slice(0, 10),
+                    getRemainingValue: true,
+                    _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
+                },
             ])) as (OurContract | OtherContract)[];
             setContracts(contracts);
             setOurContracts(contracts.filter((c) => c._type.isOur) as OurContract[]);

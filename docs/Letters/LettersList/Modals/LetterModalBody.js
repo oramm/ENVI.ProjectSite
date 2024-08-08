@@ -94,7 +94,7 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf, application/txt, image/*", ...register("file") }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
 }
 exports.LetterModalBody = LetterModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem pisma

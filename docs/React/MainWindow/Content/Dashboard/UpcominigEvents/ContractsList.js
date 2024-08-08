@@ -47,18 +47,26 @@ function ContractsList() {
         async function fetchData() {
             setDataLoaded(false);
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
-            const contracts = (await Promise.all([
-                MainWindowController_1.contractsRepository.loadItemsFromServerPOST([
-                    {
-                        status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
-                        endDateTo: endDateTo.toISOString().slice(0, 10),
-                        getRemainingValue: true,
-                        _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
-                    },
-                ]),
+            const contracts = (await MainWindowController_1.contractsRepository.loadItemsFromServerPOST([
+                {
+                    status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
+                    endDateTo: endDateTo.toISOString().slice(0, 10),
+                    getRemainingValue: true,
+                    _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
+                },
             ]));
             setContracts(contracts);
-            setOurContracts(contracts.filter((c) => c._type.isOur));
+            console.log("contacts", contracts);
+            const ourContracts = contracts.filter((c) => {
+                console.log("c", c);
+                return c._type.isOur;
+            });
+            setOurContracts(contracts.filter((c) => {
+                console.log("c", c);
+                if (!c._type)
+                    console.error("Error in ContractsList.tsx", c);
+                return c._type.isOur;
+            }));
             setOtherContracts(contracts.filter((c) => !c._type.isOur));
             setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
