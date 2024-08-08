@@ -116,10 +116,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
             </Form.Group>
             <Form.Group controlId="file">
                 <Form.Label>Plik</Form.Label>
-                <FileInput
-                    acceptedFileTypes="application/msword, application/vnd.ms-excel, application/pdf"
-                    {...register("file")}
-                />
+                <FileInput {...register("file")} />
             </Form.Group>
         </>
     );

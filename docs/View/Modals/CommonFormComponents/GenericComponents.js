@@ -188,7 +188,7 @@ exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, f
         react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
         react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));
 });
-function FileInput({ name, required = false, acceptedFileTypes = "", multiple = true }) {
+function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, }) {
     const { control, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, defaultValue: [], 

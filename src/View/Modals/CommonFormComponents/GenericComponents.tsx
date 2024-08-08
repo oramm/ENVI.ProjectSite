@@ -364,7 +364,12 @@ type FileInputProps = {
     multiple?: boolean;
 };
 
-export function FileInput({ name, required = false, acceptedFileTypes = "", multiple = true }: FileInputProps) {
+export function FileInput({
+    name,
+    required = false,
+    acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif",
+    multiple = true,
+}: FileInputProps) {
     const {
         control,
         formState: { errors },
