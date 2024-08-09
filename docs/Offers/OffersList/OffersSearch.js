@@ -37,6 +37,9 @@ const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const OfferBondModalButtons_1 = require("./OfferBonds/Modals/OfferBondModalButtons");
 const Tools_1 = __importDefault(require("../../React/Tools"));
+const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
+const OfferModalBodiesPartial_1 = require("./Modals/OfferModalBodiesPartial");
+const OfferValidationSchema_1 = require("./Modals/OfferValidationSchema");
 function OffersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -96,7 +99,16 @@ function OffersSearch({ title }) {
     function renderStatus(offer) {
         if (!offer.status)
             return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
-        return react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: offer.status });
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: offer,
+                modalTitle: "Edycja statusu",
+                repository: OffersController_1.OffersRepository,
+                ModalBodyComponent: OfferModalBodiesPartial_1.OfferModalBodyStatus,
+                onEdit: () => { },
+                fieldsToUpdate: ["status"],
+                makeValidationSchema: OfferValidationSchema_1.makeOfferStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: offer.status })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },

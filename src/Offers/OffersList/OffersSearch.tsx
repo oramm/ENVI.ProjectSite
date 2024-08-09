@@ -18,6 +18,9 @@ import {
     OfferBondEditModalButton,
 } from "./OfferBonds/Modals/OfferBondModalButtons";
 import Tools from "../../React/Tools";
+import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
+import { OfferModalBodyStatus } from "./Modals/OfferModalBodiesPartial";
+import { makeOfferStatusValidationSchema } from "./Modals/OfferValidationSchema";
 
 export default function OffersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -110,7 +113,21 @@ export default function OffersSearch({ title }: { title: string }) {
 
     function renderStatus(offer: OurOffer | ExternalOffer) {
         if (!offer.status) return <Alert variant="danger">Brak statusu</Alert>;
-        return <OfferStatusBadge status={offer.status} />;
+        return (
+            <PartialEditTrigger
+                modalProps={{
+                    initialData: offer,
+                    modalTitle: "Edycja statusu",
+                    repository: offersRepository,
+                    ModalBodyComponent: OfferModalBodyStatus,
+                    onEdit: () => {},
+                    fieldsToUpdate: ["status"],
+                    makeValidationSchema: makeOfferStatusValidationSchema,
+                }}
+            >
+                <OfferStatusBadge status={offer.status} />
+            </PartialEditTrigger>
+        );
     }
 
     return (

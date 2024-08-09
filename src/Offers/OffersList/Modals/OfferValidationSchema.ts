@@ -1,5 +1,7 @@
 import * as Yup from "yup";
 
+const status = Yup.string().required("Wybierz status oferty");
+
 function makeCommonFields(isEditing: boolean) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -46,7 +48,7 @@ function makeCommonFields(isEditing: boolean) {
                 "Nazwa może mieć maksymalnie 150 znaków",
                 (value) => typeof value !== "string" || value.length <= 150
             ),
-        status: Yup.string().required("Wybierz status oferty"),
+        status: status,
     };
 }
 
@@ -72,5 +74,11 @@ export function makeOtherOfferValidationSchema(isEditing: boolean) {
                 if (!value) return true; // Skip the test if value is empty or null
                 return value.length >= 10;
             }),
+    });
+}
+
+export function makeOfferStatusValidationSchema(isEditing: boolean) {
+    return Yup.object().shape({
+        status,
     });
 }

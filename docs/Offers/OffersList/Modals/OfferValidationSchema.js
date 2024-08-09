@@ -23,8 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeOtherOfferValidationSchema = exports.makeOurOfferValidationSchema = void 0;
+exports.makeOfferStatusValidationSchema = exports.makeOtherOfferValidationSchema = exports.makeOurOfferValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
+const status = Yup.string().required("Wybierz status oferty");
 function makeCommonFields(isEditing) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -53,7 +54,7 @@ function makeCommonFields(isEditing) {
             .required("Wybierz podmiot")
             .test("is-object-or-string", "Wybierz podmiot lub podaj nazwę", (value) => typeof value === "object" || typeof value === "string")
             .test("string-length", "Nazwa może mieć maksymalnie 150 znaków", (value) => typeof value !== "string" || value.length <= 150),
-        status: Yup.string().required("Wybierz status oferty"),
+        status: status,
     };
 }
 function makeOurOfferValidationSchema(isEditing) {
@@ -79,3 +80,9 @@ function makeOtherOfferValidationSchema(isEditing) {
     });
 }
 exports.makeOtherOfferValidationSchema = makeOtherOfferValidationSchema;
+function makeOfferStatusValidationSchema(isEditing) {
+    return Yup.object().shape({
+        status,
+    });
+}
+exports.makeOfferStatusValidationSchema = makeOfferStatusValidationSchema;
