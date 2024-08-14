@@ -5,7 +5,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import ToolsForms from "../../../React/ToolsForms";
 import ToolsDate from "../../../React/ToolsDate";
 import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
-import { ContractStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function ContractModalBodyStatus({ initialData }: ModalBodyProps<OurContract | OtherContract>) {
@@ -19,7 +19,7 @@ export function ContractModalBodyStatus({ initialData }: ModalBodyProps<OurContr
         setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
 
-    return <ContractStatusSelectFormElement />;
+    return <ContractStatusSelector />;
 }
 
 export function ContractModalBodyName({ initialData }: ModalBodyProps<OurContract | OtherContract>) {

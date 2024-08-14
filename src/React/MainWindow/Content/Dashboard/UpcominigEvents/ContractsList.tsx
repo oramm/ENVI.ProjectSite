@@ -20,9 +20,10 @@ import ToolsDate from "../../../../ToolsDate";
 import { contractsRepository } from "../../../MainWindowController";
 import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Section";
 import { RowStructure } from "../../../../../View/Resultsets/FilterableTable/FilterableTableTypes";
+import { useFilterableTableContext } from "../../../../../View/Resultsets/FilterableTable/FilterableTableContext";
 
 export default function ContractsList() {
-    const [contracts, setContracts] = useState([] as (OurContract | OtherContract)[]);
+    const [contracts, setContracts] = useState<(OurContract | OtherContract)[]>([]);
     const [ourContracts, setOurContracts] = useState<OurContract[]>([]);
     const [otherContracts, setOtherContracts] = useState<OtherContract[]>([]);
 
@@ -59,6 +60,8 @@ export default function ContractsList() {
     }
 
     function renderName(contract: OurContract | OtherContract) {
+        const { handleEditObject } = useFilterableTableContext<OurContract | OtherContract>();
+
         return (
             <>
                 <PartialEditTrigger
@@ -92,6 +95,7 @@ export default function ContractsList() {
     }
 
     function renderEndDate(contract: OurContract | OtherContract) {
+        const { handleEditObject } = useFilterableTableContext<OurContract | OtherContract>();
         const { endDate } = contract;
         if (!endDate) return <Alert variant="danger">Brak daty zakończenia</Alert>;
         const daysLeft = ToolsDate.countDaysLeftTo(endDate);
@@ -109,6 +113,7 @@ export default function ContractsList() {
     }
 
     function renderStartDate(contract: OurContract | OtherContract) {
+        const { handleEditObject } = useFilterableTableContext<OurContract | OtherContract>();
         const { startDate } = contract;
         if (!startDate) return <Alert variant="danger">Brak daty rozpoczęcia</Alert>;
         return (
@@ -116,11 +121,6 @@ export default function ContractsList() {
                 <DateEditTrigger contract={contract} date={startDate} onEdit={handleEditObject} />
             </div>
         );
-    }
-
-    function handleEditObject(object: OurContract | OtherContract) {
-        setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate((prevState) => prevState + 1);
     }
 
     function renderRemainingValue(contract: OurContract | OtherContract) {

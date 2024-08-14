@@ -40,50 +40,81 @@ const Tools_1 = __importDefault(require("../../React/Tools"));
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
 const OfferModalBodiesPartial_1 = require("./Modals/OfferModalBodiesPartial");
 const OfferValidationSchema_1 = require("./Modals/OfferValidationSchema");
+const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
+const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 function OffersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
     function renderEntityData(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, offer.employerName),
-            react_1.default.createElement("div", { className: "muted" }, offer._city.name)));
+            react_1.default.createElement("div", null,
+                offer.employerName,
+                " / ",
+                offer._city.name)));
     }
     function renderIcon(offer) {
         offer = offer;
         const icon = offer.isOur ? free_solid_svg_icons_1.faHome : free_solid_svg_icons_1.faFileLines;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
-    function renderNameDescription(offer, isActive = false) {
+    function renderRowContent(offer, isActive = false) {
+        if (!offer.submissionDeadline)
+            throw new Error("Brak terminu składania oferty");
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
+            react_1.default.createElement("h5", null,
                 offer._type.name,
                 " | ",
                 renderTenderLink(offer) ?? offer.alias,
                 " ",
-                renderStatus(offer)),
+                react_1.default.createElement("small", null, renderStatus(offer))),
+            renderEntityData(offer),
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("span", { className: "text-muted" }, "Termin sk\u0142adania:"),
+                " ",
+                react_1.default.createElement("span", { className: "fw-bold" }, offer.submissionDeadline),
+                react_1.default.createElement("span", null,
+                    " ",
+                    renderDaysLeft(offer)),
+                react_1.default.createElement("span", { className: "ml-3" }, " Forma wysy\u0142ki:"),
+                " ",
+                react_1.default.createElement("span", { className: "fw-bold" }, offer.form)),
             react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } }, offer.description),
             renderOfferBond(offer, isActive)));
+    }
+    function renderDaysLeft(offer) {
+        if (!offer.submissionDeadline)
+            return null;
+        if (!offer.status)
+            return null;
+        if (![MainSetupReact_1.default.OfferStatus.DECISION_PENDING, MainSetupReact_1.default.OfferStatus.TO_DO, MainSetupReact_1.default.OfferStatus.DONE].includes(offer.status))
+            return null;
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(offer.submissionDeadline);
+        return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
     }
     function renderOfferBond(offer, isActive) {
         if (offer.isOur)
             return null;
         if (!offer._offerBond)
             return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } })));
-        return (react_1.default.createElement("div", { className: "mt-4 mb-4", style: { whiteSpace: "pre-line" } },
-            react_1.default.createElement("h6", null,
-                "Wadium ",
-                Tools_1.default.formatNumber(offer._offerBond.value),
-                " ",
-                react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status })),
-            offer._offerBond.form,
-            " ",
-            offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
-                "wa\u017Cna do: ",
-                offer._offerBond.expiryDate),
-            react_1.default.createElement("div", null, offer._offerBond.paymentData),
-            react_1.default.createElement("div", null, offer._offerBond.comment),
-            isActive && renderOfferBondMenu(offer)));
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2 mb-2", style: { whiteSpace: "pre-line" } },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null,
+                    "Wadium ",
+                    Tools_1.default.formatNumber(offer._offerBond.value),
+                    " ",
+                    react_1.default.createElement("small", null,
+                        react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }))),
+                react_1.default.createElement(react_bootstrap_1.Card.Text, null,
+                    offer._offerBond.form,
+                    " ",
+                    offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
+                        "wa\u017Cna do: ",
+                        offer._offerBond.expiryDate),
+                    react_1.default.createElement("div", null, offer._offerBond.paymentData),
+                    react_1.default.createElement("div", null, offer._offerBond.comment)),
+                isActive && renderOfferBondMenu(offer))));
     }
     function renderOfferBondMenu(offer) {
         return (react_1.default.createElement("div", null,
@@ -99,12 +130,13 @@ function OffersSearch({ title }) {
     function renderStatus(offer) {
         if (!offer.status)
             return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: offer,
                 modalTitle: "Edycja statusu",
                 repository: OffersController_1.OffersRepository,
                 ModalBodyComponent: OfferModalBodiesPartial_1.OfferModalBodyStatus,
-                onEdit: () => { },
+                onEdit: handleEditObject,
                 fieldsToUpdate: ["status"],
                 makeValidationSchema: OfferValidationSchema_1.makeOfferStatusValidationSchema,
             } },
@@ -112,10 +144,7 @@ function OffersSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },
-            { header: "Nazwa", renderTdBody: renderNameDescription },
-            { header: "Zamawiający", renderTdBody: renderEntityData },
-            { header: "Termin", objectAttributeToShow: "submissionDeadline" },
-            { header: "Wysyłka", objectAttributeToShow: "form" },
+            { header: "Oferta", renderTdBody: renderRowContent },
         ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.OffersRepository, selectedObjectRoute: "/offer/" }));
 }
 exports.default = OffersSearch;

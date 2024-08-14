@@ -210,8 +210,9 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * @param item obiekt do edycji
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
+     * @param _fieldsToUpdate - tablica z nazwami pól, które mają być zaktualizowane. Nazwa z podkreśleniem ze względu na serwer
      */
-    async editItem(item: DataItemType | FormData, specialActionRoute?: string, fieldsToUpdate?: string[]) {
+    async editItem(item: DataItemType | FormData, specialActionRoute?: string, _fieldsToUpdate?: string[]) {
         const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
         const itemId = item instanceof FormData ? item.get("id") : item.id;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
@@ -226,7 +227,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         };
 
         if (item instanceof FormData) {
-            if (fieldsToUpdate) item.append("fieldsToUpdate", JSON.stringify(fieldsToUpdate));
+            if (_fieldsToUpdate) item.append("_fieldsToUpdate", JSON.stringify(_fieldsToUpdate));
             requestOptions.body = item;
         } else {
             requestOptions.headers = {
@@ -234,7 +235,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 ["Content-Type"]: "application/json",
             };
             ToolsDate.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
+            requestOptions.body = JSON.stringify({ ...item, _fieldsToUpdate });
         }
 
         try {
@@ -249,8 +250,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 return item as DataItemType;
             }
 
-            this.replaceItemById(resultObject.id, resultObject);
             this.replaceCurrentItemById(resultObject.id, resultObject);
+            this.items = this.items.map((item) => (item.id === resultObject.id ? resultObject : item));
             this.saveToSessionStorage();
             console.log("Obiekt po edycji z serwera: %o", resultObject);
             return resultObject;

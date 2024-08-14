@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelectFormElement = exports.ProjectStatusSelectFormElement = void 0;
+exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelectFormElement = exports.TaksStatusSelectFormElement = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelectFormElement = exports.ContractStatusSelector = exports.ProjectStatusSelectFormElement = void 0;
 const react_1 = __importDefault(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -14,11 +14,11 @@ function ProjectStatusSelectFormElement({ showValidationInfo = true, name = "sta
     return (react_1.default.createElement(GenericComponents_1.SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
 }
 exports.ProjectStatusSelectFormElement = ProjectStatusSelectFormElement;
-function ContractStatusSelectFormElement({ showValidationInfo = true, name = "status", as, }) {
+function ContractStatusSelector({ showValidationInfo = true, name = "status", as }) {
     const statuses = Object.entries(MainSetupReact_1.default.ContractStatuses).map(([key, value]) => value);
     return (react_1.default.createElement(GenericComponents_1.SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
 }
-exports.ContractStatusSelectFormElement = ContractStatusSelectFormElement;
+exports.ContractStatusSelector = ContractStatusSelector;
 function SecurityStatusSelectFormElement({ showValidationInfo = true, name = "status", as, }) {
     const statuses = Object.entries(MainSetupReact_1.default.SecurityStatus).map(([key, value]) => value);
     return (react_1.default.createElement(GenericComponents_1.SelectTextOptionFormElement, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));

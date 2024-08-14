@@ -194,8 +194,9 @@ class RepositoryReact {
      * @param item obiekt do edycji
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
+     * @param _fieldsToUpdate - tablica z nazwami pól, które mają być zaktualizowane. Nazwa z podkreśleniem ze względu na serwer
      */
-    async editItem(item, specialActionRoute, fieldsToUpdate) {
+    async editItem(item, specialActionRoute, _fieldsToUpdate) {
         const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
         const itemId = item instanceof FormData ? item.get("id") : item.id;
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${itemId}`;
@@ -208,8 +209,8 @@ class RepositoryReact {
             credentials: "include",
         };
         if (item instanceof FormData) {
-            if (fieldsToUpdate)
-                item.append("fieldsToUpdate", JSON.stringify(fieldsToUpdate));
+            if (_fieldsToUpdate)
+                item.append("_fieldsToUpdate", JSON.stringify(_fieldsToUpdate));
             requestOptions.body = item;
         }
         else {
@@ -218,7 +219,7 @@ class RepositoryReact {
                 ["Content-Type"]: "application/json",
             };
             ToolsDate_1.default.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
+            requestOptions.body = JSON.stringify({ ...item, _fieldsToUpdate });
         }
         try {
             const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
@@ -231,8 +232,8 @@ class RepositoryReact {
                 console.log("Konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
                 return item;
             }
-            this.replaceItemById(resultObject.id, resultObject);
             this.replaceCurrentItemById(resultObject.id, resultObject);
+            this.items = this.items.map((item) => (item.id === resultObject.id ? resultObject : item));
             this.saveToSessionStorage();
             console.log("Obiekt po edycji z serwera: %o", resultObject);
             return resultObject;

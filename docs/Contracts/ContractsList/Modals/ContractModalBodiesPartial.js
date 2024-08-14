@@ -39,7 +39,7 @@ function ContractModalBodyStatus({ initialData }) {
     (0, react_1.useEffect)(() => {
         setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelectFormElement, null);
+    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, null);
 }
 exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function ContractModalBodyName({ initialData }) {

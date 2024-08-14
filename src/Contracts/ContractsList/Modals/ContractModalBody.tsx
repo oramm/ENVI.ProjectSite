@@ -11,7 +11,7 @@ import { contractRangesRepository, projectsRepository } from "../ContractsContro
 import ToolsDate from "../../../React/ToolsDate";
 import ToolsForms from "../../../React/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
-import { ContractStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {
@@ -167,7 +167,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                     <ErrorMessage errors={errors} name="guaranteeEndDate" />
                 </Form.Group>
             </Row>
-            <ContractStatusSelectFormElement />
+            <ContractStatusSelector />
         </>
     );
 }

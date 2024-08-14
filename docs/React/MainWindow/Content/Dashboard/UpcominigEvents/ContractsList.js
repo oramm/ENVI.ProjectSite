@@ -37,6 +37,7 @@ const MainSetupReact_1 = __importDefault(require("../../../../MainSetupReact"));
 const Tools_1 = __importDefault(require("../../../../Tools"));
 const ToolsDate_1 = __importDefault(require("../../../../ToolsDate"));
 const MainWindowController_1 = require("../../../MainWindowController");
+const FilterableTableContext_1 = require("../../../../../View/Resultsets/FilterableTable/FilterableTableContext");
 function ContractsList() {
     const [contracts, setContracts] = (0, react_1.useState)([]);
     const [ourContracts, setOurContracts] = (0, react_1.useState)([]);
@@ -71,6 +72,7 @@ function ContractsList() {
         return !privilegedRoles.includes(MainSetupReact_1.default.currentUser.systemRoleName);
     }
     function renderName(contract) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: contract,
@@ -95,6 +97,7 @@ function ContractsList() {
                 react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))));
     }
     function renderEndDate(contract) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
         const { endDate } = contract;
         if (!endDate)
             return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty zako\u0144czenia");
@@ -106,15 +109,12 @@ function ContractsList() {
                 react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))));
     }
     function renderStartDate(contract) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
         const { startDate } = contract;
         if (!startDate)
             return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty rozpocz\u0119cia");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject })));
-    }
-    function handleEditObject(object) {
-        setContracts(contracts.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate((prevState) => prevState + 1);
     }
     function renderRemainingValue(contract) {
         const ourId = "ourId" in contract ? contract.ourId : "";

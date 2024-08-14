@@ -12,7 +12,7 @@ exports.contractsRepository = new RepositoryReact_1.default({
         editRoute: "contract",
         deleteRoute: "",
     },
-    name: "contracts",
+    name: "dashboardContracts",
 });
 exports.securitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {

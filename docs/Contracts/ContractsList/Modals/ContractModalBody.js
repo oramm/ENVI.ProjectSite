@@ -114,7 +114,7 @@ function ContractModalBody({ isEditing, initialData }) {
                         //trigger("startDate");
                     } }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))),
-        react_1.default.createElement(StatusSelectors_1.ContractStatusSelectFormElement, null)));
+        react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, null)));
 }
 exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

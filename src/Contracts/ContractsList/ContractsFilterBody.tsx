@@ -8,7 +8,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import ToolsDate from "../../React/ToolsDate";
 import { contractRangesRepository, projectsRepository } from "./ContractsController";
-import { ContractStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ContractStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import MainSetup from "../../React/MainSetupReact";
 
@@ -53,7 +53,7 @@ export function ContractsFilterBody() {
             />
 
             <Form.Group as={Col} xl={2}>
-                <ContractStatusSelectFormElement name="status" showValidationInfo={false} />
+                <ContractStatusSelector name="status" showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} xl={2}>
                 <ContractRangeSelector repository={contractRangesRepository} showValidationInfo={false} />

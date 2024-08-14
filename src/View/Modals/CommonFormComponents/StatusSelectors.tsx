@@ -17,11 +17,7 @@ export function ProjectStatusSelectFormElement({
     );
 }
 
-export function ContractStatusSelectFormElement({
-    showValidationInfo = true,
-    name = "status",
-    as,
-}: SpecificTextOptionProps) {
+export function ContractStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
     const statuses = Object.entries(MainSetup.ContractStatuses).map(([key, value]) => value);
     return (
         <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />

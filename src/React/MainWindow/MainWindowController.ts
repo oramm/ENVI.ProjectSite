@@ -9,7 +9,7 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
         editRoute: "contract",
         deleteRoute: "",
     },
-    name: "contracts",
+    name: "dashboardContracts",
 });
 
 export const securitiesRepository = new RepositoryReact<Security>({
