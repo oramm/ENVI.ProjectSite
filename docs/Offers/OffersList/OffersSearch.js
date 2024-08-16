@@ -49,10 +49,7 @@ function OffersSearch({ title }) {
     }, [title]);
     function renderEntityData(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
-                offer.employerName,
-                " / ",
-                offer._city.name)));
+            react_1.default.createElement("div", null, offer.employerName)));
     }
     function renderIcon(offer) {
         offer = offer;
@@ -65,6 +62,8 @@ function OffersSearch({ title }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("h5", null,
                 offer._type.name,
+                " ",
+                offer._city.name,
                 " | ",
                 renderTenderLink(offer) ?? offer.alias,
                 " ",
@@ -93,35 +92,6 @@ function OffersSearch({ title }) {
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(offer.submissionDeadline);
         return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
     }
-    function renderOfferBond(offer, isActive) {
-        if (offer.isOur)
-            return null;
-        if (!offer._offerBond)
-            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } })));
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2 mb-2", style: { whiteSpace: "pre-line" } },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null,
-                    "Wadium ",
-                    Tools_1.default.formatNumber(offer._offerBond.value),
-                    " ",
-                    react_1.default.createElement("small", null,
-                        react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }))),
-                react_1.default.createElement(react_bootstrap_1.Card.Text, null,
-                    offer._offerBond.form,
-                    " ",
-                    offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
-                        "wa\u017Cna do: ",
-                        offer._offerBond.expiryDate),
-                    react_1.default.createElement("div", null, offer._offerBond.paymentData),
-                    react_1.default.createElement("div", null, offer._offerBond.comment)),
-                isActive && renderOfferBondMenu(offer))));
-    }
-    function renderOfferBondMenu(offer) {
-        return (react_1.default.createElement("div", null,
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }),
-            " ",
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
-    }
     function renderTenderLink(offer) {
         if (!("tenderUrl" in offer) || !offer.tenderUrl)
             return null;
@@ -141,6 +111,36 @@ function OffersSearch({ title }) {
                 makeValidationSchema: OfferValidationSchema_1.makeOfferStatusValidationSchema,
             } },
             react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: offer.status })));
+    }
+    function renderOfferBond(offer, isActive) {
+        if (offer.isOur)
+            return null;
+        if (!offer._offerBond)
+            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } })));
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2 mb-2", style: { whiteSpace: "pre-line" } },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement("div", { className: "card-title h6" },
+                    "Wadium ",
+                    Tools_1.default.formatNumber(offer._offerBond.value),
+                    " ",
+                    offer._city.name,
+                    react_1.default.createElement("small", null,
+                        react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }))),
+                react_1.default.createElement(react_bootstrap_1.Card.Text, null,
+                    offer._offerBond.form,
+                    " ",
+                    offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
+                        "wa\u017Cna do: ",
+                        offer._offerBond.expiryDate),
+                    react_1.default.createElement("div", null, offer._offerBond.paymentData),
+                    react_1.default.createElement("div", null, offer._offerBond.comment)),
+                isActive && renderOfferBondMenu(offer))));
+    }
+    function renderOfferBondMenu(offer) {
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }),
+            " ",
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },
