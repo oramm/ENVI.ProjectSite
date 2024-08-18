@@ -232,7 +232,7 @@ function OfferBondStatusBadge({ status }) {
     let variant;
     let textMode = "light";
     switch (status) {
-        case MainSetupReact_1.default.OfferBondStatus.TO_DO:
+        case MainSetupReact_1.default.OfferBondStatus.TO_PAY:
             variant = "primary";
             break;
         case MainSetupReact_1.default.OfferBondStatus.PAID:

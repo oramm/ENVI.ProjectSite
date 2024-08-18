@@ -87,7 +87,7 @@ function OffersSearch({ title }) {
             return null;
         if (!offer.status)
             return null;
-        if (![MainSetupReact_1.default.OfferStatus.DECISION_PENDING, MainSetupReact_1.default.OfferStatus.TO_DO, MainSetupReact_1.default.OfferStatus.DONE].includes(offer.status))
+        if (![MainSetupReact_1.default.OfferStatus.DECISION_PENDING, MainSetupReact_1.default.OfferStatus.TO_DO].includes(offer.status))
             return null;
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(offer.submissionDeadline);
         return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });

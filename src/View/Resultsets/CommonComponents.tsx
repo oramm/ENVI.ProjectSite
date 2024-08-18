@@ -288,7 +288,7 @@ export function OfferBondStatusBadge({ status }: { status: string }) {
     let textMode: Color = "light";
 
     switch (status) {
-        case MainSetup.OfferBondStatus.TO_DO:
+        case MainSetup.OfferBondStatus.TO_PAY:
             variant = "primary";
             break;
         case MainSetup.OfferBondStatus.PAID:

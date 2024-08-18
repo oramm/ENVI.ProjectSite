@@ -70,12 +70,7 @@ export default function OffersSearch({ title }: { title: string }) {
     function renderDaysLeft(offer: OurOffer | ExternalOffer) {
         if (!offer.submissionDeadline) return null;
         if (!offer.status) return null;
-        if (
-            ![MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DONE].includes(
-                offer.status
-            )
-        )
-            return null;
+        if (![MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.TO_DO].includes(offer.status)) return null;
         const daysLeft = ToolsDate.countDaysLeftTo(offer.submissionDeadline);
         return <DaysLeftBadge daysLeft={daysLeft} />;
     }
