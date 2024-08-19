@@ -137,8 +137,9 @@ export default class ToolsDate {
 
     static countDaysLeftTo(expiryDate: string) {
         const today = new Date();
+        today.setHours(23, 59, 59, 999);
         const expiryDateParsed = new Date(expiryDate);
         const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
-        return diffDays;
+        return diffDays + 1;
     }
 }
