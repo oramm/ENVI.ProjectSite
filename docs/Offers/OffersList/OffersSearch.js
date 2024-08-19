@@ -79,7 +79,9 @@ function OffersSearch({ title }) {
                 react_1.default.createElement("span", { className: "ml-3" }, " Forma wysy\u0142ki:"),
                 " ",
                 react_1.default.createElement("span", { className: "fw-bold" }, offer.form)),
-            react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } }, offer.description),
+            react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } },
+                react_1.default.createElement("p", null, offer.description),
+                react_1.default.createElement("p", null, offer.comment)),
             renderOfferBond(offer, isActive)));
     }
     function renderDaysLeft(offer) {

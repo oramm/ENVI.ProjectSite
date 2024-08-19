@@ -60,7 +60,8 @@ export default function OffersSearch({ title }: { title: string }) {
                     <span className="ml-3"> Forma wysyłki:</span> <span className="fw-bold">{offer.form}</span>
                 </div>
                 <div className="text-muted" style={{ whiteSpace: "pre-line" }}>
-                    {offer.description}
+                    <p>{offer.description}</p>
+                    <p>{offer.comment}</p>
                 </div>
                 {renderOfferBond(offer, isActive)}
             </>
