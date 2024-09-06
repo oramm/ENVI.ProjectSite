@@ -15,9 +15,8 @@ function MainContent() {
                 react_1.default.createElement(react_bootstrap_1.Col, { md: 9 },
                     react_1.default.createElement(Dashboard_1.default, null)),
                 react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                    react_1.default.createElement("div", { className: 'mb-3' },
+                    react_1.default.createElement("div", { className: "mb-3" },
                         react_1.default.createElement(MyData_1.default, null)),
                     react_1.default.createElement(News_1.default, null))))));
 }
 exports.default = MainContent;
-;
