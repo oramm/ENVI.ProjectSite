@@ -100,13 +100,13 @@ function App() {
     else if (isReady) {
         return isLoggedIn ? (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0" },
             react_1.default.createElement(AppRoutes, null),
-            react_1.default.createElement(Footer_1.default, null))) : (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(Footer_1.default, null))) : (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
             react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
                 react_1.default.createElement(react_bootstrap_1.Card.Header, null, "Dokument"),
                 react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                     react_1.default.createElement(react_bootstrap_1.Card.Title, null, "argumenty"),
                     react_1.default.createElement(react_bootstrap_1.Card.Text, null,
-                        react_1.default.createElement("a", { href: "https://www.google.comhttps://docs.google.com/document/d/1PcHqdu_Oz5wkmVUtCjKGKeeAK7wxkuRvlRaXKiDCDAA/edit?usp=sharing" }, "https://docs.google.com/document/d/1PcHqdu_Oz5wkmVUtCjKGKeeAK7wxkuRvlRaXKiDCDAA/edit?usp=sharing")))),
+                        react_1.default.createElement("a", { href: "https://docs.google.com/document/d/1PcHqdu_Oz5wkmVUtCjKGKeeAK7wxkuRvlRaXKiDCDAA/edit?usp=sharing" }, "https://docs.google.com/document/d/1PcHqdu_Oz5wkmVUtCjKGKeeAK7wxkuRvlRaXKiDCDAA/edit?usp=sharing")))),
             react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse })));
     }
     else
