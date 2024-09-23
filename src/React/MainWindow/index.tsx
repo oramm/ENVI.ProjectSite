@@ -1,6 +1,6 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
-import { Alert, Container } from "react-bootstrap";
+import { Alert, Card, Container } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
@@ -79,7 +79,11 @@ function App() {
                 <Footer />
             </Container>
         ) : (
-            <GoogleButton onServerResponse={handleServerResponse} />
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
+                <div>
+                    <GoogleButton onServerResponse={handleServerResponse} />
+                </div>
+            </Container>
         );
     } else
         return (
