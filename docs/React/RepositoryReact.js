@@ -291,6 +291,25 @@ class RepositoryReact {
         }
         return oldItem;
     }
+    async fetch(actionRoute, item) {
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item.id}`;
+        const requestKey = JSON.stringify({ url: urlPath, body: item });
+        const requestOptions = {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                ["Content-Type"]: "application/json",
+            },
+        };
+        ToolsDate_1.default.convertDatesToUTC(item);
+        requestOptions.body = JSON.stringify({ ...item });
+        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+            this.pendingRequests.delete(requestKey);
+        });
+        this.pendingRequests.set(requestKey, fetchPromise);
+        const resultObject = await fetchPromise;
+        return resultObject;
+    }
     clearData() {
         this.items = [];
         this.currentItems = [];

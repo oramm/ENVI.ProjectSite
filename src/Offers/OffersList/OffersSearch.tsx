@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { offersRepository } from "./OffersController";
 import { OffersFilterBody } from "./OfferFilterBody";
@@ -6,6 +6,7 @@ import {
     OfferEditModalButton,
     ExternalOfferAddNewModalButton,
     OurOfferAddNewModalButton,
+    ExportOurOfferToPDFButton,
 } from "./Modals/OfferModalButtons";
 import { ExternalOffer, OurOffer } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -64,7 +65,8 @@ export default function OffersSearch({ title }: { title: string }) {
                     <p>{offer.description}</p>
                     <p>{offer.comment}</p>
                 </div>
-                {renderSendOfferModalButton(offer, isActive)}
+                {renderSendOfferModalButton(offer, isActive)}{" "}
+                <ExportToPDFButtonWithError offer={offer} isActive={isActive} />
                 {renderOfferBond(offer, isActive)}
                 {renderLastEvent(offer)}
             </>
@@ -77,6 +79,29 @@ export default function OffersSearch({ title }: { title: string }) {
         if (offer._lastEvent?.versionNumber)
             return <SendAnotherOfferModalButton modalProps={{ onEdit: () => {}, initialData: offer }} />;
         return <SendOfferModalButton modalProps={{ onEdit: () => {}, initialData: offer }} />;
+    }
+
+    function ExportToPDFButtonWithError({ offer, isActive }: { offer: OurOffer; isActive: boolean }) {
+        const [error, setError] = useState<Error | null>(null);
+
+        useEffect(() => {
+            if (error) {
+                console.log("Error zaktualizowany:", error.message);
+            }
+        }, [error]);
+
+        if (!offer.isOur || !isActive) return null;
+
+        return (
+            <>
+                <ExportOurOfferToPDFButton onError={(error) => setError(error)} ourOffer={offer} />
+                {error && (
+                    <Alert dismissible variant="danger" className="mt-2" onClose={() => setError(null)}>
+                        {error.message}
+                    </Alert>
+                )}
+            </>
+        );
     }
 
     function renderLastEvent(offer: OurOffer | ExternalOffer) {

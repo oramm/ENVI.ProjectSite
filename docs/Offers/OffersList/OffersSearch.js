@@ -84,6 +84,8 @@ function OffersSearch({ title }) {
                 react_1.default.createElement("p", null, offer.description),
                 react_1.default.createElement("p", null, offer.comment)),
             renderSendOfferModalButton(offer, isActive),
+            " ",
+            react_1.default.createElement(ExportToPDFButtonWithError, { offer: offer, isActive: isActive }),
             renderOfferBond(offer, isActive),
             renderLastEvent(offer)));
     }
@@ -95,6 +97,19 @@ function OffersSearch({ title }) {
         if (offer._lastEvent?.versionNumber)
             return react_1.default.createElement(SendOfferModalButtons_1.SendAnotherOfferModalButton, { modalProps: { onEdit: () => { }, initialData: offer } });
         return react_1.default.createElement(SendOfferModalButtons_1.SendOfferModalButton, { modalProps: { onEdit: () => { }, initialData: offer } });
+    }
+    function ExportToPDFButtonWithError({ offer, isActive }) {
+        const [error, setError] = (0, react_1.useState)(null);
+        (0, react_1.useEffect)(() => {
+            if (error) {
+                console.log("Error zaktualizowany:", error.message);
+            }
+        }, [error]);
+        if (!offer.isOur || !isActive)
+            return null;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(OfferModalButtons_1.ExportOurOfferToPDFButton, { onError: (error) => setError(error), ourOffer: offer }),
+            error && (react_1.default.createElement(react_bootstrap_1.Alert, { dismissible: true, variant: "danger", className: "mt-2", onClose: () => setError(null) }, error.message))));
     }
     function renderLastEvent(offer) {
         if (!offer._lastEvent)

@@ -43,8 +43,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     fieldsToUpdate,
     shouldRetrieveDataBeforeEdit = false,
 }: GeneralModalProps<DataItemType>) {
-    const [dataObjectFromServer, setDataObjectFromServer] = React.useState<DataItemType | undefined>(undefined);
-    const [isLoadingData, setIsLoadingData] = React.useState(false);
+    const [dataObjectFromServer, setDataObjectFromServer] = useState<DataItemType | undefined>(undefined);
+    const [isLoadingData, setIsLoadingData] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
     const [requestPending, setRequestPending] = useState(false);

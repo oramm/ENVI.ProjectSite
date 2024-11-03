@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -60,6 +60,18 @@ const AlertComponent = ({ message, type, timeout = 3000 }) => {
     return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: type, onClose: () => setShow(false), dismissible: true }, message));
 };
 exports.AlertComponent = AlertComponent;
+function SuccessToast({ header = "Sukces", message, show, onClose }) {
+    return (react_1.default.createElement(react_bootstrap_1.Toast, { onClose: onClose, show: show, delay: 5000, autohide: true, style: {
+            position: "absolute",
+            bottom: 20,
+            right: 20,
+            zIndex: 9999,
+        } },
+        react_1.default.createElement(react_bootstrap_1.Toast.Header, null,
+            react_1.default.createElement("strong", { className: "me-auto" }, header)),
+        react_1.default.createElement(react_bootstrap_1.Toast.Body, null, message)));
+}
+exports.SuccessToast = SuccessToast;
 function GDFolderIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },

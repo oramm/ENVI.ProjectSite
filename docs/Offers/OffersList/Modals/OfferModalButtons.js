@@ -23,13 +23,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExternalOfferAddNewModalButton = exports.ExternalOfferEditModalButton = exports.OurOfferAddNewModalButton = exports.OurOfferEditModalButton = exports.OfferEditModalButton = void 0;
+exports.ExportOurOfferToPDFButton = exports.ExternalOfferAddNewModalButton = exports.ExternalOfferEditModalButton = exports.OurOfferAddNewModalButton = exports.OurOfferEditModalButton = exports.OfferEditModalButton = void 0;
 const react_1 = __importStar(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const OfferValidationSchema_1 = require("./OfferValidationSchema");
 const ExternalOfferModalBody_1 = require("./ExternalOfferModalBody");
 const OurOfferModalBody_1 = require("./OurOfferModalBody");
 const OffersController_1 = require("../OffersController");
+const react_bootstrap_1 = require("react-bootstrap");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 /** przycisk i modal edycji Offer */
 function OfferEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
@@ -87,3 +89,28 @@ function ExternalOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.ExternalOfferAddNewModalButton = ExternalOfferAddNewModalButton;
+function ExportOurOfferToPDFButton({ onError, ourOffer, }) {
+    const [requestPending, setRequestPending] = (0, react_1.useState)(false);
+    const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
+    async function handleClick() {
+        try {
+            setRequestPending(true);
+            await OffersController_1.offersRepository.fetch("exportOurOfferToPDF", ourOffer);
+            setRequestPending(false);
+            setShowSuccessToast(true);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                setRequestPending(false);
+                onError(error);
+            }
+        }
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { key: "Exportuj do PDF", variant: "outline-secondary", size: "sm", onClick: handleClick },
+            "Exportuj do PDF",
+            " ",
+            requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
+        react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
+}
+exports.ExportOurOfferToPDFButton = ExportOurOfferToPDFButton;

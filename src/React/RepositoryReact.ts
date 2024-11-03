@@ -312,6 +312,29 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         return oldItem;
     }
 
+    async fetch(actionRoute: string, item: DataItemType) {
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item.id}`;
+        const requestKey = JSON.stringify({ url: urlPath, body: item });
+
+        const requestOptions: RequestInit = {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                ["Content-Type"]: "application/json",
+            },
+        };
+
+        ToolsDate.convertDatesToUTC(item);
+        requestOptions.body = JSON.stringify({ ...item });
+
+        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+            this.pendingRequests.delete(requestKey);
+        });
+        this.pendingRequests.set(requestKey, fetchPromise);
+        const resultObject = await fetchPromise;
+        return resultObject;
+    }
+
     clearData() {
         this.items = [];
         this.currentItems = [];

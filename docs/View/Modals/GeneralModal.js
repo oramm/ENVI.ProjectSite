@@ -37,8 +37,8 @@ require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
 function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
-    const [dataObjectFromServer, setDataObjectFromServer] = react_1.default.useState(undefined);
-    const [isLoadingData, setIsLoadingData] = react_1.default.useState(false);
+    const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
+    const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const formMethods = (0, react_hook_form_1.useForm)({
