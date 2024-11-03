@@ -29,7 +29,7 @@ import {
     OtherContract,
     OurContract,
     OurOffer,
-    Person,
+    PersonData,
     Project,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
@@ -885,10 +885,51 @@ export function OurLetterTemplateSelectFormElement({
     );
 }
 
-type PersonsSelectFormElementProps = {
+export type PersonSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function PersonSelector({
+    name = "_person",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: PersonSelectorProps) {
+    function renderOption(option: any) {
+        const typedOption = option as PersonData;
+        return (
+            <>
+                <div>{typedOption._nameSurnameEmail}</div>
+                <div className="text-muted small"> {typedOption._entity.name}</div>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="_nameSurnameEmail"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+type PersonsSelectorProps = {
     label: string;
     name: string;
-    repository: RepositoryReact<Person>;
+    repository: RepositoryReact<PersonData>;
     multiple?: boolean;
     showValidationInfo?: boolean;
 };
@@ -897,20 +938,20 @@ type PersonsSelectFormElementProps = {
  * @param label oznaczenie pola formularza
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-export function PersonSelectFormElement({
+export function PersonSelectorPreloaded({
     label,
     name,
     repository,
     multiple = false,
     showValidationInfo = true,
-}: PersonsSelectFormElementProps) {
+}: PersonsSelectorProps) {
     const {
         control,
         setValue,
         formState: { errors },
     } = useFormContext();
 
-    function makeoptions(repositoryDataItems: (Person & { _nameSurname: string })[]) {
+    function makeoptions(repositoryDataItems: (PersonData & { _nameSurname: string })[]) {
         repositoryDataItems.map((item) => (item._nameSurname = `${item.name} ${item.surname}`));
         return repositoryDataItems;
     }
@@ -922,7 +963,7 @@ export function PersonSelectFormElement({
     }
 
     function handleSelected(field: ControllerRenderProps<any, string>) {
-        const currentValue = (field.value ? (multiple ? field.value : [field.value]) : []) as (Person & {
+        const currentValue = (field.value ? (multiple ? field.value : [field.value]) : []) as (PersonData & {
             _nameSurname: string;
         })[];
         return makeoptions(currentValue);
@@ -938,7 +979,7 @@ export function PersonSelectFormElement({
                     <Typeahead
                         id={`${label}-controlled`}
                         labelKey="_nameSurname"
-                        options={makeoptions(repository.items as (Person & { _nameSurname: string })[])}
+                        options={makeoptions(repository.items as (PersonData & { _nameSurname: string })[])}
                         onChange={(items) => handleOnChange(items, field)}
                         selected={handleSelected(field)}
                         placeholder="-- Wybierz osobę --"

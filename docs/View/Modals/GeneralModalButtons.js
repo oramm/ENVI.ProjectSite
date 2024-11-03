@@ -32,6 +32,21 @@ const react_bootstrap_1 = require("react-bootstrap");
 const ConfirmModal_1 = __importDefault(require("./ConfirmModal"));
 const GeneralModal_1 = require("./GeneralModal");
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
+/**
+ *
+ * @param modalProps - właściwości modalu
+ * - onEdit - funkcja z obiektu nadrzędnego wywoływana po edycji elementu
+ * - specialActionRoute - ścieżka do specjalnej akcji (np. wysłania maila)
+ * - ModalBodyComponent - komponent wyświetlany w modalu
+ * - additionalModalBodyProps - dodatkowe właściwości przekazywane do komponentu wyświetlanego w modalu
+ * - modalTitle - tytuł modalu
+ * - initialData - dane początkowe
+ * - repository - repozytorium
+ * - makeValidationSchema - funkcja tworząca schemat walidacji
+ * - fieldsToUpdate - pola do aktualizacji
+ * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
+ * @param buttonProps - właściwości przycisku
+ */
 function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {

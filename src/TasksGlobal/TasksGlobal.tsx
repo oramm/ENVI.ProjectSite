@@ -5,7 +5,7 @@ import {
     Milestone,
     OtherContract,
     OurContract,
-    Person,
+    PersonData,
     Project,
     RepositoryDataItem,
     Task,
@@ -168,7 +168,7 @@ function LoadingMessage({ selectedProject }: { selectedProject: Project | undefi
 }
 
 function makeContractTitleLabel(contract: OurContract | OtherContract) {
-    const manager = "ourId" in contract ? (contract._manager as Person) : undefined;
+    const manager = "ourId" in contract ? (contract._manager as PersonData) : undefined;
     const ourId = "ourId" in contract ? contract.ourId : undefined;
 
     let label = "K: ";
@@ -179,7 +179,12 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
 }
 
 function contractNodeEditHandler(node: SectionNode<Task>) {
-    const contract = node.dataItem as OurContract | OtherContract;
+    const dataItem = node.dataItem as OurContract | OtherContract;
+    console.log("contractNodeEditHandler", node);
+    const contract = {
+        //...node.dataItem.repository.currentItems[0],
+        ...(node.dataItem as OurContract | OtherContract),
+    };
     node.titleLabel = makeContractTitleLabel(contract);
 }
 

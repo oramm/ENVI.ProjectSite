@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     ContractSelectFormElement,
     EntitySelector,
-    PersonSelectFormElement,
+    PersonSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -105,7 +105,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData }: ModalB
                 <EntitySelector name="_entity" repository={entitiesRepository} multiple={false} />
             </Form.Group>
             <Form.Group controlId="_owner">
-                <PersonSelectFormElement
+                <PersonSelectorPreloaded
                     label="Osoba rejestrująca"
                     name="_owner"
                     repository={MainSetup.personsEnviRepository}

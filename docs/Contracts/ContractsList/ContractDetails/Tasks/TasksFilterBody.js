@@ -32,6 +32,6 @@ function TasksFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(StatusSelectors_1.TaksStatusSelectFormElement, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
 }
 exports.TasksFilterBody = TasksFilterBody;

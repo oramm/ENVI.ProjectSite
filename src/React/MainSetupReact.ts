@@ -2,7 +2,7 @@ import {
     CaseType,
     ContractType,
     DocumentTemplate,
-    Person,
+    PersonData,
     Project,
     SystemRole,
     SystemRoleName,
@@ -14,7 +14,7 @@ import ToolsDate from "./ToolsDate";
 export default class MainSetup {
     static projectsRepository: RepositoryReact<Project>;
     static documentTemplatesRepository: RepositoryReact<DocumentTemplate>;
-    static personsEnviRepository: RepositoryReact<Person>;
+    static personsEnviRepository: RepositoryReact<PersonData>;
     static contractTypesRepository: RepositoryReact<ContractType>;
 
     static CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
@@ -143,6 +143,16 @@ export default class MainSetup {
     static OfferBondForm = {
         CASH: "Gotówka",
         GUARANTEE: "Gwarancja",
+    };
+
+    static OfferEventType = {
+        CREATED: "Oferta Utworzona",
+        SEND: "Oferta wysłana",
+        CHANGED: "Oferta zmieniona",
+        AWARDED: "Oferta wygrana",
+        LOST: "Oferta przegrana",
+        CANCELED: "Przetarg unieważniony",
+        WITHDRAWN: "Oferta wycofana",
     };
 
     static InvoicesFilterInitState = {

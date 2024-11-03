@@ -56,9 +56,9 @@ function OurContractModalBody(props) {
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
-                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Koordynator", name: "_manager", repository: MainSetupReact_1.default.personsEnviRepository })),
+                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Koordynator", name: "_manager", repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_admin" },
-                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Administrator", name: "_admin", repository: MainSetupReact_1.default.personsEnviRepository })),
+                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Administrator", name: "_admin", repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
                 react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employers", repository: ContractsController_1.entitiesRepository, multiple: true })))));

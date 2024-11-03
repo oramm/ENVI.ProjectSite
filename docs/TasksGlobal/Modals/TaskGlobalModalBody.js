@@ -65,6 +65,6 @@ function TaskGlobalModalBody({ isEditing, initialData, contextData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "deadline", errors: errors })),
         react_1.default.createElement(StatusSelectors_1.TaksStatusSelectFormElement, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "W\u0142a\u015Bciciel", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "W\u0142a\u015Bciciel", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository }))));
 }
 exports.TaskGlobalModalBody = TaskGlobalModalBody;

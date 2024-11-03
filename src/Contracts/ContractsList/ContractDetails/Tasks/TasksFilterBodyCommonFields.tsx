@@ -3,7 +3,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import {
     CaseSelectMenuElement,
-    PersonSelectFormElement,
+    PersonSelectorPreloaded,
 } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useContract } from "../../ContractContext";
 import ToolsDate from "../../../../React/ToolsDate";
@@ -44,7 +44,7 @@ export function TasksFilterBodyCommonFields() {
                 <TaksStatusSelectFormElement showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col}>
-                <PersonSelectFormElement
+                <PersonSelectorPreloaded
                     showValidationInfo={false}
                     repository={MainSetup.personsEnviRepository}
                     name="_owner"

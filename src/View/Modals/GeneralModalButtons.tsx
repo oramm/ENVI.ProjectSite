@@ -11,6 +11,21 @@ import {
 } from "./ModalsTypes";
 import { DeleteIconButton, EditIconButton } from "../Resultsets/CommonComponents";
 
+/**
+ *
+ * @param modalProps - właściwości modalu
+ * - onEdit - funkcja z obiektu nadrzędnego wywoływana po edycji elementu
+ * - specialActionRoute - ścieżka do specjalnej akcji (np. wysłania maila)
+ * - ModalBodyComponent - komponent wyświetlany w modalu
+ * - additionalModalBodyProps - dodatkowe właściwości przekazywane do komponentu wyświetlanego w modalu
+ * - modalTitle - tytuł modalu
+ * - initialData - dane początkowe
+ * - repository - repozytorium
+ * - makeValidationSchema - funkcja tworząca schemat walidacji
+ * - fieldsToUpdate - pola do aktualizacji
+ * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
+ * @param buttonProps - właściwości przycisku
+ */
 export function GeneralEditModalButton<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     buttonProps,
     modalProps: {

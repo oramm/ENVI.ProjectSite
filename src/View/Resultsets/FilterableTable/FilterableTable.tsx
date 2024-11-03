@@ -242,38 +242,62 @@ export function TableTitle({ title }: { title: string }) {
     return <h1>{title}</h1>;
 }
 
-// Funkcja do aktualizacji węzłów
+/** Funkcja do aktualizacji węzłów
+ * jeśli edytujemy sekcję to zaczynamy od najwyższego poziomu drzewa i schodzimy do spodu szukając sekcji
+ * jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia i go edytujemy
+ * @param nodes tablica węzłów
+ * @param sectionId id węzła sekcji do edycji - dla liscia jest to id sekcji głównej
+ * @param newData nowe dane węzła lub liścia
+ */
 function editNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
     sectionId: string,
     newData: RepositoryDataItem
 ): SectionNode<LeafDataItemType>[] {
     return nodes.map((node) => {
-        if (node.id === sectionId) {
-            // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
+        const nodeTypeToEdit = nodeTypeToBeEdited(node, newData);
+        if (nodeTypeToEdit === "SECTION") {
+            if (node.id !== sectionId) {
+                // bieżący węzeł to nie ten szukany, przeszukujemy dzieci
+                return {
+                    ...node,
+                    children: editNode(node.children, sectionId, newData),
+                };
+            }
+            // Edytujemy sekcję Znaleziono węzeł do zaktualizowania
             const newSectionNode = { ...node };
             newSectionNode.dataItem = newData;
             if (newSectionNode.editHandler) newSectionNode.editHandler(newSectionNode);
             return newSectionNode;
-        } else {
-            // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
+        } //jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia
+        else if (nodeTypeToEdit === "LEAF") {
+            //mamy sekcję nadrzędną dla szukanego liścia
+            if (node.editHandler) node.editHandler(node);
             return {
                 ...node,
-                children: editNode(node.children, sectionId, newData),
-                leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
+                children: node.children && editNode(node.children, sectionId, newData),
+                leaves: node.leaves && editLeafDataItem(node.leaves, newData),
             };
         }
+        throw new Error(`Zły typ węzła}`);
     });
 }
 
-// Funkcja do aktualizacji liści
+function nodeTypeToBeEdited<LeafDataItemType extends RepositoryDataItem>(
+    node: SectionNode<LeafDataItemType>,
+    newData: RepositoryDataItem
+) {
+    if (newData.id === node.dataItem.id) return "SECTION";
+    return "LEAF";
+}
+
+/**Funkcja do aktualizacji liści */
 function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
     leaves: LeafDataItemType[],
-    id: number,
     newData: RepositoryDataItem
 ): LeafDataItemType[] {
     return leaves.map((leaf) =>
-        leaf.id === id
+        leaf.id === newData.id
             ? {
                   ...leaf,
                   ...newData,

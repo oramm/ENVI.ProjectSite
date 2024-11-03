@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
-import { EntityData, Person } from "../../Typings/bussinesTypes";
+import { EntityData, PersonData } from "../../Typings/bussinesTypes";
 import { PersonsFilterBody } from "./PersonFilterBody";
 import { PersonAddNewModalButton, PersonEditModalButton } from "./Modals/PersonModalButtons";
 import { personsRepository } from "./PersonsController";
@@ -10,12 +10,12 @@ export default function PersonsSearch({ title }: { title: string }) {
         document.title = title;
     }, [title]);
 
-    function renderEntityName(person: Person) {
+    function renderEntityName(person: PersonData) {
         return <>{person._entity.name}</>;
     }
 
     return (
-        <FilterableTable<Person>
+        <FilterableTable<PersonData>
             id="persons"
             title={title}
             FilterBodyComponent={PersonsFilterBody}
@@ -24,7 +24,7 @@ export default function PersonsSearch({ title }: { title: string }) {
                 { header: "Nazwisko", objectAttributeToShow: "surname" },
                 { header: "Telefon", objectAttributeToShow: "phone" },
                 { header: "Email", objectAttributeToShow: "email" },
-                { header: "Firma", renderTdBody: (person: Person) => renderEntityName(person) },
+                { header: "Firma", renderTdBody: (person: PersonData) => renderEntityName(person) },
                 { header: "Stanowisko", objectAttributeToShow: "position" },
                 { header: "Opis", objectAttributeToShow: "comment" },
             ]}

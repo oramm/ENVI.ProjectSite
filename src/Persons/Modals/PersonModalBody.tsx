@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
-import { Person } from "../../../Typings/bussinesTypes";
+import { PersonData } from "../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../PersonsController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntitySelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 
-export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Person>) {
+export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<PersonData>) {
     const {
         register,
         reset,

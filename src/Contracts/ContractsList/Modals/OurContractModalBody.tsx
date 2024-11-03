@@ -4,7 +4,7 @@ import {
     CitySelector,
     ContractTypeSelectFormElement,
     EntitySelector,
-    PersonSelectFormElement,
+    PersonSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -51,14 +51,14 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
             <ContractModalBody {...props} />
             <Row>
                 <Form.Group as={Col} controlId="_manager">
-                    <PersonSelectFormElement
+                    <PersonSelectorPreloaded
                         label="Koordynator"
                         name="_manager"
                         repository={MainSetup.personsEnviRepository}
                     />
                 </Form.Group>
                 <Form.Group as={Col} controlId="_admin">
-                    <PersonSelectFormElement
+                    <PersonSelectorPreloaded
                         label="Administrator"
                         name="_admin"
                         repository={MainSetup.personsEnviRepository}

@@ -131,7 +131,12 @@ function makeContractTitleLabel(contract) {
     return label;
 }
 function contractNodeEditHandler(node) {
-    const contract = node.dataItem;
+    const dataItem = node.dataItem;
+    console.log("contractNodeEditHandler", node);
+    const contract = {
+        //...node.dataItem.repository.currentItems[0],
+        ...node.dataItem,
+    };
     node.titleLabel = makeContractTitleLabel(contract);
 }
 function makeMilestoneTitleLabel(milestone) {

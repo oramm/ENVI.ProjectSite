@@ -80,11 +80,11 @@ export interface Contract extends RepositoryDataItem {
 }
 
 export interface OurContract extends Contract {
-    _admin?: Person;
-    _manager?: Person;
+    _admin?: PersonData;
+    _manager?: PersonData;
     ourId: string;
     _ourType: string;
-    _admin?: Person;
+    _admin?: PersonData;
     _city?: CityData;
 }
 
@@ -150,8 +150,8 @@ export interface Task extends RepositoryDataItem {
     deadline: string;
     status: string;
     _parent: Case;
-    _owner: Person;
-    _editor: Person;
+    _owner: PersonData;
+    _editor: PersonData;
     _lastUpdated: string;
 }
 
@@ -205,7 +205,7 @@ export interface GenericDocument extends RepositoryDataItem {
 export interface Letter extends GenericDocument {
     number?: string | number;
     registrationDate?: string;
-    _editor: Person;
+    _editor: PersonData;
     _cases: Case[];
 }
 
@@ -245,7 +245,7 @@ export interface EntityData extends RepositoryDataItem {
     phone?: string;
 }
 
-export interface Person extends RepositoryDataItem {
+export interface PersonData extends RepositoryDataItem {
     name: string;
     surname: string;
     email: string;
@@ -281,8 +281,8 @@ export interface Invoice extends RepositoryDataItem {
     status: string;
     gdId?: string | null;
     _contract: OurContract;
-    _editor: Person;
-    _owner: Person;
+    _editor: PersonData;
+    _owner: PersonData;
     _entity: EntityData;
     _lastUpdated?: string;
     _documentOpenUrl?: string;
@@ -296,7 +296,7 @@ export interface InvoiceItem extends RepositoryDataItem {
     unitPrice: number;
     vatTax: number;
     _parent: Invoice;
-    _editor: Person;
+    _editor: PersonData;
     _lastUpdated: string;
     _grossValue: number;
     _netValue: number;
@@ -319,7 +319,7 @@ export interface Security extends RepositoryDataItem {
     gdFolderUrl?: string;
     _contract: OurContract;
     _lastUpdated: string;
-    _editor: Person;
+    _editor: PersonData;
 }
 
 export interface CityData extends RepositoryDataItem {
@@ -332,6 +332,7 @@ interface Offer extends RepositoryDataItem {
     alias: string;
     description?: string;
     comment?: string;
+    emailAdditionalContent?: string;
     submissionDeadline?: string;
     _type: ContractType;
     _city: CityData;
@@ -340,14 +341,12 @@ interface Offer extends RepositoryDataItem {
     form: string;
     isOur: boolean;
     bidProcedure: string;
-    editorId?: number;
-    _lastUpdated?: string;
     employerName?: string;
     _employer?: EntityData;
-    _editor?: Person;
     status?: string;
     gdFolderId?: string;
     _gdFolderUrl?: string;
+    _lastEvent?: OfferEventData | null;
 }
 
 export interface OurOffer extends Offer {
@@ -368,6 +367,20 @@ export interface OfferBondData extends RepositoryDataItem {
     comment?: string | null;
     status: string;
     expiryDate?: string | null;
+}
+
+export interface OfferEventData extends RepositoryDataItem {
+    offerId?: number;
+    editorId?: number;
+    _editor: PersonData;
+    eventType: string;
+    _lastUpdated?: string;
+    comment?: string | null;
+    additionalMessage?: string | null;
+    versionNumber?: number | null;
+    _recipients?: PersonData[];
+    _gdFilesBasicData?: drive_v3.Schema$File[];
+    gdFilesJSON?: string | null;
 }
 
 export interface FinancialAidProgrammeData extends RepositoryDataItem {

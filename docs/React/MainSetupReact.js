@@ -119,6 +119,15 @@ MainSetup.OfferBondForm = {
     CASH: "Gotówka",
     GUARANTEE: "Gwarancja",
 };
+MainSetup.OfferEventType = {
+    CREATED: "Oferta Utworzona",
+    SEND: "Oferta wysłana",
+    CHANGED: "Oferta zmieniona",
+    AWARDED: "Oferta wygrana",
+    LOST: "Oferta przegrana",
+    CANCELED: "Przetarg unieważniony",
+    WITHDRAWN: "Oferta wycofana",
+};
 MainSetup.InvoicesFilterInitState = {
     ISSUE_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -90).toISOString().slice(0, 10),
     ISSUE_DATE_TO: ToolsDate_1.default.addDays(new Date(), +10).toISOString().slice(0, 10),

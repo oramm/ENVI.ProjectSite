@@ -142,4 +142,18 @@ export default class ToolsDate {
         const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
         return diffDays + 1;
     }
+
+    /**Formatuje datę do postaci "DD-MM-YYYY HH:MM"
+     */
+    static formatTime(date: Date | string) {
+        let dateToFormat = new Date(date);
+
+        return dateToFormat.toLocaleDateString("pl-PL", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }
 }

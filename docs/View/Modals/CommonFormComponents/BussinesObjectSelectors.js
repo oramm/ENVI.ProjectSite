@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectFormElement = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -370,12 +370,25 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.OurLetterTemplateSelectFormElement = OurLetterTemplateSelectFormElement;
+function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+    function renderOption(option) {
+        const typedOption = option;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null, typedOption._nameSurnameEmail),
+            react_1.default.createElement("div", { className: "text-muted small" },
+                " ",
+                typedOption._entity.name)));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+}
+exports.PersonSelector = PersonSelector;
 /**
  * Komponent formularza wyboru osoby
  * @param label oznaczenie pola formularza
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-function PersonSelectFormElement({ label, name, repository, multiple = false, showValidationInfo = true, }) {
+function PersonSelectorPreloaded({ label, name, repository, multiple = false, showValidationInfo = true, }) {
     const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function makeoptions(repositoryDataItems) {
         repositoryDataItems.map((item) => (item._nameSurname = `${item.name} ${item.surname}`));
@@ -395,7 +408,7 @@ function PersonSelectFormElement({ label, name, repository, multiple = false, sh
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined })) }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
-exports.PersonSelectFormElement = PersonSelectFormElement;
+exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
         const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";

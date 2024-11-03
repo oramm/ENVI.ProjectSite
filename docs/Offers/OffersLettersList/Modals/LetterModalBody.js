@@ -83,7 +83,7 @@ function LetterModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.registrationDate, isInvalid: !!errors.registrationDate, ...register("registrationDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "registrationDate", errors: errors }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_editor" },
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectFormElement, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
             react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));

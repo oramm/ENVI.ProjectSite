@@ -43,6 +43,7 @@ const OfferValidationSchema_1 = require("./Modals/OfferValidationSchema");
 const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
 const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const SendOfferModalButtons_1 = require("./Modals/SendOffer/SendOfferModalButtons");
 function OffersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -82,7 +83,39 @@ function OffersSearch({ title }) {
             react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } },
                 react_1.default.createElement("p", null, offer.description),
                 react_1.default.createElement("p", null, offer.comment)),
-            renderOfferBond(offer, isActive)));
+            renderSendOfferModalButton(offer, isActive),
+            renderOfferBond(offer, isActive),
+            renderLastEvent(offer)));
+    }
+    function renderSendOfferModalButton(offer, isActive) {
+        if (!offer.isOur || !isActive)
+            return null;
+        if (offer.form !== "Email")
+            return null;
+        if (offer._lastEvent?.versionNumber)
+            return react_1.default.createElement(SendOfferModalButtons_1.SendAnotherOfferModalButton, { modalProps: { onEdit: () => { }, initialData: offer } });
+        return react_1.default.createElement(SendOfferModalButtons_1.SendOfferModalButton, { modalProps: { onEdit: () => { }, initialData: offer } });
+    }
+    function renderLastEvent(offer) {
+        if (!offer._lastEvent)
+            return null;
+        const _recipients = offer._lastEvent._recipients?.map((r) => r._nameSurnameEmail).join(", ") || "";
+        const fileNames = offer._lastEvent._gdFilesBasicData?.map((f) => f.name).join(", ") || "";
+        const offerVersion = offer._lastEvent.versionNumber ? ` | wersja: ${offer._lastEvent.versionNumber}` : "";
+        return (react_1.default.createElement("div", { className: "text-muted" },
+            react_1.default.createElement("span", { className: "fw-bold" }, offer._lastEvent.eventType),
+            " ",
+            ToolsDate_1.default.formatTime(offer._lastEvent._lastUpdated),
+            " przez ",
+            offer._lastEvent._editor.name,
+            " ",
+            offer._lastEvent._editor.surname,
+            " ",
+            _recipients ? `do: ${_recipients}` : "",
+            " ",
+            fileNames ? ` | wysłane pliki: ${fileNames}` : "",
+            " ",
+            offerVersion));
     }
     function renderDaysLeft(offer) {
         if (!offer.submissionDeadline)
@@ -106,7 +139,7 @@ function OffersSearch({ title }) {
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: offer,
                 modalTitle: "Edycja statusu",
-                repository: OffersController_1.OffersRepository,
+                repository: OffersController_1.offersRepository,
                 ModalBodyComponent: OfferModalBodiesPartial_1.OfferModalBodyStatus,
                 onEdit: handleEditObject,
                 fieldsToUpdate: ["status"],
@@ -147,6 +180,6 @@ function OffersSearch({ title }) {
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },
             { header: "Oferta", renderTdBody: renderRowContent },
-        ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.OffersRepository, selectedObjectRoute: "/offer/" }));
+        ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }
 exports.default = OffersSearch;

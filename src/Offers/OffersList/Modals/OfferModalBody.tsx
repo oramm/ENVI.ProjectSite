@@ -36,12 +36,12 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             _employer: initialData?.employerName,
             alias: initialData?.alias || "",
             description: initialData?.description || "",
+            comment: initialData?.comment || "",
             creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
             submissionDeadline: initialData?.submissionDeadline,
             status: initialData?.status || "",
             bidProcedure: initialData?.bidProcedure || "",
             form: initialData?.form || "",
-            _editor: initialData?._editor,
         };
         reset(resetData);
 

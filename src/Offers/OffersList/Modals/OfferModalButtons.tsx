@@ -5,7 +5,11 @@ import { makeOtherOfferValidationSchema, makeOurOfferValidationSchema } from "./
 import { ExternalOfferModalBody } from "./ExternalOfferModalBody";
 import { OurOfferModalBody } from "./OurOfferModalBody";
 import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
-import { OffersRepository } from "../OffersController";
+import { offersRepository } from "../OffersController";
+import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTable/FilterableTableContext";
+import { SendOfferModalBody } from "./SendOffer/SendOfferModalBody";
+import RepositoryReact from "../../../React/RepositoryReact";
+import { makeSendOfferValidationSchema } from "./SendOffer/SendOfferValidationSchema";
 
 /** przycisk i modal edycji Offer */
 export function OfferEditModalButton({
@@ -32,7 +36,7 @@ export function OurOfferEditModalButton({
                 onEdit: onEdit,
                 ModalBodyComponent: OurOfferModalBody,
                 modalTitle: "Edycja oferty - szablon ENVI",
-                repository: OffersRepository,
+                repository: offersRepository,
                 initialData: initialData,
                 makeValidationSchema: makeOurOfferValidationSchema,
             }}
@@ -50,7 +54,7 @@ export function OurOfferAddNewModalButton({ modalProps: { onAddNew } }: Specific
                 onAddNew: onAddNew,
                 ModalBodyComponent: OurOfferModalBody,
                 modalTitle: "Rejestruj ofertę - szablon ENVI",
-                repository: OffersRepository,
+                repository: offersRepository,
                 makeValidationSchema: makeOurOfferValidationSchema,
             }}
             buttonProps={{
@@ -70,7 +74,7 @@ export function ExternalOfferEditModalButton({
                 onEdit: onEdit,
                 ModalBodyComponent: ExternalOfferModalBody,
                 modalTitle: "Edycja oferty - formularz Zamawiającego",
-                repository: OffersRepository,
+                repository: offersRepository,
                 initialData: initialData,
                 makeValidationSchema: makeOtherOfferValidationSchema,
             }}
@@ -88,7 +92,7 @@ export function ExternalOfferAddNewModalButton({
                 onAddNew: onAddNew,
                 ModalBodyComponent: ExternalOfferModalBody,
                 modalTitle: "Nowa oferta - formularz Zamawiającego",
-                repository: OffersRepository,
+                repository: offersRepository,
                 makeValidationSchema: makeOtherOfferValidationSchema,
             }}
             buttonProps={{

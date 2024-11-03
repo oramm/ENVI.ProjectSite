@@ -1,7 +1,7 @@
-import { EntityData, Person } from "../../Typings/bussinesTypes";
+import { EntityData, PersonData } from "../../Typings/bussinesTypes";
 import RepositoryReact from "../React/RepositoryReact";
 
-export const personsRepository = new RepositoryReact<Person>({
+export const personsRepository = new RepositoryReact<PersonData>({
     actionRoutes: {
         getRoute: "persons",
         addNewRoute: "person",

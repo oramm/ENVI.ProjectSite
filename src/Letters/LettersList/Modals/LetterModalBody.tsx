@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     CaseSelectMenuElement,
     ContractSelectFormElement,
-    PersonSelectFormElement,
+    PersonSelectorPreloaded,
     ProjectSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Alert, Col, Form, Row } from "react-bootstrap";
@@ -125,7 +125,7 @@ export function LetterModalBody({
                 </Form.Group>
             </Row>
             <Form.Group controlId="_editor">
-                <PersonSelectFormElement
+                <PersonSelectorPreloaded
                     label="Osoba rejestrująca"
                     name="_editor"
                     repository={MainSetup.personsEnviRepository}

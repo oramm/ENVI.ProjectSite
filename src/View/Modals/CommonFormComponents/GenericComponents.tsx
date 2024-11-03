@@ -147,8 +147,10 @@ export function MyAsyncTypeahead({
                             newSelectionPrefix="Dodaj nowy: "
                             placeholder="-- Wybierz opcję --"
                             renderMenuItemChildren={renderMenuItemChildren}
-                            isValid={showValidationInfo ? !errors?.[name] : undefined}
-                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            isValid={!hasError(errors, name)}
+                            isInvalid={hasError(errors, name)}
+                            //isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            //isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                         />
                     );
                 }}

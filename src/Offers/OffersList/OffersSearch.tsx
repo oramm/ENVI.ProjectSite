@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
-import { OffersRepository as offersRepository } from "./OffersController";
+import { offersRepository } from "./OffersController";
 import { OffersFilterBody } from "./OfferFilterBody";
 import {
     OfferEditModalButton,
@@ -24,6 +24,7 @@ import { makeOfferStatusValidationSchema } from "./Modals/OfferValidationSchema"
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 import ToolsDate from "../../React/ToolsDate";
 import MainSetup from "../../React/MainSetupReact";
+import { SendAnotherOfferModalButton, SendOfferModalButton } from "./Modals/SendOffer/SendOfferModalButtons";
 
 export default function OffersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -63,8 +64,33 @@ export default function OffersSearch({ title }: { title: string }) {
                     <p>{offer.description}</p>
                     <p>{offer.comment}</p>
                 </div>
+                {renderSendOfferModalButton(offer, isActive)}
                 {renderOfferBond(offer, isActive)}
+                {renderLastEvent(offer)}
             </>
+        );
+    }
+
+    function renderSendOfferModalButton(offer: OurOffer, isActive: boolean) {
+        if (!offer.isOur || !isActive) return null;
+        if (offer.form !== "Email") return null;
+        if (offer._lastEvent?.versionNumber)
+            return <SendAnotherOfferModalButton modalProps={{ onEdit: () => {}, initialData: offer }} />;
+        return <SendOfferModalButton modalProps={{ onEdit: () => {}, initialData: offer }} />;
+    }
+
+    function renderLastEvent(offer: OurOffer | ExternalOffer) {
+        if (!offer._lastEvent) return null;
+        const _recipients = offer._lastEvent._recipients?.map((r) => r._nameSurnameEmail).join(", ") || "";
+        const fileNames = offer._lastEvent._gdFilesBasicData?.map((f) => f.name).join(", ") || "";
+        const offerVersion = offer._lastEvent.versionNumber ? ` | wersja: ${offer._lastEvent.versionNumber}` : "";
+        return (
+            <div className="text-muted">
+                <span className="fw-bold">{offer._lastEvent.eventType}</span>{" "}
+                {ToolsDate.formatTime(offer._lastEvent._lastUpdated!)} przez {offer._lastEvent._editor.name}{" "}
+                {offer._lastEvent._editor.surname} {_recipients ? `do: ${_recipients}` : ""}{" "}
+                {fileNames ? ` | wysłane pliki: ${fileNames}` : ""} {offerVersion}
+            </div>
         );
     }
 

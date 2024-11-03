@@ -43,7 +43,7 @@ function OurOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
             onEdit: onEdit,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Edycja oferty - szablon ENVI",
-            repository: OffersController_1.OffersRepository,
+            repository: OffersController_1.offersRepository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
         }, buttonProps: {
@@ -56,7 +56,7 @@ function OurOfferAddNewModalButton({ modalProps: { onAddNew } }) {
             onAddNew: onAddNew,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Rejestruj ofertę - szablon ENVI",
-            repository: OffersController_1.OffersRepository,
+            repository: OffersController_1.offersRepository,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj ENVI",
@@ -69,7 +69,7 @@ function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData }, }) 
             onEdit: onEdit,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Edycja oferty - formularz Zamawiającego",
-            repository: OffersController_1.OffersRepository,
+            repository: OffersController_1.offersRepository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
         }, buttonProps: {} }));
@@ -80,7 +80,7 @@ function ExternalOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
             onAddNew: onAddNew,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Nowa oferta - formularz Zamawiającego",
-            repository: OffersController_1.OffersRepository,
+            repository: OffersController_1.offersRepository,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj ofertę",
