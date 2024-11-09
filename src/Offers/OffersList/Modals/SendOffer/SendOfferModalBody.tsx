@@ -101,11 +101,14 @@ export function SendOfferModalBody({ initialData }: ModalBodyProps<OurOffer>) {
                 <ErrorMessage name="_newEvent.comment" errors={errors} />
                 <Form.Text className="text-muted">
                     <div>
-                        {isAnotherOffer
-                            ? `UWAGA oferta była juz wysłana ${
-                                  initialData._lastEvent!.versionNumber
-                              } razy. Podaj wyjąśnienie wewnętrzne dla ENVI`
-                            : "<br />Wypełnij to pole tylko jeśli masz komentarz wewnętrzy na potrzeby ENVI - nie będzie on wysłany do Klienta."}
+                        {isAnotherOffer ? (
+                            <>
+                                UWAGA oferta była juz wysłana ${initialData._lastEvent!.versionNumber} razy. Podaj
+                                wyjąśnienie wewnętrzne dla ENVI <br />
+                            </>
+                        ) : (
+                            "Wypełnij to pole tylko jeśli masz komentarz wewnętrzy na potrzeby ENVI - nie będzie on wysłany do Klienta."
+                        )}
                     </div>
                 </Form.Text>
             </Form.Group>

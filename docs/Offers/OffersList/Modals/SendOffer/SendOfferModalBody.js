@@ -77,9 +77,11 @@ function SendOfferModalBody({ initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Pole opcjonalne", isValid: !(0, CommonComponentsController_1.hasError)(errors, "_newEvent.comment"), isInvalid: (0, CommonComponentsController_1.hasError)(errors, "_newEvent.comment"), ...register("_newEvent.comment") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_newEvent.comment", errors: errors }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" },
-                react_1.default.createElement("div", null, isAnotherOffer
-                    ? `UWAGA oferta była juz wysłana ${initialData._lastEvent.versionNumber} razy. Podaj wyjąśnienie wewnętrzne dla ENVI`
-                    : "<br />Wypełnij to pole tylko jeśli masz komentarz wewnętrzy na potrzeby ENVI - nie będzie on wysłany do Klienta."))),
+                react_1.default.createElement("div", null, isAnotherOffer ? (react_1.default.createElement(react_1.default.Fragment, null,
+                    "UWAGA oferta by\u0142a juz wys\u0142ana $",
+                    initialData._lastEvent.versionNumber,
+                    " razy. Podaj wyj\u0105\u015Bnienie wewn\u0119trzne dla ENVI ",
+                    react_1.default.createElement("br", null))) : ("Wypełnij to pole tylko jeśli masz komentarz wewnętrzy na potrzeby ENVI - nie będzie on wysłany do Klienta.")))),
         react_1.default.createElement(OtherAttributesSelectors_1.GdFilesSelector, { showValidationInfo: true, name: "_newEvent._gdFilesBasicData", contextData: initialData, attentionRequiredFileNames: initialData?._lastEvent?._gdFilesBasicData?.map((file) => file.name), multiple: true }),
         react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, isAnotherOffer ? (renderAnotherOfferFileInstrutions()) : (react_1.default.createElement("div", null, "Wybierz z folderu oferty na Dysku Google pliki, kt\u00F3re chcesz przes\u0142a\u0107 wraz z ofert\u0105. Mo\u017Cesz wybra\u0107 wi\u0119cej ni\u017C jeden.")))));
 }
