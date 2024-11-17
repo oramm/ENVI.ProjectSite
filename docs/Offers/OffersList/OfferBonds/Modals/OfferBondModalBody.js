@@ -70,7 +70,6 @@ function OfferBondModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !(0, CommonComponentsController_1.hasError)(errors, "_offerBond.expiryDate"), isInvalid: (0, CommonComponentsController_1.hasError)(errors, "_offerBond.expiryDate"), ...register("_offerBond.expiryDate") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_offerBond.expiryDate", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_offerBond.status" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
-            react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { name: "_offerBond.status" }))));
+            react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { name: "_offerBond.status", label: "Status", multiple: false }))));
 }
 exports.OfferBondModalBody = OfferBondModalBody;

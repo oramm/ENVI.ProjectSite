@@ -112,22 +112,29 @@ export function OfferStatusSelector({
 export function OfferBondStatusSelector({
     showValidationInfo = true,
     multiple = false,
-    name = "offerBondStatus",
+    name,
     label,
     as,
 }: TypeaheadStringSelectorProps & { multiple?: boolean }) {
     const statuses = Object.entries(MainSetup.OfferBondStatus).map(([key, value]) => value);
-
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
     return multiple ? (
         <TypeaheadStringSelector
             options={statuses}
             showValidationInfo={showValidationInfo}
-            name={name}
-            label={label}
+            name={resolvedName}
+            label={resolvedLabel}
             as={as}
         />
     ) : (
-        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }
 

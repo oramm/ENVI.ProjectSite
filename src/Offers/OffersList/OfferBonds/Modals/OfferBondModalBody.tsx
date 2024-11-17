@@ -84,8 +84,7 @@ export function OfferBondModalBody({ isEditing, initialData }: ModalBodyProps<Ex
                 <ErrorMessage name="_offerBond.expiryDate" errors={errors} />
             </Form.Group>
             <Form.Group as={Col} controlId="_offerBond.status">
-                <Form.Label>Status</Form.Label>
-                <OfferBondStatusSelector name="_offerBond.status" />
+                <OfferBondStatusSelector name="_offerBond.status" label="Status" multiple={false} />
             </Form.Group>
         </>
     );

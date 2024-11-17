@@ -35,9 +35,11 @@ function OfferStatusSelector({ showValidationInfo = true, name, label, multiple 
     return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
 }
 exports.OfferStatusSelector = OfferStatusSelector;
-function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, name = "offerBondStatus", label, as, }) {
+function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     const statuses = Object.entries(MainSetupReact_1.default.OfferBondStatus).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: name, label: label, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: name, as: as }));
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
 }
 exports.OfferBondStatusSelector = OfferBondStatusSelector;
 function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, label = name, }) {
