@@ -63,7 +63,7 @@ function TaskModalBody({ isEditing, initialData, contextData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.deadline, isInvalid: !!errors.deadline, ...register("deadline") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "deadline", errors: errors })),
-        react_1.default.createElement(StatusSelectors_1.TaksStatusSelectFormElement, null),
+        react_1.default.createElement(StatusSelectors_1.TaksStatusSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "W\u0142a\u015Bciciel", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository }))));
 }

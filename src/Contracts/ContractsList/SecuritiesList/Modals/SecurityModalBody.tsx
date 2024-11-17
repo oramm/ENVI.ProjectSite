@@ -9,7 +9,7 @@ import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { Project, Security } from "../../../../../Typings/bussinesTypes";
 import { contractsRepository, projectsRepository } from "../../ContractsController";
 import { ErrorMessage, ValueInPLNInput } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
-import { SecurityStatusSelectFormElement } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { SecurityStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Security>) {
     const {
@@ -69,7 +69,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Sec
                 <Form.Label>Zwrócono</Form.Label>
                 <ValueInPLNInput name="returnedValue" />
             </Form.Group>
-            <SecurityStatusSelectFormElement name="status" showValidationInfo={true} />
+            <SecurityStatusSelector name="status" showValidationInfo={true} />
         </>
     );
 }

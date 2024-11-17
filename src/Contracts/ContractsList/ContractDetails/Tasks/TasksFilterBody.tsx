@@ -9,7 +9,7 @@ import { useContract } from "../../ContractContext";
 import ToolsDate from "../../../../React/ToolsDate";
 import { casesRepository } from "../../ContractsController";
 import MainSetup from "../../../../React/MainSetupReact";
-import { TaksStatusSelectFormElement } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { TaksStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function TasksFilterBody() {
     const { register } = useFormContext();
@@ -41,7 +41,7 @@ export function TasksFilterBody() {
                 <CaseSelectMenuElement repository={casesRepository} showValidationInfo={false} _contract={contract} />
             </Form.Group>
             <Form.Group as={Col}>
-                <TaksStatusSelectFormElement showValidationInfo={false} />
+                <TaksStatusSelector showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col}>
                 <PersonSelectorPreloaded

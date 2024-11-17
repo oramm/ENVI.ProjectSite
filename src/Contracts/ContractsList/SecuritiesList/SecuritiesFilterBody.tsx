@@ -7,7 +7,7 @@ import {
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { projectsRepository } from "../ContractsController";
-import { SecurityStatusSelectFormElement } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { SecurityStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { DateRangeInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import MainSetup from "../../../React/MainSetupReact";
 
@@ -61,7 +61,7 @@ export function SecuritiesFilterBody() {
                 defaultFromValue={MainSetup.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM}
             />
 
-            <SecurityStatusSelectFormElement name="status" showValidationInfo={false} />
+            <SecurityStatusSelector name="status" showValidationInfo={false} />
         </Row>
     );
 }

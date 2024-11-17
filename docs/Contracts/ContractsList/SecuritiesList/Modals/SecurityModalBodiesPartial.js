@@ -34,7 +34,7 @@ function SecurityModalBodyStatus({ initialData }) {
     (0, react_1.useEffect)(() => {
         setValue("status", initialData?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.SecurityStatusSelectFormElement, null);
+    return react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, null);
 }
 exports.SecurityModalBodyStatus = SecurityModalBodyStatus;
 function SecurityModalBodyDescritpion({ initialData }) {

@@ -13,12 +13,8 @@ import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/type
 import { RenderMenuItemChildren } from "react-bootstrap-typeahead/types/components/TypeaheadMenu";
 import { hasError } from "../../Resultsets/CommonComponentsController";
 import { ColProps } from "react-bootstrap";
-import { yupResolver } from "@hookform/resolvers/yup";
 
 export type ErrorMessageProps = { errors: FieldErrors<any>; name: string };
-export function ErrorMessage1({ errors, name }: ErrorMessageProps) {
-    return <>{errors[name] && <Form.Text className="text-danger">{errors[name]?.message as string}</Form.Text>}</>;
-}
 
 export function ErrorMessage({ errors, name }: ErrorMessageProps) {
     // Function to access nested properties
@@ -147,10 +143,8 @@ export function MyAsyncTypeahead({
                             newSelectionPrefix="Dodaj nowy: "
                             placeholder="-- Wybierz opcję --"
                             renderMenuItemChildren={renderMenuItemChildren}
-                            isValid={!hasError(errors, name)}
-                            isInvalid={hasError(errors, name)}
-                            //isValid={showValidationInfo ? !errors?.[name] : undefined}
-                            //isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            isValid={showValidationInfo ? !hasError(errors, name) : undefined}
+                            isInvalid={showValidationInfo ? hasError(errors, name) : undefined}
                         />
                     );
                 }}
@@ -161,21 +155,23 @@ export function MyAsyncTypeahead({
     );
 }
 
-type SelectTextOptionFormElementProps = {
+type TextOptionSelectorProps = {
     showValidationInfo?: boolean;
     options: string[];
     name: string;
     as?: React.ElementType;
     label?: string;
+    multiple?: boolean;
 };
 
-export function SelectTextOptionFormElement({
+export function TextOptionSelector({
     options,
     showValidationInfo = true,
     name,
     as,
     label = name,
-}: SelectTextOptionFormElementProps) {
+    multiple = false,
+}: TextOptionSelectorProps) {
     const {
         register,
         formState: { errors },
@@ -190,6 +186,7 @@ export function SelectTextOptionFormElement({
             <Form.Label>{makeLabel()}</Form.Label>
             <Form.Control
                 as="select"
+                multiple={multiple}
                 isValid={showValidationInfo ? !hasError(errors, name) : undefined}
                 isInvalid={showValidationInfo ? hasError(errors, name) : undefined}
                 {...register(name)}
@@ -206,10 +203,87 @@ export function SelectTextOptionFormElement({
     );
 }
 
+export interface TypeaheadStringSelectorProps {
+    showValidationInfo?: boolean;
+    name?: string;
+    label?: string;
+    as?: React.ElementType;
+}
+/**
+ * Komponent do wyboru opcji z listy stringów służy jako multiselect
+ */
+export function TypeaheadStringSelector({
+    options,
+    showValidationInfo = true,
+    name = "status",
+    label = name,
+    as,
+}: TypeaheadStringSelectorProps & { options: string[] }) {
+    const {
+        control,
+        setValue,
+        getValues,
+        formState: { errors },
+    } = useFormContext();
+    const multiple = true;
+    useEffect(() => {
+        // Set default value if undefined
+        const currentValue = getValues(name);
+        if (currentValue === undefined) {
+            const defaultValue = multiple ? [] : "";
+            setValue(name, defaultValue);
+        }
+    }, [setValue, getValues, multiple, name]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0] || "";
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    function setSelectedValue(field: ControllerRenderProps<any, typeof name>) {
+        return Array.isArray(field.value) ? field.value : field.value ? [field.value] : [];
+    }
+
+    function makeLabel() {
+        return label.charAt(0).toUpperCase() + label.slice(1);
+    }
+
+    return (
+        <>
+            <Form.Group controlId={name} as={as}>
+                <Form.Label>{makeLabel()}</Form.Label>
+                <Controller
+                    name={name}
+                    control={control}
+                    defaultValue={multiple ? [] : ""}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${name}-controlled`}
+                            labelKey={(option) => option as string}
+                            multiple={multiple}
+                            options={options}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={setSelectedValue(field)}
+                            placeholder="-- Wybierz status --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option) => <>{option as string}</>}
+                        />
+                    )}
+                />
+                <ErrorMessage name={name} errors={errors} />
+            </Form.Group>
+        </>
+    );
+}
+
 export type SpecificTextOptionProps = {
     showValidationInfo?: boolean;
     name?: string;
+    label?: string;
     as?: React.ElementType;
+    multiple?: boolean;
 };
 
 type ValueInPLNInputProps = {

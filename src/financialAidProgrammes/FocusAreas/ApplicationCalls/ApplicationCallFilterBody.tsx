@@ -34,7 +34,7 @@ export function ApplicationCallsFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} md={2} controlId="status">
-                <ApplicationCallStatusSelector showValidationInfo={false} />
+                <ApplicationCallStatusSelector multiple={true} showValidationInfo={false} />
             </Form.Group>
         </Row>
     );

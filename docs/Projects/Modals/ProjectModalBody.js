@@ -95,6 +95,6 @@ function ProjectModalBody({ isEditing, initialData }) {
                         trigger("startDate");
                     } }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "endDate" }))),
-        react_1.default.createElement(StatusSelectors_1.ProjectStatusSelectFormElement, null)));
+        react_1.default.createElement(StatusSelectors_1.ProjectStatusSelector, null)));
 }
 exports.ProjectModalBody = ProjectModalBody;

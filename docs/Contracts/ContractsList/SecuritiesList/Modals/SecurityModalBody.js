@@ -61,7 +61,7 @@ function SecurityModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "returnedValue" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zwr\u00F3cono"),
             react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { name: "returnedValue" })),
-        react_1.default.createElement(StatusSelectors_1.SecurityStatusSelectFormElement, { name: "status", showValidationInfo: true })));
+        react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, { name: "status", showValidationInfo: true })));
 }
 exports.SecurityModalBody = SecurityModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu

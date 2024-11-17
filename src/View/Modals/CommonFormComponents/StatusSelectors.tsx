@@ -1,95 +1,256 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "../../../Css/styles.css";
 
 import MainSetup from "../../../React/MainSetupReact";
 
-import { SelectTextOptionFormElement, SpecificTextOptionProps } from "./GenericComponents";
+import {
+    TextOptionSelector,
+    SpecificTextOptionProps,
+    TypeaheadStringSelector,
+    TypeaheadStringSelectorProps,
+} from "./GenericComponents";
 
-export function ProjectStatusSelectFormElement({
+export function ProjectStatusSelector({
     showValidationInfo = true,
-    name = "status",
+    name,
+    label = name,
+    multiple = false,
     as,
 }: SpecificTextOptionProps) {
     const statuses = Object.entries(MainSetup.ProjectStatuses).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedLabel}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }
 
-export function ContractStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
+export function ContractStatusSelector({
+    showValidationInfo = true,
+    multiple,
+    name,
+    label,
+    as,
+}: SpecificTextOptionProps) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
     const statuses = Object.entries(MainSetup.ContractStatuses).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={resolvedName} as={as} />
     );
 }
 
-export function SecurityStatusSelectFormElement({
+export function SecurityStatusSelector({
     showValidationInfo = true,
     name = "status",
+    label,
     as,
 }: SpecificTextOptionProps) {
     const statuses = Object.entries(MainSetup.SecurityStatus).map(([key, value]) => value);
     return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={name}
+            label={label}
+            as={as}
+        />
     );
 }
 
-export function OfferStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.OfferStatus).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
-    );
-}
-
-export function OfferBondStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.OfferBondStatus).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
-    );
-}
-
-export function OfferBondFormSelector({ showValidationInfo = true, name = "form", as }: SpecificTextOptionProps) {
-    const forms = Object.entries(MainSetup.OfferBondForm).map(([key, value]) => value);
-    return <SelectTextOptionFormElement options={forms} showValidationInfo={showValidationInfo} name={name} as={as} />;
-}
-
-export function TaksStatusSelectFormElement({
+export function OfferStatusSelector({
     showValidationInfo = true,
-    name = "status",
+    name,
+    label,
+    multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    let statuses = Object.entries(MainSetup.TaskStatus).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    const statuses = Object.entries(MainSetup.OfferStatus).map(([key, value]) => value);
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    );
+}
+export function OfferBondStatusSelector({
+    showValidationInfo = true,
+    multiple = false,
+    name = "offerBondStatus",
+    label,
+    as,
+}: TypeaheadStringSelectorProps & { multiple?: boolean }) {
+    const statuses = Object.entries(MainSetup.OfferBondStatus).map(([key, value]) => value);
+
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={name}
+            label={label}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
     );
 }
 
-export function InvoiceStatusSelectFormElement({
+export function OfferBondFormSelector({
     showValidationInfo = true,
-    name = "status",
+    name = "form",
+    as,
+    label = name,
+}: SpecificTextOptionProps) {
+    const forms = Object.entries(MainSetup.OfferBondForm).map(([key, value]) => value);
+    return (
+        <TextOptionSelector options={forms} showValidationInfo={showValidationInfo} name={name} as={as} label={label} />
+    );
+}
+
+export function TaksStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    const statuses = Object.entries(MainSetup.TaskStatus).map(([key, value]) => value);
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    );
+}
+
+export function InvoiceStatusSelector({
+    showValidationInfo = true,
+    multiple = false,
+    name,
+    label,
     as,
 }: SpecificTextOptionProps) {
     const statuses = Object.entries(MainSetup.InvoiceStatuses).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={resolvedName} as={as} />
     );
 }
 
 export function ApplicationCallStatusSelector({
     showValidationInfo = true,
-    name = "status",
+    name,
+    label,
+    multiple = false,
     as,
 }: SpecificTextOptionProps) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
     const statuses = Object.entries(MainSetup.ApplicationCallStatus).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }
 
-export function ClientNeedStatusSelector({ showValidationInfo = true, name = "status", as }: SpecificTextOptionProps) {
+export function ClientNeedStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
     const statuses = Object.entries(MainSetup.ClientNeedStatus).map(([key, value]) => value);
-    return (
-        <SelectTextOptionFormElement options={statuses} showValidationInfo={showValidationInfo} name={name} as={as} />
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }

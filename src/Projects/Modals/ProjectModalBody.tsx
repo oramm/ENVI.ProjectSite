@@ -5,7 +5,7 @@ import MainSetup from "../../React/MainSetupReact";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { ErrorMessage, ValueInPLNInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
-import { ProjectStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ProjectStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Project>) {
     const {
@@ -130,7 +130,7 @@ export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Proj
                     <ErrorMessage errors={errors} name="endDate" />
                 </Form.Group>
             </Row>
-            <ProjectStatusSelectFormElement />
+            <ProjectStatusSelector />
         </>
     );
 }

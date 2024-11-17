@@ -50,7 +50,7 @@ function ContractsList() {
             const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
             const contracts = (await MainWindowController_1.contractsRepository.loadItemsFromServerPOST([
                 {
-                    status: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
+                    statuses: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
                     endDateTo: endDateTo.toISOString().slice(0, 10),
                     getRemainingValue: true,
                     _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,

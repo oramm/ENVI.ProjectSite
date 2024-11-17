@@ -30,7 +30,7 @@ function TasksFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
             react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { repository: ContractsController_1.casesRepository, showValidationInfo: false, _contract: contract })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(StatusSelectors_1.TaksStatusSelectFormElement, { showValidationInfo: false })),
+            react_1.default.createElement(StatusSelectors_1.TaksStatusSelector, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
 }

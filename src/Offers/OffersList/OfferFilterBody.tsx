@@ -27,10 +27,15 @@ export function OffersFilterBody() {
                 defaultToValue={MainSetup.OffersFilterInitState.SUBMISSION_TO}
             />
             <Form.Group as={Col} md={2}>
-                <OfferStatusSelector showValidationInfo={false} />
+                <OfferStatusSelector multiple={true} showValidationInfo={false} label="Status oferty" />
             </Form.Group>
             <Form.Group as={Col} md={2}>
-                <OfferBondStatusSelector showValidationInfo={false} name="_offerBond.status" />
+                <OfferBondStatusSelector
+                    name="offerBondStatuses"
+                    label="Status wadium"
+                    showValidationInfo={false}
+                    multiple={true}
+                />
             </Form.Group>
         </Row>
     );

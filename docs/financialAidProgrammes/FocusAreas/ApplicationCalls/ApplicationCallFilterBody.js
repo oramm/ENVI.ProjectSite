@@ -24,6 +24,6 @@ function ApplicationCallsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_focusArea" },
             react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
-            react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { showValidationInfo: false }))));
+            react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
 exports.ApplicationCallsFilterBody = ApplicationCallsFilterBody;

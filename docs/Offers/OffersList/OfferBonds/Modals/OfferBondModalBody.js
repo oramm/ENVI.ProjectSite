@@ -56,7 +56,7 @@ function OfferBondModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "value" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107 netto w PLN"),
                 react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { name: "_offerBond.value" })),
-            react_1.default.createElement(StatusSelectors_1.OfferBondFormSelector, { as: react_bootstrap_1.Col, name: "_offerBond.form" })),
+            react_1.default.createElement(StatusSelectors_1.OfferBondFormSelector, { as: react_bootstrap_1.Col, name: "_offerBond.form", label: "Forma" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "paymentData" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dane do przelewu"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Wpisz dane do op\u0142acenia wadium", isValid: !(0, CommonComponentsController_1.hasError)(errors, "_offerBond.paymentData"), isInvalid: (0, CommonComponentsController_1.hasError)(errors, "_offerBond.paymentData"), ...register("_offerBond.paymentData") }),
@@ -69,7 +69,8 @@ function OfferBondModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data wa\u017Cno\u015Bci"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !(0, CommonComponentsController_1.hasError)(errors, "_offerBond.expiryDate"), isInvalid: (0, CommonComponentsController_1.hasError)(errors, "_offerBond.expiryDate"), ...register("_offerBond.expiryDate") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_offerBond.expiryDate", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "status" },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_offerBond.status" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
             react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { name: "_offerBond.status" }))));
 }
 exports.OfferBondModalBody = OfferBondModalBody;

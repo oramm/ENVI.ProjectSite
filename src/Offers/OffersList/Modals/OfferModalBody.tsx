@@ -133,7 +133,10 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                 <OfferBidProcedureSelectFormElement as={Col} />
                 <OfferFormSelectFormElement as={Col} />
             </Row>
-            <OfferStatusSelector />
+            <Form.Group controlId="status">
+                <Form.Label>Status</Form.Label>
+                <OfferStatusSelector multiple={false} />
+            </Form.Group>
         </>
     );
 }

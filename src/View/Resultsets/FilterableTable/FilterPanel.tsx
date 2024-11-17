@@ -3,7 +3,6 @@ import { Alert, Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { FieldValues, set, useForm } from "react-hook-form";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FormProvider } from "../../Modals/FormContext";
-import { parseFieldValuesToParams } from "../CommonComponentsController";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { FilterableTableSnapShot, FilterPanelProps } from "./FilterableTableTypes";
 import { yupResolver } from "@hookform/resolvers/yup";

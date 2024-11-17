@@ -47,7 +47,7 @@ export function OfferBondModalBody({ isEditing, initialData }: ModalBodyProps<Ex
                     <Form.Label>Wartość netto w PLN</Form.Label>
                     <ValueInPLNInput name="_offerBond.value" />
                 </Form.Group>
-                <OfferBondFormSelector as={Col} name="_offerBond.form" />
+                <OfferBondFormSelector as={Col} name="_offerBond.form" label="Forma" />
             </Row>
             <Form.Group controlId="paymentData">
                 <Form.Label>Dane do przelewu</Form.Label>
@@ -83,7 +83,8 @@ export function OfferBondModalBody({ isEditing, initialData }: ModalBodyProps<Ex
                 />
                 <ErrorMessage name="_offerBond.expiryDate" errors={errors} />
             </Form.Group>
-            <Form.Group as={Col} controlId="status">
+            <Form.Group as={Col} controlId="_offerBond.status">
+                <Form.Label>Status</Form.Label>
                 <OfferBondStatusSelector name="_offerBond.status" />
             </Form.Group>
         </>

@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioButtonGroup = exports.FileInput = exports.DateRangeInput = exports.valueValidation = exports.ValueInPLNInput = exports.SelectTextOptionFormElement = exports.MyAsyncTypeahead = exports.ErrorMessage = exports.ErrorMessage1 = void 0;
+exports.RadioButtonGroup = exports.FileInput = exports.DateRangeInput = exports.valueValidation = exports.ValueInPLNInput = exports.TypeaheadStringSelector = exports.TextOptionSelector = exports.MyAsyncTypeahead = exports.ErrorMessage = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -34,10 +34,6 @@ const react_hook_form_1 = require("react-hook-form");
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
 const CommonComponentsController_1 = require("../../Resultsets/CommonComponentsController");
-function ErrorMessage1({ errors, name }) {
-    return react_1.default.createElement(react_1.default.Fragment, null, errors[name] && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, errors[name]?.message));
-}
-exports.ErrorMessage1 = ErrorMessage1;
 function ErrorMessage({ errors, name }) {
     // Function to access nested properties
     const getNestedError = (errors, path) => {
@@ -108,25 +104,57 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? (multiple ? field.value : [field.value]) : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: !(0, CommonComponentsController_1.hasError)(errors, name), isInvalid: (0, CommonComponentsController_1.hasError)(errors, name) }));
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? (multiple ? field.value : [field.value]) : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
             } }),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && react_1.default.createElement("input", { type: "hidden", ...register(name) })));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
-function SelectTextOptionFormElement({ options, showValidationInfo = true, name, as, label = name, }) {
+function TextOptionSelector({ options, showValidationInfo = true, name, as, label = name, multiple = false, }) {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function makeLabel() {
         return label.charAt(0).toUpperCase() + label.slice(1);
     }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name, as: as },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, makeLabel()),
-        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined, ...register(name) },
+        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", multiple: multiple, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
             options.map((option, index) => (react_1.default.createElement("option", { key: index, value: option }, option)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
-exports.SelectTextOptionFormElement = SelectTextOptionFormElement;
+exports.TextOptionSelector = TextOptionSelector;
+/**
+ * Komponent do wyboru opcji z listy stringów służy jako multiselect
+ */
+function TypeaheadStringSelector({ options, showValidationInfo = true, name = "status", label = name, as, }) {
+    const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const multiple = true;
+    (0, react_1.useEffect)(() => {
+        // Set default value if undefined
+        const currentValue = getValues(name);
+        if (currentValue === undefined) {
+            const defaultValue = multiple ? [] : "";
+            setValue(name, defaultValue);
+        }
+    }, [setValue, getValues, multiple, name]);
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0] || "";
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    function setSelectedValue(field) {
+        return Array.isArray(field.value) ? field.value : field.value ? [field.value] : [];
+    }
+    function makeLabel() {
+        return label.charAt(0).toUpperCase() + label.slice(1);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name, as: as },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, makeLabel()),
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, defaultValue: multiple ? [] : "", render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: (option) => option, multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: setSelectedValue(field), placeholder: "-- Wybierz status --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option) => react_1.default.createElement(react_1.default.Fragment, null, option) })) }),
+            react_1.default.createElement(ErrorMessage, { name: name, errors: errors }))));
+}
+exports.TypeaheadStringSelector = TypeaheadStringSelector;
 /**
  * Wyświetla pole do wprowadzania wartości w PLN
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)

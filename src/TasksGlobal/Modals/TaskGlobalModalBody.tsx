@@ -5,7 +5,7 @@ import MainSetup from "../../React/MainSetupReact";
 import { PersonSelectorPreloaded } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
-import { TaksStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { TaksStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function TaskGlobalModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
@@ -69,7 +69,7 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData }: Mod
                 />
                 <ErrorMessage name="deadline" errors={errors} />
             </Form.Group>
-            <TaksStatusSelectFormElement />
+            <TaksStatusSelector />
             <Form.Group controlId="_owner">
                 <PersonSelectorPreloaded
                     label="Właściciel"

@@ -3,7 +3,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "../../../Css/styles.css";
 
 import MainSetup from "../../../React/MainSetupReact";
-import { ErrorMessage, SelectTextOptionFormElement, SpecificTextOptionProps } from "./GenericComponents";
+import { ErrorMessage, TextOptionSelector, SpecificTextOptionProps } from "./GenericComponents";
 import { Form } from "react-bootstrap";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -21,7 +21,7 @@ export function OfferBidProcedureSelectFormElement({
 }: SpecificTextOptionProps) {
     const options = Object.entries(MainSetup.OfferBidProcedure).map(([key, value]) => value);
     return (
-        <SelectTextOptionFormElement
+        <TextOptionSelector
             options={options}
             showValidationInfo={showValidationInfo}
             name={name}
@@ -34,7 +34,7 @@ export function OfferBidProcedureSelectFormElement({
 export function OfferFormSelectFormElement({ showValidationInfo = true, name = "form", as }: SpecificTextOptionProps) {
     const options = Object.entries(MainSetup.OfferForm).map(([key, value]) => value);
     return (
-        <SelectTextOptionFormElement
+        <TextOptionSelector
             options={options}
             showValidationInfo={showValidationInfo}
             name={name}

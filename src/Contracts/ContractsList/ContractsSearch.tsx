@@ -41,7 +41,7 @@ export default function ContractsSearch({ title }: { title: string }) {
 
     function numberLabel(contract: OurContract | OtherContract) {
         if ("ourId" in contract && contract.number === contract.ourId) return null;
-        return `[${contract.number}]` ?? null;
+        return `[${contract.number}]` || null;
     }
 
     function ourIdLabel(contract: OurContract | OtherContract) {

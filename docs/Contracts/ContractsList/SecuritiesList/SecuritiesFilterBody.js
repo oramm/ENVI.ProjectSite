@@ -25,6 +25,6 @@ function SecuritiesFilterBody() {
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.START_DATE_FROM, defaultToValue: MainSetupReact_1.default.SecuritiesFilterInitState.START_DATE_TO }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "70% wygasa", fromName: "firstPartExpiryDateFrom", toName: "firstPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.FIRST_PART_EXPIRY_DATE_FROM }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "30% wygasa", fromName: "secondPartExpiryDateFrom", toName: "secondPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM }),
-        react_1.default.createElement(StatusSelectors_1.SecurityStatusSelectFormElement, { name: "status", showValidationInfo: false })));
+        react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, { name: "status", showValidationInfo: false })));
 }
 exports.SecuritiesFilterBody = SecuritiesFilterBody;

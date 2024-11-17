@@ -4,7 +4,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
 import { contractsRepository } from "./InvoicesController";
-import { InvoiceStatusSelectFormElement } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { InvoiceStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoicesFilterBody() {
@@ -37,7 +37,7 @@ export function InvoicesFilterBody() {
                 />
             </Form.Group>
             <Form.Group as={Col} sm={12} md={4}>
-                <InvoiceStatusSelectFormElement showValidationInfo={false} />
+                <InvoiceStatusSelector multiple={true} showValidationInfo={false} />
             </Form.Group>
         </Row>
     );

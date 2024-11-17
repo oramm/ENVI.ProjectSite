@@ -42,12 +42,12 @@ const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function OfferBidProcedureSelectFormElement({ showValidationInfo = true, name = "bidProcedure", as, }) {
     const options = Object.entries(MainSetupReact_1.default.OfferBidProcedure).map(([key, value]) => value);
-    return (react_1.default.createElement(GenericComponents_1.SelectTextOptionFormElement, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Procedura" }));
+    return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Procedura" }));
 }
 exports.OfferBidProcedureSelectFormElement = OfferBidProcedureSelectFormElement;
 function OfferFormSelectFormElement({ showValidationInfo = true, name = "form", as }) {
     const options = Object.entries(MainSetupReact_1.default.OfferForm).map(([key, value]) => value);
-    return (react_1.default.createElement(GenericComponents_1.SelectTextOptionFormElement, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Forma wysy\u0142ki" }));
+    return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Forma wysy\u0142ki" }));
 }
 exports.OfferFormSelectFormElement = OfferFormSelectFormElement;
 function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showValidationInfo = true, multiple = true, name = "_gdFilesBasicData", }) {
