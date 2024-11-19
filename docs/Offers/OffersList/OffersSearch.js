@@ -45,15 +45,11 @@ const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const SendOfferModalButtons_1 = require("./Modals/SendOffer/SendOfferModalButtons");
 function OffersSearch({ title }) {
-    (0, react_1.useEffect)(() => {
-        document.title = title;
-    }, [title]);
     function renderEntityData(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, offer.employerName)));
     }
     function renderIcon(offer) {
-        offer = offer;
         const icon = offer.isOur ? free_solid_svg_icons_1.faHome : free_solid_svg_icons_1.faFileLines;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
@@ -70,6 +66,7 @@ function OffersSearch({ title }) {
                 " ",
                 react_1.default.createElement("small", null, renderStatus(offer))),
             renderEntityData(offer),
+            react_1.default.createElement("div", { className: "mb-2" }),
             react_1.default.createElement("div", { className: "mb-2" },
                 react_1.default.createElement("span", { className: "text-muted" }, "Termin sk\u0142adania:"),
                 " ",
@@ -194,7 +191,7 @@ function OffersSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },
-            { header: "Oferta", renderTdBody: renderRowContent },
+            { header: undefined, renderTdBody: renderRowContent },
         ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }
 exports.default = OffersSearch;

@@ -7,7 +7,7 @@ import * as yup from "yup";
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     id: string;
-    title: string;
+    title?: string;
     showTableHeader?: boolean;
     initialSections?: SectionNode<DataItemType>[];
     tableStructure: RowStructure<DataItemType>[];

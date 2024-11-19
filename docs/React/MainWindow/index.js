@@ -51,13 +51,13 @@ const MainContent_1 = __importDefault(require("./Content/MainContent"));
 const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
 const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
-const OffersSearch_1 = __importDefault(require("../../Offers/OffersList/OffersSearch"));
 const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
 const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch"));
 const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
 const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
 const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
+const OffersMainView_1 = __importDefault(require("../../Offers/OffersList/OffersMainView"));
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -124,8 +124,8 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),

@@ -27,11 +27,7 @@ import ToolsDate from "../../React/ToolsDate";
 import MainSetup from "../../React/MainSetupReact";
 import { SendAnotherOfferModalButton, SendOfferModalButton } from "./Modals/SendOffer/SendOfferModalButtons";
 
-export default function OffersSearch({ title }: { title: string }) {
-    useEffect(() => {
-        document.title = title;
-    }, [title]);
-
+export default function OffersSearch({ title }: { title?: string }) {
     function renderEntityData(offer: OurOffer | ExternalOffer) {
         return (
             <>
@@ -41,7 +37,6 @@ export default function OffersSearch({ title }: { title: string }) {
     }
 
     function renderIcon(offer: OurOffer | ExternalOffer) {
-        offer = offer as OurOffer | ExternalOffer;
         const icon = offer.isOur ? faHome : faFileLines;
         return <FontAwesomeIcon icon={icon} size="lg" />;
     }
@@ -55,6 +50,7 @@ export default function OffersSearch({ title }: { title: string }) {
                     <small>{renderStatus(offer)}</small>
                 </h5>
                 {renderEntityData(offer)}
+                <div className="mb-2"></div>
                 <div className="mb-2">
                     <span className="text-muted">Termin składania:</span>{" "}
                     <span className="fw-bold">{offer.submissionDeadline}</span>
@@ -215,7 +211,7 @@ export default function OffersSearch({ title }: { title: string }) {
             FilterBodyComponent={OffersFilterBody}
             tableStructure={[
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcon },
-                { header: "Oferta", renderTdBody: renderRowContent },
+                { header: undefined, renderTdBody: renderRowContent },
             ]}
             AddNewButtonComponents={[OurOfferAddNewModalButton, ExternalOfferAddNewModalButton]}
             EditButtonComponent={OfferEditModalButton}

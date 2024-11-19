@@ -1,8 +1,8 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
-import { Alert, Card, Container } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
@@ -23,13 +23,13 @@ import MainContent from "./Content/MainContent";
 import EntitiesSearch from "../../Entities/EntitiesSearch";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
-import OffersSearch from "../../Offers/OffersList/OffersSearch";
 import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
 import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
 import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
 import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
+import OffersMainView from "../../Offers/OffersList/OffersMainView";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -110,8 +110,8 @@ function AppRoutes() {
                 <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                 <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
                 <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
-                <Route path="/offers" element={<OffersSearch title="Oferty" />} />
-                <Route path="/offers/list" element={<OffersSearch title="Oferty" />} />
+                <Route path="/offers" element={<OffersMainView title="Oferty" />} />
+                <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
                 <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
                 <Route
                     path="/financialAidProgrammes"
