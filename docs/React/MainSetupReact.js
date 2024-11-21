@@ -148,8 +148,13 @@ MainSetup.SecuritiesFilterInitState = {
     SECOND_PART_EXPIRY_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10),
 };
 MainSetup.OffersFilterInitState = {
-    SUBMISSION_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
-    SUBMISSION_TO: ToolsDate_1.default.addDays(new Date(), +14).toISOString().slice(0, 10),
+    SUBMISSION_FROM: ToolsDate_1.default.addDays(new Date(), -180).toISOString().slice(0, 10),
+    SUBMISSION_TO: ToolsDate_1.default.addDays(new Date(), +40).toISOString().slice(0, 10),
+    STATUSES: [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.DONE],
+};
+MainSetup.OffersInvitationMailFilterInitState = {
+    INCOMING_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -7).toISOString().slice(0, 10),
+    INCOMING_DATE_TO: ToolsDate_1.default.addDays(new Date(), 0).toISOString().slice(0, 10),
 };
 MainSetup.SystemRoles = {
     ADMIN: {

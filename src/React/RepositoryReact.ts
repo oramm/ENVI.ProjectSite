@@ -312,8 +312,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         return oldItem;
     }
 
-    async fetch(actionRoute: string, item: DataItemType) {
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item.id}`;
+    async fetch(actionRoute: string, item?: DataItemType) {
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
 
         const requestOptions: RequestInit = {

@@ -6,7 +6,19 @@ import { OfferBondStatusSelector, OfferStatusSelector } from "../../View/Modals/
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OffersFilterBody() {
-    const { register } = useFormContext();
+    const { reset, register, setValue, watch, trigger } = useFormContext();
+
+    useEffect(() => {
+        const resetData = {
+            searchText: "",
+            statuses: MainSetup.OffersFilterInitState.STATUSES,
+            submissionDeadlineFrom: MainSetup.OffersFilterInitState.SUBMISSION_FROM,
+            submissionDeadlineTo: MainSetup.OffersFilterInitState.SUBMISSION_TO,
+        };
+        reset(resetData);
+
+        trigger();
+    }, []);
 
     return (
         <Row>
@@ -23,8 +35,6 @@ export function OffersFilterBody() {
                 fromName="submissionDeadlineFrom"
                 toName="submissionDeadlineTo"
                 showValidationInfo={false}
-                defaultFromValue={MainSetup.OffersFilterInitState.SUBMISSION_FROM}
-                defaultToValue={MainSetup.OffersFilterInitState.SUBMISSION_TO}
             />
             <Form.Group as={Col} md={2}>
                 <OfferStatusSelector multiple={true} showValidationInfo={false} label="Status oferty" />

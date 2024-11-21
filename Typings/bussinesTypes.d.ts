@@ -369,9 +369,10 @@ export interface OfferBondData extends RepositoryDataItem {
     expiryDate?: string | null;
 }
 
-export interface MailInvitation extends RepositoryDataItem {
+export interface MailData extends RepositoryDataItem {
     uid: number;
     subject: string;
+    body: string;
     from: string;
     to: string;
     date: string;

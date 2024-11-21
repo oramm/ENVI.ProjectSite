@@ -179,8 +179,14 @@ export default class MainSetup {
     };
 
     static OffersFilterInitState = {
-        SUBMISSION_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
-        SUBMISSION_TO: ToolsDate.addDays(new Date(), +14).toISOString().slice(0, 10),
+        SUBMISSION_FROM: ToolsDate.addDays(new Date(), -180).toISOString().slice(0, 10),
+        SUBMISSION_TO: ToolsDate.addDays(new Date(), +40).toISOString().slice(0, 10),
+        STATUSES: [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.DONE],
+    };
+
+    static OffersInvitationMailFilterInitState = {
+        INCOMING_DATE_FROM: ToolsDate.addDays(new Date(), -7).toISOString().slice(0, 10),
+        INCOMING_DATE_TO: ToolsDate.addDays(new Date(), 0).toISOString().slice(0, 10),
     };
 
     static readonly SystemRoles: Record<SystemRoleName, SystemRole> = {

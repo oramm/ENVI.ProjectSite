@@ -1,7 +1,7 @@
 import {
     EntityData,
     ExternalOffer,
-    MailInvitation,
+    MailData,
     OfferBondData,
     OurOffer,
     PersonData,
@@ -18,7 +18,7 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
     name: "offers",
 });
 
-export const mailInvitationsRepository = new RepositoryReact<MailInvitation>({
+export const mailInvitationsRepository = new RepositoryReact<MailData>({
     actionRoutes: {
         getRoute: "mailInvitations",
         addNewRoute: "mailInvitation",

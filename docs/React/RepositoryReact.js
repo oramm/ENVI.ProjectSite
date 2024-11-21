@@ -292,7 +292,7 @@ class RepositoryReact {
         return oldItem;
     }
     async fetch(actionRoute, item) {
-        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}/${item.id}`;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
         const requestOptions = {
             method: "PUT",

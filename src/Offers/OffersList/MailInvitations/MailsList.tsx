@@ -1,27 +1,30 @@
 import React from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
-import { MailInvitation } from "../../../../Typings/bussinesTypes";
+import { MailData } from "../../../../Typings/bussinesTypes";
 import { mailInvitationsRepository } from "../OffersController";
+import { MailsFilterBody } from "./MailsFilterBody";
 
 export default function MailsList() {
-    function renderTdBody(dataItem: MailInvitation) {
+    function renderTdBody(dataItem: MailData) {
         return (
             <>
                 <div>
-                    Od: <strong>{dataItem.from}</strong>, Otrzymano: {dataItem.date}
+                    Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano: {dataItem.date}
                 </div>
                 <div>Temat: {dataItem.subject}</div>
+                <div>{dataItem.body}</div>
             </>
         );
     }
 
     return (
-        <FilterableTable<MailInvitation>
+        <FilterableTable<MailData>
             id="invitationMails"
             tableStructure={[{ header: undefined, renderTdBody }]}
             AddNewButtonComponents={[]}
             isDeletable={true}
             repository={mailInvitationsRepository}
+            FilterBodyComponent={MailsFilterBody}
         />
     );
 }
