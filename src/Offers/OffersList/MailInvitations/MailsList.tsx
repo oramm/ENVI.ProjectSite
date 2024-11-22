@@ -11,8 +11,16 @@ export default function MailsList() {
                 <div>
                     Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano: {dataItem.date}
                 </div>
-                <div>Temat: {dataItem.subject}</div>
-                <div>{dataItem.body}</div>
+                <div className="mb-1">Temat: {dataItem.subject}</div>
+                Pierwsze 500 znaków maila:
+                <div
+                    style={{
+                        maxWidth: "800px", // Ograniczenie szerokości
+                        wordWrap: "break-word", // Łamanie długich słów
+                        whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
+                    }}
+                    dangerouslySetInnerHTML={{ __html: dataItem.body.substring(0, 300) + "..." }}
+                ></div>
             </>
         );
     }

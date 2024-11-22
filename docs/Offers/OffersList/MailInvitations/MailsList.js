@@ -17,10 +17,15 @@ function MailsList() {
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano: ",
                 dataItem.date),
-            react_1.default.createElement("div", null,
+            react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),
-            react_1.default.createElement("div", null, dataItem.body)));
+            "Pierwsze 500 znak\u00F3w maila:",
+            react_1.default.createElement("div", { style: {
+                    maxWidth: "800px",
+                    wordWrap: "break-word",
+                    whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
+                }, dangerouslySetInnerHTML: { __html: dataItem.body.substring(0, 300) + "..." } })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "invitationMails", tableStructure: [{ header: undefined, renderTdBody }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailInvitationsRepository, FilterBodyComponent: MailsFilterBody_1.MailsFilterBody }));
 }
