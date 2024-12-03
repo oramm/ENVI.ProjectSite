@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Accordion, Container } from "react-bootstrap";
 import OffersSearch from "./OffersSearch";
 import { AccordionEventKey } from "react-bootstrap/esm/AccordionContext";
-import MailsList from "./MailInvitations/MailsList";
+import { ShowMailsToCheckButton } from "./MailInvitations/MailsModalButtons";
+import MailInvitationsList from "./MailInvitations/MailInvitationsList";
 
 export default function OffersMainView({ title }: { title: string }) {
     const [mails, setMails] = useState([]);
@@ -32,10 +33,10 @@ export default function OffersMainView({ title }: { title: string }) {
                 <Accordion className="mt-3 mb-3" activeKey={activeKeys} onSelect={handleSelect}>
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>
-                            <h3>Oczekujące maile z zaproszeniami </h3>
+                            <h3>Oczekujące maile z zaproszeniami</h3> <ShowMailsToCheckButton />
                         </Accordion.Header>
                         <Accordion.Body>
-                            <MailsList />
+                            <MailInvitationsList />
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>

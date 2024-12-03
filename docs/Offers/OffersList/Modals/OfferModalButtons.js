@@ -79,7 +79,7 @@ function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData }, }) 
 exports.ExternalOfferEditModalButton = ExternalOfferEditModalButton;
 function ExternalOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
+            onAddNew,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Nowa oferta - formularz Zamawiającego",
             repository: OffersController_1.offersRepository,

@@ -6,7 +6,17 @@ import MainSetup from "../../../React/MainSetupReact";
 import { useFormContext } from "../../../View/Modals/FormContext";
 
 export function MailsFilterBody() {
-    const { register } = useFormContext();
+    const { register, reset, trigger } = useFormContext();
+    useEffect(() => {
+        const resetData = {
+            searchText: "",
+            incomingDateFrom: MainSetup.OffersInvitationMailFilterInitState.INCOMING_DATE_FROM,
+            incomingDateTo: MainSetup.OffersInvitationMailFilterInitState.INCOMING_DATE_TO,
+        };
+        reset(resetData);
+
+        trigger();
+    }, []);
 
     return (
         <Row>
@@ -23,8 +33,6 @@ export function MailsFilterBody() {
                 fromName="incomingDateFrom"
                 toName="incomingDateTo"
                 showValidationInfo={false}
-                defaultFromValue={MainSetup.OffersInvitationMailFilterInitState.INCOMING_DATE_FROM}
-                defaultToValue={MainSetup.OffersInvitationMailFilterInitState.INCOMING_DATE_TO}
             />
         </Row>
     );

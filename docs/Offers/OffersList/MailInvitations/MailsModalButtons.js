@@ -22,19 +22,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoadEmailsButton = void 0;
+exports.ShowMailsToCheckButton = exports.SetAsGoodToOfferButton = void 0;
 const react_1 = __importStar(require("react"));
 const OffersController_1 = require("../OffersController");
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
-function LoadEmailsButton({ onError }) {
+const MailsToCheckList_1 = __importDefault(require("./MailsToCheckList"));
+function SetAsGoodToOfferButton({ onError }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
     async function handleClick() {
         try {
             setRequestPending(true);
-            await OffersController_1.mailInvitationsRepository.fetch("mailInvitations");
+            const currentItem = { ...OffersController_1.mailsToCheckRepository.currentItems[0] };
+            await OffersController_1.mailsToCheckRepository.addNewItem(currentItem);
             setRequestPending(false);
             setShowSuccessToast(true);
         }
@@ -46,10 +51,23 @@ function LoadEmailsButton({ onError }) {
         }
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Button, { key: "Exportuj do PDF", variant: "outline-secondary", size: "sm", onClick: handleClick },
-            "Exportuj do PDF",
+        react_1.default.createElement(react_bootstrap_1.Button, { key: "Do ofertowania", variant: "outline-secondary", size: "sm", onClick: handleClick },
+            "Do ofertowania",
             " ",
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
-        react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
+        react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Mail przypisany do ofertowania", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
-exports.LoadEmailsButton = LoadEmailsButton;
+exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
+function ShowMailsToCheckButton() {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { key: "Sprawd\u017A poczt\u0119", variant: "outline-secondary", size: "sm", onClick: handleOpen }, "Sprawd\u017A poczt\u0119"),
+        react_1.default.createElement(MailsToCheckList_1.default, { show: showForm, handleClose: handleClose })));
+}
+exports.ShowMailsToCheckButton = ShowMailsToCheckButton;

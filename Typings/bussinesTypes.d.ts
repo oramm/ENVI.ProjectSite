@@ -372,7 +372,7 @@ export interface OfferBondData extends RepositoryDataItem {
 export interface MailData extends RepositoryDataItem {
     uid: number;
     subject: string;
-    body: string;
+    body?: string;
     from: string;
     to: string;
     date: string;

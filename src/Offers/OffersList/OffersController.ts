@@ -18,6 +18,16 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
     name: "offers",
 });
 
+export const mailsToCheckRepository = new RepositoryReact<MailData>({
+    actionRoutes: {
+        getRoute: "mailsToCheck",
+        addNewRoute: "mailToCheck",
+        editRoute: "mailToCheck",
+        deleteRoute: "mailToCheck",
+    },
+    name: "mailsToCheck",
+});
+
 export const mailInvitationsRepository = new RepositoryReact<MailData>({
     actionRoutes: {
         getRoute: "mailInvitations",

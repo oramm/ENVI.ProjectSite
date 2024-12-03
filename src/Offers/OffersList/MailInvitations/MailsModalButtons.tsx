@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { mailInvitationsRepository } from "../OffersController";
+import { mailsToCheckRepository } from "../OffersController";
 import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../View/Resultsets/CommonComponents";
+import MailsToCheckList from "./MailsToCheckList";
 
-export function LoadEmailsButton({ onError }: { onError: (error: Error) => void }) {
+export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
     async function handleClick() {
         try {
             setRequestPending(true);
-            await mailInvitationsRepository.fetch("mailInvitations");
+            const currentItem = { ...mailsToCheckRepository.currentItems[0] };
+            await mailsToCheckRepository.addNewItem(currentItem);
             setRequestPending(false);
             setShowSuccessToast(true);
         } catch (error) {
@@ -23,15 +25,35 @@ export function LoadEmailsButton({ onError }: { onError: (error: Error) => void 
 
     return (
         <>
-            <Button key="Exportuj do PDF" variant="outline-secondary" size="sm" onClick={handleClick}>
-                Exportuj do PDF{" "}
+            <Button key="Do ofertowania" variant="outline-secondary" size="sm" onClick={handleClick}>
+                Do ofertowania{" "}
                 {requestPending && <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />}
             </Button>
             <SuccessToast
-                message="Eksport do PDF zakończył się powodzeniem!"
+                message="Mail przypisany do ofertowania"
                 show={showSuccessToast}
                 onClose={() => setShowSuccessToast(false)}
             />
+        </>
+    );
+}
+
+export function ShowMailsToCheckButton() {
+    const [showForm, setShowForm] = useState(false);
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+
+    return (
+        <>
+            <Button key="Sprawdź pocztę" variant="outline-secondary" size="sm" onClick={handleOpen}>
+                Sprawdź pocztę
+            </Button>
+            <MailsToCheckList show={showForm} handleClose={handleClose} />
         </>
     );
 }

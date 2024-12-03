@@ -144,7 +144,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     /** Funkcja pomocnicza do dodawania nowych elementów */
-    async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
+    private async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
         const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
 

@@ -87,7 +87,7 @@ export function ExternalOfferAddNewModalButton({
     return (
         <GeneralAddNewModalButton<ExternalOffer>
             modalProps={{
-                onAddNew: onAddNew,
+                onAddNew,
                 ModalBodyComponent: ExternalOfferModalBody,
                 modalTitle: "Nowa oferta - formularz Zamawiającego",
                 repository: offersRepository,
