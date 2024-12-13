@@ -2,6 +2,7 @@ import {
     EntityData,
     ExternalOffer,
     MailData,
+    MailDataToProcess,
     OfferBondData,
     OurOffer,
     PersonData,
@@ -28,7 +29,7 @@ export const mailsToCheckRepository = new RepositoryReact<MailData>({
     name: "mailsToCheck",
 });
 
-export const mailInvitationsRepository = new RepositoryReact<MailData>({
+export const mailInvitationsRepository = new RepositoryReact<MailDataToProcess>({
     actionRoutes: {
         getRoute: "mailInvitations",
         addNewRoute: "mailInvitation",

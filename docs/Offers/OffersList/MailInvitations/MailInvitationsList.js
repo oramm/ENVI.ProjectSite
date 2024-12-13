@@ -7,7 +7,13 @@ const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const OffersController_1 = require("../OffersController");
 const MailsFilterBody_1 = require("./MailsFilterBody");
-const MailsModalButtons_1 = require("./MailsModalButtons");
+const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
+const react_bootstrap_1 = require("react-bootstrap");
+const FilterableTableContext_1 = require("../../../View/Resultsets/FilterableTable/FilterableTableContext");
+const MailModalBodiesPartial_1 = require("./Modals/MailModalBodiesPartial");
+const MailValidationSchema_1 = require("./Modals/MailValidationSchema");
 function MailInvitationsList() {
     function renderRowContent(dataItem, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -17,7 +23,9 @@ function MailInvitationsList() {
                 ", Do ",
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano: ",
-                dataItem.date),
+                dataItem.date,
+                " ",
+                renderStatus(dataItem)),
             react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),
@@ -28,6 +36,21 @@ function MailInvitationsList() {
                     whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
                 }, dangerouslySetInnerHTML: { __html: dataItem.body?.substring(0, 300) + "..." } }),
             isActive && renderMenu()));
+    }
+    function renderStatus(dataItem) {
+        if (!dataItem.status)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: dataItem,
+                modalTitle: "Edycja statusu",
+                repository: OffersController_1.mailInvitationsRepository,
+                ModalBodyComponent: MailModalBodiesPartial_1.MailModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                makeValidationSchema: MailValidationSchema_1.makeMailStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: dataItem.status })));
     }
     function renderMenu() {
         return react_1.default.createElement(MailsModalButtons_1.SetAsGoodToOfferButton, { onError: () => { } });

@@ -115,6 +115,12 @@ MainSetup.OfferBondStatus = {
     TO_BE_RETURNED: "Do zwrotu",
     RETURNED: "Zwrócone",
 };
+MainSetup.OfferInvitationMailStatus = {
+    NEW: "Nowy",
+    TO_OFFER: "Przekazać do ofertowania",
+    DONE: "Oferta utworzona",
+    REJECTED: "Odrzucony",
+};
 MainSetup.OfferBondForm = {
     CASH: "Gotówka",
     GUARANTEE: "Gwarancja",

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Accordion, Container } from "react-bootstrap";
 import OffersSearch from "./OffersSearch";
 import { AccordionEventKey } from "react-bootstrap/esm/AccordionContext";
-import { ShowMailsToCheckButton } from "./MailInvitations/MailsModalButtons";
+import { ShowMailsToCheckButton } from "./MailInvitations/Modals/MailsModalButtons";
 import MailInvitationsList from "./MailInvitations/MailInvitationsList";
 
 export default function OffersMainView({ title }: { title: string }) {

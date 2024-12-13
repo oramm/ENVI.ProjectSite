@@ -120,8 +120,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             try {
                 const response = await fetch(url, options);
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                    const errorDetails: ErrorServerResponse = await response.json();
+                    throw new Error(errorDetails.errorMessage);
                 }
                 return await response.json();
             } catch (error) {

@@ -376,6 +376,16 @@ export interface MailData extends RepositoryDataItem {
     from: string;
     to: string;
     date: string;
+    flags?: Set<string>;
+    _ourOfferId?: number;
+    _lastUpdated?: string;
+    editorId?: number | null;
+    _editor?: PersonData;
+}
+
+export interface MailDataToProcess extends MailData {
+    status: string;
+    _ourOffer?: OurOfferData;
 }
 
 export interface OfferEventData extends RepositoryDataItem {

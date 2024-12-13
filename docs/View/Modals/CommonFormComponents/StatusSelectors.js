@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -47,6 +47,13 @@ function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, l
     return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: forms, showValidationInfo: showValidationInfo, name: name, as: as, label: label }));
 }
 exports.OfferBondFormSelector = OfferBondFormSelector;
+function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    const statuses = Object.entries(MainSetupReact_1.default.OfferInvitationMailStatus).map(([key, value]) => value);
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+}
+exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     const statuses = Object.entries(MainSetupReact_1.default.TaskStatus).map(([key, value]) => value);
     const resolvedName = name ?? (multiple ? "statuses" : "status");

@@ -45,6 +45,7 @@ export function ContractEditModalButtonGeneric({
                 repository: repository as RepositoryReact<OtherContract>,
                 initialData: initialData,
                 makeValidationSchema: otherContractValidationSchema,
+                shouldRetrieveDataBeforeEdit,
             }}
             buttonProps={{ ...buttonProps }}
         />

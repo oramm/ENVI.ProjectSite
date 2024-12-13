@@ -348,6 +348,36 @@ export function OfferBondStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function OfferInvitationMailStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+
+    switch (status) {
+        case MainSetup.OfferInvitationMailStatus.NEW:
+            variant = "secondary";
+            break;
+        case MainSetup.OfferInvitationMailStatus.TO_OFFER:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetup.OfferInvitationMailStatus.DONE:
+            variant = "success";
+            break;
+        case MainSetup.OfferInvitationMailStatus.REJECTED:
+            variant = "danger";
+            break;
+        default:
+            variant = "light";
+            textMode = "dark";
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 export function TaskStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = "light";

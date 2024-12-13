@@ -109,6 +109,7 @@ export function OfferStatusSelector({
         />
     );
 }
+
 export function OfferBondStatusSelector({
     showValidationInfo = true,
     multiple = false,
@@ -147,6 +148,35 @@ export function OfferBondFormSelector({
     const forms = Object.entries(MainSetup.OfferBondForm).map(([key, value]) => value);
     return (
         <TextOptionSelector options={forms} showValidationInfo={showValidationInfo} name={name} as={as} label={label} />
+    );
+}
+
+export function OfferInvitationMailStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    const statuses = Object.entries(MainSetup.OfferInvitationMailStatus).map(([key, value]) => value);
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={statuses}
+            showValidationInfo={showValidationInfo}
+            name={resolvedName}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }
 

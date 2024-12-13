@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const OffersSearch_1 = __importDefault(require("./OffersSearch"));
-const MailsModalButtons_1 = require("./MailInvitations/MailsModalButtons");
+const MailsModalButtons_1 = require("./MailInvitations/Modals/MailsModalButtons");
 const MailInvitationsList_1 = __importDefault(require("./MailInvitations/MailInvitationsList"));
 function OffersMainView({ title }) {
     const [mails, setMails] = (0, react_1.useState)([]);

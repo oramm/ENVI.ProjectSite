@@ -113,8 +113,8 @@ class RepositoryReact {
             try {
                 const response = await fetch(url, options);
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                    const errorDetails = await response.json();
+                    throw new Error(errorDetails.errorMessage);
                 }
                 return await response.json();
             }

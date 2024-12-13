@@ -30,7 +30,7 @@ const react_1 = __importStar(require("react"));
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const OffersController_1 = require("../OffersController");
 const MailsFilterBody_1 = require("./MailsFilterBody");
-const MailsModalButtons_1 = require("./MailsModalButtons");
+const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
 const react_bootstrap_1 = require("react-bootstrap");
 function MailsToCheckList({ show, handleClose }) {
     const [activeMailBody, setActiveMailBody] = (0, react_1.useState)("");
@@ -41,17 +41,19 @@ function MailsToCheckList({ show, handleClose }) {
                 return;
             setActiveMailBody("Ładuję dane...");
             const response = await OffersController_1.mailsToCheckRepository.loadItemsFromServerPOST([{ uid: activeMailId }], "getEmailDetails");
+            OffersController_1.mailsToCheckRepository.replaceCurrentItemById(response.id, response);
+            OffersController_1.mailsToCheckRepository.replaceItemById(response.id, response);
             setActiveMailBody(response.body);
         }
         fetchData();
     }, [activeMailId]);
-    function renderRowContent(dataItem, isActive = false) {
-        function handleRowClick() {
-            if (activeMailId !== dataItem.id) {
-                setActiveMailId(dataItem.id);
-            }
+    function handleRowClick(dataItem) {
+        if (activeMailId !== dataItem.id) {
+            setActiveMailId(dataItem.id);
         }
-        return (react_1.default.createElement("div", { onClick: handleRowClick },
+    }
+    function renderRowContent(dataItem, isActive = false) {
+        return (react_1.default.createElement("div", { onClick: () => handleRowClick(dataItem) },
             react_1.default.createElement("div", null,
                 "Od: ",
                 react_1.default.createElement("strong", null, dataItem.from),

@@ -3,7 +3,7 @@ import FilterableTable from "../../../View/Resultsets/FilterableTable/Filterable
 import { MailData } from "../../../../Typings/bussinesTypes";
 import { mailsToCheckRepository } from "../OffersController";
 import { MailsFilterBody } from "./MailsFilterBody";
-import { SetAsGoodToOfferButton } from "./MailsModalButtons";
+import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { Button, Modal } from "react-bootstrap";
 
 export default function MailsToCheckList({ show, handleClose }: { show: boolean; handleClose: () => void }) {
@@ -18,20 +18,22 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
                 [{ uid: activeMailId }],
                 "getEmailDetails"
             );
+            mailsToCheckRepository.replaceCurrentItemById(response.id, response);
+            mailsToCheckRepository.replaceItemById(response.id, response);
             setActiveMailBody(response.body!);
         }
         fetchData();
     }, [activeMailId]);
 
-    function renderRowContent(dataItem: MailData, isActive: boolean = false) {
-        function handleRowClick() {
-            if (activeMailId !== dataItem.id) {
-                setActiveMailId(dataItem.id);
-            }
+    function handleRowClick(dataItem: MailData) {
+        if (activeMailId !== dataItem.id) {
+            setActiveMailId(dataItem.id);
         }
+    }
 
+    function renderRowContent(dataItem: MailData, isActive: boolean = false) {
         return (
-            <div onClick={handleRowClick}>
+            <div onClick={() => handleRowClick(dataItem)}>
                 <div>
                     Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano: {dataItem.date}
                 </div>
