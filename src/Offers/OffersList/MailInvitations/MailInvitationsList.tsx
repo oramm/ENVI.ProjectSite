@@ -1,10 +1,10 @@
 import React from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
-import { MailData, MailDataToProcess } from "../../../../Typings/bussinesTypes";
-import { mailInvitationsRepository, mailsToCheckRepository } from "../OffersController";
+import { MailDataToProcess } from "../../../../Typings/bussinesTypes";
+import { mailInvitationsRepository } from "../OffersController";
 import { MailsFilterBody } from "./MailsFilterBody";
-import { SetAsGoodToOfferButton, ShowMailsToCheckButton } from "./Modals/MailsModalButtons";
-import { OfferInvitationMailStatusBadge, OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
+import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
+import { OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { Alert } from "react-bootstrap";
 import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTable/FilterableTableContext";
@@ -20,16 +20,24 @@ export default function MailInvitationsList() {
                     {renderStatus(dataItem)}
                 </div>
                 <div className="mb-1">Temat: {dataItem.subject}</div>
-                Pierwsze 500 znaków maila:
-                <div
-                    style={{
-                        maxWidth: "800px", // Ograniczenie szerokości
-                        wordWrap: "break-word", // Łamanie długich słów
-                        whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
-                    }}
-                    dangerouslySetInnerHTML={{ __html: dataItem.body?.substring(0, 300) + "..." }}
-                ></div>
-                {isActive && renderMenu()}
+                {isActive && (
+                    <>
+                        <div
+                            style={{
+                                marginLeft: "10px",
+                                padding: "10px",
+                                borderLeft: "solid 2pt rgb(241 146 146)",
+                                backgroundColor: "#ebf5f0",
+                                wordWrap: "break-word", // Łamanie długich słów
+                                whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
+                            }}
+                        >
+                            <p>Pierwsze 500 znaków maila:</p>
+                            <div dangerouslySetInnerHTML={{ __html: dataItem.body?.substring(0, 300) + "..." }}></div>
+                        </div>
+                        <div className="mt-2 mb-2">{renderMenu()}</div>
+                    </>
+                )}
             </>
         );
     }

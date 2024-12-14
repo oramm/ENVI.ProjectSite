@@ -40,10 +40,10 @@ function MailsToCheckList({ show, handleClose }) {
             if (!activeMailId)
                 return;
             setActiveMailBody("Ładuję dane...");
-            const response = await OffersController_1.mailsToCheckRepository.loadItemsFromServerPOST([{ uid: activeMailId }], "getEmailDetails");
+            const response = await OffersController_1.mailsToCheckRepository.loadCurrentItemDetailsFromServerPOST("getEmailDetails");
             OffersController_1.mailsToCheckRepository.replaceCurrentItemById(response.id, response);
             OffersController_1.mailsToCheckRepository.replaceItemById(response.id, response);
-            setActiveMailBody(response.body);
+            setActiveMailBody(response.body || "treść maila nie została pobrana");
         }
         fetchData();
     }, [activeMailId]);
@@ -65,13 +65,17 @@ function MailsToCheckList({ show, handleClose }) {
                 "Temat: ",
                 dataItem.subject),
             isActive && (react_1.default.createElement(react_1.default.Fragment, null,
-                "\"Pierwsze 500 znak\u00F3w maila:\"",
                 react_1.default.createElement("div", { style: {
-                        maxWidth: "800px",
+                        marginLeft: "10px",
+                        padding: "10px",
+                        borderLeft: "solid 2pt rgb(241 146 146)",
+                        backgroundColor: "#ebf5f0",
                         wordWrap: "break-word",
                         whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
-                    }, dangerouslySetInnerHTML: { __html: activeMailBody?.substring(0, 300) + "..." } }),
-                renderMenu()))));
+                    } },
+                    react_1.default.createElement("p", null, "Pierwsze 500 znak\u00F3w maila:"),
+                    react_1.default.createElement("div", { dangerouslySetInnerHTML: { __html: activeMailBody?.substring(0, 300) + "..." } })),
+                activeMailBody !== "Ładuję dane..." && react_1.default.createElement("div", { className: "mt-2 mb-2" }, renderMenu())))));
     }
     function renderMenu() {
         return react_1.default.createElement(MailsModalButtons_1.SetAsGoodToOfferButton, { onError: () => { } });

@@ -33,9 +33,12 @@ export default function OffersMainView({ title }: { title: string }) {
                 <Accordion className="mt-3 mb-3" activeKey={activeKeys} onSelect={handleSelect}>
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>
-                            <h3>Oczekujące maile z zaproszeniami</h3> <ShowMailsToCheckButton />
+                            <h3>Oczekujące maile z zaproszeniami</h3>
                         </Accordion.Header>
                         <Accordion.Body>
+                            <div className="d-flex justify-content-end">
+                                <ShowMailsToCheckButton />
+                            </div>
                             <MailInvitationsList />
                         </Accordion.Body>
                     </Accordion.Item>

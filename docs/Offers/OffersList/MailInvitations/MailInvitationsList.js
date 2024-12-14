@@ -29,13 +29,18 @@ function MailInvitationsList() {
             react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),
-            "Pierwsze 500 znak\u00F3w maila:",
-            react_1.default.createElement("div", { style: {
-                    maxWidth: "800px",
-                    wordWrap: "break-word",
-                    whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
-                }, dangerouslySetInnerHTML: { __html: dataItem.body?.substring(0, 300) + "..." } }),
-            isActive && renderMenu()));
+            isActive && (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("div", { style: {
+                        marginLeft: "10px",
+                        padding: "10px",
+                        borderLeft: "solid 2pt rgb(241 146 146)",
+                        backgroundColor: "#ebf5f0",
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
+                    } },
+                    react_1.default.createElement("p", null, "Pierwsze 500 znak\u00F3w maila:"),
+                    react_1.default.createElement("div", { dangerouslySetInnerHTML: { __html: dataItem.body?.substring(0, 300) + "..." } })),
+                react_1.default.createElement("div", { className: "mt-2 mb-2" }, renderMenu())))));
     }
     function renderStatus(dataItem) {
         if (!dataItem.status)

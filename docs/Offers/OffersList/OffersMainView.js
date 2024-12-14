@@ -52,10 +52,10 @@ function OffersMainView({ title }) {
             react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mt-3 mb-3", activeKey: activeKeys, onSelect: handleSelect },
                 react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
                     react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
-                        react_1.default.createElement("h3", null, "Oczekuj\u0105ce maile z zaproszeniami"),
-                        " ",
-                        react_1.default.createElement(MailsModalButtons_1.ShowMailsToCheckButton, null)),
+                        react_1.default.createElement("h3", null, "Oczekuj\u0105ce maile z zaproszeniami")),
                     react_1.default.createElement(react_bootstrap_1.Accordion.Body, null,
+                        react_1.default.createElement("div", { className: "d-flex justify-content-end" },
+                            react_1.default.createElement(MailsModalButtons_1.ShowMailsToCheckButton, null)),
                         react_1.default.createElement(MailInvitationsList_1.default, null))))),
         react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" })));
 }

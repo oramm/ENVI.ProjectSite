@@ -106,6 +106,33 @@ class RepositoryReact {
         console.log(this.name + " NodeJS: %o", this.items);
         return this.items;
     }
+    async loadCurrentItemDetailsFromServerPOST(specialActionRoute) {
+        const conditions = { id: this.currentItems[0].id };
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
+        const requestKey = JSON.stringify({ url: url.toString(), body: conditions });
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+        const fetchPromise = this.fetchWithRetry(url.toString(), {
+            method: "POST",
+            headers: {
+                ...this.makeRequestHeaders(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(conditions),
+            credentials: "include",
+        }).finally(() => {
+            this.pendingRequests.delete(requestKey);
+        });
+        this.pendingRequests.set(requestKey, fetchPromise);
+        const detailedItem = (await fetchPromise);
+        this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
+        this.currentItems[0] = detailedItem;
+        this.saveToSessionStorage();
+        console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
+        return this.currentItems[0];
+    }
     /** Funkcja pomocnicza do ponawiania żądań */
     async fetchWithRetry(url, options, retries = 3, delay = 1000) {
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -291,6 +318,11 @@ class RepositoryReact {
         }
         return oldItem;
     }
+    /**
+     * Wykonuje zapytanie do serwera
+     * @param actionRoute - ścieżka do akcji na serwerze
+     * @param item
+     */
     async fetch(actionRoute, item) {
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });

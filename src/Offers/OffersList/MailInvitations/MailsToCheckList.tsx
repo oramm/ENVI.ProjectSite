@@ -14,13 +14,12 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
         async function fetchData() {
             if (!activeMailId) return;
             setActiveMailBody("Ładuję dane...");
-            const response: MailData = await mailsToCheckRepository.loadItemsFromServerPOST(
-                [{ uid: activeMailId }],
+            const response: MailData = await mailsToCheckRepository.loadCurrentItemDetailsFromServerPOST(
                 "getEmailDetails"
             );
             mailsToCheckRepository.replaceCurrentItemById(response.id, response);
             mailsToCheckRepository.replaceItemById(response.id, response);
-            setActiveMailBody(response.body!);
+            setActiveMailBody(response.body || "treść maila nie została pobrana");
         }
         fetchData();
     }, [activeMailId]);
@@ -40,16 +39,20 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
                 <div className="mb-1">Temat: {dataItem.subject}</div>
                 {isActive && (
                     <>
-                        "Pierwsze 500 znaków maila:"
                         <div
                             style={{
-                                maxWidth: "800px", // Ograniczenie szerokości
+                                marginLeft: "10px",
+                                padding: "10px",
+                                borderLeft: "solid 2pt rgb(241 146 146)",
+                                backgroundColor: "#ebf5f0",
                                 wordWrap: "break-word", // Łamanie długich słów
                                 whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
                             }}
-                            dangerouslySetInnerHTML={{ __html: activeMailBody?.substring(0, 300) + "..." }}
-                        ></div>
-                        {renderMenu()}
+                        >
+                            <p>Pierwsze 500 znaków maila:</p>
+                            <div dangerouslySetInnerHTML={{ __html: activeMailBody?.substring(0, 300) + "..." }}></div>
+                        </div>
+                        {activeMailBody !== "Ładuję dane..." && <div className="mt-2 mb-2">{renderMenu()}</div>}
                     </>
                 )}
             </div>

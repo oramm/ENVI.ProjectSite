@@ -1,12 +1,7 @@
-import React, { useState } from "react";
-import { OtherContract, OurContract, RepositoryDataItem } from "../../../../Typings/bussinesTypes";
+import React from "react";
+import { OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
-import {
-    GeneralEditModalButtonProps,
-    SpecificAddNewModalButtonProps,
-    SpecificDeleteModalButtonProps,
-    SpecificEditModalButtonProps,
-} from "../../../View/Modals/ModalsTypes";
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { contractsRepository } from "../ContractsController";
 import { ProjectSelectorModalBody } from "./ContractModalBody";
 import { otherContractValidationSchema, ourContractValidationSchema } from "./ContractValidationSchema";

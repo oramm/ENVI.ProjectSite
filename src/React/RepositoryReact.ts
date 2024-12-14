@@ -28,7 +28,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         else this.currentItems[0] = itemSelected;
     }
 
-    deleteFromCurrentItemsById(id: number) {
+    protected deleteFromCurrentItemsById(id: number) {
         const index = this.currentItems.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1);
     }
@@ -68,7 +68,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     }
 
     /**Ładuje items z sessionstorage i resetuje currentitems */
-    loadFromSessionStorage() {
+    protected loadFromSessionStorage() {
         const JSONFromSessionStorage = sessionStorage.getItem(this.name);
         if (!JSONFromSessionStorage) return;
         const data = JSON.parse(JSONFromSessionStorage);
@@ -112,8 +112,38 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         return this.items;
     }
 
+    async loadCurrentItemDetailsFromServerPOST(specialActionRoute: string) {
+        const conditions = { id: this.currentItems[0].id };
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetup.serverUrl + actionRoute);
+        const requestKey = JSON.stringify({ url: url.toString(), body: conditions });
+
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+
+        const fetchPromise = this.fetchWithRetry(url.toString(), {
+            method: "POST",
+            headers: {
+                ...this.makeRequestHeaders(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(conditions),
+            credentials: "include",
+        }).finally(() => {
+            this.pendingRequests.delete(requestKey);
+        });
+        this.pendingRequests.set(requestKey, fetchPromise);
+        const detailedItem = (await fetchPromise) as DataItemType;
+        this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
+        this.currentItems[0] = detailedItem;
+        this.saveToSessionStorage();
+        console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
+        return this.currentItems[0];
+    }
+
     /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 1000) {
+    protected async fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 1000) {
         const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
         for (let i = 0; i < retries; i++) {
@@ -311,7 +341,11 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
         return oldItem;
     }
-
+    /**
+     * Wykonuje zapytanie do serwera
+     * @param actionRoute - ścieżka do akcji na serwerze
+     * @param item
+     */
     async fetch(actionRoute: string, item?: DataItemType) {
         const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
