@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const OffersController_1 = require("../OffersController");
-const MailsFilterBody_1 = require("./MailsFilterBody");
 const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
@@ -14,6 +13,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("../../../View/Resultsets/FilterableTable/FilterableTableContext");
 const MailModalBodiesPartial_1 = require("./Modals/MailModalBodiesPartial");
 const MailValidationSchema_1 = require("./Modals/MailValidationSchema");
+const MailInvitationsFilterBody_1 = require("./MailInvitationsFilterBody");
 function MailInvitationsList() {
     function renderRowContent(dataItem, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -55,12 +55,12 @@ function MailInvitationsList() {
                 fieldsToUpdate: ["status"],
                 makeValidationSchema: MailValidationSchema_1.makeMailStatusValidationSchema,
             } },
-            react_1.default.createElement(CommonComponents_1.OfferStatusBadge, { status: dataItem.status })));
+            react_1.default.createElement(CommonComponents_1.OfferInvitationMailStatusBadge, { status: dataItem.status })));
     }
     function renderMenu() {
-        return react_1.default.createElement(MailsModalButtons_1.SetAsGoodToOfferButton, { onError: () => { } });
+        return react_1.default.createElement(MailsModalButtons_1.AddNewOfferButton, { onError: () => { } });
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(FilterableTable_1.default, { id: "mailInvitations", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailInvitationsRepository, FilterBodyComponent: MailsFilterBody_1.MailsFilterBody })));
+        react_1.default.createElement(FilterableTable_1.default, { id: "mailInvitations", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailInvitationsRepository, FilterBodyComponent: MailInvitationsFilterBody_1.MailInvitationsFilterBody })));
 }
 exports.default = MailInvitationsList;

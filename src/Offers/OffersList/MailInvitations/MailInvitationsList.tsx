@@ -2,14 +2,14 @@ import React from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { MailDataToProcess } from "../../../../Typings/bussinesTypes";
 import { mailInvitationsRepository } from "../OffersController";
-import { MailsFilterBody } from "./MailsFilterBody";
-import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
-import { OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
+import { AddNewOfferButton, SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
+import { OfferInvitationMailStatusBadge, OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { Alert } from "react-bootstrap";
 import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTable/FilterableTableContext";
 import { MailModalBodyStatus } from "./Modals/MailModalBodiesPartial";
 import { makeMailStatusValidationSchema } from "./Modals/MailValidationSchema";
+import { MailInvitationsFilterBody } from "./MailInvitationsFilterBody";
 
 export default function MailInvitationsList() {
     function renderRowContent(dataItem: MailDataToProcess, isActive: boolean = false) {
@@ -58,13 +58,13 @@ export default function MailInvitationsList() {
                     makeValidationSchema: makeMailStatusValidationSchema,
                 }}
             >
-                <OfferStatusBadge status={dataItem.status} />
+                <OfferInvitationMailStatusBadge status={dataItem.status} />
             </PartialEditTrigger>
         );
     }
 
     function renderMenu() {
-        return <SetAsGoodToOfferButton onError={() => {}} />;
+        return <AddNewOfferButton onError={() => {}} />;
     }
 
     return (
@@ -75,7 +75,7 @@ export default function MailInvitationsList() {
                 AddNewButtonComponents={[]}
                 isDeletable={true}
                 repository={mailInvitationsRepository}
-                FilterBodyComponent={MailsFilterBody}
+                FilterBodyComponent={MailInvitationsFilterBody}
             />
         </>
     );

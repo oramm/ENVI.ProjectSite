@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import {
     ContractRangeSelector,
     ProjectSelector,
@@ -17,7 +17,6 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
     const {
         register,
         setValue,
-        getValues,
         watch,
         formState: { errors },
         trigger,

@@ -275,17 +275,17 @@ function OfferInvitationMailStatusBadge({ status }) {
     let textMode = "light";
     switch (status) {
         case MainSetupReact_1.default.OfferInvitationMailStatus.NEW:
-            variant = "secondary";
-            break;
-        case MainSetupReact_1.default.OfferInvitationMailStatus.TO_OFFER:
             variant = "warning";
             textMode = "dark";
+            break;
+        case MainSetupReact_1.default.OfferInvitationMailStatus.TO_OFFER:
+            variant = "danger";
             break;
         case MainSetupReact_1.default.OfferInvitationMailStatus.DONE:
             variant = "success";
             break;
         case MainSetupReact_1.default.OfferInvitationMailStatus.REJECTED:
-            variant = "danger";
+            variant = "secondary";
             break;
         default:
             variant = "light";

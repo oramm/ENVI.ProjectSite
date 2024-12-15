@@ -3,6 +3,7 @@ import { mailsToCheckRepository } from "../../OffersController";
 import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../../View/Resultsets/CommonComponents";
 import MailsToCheckList from "../MailsToCheckList";
+import { OurOfferAddNewModalButton } from "../../Modals/OfferModalButtons";
 
 export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);
@@ -38,7 +39,7 @@ export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) =>
     );
 }
 
-export function ChangeStatusButton({ onError }: { onError: (error: Error) => void }) {
+export function AddNewOfferButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -58,17 +59,13 @@ export function ChangeStatusButton({ onError }: { onError: (error: Error) => voi
     }
 
     return (
-        <>
-            <Button key="Do ofertowania" variant="outline-secondary" size="sm" onClick={handleClick}>
-                Do ofertowania{" "}
-                {requestPending && <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />}
-            </Button>
-            <SuccessToast
-                message="Mail przypisany do ofertowania"
-                show={showSuccessToast}
-                onClose={() => setShowSuccessToast(false)}
-            />
-        </>
+        <OurOfferAddNewModalButton
+            modalProps={{
+                contextData: { mail: { ...mailsToCheckRepository.currentItems[0] } },
+                onAddNew: handleClick,
+            }}
+            buttonProps={{ buttonCaption: "Rejestruj ofertę" }}
+        />
     );
 }
 

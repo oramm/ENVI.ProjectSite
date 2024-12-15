@@ -37,7 +37,7 @@ const ToolsForms_1 = __importDefault(require("../../../React/ToolsForms"));
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 function ContractModalBody({ isEditing, initialData }) {
-    const { register, setValue, getValues, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const watchAllFields = watch();
     let startDateSugestion;
     let endDateSugestion;

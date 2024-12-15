@@ -354,17 +354,17 @@ export function OfferInvitationMailStatusBadge({ status }: { status: string }) {
 
     switch (status) {
         case MainSetup.OfferInvitationMailStatus.NEW:
-            variant = "secondary";
-            break;
-        case MainSetup.OfferInvitationMailStatus.TO_OFFER:
             variant = "warning";
             textMode = "dark";
+            break;
+        case MainSetup.OfferInvitationMailStatus.TO_OFFER:
+            variant = "danger";
             break;
         case MainSetup.OfferInvitationMailStatus.DONE:
             variant = "success";
             break;
         case MainSetup.OfferInvitationMailStatus.REJECTED:
-            variant = "danger";
+            variant = "secondary";
             break;
         default:
             variant = "light";

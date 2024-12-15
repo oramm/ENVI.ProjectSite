@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const OffersController_1 = require("../OffersController");
-const MailsFilterBody_1 = require("./MailsFilterBody");
+const MailsToCheckFilterBody_1 = require("./MailsToCheckFilterBody");
 const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
 const react_bootstrap_1 = require("react-bootstrap");
 function MailsToCheckList({ show, handleClose }) {
@@ -83,7 +83,7 @@ function MailsToCheckList({ show, handleClose }) {
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "xl", show: show, onHide: handleClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
             react_1.default.createElement(react_bootstrap_1.Modal.Title, null, "Lista maili do sprawdzenia")),
-        react_1.default.createElement(FilterableTable_1.default, { id: "mailsTocheck", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailsToCheckRepository, FilterBodyComponent: MailsFilterBody_1.MailsFilterBody }),
+        react_1.default.createElement(FilterableTable_1.default, { id: "mailsTocheck", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailsToCheckRepository, FilterBodyComponent: MailsToCheckFilterBody_1.MailsToCheckFilterBody }),
         react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: handleClose }, "Zamknij"))));
 }

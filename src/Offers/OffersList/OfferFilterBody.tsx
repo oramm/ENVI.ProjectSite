@@ -16,7 +16,6 @@ export function OffersFilterBody() {
             submissionDeadlineTo: MainSetup.OffersFilterInitState.SUBMISSION_TO,
         };
         reset(resetData);
-
         trigger();
     }, []);
 

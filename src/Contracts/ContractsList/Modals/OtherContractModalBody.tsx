@@ -21,7 +21,7 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
     });
 
-    const { register, setValue, watch, formState, control } = useFormContext();
+    const { setValue, watch } = useFormContext();
     const _project = watch("_project");
 
     useEffect(() => {

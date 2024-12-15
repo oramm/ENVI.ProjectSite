@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { MailData } from "../../../../Typings/bussinesTypes";
 import { mailsToCheckRepository } from "../OffersController";
-import { MailsFilterBody } from "./MailsFilterBody";
+import { MailsToCheckFilterBody } from "./MailsToCheckFilterBody";
 import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { Button, Modal } from "react-bootstrap";
 
@@ -80,7 +80,7 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
                 AddNewButtonComponents={[]}
                 isDeletable={true}
                 repository={mailsToCheckRepository}
-                FilterBodyComponent={MailsFilterBody}
+                FilterBodyComponent={MailsToCheckFilterBody}
             />
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>

@@ -42,7 +42,7 @@ function OtherContractModalBody(props) {
         name: "OurRelatedContractsRepository",
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
     });
-    const { register, setValue, watch, formState, control } = (0, FormContext_1.useFormContext)();
+    const { setValue, watch } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {
         setValue("_type", initialData?._type, { shouldValidate: true });
