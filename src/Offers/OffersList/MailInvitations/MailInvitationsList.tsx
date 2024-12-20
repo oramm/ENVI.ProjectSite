@@ -2,7 +2,7 @@ import React from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { MailDataToProcess } from "../../../../Typings/bussinesTypes";
 import { mailInvitationsRepository } from "../OffersController";
-import { AddNewOfferButton, SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
+import { AddOurOfferFromMailButton, SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { OfferInvitationMailStatusBadge, OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { Alert } from "react-bootstrap";
@@ -64,7 +64,7 @@ export default function MailInvitationsList() {
     }
 
     function renderMenu() {
-        return <AddNewOfferButton onError={() => {}} />;
+        return <AddOurOfferFromMailButton onError={() => {}} />;
     }
 
     return (

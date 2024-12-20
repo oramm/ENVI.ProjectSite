@@ -39,7 +39,7 @@ export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) =>
     );
 }
 
-export function AddNewOfferButton({ onError }: { onError: (error: Error) => void }) {
+export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
