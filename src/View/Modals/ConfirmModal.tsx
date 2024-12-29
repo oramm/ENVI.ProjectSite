@@ -6,11 +6,12 @@ type ConfirmModalProps = {
     show: boolean;
     onClose: () => void;
     title: string;
+    subtitle?: string;
     prompt: string;
     onConfirm: () => Promise<void>;
 };
 
-export default function ConfirmModal({ show, onClose, title, prompt, onConfirm }: ConfirmModalProps) {
+export default function ConfirmModal({ show, onClose, title, subtitle, prompt, onConfirm }: ConfirmModalProps) {
     const [isWaiting, setIsWaiting] = useState(false);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -35,6 +36,7 @@ export default function ConfirmModal({ show, onClose, title, prompt, onConfirm }
         <Modal show={show} onHide={onClose}>
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
+                {subtitle && <small>{subtitle}</small>}
             </Modal.Header>
             <Modal.Body>{prompt}</Modal.Body>
             <Modal.Footer>

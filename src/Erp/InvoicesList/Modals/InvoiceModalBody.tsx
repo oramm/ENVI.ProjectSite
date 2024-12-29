@@ -12,7 +12,7 @@ import { Invoice, OurContract } from "../../../../Typings/bussinesTypes";
 import { contractsRepository, entitiesRepository } from "../InvoicesController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function InvoiceModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Invoice>) {
+export function InvoiceModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Invoice>) {
     const {
         register,
         reset,

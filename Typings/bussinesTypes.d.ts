@@ -352,6 +352,8 @@ interface Offer extends RepositoryDataItem {
 export interface OurOffer extends Offer {
     gdDocumentId?: string;
     resourcesGdFolderId?: string;
+    _invitationMail?: OfferInvitationMailToProcessData;
+    invitationMailId?: number | null;
 }
 
 export interface ExternalOffer extends Offer {
@@ -383,8 +385,9 @@ export interface MailData extends RepositoryDataItem {
     _editor?: PersonData;
 }
 
-export interface MailDataToProcess extends MailData {
+export interface OfferInvitationMailToProcessData extends MailData {
     status: string;
+    _ourOfferId?: number;
     _ourOffer?: OurOfferData;
 }
 

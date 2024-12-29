@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
-import { MailData } from "../../../../Typings/bussinesTypes";
 import { mailsToCheckRepository } from "../OffersController";
 import { MailsToCheckFilterBody } from "./MailsToCheckFilterBody";
 import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { Button, Modal } from "react-bootstrap";
+import { MailData } from "../../../../Typings/bussinesTypes";
+import ToolsDate from "../../../React/ToolsDate";
 
 export default function MailsToCheckList({ show, handleClose }: { show: boolean; handleClose: () => void }) {
     const [activeMailBody, setActiveMailBody] = useState<string>("");
@@ -34,7 +35,8 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
         return (
             <div onClick={() => handleRowClick(dataItem)}>
                 <div>
-                    Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano: {dataItem.date}
+                    Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano:{" "}
+                    {ToolsDate.formatTime(dataItem.date)}
                 </div>
                 <div className="mb-1">Temat: {dataItem.subject}</div>
                 {isActive && (

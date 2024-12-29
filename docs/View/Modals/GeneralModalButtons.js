@@ -47,7 +47,7 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
  * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
  * @param buttonProps - właściwości przycisku
  */
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, }, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -57,10 +57,11 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GeneraEditButton, { ...buttonProps, onClick: handleOpen }),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
+                contextData: contextData,
             }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })));
 }
 exports.GeneralEditModalButton = GeneralEditModalButton;
@@ -84,7 +85,7 @@ function GeneraEditButton(buttonProps) {
  *
  */
 function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, repository, makeValidationSchema: validationSchema, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, repository, makeValidationSchema: validationSchema, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -94,15 +95,15 @@ contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, repositor
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Button, { key: buttonCaption, variant: buttonVariant, size: buttonSize, active: buttonIsActive, disabled: buttonIsDisabled, onClick: handleOpen }, buttonCaption),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, repository: repository, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: validationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: false, title: modalTitle, subtitle: modalSubtitle, repository: repository, onAddNew: onAddNew, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: validationSchema, modalBodyProps: {
                 isEditing: false,
-                contextData,
+                contextData: contextData,
                 additionalProps: additionalModalBodyProps,
             } })));
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
-function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialData, repository }, buttonProps, }) {
+function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSubtitle, initialData, repository }, buttonProps, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     const { layout = "vertical" } = { ...buttonProps };
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
@@ -118,10 +119,10 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, initialD
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: layout, onClick: handleOpen }),
-        react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
+        react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, subtitle: modalSubtitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
-function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, initialData, repository, makeValidationSchema, fieldsToUpdate, }, children, }) {
+function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -131,10 +132,11 @@ function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBod
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("span", { onClick: handleOpen, style: { cursor: "pointer" } }, children),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
+                contextData: contextData,
             }, fieldsToUpdate: fieldsToUpdate })));
 }
 exports.PartialEditTrigger = PartialEditTrigger;

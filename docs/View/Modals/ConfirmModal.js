@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
-function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
+function ConfirmModal({ show, onClose, title, subtitle, prompt, onConfirm }) {
     const [isWaiting, setIsWaiting] = (0, react_1.useState)(false);
     const [isError, setIsError] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -48,7 +48,8 @@ function ConfirmModal({ show, onClose, title, prompt, onConfirm }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: onClose },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title),
+            subtitle && react_1.default.createElement("small", null, subtitle)),
         react_1.default.createElement(react_bootstrap_1.Modal.Body, null, prompt),
         react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),

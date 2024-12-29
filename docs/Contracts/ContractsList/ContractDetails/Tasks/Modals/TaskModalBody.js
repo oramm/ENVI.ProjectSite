@@ -34,7 +34,7 @@ const MainSetupReact_1 = __importDefault(require("../../../../../React/MainSetup
 const BussinesObjectSelectors_1 = require("../../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const StatusSelectors_1 = require("../../../../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../../../../View/Modals/CommonFormComponents/GenericComponents");
-function TaskModalBody({ isEditing, initialData, contextData }) {
+function TaskModalBody({ isEditing, initialData, contextData: contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _parent = initialData?._parent || contextData;
     (0, react_1.useEffect)(() => {

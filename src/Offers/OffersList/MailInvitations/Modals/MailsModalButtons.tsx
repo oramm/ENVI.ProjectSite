@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { mailsToCheckRepository } from "../../OffersController";
+import { mailInvitationsRepository, mailsToCheckRepository } from "../../OffersController";
 import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../../View/Resultsets/CommonComponents";
 import MailsToCheckList from "../MailsToCheckList";
 import { OurOfferAddNewModalButton } from "../../Modals/OfferModalButtons";
+import ToolsDate from "../../../../React/ToolsDate";
 
 export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);
@@ -40,19 +41,17 @@ export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) =>
 }
 
 export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error) => void }) {
-    const [requestPending, setRequestPending] = useState(false);
-    const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const mailData = mailInvitationsRepository.currentItems[0];
 
+    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate.formatTime(
+        mailData.date
+    )}</strong><br>${mailData.subject}`;
     async function handleClick() {
         try {
-            setRequestPending(true);
-            const currentItem = { ...mailsToCheckRepository.currentItems[0] };
+            const currentItem = { ...mailInvitationsRepository.currentItems[0] };
             await mailsToCheckRepository.editItem(currentItem);
-            setRequestPending(false);
-            setShowSuccessToast(true);
         } catch (error) {
             if (error instanceof Error) {
-                setRequestPending(false);
                 onError(error);
             }
         }
@@ -61,8 +60,9 @@ export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error)
     return (
         <OurOfferAddNewModalButton
             modalProps={{
-                contextData: { mail: { ...mailsToCheckRepository.currentItems[0] } },
+                contextData: { mail: { ...mailInvitationsRepository.currentItems[0] } },
                 onAddNew: handleClick,
+                modalSubtitle,
             }}
             buttonProps={{ buttonCaption: "Rejestruj ofertę" }}
         />

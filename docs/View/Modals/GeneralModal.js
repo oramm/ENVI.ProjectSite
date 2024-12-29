@@ -36,7 +36,7 @@ const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
-function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
+function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -46,7 +46,6 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
         mode: "onChange",
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined,
     });
-    let newObject;
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             await loadDataObject();
@@ -126,13 +125,26 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
     }
     async function handleEditWithoutFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = { ...currentDataItem, ...data };
+        const objectToEdit = {
+            ...currentDataItem,
+            ...data,
+            _contextData: modalBodyProps.contextData,
+        };
         const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
         if (onEdit)
             onEdit(editedObject);
     }
     async function handleAdd(data) {
-        newObject = await repository.addNewItem(data);
+        if (data instanceof FormData) {
+            data.append("_contextData", JSON.stringify(modalBodyProps.contextData));
+        }
+        else {
+            data = {
+                ...data,
+                _contextData: modalBodyProps.contextData,
+            };
+        }
+        const newObject = await repository.addNewItem(data);
         if (onAddNew)
             onAddNew(newObject);
     }
@@ -147,11 +159,16 @@ function GeneralModal({ show, title, isEditing, specialActionRoute, onEdit, onAd
                 react_1.default.createElement(ModalBodyComponent, { ...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData } }),
                 errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: "pre-wrap" }, className: "mt-3", variant: "danger", onClose: () => setErrorMessage(""), dismissible: true }, errorMessage)))));
     }
+    function renderHeader() {
+        return (react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement("h5", null, title),
+                subtitle && react_1.default.createElement("div", { className: "text-muted", dangerouslySetInnerHTML: { __html: subtitle } }))));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
-                react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-                    react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title)),
+                react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true }, renderHeader()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Body, null, renderFormBody()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),

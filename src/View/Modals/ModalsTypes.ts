@@ -16,12 +16,13 @@ export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryD
     initialData?: DataItemType;
     contextData?: unknown;
     additionalProps?: any;
-}
+};
 
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     additionalModalBodyProps?: any;
     modalTitle: string;
+    modalSubtitle?: string;
     repository: RepositoryReact<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     contextData?: unknown;
@@ -33,7 +34,7 @@ export type GeneralModalButtonButtonProps = {
     buttonSize?: ButtonProps["size"];
     buttonIsActive?: boolean;
     buttonIsDisabled?: boolean;
-    layout?: 'vertical' | 'horizontal';
+    layout?: "vertical" | "horizontal";
 };
 
 export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
@@ -41,10 +42,11 @@ export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = Re
     buttonProps: GeneralModalButtonButtonProps;
 };
 
-type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
-    onAddNew: (object: DataItemType) => void;
-    initialData?: DataItemType;
-};
+type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
+    GeneralModalButtonModalProps<DataItemType> & {
+        onAddNew: (object: DataItemType) => void;
+        initialData?: DataItemType;
+    };
 
 type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {
     buttonCaption: string;
@@ -55,13 +57,14 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
     buttonProps: GeneralAddNewModalButtonButtonProps;
 };
 
-type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
-    onEdit: (object: DataItemType) => void;
-    specialActionRoute?: string;
-    initialData: DataItemType;
-    fieldsToUpdate?: string[];
-    shouldRetrieveDataBeforeEdit?: boolean;
-};
+type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
+    GeneralModalButtonModalProps<DataItemType> & {
+        onEdit: (object: DataItemType) => void;
+        specialActionRoute?: string;
+        initialData: DataItemType;
+        fieldsToUpdate?: string[];
+        shouldRetrieveDataBeforeEdit?: boolean;
+    };
 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;

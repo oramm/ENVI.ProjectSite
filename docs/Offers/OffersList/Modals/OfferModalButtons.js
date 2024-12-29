@@ -53,13 +53,15 @@ function OurOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
         } }));
 }
 exports.OurOfferEditModalButton = OurOfferEditModalButton;
-function OurOfferAddNewModalButton({ modalProps: { onAddNew } }) {
+function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Rejestruj ofertę - szablon ENVI",
+            modalSubtitle,
             repository: OffersController_1.offersRepository,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
+            contextData,
         }, buttonProps: {
             buttonCaption: "Rejestruj ENVI",
             buttonVariant: "outline-success",

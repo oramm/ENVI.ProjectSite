@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, Alert, Spinner, Container, Placeholder } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Spinner, Container, Placeholder, Row, Col } from "react-bootstrap";
 import { useForm, FieldValues } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
 import { FormProvider } from "./FormContext";
@@ -15,6 +15,7 @@ import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
     title: string;
+    subtitle?: string;
     isEditing: boolean;
     onEdit?: (object: DataItemType) => void;
     specialActionRoute?: string;
@@ -31,6 +32,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
     show,
     title,
+    subtitle,
     isEditing,
     specialActionRoute,
     onEdit,
@@ -53,7 +55,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         mode: "onChange",
         resolver: validationSchema ? yupResolver(validationSchema(isEditing)) : undefined,
     });
-    let newObject: DataItemType;
 
     useEffect(() => {
         async function fetchData() {
@@ -136,13 +137,26 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = { ...currentDataItem, ...data } as DataItemType;
+        const objectToEdit = {
+            ...currentDataItem,
+            ...data,
+            _contextData: modalBodyProps.contextData as object,
+        } as DataItemType;
         const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
         if (onEdit) onEdit(editedObject);
     }
 
     async function handleAdd(data: FormData | FieldValues) {
-        newObject = await repository.addNewItem(data);
+        if (data instanceof FormData) {
+            data.append("_contextData", JSON.stringify(modalBodyProps.contextData));
+        } else {
+            data = {
+                ...data,
+                _contextData: modalBodyProps.contextData as object,
+            };
+        }
+
+        const newObject = await repository.addNewItem(data);
         if (onAddNew) onAddNew(newObject);
     }
 
@@ -155,7 +169,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                 </div>
             );
         }
-
         return (
             <Container>
                 <FormProvider value={formMethods}>
@@ -178,6 +191,17 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         );
     }
 
+    function renderHeader() {
+        return (
+            <Row>
+                <Col>
+                    <h5>{title}</h5>
+                    {subtitle && <div className="text-muted" dangerouslySetInnerHTML={{ __html: subtitle }} />}
+                </Col>
+            </Row>
+        );
+    }
+
     return (
         <Modal
             size="lg"
@@ -188,9 +212,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         >
             <ErrorBoundary>
                 <Form onSubmit={formMethods.handleSubmit(handleSubmitRepository)}>
-                    <Modal.Header closeButton={true}>
-                        <Modal.Title>{title}</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton={true}>{renderHeader()}</Modal.Header>
                     <Modal.Body>{renderFormBody()}</Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={onClose}>

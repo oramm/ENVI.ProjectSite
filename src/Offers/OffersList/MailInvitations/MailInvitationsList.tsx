@@ -1,6 +1,6 @@
 import React from "react";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
-import { MailDataToProcess } from "../../../../Typings/bussinesTypes";
+import { OfferInvitationMailToProcessData } from "../../../../Typings/bussinesTypes";
 import { mailInvitationsRepository } from "../OffersController";
 import { AddOurOfferFromMailButton, SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { OfferInvitationMailStatusBadge, OfferStatusBadge } from "../../../View/Resultsets/CommonComponents";
@@ -10,14 +10,15 @@ import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTa
 import { MailModalBodyStatus } from "./Modals/MailModalBodiesPartial";
 import { makeMailStatusValidationSchema } from "./Modals/MailValidationSchema";
 import { MailInvitationsFilterBody } from "./MailInvitationsFilterBody";
+import ToolsDate from "../../../React/ToolsDate";
 
 export default function MailInvitationsList() {
-    function renderRowContent(dataItem: MailDataToProcess, isActive: boolean = false) {
+    function renderRowContent(dataItem: OfferInvitationMailToProcessData, isActive: boolean = false) {
         return (
             <>
                 <div>
-                    Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano: {dataItem.date}{" "}
-                    {renderStatus(dataItem)}
+                    Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano:{" "}
+                    {ToolsDate.formatTime(dataItem.date)} {renderStatus(dataItem)}
                 </div>
                 <div className="mb-1">Temat: {dataItem.subject}</div>
                 {isActive && (
@@ -42,9 +43,9 @@ export default function MailInvitationsList() {
         );
     }
 
-    function renderStatus(dataItem: MailDataToProcess) {
+    function renderStatus(dataItem: OfferInvitationMailToProcessData) {
         if (!dataItem.status) return <Alert variant="danger">Brak statusu</Alert>;
-        const { handleEditObject } = useFilterableTableContext<MailDataToProcess>();
+        const { handleEditObject } = useFilterableTableContext<OfferInvitationMailToProcessData>();
 
         return (
             <PartialEditTrigger
@@ -69,7 +70,7 @@ export default function MailInvitationsList() {
 
     return (
         <>
-            <FilterableTable<MailDataToProcess>
+            <FilterableTable<OfferInvitationMailToProcessData>
                 id="mailInvitations"
                 tableStructure={[{ header: undefined, renderTdBody: renderRowContent }]}
                 AddNewButtonComponents={[]}

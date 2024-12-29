@@ -22,7 +22,6 @@ export default class ToolsDate {
             )
         );
         const parsedDate = utcDate.toISOString().slice(0, 10);
-        console.log(parsedDate);
         return parsedDate;
     }
 

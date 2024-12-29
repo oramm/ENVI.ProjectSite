@@ -32,6 +32,7 @@ const OffersController_1 = require("../OffersController");
 const MailsToCheckFilterBody_1 = require("./MailsToCheckFilterBody");
 const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
 const react_bootstrap_1 = require("react-bootstrap");
+const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
 function MailsToCheckList({ show, handleClose }) {
     const [activeMailBody, setActiveMailBody] = (0, react_1.useState)("");
     const [activeMailId, setActiveMailId] = (0, react_1.useState)(null);
@@ -59,8 +60,9 @@ function MailsToCheckList({ show, handleClose }) {
                 react_1.default.createElement("strong", null, dataItem.from),
                 ", Do ",
                 react_1.default.createElement("strong", null, dataItem.to),
-                " Otrzymano: ",
-                dataItem.date),
+                " Otrzymano:",
+                " ",
+                ToolsDate_1.default.formatTime(dataItem.date)),
             react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),

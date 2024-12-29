@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 const OfferModalBody_1 = require("./OfferModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 function OurOfferModalBody(props) {
-    const { initialData, isEditing } = props;
+    const { initialData, isEditing, contextData } = props;
     const { setValue, watch, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         setValue("isOur", true);

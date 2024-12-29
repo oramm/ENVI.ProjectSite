@@ -34,11 +34,13 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
+        modalSubtitle,
         initialData,
         repository,
         makeValidationSchema,
         fieldsToUpdate,
         shouldRetrieveDataBeforeEdit,
+        contextData,
     },
 }: GeneralEditModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -58,6 +60,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 show={showForm}
                 isEditing={true}
                 title={modalTitle}
+                subtitle={modalSubtitle}
                 repository={repository}
                 onEdit={onEdit}
                 specialActionRoute={specialActionRoute}
@@ -67,6 +70,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                     isEditing: true,
                     initialData: initialData,
                     additionalProps: additionalModalBodyProps,
+                    contextData: contextData,
                 }}
                 fieldsToUpdate={fieldsToUpdate}
                 shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
@@ -120,6 +124,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
+        modalSubtitle,
         repository,
         makeValidationSchema: validationSchema,
     },
@@ -139,7 +144,6 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
     function handleClose() {
         setShowForm(false);
     }
-
     return (
         <>
             <Button
@@ -157,13 +161,14 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                 show={showForm}
                 isEditing={false}
                 title={modalTitle}
+                subtitle={modalSubtitle}
                 repository={repository}
                 onAddNew={onAddNew}
                 ModalBodyComponent={ModalBodyComponent}
                 makeValidationSchema={validationSchema}
                 modalBodyProps={{
                     isEditing: false,
-                    contextData,
+                    contextData: contextData,
                     additionalProps: additionalModalBodyProps,
                 }}
             />
@@ -173,7 +178,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
 
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
 export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem>({
-    modalProps: { onDelete, modalTitle, initialData, repository },
+    modalProps: { onDelete, modalTitle, modalSubtitle, initialData, repository },
     buttonProps,
 }: GeneralDeleteModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -199,6 +204,7 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
                 onClose={handleClose}
                 show={showForm}
                 title={modalTitle}
+                subtitle={modalSubtitle}
                 onConfirm={handleDelete}
                 prompt={`Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?`}
             />
@@ -213,10 +219,12 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
+        modalSubtitle,
         initialData,
         repository,
         makeValidationSchema,
         fieldsToUpdate,
+        contextData,
     },
     children,
 }: GeneralEditModalButtonProps<DataItemType> & { children: JSX.Element }) {
@@ -239,6 +247,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
                 show={showForm}
                 isEditing={true}
                 title={modalTitle}
+                subtitle={modalSubtitle}
                 repository={repository}
                 onEdit={onEdit}
                 specialActionRoute={specialActionRoute}
@@ -248,6 +257,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
                     isEditing: true,
                     initialData: initialData,
                     additionalProps: additionalModalBodyProps,
+                    contextData: contextData,
                 }}
                 fieldsToUpdate={fieldsToUpdate}
             />

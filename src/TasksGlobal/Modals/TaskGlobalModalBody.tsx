@@ -8,7 +8,7 @@ import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { TaksStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function TaskGlobalModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
+export function TaskGlobalModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Task>) {
     const {
         register,
         reset,

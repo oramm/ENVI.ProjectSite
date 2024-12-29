@@ -26,13 +26,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShowMailsToCheckButton = exports.AddNewOfferButton = exports.SetAsGoodToOfferButton = void 0;
+exports.ShowMailsToCheckButton = exports.AddOurOfferFromMailButton = exports.SetAsGoodToOfferButton = void 0;
 const react_1 = __importStar(require("react"));
 const OffersController_1 = require("../../OffersController");
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const MailsToCheckList_1 = __importDefault(require("../MailsToCheckList"));
 const OfferModalButtons_1 = require("../../Modals/OfferModalButtons");
+const ToolsDate_1 = __importDefault(require("../../../../React/ToolsDate"));
 function SetAsGoodToOfferButton({ onError }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
@@ -59,30 +60,27 @@ function SetAsGoodToOfferButton({ onError }) {
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Mail przypisany do ofertowania", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
 exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
-function AddNewOfferButton({ onError }) {
-    const [requestPending, setRequestPending] = (0, react_1.useState)(false);
-    const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
+function AddOurOfferFromMailButton({ onError }) {
+    const mailData = OffersController_1.mailInvitationsRepository.currentItems[0];
+    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate_1.default.formatTime(mailData.date)}</strong><br>${mailData.subject}`;
     async function handleClick() {
         try {
-            setRequestPending(true);
-            const currentItem = { ...OffersController_1.mailsToCheckRepository.currentItems[0] };
+            const currentItem = { ...OffersController_1.mailInvitationsRepository.currentItems[0] };
             await OffersController_1.mailsToCheckRepository.editItem(currentItem);
-            setRequestPending(false);
-            setShowSuccessToast(true);
         }
         catch (error) {
             if (error instanceof Error) {
-                setRequestPending(false);
                 onError(error);
             }
         }
     }
     return (react_1.default.createElement(OfferModalButtons_1.OurOfferAddNewModalButton, { modalProps: {
-            contextData: { mail: { ...OffersController_1.mailsToCheckRepository.currentItems[0] } },
+            contextData: { mail: { ...OffersController_1.mailInvitationsRepository.currentItems[0] } },
             onAddNew: handleClick,
+            modalSubtitle,
         }, buttonProps: { buttonCaption: "Rejestruj ofertę" } }));
 }
-exports.AddNewOfferButton = AddNewOfferButton;
+exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;
 function ShowMailsToCheckButton() {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {

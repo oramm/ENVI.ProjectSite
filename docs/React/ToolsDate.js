@@ -18,7 +18,6 @@ class ToolsDate {
     static toUTC(date) {
         const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         const parsedDate = utcDate.toISOString().slice(0, 10);
-        console.log(parsedDate);
         return parsedDate;
     }
     /** Przetwarza wszystkie daty w obiekcie na UTC */

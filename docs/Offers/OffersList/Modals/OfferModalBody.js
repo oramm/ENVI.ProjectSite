@@ -56,7 +56,7 @@ function OfferModalBody({ isEditing, initialData }) {
     function renderCityText() {
         if (typeof _city !== "string")
             return "";
-        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upwnij się, że podałaś nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
+        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upewnij się, że podałano nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Row, null,

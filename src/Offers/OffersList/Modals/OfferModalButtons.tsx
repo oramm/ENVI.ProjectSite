@@ -45,15 +45,19 @@ export function OurOfferEditModalButton({
     );
 }
 
-export function OurOfferAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<OurOffer>) {
+export function OurOfferAddNewModalButton({
+    modalProps: { onAddNew, contextData, modalSubtitle },
+}: SpecificAddNewModalButtonProps<OurOffer>) {
     return (
         <GeneralAddNewModalButton<OurOffer>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: OurOfferModalBody,
                 modalTitle: "Rejestruj ofertę - szablon ENVI",
+                modalSubtitle,
                 repository: offersRepository,
                 makeValidationSchema: makeOurOfferValidationSchema,
+                contextData,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj ENVI",

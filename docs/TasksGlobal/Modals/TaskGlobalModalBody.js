@@ -34,7 +34,7 @@ const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponent
 const FormContext_1 = require("../../View/Modals/FormContext");
 const StatusSelectors_1 = require("../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
-function TaskGlobalModalBody({ isEditing, initialData, contextData }) {
+function TaskGlobalModalBody({ isEditing, initialData, contextData: contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _case = initialData?._parent || contextData;
     (0, react_1.useEffect)(() => {

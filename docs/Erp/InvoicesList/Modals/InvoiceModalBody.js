@@ -34,7 +34,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const InvoicesController_1 = require("../InvoicesController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
-function InvoiceModalBody({ isEditing, initialData, contextData }) {
+function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const statuses = [];
     statuses.push(MainSetupReact_1.default.InvoiceStatuses.FOR_LATER, MainSetupReact_1.default.InvoiceStatuses.TO_CORRECT, MainSetupReact_1.default.InvoiceStatuses.WITHDRAWN);

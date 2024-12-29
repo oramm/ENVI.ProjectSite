@@ -8,7 +8,7 @@ import { PersonSelectorPreloaded } from "../../../../../View/Modals/CommonFormCo
 import { TaksStatusSelector } from "../../../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { ErrorMessage } from "../../../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function TaskModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
+export function TaskModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Task>) {
     const {
         register,
         reset,

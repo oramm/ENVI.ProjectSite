@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
-import { MailDataToProcess } from "../../../../../Typings/bussinesTypes";
+import { OfferInvitationMailToProcessData } from "../../../../../Typings/bussinesTypes";
 import { OfferInvitationMailStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
-export function MailModalBodyStatus({ initialData }: ModalBodyProps<MailDataToProcess>) {
+export function MailModalBodyStatus({ initialData }: ModalBodyProps<OfferInvitationMailToProcessData>) {
     const { setValue } = useFormContext();
 
     useEffect(() => {

@@ -29,7 +29,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
-function CaseModalBody({ isEditing, initialData, contextData }) {
+function CaseModalBody({ isEditing, initialData, contextData: contextData }) {
     const { register, reset, getValues, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _type = watch("_type");
     const _parent = (initialData?._parent || contextData);

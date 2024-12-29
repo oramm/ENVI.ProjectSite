@@ -50,7 +50,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
 
     function renderCityText() {
         if (typeof _city !== "string") return "";
-        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upwnij się, że podałaś nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
+        return "System utworzy nowe miasto w bazie i wygeneruje dla niego trzyliterowy kod. Upewnij się, że podałano nazwę bez literówek i, że system nie podpowiada Ci już tego miasta";
     }
 
     return (

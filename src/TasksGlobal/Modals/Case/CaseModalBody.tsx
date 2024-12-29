@@ -6,7 +6,7 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function CaseModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Case>) {
+export function CaseModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Case>) {
     const {
         register,
         reset,
