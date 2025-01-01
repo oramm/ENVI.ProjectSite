@@ -42,6 +42,10 @@ export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) =>
 
 export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error) => void }) {
     const mailData = mailInvitationsRepository.currentItems[0];
+    if (!mailData) {
+        console.log("mailInvitationsRepository.currentItems[0] is null");
+        return null;
+    }
 
     const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate.formatTime(
         mailData.date
