@@ -49,22 +49,29 @@ function OffersSearch({ title }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, offer.employerName)));
     }
-    function renderIcon(offer) {
-        const icon = offer.isOur ? free_solid_svg_icons_1.faHome : free_solid_svg_icons_1.faFileLines;
-        return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
+    function hasInvitationMailId(offer) {
+        return offer.invitationMailId ? true : false;
+    }
+    function renderIcons(offer) {
+        const offerTypeIcon = offer.isOur ? free_solid_svg_icons_1.faHome : free_solid_svg_icons_1.faFileLines;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: offerTypeIcon, size: "sm" }),
+            hasInvitationMailId(offer) && react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faReply, size: "sm" })));
     }
     function renderRowContent(offer, isActive = false) {
         if (!offer.submissionDeadline)
             throw new Error("Brak terminu składania oferty");
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("h5", null,
-                offer._type.name,
-                " ",
-                offer._city.name,
-                " | ",
-                renderTenderLink(offer) ?? offer.alias,
-                " ",
-                react_1.default.createElement("small", null, renderStatus(offer))),
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-1 mb-2" },
+                renderIcons(offer),
+                react_1.default.createElement("h5", { className: "mb-0" },
+                    offer._type.name,
+                    " ",
+                    offer._city.name,
+                    " | ",
+                    renderTenderLink(offer) ?? offer.alias,
+                    " ",
+                    react_1.default.createElement("small", null, renderStatus(offer)))),
             renderEntityData(offer),
             react_1.default.createElement("div", { className: "mb-2" }),
             react_1.default.createElement("div", { className: "mb-2" },
@@ -127,7 +134,10 @@ function OffersSearch({ title }) {
             " ",
             fileNames ? ` | wysłane pliki: ${fileNames}` : "",
             " ",
-            offerVersion));
+            offerVersion,
+            offer.isOur && !offer.invitationMailId && (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement("span", null, " | "),
+                react_1.default.createElement("span", { className: "text-info" }, " Utworzono na podstawie maila")))));
     }
     function renderDaysLeft(offer) {
         if (!offer.submissionDeadline)
@@ -190,7 +200,7 @@ function OffersSearch({ title }) {
             react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
-            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIcon },
+            //{ renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcons },
             { header: undefined, renderTdBody: renderRowContent },
         ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }

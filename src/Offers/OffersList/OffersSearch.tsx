@@ -10,7 +10,7 @@ import {
 } from "./Modals/OfferModalButtons";
 import { ExternalOffer, OurOffer } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileLines, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faFileLines, faHome, faReply } from "@fortawesome/free-solid-svg-icons";
 import { DaysLeftBadge, OfferBondStatusBadge, OfferStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { Alert, Card } from "react-bootstrap";
 import {
@@ -35,20 +35,31 @@ export default function OffersSearch({ title }: { title?: string }) {
             </>
         );
     }
+    function hasInvitationMailId(offer: OurOffer | ExternalOffer) {
+        return (offer as OurOffer).invitationMailId ? true : false;
+    }
 
-    function renderIcon(offer: OurOffer | ExternalOffer) {
-        const icon = offer.isOur ? faHome : faFileLines;
-        return <FontAwesomeIcon icon={icon} size="lg" />;
+    function renderIcons(offer: OurOffer | ExternalOffer) {
+        const offerTypeIcon = offer.isOur ? faHome : faFileLines;
+        return (
+            <>
+                <FontAwesomeIcon icon={offerTypeIcon} size="sm" />
+                {hasInvitationMailId(offer) && <FontAwesomeIcon icon={faReply} size="sm" />}
+            </>
+        );
     }
 
     function renderRowContent(offer: OurOffer | ExternalOffer, isActive: boolean = false) {
         if (!offer.submissionDeadline) throw new Error("Brak terminu składania oferty");
         return (
             <>
-                <h5>
-                    {offer._type.name} {offer._city.name} | {renderTenderLink(offer) ?? offer.alias}{" "}
-                    <small>{renderStatus(offer)}</small>
-                </h5>
+                <div className="d-flex align-items-center gap-1 mb-2">
+                    {renderIcons(offer)}
+                    <h5 className="mb-0">
+                        {offer._type.name} {offer._city.name} | {renderTenderLink(offer) ?? offer.alias}{" "}
+                        <small>{renderStatus(offer)}</small>
+                    </h5>
+                </div>
                 {renderEntityData(offer)}
                 <div className="mb-2"></div>
                 <div className="mb-2">
@@ -111,6 +122,12 @@ export default function OffersSearch({ title }: { title?: string }) {
                 {ToolsDate.formatTime(offer._lastEvent._lastUpdated!)} przez {offer._lastEvent._editor.name}{" "}
                 {offer._lastEvent._editor.surname} {_recipients ? `do: ${_recipients}` : ""}{" "}
                 {fileNames ? ` | wysłane pliki: ${fileNames}` : ""} {offerVersion}
+                {offer.isOur && !(offer as OurOffer).invitationMailId && (
+                    <>
+                        <span> | </span>
+                        <span className="text-info"> Utworzono na podstawie maila</span>
+                    </>
+                )}
             </div>
         );
     }
@@ -210,7 +227,7 @@ export default function OffersSearch({ title }: { title?: string }) {
             title={title}
             FilterBodyComponent={OffersFilterBody}
             tableStructure={[
-                { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcon },
+                //{ renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcons },
                 { header: undefined, renderTdBody: renderRowContent },
             ]}
             AddNewButtonComponents={[OurOfferAddNewModalButton, ExternalOfferAddNewModalButton]}
