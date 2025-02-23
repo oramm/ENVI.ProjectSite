@@ -86,30 +86,26 @@ export default function LettersSearch({ title }: { title: string }) {
 
     function renderLastEvent(letter: OurLetterContract | IncomingLetterContract) {
         if (!letter._lastEvent) return null;
-        if (letter.isOur)
-            return (
-                <div className="text-muted">
-                    <span className="fw-bold">
-                        {Tools.getLabelFromKey(letter._lastEvent.eventType, MainSetup.LetterEventType)}
-                    </span>{" "}
-                    {ToolsDate.formatTime(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
-                    {letter._lastEvent._editor.surname}
-                </div>
-            );
-        else
-            return (
-                <div className="text-muted">
-                    <span className="fw-bold">{letter._lastEvent.eventType} </span>{" "}
-                    {ToolsDate.formatTime(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
-                    {letter._lastEvent._editor.surname}
-                </div>
-            );
+        return (
+            <div className="text-muted small mt-2">
+                <span className="fw-bold">
+                    {Tools.getLabelFromKey(letter._lastEvent.eventType, MainSetup.LetterEventType)}
+                </span>{" "}
+                {ToolsDate.formatTime(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
+                {letter._lastEvent._editor.surname}
+            </div>
+        );
     }
 
     function renderRowContent(letter: OurLetterContract | IncomingLetterContract, isActive: boolean = false) {
         return (
             <>
-                <div className="text-muted" style={{ whiteSpace: "pre-line" }}>
+                {letter.number && (
+                    <div>
+                        Numer: <strong>{letter.number}</strong>
+                    </div>
+                )}
+                <div className="mt-2" style={{ whiteSpace: "pre-line" }}>
                     Dotyczy: {letter.description}
                 </div>
                 {letter.isOur && <ExportToPDFButtonWithError ourLetterContract={letter} isActive={isActive} />}
@@ -127,7 +123,6 @@ export default function LettersSearch({ title }: { title: string }) {
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody },
                 { header: "Utworzono", objectAttributeToShow: "creationDate" },
                 { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-                { header: "Numer", objectAttributeToShow: "number" },
                 { header: "Dane Pisma", renderTdBody: renderRowContent },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
             ]}

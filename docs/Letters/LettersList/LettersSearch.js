@@ -82,30 +82,22 @@ function LettersSearch({ title }) {
     function renderLastEvent(letter) {
         if (!letter._lastEvent)
             return null;
-        if (letter.isOur)
-            return (react_1.default.createElement("div", { className: "text-muted" },
-                react_1.default.createElement("span", { className: "fw-bold" }, Tools_1.default.getLabelFromKey(letter._lastEvent.eventType, MainSetupReact_1.default.LetterEventType)),
-                " ",
-                ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
-                " przez ",
-                letter._lastEvent._editor.name,
-                " ",
-                letter._lastEvent._editor.surname));
-        else
-            return (react_1.default.createElement("div", { className: "text-muted" },
-                react_1.default.createElement("span", { className: "fw-bold" },
-                    letter._lastEvent.eventType,
-                    " "),
-                " ",
-                ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
-                " przez ",
-                letter._lastEvent._editor.name,
-                " ",
-                letter._lastEvent._editor.surname));
+        return (react_1.default.createElement("div", { className: "text-muted small mt-2" },
+            react_1.default.createElement("span", { className: "fw-bold" }, Tools_1.default.getLabelFromKey(letter._lastEvent.eventType, MainSetupReact_1.default.LetterEventType)),
+            " ",
+            ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
+            " przez ",
+            letter._lastEvent._editor.name,
+            " ",
+            letter._lastEvent._editor.surname));
     }
     function renderRowContent(letter, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } },
+            letter.number && (react_1.default.createElement("div", null,
+                " ",
+                "Numer: ",
+                react_1.default.createElement("strong", null, letter.number))),
+            react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
                 letter.description),
             letter.isOur && react_1.default.createElement(ExportToPDFButtonWithError, { ourLetterContract: letter, isActive: isActive }),
@@ -115,7 +107,6 @@ function LettersSearch({ title }) {
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
             { header: "Utworzono", objectAttributeToShow: "creationDate" },
             { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-            { header: "Numer", objectAttributeToShow: "number" },
             { header: "Dane Pisma", renderTdBody: renderRowContent },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
