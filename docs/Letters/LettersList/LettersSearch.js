@@ -33,6 +33,10 @@ const LetterFilterBody_1 = require("./LetterFilterBody");
 const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const react_bootstrap_1 = require("react-bootstrap");
+const Tools_1 = __importDefault(require("../../React/Tools"));
+const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -62,12 +66,57 @@ function LettersSearch({ title }) {
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
+    function ExportToPDFButtonWithError({ ourLetterContract, isActive, }) {
+        const [error, setError] = (0, react_1.useState)(null);
+        (0, react_1.useEffect)(() => {
+            if (error) {
+                console.log("Error zaktualizowany:", error.message);
+            }
+        }, [error]);
+        if (!ourLetterContract.isOur || !isActive)
+            return null;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(LetterModalButtons_1.ExportOurLetterContractToPDFButton, { onError: (error) => setError(error), ourLetterContract: ourLetterContract }),
+            error && (react_1.default.createElement(react_bootstrap_1.Alert, { dismissible: true, variant: "danger", className: "mt-2", onClose: () => setError(null) }, error.message))));
+    }
+    function renderLastEvent(letter) {
+        if (!letter._lastEvent)
+            return null;
+        if (letter.isOur)
+            return (react_1.default.createElement("div", { className: "text-muted" },
+                react_1.default.createElement("span", { className: "fw-bold" }, Tools_1.default.getLabelFromKey(letter._lastEvent.eventType, MainSetupReact_1.default.LetterEventType)),
+                " ",
+                ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
+                " przez ",
+                letter._lastEvent._editor.name,
+                " ",
+                letter._lastEvent._editor.surname));
+        else
+            return (react_1.default.createElement("div", { className: "text-muted" },
+                react_1.default.createElement("span", { className: "fw-bold" },
+                    letter._lastEvent.eventType,
+                    " "),
+                " ",
+                ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
+                " przez ",
+                letter._lastEvent._editor.name,
+                " ",
+                letter._lastEvent._editor.surname));
+    }
+    function renderRowContent(letter, isActive = false) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "text-muted", style: { whiteSpace: "pre-line" } },
+                "Dotyczy: ",
+                letter.description),
+            letter.isOur && react_1.default.createElement(ExportToPDFButtonWithError, { ourLetterContract: letter, isActive: isActive }),
+            renderLastEvent(letter)));
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "contractsLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
             { header: "Utworzono", objectAttributeToShow: "creationDate" },
             { header: "Wysłano", objectAttributeToShow: "registrationDate" },
             { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Dotyczy", objectAttributeToShow: "description" },
+            { header: "Dane Pisma", renderTdBody: renderRowContent },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }

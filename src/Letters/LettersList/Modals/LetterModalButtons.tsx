@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { ProjectSelectorModalBody } from "./LetterModalBody";
@@ -7,6 +7,8 @@ import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
 import { OurLetterModalBody } from "./OurLetterModalBody";
 import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
 import { lettersRepository } from "../LettersController";
+import { Button, Spinner } from "react-bootstrap";
+import { SuccessToast } from "../../../View/Resultsets/CommonComponents";
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
@@ -98,5 +100,44 @@ export function IncomingLetterAddNewModalButton({
                 buttonCaption: "Rejestruj przychodzące",
             }}
         />
+    );
+}
+
+export function ExportOurLetterContractToPDFButton({
+    onError,
+    ourLetterContract,
+}: {
+    onError: (error: Error) => void;
+    ourLetterContract: OurLetterContract;
+}) {
+    const [requestPending, setRequestPending] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+    async function handleClick() {
+        try {
+            setRequestPending(true);
+            await lettersRepository.fetch("exportOurLetterToPDF", ourLetterContract);
+            setRequestPending(false);
+            setShowSuccessToast(true);
+        } catch (error) {
+            if (error instanceof Error) {
+                setRequestPending(false);
+                onError(error);
+            }
+        }
+    }
+
+    return (
+        <>
+            <Button key="Exportuj do PDF" variant="outline-secondary" size="sm" onClick={handleClick}>
+                Exportuj do PDF{" "}
+                {requestPending && <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />}
+            </Button>
+            <SuccessToast
+                message="Eksport do PDF zakończył się powodzeniem!"
+                show={showSuccessToast}
+                onClose={() => setShowSuccessToast(false)}
+            />
+        </>
     );
 }

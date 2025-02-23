@@ -134,6 +134,22 @@ MainSetup.OfferEventType = {
     CANCELED: "Przetarg unieważniony",
     WITHDRAWN: "Oferta wycofana",
 };
+MainSetup.LetterStatus = {
+    CREATED: "Utworzony",
+    TO_CORRECT: "Do poprawy",
+    CHANGED: "Zmieniony",
+    APPROVED: "Zatwierdzony",
+    SENT: "Wysłany",
+    CANCELED: "Anulowany",
+};
+MainSetup.LetterEventType = {
+    CREATED: "Utworzony",
+    TO_CORRECT: "Do poprawy",
+    CHANGED: "Zmieniony",
+    APPROVED: "Zatwierdzony",
+    SENT: "Wysłany",
+    CANCELED: "Anulowany",
+};
 MainSetup.InvoicesFilterInitState = {
     ISSUE_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -90).toISOString().slice(0, 10),
     ISSUE_DATE_TO: ToolsDate_1.default.addDays(new Date(), +10).toISOString().slice(0, 10),

@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
+exports.ExportOurLetterContractToPDFButton = exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
 const react_1 = __importStar(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const LetterModalBody_1 = require("./LetterModalBody");
@@ -31,6 +31,8 @@ const LetterValidationSchema_1 = require("./LetterValidationSchema");
 const IncomingLetterModalBody_1 = require("./IncomingLetterModalBody");
 const OurLetterModalBody_1 = require("./OurLetterModalBody");
 const LettersController_1 = require("../LettersController");
+const react_bootstrap_1 = require("react-bootstrap");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 /** przycisk i modal edycji Letter */
 function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => { }, [initialData]);
@@ -88,3 +90,28 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
         } }));
 }
 exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
+function ExportOurLetterContractToPDFButton({ onError, ourLetterContract, }) {
+    const [requestPending, setRequestPending] = (0, react_1.useState)(false);
+    const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
+    async function handleClick() {
+        try {
+            setRequestPending(true);
+            await LettersController_1.lettersRepository.fetch("exportOurLetterToPDF", ourLetterContract);
+            setRequestPending(false);
+            setShowSuccessToast(true);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                setRequestPending(false);
+                onError(error);
+            }
+        }
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Button, { key: "Exportuj do PDF", variant: "outline-secondary", size: "sm", onClick: handleClick },
+            "Exportuj do PDF",
+            " ",
+            requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
+        react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
+}
+exports.ExportOurLetterContractToPDFButton = ExportOurLetterContractToPDFButton;

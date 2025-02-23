@@ -143,20 +143,24 @@ export default function ContractsList() {
         );
     }
 
+    function renderContractData(contract: OurContract | OtherContract) {
+        return (
+            <>
+                <div>
+                    {contract._project.ourId} | <strong>{"ourId" in contract ? `${contract.ourId} | ` : ""}</strong>
+                    {contract.number}
+                </div>
+                <div>{renderName(contract)}</div>
+            </>
+        );
+    }
+
     function makeTablestructure() {
         const tableStructure: RowStructure<OurContract | OtherContract>[] = [
             {
-                header: "Projekt",
-                renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
+                header: "Kontrakt",
+                renderTdBody: (contract: OurContract | OtherContract) => renderContractData(contract),
             },
-            {
-                header: "Oznaczenie",
-                renderTdBody: (contract: OurContract | OtherContract) => (
-                    <>{"ourId" in contract ? contract.ourId : ""}</>
-                ),
-            },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Nazwa", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
             {
                 header: "Rozpoczęcie",
                 renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract),

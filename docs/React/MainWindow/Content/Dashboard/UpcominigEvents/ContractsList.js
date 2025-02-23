@@ -128,18 +128,21 @@ function ContractsList() {
             react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy", placement: "right" },
                 react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue))));
     }
+    function renderContractData(contract) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                contract._project.ourId,
+                " | ",
+                react_1.default.createElement("strong", null, "ourId" in contract ? `${contract.ourId} | ` : ""),
+                contract.number),
+            react_1.default.createElement("div", null, renderName(contract))));
+    }
     function makeTablestructure() {
         const tableStructure = [
             {
-                header: "Projekt",
-                renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
+                header: "Kontrakt",
+                renderTdBody: (contract) => renderContractData(contract),
             },
-            {
-                header: "Oznaczenie",
-                renderTdBody: (contract) => (react_1.default.createElement(react_1.default.Fragment, null, "ourId" in contract ? contract.ourId : "")),
-            },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Nazwa", renderTdBody: (contract) => renderName(contract) },
             {
                 header: "Rozpoczęcie",
                 renderTdBody: (contract) => renderStartDate(contract),

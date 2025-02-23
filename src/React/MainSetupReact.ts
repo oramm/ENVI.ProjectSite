@@ -162,6 +162,24 @@ export default class MainSetup {
         WITHDRAWN: "Oferta wycofana",
     };
 
+    static LetterStatus = {
+        CREATED: "Utworzony",
+        TO_CORRECT: "Do poprawy",
+        CHANGED: "Zmieniony",
+        APPROVED: "Zatwierdzony",
+        SENT: "Wysłany",
+        CANCELED: "Anulowany",
+    };
+
+    static LetterEventType = {
+        CREATED: "Utworzony",
+        TO_CORRECT: "Do poprawy",
+        CHANGED: "Zmieniony",
+        APPROVED: "Zatwierdzony",
+        SENT: "Wysłany",
+        CANCELED: "Anulowany",
+    };
+
     static InvoicesFilterInitState = {
         ISSUE_DATE_FROM: ToolsDate.addDays(new Date(), -90).toISOString().slice(0, 10),
         ISSUE_DATE_TO: ToolsDate.addDays(new Date(), +10).toISOString().slice(0, 10),

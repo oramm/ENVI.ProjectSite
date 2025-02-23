@@ -1,5 +1,4 @@
 export default class Tools {
-
     /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(i: number) {
         let label: string = i.toString();
@@ -10,7 +9,7 @@ export default class Tools {
     }
 
     static formatNumber(number: number, digits: number = 2) {
-        const formatter = new Intl.NumberFormat('pl-PL', {
+        const formatter = new Intl.NumberFormat("pl-PL", {
             minimumFractionDigits: digits,
             maximumFractionDigits: digits,
         });
@@ -20,19 +19,21 @@ export default class Tools {
     //retrieves GET variables from URL
     static getUrlVars() {
         const vars: any = {};
-        const parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-            //@ts-ignore    
+        const parts = window.location.href.replace(
+            /[?&]+([^=&]+)=([^&]*)/gi,
+            //@ts-ignore
             function (m, key: string, value: string) {
                 vars[key] = value;
-            });
+            }
+        );
         return vars;
     }
 
     static stringToSql(string: string) {
         var sqlString = string.replace(/\'/gi, "\\'");
         sqlString = sqlString.replace(/\"/gi, '\\"');
-        sqlString = sqlString.replace(/\%/gi, '\\%');
-        sqlString = sqlString.replace(/\_/gi, '\\_');
+        sqlString = sqlString.replace(/\%/gi, "\\%");
+        sqlString = sqlString.replace(/\_/gi, "\\_");
         return sqlString;
     }
 
@@ -43,14 +44,14 @@ export default class Tools {
             //Check property exists on both objects
             if (obj1.hasOwnProperty(p1) !== obj2.hasOwnProperty(p1)) return false;
 
-            switch (typeof (obj1[p1])) {
+            switch (typeof obj1[p1]) {
                 //Deep compare objects
-                case 'object':
+                case "object":
                     if (!Tools.areEqualObjects(obj1[p1], obj2[p1])) return false;
                     break;
                 //Compare function code
-                case 'function':
-                    if (typeof (obj2[p1]) == 'undefined' || obj1[p1].toString() != obj2[p1].toString()) return false;
+                case "function":
+                    if (typeof obj2[p1] == "undefined" || obj1[p1].toString() != obj2[p1].toString()) return false;
                     break;
                 //Compare values
                 default:
@@ -61,7 +62,7 @@ export default class Tools {
         //Check object 2 for any extra properties
         let p2: keyof typeof obj2;
         for (p2 in obj2) {
-            if (typeof (obj1[p2]) == 'undefined') return false;
+            if (typeof obj1[p2] == "undefined") return false;
         }
         return true;
     }
@@ -71,16 +72,13 @@ export default class Tools {
      * @param {type} order
      * @returns {Function}
      */
-    static compareValues(key: string, order = 'asc') {
+    static compareValues(key: string, order = "asc") {
         return function (a: any, b: any) {
             if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
             let comparison = a[key].localeCompare(b[key]);
-            return (
-                (order == 'desc') ? (comparison * -1) : comparison
-            );
+            return order == "desc" ? comparison * -1 : comparison;
         };
     }
-
 
     /**
      * If you don't care about primitives and only objects then this function
@@ -96,17 +94,15 @@ export default class Tools {
             const o = JSON.parse(jsonString);
             // Handle non-exception-throwing cases:
             // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-            // but... JSON.parse(null) returns null, and typeof null === "object", 
+            // but... JSON.parse(null) returns null, and typeof null === "object",
             // so we must check for that, too. Thankfully, null is falsey, so this suffices:
-            if (o && typeof o === "object")
-                return o;
-        }
-        catch (e) { }
+            if (o && typeof o === "object") return o;
+        } catch (e) {}
         return false;
     }
 
     //https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-    static b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
+    static b64toBlob(b64Data: string, contentType = "", sliceSize = 512) {
         const byteCharacters = atob(b64Data);
         const byteArrays = [];
 
@@ -125,13 +121,19 @@ export default class Tools {
         return blob;
     }
 
-    static isObjectEmpty(object: Object) {
-        for (const element in object) return true;
-        return false;
+    static isObjectEmpty(object: Object): boolean {
+        return Object.keys(object).length === 0;
     }
 
     static isNumber(value: unknown): value is number {
-        return typeof value === 'number' && !isNaN(value);
+        return typeof value === "number" && !isNaN(value);
     }
 
+    static getLabelFromKey = (
+        key: string,
+        options: Record<string, string>,
+        defaultLabel = "Nieznana wartość"
+    ): string => {
+        return options[key] || defaultLabel;
+    };
 }
