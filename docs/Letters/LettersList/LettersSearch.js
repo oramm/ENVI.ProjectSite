@@ -94,7 +94,6 @@ function LettersSearch({ title }) {
     function renderRowContent(letter, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             letter.number && (react_1.default.createElement("div", null,
-                " ",
                 "Numer: ",
                 react_1.default.createElement("strong", null, letter.number))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },

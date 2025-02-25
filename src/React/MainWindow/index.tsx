@@ -62,7 +62,7 @@ function App() {
             setIsLoggedIn(true);
         } else {
             console.error("Authentication failed:", response.error);
-            setErrorMessage(response.error);
+            setErrorMessage(response.errorMessage);
         }
     };
 

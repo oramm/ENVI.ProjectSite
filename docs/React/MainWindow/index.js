@@ -89,7 +89,7 @@ function App() {
         }
         else {
             console.error("Authentication failed:", response.error);
-            setErrorMessage(response.error);
+            setErrorMessage(response.errorMessage);
         }
     };
     if (errorMessage)
