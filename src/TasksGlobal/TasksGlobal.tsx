@@ -105,7 +105,10 @@ export default function TasksGlobal() {
             },
             { header: "Termin", objectAttributeToShow: "deadline" },
             { header: "Status", renderTdBody: (task: Task) => <TaskStatusBadge status={task.status} /> },
-            { header: "Właściciel", renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</> }
+            {
+                header: "Właściciel",
+                renderTdBody: (task: Task) => <>{`${task._owner?.name} ${task._owner?.surname}`}</>,
+            }
         );
         return tableStructure;
     }

@@ -21,13 +21,31 @@ export default function MainMenu() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <NavDropdown title="Kontrakty" id="basic-nav-dropdown" className={isActive("/contracts")}>
-                                <NavDropdown.Item as={Link} to="/contracts">
+                                <NavDropdown.Item as={Link} to="/contracts" className={isActive("/contracts")}>
                                     Wszystkie Kontrakty
                                 </NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/contracts/znwu">
+                                <NavDropdown.Item as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
+                                    Projekty i zadania
+                                </NavDropdown.Item>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/contracts/roles"
+                                    className={isActive("/contracts/roles")}
+                                >
+                                    Role kontrakowe{" "}
+                                    <Badge bg="primary" text="light">
+                                        beta
+                                    </Badge>
+                                </NavDropdown.Item>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/contracts/znwu"
+                                    className={isActive("/contracts/znwu")}
+                                >
                                     ZNWU
                                 </NavDropdown.Item>
                             </NavDropdown>
+
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>
                                 Pisma
                             </Nav.Link>
@@ -38,9 +56,6 @@ export default function MainMenu() {
                                     Faktury
                                 </Nav.Link>
                             )}
-                            <Nav.Link as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
-                                Zadania
-                            </Nav.Link>
                             <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
                                 Podmioty
                             </Nav.Link>
@@ -89,9 +104,6 @@ export default function MainMenu() {
                                         </NavDropdown.Item>
                                         <NavDropdown.Item as={Link} to="/admin/contractRanges">
                                             Zakresy kontraktów{" "}
-                                            <Badge bg="primary" text="light">
-                                                nowe
-                                            </Badge>
                                         </NavDropdown.Item>
                                     </NavDropdown>
                                 </>

@@ -69,7 +69,7 @@ function Tasks() {
                     },
                     {
                         header: "Właściciel",
-                        renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`),
+                        renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner?.name} ${task._owner?.surname}`),
                     },
                 ], externalUpdate: externalUpdate })) : (react_1.default.createElement(react_1.default.Fragment, null,
                 "\"\u0141adowanie zada\u0144...\" ",

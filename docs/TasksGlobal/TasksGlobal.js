@@ -96,7 +96,10 @@ function TasksGlobal() {
                 task.name,
                 react_1.default.createElement("br", null),
                 task.description)),
-        }, { header: "Termin", objectAttributeToShow: "deadline" }, { header: "Status", renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, { header: "Właściciel", renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner.name} ${task._owner.surname}`) });
+        }, { header: "Termin", objectAttributeToShow: "deadline" }, { header: "Status", renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, {
+            header: "Właściciel",
+            renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner?.name} ${task._owner?.surname}`),
+        });
         return tableStructure;
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,

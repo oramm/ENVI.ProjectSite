@@ -146,13 +146,13 @@ export interface Case extends RepositoryDataItem {
 
 export interface Task extends RepositoryDataItem {
     name: string;
-    description: string;
-    deadline: string;
-    status: string;
+    description?: string;
+    deadline?: string | Date | null;
     _parent: Case;
-    _owner: PersonData;
-    _editor: PersonData;
-    _lastUpdated: string;
+    _lastUpdated?: string;
+    status: string;
+    ownerId?: number | null;
+    _owner?: PersonData;
 }
 
 export interface ContractType extends RepositoryDataItem {
@@ -470,3 +470,26 @@ export interface NeedsFocusAreasData {
     _focusArea: FocusAreaData;
     comment: string;
 }
+
+export interface RoleData extends RepositoryDataItem {
+    id: number;
+    personId: number | null;
+    _person?: PersonData;
+    name: string;
+    description: string;
+    groupName: RoleGroup;
+}
+
+export interface ContractRoleData extends RoleData {
+    contractId?: number | null;
+    _contract?: OurContractData | OtherContractData;
+}
+
+export interface ProjectRoleData extends RoleData {
+    projectId?: number | null;
+    _project?: ProjectData;
+}
+
+export type RoleGroup = "Zamawiający" | "Inżynier" | "Wykonawca/Podwykonawcy" | "Pozostali";
+
+export type RoleType = "Projektowa" | "Kontraktowa";

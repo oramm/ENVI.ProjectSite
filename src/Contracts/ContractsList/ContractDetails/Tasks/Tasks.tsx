@@ -55,7 +55,7 @@ export default function Tasks() {
                             },
                             {
                                 header: "Właściciel",
-                                renderTdBody: (task: Task) => <>{`${task._owner.name} ${task._owner.surname}`}</>,
+                                renderTdBody: (task: Task) => <>{`${task._owner?.name} ${task._owner?.surname}`}</>,
                             },
                         ]}
                         externalUpdate={externalUpdate}

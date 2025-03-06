@@ -20,11 +20,15 @@ function MainMenu() {
                 react_1.default.createElement(react_bootstrap_1.Navbar.Collapse, { id: "basic-navbar-nav" },
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "me-auto" },
                         react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Kontrakty", id: "basic-nav-dropdown", className: isActive("/contracts") },
-                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts" }, "Wszystkie Kontrakty"),
-                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu" }, "ZNWU")),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts", className: isActive("/contracts") }, "Wszystkie Kontrakty"),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive("/tasksGlobal") }, "Projekty i zadania"),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/roles", className: isActive("/contracts/roles") },
+                                "Role kontrakowe",
+                                " ",
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "beta")),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu", className: isActive("/contracts/znwu") }, "ZNWU")),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury")),
-                        react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/tasksGlobal", className: isActive("/tasksGlobal") }, "Zadania"),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive("/entities") }, "Podmioty"),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive("/persons") }, "Osoby"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -41,7 +45,6 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/cities" }, "Miasta"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/contractRanges" },
                                     "Zakresy kontrakt\u00F3w",
-                                    " ",
-                                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "nowe")))))))))));
+                                    " "))))))))));
 }
 exports.default = MainMenu;

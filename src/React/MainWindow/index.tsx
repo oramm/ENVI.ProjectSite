@@ -30,6 +30,7 @@ import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 import OffersMainView from "../../Offers/OffersList/OffersMainView";
+import RolesSearch from "../../Contracts/Roles/RolesSearch";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -100,6 +101,7 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<MainContent />} />
                 <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
+                <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
                 <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
                 <Route path="/contract/:id" element={<ContractMainViewTabs />} />
                 <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
