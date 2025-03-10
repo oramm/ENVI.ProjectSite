@@ -120,9 +120,8 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.GdFilesSelector = GdFilesSelector;
-function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = name, multiple = false, as, }) {
+function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = "Grupa Ról", multiple = false, as, }) {
     const roleGroups = Object.entries(MainSetupReact_1.default.RoleGroups).map(([key, value]) => value);
-    const resolvedLabel = label ?? name;
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as }));
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as }));
 }
 exports.RoleGroupSelector = RoleGroupSelector;

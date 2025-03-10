@@ -29,11 +29,7 @@ export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<Contrac
 
     return (
         <>
-            <Form.Group controlId="groupName">
-                <Form.Label>Rodzaj podmiotu</Form.Label>
-                <RoleGroupSelector />
-                <ErrorMessage name="name" errors={errors} />
-            </Form.Group>
+            <RoleGroupSelector />
 
             <Form.Group controlId="name">
                 <Form.Label>Nazwa roli</Form.Label>

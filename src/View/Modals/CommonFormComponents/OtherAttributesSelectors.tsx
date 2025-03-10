@@ -179,18 +179,18 @@ export function GdFilesSelector({
 export function RoleGroupSelector({
     showValidationInfo = true,
     name = "groupName",
-    label = name,
+    label = "Grupa Ról",
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
     const roleGroups = Object.entries(MainSetup.RoleGroups).map(([key, value]) => value);
-    const resolvedLabel = label ?? name;
+
     return multiple ? (
         <TypeaheadStringSelector
             options={roleGroups}
             showValidationInfo={showValidationInfo}
             name={name}
-            label={resolvedLabel}
+            label={label}
             as={as}
         />
     ) : (
@@ -198,7 +198,7 @@ export function RoleGroupSelector({
             options={roleGroups}
             showValidationInfo={showValidationInfo}
             name={name}
-            label={resolvedLabel}
+            label={label}
             as={as}
         />
     );

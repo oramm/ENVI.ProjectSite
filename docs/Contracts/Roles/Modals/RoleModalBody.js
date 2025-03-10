@@ -44,10 +44,7 @@ function RoleModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "groupName" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rodzaj podmiotu"),
-            react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
+        react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa roli"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazw\u0119 roli", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),

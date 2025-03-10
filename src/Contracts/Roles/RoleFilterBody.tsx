@@ -44,7 +44,7 @@ export function RolesFilterBody() {
                     />
                 </Form.Group>
                 <Form.Group as={Col} xl={3}>
-                    <ContractStatusSelector showValidationInfo={false} multiple={true} name="Statusy kontratu" />
+                    <ContractStatusSelector showValidationInfo={false} multiple={true} label="Statusy kontratu" />
                 </Form.Group>
             </Row>
 
@@ -67,6 +67,10 @@ export function RolesFilterBody() {
                     toName="endDateTo"
                     showValidationInfo={false}
                 />
+                <Form.Group as={Col} xs={12} md={8} lg={4} xl={4} controlId="_person">
+                    <Form.Label>Osoba</Form.Label>
+                    <PersonSelector name="_person" repository={personsRepository} showValidationInfo={false} />
+                </Form.Group>
             </Row>
             <Row>
                 <Form.Group as={Col} xl={4}>
@@ -75,14 +79,8 @@ export function RolesFilterBody() {
                 <Form.Group as={Col} xl={4}>
                     <ContractRangeSelector repository={MainSetup.contractRangesRepository} showValidationInfo={false} />
                 </Form.Group>
-            </Row>
-            <Row>
-                <Form.Group as={Col} xs={12} md={8} lg={4} xl={4} controlId="_person">
-                    <Form.Label>Osoba</Form.Label>
-                    <PersonSelector name="_person" repository={personsRepository} showValidationInfo={false} />
-                </Form.Group>
-                <Form.Group as={Col} xs={12} md={12} lg={4} xl={4}>
-                    <RoleGroupSelector showValidationInfo={false} name="Grupa Ról" label="roleGroup" />
+                <Form.Group as={Col} xs={12} md={12} lg={4}>
+                    <RoleGroupSelector showValidationInfo={false} />
                 </Form.Group>
             </Row>
         </>
