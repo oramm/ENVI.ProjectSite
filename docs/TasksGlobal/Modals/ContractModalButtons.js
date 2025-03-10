@@ -11,21 +11,21 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
     return (react_1.default.createElement(ContractModalButtons_1.ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
             initialData,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OurContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OtherContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;

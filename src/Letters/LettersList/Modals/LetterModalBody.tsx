@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     CaseSelectMenuElement,
-    ContractSelectFormElement,
+    ContractSelector,
     PersonSelectorPreloaded,
     ProjectSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -9,7 +9,13 @@ import { Alert, Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
-import { Case, Contract, IncomingLetterContract, OurLetterContract, Project } from "../../../../Typings/bussinesTypes";
+import {
+    Case,
+    Contract,
+    IncomingLetterContract,
+    OurLetterContract,
+    ProjectData,
+} from "../../../../Typings/bussinesTypes";
 import { casesRepository, contractsRepository, projectsRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
@@ -25,7 +31,7 @@ export function LetterModalBody({
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
-    const _project = isEditing ? undefined : (watch("_project") as Project | undefined);
+    const _project = isEditing ? undefined : (watch("_project") as ProjectData | undefined);
 
     const _contract = watch("_contract");
     const creationDate = watch("creationDate");
@@ -68,7 +74,7 @@ export function LetterModalBody({
         <>
             <Form.Group controlId="_contract">
                 <Form.Label>Wybierz kontrakt</Form.Label>
-                <ContractSelectFormElement
+                <ContractSelector
                     name="_contract"
                     repository={contractsRepository}
                     _project={_project}
@@ -150,7 +156,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState } = useFormContext();
-    const _project = watch("_project") as Project | undefined;
+    const _project = watch("_project") as ProjectData | undefined;
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificLetterModalBody } = additionalProps;

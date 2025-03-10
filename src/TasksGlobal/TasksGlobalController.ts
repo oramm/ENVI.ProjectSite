@@ -6,7 +6,7 @@ import {
     MilestoneType,
     OtherContract,
     OurContract,
-    Project,
+    ProjectData,
     Task,
 } from "../../Typings/bussinesTypes";
 import RepositoryReact from "../React/RepositoryReact";
@@ -72,7 +72,7 @@ export const entitiesRepository = new RepositoryReact<EntityData>({
     name: "entities",
 });
 
-export const projectsRepository = new RepositoryReact<Project>({
+export const projectsRepository = new RepositoryReact<ProjectData>({
     actionRoutes: {
         getRoute: "projects",
         addNewRoute: "project",

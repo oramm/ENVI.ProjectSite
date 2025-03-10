@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -49,7 +49,7 @@ function ProjectSelector({ name = "_project", repository, showValidationInfo = t
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.ourId),
-            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -77,7 +77,7 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, rep
         const typedOption = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, typedOption.name),
-            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.address)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.address)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
@@ -99,7 +99,7 @@ function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, mu
                 " ",
                 ` | `,
                 typedOption.submissionDeadline),
-            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.employerName)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.employerName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
@@ -162,7 +162,7 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.alias),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.name)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.name)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -174,7 +174,7 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
         console.log("renderOption - Option: ", option); // Log the option being rendered
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.description),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 optionTyped.endDate,
                 " ",
                 optionTyped.status)));
@@ -192,7 +192,7 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.name),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 optionTyped._client?.name,
                 " | ",
                 optionTyped.status)));
@@ -201,14 +201,14 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.ClientNeedSelector = ClientNeedSelector;
-function ContractSelectFormElement({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
+function ContractSelector({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
         const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, mainLabel),
-            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias || optionTyped.name)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias || optionTyped.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_ourIdOrNumber_Name", searchKey: "searchText", contextSearchParams: {
@@ -216,7 +216,7 @@ function ContractSelectFormElement({ name = "_contract", showValidationInfo = tr
                 _project: _project,
             }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-exports.ContractSelectFormElement = ContractSelectFormElement;
+exports.ContractSelector = ContractSelector;
 function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
     const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -251,7 +251,7 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -291,7 +291,7 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -329,7 +329,7 @@ function CaseTypeSelectFormElement({ milestoneType, required = false, showValida
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -365,7 +365,7 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption._nameContentsAlias),
-                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -375,7 +375,7 @@ function PersonSelector({ name = "_person", showValidationInfo = true, multiple 
         const typedOption = option;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, typedOption._nameSurnameEmail),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 " ",
                 typedOption._entity.name)));
     }
@@ -479,7 +479,7 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
                 const myOption = option;
                 return (react_1.default.createElement("div", null,
                     react_1.default.createElement("span", null, myOption._typeFolderNumber_TypeName_Number_Name),
-                    react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                    react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
             } })) }));
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;

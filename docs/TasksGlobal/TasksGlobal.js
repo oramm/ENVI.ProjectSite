@@ -106,7 +106,10 @@ function TasksGlobal() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             showProjects && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                 react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                        { header: "Nazwa", renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
+                        {
+                            header: "Nazwa",
+                            renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                        },
                     ], onRowClick: setSelectedProject }))),
             react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? "9" : "12" },
                 react_1.default.createElement("div", { className: "d-flex justify-content-end" },

@@ -6,7 +6,7 @@ import {
     OtherContract,
     OurContract,
     PersonData,
-    Project,
+    ProjectData,
     RepositoryDataItem,
     Task,
 } from "../../Typings/bussinesTypes";
@@ -39,7 +39,7 @@ export default function TasksGlobal() {
     const [contractsWithChildren, setContractsWithCildren] = useState([] as ContractsWithChildren[]);
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [tasksLoaded, setDataLoaded] = useState(true);
-    const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
+    const [selectedProject, setSelectedProject] = useState<ProjectData | undefined>(undefined);
     const [showProjects, setShowProjects] = useState(true);
 
     useEffect(() => {
@@ -118,7 +118,7 @@ export default function TasksGlobal() {
             <Row>
                 {showProjects && (
                     <Col md={3}>
-                        <FilterableTable<Project>
+                        <FilterableTable<ProjectData>
                             id="projects"
                             title="Projekty"
                             repository={projectsRepository}
@@ -126,7 +126,10 @@ export default function TasksGlobal() {
                             FilterBodyComponent={ProjectsFilterBody}
                             EditButtonComponent={ProjectEditModalButton}
                             tableStructure={[
-                                { header: "Nazwa", renderTdBody: (project: Project) => <>{project._ourId_Alias}</> },
+                                {
+                                    header: "Nazwa",
+                                    renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
+                                },
                             ]}
                             onRowClick={setSelectedProject}
                         />
@@ -159,7 +162,7 @@ export default function TasksGlobal() {
     );
 }
 
-function LoadingMessage({ selectedProject }: { selectedProject: Project | undefined }) {
+function LoadingMessage({ selectedProject }: { selectedProject: ProjectData | undefined }) {
     return (
         <>
             <p> Ładuję zadania dla projektu:</p>

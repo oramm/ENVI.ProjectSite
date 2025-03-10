@@ -1,41 +1,49 @@
 import React, { createContext, useContext } from "react";
-import { Case, CaseType, Milestone, MilestoneType, OtherContract, OurContract, Project, Task } from "../../../Typings/bussinesTypes";
-
+import {
+    Case,
+    CaseType,
+    Milestone,
+    MilestoneType,
+    OtherContract,
+    OurContract,
+    ProjectData,
+    Task,
+} from "../../../Typings/bussinesTypes";
 
 // Utwórz kontekst
 const ContractContext = createContext<{
-    contract?: OurContract | OtherContract,
-    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>,
-    caseTypes?: CaseType[] | undefined,
-    setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>,
-    miletonesTypes?: MilestoneType[] | undefined,
-    setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>,
-    milestones?: Milestone[] | undefined,
-    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>,
-    cases?: Case[] | undefined,
-    setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>,
-    tasks?: Task[] | undefined,
-    setTasks?: React.Dispatch<React.SetStateAction<Task[] | undefined>>,
-    project?: Project,
-    setProject?: React.Dispatch<React.SetStateAction<Project>>
+    contract?: OurContract | OtherContract;
+    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>;
+    caseTypes?: CaseType[] | undefined;
+    setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>;
+    miletonesTypes?: MilestoneType[] | undefined;
+    setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>;
+    milestones?: Milestone[] | undefined;
+    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>;
+    cases?: Case[] | undefined;
+    setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>;
+    tasks?: Task[] | undefined;
+    setTasks?: React.Dispatch<React.SetStateAction<Task[] | undefined>>;
+    project?: ProjectData;
+    setProject?: React.Dispatch<React.SetStateAction<ProjectData>>;
 }>({});
 
 type ContractProviderProps = {
-    contract?: OurContract | OtherContract,
-    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>,
-    caseTypes?: CaseType[] | undefined,
-    setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>,
-    miletonesTypes?: MilestoneType[] | undefined,
-    setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>,
-    milestones?: Milestone[] | undefined,
-    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>,
-    cases?: Case[] | undefined,
-    setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>,
-    tasks?: Task[] | undefined,
-    setTasks?: React.Dispatch<React.SetStateAction<Task[] | undefined>>,
-    project?: Project,
-    setProject?: React.Dispatch<React.SetStateAction<Project>>
-}
+    contract?: OurContract | OtherContract;
+    setContract?: React.Dispatch<React.SetStateAction<OurContract | OtherContract>>;
+    caseTypes?: CaseType[] | undefined;
+    setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>;
+    miletonesTypes?: MilestoneType[] | undefined;
+    setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>;
+    milestones?: Milestone[] | undefined;
+    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>;
+    cases?: Case[] | undefined;
+    setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>;
+    tasks?: Task[] | undefined;
+    setTasks?: React.Dispatch<React.SetStateAction<Task[] | undefined>>;
+    project?: ProjectData;
+    setProject?: React.Dispatch<React.SetStateAction<ProjectData>>;
+};
 
 // Twórz dostawcę kontekstu, który przechowuje stan faktury
 export function ContractProvider({
@@ -53,9 +61,8 @@ export function ContractProvider({
     setTasks,
     project,
     setProject,
-    children
+    children,
 }: React.PropsWithChildren<ContractProviderProps>) {
-
     return (
         <ContractContext.Provider
             value={{
@@ -73,7 +80,8 @@ export function ContractProvider({
                 setTasks,
                 project,
                 setProject,
-            }}>
+            }}
+        >
             {children}
         </ContractContext.Provider>
     );

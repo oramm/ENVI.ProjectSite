@@ -35,10 +35,46 @@ function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Adres", objectAttributeToShow: "groupName" },
-            { header: "NIP", objectAttributeToShow: "description" },
-        ], AddNewButtonComponents: [RoleModalButtons_1.RoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
+    function isProjectRole(role) {
+        return role._project !== undefined;
+    }
+    function renderRow(role) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                role.groupName,
+                ": ",
+                react_1.default.createElement("strong", null, role.name),
+                " | ",
+                role._person?._nameSurnameEmail),
+            react_1.default.createElement("div", { className: "text-muted" }, role.description),
+            isProjectRole(role) ? renderProjectData(role) : renderContractData(role)));
+    }
+    function renderProjectData(role) {
+        const { name, ourId, alias } = role._project;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                ourId,
+                " ",
+                alias,
+                " "),
+            react_1.default.createElement("div", { className: "text-secondary" }, name)));
+    }
+    function renderContractData(role) {
+        const { name, alias, startDate, endDate, _type } = role._contract;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                "Typ umowy: ",
+                _type.name,
+                ", ",
+                alias),
+            react_1.default.createElement("div", { className: "text-secondary" }, name),
+            react_1.default.createElement("div", null,
+                " ",
+                "Realizacja od ",
+                startDate,
+                " do ",
+                endDate)));
+    }
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [{ header: "Nazwa", renderTdBody: renderRow }], AddNewButtonComponents: [RoleModalButtons_1.ProjectRoleAddNewModalButton, RoleModalButtons_1.ContractRoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
 }
 exports.default = RolesSearch;

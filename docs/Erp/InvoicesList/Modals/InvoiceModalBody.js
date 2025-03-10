@@ -66,7 +66,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", repository: InvoicesController_1.contractsRepository, typesToInclude: "our", readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: InvoicesController_1.contractsRepository, typesToInclude: "our", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),

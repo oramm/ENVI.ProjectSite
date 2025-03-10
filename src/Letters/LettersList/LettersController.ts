@@ -7,7 +7,7 @@ import {
     OtherContract,
     OurContract,
     OurLetterContract,
-    Project,
+    ProjectData,
 } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
@@ -21,7 +21,7 @@ export const lettersRepository = new RepositoryReact<OurLetterContract | Incomin
     name: "contractsLetters",
 });
 
-export const projectsRepository = new RepositoryReact<Project>({
+export const projectsRepository = new RepositoryReact<ProjectData>({
     actionRoutes: {
         getRoute: "projects",
         addNewRoute: "",

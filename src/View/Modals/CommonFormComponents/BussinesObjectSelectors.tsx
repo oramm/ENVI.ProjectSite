@@ -30,7 +30,7 @@ import {
     OurContract,
     OurOffer,
     PersonData,
-    Project,
+    ProjectData,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
@@ -59,11 +59,11 @@ export function ProjectSelector({
     } = useFormContext();
 
     function renderOption(option: unknown) {
-        const optionTyped = option as Project;
+        const optionTyped = option as ProjectData;
         return (
             <div>
                 <span>{optionTyped.ourId}</span>
-                <div className="text-muted small">{optionTyped.alias}</div>
+                <div className="text-muted small text-wrap">{optionTyped.alias}</div>
             </div>
         );
     }
@@ -150,7 +150,7 @@ export function EntitySelector({
         return (
             <div>
                 <span>{typedOption.name}</span>
-                <div className="text-muted small">{typedOption.address}</div>
+                <div className="text-muted small text-wrap">{typedOption.address}</div>
             </div>
         );
     }
@@ -200,7 +200,7 @@ export function OfferSelectFormElement({
                     {typedOption.alias} {` | `}
                     {typedOption.submissionDeadline}
                 </span>
-                <div className="text-muted small">{typedOption.employerName}</div>
+                <div className="text-muted small text-wrap">{typedOption.employerName}</div>
             </div>
         );
     }
@@ -387,7 +387,7 @@ export function FocusAreaSelectorPrefilled({
                                 return (
                                     <div>
                                         <span>{optionTyped.alias}</span>
-                                        <div className="text-muted small">{optionTyped.name}</div>
+                                        <div className="text-muted small text-wrap">{optionTyped.name}</div>
                                     </div>
                                 );
                             }}
@@ -429,7 +429,7 @@ export function ApplicationCallSelector({
         return (
             <div>
                 <span>{optionTyped.description}</span>
-                <div className="text-muted small">
+                <div className="text-muted small text-wrap">
                     {optionTyped.endDate} {optionTyped.status}
                 </div>
             </div>
@@ -480,7 +480,7 @@ export function ClientNeedSelector({
         return (
             <div>
                 <span>{optionTyped.name}</span>
-                <div className="text-muted small">
+                <div className="text-muted small text-wrap">
                     {optionTyped._client?.name} | {optionTyped.status}
                 </div>
             </div>
@@ -509,11 +509,11 @@ export type ContractSelectFormElementProps = {
     multiple?: boolean;
     typesToInclude?: "our" | "other" | "all";
     repository: RepositoryReact;
-    _project?: Project;
+    _project?: ProjectData;
     readOnly?: boolean;
 };
 
-export function ContractSelectFormElement({
+export function ContractSelector({
     name = "_contract",
     showValidationInfo = true,
     multiple = false,
@@ -532,7 +532,7 @@ export function ContractSelectFormElement({
         return (
             <div>
                 <span>{mainLabel}</span>
-                <div className="text-muted small">{optionTyped.alias || optionTyped.name}</div>
+                <div className="text-muted small text-wrap">{optionTyped.alias || optionTyped.name}</div>
             </div>
         );
     }
@@ -627,7 +627,7 @@ export function ContractRangeSelector({
                                 return (
                                     <div>
                                         <span>{optionTyped.name}</span>
-                                        <div className="text-muted small">{optionTyped.description}</div>
+                                        <div className="text-muted small text-wrap">{optionTyped.description}</div>
                                     </div>
                                 );
                             }}
@@ -711,7 +711,7 @@ export function ContractTypeSelectFormElement({
                                 return (
                                     <div>
                                         <span>{optionTyped.name}</span>
-                                        <div className="text-muted small">{optionTyped.description}</div>
+                                        <div className="text-muted small text-wrap">{optionTyped.description}</div>
                                     </div>
                                 );
                             }}
@@ -794,7 +794,7 @@ export function CaseTypeSelectFormElement({
                                 return (
                                     <div>
                                         <span>{myOption.name}</span>
-                                        <div className="text-muted small">{myOption.description}</div>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
                                     </div>
                                 );
                             }}
@@ -872,7 +872,7 @@ export function OurLetterTemplateSelectFormElement({
                                 return (
                                     <div>
                                         <span>{myOption._nameContentsAlias}</span>
-                                        <div className="text-muted small">{myOption.description}</div>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
                                     </div>
                                 );
                             }}
@@ -905,7 +905,7 @@ export function PersonSelector({
         return (
             <>
                 <div>{typedOption._nameSurnameEmail}</div>
-                <div className="text-muted small"> {typedOption._entity.name}</div>
+                <div className="text-muted small text-wrap"> {typedOption._entity.name}</div>
             </>
         );
     }
@@ -1037,7 +1037,7 @@ function renderCaseMenu(
 interface CaseSelectMenuElementProps {
     name?: string;
     repository: RepositoryReact<Case>;
-    _project?: Project;
+    _project?: ProjectData;
     _contract?: Contract;
     _offer?: OurOffer | ExternalOffer;
     _milestone?: Milestone;
@@ -1121,7 +1121,7 @@ export function CaseSelectMenuElement({
                         return (
                             <div>
                                 <span>{myOption._typeFolderNumber_TypeName_Number_Name}</span>
-                                <div className="text-muted small">{myOption.description}</div>
+                                <div className="text-muted small text-wrap">{myOption.description}</div>
                             </div>
                         );
                     }}

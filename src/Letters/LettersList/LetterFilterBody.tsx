@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import {
     CaseSelectMenuElement,
-    ContractSelectFormElement,
+    ContractSelector,
     ProjectSelector,
 } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
@@ -54,7 +54,7 @@ export function LettersFilterBody() {
             <Row>
                 <Form.Group as={Col} md={12}>
                     <Form.Label>Kontrakt</Form.Label>
-                    <ContractSelectFormElement
+                    <ContractSelector
                         repository={contractsRepository}
                         name="_contract"
                         typesToInclude="all"

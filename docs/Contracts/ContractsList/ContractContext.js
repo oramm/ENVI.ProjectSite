@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 // Utwórz kontekst
 const ContractContext = (0, react_1.createContext)({});
 // Twórz dostawcę kontekstu, który przechowuje stan faktury
-function ContractProvider({ contract, setContract, caseTypes, setCaseTypes, miletonesTypes, setMiletonesTypes, milestones, setMilestones, cases, setCases, tasks, setTasks, project, setProject, children }) {
+function ContractProvider({ contract, setContract, caseTypes, setCaseTypes, miletonesTypes, setMiletonesTypes, milestones, setMilestones, cases, setCases, tasks, setTasks, project, setProject, children, }) {
     return (react_1.default.createElement(ContractContext.Provider, { value: {
             contract,
             setContract,

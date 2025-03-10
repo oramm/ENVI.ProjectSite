@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GdFilesSelector = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = void 0;
+exports.RoleGroupSelector = exports.GdFilesSelector = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = void 0;
 const react_1 = __importStar(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -120,3 +120,9 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.GdFilesSelector = GdFilesSelector;
+function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = name, multiple = false, as, }) {
+    const roleGroups = Object.entries(MainSetupReact_1.default.RoleGroups).map(([key, value]) => value);
+    const resolvedLabel = label ?? name;
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as }));
+}
+exports.RoleGroupSelector = RoleGroupSelector;

@@ -3,7 +3,12 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "../../../Css/styles.css";
 
 import MainSetup from "../../../React/MainSetupReact";
-import { ErrorMessage, TextOptionSelector, SpecificTextOptionProps } from "./GenericComponents";
+import {
+    ErrorMessage,
+    TextOptionSelector,
+    SpecificTextOptionProps,
+    TypeaheadStringSelector,
+} from "./GenericComponents";
 import { Form } from "react-bootstrap";
 import { Controller, ControllerRenderProps } from "react-hook-form";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -168,5 +173,33 @@ export function GdFilesSelector({
                 <ErrorMessage errors={errors} name={name} />
             </>
         </Form.Group>
+    );
+}
+
+export function RoleGroupSelector({
+    showValidationInfo = true,
+    name = "groupName",
+    label = name,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    const roleGroups = Object.entries(MainSetup.RoleGroups).map(([key, value]) => value);
+    const resolvedLabel = label ?? name;
+    return multiple ? (
+        <TypeaheadStringSelector
+            options={roleGroups}
+            showValidationInfo={showValidationInfo}
+            name={name}
+            label={resolvedLabel}
+            as={as}
+        />
+    ) : (
+        <TextOptionSelector
+            options={roleGroups}
+            showValidationInfo={showValidationInfo}
+            name={name}
+            label={resolvedLabel}
+            as={as}
+        />
     );
 }

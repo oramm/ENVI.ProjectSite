@@ -28,7 +28,7 @@ export interface RepositoryDataItem {
     _documentOpenUrl?: string;
 }
 
-export interface Project extends RepositoryDataItem {
+export interface ProjectData extends RepositoryDataItem {
     ourId: string;
     name: string;
     alias: string;
@@ -59,7 +59,7 @@ export interface Contract extends RepositoryDataItem {
     startDate?: string;
     endDate?: string;
     guaranteeEndDate?: string;
-    _project: Project;
+    _project: ProjectData;
     status: string;
     gdFolderId?: string;
     meetingProtocolsGdFolderId?: string;
@@ -220,12 +220,12 @@ export interface IncomingLetter extends Letter {
 }
 
 export interface OurLetterContract extends OurLetter {
-    _project: Project;
+    _project: ProjectData;
     projectId?: number;
 }
 
 export interface IncomingLetterContract extends IncomingLetter {
-    _project: Project;
+    _project: ProjectData;
     projectId?: number;
 }
 
@@ -477,19 +477,15 @@ export interface RoleData extends RepositoryDataItem {
     _person?: PersonData;
     name: string;
     description: string;
-    groupName: RoleGroup;
+    groupName: string;
 }
 
 export interface ContractRoleData extends RoleData {
     contractId?: number | null;
-    _contract?: OurContractData | OtherContractData;
+    _contract?: OurContract | OtherContract;
 }
 
 export interface ProjectRoleData extends RoleData {
     projectId?: number | null;
     _project?: ProjectData;
 }
-
-export type RoleGroup = "Zamawiający" | "Inżynier" | "Wykonawca/Podwykonawcy" | "Pozostali";
-
-export type RoleType = "Projektowa" | "Kontraktowa";

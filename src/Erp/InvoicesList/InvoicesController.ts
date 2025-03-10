@@ -1,4 +1,4 @@
-import { EntityData, Invoice, InvoiceItem, OurContract, Project } from "../../../Typings/bussinesTypes";
+import { EntityData, Invoice, InvoiceItem, OurContract, ProjectData } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
 export const statusNames = ["Roboczy", "Do wysłania", "Wysłany"];
@@ -24,7 +24,7 @@ export const invoiceItemsRepository = new RepositoryReact<InvoiceItem>({
     name: "invoiceItems",
 });
 
-export const projectsRepository = new RepositoryReact<Project>({
+export const projectsRepository = new RepositoryReact<ProjectData>({
     actionRoutes: {
         getRoute: "projects",
         addNewRoute: "",

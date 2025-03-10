@@ -6,6 +6,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ContractRoleData, ProjectRoleData } from "../../../../Typings/bussinesTypes";
 import { PersonSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { personsRepository } from "../RolesController";
+import { RoleGroupSelector } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
 
 export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<ContractRoleData | ProjectRoleData>) {
     const {
@@ -28,6 +29,12 @@ export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<Contrac
 
     return (
         <>
+            <Form.Group controlId="groupName">
+                <Form.Label>Rodzaj podmiotu</Form.Label>
+                <RoleGroupSelector />
+                <ErrorMessage name="name" errors={errors} />
+            </Form.Group>
+
             <Form.Group controlId="name">
                 <Form.Label>Nazwa roli</Form.Label>
                 <Form.Control
@@ -53,7 +60,7 @@ export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<Contrac
             </Form.Group>
             <Form.Group controlId="_person" className="mb-4">
                 <Form.Label>Osoba</Form.Label>
-                <PersonSelector name="_person" multiple={false} repository={personsRepository} allowNew={false} />
+                <PersonSelector name="_person" repository={personsRepository} />
             </Form.Group>
         </>
     );

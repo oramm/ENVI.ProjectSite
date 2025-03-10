@@ -49,6 +49,15 @@ class MainController {
         await documentTemplatesRepository.loadItemsFromServerPOST();
         documentTemplatesRepository.saveToSessionStorage();
         MainSetupReact_1.default.documentTemplatesRepository = documentTemplatesRepository;
+        MainSetupReact_1.default.contractRangesRepository = new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "contractRanges",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "contractRanges",
+        });
     }
 }
 exports.default = MainController;

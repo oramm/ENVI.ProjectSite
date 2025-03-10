@@ -5,6 +5,8 @@ import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/
 import { rolesRepository } from "../RolesController";
 import { RoleModalBody } from "./RoleModalBody";
 import { makeRoleValidationSchema } from "./RoleValidationSchema";
+import { ContractRoleModalBody } from "./ContractRoleModal";
+import { ProjectRoleModalBody } from "./ProjectRoleModal";
 
 export function RoleEditModalButton({ modalProps: { onEdit, initialData } }: SpecificEditModalButtonProps<RoleData>) {
     return (
@@ -24,18 +26,36 @@ export function RoleEditModalButton({ modalProps: { onEdit, initialData } }: Spe
     );
 }
 
-export function RoleAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<RoleData>) {
+export function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<RoleData>) {
     return (
         <GeneralAddNewModalButton<RoleData>
             modalProps={{
                 onAddNew: onAddNew,
-                ModalBodyComponent: RoleModalBody,
-                modalTitle: "Dodaj rolę",
+                ModalBodyComponent: ContractRoleModalBody,
+                modalTitle: "Dodaj rolę kontraktową",
                 repository: rolesRepository,
                 makeValidationSchema: makeRoleValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj rolę",
+                buttonVariant: "outline-success",
+            }}
+        />
+    );
+}
+
+export function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<RoleData>) {
+    return (
+        <GeneralAddNewModalButton<RoleData>
+            modalProps={{
+                onAddNew: onAddNew,
+                ModalBodyComponent: ProjectRoleModalBody,
+                modalTitle: "Dodaj rolę",
+                repository: rolesRepository,
+                makeValidationSchema: makeRoleValidationSchema,
+            }}
+            buttonProps={{
+                buttonCaption: "Dodaj rolę projektową",
                 buttonVariant: "outline-success",
             }}
         />

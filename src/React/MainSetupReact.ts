@@ -1,9 +1,9 @@
 import {
-    CaseType,
+    ContractRangeData,
     ContractType,
     DocumentTemplate,
     PersonData,
-    Project,
+    ProjectData,
     SystemRole,
     SystemRoleName,
     User,
@@ -12,10 +12,11 @@ import RepositoryReact from "./RepositoryReact";
 import ToolsDate from "./ToolsDate";
 
 export default class MainSetup {
-    static projectsRepository: RepositoryReact<Project>;
+    static projectsRepository: RepositoryReact<ProjectData>;
     static documentTemplatesRepository: RepositoryReact<DocumentTemplate>;
     static personsEnviRepository: RepositoryReact<PersonData>;
     static contractTypesRepository: RepositoryReact<ContractType>;
+    static contractRangesRepository: RepositoryReact<ContractRangeData>;
 
     static CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
 
@@ -235,6 +236,13 @@ export default class MainSetup {
             id: 5,
             systemName: "EXTERNAL_USER",
         },
+    };
+
+    static readonly RoleGroups = {
+        EMPLOYER: "Zamawiający",
+        ENGINEER: "Inżynier",
+        CONTRACTOR: "Wykonawca/Podwykonawcy",
+        OTHERS: "Pozostali",
     };
 
     static isRoleAllowed(roles: SystemRoleName[]) {

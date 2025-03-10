@@ -200,3 +200,9 @@ MainSetup.SystemRoles = {
         systemName: "EXTERNAL_USER",
     },
 };
+MainSetup.RoleGroups = {
+    EMPLOYER: "Zamawiający",
+    ENGINEER: "Inżynier",
+    CONTRACTOR: "Wykonawca/Podwykonawcy",
+    OTHERS: "Pozostali",
+};

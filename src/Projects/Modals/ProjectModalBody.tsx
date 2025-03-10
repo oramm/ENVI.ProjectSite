@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Col, Form, Row } from "react-bootstrap";
-import { Project } from "../../../Typings/bussinesTypes";
+import { ProjectData } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
 import { useFormContext } from "../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
 import { ErrorMessage, ValueInPLNInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 import { ProjectStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
-export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<Project>) {
+export function ProjectModalBody({ isEditing, initialData }: ModalBodyProps<ProjectData>) {
     const {
         register,
         reset,

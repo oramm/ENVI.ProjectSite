@@ -10,7 +10,7 @@ import {
     MilestoneType,
     OtherContract,
     OurContract,
-    Project,
+    ProjectData,
     Security,
     Task,
 } from "../../../Typings/bussinesTypes";
@@ -96,7 +96,7 @@ export const contractRangesRepository = new RepositoryReact<ContractRangeData>({
     name: "contractRanges",
 });
 
-export const projectsRepository = new RepositoryReact<Project>({
+export const projectsRepository = new RepositoryReact<ProjectData>({
     actionRoutes: {
         getRoute: "projects",
         addNewRoute: "project",

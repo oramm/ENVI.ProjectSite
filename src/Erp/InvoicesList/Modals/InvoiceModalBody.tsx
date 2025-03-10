@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    ContractSelectFormElement,
+    ContractSelector,
     EntitySelector,
     PersonSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -57,7 +57,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
         <>
             <Form.Group controlId="_contract">
                 <Form.Label>Wybierz kontrakt</Form.Label>
-                <ContractSelectFormElement
+                <ContractSelector
                     name="_contract"
                     repository={contractsRepository}
                     typesToInclude="our"

@@ -80731,7 +80731,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 // Utwórz kontekst
 const ContractContext = (0, react_1.createContext)({});
 // Twórz dostawcę kontekstu, który przechowuje stan faktury
-function ContractProvider({ contract, setContract, caseTypes, setCaseTypes, miletonesTypes, setMiletonesTypes, milestones, setMilestones, cases, setCases, tasks, setTasks, project, setProject, children }) {
+function ContractProvider({ contract, setContract, caseTypes, setCaseTypes, miletonesTypes, setMiletonesTypes, milestones, setMilestones, cases, setCases, tasks, setTasks, project, setProject, children, }) {
     return (react_1.default.createElement(ContractContext.Provider, { value: {
             contract,
             setContract,
@@ -82834,7 +82834,7 @@ function SecurityModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", typesToInclude: "our", repository: ContractsController_1.contractsRepository, _project: _project, readOnly: !isEditing }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", repository: ContractsController_1.contractsRepository, _project: _project, readOnly: !isEditing }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
@@ -83278,6 +83278,126 @@ exports["default"] = SecuritiesSearch;
 
 /***/ }),
 
+/***/ "./src/Contracts/Roles/Modals/ContractRoleModal.tsx":
+/*!**********************************************************!*\
+  !*** ./src/Contracts/Roles/Modals/ContractRoleModal.tsx ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContractRoleModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
+const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
+function ContractRoleModalBody(props) {
+    const { isEditing, initialData } = props;
+    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            name: initialData?.name,
+            description: initialData?.description,
+            groupName: initialData?.groupName,
+            _person: initialData?._person,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_project" }),
+        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+}
+exports.ContractRoleModalBody = ContractRoleModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Roles/Modals/ProjectRoleModal.tsx":
+/*!*********************************************************!*\
+  !*** ./src/Contracts/Roles/Modals/ProjectRoleModal.tsx ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ProjectRoleModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
+const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
+function ProjectRoleModalBody(props) {
+    const { isEditing, initialData } = props;
+    const { reset, trigger } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            name: initialData?.name,
+            description: initialData?.description,
+            groupName: initialData?.groupName,
+            _person: initialData?._person,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, name: "_project" }),
+        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+}
+exports.ProjectRoleModalBody = ProjectRoleModalBody;
+
+
+/***/ }),
+
 /***/ "./src/Contracts/Roles/Modals/RoleModalBody.tsx":
 /*!******************************************************!*\
   !*** ./src/Contracts/Roles/Modals/RoleModalBody.tsx ***!
@@ -83317,6 +83437,7 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
+const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
 function RoleModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -83330,6 +83451,10 @@ function RoleModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "groupName" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rodzaj podmiotu"),
+            react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa roli"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazw\u0119 roli", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
@@ -83340,7 +83465,7 @@ function RoleModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_person", className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", multiple: false, repository: RolesController_1.personsRepository, allowNew: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
 }
 exports.RoleModalBody = RoleModalBody;
 
@@ -83359,12 +83484,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoleAddNewModalButton = exports.RoleEditModalButton = void 0;
+exports.ProjectRoleAddNewModalButton = exports.ContractRoleAddNewModalButton = exports.RoleEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
 const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
 const RoleValidationSchema_1 = __webpack_require__(/*! ./RoleValidationSchema */ "./src/Contracts/Roles/Modals/RoleValidationSchema.ts");
+const ContractRoleModal_1 = __webpack_require__(/*! ./ContractRoleModal */ "./src/Contracts/Roles/Modals/ContractRoleModal.tsx");
+const ProjectRoleModal_1 = __webpack_require__(/*! ./ProjectRoleModal */ "./src/Contracts/Roles/Modals/ProjectRoleModal.tsx");
 function RoleEditModalButton({ modalProps: { onEdit, initialData } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -83378,11 +83505,11 @@ function RoleEditModalButton({ modalProps: { onEdit, initialData } }) {
         } }));
 }
 exports.RoleEditModalButton = RoleEditModalButton;
-function RoleAddNewModalButton({ modalProps: { onAddNew } }) {
+function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            ModalBodyComponent: RoleModalBody_1.RoleModalBody,
-            modalTitle: "Dodaj rolę",
+            ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
+            modalTitle: "Dodaj rolę kontraktową",
             repository: RolesController_1.rolesRepository,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
@@ -83390,7 +83517,20 @@ function RoleAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.RoleAddNewModalButton = RoleAddNewModalButton;
+exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;
+function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: ProjectRoleModal_1.ProjectRoleModalBody,
+            modalTitle: "Dodaj rolę",
+            repository: RolesController_1.rolesRepository,
+            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+        }, buttonProps: {
+            buttonCaption: "Dodaj rolę projektową",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.ProjectRoleAddNewModalButton = ProjectRoleAddNewModalButton;
 
 
 /***/ }),
@@ -83466,20 +83606,75 @@ exports.makeRoleValidationSchema = makeRoleValidationSchema;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RolesFilterBody = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const RolesController_1 = __webpack_require__(/*! ./RolesController */ "./src/Contracts/Roles/RolesController.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
 function RolesFilterBody() {
-    const { register } = (0, FormContext_1.useFormContext)();
-    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 6, xs: 12 },
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 4 },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") }))));
+    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
+    const _project = watch("_project");
+    (0, react_1.useEffect)(() => {
+        setValue("_contract", undefined);
+    }, [_project]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, xl: 2 },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, xl: 2 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12, xl: 5 },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 3 },
+                react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, name: "Statusy kontratu" }))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false }),
+            react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false }))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
+                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository, showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4, xl: 4 },
+                react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, { showValidationInfo: false, name: "Grupa R\u00F3l", label: "roleGroup" })))));
 }
 exports.RolesFilterBody = RolesFilterBody;
 
@@ -83498,7 +83693,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.personsRepository = exports.rolesRepository = void 0;
+exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.rolesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -83517,6 +83712,24 @@ exports.personsRepository = new RepositoryReact_1.default({
         deleteRoute: "",
     },
     name: "contractRoles-persons",
+});
+exports.projectsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "projects",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "contractRoles-projects",
+});
+exports.contractsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "contracts",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "contractRoles-contracts",
 });
 
 
@@ -83566,11 +83779,47 @@ function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Adres", objectAttributeToShow: "groupName" },
-            { header: "NIP", objectAttributeToShow: "description" },
-        ], AddNewButtonComponents: [RoleModalButtons_1.RoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
+    function isProjectRole(role) {
+        return role._project !== undefined;
+    }
+    function renderRow(role) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                role.groupName,
+                ": ",
+                react_1.default.createElement("strong", null, role.name),
+                " | ",
+                role._person?._nameSurnameEmail),
+            react_1.default.createElement("div", { className: "text-muted" }, role.description),
+            isProjectRole(role) ? renderProjectData(role) : renderContractData(role)));
+    }
+    function renderProjectData(role) {
+        const { name, ourId, alias } = role._project;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                ourId,
+                " ",
+                alias,
+                " "),
+            react_1.default.createElement("div", { className: "text-secondary" }, name)));
+    }
+    function renderContractData(role) {
+        const { name, alias, startDate, endDate, _type } = role._contract;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                "Typ umowy: ",
+                _type.name,
+                ", ",
+                alias),
+            react_1.default.createElement("div", { className: "text-secondary" }, name),
+            react_1.default.createElement("div", null,
+                " ",
+                "Realizacja od ",
+                startDate,
+                " do ",
+                endDate)));
+    }
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [{ header: "Nazwa", renderTdBody: renderRow }], AddNewButtonComponents: [RoleModalButtons_1.ProjectRoleAddNewModalButton, RoleModalButtons_1.ContractRoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
 }
 exports["default"] = RolesSearch;
 
@@ -84095,7 +84344,7 @@ function InvoicesFilterBody() {
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 7, label: "Data utworzenia", fromName: "issueDateFrom", toName: "issueDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_FROM, defaultToValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_TO }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 8 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { repository: InvoicesController_1.contractsRepository, name: "_contract", typesToInclude: "our", showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: InvoicesController_1.contractsRepository, name: "_contract", typesToInclude: "our", showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 4 },
             react_1.default.createElement(StatusSelectors_1.InvoiceStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
@@ -84567,7 +84816,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", repository: InvoicesController_1.contractsRepository, typesToInclude: "our", readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: InvoicesController_1.contractsRepository, typesToInclude: "our", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
@@ -84939,7 +85188,7 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
         _contract && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
@@ -85291,7 +85540,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_cases", repository: LettersController_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Wybierz kontrakt, by przypisa\u0107 do spraw"))),
@@ -88697,6 +88946,15 @@ class MainController {
         await documentTemplatesRepository.loadItemsFromServerPOST();
         documentTemplatesRepository.saveToSessionStorage();
         MainSetupReact_1.default.documentTemplatesRepository = documentTemplatesRepository;
+        MainSetupReact_1.default.contractRangesRepository = new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "contractRanges",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "contractRanges",
+        });
     }
 }
 exports["default"] = MainController;
@@ -88912,6 +89170,12 @@ MainSetup.SystemRoles = {
         id: 5,
         systemName: "EXTERNAL_USER",
     },
+};
+MainSetup.RoleGroups = {
+    EMPLOYER: "Zamawiający",
+    ENGINEER: "Inżynier",
+    CONTRACTOR: "Wykonawca/Podwykonawcy",
+    OTHERS: "Pozostali",
 };
 
 
@@ -90638,21 +90902,21 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
     return (react_1.default.createElement(ContractModalButtons_1.ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
             initialData,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.ContractEditModalButton = ContractEditModalButton;
-function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OurContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps }) {
+function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OtherContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
-            repository: TasksGlobalController_1.contractsRepository
+            repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
 exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
@@ -90679,27 +90943,27 @@ const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController
 const ProjectValidationSchema_1 = __webpack_require__(/*! ../../Projects/Modals/ProjectValidationSchema */ "./src/Projects/Modals/ProjectValidationSchema.ts");
 const ProjectModalBody_1 = __webpack_require__(/*! ../../Projects/Modals/ProjectModalBody */ "./src/Projects/Modals/ProjectModalBody.tsx");
 /** przycisk i modal edycji Project */
-function ProjectEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
+function ProjectEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: ProjectModalBody_1.ProjectModalBody,
             modalTitle: "Edycja Projektu",
             repository: TasksGlobalController_1.projectsRepository,
             initialData: initialData,
-            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema
+            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.ProjectEditModalButton = ProjectEditModalButton;
-function ProjectAddNewModalButton({ modalProps: { onAddNew }, }) {
+function ProjectAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ProjectModalBody_1.ProjectModalBody,
             modalTitle: "Dodaj projekt",
             repository: TasksGlobalController_1.projectsRepository,
-            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema
+            makeValidationSchema: ProjectValidationSchema_1.makeProjectValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj projekt",
             buttonVariant: "outline-success",
@@ -91039,7 +91303,10 @@ function TasksGlobal() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             showProjects && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
                 react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                        { header: "Nazwa", renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias) },
+                        {
+                            header: "Nazwa",
+                            renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                        },
                     ], onRowClick: setSelectedProject }))),
             react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? "9" : "12" },
                 react_1.default.createElement("div", { className: "d-flex justify-content-end" },
@@ -91257,7 +91524,7 @@ function TasksGlobalFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project && (react_1.default.createElement(react_bootstrap_1.Col, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { repository: TasksGlobalController_1.contractsWithChildrenRepository, showValidationInfo: false, _project: project })))))));
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: TasksGlobalController_1.contractsWithChildrenRepository, showValidationInfo: false, _project: project })))))));
 }
 exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
 
@@ -91299,7 +91566,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelectFormElement = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -91322,7 +91589,7 @@ function ProjectSelector({ name = "_project", repository, showValidationInfo = t
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.ourId),
-            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -91350,7 +91617,7 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, rep
         const typedOption = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, typedOption.name),
-            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.address)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.address)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
@@ -91372,7 +91639,7 @@ function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, mu
                 " ",
                 ` | `,
                 typedOption.submissionDeadline),
-            react_1.default.createElement("div", { className: "text-muted small" }, typedOption.employerName)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.employerName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
@@ -91435,7 +91702,7 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.alias),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.name)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.name)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -91447,7 +91714,7 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
         console.log("renderOption - Option: ", option); // Log the option being rendered
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.description),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 optionTyped.endDate,
                 " ",
                 optionTyped.status)));
@@ -91465,7 +91732,7 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.name),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 optionTyped._client?.name,
                 " | ",
                 optionTyped.status)));
@@ -91474,14 +91741,14 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.ClientNeedSelector = ClientNeedSelector;
-function ContractSelectFormElement({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
+function ContractSelector({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
         const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, mainLabel),
-            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.alias || optionTyped.name)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias || optionTyped.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_ourIdOrNumber_Name", searchKey: "searchText", contextSearchParams: {
@@ -91489,7 +91756,7 @@ function ContractSelectFormElement({ name = "_contract", showValidationInfo = tr
                 _project: _project,
             }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-exports.ContractSelectFormElement = ContractSelectFormElement;
+exports.ContractSelector = ContractSelector;
 function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
     const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -91524,7 +91791,7 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -91564,7 +91831,7 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, optionTyped.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -91602,7 +91869,7 @@ function CaseTypeSelectFormElement({ milestoneType, required = false, showValida
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption.name),
-                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -91638,7 +91905,7 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
                         const myOption = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, myOption._nameContentsAlias),
-                            react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
@@ -91648,7 +91915,7 @@ function PersonSelector({ name = "_person", showValidationInfo = true, multiple 
         const typedOption = option;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, typedOption._nameSurnameEmail),
-            react_1.default.createElement("div", { className: "text-muted small" },
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 " ",
                 typedOption._entity.name)));
     }
@@ -91752,7 +92019,7 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
                 const myOption = option;
                 return (react_1.default.createElement("div", null,
                     react_1.default.createElement("span", null, myOption._typeFolderNumber_TypeName_Number_Name),
-                    react_1.default.createElement("div", { className: "text-muted small" }, myOption.description)));
+                    react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
             } })) }));
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
@@ -92041,7 +92308,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GdFilesSelector = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = void 0;
+exports.RoleGroupSelector = exports.GdFilesSelector = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
@@ -92135,6 +92402,12 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.GdFilesSelector = GdFilesSelector;
+function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = name, multiple = false, as, }) {
+    const roleGroups = Object.entries(MainSetupReact_1.default.RoleGroups).map(([key, value]) => value);
+    const resolvedLabel = label ?? name;
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: resolvedLabel, as: as }));
+}
+exports.RoleGroupSelector = RoleGroupSelector;
 
 
 /***/ }),

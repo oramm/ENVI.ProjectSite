@@ -30,6 +30,7 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const RolesController_1 = require("../RolesController");
+const OtherAttributesSelectors_1 = require("../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
 function RoleModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -43,6 +44,10 @@ function RoleModalBody({ isEditing, initialData }) {
         trigger();
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "groupName" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rodzaj podmiotu"),
+            react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa roli"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazw\u0119 roli", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
@@ -53,6 +58,6 @@ function RoleModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_person", className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", multiple: false, repository: RolesController_1.personsRepository, allowNew: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
 }
 exports.RoleModalBody = RoleModalBody;

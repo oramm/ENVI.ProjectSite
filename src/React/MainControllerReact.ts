@@ -1,6 +1,6 @@
 import RepositoryReact from "./RepositoryReact";
 import MainSetup from "./MainSetupReact";
-import { ContractType, DocumentTemplate, PersonData } from "../../Typings/bussinesTypes";
+import { ContractRangeData, ContractType, DocumentTemplate, PersonData } from "../../Typings/bussinesTypes";
 
 export default class MainController {
     static async main() {
@@ -49,5 +49,15 @@ export default class MainController {
         await documentTemplatesRepository.loadItemsFromServerPOST();
         documentTemplatesRepository.saveToSessionStorage();
         MainSetup.documentTemplatesRepository = documentTemplatesRepository;
+
+        MainSetup.contractRangesRepository = new RepositoryReact<ContractRangeData>({
+            actionRoutes: {
+                getRoute: "contractRanges",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "contractRanges",
+        });
     }
 }

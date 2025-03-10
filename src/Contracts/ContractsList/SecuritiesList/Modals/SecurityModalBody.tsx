@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    ContractSelectFormElement,
+    ContractSelector,
     ProjectSelector,
 } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
-import { Project, Security } from "../../../../../Typings/bussinesTypes";
+import { ProjectData, Security } from "../../../../../Typings/bussinesTypes";
 import { contractsRepository, projectsRepository } from "../../ContractsController";
 import { ErrorMessage, ValueInPLNInput } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 import { SecurityStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
@@ -19,7 +19,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Sec
         formState: { errors },
         trigger,
     } = useFormContext();
-    const _project = watch("_project") as Project | undefined;
+    const _project = watch("_project") as ProjectData | undefined;
     useEffect(() => {
         const resetData: any = {
             _contract: initialData?._contract,
@@ -40,7 +40,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Sec
             {!isEditing && (
                 <Form.Group controlId="_contract">
                     <Form.Label>Wybierz kontrakt</Form.Label>
-                    <ContractSelectFormElement
+                    <ContractSelector
                         name="_contract"
                         typesToInclude="our"
                         repository={contractsRepository}
@@ -85,7 +85,7 @@ type ProjectSelectorProps = ModalBodyProps & {
  */
 export function ProjectSelectorModalBody({ isEditing, additionalProps }: ProjectSelectorProps) {
     const { register, setValue, watch, formState, reset, trigger } = useFormContext();
-    const project = watch("_project") as Project | undefined;
+    const project = watch("_project") as ProjectData | undefined;
 
     //musi być zgodna z nazwą w Our... lub OtherContractModalBody
     const { SpecificContractModalBody: SpecificModalBody } = additionalProps;

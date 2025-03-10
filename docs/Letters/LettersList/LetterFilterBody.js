@@ -61,7 +61,7 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
         _contract && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),

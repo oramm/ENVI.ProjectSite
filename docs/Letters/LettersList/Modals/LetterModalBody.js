@@ -73,7 +73,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelectFormElement, { name: "_contract", repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_cases", repository: LettersController_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Wybierz kontrakt, by przypisa\u0107 do spraw"))),
