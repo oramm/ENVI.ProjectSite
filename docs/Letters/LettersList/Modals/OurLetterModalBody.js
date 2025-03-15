@@ -22,6 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OurLetterModalBody = void 0;
 const react_1 = __importStar(require("react"));
@@ -30,17 +33,22 @@ const LetterModalBody_1 = require("./LetterModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
 const LettersController_1 = require("../LettersController");
+const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
+const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 function OurLetterModalBody(props) {
     const { initialData, isEditing } = props;
     const { setValue, watch, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const _cases = watch("_cases");
     (0, react_1.useEffect)(() => {
+        const initialStatus = isEditing ? MainSetupReact_1.default.OurLetterStatus.CHANGED : MainSetupReact_1.default.IncomingLetterStatus.REGISTERED;
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("_entitiesCc", initialData?._entitiesCc, { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || initialStatus, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
+        react_1.default.createElement(StatusSelectors_1.OurLetterStatusSelector, null),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelector, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true })),

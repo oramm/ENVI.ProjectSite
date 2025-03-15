@@ -521,3 +521,48 @@ export function DaysLeftBadge({ daysLeft }: { daysLeft: number }) {
         </Badge>
     );
 }
+export function LetterStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+
+    switch (status) {
+        case MainSetup.OurLetterStatus.CREATED:
+            variant = "secondary";
+            break;
+        case MainSetup.OurLetterStatus.TO_CORRECT:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetup.OurLetterStatus.CHANGED:
+            variant = "info";
+            break;
+        case MainSetup.OurLetterStatus.APPROVED:
+            variant = "success";
+            break;
+        case MainSetup.OurLetterStatus.SENT:
+            variant = "primary";
+            break;
+        case MainSetup.IncomingLetterStatus.REGISTERED:
+            variant = "secondary";
+            break;
+        case MainSetup.IncomingLetterStatus.RESPONSE_SENT:
+            variant = "success";
+            break;
+        case MainSetup.IncomingLetterStatus.RESPONSE_REQUIRED:
+            variant = "danger";
+            break;
+        case MainSetup.IncomingLetterStatus.NO_RESPONSE_REQUIRED:
+            variant = "info";
+            break;
+        default:
+            variant = "light";
+            textMode = "dark";
+            break;
+    }
+
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}

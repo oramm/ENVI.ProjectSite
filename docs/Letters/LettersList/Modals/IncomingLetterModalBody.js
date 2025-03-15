@@ -22,6 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IncomingLetterModalBody = void 0;
 const react_1 = __importStar(require("react"));
@@ -31,6 +34,8 @@ const FormContext_1 = require("../../../View/Modals/FormContext");
 const LettersController_1 = require("../LettersController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
+const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 /**Wywoływana w ProjectsSelector jako props  */
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
@@ -38,6 +43,10 @@ function IncomingLetterModalBody(props) {
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_REQUIRED, {
+            shouldDirty: false,
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
@@ -45,6 +54,7 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register("number") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));

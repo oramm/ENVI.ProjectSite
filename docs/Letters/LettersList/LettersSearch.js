@@ -37,6 +37,7 @@ const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 const react_bootstrap_1 = require("react-bootstrap");
 const Tools_1 = __importDefault(require("../../React/Tools"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
+const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -95,7 +96,9 @@ function LettersSearch({ title }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             letter.number && (react_1.default.createElement("div", null,
                 "Numer: ",
-                react_1.default.createElement("strong", null, letter.number))),
+                react_1.default.createElement("strong", null, letter.number),
+                " ",
+                react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status }))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
                 letter.description),

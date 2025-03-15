@@ -29,10 +29,12 @@ function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
             modalTitle: "Dodaj rolę kontraktową",
+            modalSubtitle: "Dodana rola będzie przypisana do wybranego kontraktu. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie," +
+                "skorzystaj z opcji dodaj rolę projektową",
             repository: RolesController_1.rolesRepository,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
-            buttonCaption: "Dodaj rolę",
+            buttonCaption: "Dodaj rolę kontraktową",
             buttonVariant: "outline-success",
         } }));
 }
@@ -41,7 +43,9 @@ function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ProjectRoleModal_1.ProjectRoleModalBody,
-            modalTitle: "Dodaj rolę",
+            modalTitle: "Dodaj rolę projektową",
+            modalSubtitle: "Dodana rola będzie przypisana do wszystkich kontraktów w wybranym projekcie. Jeśi chcesz dodac rolę do jednego kontraktu," +
+                "skorzystaj z opcji dodaj rola kontraktowa",
             repository: RolesController_1.rolesRepository,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {

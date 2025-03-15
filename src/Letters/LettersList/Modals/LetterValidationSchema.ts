@@ -3,7 +3,7 @@ import * as Yup from "yup";
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
     _cases: Yup.array().required("Wybierz sprawy"),
-
+    status: Yup.string().required("Wybierz status"),
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
         .required("Data utworzenia jest wymagana")

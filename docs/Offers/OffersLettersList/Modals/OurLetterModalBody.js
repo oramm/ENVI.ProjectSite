@@ -40,7 +40,7 @@ function OurLetterModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelector, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true })),

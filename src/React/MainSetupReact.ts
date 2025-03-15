@@ -163,13 +163,19 @@ export default class MainSetup {
         WITHDRAWN: "Oferta wycofana",
     };
 
-    static LetterStatus = {
+    static OurLetterStatus = {
         CREATED: "Utworzony",
         TO_CORRECT: "Do poprawy",
         CHANGED: "Zmieniony",
         APPROVED: "Zatwierdzony",
         SENT: "Wysłany",
-        CANCELED: "Anulowany",
+    };
+
+    static IncomingLetterStatus = {
+        REGISTERED: "Zarejestrowany",
+        RESPONSE_SENT: "Odpowiedź wysłana", // bardziej naturalna forma
+        RESPONSE_REQUIRED: "Wymaga odpowiedzi", // krócej i konkretniej
+        NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
     };
 
     static LetterEventType = {

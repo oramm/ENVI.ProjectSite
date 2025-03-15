@@ -18,49 +18,31 @@ export function ProjectStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.ProjectStatuses).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedLabel}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.ProjectStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function ContractStatusSelector({
     showValidationInfo = true,
-    multiple,
+    multiple = false,
     name,
     label,
     as,
 }: SpecificTextOptionProps) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetup.ContractStatuses).map(([key, value]) => value);
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={resolvedName} as={as} />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.ContractStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function SecurityStatusSelector({
@@ -69,16 +51,14 @@ export function SecurityStatusSelector({
     label,
     as,
 }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.SecurityStatus).map(([key, value]) => value);
-    return (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={name}
-            label={label}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.SecurityStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple: false,
+        as,
+    });
 }
 
 export function OfferStatusSelector({
@@ -88,26 +68,14 @@ export function OfferStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetup.OfferStatus).map(([key, value]) => value);
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.OfferStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function OfferBondStatusSelector({
@@ -117,26 +85,14 @@ export function OfferBondStatusSelector({
     label,
     as,
 }: TypeaheadStringSelectorProps & { multiple?: boolean }) {
-    const statuses = Object.entries(MainSetup.OfferBondStatus).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.OfferBondStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function OfferBondFormSelector({
@@ -145,10 +101,14 @@ export function OfferBondFormSelector({
     as,
     label = name,
 }: SpecificTextOptionProps) {
-    const forms = Object.entries(MainSetup.OfferBondForm).map(([key, value]) => value);
-    return (
-        <TextOptionSelector options={forms} showValidationInfo={showValidationInfo} name={name} as={as} label={label} />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.OfferBondForm),
+        showValidationInfo,
+        name,
+        label,
+        multiple: false,
+        as,
+    });
 }
 
 export function OfferInvitationMailStatusSelector({
@@ -158,26 +118,14 @@ export function OfferInvitationMailStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetup.OfferInvitationMailStatus).map(([key, value]) => value);
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.OfferInvitationMailStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function TaksStatusSelector({
@@ -187,26 +135,14 @@ export function TaksStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.TaskStatus).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.TaskStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function InvoiceStatusSelector({
@@ -216,22 +152,14 @@ export function InvoiceStatusSelector({
     label,
     as,
 }: SpecificTextOptionProps) {
-    const statuses = Object.entries(MainSetup.InvoiceStatuses).map(([key, value]) => value);
-
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector options={statuses} showValidationInfo={showValidationInfo} name={resolvedName} as={as} />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.InvoiceStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function ApplicationCallStatusSelector({
@@ -241,26 +169,14 @@ export function ApplicationCallStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetup.ApplicationCallStatus).map(([key, value]) => value);
-    return multiple ? (
-        <TypeaheadStringSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    ) : (
-        <TextOptionSelector
-            options={statuses}
-            showValidationInfo={showValidationInfo}
-            name={resolvedName}
-            label={resolvedLabel}
-            as={as}
-        />
-    );
+    return statusSelector({
+        statuses: Object.values(MainSetup.ApplicationCallStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 
 export function ClientNeedStatusSelector({
@@ -270,9 +186,78 @@ export function ClientNeedStatusSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: Object.values(MainSetup.ClientNeedStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
+}
+
+export function LetterStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: [...Object.values(MainSetup.OurLetterStatus), ...Object.values(MainSetup.IncomingLetterStatus)],
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+
+export function OurLetterStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: Object.values(MainSetup.OurLetterStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+
+export function IncomingLetterStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: Object.values(MainSetup.IncomingLetterStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+
+function statusSelector({
+    statuses,
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps & { statuses: string[] }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
     const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetup.ClientNeedStatus).map(([key, value]) => value);
+
     return multiple ? (
         <TypeaheadStringSelector
             options={statuses}

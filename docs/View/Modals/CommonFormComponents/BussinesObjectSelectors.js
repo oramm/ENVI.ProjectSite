@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -341,7 +341,7 @@ exports.CaseTypeSelectFormElement = CaseTypeSelectFormElement;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases = [], }) {
+function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const name = "_template";
     const label = "Szablon pisma";
@@ -369,7 +369,7 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.OurLetterTemplateSelectFormElement = OurLetterTemplateSelectFormElement;
+exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
 function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     function renderOption(option) {
         const typedOption = option;

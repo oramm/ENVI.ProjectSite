@@ -33,11 +33,14 @@ export function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }: Spec
                 onAddNew: onAddNew,
                 ModalBodyComponent: ContractRoleModalBody,
                 modalTitle: "Dodaj rolę kontraktową",
+                modalSubtitle:
+                    "Dodana rola będzie przypisana do wybranego kontraktu. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie," +
+                    "skorzystaj z opcji dodaj rolę projektową",
                 repository: rolesRepository,
                 makeValidationSchema: makeRoleValidationSchema,
             }}
             buttonProps={{
-                buttonCaption: "Dodaj rolę",
+                buttonCaption: "Dodaj rolę kontraktową",
                 buttonVariant: "outline-success",
             }}
         />
@@ -50,7 +53,10 @@ export function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }: Speci
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectRoleModalBody,
-                modalTitle: "Dodaj rolę",
+                modalTitle: "Dodaj rolę projektową",
+                modalSubtitle:
+                    "Dodana rola będzie przypisana do wszystkich kontraktów w wybranym projekcie. Jeśi chcesz dodac rolę do jednego kontraktu," +
+                    "skorzystaj z opcji dodaj rola kontraktowa",
                 repository: rolesRepository,
                 makeValidationSchema: makeRoleValidationSchema,
             }}

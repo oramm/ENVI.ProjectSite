@@ -819,7 +819,7 @@ type OurLetterTemplateSelectFormElementProps = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-export function OurLetterTemplateSelectFormElement({
+export function OurLetterTemplateSelector({
     showValidationInfo = true,
     _cases = [],
 }: OurLetterTemplateSelectFormElementProps) {

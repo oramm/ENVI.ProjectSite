@@ -15,6 +15,7 @@ import ToolsDate from "../../React/ToolsDate";
 import { Alert } from "react-bootstrap";
 import Tools from "../../React/Tools";
 import MainSetup from "../../React/MainSetupReact";
+import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -102,7 +103,7 @@ export default function LettersSearch({ title }: { title: string }) {
             <>
                 {letter.number && (
                     <div>
-                        Numer: <strong>{letter.number}</strong>
+                        Numer: <strong>{letter.number}</strong> <LetterStatusBadge status={letter.status} />
                     </div>
                 )}
                 <div className="mt-2" style={{ whiteSpace: "pre-line" }}>

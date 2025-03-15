@@ -183,7 +183,7 @@ export function RoleGroupSelector({
     multiple = false,
     as,
 }: SpecificTextOptionProps) {
-    const roleGroups = Object.entries(MainSetup.RoleGroups).map(([key, value]) => value);
+    const roleGroups = Object.values(MainSetup.RoleGroups);
 
     return multiple ? (
         <TypeaheadStringSelector

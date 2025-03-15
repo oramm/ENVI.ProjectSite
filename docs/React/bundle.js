@@ -83507,10 +83507,12 @@ function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
             modalTitle: "Dodaj rolę kontraktową",
+            modalSubtitle: "Dodana rola będzie przypisana do wybranego kontraktu. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie," +
+                "skorzystaj z opcji dodaj rolę projektową",
             repository: RolesController_1.rolesRepository,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
-            buttonCaption: "Dodaj rolę",
+            buttonCaption: "Dodaj rolę kontraktową",
             buttonVariant: "outline-success",
         } }));
 }
@@ -83519,7 +83521,9 @@ function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ProjectRoleModal_1.ProjectRoleModalBody,
-            modalTitle: "Dodaj rolę",
+            modalTitle: "Dodaj rolę projektową",
+            modalSubtitle: "Dodana rola będzie przypisana do wszystkich kontraktów w wybranym projekcie. Jeśi chcesz dodac rolę do jednego kontraktu," +
+                "skorzystaj z opcji dodaj rola kontraktowa",
             repository: RolesController_1.rolesRepository,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
@@ -83669,7 +83673,7 @@ function RolesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4, xl: 4 },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4 },
                 react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, { showValidationInfo: false })))));
 }
 exports.RolesFilterBody = RolesFilterBody;
@@ -85313,6 +85317,7 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDat
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -85371,7 +85376,9 @@ function LettersSearch({ title }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             letter.number && (react_1.default.createElement("div", null,
                 "Numer: ",
-                react_1.default.createElement("strong", null, letter.number))),
+                react_1.default.createElement("strong", null, letter.number),
+                " ",
+                react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status }))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
                 letter.description),
@@ -85422,6 +85429,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.IncomingLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -85431,6 +85441,8 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const LettersController_1 = __webpack_require__(/*! ../LettersController */ "./src/Letters/LettersList/LettersController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 /**Wywoływana w ProjectsSelector jako props  */
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
@@ -85438,6 +85450,10 @@ function IncomingLetterModalBody(props) {
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_REQUIRED, {
+            shouldDirty: false,
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
@@ -85445,6 +85461,7 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register("number") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));
@@ -85745,6 +85762,7 @@ const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/inde
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
     _cases: Yup.array().required("Wybierz sprawy"),
+    status: Yup.string().required("Wybierz status"),
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
         .required("Data utworzenia jest wymagana")
@@ -85812,6 +85830,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OurLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -85820,17 +85841,22 @@ const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Le
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const LettersController_1 = __webpack_require__(/*! ../LettersController */ "./src/Letters/LettersList/LettersController.ts");
+const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function OurLetterModalBody(props) {
     const { initialData, isEditing } = props;
     const { setValue, watch, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const _cases = watch("_cases");
     (0, react_1.useEffect)(() => {
+        const initialStatus = isEditing ? MainSetupReact_1.default.OurLetterStatus.CHANGED : MainSetupReact_1.default.IncomingLetterStatus.REGISTERED;
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("_entitiesCc", initialData?._entitiesCc, { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || initialStatus, { shouldDirty: false, shouldValidate: true });
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
+        react_1.default.createElement(StatusSelectors_1.OurLetterStatusSelector, null),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelector, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true })),
@@ -86449,7 +86475,7 @@ function OurLetterModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelectFormElement, { _cases: _cases || [] }),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.OurLetterTemplateSelector, { _cases: _cases || [] }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorcy"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true })),
@@ -89101,13 +89127,18 @@ MainSetup.OfferEventType = {
     CANCELED: "Przetarg unieważniony",
     WITHDRAWN: "Oferta wycofana",
 };
-MainSetup.LetterStatus = {
+MainSetup.OurLetterStatus = {
     CREATED: "Utworzony",
     TO_CORRECT: "Do poprawy",
     CHANGED: "Zmieniony",
     APPROVED: "Zatwierdzony",
     SENT: "Wysłany",
-    CANCELED: "Anulowany",
+};
+MainSetup.IncomingLetterStatus = {
+    REGISTERED: "Zarejestrowany",
+    RESPONSE_SENT: "Odpowiedź wysłana",
+    RESPONSE_REQUIRED: "Wymaga odpowiedzi",
+    NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
 };
 MainSetup.LetterEventType = {
     CREATED: "Utworzony",
@@ -91562,7 +91593,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelectFormElement = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -91877,7 +91908,7 @@ exports.CaseTypeSelectFormElement = CaseTypeSelectFormElement;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases = [], }) {
+function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const name = "_template";
     const label = "Szablon pisma";
@@ -91905,7 +91936,7 @@ function OurLetterTemplateSelectFormElement({ showValidationInfo = true, _cases 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.OurLetterTemplateSelectFormElement = OurLetterTemplateSelectFormElement;
+exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
 function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     function renderOption(option) {
         const typedOption = option;
@@ -92399,7 +92430,7 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
 }
 exports.GdFilesSelector = GdFilesSelector;
 function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = "Grupa Ról", multiple = false, as, }) {
-    const roleGroups = Object.entries(MainSetupReact_1.default.RoleGroups).map(([key, value]) => value);
+    const roleGroups = Object.values(MainSetupReact_1.default.RoleGroups);
     return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as }));
 }
 exports.RoleGroupSelector = RoleGroupSelector;
@@ -92419,85 +92450,171 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const GenericComponents_1 = __webpack_require__(/*! ./GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function ProjectStatusSelector({ showValidationInfo = true, name, label = name, multiple = false, as, }) {
-    const statuses = Object.entries(MainSetupReact_1.default.ProjectStatuses).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedLabel, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.ProjectStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.ProjectStatusSelector = ProjectStatusSelector;
-function ContractStatusSelector({ showValidationInfo = true, multiple, name, label, as, }) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetupReact_1.default.ContractStatuses).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, as: as }));
+function ContractStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.ContractStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.ContractStatusSelector = ContractStatusSelector;
 function SecurityStatusSelector({ showValidationInfo = true, name = "status", label, as, }) {
-    const statuses = Object.entries(MainSetupReact_1.default.SecurityStatus).map(([key, value]) => value);
-    return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: name, label: label, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.SecurityStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple: false,
+        as,
+    });
 }
 exports.SecurityStatusSelector = SecurityStatusSelector;
 function OfferStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetupReact_1.default.OfferStatus).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.OfferStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.OfferStatusSelector = OfferStatusSelector;
 function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
-    const statuses = Object.entries(MainSetupReact_1.default.OfferBondStatus).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.OfferBondStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.OfferBondStatusSelector = OfferBondStatusSelector;
 function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, label = name, }) {
-    const forms = Object.entries(MainSetupReact_1.default.OfferBondForm).map(([key, value]) => value);
-    return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: forms, showValidationInfo: showValidationInfo, name: name, as: as, label: label }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.OfferBondForm),
+        showValidationInfo,
+        name,
+        label,
+        multiple: false,
+        as,
+    });
 }
 exports.OfferBondFormSelector = OfferBondFormSelector;
 function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetupReact_1.default.OfferInvitationMailStatus).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.OfferInvitationMailStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
-    const statuses = Object.entries(MainSetupReact_1.default.TaskStatus).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.TaskStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.TaksStatusSelector = TaksStatusSelector;
 function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
-    const statuses = Object.entries(MainSetupReact_1.default.InvoiceStatuses).map(([key, value]) => value);
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.InvoiceStatusSelector = InvoiceStatusSelector;
 function ApplicationCallStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetupReact_1.default.ApplicationCallStatus).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
 function ClientNeedStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
-    const resolvedName = name ?? (multiple ? "statuses" : "status");
-    const resolvedLabel = label ?? resolvedName;
-    const statuses = Object.entries(MainSetupReact_1.default.ClientNeedStatus).map(([key, value]) => value);
-    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.ClientNeedStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
 }
 exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
+function LetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    return statusSelector({
+        statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+exports.LetterStatusSelector = LetterStatusSelector;
+function OurLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.OurLetterStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+exports.OurLetterStatusSelector = OurLetterStatusSelector;
+function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.IncomingLetterStatus),
+        showValidationInfo,
+        name,
+        label,
+        multiple,
+        as,
+    });
+}
+exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
+function statusSelector({ statuses, showValidationInfo = true, name, label, multiple = false, as, }) {
+    const resolvedName = name ?? (multiple ? "statuses" : "status");
+    const resolvedLabel = label ?? resolvedName;
+    return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));
+}
 
 
 /***/ }),
@@ -92841,7 +92958,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
         return (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement("h5", null, title),
-                subtitle && react_1.default.createElement("div", { className: "text-muted", dangerouslySetInnerHTML: { __html: subtitle } }))));
+                subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
@@ -93049,7 +93166,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
@@ -93424,6 +93541,46 @@ function DaysLeftBadge({ daysLeft }) {
         " dni"));
 }
 exports.DaysLeftBadge = DaysLeftBadge;
+function LetterStatusBadge({ status }) {
+    let variant;
+    let textMode = "light";
+    switch (status) {
+        case MainSetupReact_1.default.OurLetterStatus.CREATED:
+            variant = "secondary";
+            break;
+        case MainSetupReact_1.default.OurLetterStatus.TO_CORRECT:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetupReact_1.default.OurLetterStatus.CHANGED:
+            variant = "info";
+            break;
+        case MainSetupReact_1.default.OurLetterStatus.APPROVED:
+            variant = "success";
+            break;
+        case MainSetupReact_1.default.OurLetterStatus.SENT:
+            variant = "primary";
+            break;
+        case MainSetupReact_1.default.IncomingLetterStatus.REGISTERED:
+            variant = "secondary";
+            break;
+        case MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_SENT:
+            variant = "success";
+            break;
+        case MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_REQUIRED:
+            variant = "danger";
+            break;
+        case MainSetupReact_1.default.IncomingLetterStatus.NO_RESPONSE_REQUIRED:
+            variant = "info";
+            break;
+        default:
+            variant = "light";
+            textMode = "dark";
+            break;
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.LetterStatusBadge = LetterStatusBadge;
 
 
 /***/ }),

@@ -207,6 +207,7 @@ export interface Letter extends GenericDocument {
     registrationDate?: string;
     _editor: PersonData;
     _cases: Case[];
+    status: string;
     _lastEvent?: LetterEvent | null;
 }
 

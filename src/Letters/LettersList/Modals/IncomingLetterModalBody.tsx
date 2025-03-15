@@ -7,6 +7,8 @@ import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/b
 import { entitiesRepository } from "../LettersController";
 import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { IncomingLetterStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import MainSetup from "../../../React/MainSetupReact";
 
 /**Wywoływana w ProjectsSelector jako props  */
 export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
@@ -22,6 +24,10 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
     useEffect(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || MainSetup.IncomingLetterStatus.RESPONSE_REQUIRED, {
+            shouldDirty: false,
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
 
     return (
@@ -38,6 +44,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
                 <ErrorMessage errors={errors} name={"number"} />
             </Form.Group>
             <LetterModalBody {...props} />
+            <IncomingLetterStatusSelector />
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
                 <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />

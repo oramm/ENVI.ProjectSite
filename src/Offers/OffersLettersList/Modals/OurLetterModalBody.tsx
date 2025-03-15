@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     EntitySelector,
-    OurLetterTemplateSelectFormElement,
+    OurLetterTemplateSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { LetterModalBody } from "./LetterModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
@@ -29,7 +29,7 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetterOffer | Incomi
     return (
         <>
             <LetterModalBody {...props} />
-            {!isEditing && <OurLetterTemplateSelectFormElement _cases={_cases || []} />}
+            {!isEditing && <OurLetterTemplateSelector _cases={_cases || []} />}
             <Form.Group>
                 <Form.Label>Odbiorcy</Form.Label>
                 <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />

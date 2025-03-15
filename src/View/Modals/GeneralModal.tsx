@@ -196,7 +196,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             <Row>
                 <Col>
                     <h5>{title}</h5>
-                    {subtitle && <div className="text-muted" dangerouslySetInnerHTML={{ __html: subtitle }} />}
+                    {subtitle && <div className="text-muted small" dangerouslySetInnerHTML={{ __html: subtitle }} />}
                 </Col>
             </Row>
         );

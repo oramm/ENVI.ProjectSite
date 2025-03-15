@@ -134,13 +134,18 @@ MainSetup.OfferEventType = {
     CANCELED: "Przetarg unieważniony",
     WITHDRAWN: "Oferta wycofana",
 };
-MainSetup.LetterStatus = {
+MainSetup.OurLetterStatus = {
     CREATED: "Utworzony",
     TO_CORRECT: "Do poprawy",
     CHANGED: "Zmieniony",
     APPROVED: "Zatwierdzony",
     SENT: "Wysłany",
-    CANCELED: "Anulowany",
+};
+MainSetup.IncomingLetterStatus = {
+    REGISTERED: "Zarejestrowany",
+    RESPONSE_SENT: "Odpowiedź wysłana",
+    RESPONSE_REQUIRED: "Wymaga odpowiedzi",
+    NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
 };
 MainSetup.LetterEventType = {
     CREATED: "Utworzony",

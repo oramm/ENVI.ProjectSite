@@ -163,7 +163,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
         return (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement("h5", null, title),
-                subtitle && react_1.default.createElement("div", { className: "text-muted", dangerouslySetInnerHTML: { __html: subtitle } }))));
+                subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,

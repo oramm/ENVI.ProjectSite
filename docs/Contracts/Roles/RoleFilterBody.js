@@ -65,7 +65,7 @@ function RolesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4, xl: 4 },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4 },
                 react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, { showValidationInfo: false })))));
 }
 exports.RolesFilterBody = RolesFilterBody;
