@@ -1,6 +1,5 @@
 import {
     Case,
-    Contract,
     EntityData,
     IncomingLetterContract,
     Milestone,

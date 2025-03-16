@@ -9,7 +9,6 @@ import { Col, Form, Row } from "react-bootstrap";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { Case, IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
 import { entitiesRepository } from "../LettersController";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { OurLetterStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import MainSetup from "../../../React/MainSetupReact";
 

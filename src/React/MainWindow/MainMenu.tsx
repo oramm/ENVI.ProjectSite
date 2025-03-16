@@ -20,32 +20,39 @@ export default function MainMenu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <NavDropdown title="Kontrakty" id="basic-nav-dropdown" className={isActive("/contracts")}>
-                                <NavDropdown.Item as={Link} to="/contracts" className={isActive("/contracts")}>
-                                    Wszystkie Kontrakty
-                                </NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
-                                    Projekty i zadania
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    as={Link}
-                                    to="/contracts/roles"
-                                    className={isActive("/contracts/roles")}
+                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
+                                MainSetup.currentUser.systemRoleName
+                            ) && (
+                                <NavDropdown
+                                    title="Kontrakty"
+                                    id="basic-nav-dropdown"
+                                    className={isActive("/contracts")}
                                 >
-                                    Role kontrakowe{" "}
-                                    <Badge bg="primary" text="light">
-                                        beta
-                                    </Badge>
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    as={Link}
-                                    to="/contracts/znwu"
-                                    className={isActive("/contracts/znwu")}
-                                >
-                                    ZNWU
-                                </NavDropdown.Item>
-                            </NavDropdown>
-
+                                    <NavDropdown.Item as={Link} to="/contracts" className={isActive("/contracts")}>
+                                        Wszystkie Kontrakty
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item as={Link} to="/tasksGlobal" className={isActive("/tasksGlobal")}>
+                                        Projekty i zadania
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="/contracts/roles"
+                                        className={isActive("/contracts/roles")}
+                                    >
+                                        Role kontrakowe{" "}
+                                        <Badge bg="primary" text="light">
+                                            beta
+                                        </Badge>
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="/contracts/znwu"
+                                        className={isActive("/contracts/znwu")}
+                                    >
+                                        ZNWU
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            )}
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>
                                 Pisma
                             </Nav.Link>
@@ -56,16 +63,16 @@ export default function MainMenu() {
                                     Faktury
                                 </Nav.Link>
                             )}
-                            <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
-                                Podmioty
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/persons" className={isActive("/persons")}>
-                                Osoby
-                            </Nav.Link>
                             {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
                                 MainSetup.currentUser.systemRoleName
                             ) && (
                                 <>
+                                    <Nav.Link as={Link} to="/entities" className={isActive("/entities")}>
+                                        Podmioty
+                                    </Nav.Link>
+                                    <Nav.Link as={Link} to="/persons" className={isActive("/persons")}>
+                                        Osoby
+                                    </Nav.Link>
                                     <NavDropdown title="Oferty" id="basic-nav-dropdown" className={isActive("/offers")}>
                                         <NavDropdown.Item as={Link} to="/offers/list">
                                             Oferty
