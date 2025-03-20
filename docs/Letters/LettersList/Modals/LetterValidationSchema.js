@@ -25,6 +25,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
+const todayUTC = new Date();
+todayUTC.setUTCHours(0, 0, 0, 0); // Ustawia godziny na 00:00:00 UTC
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
     _cases: Yup.array().required("Wybierz sprawy"),
@@ -32,13 +34,13 @@ const commonFields = {
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
         .required("Data utworzenia jest wymagana")
-        .max(new Date(), "Data utworzenia nie może być z przyszłości")
+        .max(todayUTC, "Data utworzenia nie może być z przyszłości")
         .test("creationDateValidation", "Pismo nie może być nadane przed utworzeniem", function (value) {
         return this.parent.registrationDate >= value;
     }),
     registrationDate: Yup.date()
         //.required('Data nadania jest wymagana')
-        .max(new Date(), "Data nadania nie może być z przyszłości")
+        .max(todayUTC, "Data nadania nie może być z przyszłości")
         .test("registrationDateValidation", "Pismo nie może być nadane przed utworzeniem", function (value) {
         if (value === undefined)
             return true;

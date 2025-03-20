@@ -43,12 +43,13 @@ export function LetterModalBody({
     }
 
     useEffect(() => {
+        const nowUTC = new Date().toISOString().split("T")[0];
         const resetData: any = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
-            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
-            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            creationDate: initialData?.creationDate || nowUTC,
+            registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
         };
         if (!isEditing) resetData._project = _project;

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from "react";
 
 interface ErrorBoundaryProps {
     children: React.ReactNode;
@@ -11,13 +11,13 @@ interface State {
     error: Error | null;
 }
 
-type Action = { type: 'SET_ERROR'; payload: Error } | { type: 'RESET_ERROR' };
+type Action = { type: "SET_ERROR"; payload: Error } | { type: "RESET_ERROR" };
 
 function reducer(state: State, action: Action): State {
     switch (action.type) {
-        case 'SET_ERROR':
+        case "SET_ERROR":
             return { error: action.payload };
-        case 'RESET_ERROR':
+        case "RESET_ERROR":
             return { error: null };
         default:
             return state;
@@ -28,26 +28,26 @@ export default function ErrorBoundary({ children, fallback = defaultFallback }: 
     const [{ error }, dispatch] = useReducer(reducer, { error: null });
 
     useEffect(() => {
-        if (error) {
-            console.error(error);
-        }
+        if (error) console.error(error);
     }, [error]);
 
     useEffect(() => {
         const handleUncaughtError = (e: ErrorEvent) => {
-            dispatch({ type: 'SET_ERROR', payload: e.error });
+            dispatch({ type: "SET_ERROR", payload: e.error });
         };
 
-        window.addEventListener('error', handleUncaughtError);
-
-        return () => {
-            window.removeEventListener('error', handleUncaughtError);
-        };
+        window.addEventListener("error", handleUncaughtError);
+        return () => window.removeEventListener("error", handleUncaughtError);
     }, []);
 
     if (error) {
-        return <>{fallback}</>;
+        return (
+            <div>
+                {fallback}
+                <button onClick={() => dispatch({ type: "RESET_ERROR" })}>Spróbuj ponownie</button>
+            </div>
+        );
     }
 
-    return <React.Fragment>{children}</React.Fragment>;
+    return <>{children}</>;
 }

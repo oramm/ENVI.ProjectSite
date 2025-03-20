@@ -15,6 +15,8 @@ export default function RolesSearch({ title }: { title: string }) {
     }, [title]);
 
     function isProjectRole(role: ContractRoleData | ProjectRoleData): role is ProjectRoleData {
+        if (!(role as ProjectRoleData)._project?.id && !(role as ContractRoleData)._contract?.id)
+            console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
         return (role as ProjectRoleData)._project !== undefined;
     }
 
@@ -30,7 +32,9 @@ export default function RolesSearch({ title }: { title: string }) {
         );
     }
     function renderProjectData(role: ProjectRoleData) {
-        const { name, ourId, alias } = role._project!;
+        if (!role._project?.id) return <div className="text-danger">⚠️ Brak danych projektu</div>;
+        const { name, ourId, alias } = role._project;
+
         return (
             <>
                 <div>
@@ -42,7 +46,9 @@ export default function RolesSearch({ title }: { title: string }) {
     }
 
     function renderContractData(role: ContractRoleData) {
-        const { name, alias, startDate, endDate, _type } = role._contract!;
+        if (!role._contract?.id) return <div className="text-danger">⚠️ Brak danych kontraktu</div>;
+
+        const { name, alias, startDate, endDate, _type } = role._contract;
         return (
             <>
                 <div>

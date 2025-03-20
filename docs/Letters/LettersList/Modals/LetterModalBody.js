@@ -46,12 +46,13 @@ function LetterModalBody({ isEditing, initialData, }) {
         return _cases[0]._parent?._contract;
     }
     (0, react_1.useEffect)(() => {
+        const nowUTC = new Date().toISOString().split("T")[0];
         const resetData = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
-            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
-            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            creationDate: initialData?.creationDate || nowUTC,
+            registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
         };
         if (!isEditing)

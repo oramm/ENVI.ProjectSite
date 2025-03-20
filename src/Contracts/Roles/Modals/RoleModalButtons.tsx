@@ -1,20 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { RoleData } from "../../../../Typings/bussinesTypes";
+import { ContractRoleData, ProjectRoleData, RoleData } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { rolesRepository } from "../RolesController";
-import { RoleModalBody } from "./RoleModalBody";
 import { makeRoleValidationSchema } from "./RoleValidationSchema";
 import { ContractRoleModalBody } from "./ContractRoleModal";
 import { ProjectRoleModalBody } from "./ProjectRoleModal";
 
-export function RoleEditModalButton({ modalProps: { onEdit, initialData } }: SpecificEditModalButtonProps<RoleData>) {
+export function RoleEditModalButton({
+    modalProps: { onEdit, initialData },
+    buttonProps,
+}: SpecificEditModalButtonProps<ProjectRoleData | ContractRoleData>) {
+    useEffect(() => {}, [initialData]);
+
+    return initialData.hasOwnProperty("projectId") ? (
+        <ProjectRoleEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+    ) : (
+        <ContractRoleEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+    );
+}
+
+export function ProjectRoleEditModalButton({
+    modalProps: { onEdit, initialData },
+}: SpecificEditModalButtonProps<ProjectRoleData>) {
     return (
-        <GeneralEditModalButton<RoleData>
+        <GeneralEditModalButton<ProjectRoleData>
             modalProps={{
                 onEdit: onEdit,
-                ModalBodyComponent: RoleModalBody,
-                modalTitle: "Edycja roli",
+                ModalBodyComponent: ProjectRoleModalBody,
+                modalTitle: "Edycja roli projektowej",
+                repository: rolesRepository,
+                initialData: initialData,
+                makeValidationSchema: makeRoleValidationSchema,
+            }}
+            buttonProps={{
+                buttonVariant: "outline-success",
+            }}
+        />
+    );
+}
+
+export function ContractRoleEditModalButton({
+    modalProps: { onEdit, initialData },
+}: SpecificEditModalButtonProps<ContractRoleData>) {
+    return (
+        <GeneralEditModalButton<ContractRoleData>
+            modalProps={{
+                onEdit: onEdit,
+                ModalBodyComponent: ContractRoleModalBody,
+                modalTitle: "Edycja roli kontraktowej",
                 repository: rolesRepository,
                 initialData: initialData,
                 makeValidationSchema: makeRoleValidationSchema,

@@ -3,12 +3,12 @@ import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { ContractRoleData, ProjectRoleData } from "../../../../Typings/bussinesTypes";
+import { ContractRoleData, ProjectRoleData, RoleData } from "../../../../Typings/bussinesTypes";
 import { PersonSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { personsRepository } from "../RolesController";
 import { RoleGroupSelector } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
 
-export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<ContractRoleData | ProjectRoleData>) {
+export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<RoleData>) {
     const {
         register,
         reset,
@@ -17,10 +17,10 @@ export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<Contrac
     } = useFormContext();
 
     useEffect(() => {
-        const resetData: any = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
+        const resetData: Partial<RoleData> = {
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            groupName: initialData?.groupName || "",
             _person: initialData?._person,
         };
         reset(resetData);

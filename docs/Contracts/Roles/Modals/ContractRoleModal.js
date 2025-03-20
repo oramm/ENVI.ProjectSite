@@ -34,10 +34,7 @@ function ContractRoleModalBody(props) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
-            _person: initialData?._person,
+            _contract: initialData?._contract || undefined,
         };
         reset(resetData);
         trigger();

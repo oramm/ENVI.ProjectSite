@@ -31,17 +31,10 @@ const RolesController_1 = require("../RolesController");
 const RoleModalBody_1 = require("./RoleModalBody");
 function ProjectRoleModalBody(props) {
     const { isEditing, initialData } = props;
-    const { reset, trigger } = (0, FormContext_1.useFormContext)();
+    const { setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const resetData = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
-            _person: initialData?._person,
-        };
-        reset(resetData);
-        trigger();
-    }, [initialData, reset]);
+        setValue("_project", initialData?._project, { shouldDirty: false, shouldValidate: true });
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, name: "_project" }),
         react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));

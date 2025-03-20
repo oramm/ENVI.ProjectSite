@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { OtherContract, OurContract, Task } from "../../../Typings/bussinesTypes";
+import { OtherContract, OurContract } from "../../../Typings/bussinesTypes";
 import { ContractStatusBadge } from "../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { contractsRepository } from "./ContractsController";

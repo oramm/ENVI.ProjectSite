@@ -4,6 +4,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 import { FilterableTableRow } from "./FilterableTableRow";
+import ErrorBoundary from "../../Modals/ErrorBoundary";
 
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
     showTableHeader: boolean;
@@ -40,12 +41,14 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
                     {objectsToShow.map((dataObject) => {
                         const isActive = dataObject.id === activeRowId;
                         return (
-                            <FilterableTableRow<DataItemType>
-                                key={dataObject.id}
-                                dataObject={dataObject}
-                                isActive={isActive}
-                                onRowClick={onRowClick}
-                            />
+                            <ErrorBoundary key={dataObject.id}>
+                                <FilterableTableRow<DataItemType>
+                                    //key={dataObject.id}
+                                    dataObject={dataObject}
+                                    isActive={isActive}
+                                    onRowClick={onRowClick}
+                                />
+                            </ErrorBoundary>
                         );
                     })}
                 </tbody>

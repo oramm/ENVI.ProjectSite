@@ -83321,10 +83321,7 @@ function ContractRoleModalBody(props) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
-            _person: initialData?._person,
+            _contract: initialData?._contract || undefined,
         };
         reset(resetData);
         trigger();
@@ -83378,17 +83375,10 @@ const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/C
 const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
 function ProjectRoleModalBody(props) {
     const { isEditing, initialData } = props;
-    const { reset, trigger } = (0, FormContext_1.useFormContext)();
+    const { setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const resetData = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
-            _person: initialData?._person,
-        };
-        reset(resetData);
-        trigger();
-    }, [initialData, reset]);
+        setValue("_project", initialData?._project, { shouldDirty: false, shouldValidate: true });
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, name: "_project" }),
         react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
@@ -83442,9 +83432,9 @@ function RoleModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
-            name: initialData?.name,
-            description: initialData?.description,
-            groupName: initialData?.groupName,
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            groupName: initialData?.groupName || "",
             _person: initialData?._person,
         };
         reset(resetData);
@@ -83477,23 +83467,47 @@ exports.RoleModalBody = RoleModalBody;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectRoleAddNewModalButton = exports.ContractRoleAddNewModalButton = exports.RoleEditModalButton = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+exports.ProjectRoleAddNewModalButton = exports.ContractRoleAddNewModalButton = exports.ContractRoleEditModalButton = exports.ProjectRoleEditModalButton = exports.RoleEditModalButton = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
-const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
 const RoleValidationSchema_1 = __webpack_require__(/*! ./RoleValidationSchema */ "./src/Contracts/Roles/Modals/RoleValidationSchema.ts");
 const ContractRoleModal_1 = __webpack_require__(/*! ./ContractRoleModal */ "./src/Contracts/Roles/Modals/ContractRoleModal.tsx");
 const ProjectRoleModal_1 = __webpack_require__(/*! ./ProjectRoleModal */ "./src/Contracts/Roles/Modals/ProjectRoleModal.tsx");
-function RoleEditModalButton({ modalProps: { onEdit, initialData } }) {
+function RoleEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    (0, react_1.useEffect)(() => { }, [initialData]);
+    return initialData.hasOwnProperty("projectId") ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+}
+exports.RoleEditModalButton = RoleEditModalButton;
+function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
-            ModalBodyComponent: RoleModalBody_1.RoleModalBody,
-            modalTitle: "Edycja roli",
+            ModalBodyComponent: ProjectRoleModal_1.ProjectRoleModalBody,
+            modalTitle: "Edycja roli projektowej",
             repository: RolesController_1.rolesRepository,
             initialData: initialData,
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
@@ -83501,7 +83515,20 @@ function RoleEditModalButton({ modalProps: { onEdit, initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.RoleEditModalButton = RoleEditModalButton;
+exports.ProjectRoleEditModalButton = ProjectRoleEditModalButton;
+function ContractRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
+            modalTitle: "Edycja roli kontraktowej",
+            repository: RolesController_1.rolesRepository,
+            initialData: initialData,
+            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.ContractRoleEditModalButton = ContractRoleEditModalButton;
 function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -83780,6 +83807,8 @@ function RolesSearch({ title }) {
         document.title = title;
     }, [title]);
     function isProjectRole(role) {
+        if (!role._project?.id && !role._contract?.id)
+            console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
         return role._project !== undefined;
     }
     function renderRow(role) {
@@ -83794,6 +83823,8 @@ function RolesSearch({ title }) {
             isProjectRole(role) ? renderProjectData(role) : renderContractData(role)));
     }
     function renderProjectData(role) {
+        if (!role._project?.id)
+            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych projektu");
         const { name, ourId, alias } = role._project;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
@@ -83804,6 +83835,8 @@ function RolesSearch({ title }) {
             react_1.default.createElement("div", { className: "text-secondary" }, name)));
     }
     function renderContractData(role) {
+        if (!role._contract?.id)
+            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych kontraktu");
         const { name, alias, startDate, endDate, _type } = role._contract;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
@@ -85526,12 +85559,13 @@ function LetterModalBody({ isEditing, initialData, }) {
         return _cases[0]._parent?._contract;
     }
     (0, react_1.useEffect)(() => {
+        const nowUTC = new Date().toISOString().split("T")[0];
         const resetData = {
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
-            creationDate: initialData?.creationDate || new Date().toISOString().slice(0, 10),
-            registrationDate: initialData?.registrationDate || new Date().toISOString().slice(0, 10),
+            creationDate: initialData?.creationDate || nowUTC,
+            registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
         };
         if (!isEditing)
@@ -85759,6 +85793,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+const todayUTC = new Date();
+todayUTC.setUTCHours(0, 0, 0, 0); // Ustawia godziny na 00:00:00 UTC
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
     _cases: Yup.array().required("Wybierz sprawy"),
@@ -85766,13 +85802,13 @@ const commonFields = {
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
         .required("Data utworzenia jest wymagana")
-        .max(new Date(), "Data utworzenia nie może być z przyszłości")
+        .max(todayUTC, "Data utworzenia nie może być z przyszłości")
         .test("creationDateValidation", "Pismo nie może być nadane przed utworzeniem", function (value) {
         return this.parent.registrationDate >= value;
     }),
     registrationDate: Yup.date()
         //.required('Data nadania jest wymagana')
-        .max(new Date(), "Data nadania nie może być z przyszłości")
+        .max(todayUTC, "Data nadania nie może być z przyszłości")
         .test("registrationDateValidation", "Pismo nie może być nadane przed utworzeniem", function (value) {
         if (value === undefined)
             return true;
@@ -92727,9 +92763,9 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const defaultFallback = react_1.default.createElement("h1", null, "Wyst\u0105pi\u0142 b\u0142\u0105d.");
 function reducer(state, action) {
     switch (action.type) {
-        case 'SET_ERROR':
+        case "SET_ERROR":
             return { error: action.payload };
-        case 'RESET_ERROR':
+        case "RESET_ERROR":
             return { error: null };
         default:
             return state;
@@ -92738,21 +92774,20 @@ function reducer(state, action) {
 function ErrorBoundary({ children, fallback = defaultFallback }) {
     const [{ error }, dispatch] = (0, react_1.useReducer)(reducer, { error: null });
     (0, react_1.useEffect)(() => {
-        if (error) {
+        if (error)
             console.error(error);
-        }
     }, [error]);
     (0, react_1.useEffect)(() => {
         const handleUncaughtError = (e) => {
-            dispatch({ type: 'SET_ERROR', payload: e.error });
+            dispatch({ type: "SET_ERROR", payload: e.error });
         };
-        window.addEventListener('error', handleUncaughtError);
-        return () => {
-            window.removeEventListener('error', handleUncaughtError);
-        };
+        window.addEventListener("error", handleUncaughtError);
+        return () => window.removeEventListener("error", handleUncaughtError);
     }, []);
     if (error) {
-        return react_1.default.createElement(react_1.default.Fragment, null, fallback);
+        return (react_1.default.createElement("div", null,
+            fallback,
+            react_1.default.createElement("button", { onClick: () => dispatch({ type: "RESET_ERROR" }) }, "Spr\u00F3buj ponownie")));
     }
     return react_1.default.createElement(react_1.default.Fragment, null, children);
 }
@@ -94307,12 +94342,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.renderHeaderBody = exports.ResultSetTable = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ./FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
+const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ../../Modals/ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
 function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
@@ -94326,7 +94365,10 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
                 react_1.default.createElement("tr", null, tableStructure.map((column, index) => (react_1.default.createElement("th", { key: column.header || index }, renderHeaderBody(column))))))),
             react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
                 const isActive = dataObject.id === activeRowId;
-                return (react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onRowClick: onRowClick }));
+                return (react_1.default.createElement(ErrorBoundary_1.default, { key: dataObject.id },
+                    react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
+                        //key={dataObject.id}
+                        dataObject: dataObject, isActive: isActive, onRowClick: onRowClick })));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;

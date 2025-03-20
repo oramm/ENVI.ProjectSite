@@ -27,9 +27,9 @@ const react_1 = __importStar(require("react"));
 const defaultFallback = react_1.default.createElement("h1", null, "Wyst\u0105pi\u0142 b\u0142\u0105d.");
 function reducer(state, action) {
     switch (action.type) {
-        case 'SET_ERROR':
+        case "SET_ERROR":
             return { error: action.payload };
-        case 'RESET_ERROR':
+        case "RESET_ERROR":
             return { error: null };
         default:
             return state;
@@ -38,21 +38,20 @@ function reducer(state, action) {
 function ErrorBoundary({ children, fallback = defaultFallback }) {
     const [{ error }, dispatch] = (0, react_1.useReducer)(reducer, { error: null });
     (0, react_1.useEffect)(() => {
-        if (error) {
+        if (error)
             console.error(error);
-        }
     }, [error]);
     (0, react_1.useEffect)(() => {
         const handleUncaughtError = (e) => {
-            dispatch({ type: 'SET_ERROR', payload: e.error });
+            dispatch({ type: "SET_ERROR", payload: e.error });
         };
-        window.addEventListener('error', handleUncaughtError);
-        return () => {
-            window.removeEventListener('error', handleUncaughtError);
-        };
+        window.addEventListener("error", handleUncaughtError);
+        return () => window.removeEventListener("error", handleUncaughtError);
     }, []);
     if (error) {
-        return react_1.default.createElement(react_1.default.Fragment, null, fallback);
+        return (react_1.default.createElement("div", null,
+            fallback,
+            react_1.default.createElement("button", { onClick: () => dispatch({ type: "RESET_ERROR" }) }, "Spr\u00F3buj ponownie")));
     }
     return react_1.default.createElement(react_1.default.Fragment, null, children);
 }

@@ -22,12 +22,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.renderHeaderBody = exports.ResultSetTable = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterableTableRow_1 = require("./FilterableTableRow");
+const ErrorBoundary_1 = __importDefault(require("../../Modals/ErrorBoundary"));
 function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
@@ -41,7 +45,10 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
                 react_1.default.createElement("tr", null, tableStructure.map((column, index) => (react_1.default.createElement("th", { key: column.header || index }, renderHeaderBody(column))))))),
             react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
                 const isActive = dataObject.id === activeRowId;
-                return (react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { key: dataObject.id, dataObject: dataObject, isActive: isActive, onRowClick: onRowClick }));
+                return (react_1.default.createElement(ErrorBoundary_1.default, { key: dataObject.id },
+                    react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
+                        //key={dataObject.id}
+                        dataObject: dataObject, isActive: isActive, onRowClick: onRowClick })));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;
