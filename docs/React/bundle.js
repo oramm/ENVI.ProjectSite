@@ -83500,7 +83500,7 @@ const ContractRoleModal_1 = __webpack_require__(/*! ./ContractRoleModal */ "./sr
 const ProjectRoleModal_1 = __webpack_require__(/*! ./ProjectRoleModal */ "./src/Contracts/Roles/Modals/ProjectRoleModal.tsx");
 function RoleEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => { }, [initialData]);
-    return initialData.hasOwnProperty("projectId") ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+    return (0, RolesController_1.isProjectRole)(initialData) ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.RoleEditModalButton = RoleEditModalButton;
 function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
@@ -83540,7 +83540,6 @@ function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj rolę kontraktową",
-            buttonVariant: "outline-success",
         } }));
 }
 exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;
@@ -83720,7 +83719,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
+exports.isProjectRole = exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.rolesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -83758,6 +83757,12 @@ exports.contractsRepository = new RepositoryReact_1.default({
     },
     name: "contractRoles-contracts",
 });
+function isProjectRole(role) {
+    if (!role._project?.ourId && !role._contract?.id)
+        console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
+    return role._project !== undefined;
+}
+exports.isProjectRole = isProjectRole;
 
 
 /***/ }),
@@ -83806,11 +83811,6 @@ function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function isProjectRole(role) {
-        if (!role._project?.id && !role._contract?.id)
-            console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
-        return role._project !== undefined;
-    }
     function renderRow(role) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
@@ -83820,10 +83820,10 @@ function RolesSearch({ title }) {
                 " | ",
                 role._person?._nameSurnameEmail),
             react_1.default.createElement("div", { className: "text-muted" }, role.description),
-            isProjectRole(role) ? renderProjectData(role) : renderContractData(role)));
+            (0, RolesController_1.isProjectRole)(role) ? renderProjectData(role) : renderContractData(role)));
     }
     function renderProjectData(role) {
-        if (!role._project?.id)
+        if (!role._project?.ourId)
             return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych projektu");
         const { name, ourId, alias } = role._project;
         return (react_1.default.createElement(react_1.default.Fragment, null,

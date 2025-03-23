@@ -1,4 +1,12 @@
-import { OtherContract, OurContract, PersonData, ProjectData, RoleData } from "../../../Typings/bussinesTypes";
+import {
+    ContractRoleData,
+    OtherContract,
+    OurContract,
+    PersonData,
+    ProjectData,
+    ProjectRoleData,
+    RoleData,
+} from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
 export const rolesRepository = new RepositoryReact<RoleData>({
@@ -40,3 +48,9 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
     },
     name: "contractRoles-contracts",
 });
+
+export function isProjectRole(role: ContractRoleData | ProjectRoleData): role is ProjectRoleData {
+    if (!(role as ProjectRoleData)._project?.ourId && !(role as ContractRoleData)._contract?.id)
+        console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
+    return (role as ProjectRoleData)._project !== undefined;
+}

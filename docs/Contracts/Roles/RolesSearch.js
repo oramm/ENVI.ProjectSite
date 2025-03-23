@@ -35,11 +35,6 @@ function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function isProjectRole(role) {
-        if (!role._project?.id && !role._contract?.id)
-            console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
-        return role._project !== undefined;
-    }
     function renderRow(role) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
@@ -49,10 +44,10 @@ function RolesSearch({ title }) {
                 " | ",
                 role._person?._nameSurnameEmail),
             react_1.default.createElement("div", { className: "text-muted" }, role.description),
-            isProjectRole(role) ? renderProjectData(role) : renderContractData(role)));
+            (0, RolesController_1.isProjectRole)(role) ? renderProjectData(role) : renderContractData(role)));
     }
     function renderProjectData(role) {
-        if (!role._project?.id)
+        if (!role._project?.ourId)
             return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych projektu");
         const { name, ourId, alias } = role._project;
         return (react_1.default.createElement(react_1.default.Fragment, null,

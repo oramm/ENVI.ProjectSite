@@ -32,7 +32,7 @@ const ContractRoleModal_1 = require("./ContractRoleModal");
 const ProjectRoleModal_1 = require("./ProjectRoleModal");
 function RoleEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => { }, [initialData]);
-    return initialData.hasOwnProperty("projectId") ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+    return (0, RolesController_1.isProjectRole)(initialData) ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
 exports.RoleEditModalButton = RoleEditModalButton;
 function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
@@ -72,7 +72,6 @@ function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
             makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj rolę kontraktową",
-            buttonVariant: "outline-success",
         } }));
 }
 exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;

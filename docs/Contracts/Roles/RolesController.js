@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
+exports.isProjectRole = exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 exports.rolesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -41,3 +41,9 @@ exports.contractsRepository = new RepositoryReact_1.default({
     },
     name: "contractRoles-contracts",
 });
+function isProjectRole(role) {
+    if (!role._project?.ourId && !role._contract?.id)
+        console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
+    return role._project !== undefined;
+}
+exports.isProjectRole = isProjectRole;

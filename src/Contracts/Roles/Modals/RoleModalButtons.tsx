@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
 import { ContractRoleData, ProjectRoleData, RoleData } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
-import { rolesRepository } from "../RolesController";
+import { isProjectRole, rolesRepository } from "../RolesController";
 import { makeRoleValidationSchema } from "./RoleValidationSchema";
 import { ContractRoleModalBody } from "./ContractRoleModal";
 import { ProjectRoleModalBody } from "./ProjectRoleModal";
@@ -13,7 +13,7 @@ export function RoleEditModalButton({
 }: SpecificEditModalButtonProps<ProjectRoleData | ContractRoleData>) {
     useEffect(() => {}, [initialData]);
 
-    return initialData.hasOwnProperty("projectId") ? (
+    return isProjectRole(initialData) ? (
         <ProjectRoleEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
     ) : (
         <ContractRoleEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
@@ -75,7 +75,6 @@ export function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }: Spec
             }}
             buttonProps={{
                 buttonCaption: "Dodaj rolę kontraktową",
-                buttonVariant: "outline-success",
             }}
         />
     );

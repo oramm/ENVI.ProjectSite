@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { ContractRoleData, ProjectRoleData, RoleData } from "../../../Typings/bussinesTypes";
 import { RolesFilterBody } from "./RoleFilterBody";
-import { rolesRepository } from "./RolesController";
+import { isProjectRole, rolesRepository } from "./RolesController";
 import {
     ContractRoleAddNewModalButton,
     ProjectRoleAddNewModalButton,
@@ -13,12 +13,6 @@ export default function RolesSearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
     }, [title]);
-
-    function isProjectRole(role: ContractRoleData | ProjectRoleData): role is ProjectRoleData {
-        if (!(role as ProjectRoleData)._project?.id && !(role as ContractRoleData)._contract?.id)
-            console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
-        return (role as ProjectRoleData)._project !== undefined;
-    }
 
     function renderRow(role: ContractRoleData | ProjectRoleData) {
         return (
@@ -32,7 +26,7 @@ export default function RolesSearch({ title }: { title: string }) {
         );
     }
     function renderProjectData(role: ProjectRoleData) {
-        if (!role._project?.id) return <div className="text-danger">⚠️ Brak danych projektu</div>;
+        if (!role._project?.ourId) return <div className="text-danger">⚠️ Brak danych projektu</div>;
         const { name, ourId, alias } = role._project;
 
         return (
