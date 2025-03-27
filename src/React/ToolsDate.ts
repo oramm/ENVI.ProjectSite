@@ -74,7 +74,9 @@ export default class ToolsDate {
     static isValidDate(date: Date) {
         return date instanceof Date && !isNaN(date.getTime());
     }
-
+    /**
+     * Konwertuje datę z formatu js (obiekt: Date) na format sql (string: "YYYY-MM-DD")
+     */
     static dateJsToSql(jsDate: Date) {
         if (jsDate !== undefined) {
             var sqlDate = new Date(jsDate).toISOString().slice(0, 10);
@@ -115,14 +117,17 @@ export default class ToolsDate {
         return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
 
-    static timestampToString(timestamp: string | Date) {
-        if (typeof timestamp === "string") timestamp = new Date(timestamp);
-        var day = this.addZero(timestamp.getUTCDate());
-        var month = this.addZero(timestamp.getUTCMonth() + 1); // months are zero-indexed
-        var year = timestamp.getUTCFullYear();
-        var h = this.addZero(timestamp.getUTCHours());
-        var m = this.addZero(timestamp.getUTCMinutes());
-        return day + "-" + month + "-" + year + " " + h + ":" + m;
+    /**
+     * Konwertuje datę z ISO ("YYYY-MM-DDTHH:MM:SSZ") na format "DD-MM-YYYY"
+     */
+    static dateISOToDMY(dateString: string) {
+        const date = new Date(dateString);
+        const options: Intl.DateTimeFormatOptions = {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        };
+        return new Intl.DateTimeFormat("pl-PL", options).format(date).replace(/\./g, "-");
     }
 
     /**dodaje przedrostek "0" do liczb 0-9 */
@@ -142,9 +147,9 @@ export default class ToolsDate {
         return diffDays + 1;
     }
 
-    /**Formatuje datę do postaci "DD-MM-YYYY HH:MM"
+    /**Formatuje datę do postaci "DD-mmm-YYYY HH:MM"
      */
-    static formatTime(date: Date | string) {
+    static dateToDDmmmYYYYHHMM(date: Date | string) {
         let dateToFormat = new Date(date);
 
         return dateToFormat.toLocaleDateString("pl-PL", {

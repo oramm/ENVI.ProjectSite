@@ -82,7 +82,7 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
         field.onChange(valueToBeSent);
     }
     function renderOption(option) {
-        const formattedDate = ToolsDate_1.default.formatTime(option.modifiedTime);
+        const formattedDate = ToolsDate_1.default.dateToDDmmmYYYYHHMM(option.modifiedTime);
         const isAttentionRequired = attentionRequiredFileNames.some((fileName) => option.name.toLowerCase() === fileName.toLowerCase());
         return isAttentionRequired
             ? renderAttentionRequiredOption(option.name, formattedDate, option.lastModifyingUser.displayName)

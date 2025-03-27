@@ -5,11 +5,10 @@ import {
     PersonData,
     ProjectData,
     ProjectRoleData,
-    RoleData,
 } from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
-export const rolesRepository = new RepositoryReact<RoleData>({
+export const rolesRepository = new RepositoryReact<ContractRoleData | ProjectRoleData>({
     actionRoutes: {
         getRoute: "roles",
         addNewRoute: "role",

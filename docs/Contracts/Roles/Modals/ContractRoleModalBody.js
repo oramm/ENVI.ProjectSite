@@ -28,19 +28,16 @@ const react_1 = __importStar(require("react"));
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const RolesController_1 = require("../RolesController");
-const RoleModalBody_1 = require("./RoleModalBody");
+const CommonRoleFieldsModalBody_1 = require("./CommonRoleFieldsModalBody");
 function ContractRoleModalBody(props) {
     const { isEditing, initialData } = props;
-    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const resetData = {
-            _contract: initialData?._contract || undefined,
-        };
-        reset(resetData);
+        setValue("_contract", initialData?._contract, { shouldDirty: false, shouldValidate: true });
         trigger();
-    }, [initialData, reset]);
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_project" }),
-        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_contract" }),
+        react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
 exports.ContractRoleModalBody = ContractRoleModalBody;

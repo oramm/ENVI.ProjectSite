@@ -92,7 +92,7 @@ export default function LettersSearch({ title }: { title: string }) {
                 <span className="fw-bold">
                     {Tools.getLabelFromKey(letter._lastEvent.eventType, MainSetup.LetterEventType)}
                 </span>{" "}
-                {ToolsDate.formatTime(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
+                {ToolsDate.dateToDDmmmYYYYHHMM(letter._lastEvent._lastUpdated!)} przez {letter._lastEvent._editor.name}{" "}
                 {letter._lastEvent._editor.surname}
             </div>
         );

@@ -78,6 +78,6 @@ function Tasks() {
                 renderCoordinatorData(),
                 react_1.default.createElement("br", null),
                 "Aktualizacja: ",
-                ToolsDate_1.default.timestampToString(contract._lastUpdated)))));
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
 exports.default = Tasks;

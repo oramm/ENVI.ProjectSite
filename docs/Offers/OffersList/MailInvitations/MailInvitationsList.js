@@ -25,7 +25,7 @@ function MailInvitationsList() {
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano:",
                 " ",
-                ToolsDate_1.default.formatTime(dataItem.date),
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(dataItem.date),
                 " ",
                 renderStatus(dataItem)),
             react_1.default.createElement("div", { className: "mb-1" },

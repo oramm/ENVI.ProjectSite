@@ -124,7 +124,7 @@ function OffersSearch({ title }) {
         return (react_1.default.createElement("div", { className: "text-muted" },
             react_1.default.createElement("span", { className: "fw-bold" }, offer._lastEvent.eventType),
             " ",
-            ToolsDate_1.default.formatTime(offer._lastEvent._lastUpdated),
+            ToolsDate_1.default.dateToDDmmmYYYYHHMM(offer._lastEvent._lastUpdated),
             " przez ",
             offer._lastEvent._editor.name,
             " ",

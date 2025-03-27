@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoleModalBody = void 0;
+exports.CommonRoleFieldsModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
@@ -31,7 +31,7 @@ const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/G
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const RolesController_1 = require("../RolesController");
 const OtherAttributesSelectors_1 = require("../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
-function RoleModalBody({ isEditing, initialData }) {
+function CommonRoleFieldsModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
@@ -57,4 +57,4 @@ function RoleModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
 }
-exports.RoleModalBody = RoleModalBody;
+exports.CommonRoleFieldsModalBody = CommonRoleFieldsModalBody;

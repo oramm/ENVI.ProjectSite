@@ -66,7 +66,7 @@ function AddOurOfferFromMailButton({ onError }) {
         console.log("mailInvitationsRepository.currentItems[0] is null");
         return null;
     }
-    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate_1.default.formatTime(mailData.date)}</strong><br>${mailData.subject}`;
+    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate_1.default.dateToDDmmmYYYYHHMM(mailData.date)}</strong><br>${mailData.subject}`;
     async function handleClick() {
         try {
             const currentItem = { ...OffersController_1.mailInvitationsRepository.currentItems[0] };

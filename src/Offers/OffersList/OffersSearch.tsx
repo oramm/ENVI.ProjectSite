@@ -119,7 +119,7 @@ export default function OffersSearch({ title }: { title?: string }) {
         return (
             <div className="text-muted">
                 <span className="fw-bold">{offer._lastEvent.eventType}</span>{" "}
-                {ToolsDate.formatTime(offer._lastEvent._lastUpdated!)} przez {offer._lastEvent._editor.name}{" "}
+                {ToolsDate.dateToDDmmmYYYYHHMM(offer._lastEvent._lastUpdated!)} przez {offer._lastEvent._editor.name}{" "}
                 {offer._lastEvent._editor.surname} {_recipients ? `do: ${_recipients}` : ""}{" "}
                 {fileNames ? ` | wysłane pliki: ${fileNames}` : ""} {offerVersion}
                 {offer.isOur && !(offer as OurOffer).invitationMailId && (

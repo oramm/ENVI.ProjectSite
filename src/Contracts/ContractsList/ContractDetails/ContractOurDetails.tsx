@@ -173,7 +173,7 @@ export default function ContractOurDetails() {
                 <p className="tekst-muted small">
                     Koordynator(ka): {renderCoordinatorData()}
                     <br />
-                    Aktualizacja: {ToolsDate.timestampToString(contract._lastUpdated)}
+                    Aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(contract._lastUpdated)}
                 </p>
             </Card.Body>
         </Card>

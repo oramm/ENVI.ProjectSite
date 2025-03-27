@@ -69,7 +69,7 @@ export default function Tasks() {
                 <p className="tekst-muted small">
                     {renderCoordinatorData()}
                     <br />
-                    Aktualizacja: {ToolsDate.timestampToString(contract._lastUpdated)}
+                    Aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(contract._lastUpdated)}
                 </p>
             </Card.Body>
         </Card>

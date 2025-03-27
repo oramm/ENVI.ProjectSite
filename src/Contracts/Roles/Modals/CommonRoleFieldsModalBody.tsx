@@ -3,12 +3,12 @@ import { Form } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { ContractRoleData, ProjectRoleData, RoleData } from "../../../../Typings/bussinesTypes";
 import { PersonSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { personsRepository } from "../RolesController";
 import { RoleGroupSelector } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
+import { ContractRoleData } from "../../../../Typings/bussinesTypes";
 
-export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<RoleData>) {
+export function CommonRoleFieldsModalBody({ isEditing, initialData }: ModalBodyProps<ContractRoleData>) {
     const {
         register,
         reset,
@@ -17,7 +17,7 @@ export function RoleModalBody({ isEditing, initialData }: ModalBodyProps<RoleDat
     } = useFormContext();
 
     useEffect(() => {
-        const resetData: Partial<RoleData> = {
+        const resetData: Partial<ContractRoleData> = {
             name: initialData?.name || "",
             description: initialData?.description || "",
             groupName: initialData?.groupName || "",

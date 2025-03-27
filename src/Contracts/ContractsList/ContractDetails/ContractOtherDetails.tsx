@@ -54,7 +54,9 @@ export default function ContractOtherDetails() {
                     </Row>
                 </Container>
 
-                <p className="tekst-muted small">Aktualizacja: {ToolsDate.timestampToString(contract._lastUpdated)}</p>
+                <p className="tekst-muted small">
+                    Aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(contract._lastUpdated)}
+                </p>
             </Card.Body>
         </Card>
     );

@@ -151,7 +151,7 @@ function InvoiceDetails() {
                     `${invoice._owner.name} ${invoice._owner.surname}`,
                     react_1.default.createElement("br", null),
                     "Aktualizacja: ",
-                    ToolsDate_1.default.timestampToString(invoice._lastUpdated))))));
+                    ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice._lastUpdated))))));
 }
 exports.default = InvoiceDetails;
 // Utwórz kontekst

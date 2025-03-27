@@ -4,7 +4,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ProjectRoleData } from "../../../../Typings/bussinesTypes";
 import { ProjectSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { projectsRepository } from "../RolesController";
-import { RoleModalBody } from "./RoleModalBody";
+import { CommonRoleFieldsModalBody } from "./CommonRoleFieldsModalBody";
 
 export function ProjectRoleModalBody(props: ModalBodyProps<ProjectRoleData>) {
     const { isEditing, initialData } = props;
@@ -17,7 +17,7 @@ export function ProjectRoleModalBody(props: ModalBodyProps<ProjectRoleData>) {
     return (
         <>
             <ProjectSelector repository={projectsRepository} name="_project" />
-            <RoleModalBody {...props} />
+            <CommonRoleFieldsModalBody {...props} />
         </>
     );
 }

@@ -81132,7 +81132,7 @@ function ContractOtherDetails() {
                         contract.comment)))),
             react_1.default.createElement("p", { className: "tekst-muted small" },
                 "Aktualizacja: ",
-                ToolsDate_1.default.timestampToString(contract._lastUpdated)))));
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
 exports["default"] = ContractOtherDetails;
 
@@ -81284,7 +81284,7 @@ function ContractOurDetails() {
                 renderCoordinatorData(),
                 react_1.default.createElement("br", null),
                 "Aktualizacja: ",
-                ToolsDate_1.default.timestampToString(contract._lastUpdated)))));
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
 exports["default"] = ContractOurDetails;
 
@@ -81565,7 +81565,7 @@ function Tasks() {
                 renderCoordinatorData(),
                 react_1.default.createElement("br", null),
                 "Aktualizacja: ",
-                ToolsDate_1.default.timestampToString(contract._lastUpdated)))));
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
 exports["default"] = Tasks;
 
@@ -83278,10 +83278,81 @@ exports["default"] = SecuritiesSearch;
 
 /***/ }),
 
-/***/ "./src/Contracts/Roles/Modals/ContractRoleModal.tsx":
-/*!**********************************************************!*\
-  !*** ./src/Contracts/Roles/Modals/ContractRoleModal.tsx ***!
-  \**********************************************************/
+/***/ "./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx":
+/*!******************************************************************!*\
+  !*** ./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommonRoleFieldsModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
+const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
+function CommonRoleFieldsModalBody({ isEditing, initialData }) {
+    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            groupName: initialData?.groupName || "",
+            _person: initialData?._person,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa roli"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazw\u0119 roli", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis roli", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_person", className: "mb-4" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
+}
+exports.CommonRoleFieldsModalBody = CommonRoleFieldsModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Roles/Modals/ContractRoleModalBody.tsx":
+/*!**************************************************************!*\
+  !*** ./src/Contracts/Roles/Modals/ContractRoleModalBody.tsx ***!
+  \**************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -83315,20 +83386,17 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
-const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
+const CommonRoleFieldsModalBody_1 = __webpack_require__(/*! ./CommonRoleFieldsModalBody */ "./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx");
 function ContractRoleModalBody(props) {
     const { isEditing, initialData } = props;
-    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
-        const resetData = {
-            _contract: initialData?._contract || undefined,
-        };
-        reset(resetData);
+        setValue("_contract", initialData?._contract, { shouldDirty: false, shouldValidate: true });
         trigger();
-    }, [initialData, reset]);
+    }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_project" }),
-        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_contract" }),
+        react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
 exports.ContractRoleModalBody = ContractRoleModalBody;
 
@@ -83372,7 +83440,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
-const RoleModalBody_1 = __webpack_require__(/*! ./RoleModalBody */ "./src/Contracts/Roles/Modals/RoleModalBody.tsx");
+const CommonRoleFieldsModalBody_1 = __webpack_require__(/*! ./CommonRoleFieldsModalBody */ "./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx");
 function ProjectRoleModalBody(props) {
     const { isEditing, initialData } = props;
     const { setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
@@ -83381,80 +83449,9 @@ function ProjectRoleModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, name: "_project" }),
-        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+        react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
 exports.ProjectRoleModalBody = ProjectRoleModalBody;
-
-
-/***/ }),
-
-/***/ "./src/Contracts/Roles/Modals/RoleModalBody.tsx":
-/*!******************************************************!*\
-  !*** ./src/Contracts/Roles/Modals/RoleModalBody.tsx ***!
-  \******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoleModalBody = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
-const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
-function RoleModalBody({ isEditing, initialData }) {
-    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
-    (0, react_1.useEffect)(() => {
-        const resetData = {
-            name: initialData?.name || "",
-            description: initialData?.description || "",
-            groupName: initialData?.groupName || "",
-            _person: initialData?._person,
-        };
-        reset(resetData);
-        trigger();
-    }, [initialData, reset]);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, null),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa roli"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazw\u0119 roli", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis roli", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_person", className: "mb-4" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
-}
-exports.RoleModalBody = RoleModalBody;
 
 
 /***/ }),
@@ -83495,9 +83492,9 @@ exports.ProjectRoleAddNewModalButton = exports.ContractRoleAddNewModalButton = e
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
-const RoleValidationSchema_1 = __webpack_require__(/*! ./RoleValidationSchema */ "./src/Contracts/Roles/Modals/RoleValidationSchema.ts");
-const ContractRoleModal_1 = __webpack_require__(/*! ./ContractRoleModal */ "./src/Contracts/Roles/Modals/ContractRoleModal.tsx");
 const ProjectRoleModal_1 = __webpack_require__(/*! ./ProjectRoleModal */ "./src/Contracts/Roles/Modals/ProjectRoleModal.tsx");
+const ContractRoleModalBody_1 = __webpack_require__(/*! ./ContractRoleModalBody */ "./src/Contracts/Roles/Modals/ContractRoleModalBody.tsx");
+const RoleValidationSchema_1 = __webpack_require__(/*! ./RoleValidationSchema */ "./src/Contracts/Roles/Modals/RoleValidationSchema.ts");
 function RoleEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     (0, react_1.useEffect)(() => { }, [initialData]);
     return (0, RolesController_1.isProjectRole)(initialData) ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
@@ -83510,7 +83507,7 @@ function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
             modalTitle: "Edycja roli projektowej",
             repository: RolesController_1.rolesRepository,
             initialData: initialData,
-            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+            makeValidationSchema: RoleValidationSchema_1.makeProjectRoleValidationSchema,
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
@@ -83519,39 +83516,39 @@ exports.ProjectRoleEditModalButton = ProjectRoleEditModalButton;
 function ContractRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
-            ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
+            ModalBodyComponent: ContractRoleModalBody_1.ContractRoleModalBody,
             modalTitle: "Edycja roli kontraktowej",
             repository: RolesController_1.rolesRepository,
             initialData: initialData,
-            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+            makeValidationSchema: RoleValidationSchema_1.makeContractRoleValidationSchema,
         }, buttonProps: {
             buttonVariant: "outline-success",
         } }));
 }
 exports.ContractRoleEditModalButton = ContractRoleEditModalButton;
-function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }) {
+function ContractRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
-            ModalBodyComponent: ContractRoleModal_1.ContractRoleModalBody,
+            ModalBodyComponent: ContractRoleModalBody_1.ContractRoleModalBody,
             modalTitle: "Dodaj rolę kontraktową",
-            modalSubtitle: "Dodana rola będzie przypisana do wybranego kontraktu. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie," +
+            modalSubtitle: "Dodana rola będzie przypisana <strong>tylko do wybranego kontraktu</strong>. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie, " +
                 "skorzystaj z opcji dodaj rolę projektową",
             repository: RolesController_1.rolesRepository,
-            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+            makeValidationSchema: RoleValidationSchema_1.makeContractRoleValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj rolę kontraktową",
         } }));
 }
 exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;
-function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }) {
+function ProjectRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ProjectRoleModal_1.ProjectRoleModalBody,
             modalTitle: "Dodaj rolę projektową",
-            modalSubtitle: "Dodana rola będzie przypisana do wszystkich kontraktów w wybranym projekcie. Jeśi chcesz dodac rolę do jednego kontraktu," +
+            modalSubtitle: "Dodana rola będzie przypisana <strong>do wszystkich kontraktów w wybranym projekcie</strong>. Jeśi chcesz dodac rolę do jednego kontraktu," +
                 "skorzystaj z opcji dodaj rola kontraktowa",
             repository: RolesController_1.rolesRepository,
-            makeValidationSchema: RoleValidationSchema_1.makeRoleValidationSchema,
+            makeValidationSchema: RoleValidationSchema_1.makeProjectRoleValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj rolę projektową",
             buttonVariant: "outline-success",
@@ -83594,33 +83591,31 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeRoleValidationSchema = void 0;
+exports.makeProjectRoleValidationSchema = exports.makeContractRoleValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
         .required("Podaj nazwę")
         .min(3, "Nazwa musi mieć co najmniej 3 znaki")
-        .max(150, "Nazwa może mieć maksymalnie 150 znaków"),
-    address: Yup.string().max(250, "Adres może mieć maksymalnie 250 znaków"),
-    taxNumber: Yup.string()
-        .nullable()
-        .test("len", "Numer podatkowy musi mieć dokładnie 10 lub 13 znaków", (val) => val ? val.length === 10 || val.length === 13 : true),
-    www: Yup.string().max(150, "WWW może mieć maksymalnie 150 znaków"),
-    email: Yup.string()
-        .nullable()
-        .matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, {
-        message: "Nieprawidłowy format email",
-        excludeEmptyString: true,
-    })
-        .max(80, "Email może mieć maksymalnie 80 znaków"),
-    phone: Yup.string().max(25, "Telefon może mieć maksymalnie 25 znaków"),
+        .max(150, "Nazwa może mieć maksymalnie 100 znaków"),
+    description: Yup.string().max(500, "Opis może mieć maksymalnie 500 znaków"),
+    _person: Yup.object().required("Wybierz osobę"),
+    groupName: Yup.string().required("Podaj nazwę grupy"),
 };
-function makeRoleValidationSchema(isEditing) {
+function makeContractRoleValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
+        _contract: Yup.object().required("Wybierz kontrakt"),
     });
 }
-exports.makeRoleValidationSchema = makeRoleValidationSchema;
+exports.makeContractRoleValidationSchema = makeContractRoleValidationSchema;
+function makeProjectRoleValidationSchema(isEditing) {
+    return Yup.object().shape({
+        ...commonFields,
+        _project: Yup.object().required("Wybierz projekt"),
+    });
+}
+exports.makeProjectRoleValidationSchema = makeProjectRoleValidationSchema;
 
 
 /***/ }),
@@ -83807,27 +83802,34 @@ const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Res
 const RoleFilterBody_1 = __webpack_require__(/*! ./RoleFilterBody */ "./src/Contracts/Roles/RoleFilterBody.tsx");
 const RolesController_1 = __webpack_require__(/*! ./RolesController */ "./src/Contracts/Roles/RolesController.ts");
 const RoleModalButtons_1 = __webpack_require__(/*! ./Modals/RoleModalButtons */ "./src/Contracts/Roles/Modals/RoleModalButtons.tsx");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
 function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
     function renderRow(role) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
+            react_1.default.createElement("h6", null,
                 role.groupName,
                 ": ",
                 react_1.default.createElement("strong", null, role.name),
                 " | ",
-                role._person?._nameSurnameEmail),
+                role._person?._nameSurnameEmail,
+                " |",
+                " ",
+                (0, RolesController_1.isProjectRole)(role) && "rola projektowa"),
             react_1.default.createElement("div", { className: "text-muted" }, role.description),
-            (0, RolesController_1.isProjectRole)(role) ? renderProjectData(role) : renderContractData(role)));
+            renderContractData(role),
+            " ",
+            renderProjectData(role)));
     }
     function renderProjectData(role) {
         if (!role._project?.ourId)
-            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych projektu");
+            return react_1.default.createElement("div", { className: "text-danger mb-2" }, "\u26A0\uFE0F Brak danych projektu");
         const { name, ourId, alias } = role._project;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement("div", { className: "mb-2" },
             react_1.default.createElement("div", null,
+                "Projekt: ",
                 ourId,
                 " ",
                 alias,
@@ -83836,21 +83838,24 @@ function RolesSearch({ title }) {
     }
     function renderContractData(role) {
         if (!role._contract?.id)
-            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych kontraktu");
-        const { name, alias, startDate, endDate, _type } = role._contract;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
+            return react_1.default.createElement("div", { className: "text-danger mb-2" }, "\u26A0\uFE0F Brak danych kontraktu");
+        const { name, alias, startDate, endDate, _type, _contractRangesNames } = role._contract;
+        return (react_1.default.createElement("div", { className: "mb-2" },
             react_1.default.createElement("div", null,
                 "Typ umowy: ",
-                _type.name,
+                react_1.default.createElement("strong", null, _type.name),
                 ", ",
-                alias),
+                alias,
+                ", zakresy:",
+                " ",
+                _contractRangesNames?.length ? (react_1.default.createElement("span", { className: "text-success" }, _contractRangesNames.join(", "))) : (react_1.default.createElement("span", { className: "text-danger" }, "\u26A0\uFE0F nie podano zakres\u00F3w"))),
             react_1.default.createElement("div", { className: "text-secondary" }, name),
             react_1.default.createElement("div", null,
-                " ",
                 "Realizacja od ",
-                startDate,
-                " do ",
-                endDate)));
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(startDate)),
+                " do",
+                " ",
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(endDate)))));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [{ header: "Nazwa", renderTdBody: renderRow }], AddNewButtonComponents: [RoleModalButtons_1.ProjectRoleAddNewModalButton, RoleModalButtons_1.ContractRoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
 }
@@ -84323,7 +84328,7 @@ function InvoiceDetails() {
                     `${invoice._owner.name} ${invoice._owner.surname}`,
                     react_1.default.createElement("br", null),
                     "Aktualizacja: ",
-                    ToolsDate_1.default.timestampToString(invoice._lastUpdated))))));
+                    ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice._lastUpdated))))));
 }
 exports["default"] = InvoiceDetails;
 // Utwórz kontekst
@@ -85399,7 +85404,7 @@ function LettersSearch({ title }) {
         return (react_1.default.createElement("div", { className: "text-muted small mt-2" },
             react_1.default.createElement("span", { className: "fw-bold" }, Tools_1.default.getLabelFromKey(letter._lastEvent.eventType, MainSetupReact_1.default.LetterEventType)),
             " ",
-            ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
+            ToolsDate_1.default.dateToDDmmmYYYYHHMM(letter._lastEvent._lastUpdated),
             " przez ",
             letter._lastEvent._editor.name,
             " ",
@@ -86621,7 +86626,7 @@ function MailInvitationsList() {
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano:",
                 " ",
-                ToolsDate_1.default.formatTime(dataItem.date),
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(dataItem.date),
                 " ",
                 renderStatus(dataItem)),
             react_1.default.createElement("div", { className: "mb-1" },
@@ -86800,7 +86805,7 @@ function MailsToCheckList({ show, handleClose }) {
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano:",
                 " ",
-                ToolsDate_1.default.formatTime(dataItem.date)),
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(dataItem.date)),
             react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),
@@ -87000,7 +87005,7 @@ function AddOurOfferFromMailButton({ onError }) {
         console.log("mailInvitationsRepository.currentItems[0] is null");
         return null;
     }
-    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate_1.default.formatTime(mailData.date)}</strong><br>${mailData.subject}`;
+    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate_1.default.dateToDDmmmYYYYHHMM(mailData.date)}</strong><br>${mailData.subject}`;
     async function handleClick() {
         try {
             const currentItem = { ...OffersController_1.mailInvitationsRepository.currentItems[0] };
@@ -88307,7 +88312,7 @@ function OffersSearch({ title }) {
         return (react_1.default.createElement("div", { className: "text-muted" },
             react_1.default.createElement("span", { className: "fw-bold" }, offer._lastEvent.eventType),
             " ",
-            ToolsDate_1.default.formatTime(offer._lastEvent._lastUpdated),
+            ToolsDate_1.default.dateToDDmmmYYYYHHMM(offer._lastEvent._lastUpdated),
             " przez ",
             offer._lastEvent._editor.name,
             " ",
@@ -90663,6 +90668,9 @@ class ToolsDate {
     static isValidDate(date) {
         return date instanceof Date && !isNaN(date.getTime());
     }
+    /**
+     * Konwertuje datę z formatu js (obiekt: Date) na format sql (string: "YYYY-MM-DD")
+     */
     static dateJsToSql(jsDate) {
         if (jsDate !== undefined) {
             var sqlDate = new Date(jsDate).toISOString().slice(0, 10);
@@ -90698,15 +90706,17 @@ class ToolsDate {
         }
         return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
-    static timestampToString(timestamp) {
-        if (typeof timestamp === "string")
-            timestamp = new Date(timestamp);
-        var day = this.addZero(timestamp.getUTCDate());
-        var month = this.addZero(timestamp.getUTCMonth() + 1); // months are zero-indexed
-        var year = timestamp.getUTCFullYear();
-        var h = this.addZero(timestamp.getUTCHours());
-        var m = this.addZero(timestamp.getUTCMinutes());
-        return day + "-" + month + "-" + year + " " + h + ":" + m;
+    /**
+     * Konwertuje datę z ISO ("YYYY-MM-DDTHH:MM:SSZ") na format "DD-MM-YYYY"
+     */
+    static dateISOToDMY(dateString) {
+        const date = new Date(dateString);
+        const options = {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        };
+        return new Intl.DateTimeFormat("pl-PL", options).format(date).replace(/\./g, "-");
     }
     /**dodaje przedrostek "0" do liczb 0-9 */
     static addZero(num) {
@@ -90723,9 +90733,9 @@ class ToolsDate {
         const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
         return diffDays + 1;
     }
-    /**Formatuje datę do postaci "DD-MM-YYYY HH:MM"
+    /**Formatuje datę do postaci "DD-mmm-YYYY HH:MM"
      */
-    static formatTime(date) {
+    static dateToDDmmmYYYYHHMM(date) {
         let dateToFormat = new Date(date);
         return dateToFormat.toLocaleDateString("pl-PL", {
             day: "2-digit",
@@ -92427,7 +92437,7 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
         field.onChange(valueToBeSent);
     }
     function renderOption(option) {
-        const formattedDate = ToolsDate_1.default.formatTime(option.modifiedTime);
+        const formattedDate = ToolsDate_1.default.dateToDDmmmYYYYHHMM(option.modifiedTime);
         const isAttentionRequired = attentionRequiredFileNames.some((fileName) => option.name.toLowerCase() === fileName.toLowerCase());
         return isAttentionRequired
             ? renderAttentionRequiredOption(option.name, formattedDate, option.lastModifyingUser.displayName)

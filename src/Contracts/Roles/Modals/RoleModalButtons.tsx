@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { ContractRoleData, ProjectRoleData, RoleData } from "../../../../Typings/bussinesTypes";
+import { ContractRoleData, ProjectRoleData } from "../../../../Typings/bussinesTypes";
 import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { isProjectRole, rolesRepository } from "../RolesController";
-import { makeRoleValidationSchema } from "./RoleValidationSchema";
-import { ContractRoleModalBody } from "./ContractRoleModal";
 import { ProjectRoleModalBody } from "./ProjectRoleModal";
+import { ContractRoleModalBody } from "./ContractRoleModalBody";
+import { makeContractRoleValidationSchema, makeProjectRoleValidationSchema } from "./RoleValidationSchema";
 
 export function RoleEditModalButton({
     modalProps: { onEdit, initialData },
@@ -31,7 +31,7 @@ export function ProjectRoleEditModalButton({
                 modalTitle: "Edycja roli projektowej",
                 repository: rolesRepository,
                 initialData: initialData,
-                makeValidationSchema: makeRoleValidationSchema,
+                makeValidationSchema: makeProjectRoleValidationSchema,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -51,7 +51,7 @@ export function ContractRoleEditModalButton({
                 modalTitle: "Edycja roli kontraktowej",
                 repository: rolesRepository,
                 initialData: initialData,
-                makeValidationSchema: makeRoleValidationSchema,
+                makeValidationSchema: makeContractRoleValidationSchema,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -60,18 +60,20 @@ export function ContractRoleEditModalButton({
     );
 }
 
-export function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<RoleData>) {
+export function ContractRoleAddNewModalButton({
+    modalProps: { onAddNew },
+}: SpecificAddNewModalButtonProps<ContractRoleData>) {
     return (
-        <GeneralAddNewModalButton<RoleData>
+        <GeneralAddNewModalButton<ContractRoleData>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ContractRoleModalBody,
                 modalTitle: "Dodaj rolę kontraktową",
                 modalSubtitle:
-                    "Dodana rola będzie przypisana do wybranego kontraktu. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie," +
+                    "Dodana rola będzie przypisana <strong>tylko do wybranego kontraktu</strong>. Jeśli chcesz dodać rolę do wszystkich kontraktów w projekcie, " +
                     "skorzystaj z opcji dodaj rolę projektową",
                 repository: rolesRepository,
-                makeValidationSchema: makeRoleValidationSchema,
+                makeValidationSchema: makeContractRoleValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj rolę kontraktową",
@@ -80,18 +82,20 @@ export function ContractRoleAddNewModalButton({ modalProps: { onAddNew } }: Spec
     );
 }
 
-export function ProjectRoleAddNewModalButton({ modalProps: { onAddNew } }: SpecificAddNewModalButtonProps<RoleData>) {
+export function ProjectRoleAddNewModalButton({
+    modalProps: { onAddNew },
+}: SpecificAddNewModalButtonProps<ProjectRoleData>) {
     return (
-        <GeneralAddNewModalButton<RoleData>
+        <GeneralAddNewModalButton<ProjectRoleData>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectRoleModalBody,
                 modalTitle: "Dodaj rolę projektową",
                 modalSubtitle:
-                    "Dodana rola będzie przypisana do wszystkich kontraktów w wybranym projekcie. Jeśi chcesz dodac rolę do jednego kontraktu," +
+                    "Dodana rola będzie przypisana <strong>do wszystkich kontraktów w wybranym projekcie</strong>. Jeśi chcesz dodac rolę do jednego kontraktu," +
                     "skorzystaj z opcji dodaj rola kontraktowa",
                 repository: rolesRepository,
-                makeValidationSchema: makeRoleValidationSchema,
+                makeValidationSchema: makeProjectRoleValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj rolę projektową",

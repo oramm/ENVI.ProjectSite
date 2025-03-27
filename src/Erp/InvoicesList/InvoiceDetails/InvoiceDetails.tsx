@@ -183,7 +183,7 @@ export default function InvoiceDetails() {
                     <p className="tekst-muted small">
                         Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}
                         <br />
-                        Aktualizacja: {ToolsDate.timestampToString(invoice._lastUpdated as string)}
+                        Aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(invoice._lastUpdated!)}
                     </p>
                 </Card.Body>
             </Card>

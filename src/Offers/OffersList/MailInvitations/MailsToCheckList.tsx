@@ -36,7 +36,7 @@ export default function MailsToCheckList({ show, handleClose }: { show: boolean;
             <div onClick={() => handleRowClick(dataItem)}>
                 <div>
                     Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano:{" "}
-                    {ToolsDate.formatTime(dataItem.date)}
+                    {ToolsDate.dateToDDmmmYYYYHHMM(dataItem.date)}
                 </div>
                 <div className="mb-1">Temat: {dataItem.subject}</div>
                 {isActive && (

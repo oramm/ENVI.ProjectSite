@@ -62,7 +62,7 @@ function MailsToCheckList({ show, handleClose }) {
                 react_1.default.createElement("strong", null, dataItem.to),
                 " Otrzymano:",
                 " ",
-                ToolsDate_1.default.formatTime(dataItem.date)),
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(dataItem.date)),
             react_1.default.createElement("div", { className: "mb-1" },
                 "Temat: ",
                 dataItem.subject),

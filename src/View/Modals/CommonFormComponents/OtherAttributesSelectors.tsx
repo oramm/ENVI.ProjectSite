@@ -113,7 +113,7 @@ export function GdFilesSelector({
     }
 
     function renderOption(option: GdFileData) {
-        const formattedDate = ToolsDate.formatTime(option.modifiedTime);
+        const formattedDate = ToolsDate.dateToDDmmmYYYYHHMM(option.modifiedTime);
         const isAttentionRequired = attentionRequiredFileNames.some(
             (fileName) => option.name.toLowerCase() === fileName.toLowerCase()
         );

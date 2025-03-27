@@ -18,7 +18,7 @@ export default function MailInvitationsList() {
             <>
                 <div>
                     Od: <strong>{dataItem.from}</strong>, Do <strong>{dataItem.to}</strong> Otrzymano:{" "}
-                    {ToolsDate.formatTime(dataItem.date)} {renderStatus(dataItem)}
+                    {ToolsDate.dateToDDmmmYYYYHHMM(dataItem.date)} {renderStatus(dataItem)}
                 </div>
                 <div className="mb-1">Temat: {dataItem.subject}</div>
                 {isActive && (

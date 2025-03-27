@@ -28,7 +28,7 @@ const react_1 = __importStar(require("react"));
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const RolesController_1 = require("../RolesController");
-const RoleModalBody_1 = require("./RoleModalBody");
+const CommonRoleFieldsModalBody_1 = require("./CommonRoleFieldsModalBody");
 function ProjectRoleModalBody(props) {
     const { isEditing, initialData } = props;
     const { setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
@@ -37,6 +37,6 @@ function ProjectRoleModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, name: "_project" }),
-        react_1.default.createElement(RoleModalBody_1.RoleModalBody, { ...props })));
+        react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
 exports.ProjectRoleModalBody = ProjectRoleModalBody;

@@ -86,7 +86,7 @@ function LettersSearch({ title }) {
         return (react_1.default.createElement("div", { className: "text-muted small mt-2" },
             react_1.default.createElement("span", { className: "fw-bold" }, Tools_1.default.getLabelFromKey(letter._lastEvent.eventType, MainSetupReact_1.default.LetterEventType)),
             " ",
-            ToolsDate_1.default.formatTime(letter._lastEvent._lastUpdated),
+            ToolsDate_1.default.dateToDDmmmYYYYHHMM(letter._lastEvent._lastUpdated),
             " przez ",
             letter._lastEvent._editor.name,
             " ",

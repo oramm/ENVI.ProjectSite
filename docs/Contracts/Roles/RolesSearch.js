@@ -31,27 +31,34 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const RoleFilterBody_1 = require("./RoleFilterBody");
 const RolesController_1 = require("./RolesController");
 const RoleModalButtons_1 = require("./Modals/RoleModalButtons");
+const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
     function renderRow(role) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
+            react_1.default.createElement("h6", null,
                 role.groupName,
                 ": ",
                 react_1.default.createElement("strong", null, role.name),
                 " | ",
-                role._person?._nameSurnameEmail),
+                role._person?._nameSurnameEmail,
+                " |",
+                " ",
+                (0, RolesController_1.isProjectRole)(role) && "rola projektowa"),
             react_1.default.createElement("div", { className: "text-muted" }, role.description),
-            (0, RolesController_1.isProjectRole)(role) ? renderProjectData(role) : renderContractData(role)));
+            renderContractData(role),
+            " ",
+            renderProjectData(role)));
     }
     function renderProjectData(role) {
         if (!role._project?.ourId)
-            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych projektu");
+            return react_1.default.createElement("div", { className: "text-danger mb-2" }, "\u26A0\uFE0F Brak danych projektu");
         const { name, ourId, alias } = role._project;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement("div", { className: "mb-2" },
             react_1.default.createElement("div", null,
+                "Projekt: ",
                 ourId,
                 " ",
                 alias,
@@ -60,21 +67,24 @@ function RolesSearch({ title }) {
     }
     function renderContractData(role) {
         if (!role._contract?.id)
-            return react_1.default.createElement("div", { className: "text-danger" }, "\u26A0\uFE0F Brak danych kontraktu");
-        const { name, alias, startDate, endDate, _type } = role._contract;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
+            return react_1.default.createElement("div", { className: "text-danger mb-2" }, "\u26A0\uFE0F Brak danych kontraktu");
+        const { name, alias, startDate, endDate, _type, _contractRangesNames } = role._contract;
+        return (react_1.default.createElement("div", { className: "mb-2" },
             react_1.default.createElement("div", null,
                 "Typ umowy: ",
-                _type.name,
+                react_1.default.createElement("strong", null, _type.name),
                 ", ",
-                alias),
+                alias,
+                ", zakresy:",
+                " ",
+                _contractRangesNames?.length ? (react_1.default.createElement("span", { className: "text-success" }, _contractRangesNames.join(", "))) : (react_1.default.createElement("span", { className: "text-danger" }, "\u26A0\uFE0F nie podano zakres\u00F3w"))),
             react_1.default.createElement("div", { className: "text-secondary" }, name),
             react_1.default.createElement("div", null,
-                " ",
                 "Realizacja od ",
-                startDate,
-                " do ",
-                endDate)));
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(startDate)),
+                " do",
+                " ",
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(endDate)))));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [{ header: "Nazwa", renderTdBody: renderRow }], AddNewButtonComponents: [RoleModalButtons_1.ProjectRoleAddNewModalButton, RoleModalButtons_1.ContractRoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
 }

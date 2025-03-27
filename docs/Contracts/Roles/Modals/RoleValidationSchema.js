@@ -23,30 +23,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeRoleValidationSchema = void 0;
+exports.makeProjectRoleValidationSchema = exports.makeContractRoleValidationSchema = void 0;
 const Yup = __importStar(require("yup"));
 const commonFields = {
     name: Yup.string()
         .required("Podaj nazwę")
         .min(3, "Nazwa musi mieć co najmniej 3 znaki")
-        .max(150, "Nazwa może mieć maksymalnie 150 znaków"),
-    address: Yup.string().max(250, "Adres może mieć maksymalnie 250 znaków"),
-    taxNumber: Yup.string()
-        .nullable()
-        .test("len", "Numer podatkowy musi mieć dokładnie 10 lub 13 znaków", (val) => val ? val.length === 10 || val.length === 13 : true),
-    www: Yup.string().max(150, "WWW może mieć maksymalnie 150 znaków"),
-    email: Yup.string()
-        .nullable()
-        .matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, {
-        message: "Nieprawidłowy format email",
-        excludeEmptyString: true,
-    })
-        .max(80, "Email może mieć maksymalnie 80 znaków"),
-    phone: Yup.string().max(25, "Telefon może mieć maksymalnie 25 znaków"),
+        .max(150, "Nazwa może mieć maksymalnie 100 znaków"),
+    description: Yup.string().max(500, "Opis może mieć maksymalnie 500 znaków"),
+    _person: Yup.object().required("Wybierz osobę"),
+    groupName: Yup.string().required("Podaj nazwę grupy"),
 };
-function makeRoleValidationSchema(isEditing) {
+function makeContractRoleValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
+        _contract: Yup.object().required("Wybierz kontrakt"),
     });
 }
-exports.makeRoleValidationSchema = makeRoleValidationSchema;
+exports.makeContractRoleValidationSchema = makeContractRoleValidationSchema;
+function makeProjectRoleValidationSchema(isEditing) {
+    return Yup.object().shape({
+        ...commonFields,
+        _project: Yup.object().required("Wybierz projekt"),
+    });
+}
+exports.makeProjectRoleValidationSchema = makeProjectRoleValidationSchema;

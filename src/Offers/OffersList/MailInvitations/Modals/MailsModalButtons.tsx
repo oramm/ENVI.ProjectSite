@@ -47,9 +47,9 @@ export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error)
         return null;
     }
 
-    const modalSubtitle = `na podstawie maila od <strong>${mailData.from}</strong> z <strong>${ToolsDate.formatTime(
-        mailData.date
-    )}</strong><br>${mailData.subject}`;
+    const modalSubtitle = `na podstawie maila od <strong>${
+        mailData.from
+    }</strong> z <strong>${ToolsDate.dateToDDmmmYYYYHHMM(mailData.date)}</strong><br>${mailData.subject}`;
     async function handleClick() {
         try {
             const currentItem = { ...mailInvitationsRepository.currentItems[0] };
