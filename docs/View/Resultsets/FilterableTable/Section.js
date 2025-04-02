@@ -38,7 +38,7 @@ function Section({ sectionNode, resulsetTableProps, onClick, }) {
     (0, react_1.useEffect)(() => {
         setIsActive(activeSectionId === sectionNode.id);
     }, [activeSectionId, sectionNode.id, sections]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                 react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),

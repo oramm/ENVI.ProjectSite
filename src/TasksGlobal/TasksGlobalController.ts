@@ -52,7 +52,21 @@ export const casesRepository = new RepositoryReact<Case>({
     name: "cases",
 });
 
+/** do przegladania zadań w widoku płaskim */
 export const tasksRepository = new RepositoryReact<Task>({
+    actionRoutes: {
+        getRoute: "tasks",
+        addNewRoute: "task",
+        editRoute: "task",
+        deleteRoute: "task",
+    },
+    name: "tasks",
+});
+
+/**
+ * do przegladania zadań w widoku hierarchicznym
+ */
+export const tasksGlobalRepository = new RepositoryReact<Task>({
     actionRoutes: {
         getRoute: "tasks",
         addNewRoute: "task",

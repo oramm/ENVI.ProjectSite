@@ -81620,54 +81620,6 @@ exports.TasksFilterBody = TasksFilterBody;
 
 /***/ }),
 
-/***/ "./src/Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields.tsx":
-/*!*******************************************************************************************!*\
-  !*** ./src/Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields.tsx ***!
-  \*******************************************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TasksFilterBodyCommonFields = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const ContractContext_1 = __webpack_require__(/*! ../../ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
-const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const StatusSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
-function TasksFilterBodyCommonFields() {
-    const { register } = (0, FormContext_1.useFormContext)();
-    const { contract } = (0, ContractContext_1.useContract)();
-    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 6, md: 3, xs: 1 },
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie od"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10), ...register("deadlineFrom") })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zako\u0144czenie do"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", defaultValue: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10), ...register("deadlineTo") })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
-            react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { repository: ContractsController_1.casesRepository, showValidationInfo: false, _contract: contract })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(StatusSelectors_1.TaksStatusSelector, { showValidationInfo: false })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
-}
-exports.TasksFilterBodyCommonFields = TasksFilterBodyCommonFields;
-
-
-/***/ }),
-
 /***/ "./src/Contracts/ContractsList/ContractsController.ts":
 /*!************************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractsController.ts ***!
@@ -91398,28 +91350,28 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralM
 const TaskGlobalValidationSchema_1 = __webpack_require__(/*! ./TaskGlobalValidationSchema */ "./src/TasksGlobal/Modals/TaskGlobalValidationSchema.ts");
 const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
 /** przycisk i modal edycji Task */
-function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps }) {
+function TaskEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
             modalTitle: "Edycja zadania",
-            repository: TasksGlobalController_1.tasksRepository,
+            repository: TasksGlobalController_1.tasksGlobalRepository,
             initialData: initialData,
-            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
+            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.TaskEditModalButton = TaskEditModalButton;
-function TaskAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
+function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: TaskGlobalModalBody_1.TaskGlobalModalBody,
             contextData,
             modalTitle: "Dodaj zadanie",
-            repository: TasksGlobalController_1.tasksRepository,
-            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema
+            repository: TasksGlobalController_1.tasksGlobalRepository,
+            makeValidationSchema: TaskGlobalValidationSchema_1.makeTaskGlobalValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj zadanie",
             buttonVariant: "outline-success",
@@ -91507,7 +91459,6 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
-const TasksGlobalFilterBody_1 = __webpack_require__(/*! ./TasksGlobalFilterBody */ "./src/TasksGlobal/TasksGlobalFilterBody.tsx");
 const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalModalButtons */ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx");
 const ProjectModalButtons_1 = __webpack_require__(/*! ./Modals/ProjectModalButtons */ "./src/TasksGlobal/Modals/ProjectModalButtons.tsx");
 const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
@@ -91521,7 +91472,7 @@ function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
-    const [tasksLoaded, setDataLoaded] = (0, react_1.useState)(true);
+    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(true);
     const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
     const [showProjects, setShowProjects] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
@@ -91559,40 +91510,33 @@ function TasksGlobal() {
             `${_milestone._FolderNumber_TypeName_Name || ""} |` +
             `${_case._type.name || ""} | ${_case.name || ""}`);
     }
-    function makeTasksTableStructure() {
-        const tableStructure = [];
-        if (!showProjects) {
-            tableStructure.push({
-                header: "Kamień|Sprawa",
-                renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, makeTaskParentsLabel(task)),
-            });
-        }
-        tableStructure.push({
-            header: "Nazwa i opis",
-            renderTdBody: (task) => (react_1.default.createElement(react_1.default.Fragment, null,
+    function renderTaskRowInCaseSection(task) {
+        return (react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 5 },
                 task.name,
                 react_1.default.createElement("br", null),
-                task.description)),
-        }, { header: "Termin", objectAttributeToShow: "deadline" }, { header: "Status", renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, {
-            header: "Właściciel",
-            renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner?.name} ${task._owner?.surname}`),
-        });
-        return tableStructure;
+                task.description && react_1.default.createElement("span", { className: "text-secondary small" }, task.description)),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                task.deadline && `${task.deadline}`,
+                " "),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            showProjects && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+        react_1.default.createElement("div", { className: "d-flex justify-content-end" },
+            react_1.default.createElement("div", { onClick: handleShowProjects },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
+        showProjects && (react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
+                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
                         {
                             header: "Nazwa",
                             renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
                         },
-                    ], onRowClick: setSelectedProject }))),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? "9" : "12" },
-                react_1.default.createElement("div", { className: "d-flex justify-content-end" },
-                    react_1.default.createElement("div", { onClick: handleShowProjects },
-                        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
-                tasksLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
+                    ], onRowClick: setSelectedProject })),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
 }
 exports["default"] = TasksGlobal;
 function LoadingMessage({ selectedProject }) {
@@ -91692,7 +91636,7 @@ function buildTree(contractsWithChildrenInput) {
                         caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                TasksGlobalController_1.tasksRepository.items = [...TasksGlobalController_1.tasksRepository.items, ...caseNode.leaves];
+                TasksGlobalController_1.tasksGlobalRepository.items = [...TasksGlobalController_1.tasksGlobalRepository.items, ...caseNode.leaves];
             }
         }
     }
@@ -91715,7 +91659,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.projectsRepository = exports.entitiesRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.contractsWithChildrenRepository = void 0;
+exports.projectsRepository = exports.entitiesRepository = exports.tasksGlobalRepository = exports.tasksRepository = exports.casesRepository = exports.milestonesRepository = exports.contractsRepository = exports.contractsWithChildrenRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.contractsWithChildrenRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -91753,7 +91697,20 @@ exports.casesRepository = new RepositoryReact_1.default({
     },
     name: "cases",
 });
+/** do przegladania zadań w widoku płaskim */
 exports.tasksRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "tasks",
+        addNewRoute: "task",
+        editRoute: "task",
+        deleteRoute: "task",
+    },
+    name: "tasks",
+});
+/**
+ * do przegladania zadań w widoku hierarchicznym
+ */
+exports.tasksGlobalRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "tasks",
         addNewRoute: "task",
@@ -91780,41 +91737,6 @@ exports.projectsRepository = new RepositoryReact_1.default({
     },
     name: "projects",
 });
-
-
-/***/ }),
-
-/***/ "./src/TasksGlobal/TasksGlobalFilterBody.tsx":
-/*!***************************************************!*\
-  !*** ./src/TasksGlobal/TasksGlobalFilterBody.tsx ***!
-  \***************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TasksGlobalFilterBody = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const TasksFilterBodyCommonFields_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields */ "./src/Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields.tsx");
-const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
-function TasksGlobalFilterBody() {
-    const { register } = (0, FormContext_1.useFormContext)();
-    const { project } = (0, ContractContext_1.useContract)();
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(TasksFilterBodyCommonFields_1.TasksFilterBodyCommonFields, null),
-        react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project && (react_1.default.createElement(react_bootstrap_1.Col, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: TasksGlobalController_1.contractsWithChildrenRepository, showValidationInfo: false, _project: project })))))));
-}
-exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
 
 
 /***/ }),
@@ -94273,7 +94195,7 @@ exports["default"] = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-2", key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
 }
@@ -94705,7 +94627,7 @@ function Section({ sectionNode, resulsetTableProps, onClick, }) {
     (0, react_1.useEffect)(() => {
         setIsActive(activeSectionId === sectionNode.id);
     }, [activeSectionId, sectionNode.id, sections]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                 react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),

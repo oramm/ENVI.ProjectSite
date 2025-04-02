@@ -18,9 +18,8 @@ import {
     contractsWithChildrenRepository,
     milestonesRepository,
     projectsRepository,
-    tasksRepository,
+    tasksGlobalRepository,
 } from "./TasksGlobalController";
-import { TasksGlobalFilterBody } from "./TasksGlobalFilterBody";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
@@ -32,14 +31,13 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
-import { RowStructure } from "../View/Resultsets/FilterableTable/FilterableTableTypes";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = useState([] as ContractsWithChildren[]);
     const [externalUpdate, setExternalUpdate] = useState(0);
-    const [tasksLoaded, setDataLoaded] = useState(true);
+    const [dataLoaded, setDataLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<ProjectData | undefined>(undefined);
     const [showProjects, setShowProjects] = useState(true);
 
@@ -84,45 +82,38 @@ export default function TasksGlobal() {
         );
     }
 
-    function makeTasksTableStructure() {
-        const tableStructure: RowStructure<Task>[] = [];
-        if (!showProjects) {
-            tableStructure.push({
-                header: "Kamień|Sprawa",
-                renderTdBody: (task: Task) => <>{makeTaskParentsLabel(task)}</>,
-            });
-        }
-
-        tableStructure.push(
-            {
-                header: "Nazwa i opis",
-                renderTdBody: (task: Task) => (
-                    <>
-                        {task.name}
-                        <br />
-                        {task.description}
-                    </>
-                ),
-            },
-            { header: "Termin", objectAttributeToShow: "deadline" },
-            { header: "Status", renderTdBody: (task: Task) => <TaskStatusBadge status={task.status} /> },
-            {
-                header: "Właściciel",
-                renderTdBody: (task: Task) => <>{`${task._owner?.name} ${task._owner?.surname}`}</>,
-            }
+    function renderTaskRowInCaseSection(task: Task) {
+        return (
+            <Row>
+                <Col md={5}>
+                    {task.name}
+                    <br />
+                    {task.description && <span className="text-secondary small">{task.description}</span>}
+                </Col>
+                <Col md={2}>{task.deadline && `${task.deadline}`} </Col>
+                <Col md={2}>
+                    <TaskStatusBadge status={task.status} />
+                </Col>
+                <Col md={2}>{task._owner && `${task._owner.name} ${task._owner.surname}`}</Col>
+            </Row>
         );
-        return tableStructure;
     }
 
     return (
         <Container>
-            <Row>
-                {showProjects && (
-                    <Col md={3}>
+            <div className="d-flex justify-content-end">
+                <div onClick={handleShowProjects}>
+                    <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
+                </div>
+            </div>
+            {showProjects && (
+                <Row>
+                    <Col md="3">
                         <FilterableTable<ProjectData>
                             id="projects"
                             title="Projekty"
                             repository={projectsRepository}
+                            showTableHeader={false}
                             AddNewButtonComponents={[ProjectAddNewModalButton]}
                             FilterBodyComponent={ProjectsFilterBody}
                             EditButtonComponent={ProjectEditModalButton}
@@ -135,30 +126,26 @@ export default function TasksGlobal() {
                             onRowClick={setSelectedProject}
                         />
                     </Col>
-                )}
-                <Col md={showProjects ? "9" : "12"}>
-                    <div className="d-flex justify-content-end">
-                        <div onClick={handleShowProjects}>
-                            <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
-                        </div>
-                    </div>
-                    {tasksLoaded ? (
-                        <FilterableTable<Task>
-                            id="tasks"
-                            title="Zadania"
-                            showTableHeader={false}
-                            repository={tasksRepository}
-                            FilterBodyComponent={!showProjects ? TasksGlobalFilterBody : undefined}
-                            EditButtonComponent={TaskEditModalButton}
-                            initialSections={buildTree(contractsWithChildren)}
-                            tableStructure={makeTasksTableStructure()}
-                            externalUpdate={externalUpdate}
-                        />
-                    ) : (
-                        <LoadingMessage selectedProject={selectedProject} />
-                    )}
-                </Col>
-            </Row>
+                    <Col md="9">
+                        {dataLoaded ? (
+                            <FilterableTable<Task>
+                                id="tasks"
+                                title="Zadania"
+                                showTableHeader={false}
+                                repository={tasksGlobalRepository}
+                                FilterBodyComponent={undefined}
+                                EditButtonComponent={TaskEditModalButton}
+                                initialSections={buildTree(contractsWithChildren)}
+                                tableStructure={[{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }]}
+                                externalUpdate={externalUpdate}
+                            />
+                        ) : (
+                            <LoadingMessage selectedProject={selectedProject} />
+                        )}
+                    </Col>
+                </Row>
+            )}
+            <Row className="d-flex justify-content-end">Tabela zadań będzie tu dodana w przyszłości.</Row>
         </Container>
     );
 }
@@ -283,7 +270,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     if (!caseNode.leaves) caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                tasksRepository.items = [...tasksRepository.items, ...caseNode.leaves];
+                tasksGlobalRepository.items = [...tasksGlobalRepository.items, ...caseNode.leaves];
             }
         }
     }

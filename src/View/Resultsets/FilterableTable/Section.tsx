@@ -51,7 +51,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
     }, [activeSectionId, sectionNode.id, sections]);
 
     return sectionNode.isInAccordion ? (
-        <Accordion key={sectionNode.id} alwaysOpen defaultActiveKey={["0"]}>
+        <Accordion className="mb-2" key={sectionNode.id} alwaysOpen defaultActiveKey={["0"]}>
             <Accordion.Item eventKey="0">
                 <Accordion.Header>
                     <SectionHeader sectionNode={sectionNode} isActive={isActive} onClick={onClick} />

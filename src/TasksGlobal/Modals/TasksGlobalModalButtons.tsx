@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
-import { Task } from '../../../Typings/bussinesTypes';
-import { TaskGlobalModalBody } from './TaskGlobalModalBody';
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../View/Modals/ModalsTypes';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../View/Modals/GeneralModalButtons';
-import { makeTaskGlobalValidationSchema } from './TaskGlobalValidationSchema';
-import { tasksRepository } from '../TasksGlobalController';
-
+import React, { useEffect } from "react";
+import { Task } from "../../../Typings/bussinesTypes";
+import { TaskGlobalModalBody } from "./TaskGlobalModalBody";
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../View/Modals/ModalsTypes";
+import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../View/Modals/GeneralModalButtons";
+import { makeTaskGlobalValidationSchema } from "./TaskGlobalValidationSchema";
+import { tasksGlobalRepository } from "../TasksGlobalController";
 
 /** przycisk i modal edycji Task */
 export function TaskEditModalButton({
-    modalProps: { onEdit, initialData, },
-    buttonProps
+    modalProps: { onEdit, initialData },
+    buttonProps,
 }: SpecificEditModalButtonProps<Task>) {
     return (
         <GeneralEditModalButton<Task>
@@ -18,9 +17,9 @@ export function TaskEditModalButton({
                 onEdit: onEdit,
                 ModalBodyComponent: TaskGlobalModalBody,
                 modalTitle: "Edycja zadania",
-                repository: tasksRepository,
+                repository: tasksGlobalRepository,
                 initialData: initialData,
-                makeValidationSchema: makeTaskGlobalValidationSchema
+                makeValidationSchema: makeTaskGlobalValidationSchema,
             }}
             buttonProps={{
                 ...buttonProps,
@@ -30,9 +29,7 @@ export function TaskEditModalButton({
     );
 }
 
-export function TaskAddNewModalButton({
-    modalProps: { onAddNew, contextData },
-}: SpecificAddNewModalButtonProps<Task>) {
+export function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }: SpecificAddNewModalButtonProps<Task>) {
     return (
         <GeneralAddNewModalButton<Task>
             modalProps={{
@@ -40,8 +37,8 @@ export function TaskAddNewModalButton({
                 ModalBodyComponent: TaskGlobalModalBody,
                 contextData,
                 modalTitle: "Dodaj zadanie",
-                repository: tasksRepository,
-                makeValidationSchema: makeTaskGlobalValidationSchema
+                repository: tasksGlobalRepository,
+                makeValidationSchema: makeTaskGlobalValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj zadanie",

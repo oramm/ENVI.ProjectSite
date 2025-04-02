@@ -31,7 +31,6 @@ const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable/FilterableTable"));
 const TasksGlobalController_1 = require("./TasksGlobalController");
-const TasksGlobalFilterBody_1 = require("./TasksGlobalFilterBody");
 const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
 const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
 const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
@@ -45,7 +44,7 @@ function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
-    const [tasksLoaded, setDataLoaded] = (0, react_1.useState)(true);
+    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(true);
     const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
     const [showProjects, setShowProjects] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
@@ -83,40 +82,33 @@ function TasksGlobal() {
             `${_milestone._FolderNumber_TypeName_Name || ""} |` +
             `${_case._type.name || ""} | ${_case.name || ""}`);
     }
-    function makeTasksTableStructure() {
-        const tableStructure = [];
-        if (!showProjects) {
-            tableStructure.push({
-                header: "Kamień|Sprawa",
-                renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, makeTaskParentsLabel(task)),
-            });
-        }
-        tableStructure.push({
-            header: "Nazwa i opis",
-            renderTdBody: (task) => (react_1.default.createElement(react_1.default.Fragment, null,
+    function renderTaskRowInCaseSection(task) {
+        return (react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 5 },
                 task.name,
                 react_1.default.createElement("br", null),
-                task.description)),
-        }, { header: "Termin", objectAttributeToShow: "deadline" }, { header: "Status", renderTdBody: (task) => react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status }) }, {
-            header: "Właściciel",
-            renderTdBody: (task) => react_1.default.createElement(react_1.default.Fragment, null, `${task._owner?.name} ${task._owner?.surname}`),
-        });
-        return tableStructure;
+                task.description && react_1.default.createElement("span", { className: "text-secondary small" }, task.description)),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                task.deadline && `${task.deadline}`,
+                " "),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            showProjects && (react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+        react_1.default.createElement("div", { className: "d-flex justify-content-end" },
+            react_1.default.createElement("div", { onClick: handleShowProjects },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
+        showProjects && (react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
+                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
                         {
                             header: "Nazwa",
                             renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
                         },
-                    ], onRowClick: setSelectedProject }))),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: showProjects ? "9" : "12" },
-                react_1.default.createElement("div", { className: "d-flex justify-content-end" },
-                    react_1.default.createElement("div", { onClick: handleShowProjects },
-                        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
-                tasksLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksRepository, FilterBodyComponent: !showProjects ? TasksGlobalFilterBody_1.TasksGlobalFilterBody : undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: makeTasksTableStructure(), externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
+                    ], onRowClick: setSelectedProject })),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
 }
 exports.default = TasksGlobal;
 function LoadingMessage({ selectedProject }) {
@@ -216,7 +208,7 @@ function buildTree(contractsWithChildrenInput) {
                         caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                TasksGlobalController_1.tasksRepository.items = [...TasksGlobalController_1.tasksRepository.items, ...caseNode.leaves];
+                TasksGlobalController_1.tasksGlobalRepository.items = [...TasksGlobalController_1.tasksGlobalRepository.items, ...caseNode.leaves];
             }
         }
     }
