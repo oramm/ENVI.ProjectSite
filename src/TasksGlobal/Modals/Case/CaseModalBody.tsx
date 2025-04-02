@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Col, Form, Row } from "react-bootstrap";
-import { Case, Milestone } from "../../../../Typings/bussinesTypes";
-import { CaseTypeSelectFormElement } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { Case, MilestoneData } from "../../../../Typings/bussinesTypes";
+import { CaseTypeSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
@@ -16,7 +16,7 @@ export function CaseModalBody({ isEditing, initialData, contextData: contextData
         trigger,
     } = useFormContext();
     const _type = watch("_type");
-    const _parent = (initialData?._parent || contextData) as Milestone;
+    const _parent = (initialData?._parent || contextData) as MilestoneData;
 
     useEffect(() => {
         console.log("CaseModalBody useEffect", initialData);
@@ -38,7 +38,7 @@ export function CaseModalBody({ isEditing, initialData, contextData: contextData
 
     return (
         <>
-            {!isEditing && <CaseTypeSelectFormElement milestoneType={_parent._type} />}
+            {!isEditing && <CaseTypeSelector milestoneType={_parent._type} />}
             {shoulShowCaseNameField() && (
                 <Form.Group controlId="name">
                     <Form.Label>Nazwa sprawy</Form.Label>

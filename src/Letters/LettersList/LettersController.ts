@@ -2,7 +2,7 @@ import {
     Case,
     EntityData,
     IncomingLetterContract,
-    Milestone,
+    MilestoneData,
     OtherContract,
     OurContract,
     OurLetterContract,
@@ -40,7 +40,7 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
     name: "contracts",
 });
 
-export const milestonesRepository = new RepositoryReact<Milestone>({
+export const milestonesRepository = new RepositoryReact<MilestoneData>({
     actionRoutes: {
         getRoute: "milestones",
         addNewRoute: "",

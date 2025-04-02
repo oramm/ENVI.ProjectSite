@@ -4,7 +4,7 @@ import {
     EntityData,
     ExternalOffer,
     IncomingLetterOffer,
-    Milestone,
+    MilestoneData,
     OurLetterOffer,
     OurOffer,
 } from "../../../Typings/bussinesTypes";
@@ -30,7 +30,7 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
     name: "offers",
 });
 
-export const milestonesRepository = new RepositoryReact<Milestone>({
+export const milestonesRepository = new RepositoryReact<MilestoneData>({
     actionRoutes: {
         getRoute: "milestones",
         addNewRoute: "",

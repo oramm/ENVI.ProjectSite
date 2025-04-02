@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Card } from "react-bootstrap";
-import { OurContract, OtherContract, SystemRoleName, Milestone } from "../../../../../../Typings/bussinesTypes";
+import { OurContract, OtherContract, SystemRoleName, MilestoneData } from "../../../../../../Typings/bussinesTypes";
 
 import { PartialEditTrigger } from "../../../../../View/Modals/GeneralModalButtons";
 import { ContractStatusBadge, DaysLeftBadge, MyTooltip } from "../../../../../View/Resultsets/CommonComponents";
@@ -13,9 +13,9 @@ import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Sect
 import { RowStructure } from "../../../../../View/Resultsets/FilterableTable/FilterableTableTypes";
 
 export default function MilestonesList() {
-    const [milestones, setMilestones] = useState([] as Milestone[]);
-    const [ourMilestones, setOurMilestones] = useState<Milestone[]>([]);
-    const [otherMilestones, setOtherMilestones] = useState<Milestone[]>([]);
+    const [milestones, setMilestones] = useState([] as MilestoneData[]);
+    const [ourMilestones, setOurMilestones] = useState<MilestoneData[]>([]);
+    const [otherMilestones, setOtherMilestones] = useState<MilestoneData[]>([]);
 
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -33,7 +33,7 @@ export default function MilestonesList() {
                         _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
                     },
                 ]),
-            ])) as Milestone[];
+            ])) as MilestoneData[];
             setMilestones(milestones);
             setOurMilestones(milestones.filter((m) => m._contract?._type.isOur));
             setOtherMilestones(milestones.filter((m) => !m._contract?._type.isOur));
@@ -51,7 +51,7 @@ export default function MilestonesList() {
         return !privilegedRoles.includes(MainSetup.currentUser.systemRoleName);
     }
 
-    function renderName(milestone: Milestone) {
+    function renderName(milestone: MilestoneData) {
         return (
             <>
                 <>{milestone.name}</>
@@ -60,7 +60,7 @@ export default function MilestonesList() {
         );
     }
 
-    function renderEndDate(milestone: Milestone) {
+    function renderEndDate(milestone: MilestoneData) {
         const { endDate } = milestone;
         if (!endDate) return <Alert variant="danger">Brak daty zakończenia</Alert>;
         const daysLeft = ToolsDate.countDaysLeftTo(endDate);
@@ -75,18 +75,18 @@ export default function MilestonesList() {
         );
     }
 
-    function renderStartDate(milestone: Milestone) {
+    function renderStartDate(milestone: MilestoneData) {
         const { startDate } = milestone;
         if (!startDate) return <Alert variant="danger">Brak daty rozpoczęcia</Alert>;
         return <div>{startDate}</div>;
     }
 
-    function handleEditObject(object: Milestone) {
+    function handleEditObject(object: MilestoneData) {
         setMilestones(milestones.map((o) => (o.id === object.id ? object : o)));
         setExternalUpdate((prevState) => prevState + 1);
     }
 
-    function renderRemainingValue(milestone: Milestone) {
+    function renderRemainingValue(milestone: MilestoneData) {
         const _contract = milestone._contract as OurContract | OtherContract;
         if (!_contract) return <>Brak kontraktu</>;
         const ourId = "ourId" in _contract ? _contract.ourId : "";
@@ -109,22 +109,22 @@ export default function MilestonesList() {
     }
 
     function makeTablestructure() {
-        const tableStructure: RowStructure<Milestone>[] = [
+        const tableStructure: RowStructure<MilestoneData>[] = [
             {
                 header: "Projekt",
-                renderTdBody: (milestone: Milestone) => <>{milestone._contract?._project.ourId}</>,
+                renderTdBody: (milestone: MilestoneData) => <>{milestone._contract?._project.ourId}</>,
             },
             {
                 header: "Oznaczenie",
-                renderTdBody: (milestone: Milestone) => <>{"ourId" in milestone ? milestone.ourId : ""}</>,
+                renderTdBody: (milestone: MilestoneData) => <>{"ourId" in milestone ? milestone.ourId : ""}</>,
             },
             { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Nazwa", renderTdBody: (milestone: Milestone) => renderName(milestone) },
+            { header: "Nazwa", renderTdBody: (milestone: MilestoneData) => renderName(milestone) },
             {
                 header: "Rozpoczęcie",
-                renderTdBody: (milestone: Milestone) => renderStartDate(milestone),
+                renderTdBody: (milestone: MilestoneData) => renderStartDate(milestone),
             },
-            { header: "Zakończenie", renderTdBody: (milestone: Milestone) => renderEndDate(milestone) },
+            { header: "Zakończenie", renderTdBody: (milestone: MilestoneData) => renderEndDate(milestone) },
         ];
 
         const allowedRoles = [MainSetup.SystemRoles.ADMIN.systemName, MainSetup.SystemRoles.ENVI_MANAGER.systemName];
@@ -142,7 +142,7 @@ export default function MilestonesList() {
         <Card>
             <Card.Body>
                 <Card.Title>Kończące się kamienie milowe</Card.Title>
-                <FilterableTable<Milestone>
+                <FilterableTable<MilestoneData>
                     id="milestones"
                     title={""}
                     initialSections={buildTree(ourMilestones, otherMilestones)}
@@ -159,16 +159,16 @@ export default function MilestonesList() {
 
 type DateEditTriggerProps = {
     date: string;
-    milestone: Milestone;
-    onEdit: (milestone: Milestone) => void;
+    milestone: MilestoneData;
+    onEdit: (milestone: MilestoneData) => void;
 };
 
 function DateEditTrigger({ date, milestone, onEdit }: DateEditTriggerProps) {
     return date ? ToolsDate.dateYMDtoDMY(date) : "Jeszcze nie ustalono";
 }
 
-function buildTree(ourMilestones: Milestone[], otherMilestones: Milestone[]): SectionNode<Milestone>[] {
-    const milestoneGroupNodes: SectionNode<Milestone>[] = [
+function buildTree(ourMilestones: MilestoneData[], otherMilestones: MilestoneData[]): SectionNode<MilestoneData>[] {
+    const milestoneGroupNodes: SectionNode<MilestoneData>[] = [
         {
             id: "milestoneGroupOur",
             isInAccordion: true,

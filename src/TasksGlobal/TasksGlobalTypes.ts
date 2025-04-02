@@ -1,13 +1,13 @@
-import { Case, Milestone, OtherContract, OurContract, Task } from "../../Typings/bussinesTypes"
+import { Case, MilestoneData, OtherContract, OurContract, Task } from "../../Typings/bussinesTypes";
 
 export interface ContractsWithChildren {
-    id: number,
-    contract: OurContract | OtherContract,
+    id: number;
+    contract: OurContract | OtherContract;
     milestonesWithCases: {
-        milestone: Milestone,
+        milestone: MilestoneData;
         casesWithTasks: {
-            caseItem: Case,
-            tasks: Task[]
-        }[]
-    }[]
+            caseItem: Case;
+            tasks: Task[];
+        }[];
+    }[];
 }

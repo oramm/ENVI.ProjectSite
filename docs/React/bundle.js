@@ -89092,6 +89092,12 @@ MainSetup.SecurityStatus = {
     RETURNED_1ST_PART: "Zwrócona 70%",
     RETURNED_2ND_PART: "Zwrócona 100%",
 };
+MainSetup.MilestoneStatus = {
+    NOT_STARTED: "Nie rozpoczęty",
+    IN_PROGRESS: "W trakcie",
+    FINISHED: "Zakończony",
+    ARCHIVAL: "Archiwalny",
+};
 MainSetup.TaskStatus = {
     BACKLOG: "Backlog",
     NOT_STARTED: "Nie rozpoczęty",
@@ -90831,7 +90837,7 @@ function CaseModalBody({ isEditing, initialData, contextData: contextData }) {
         return true;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.CaseTypeSelectFormElement, { milestoneType: _parent._type }),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.CaseTypeSelector, { milestoneType: _parent._type }),
         shoulShowCaseNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa sprawy"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
@@ -90871,15 +90877,14 @@ function CaseEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             modalTitle: "Edycja sprawy",
             repository: TasksGlobalController_1.casesRepository,
             initialData: initialData,
-            makeValidationSchema: initialData._type.isUniquePerMilestone ?
-                CaseValidationSchema_1.makeUniqueCaseValidationSchema : CaseValidationSchema_1.makeMultipleCaseValidationSchema
+            makeValidationSchema: CaseValidationSchema_1.makeCaseValidationSchema,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.CaseEditModalButton = CaseEditModalButton;
-function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps }) {
+function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             contextData,
@@ -90887,7 +90892,7 @@ function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonPr
             additionalModalBodyProps: { SpecificContractModalBody: CaseModalBody_1.CaseModalBody },
             modalTitle: "Nowa sprawa",
             repository: TasksGlobalController_1.casesRepository,
-            makeValidationSchema: CaseValidationSchema_1.makeMultipleCaseValidationSchema,
+            makeValidationSchema: CaseValidationSchema_1.makeCaseValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj sprawę",
             buttonVariant: "outline-success",
@@ -90931,26 +90936,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeUniqueCaseValidationSchema = exports.makeMultipleCaseValidationSchema = exports.commonFields = void 0;
+exports.makeCaseValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
-exports.commonFields = {
-    description: Yup.string()
-        .max(300, 'Opis może mieć maksymalnie 300 znaków'),
-};
-function makeMultipleCaseValidationSchema(isEditing) {
-    return (Yup.object().shape({
-        ...exports.commonFields,
-        name: Yup.string()
-            .required('Nazwa jest wymagana'),
-    }));
+function makeCaseValidationSchema(isEditing) {
+    return Yup.object().shape({
+        name: Yup.string().test("conditional-required", "Nazwa jest wymagana", function (value) {
+            const { _type } = this.parent;
+            const isUnique = _type?.isUniquePerMilestone;
+            if (!isUnique && !value) {
+                return this.createError({ message: "Nazwa jest wymagana bo spraw tego typu może być więcej" });
+            }
+            return true;
+        }),
+        description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
+    });
 }
-exports.makeMultipleCaseValidationSchema = makeMultipleCaseValidationSchema;
-function makeUniqueCaseValidationSchema(isEditing) {
-    return (Yup.object().shape({
-        ...exports.commonFields
-    }));
-}
-exports.makeUniqueCaseValidationSchema = makeUniqueCaseValidationSchema;
+exports.makeCaseValidationSchema = makeCaseValidationSchema;
 
 
 /***/ }),
@@ -90993,6 +90994,211 @@ function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps,
         }, buttonProps: buttonProps }));
 }
 exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/Modals/Milestone/MilestoneModalBody.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/TasksGlobal/Modals/Milestone/MilestoneModalBody.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContractMilestoneModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
+    const { register, reset, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const _type = watch("_type");
+    const _contract = (initialData?._contract || contextData);
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            _contract,
+            _type: initialData?._type,
+            name: initialData?.name,
+            description: initialData?.description || "",
+            startDate: initialData?.startDate,
+            endDate: initialData?.endDate,
+            status: initialData?.status,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset, trigger, _contract]);
+    function shouldShowNameField() {
+        if (initialData?._type?.isUniquePerContract)
+            return false;
+        if (_type?.isUniquePerContract)
+            return false;
+        return true;
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),
+        shouldShowNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name", className: "mb-2" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors }))),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate", as: react_bootstrap_1.Col },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.startDate, isValid: !errors?.startDate, ...register("startDate") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "startDate", errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.endDate, isValid: !errors?.endDate, ...register("endDate") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "endDate", errors: errors }))),
+        react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: true }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
+}
+exports.ContractMilestoneModalBody = ContractMilestoneModalBody;
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/Modals/Milestone/MilestoneModalButtons.tsx":
+/*!********************************************************************!*\
+  !*** ./src/TasksGlobal/Modals/Milestone/MilestoneModalButtons.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MilestoneAddNewModalButton = exports.MilestoneEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const TasksGlobalController_1 = __webpack_require__(/*! ../../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
+const MilestoneModalBody_1 = __webpack_require__(/*! ./MilestoneModalBody */ "./src/TasksGlobal/Modals/Milestone/MilestoneModalBody.tsx");
+const MilestoneValidationSchema_1 = __webpack_require__(/*! ./MilestoneValidationSchema */ "./src/TasksGlobal/Modals/Milestone/MilestoneValidationSchema.ts");
+function MilestoneEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: MilestoneModalBody_1.ContractMilestoneModalBody,
+            modalTitle: "Edycja kamienia milowego",
+            repository: TasksGlobalController_1.milestonesRepository,
+            initialData: initialData,
+            makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+        }, buttonProps: {
+            ...buttonProps,
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.MilestoneEditModalButton = MilestoneEditModalButton;
+function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            contextData,
+            ModalBodyComponent: MilestoneModalBody_1.ContractMilestoneModalBody,
+            additionalModalBodyProps: { SpecificContractModalBody: MilestoneModalBody_1.ContractMilestoneModalBody },
+            modalTitle: "Nowy kamień milowy",
+            repository: TasksGlobalController_1.milestonesRepository,
+            makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+        }, buttonProps: {
+            buttonCaption: "Dodaj kamień milowy",
+            buttonVariant: "outline-success",
+            ...buttonProps,
+        } }));
+}
+exports.MilestoneAddNewModalButton = MilestoneAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/Modals/Milestone/MilestoneValidationSchema.ts":
+/*!***********************************************************************!*\
+  !*** ./src/TasksGlobal/Modals/Milestone/MilestoneValidationSchema.ts ***!
+  \***********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeMilestoneValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+function makeMilestoneValidationSchema(isEditing) {
+    return Yup.object().shape({
+        _type: Yup.object().required("Typ kamienia milowego jest wymagany"),
+        name: Yup.string().test("conditional-required", "Nazwa jest wymagana", function (value) {
+            const { _type } = this.parent;
+            const isUnique = _type?.isUniquePerContract;
+            if (!isUnique && !value) {
+                return this.createError({ message: "Nazwa jest wymagana, bo kamieni tego typu może być więcej" });
+            }
+            return true;
+        }),
+        description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
+        status: Yup.string().required("Status jest wymagany"),
+        startDate: Yup.date()
+            .transform((value, originalValue) => (originalValue === "" ? null : value))
+            .nullable()
+            .typeError("Nieprawidłowy format daty rozpoczęcia")
+            .max(Yup.ref("endDate"), "Data rozpoczęcia nie może być późniejsza niż data zakończenia"),
+        endDate: Yup.date()
+            .transform((value, originalValue) => (originalValue === "" ? null : value))
+            .nullable()
+            .typeError("Nieprawidłowy format daty zakończenia")
+            .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+    });
+}
+exports.makeMilestoneValidationSchema = makeMilestoneValidationSchema;
 
 
 /***/ }),
@@ -91310,6 +91516,7 @@ const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-s
 const CaseModalButtons_1 = __webpack_require__(/*! ./Modals/Case/CaseModalButtons */ "./src/TasksGlobal/Modals/Case/CaseModalButtons.tsx");
 const ContractModalButtons_1 = __webpack_require__(/*! ./Modals/ContractModalButtons */ "./src/TasksGlobal/Modals/ContractModalButtons.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const MilestoneModalButtons_1 = __webpack_require__(/*! ./Modals/Milestone/MilestoneModalButtons */ "./src/TasksGlobal/Modals/Milestone/MilestoneModalButtons.tsx");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -91407,13 +91614,18 @@ function makeContractTitleLabel(contract) {
     return label;
 }
 function contractNodeEditHandler(node) {
-    const dataItem = node.dataItem;
     console.log("contractNodeEditHandler", node);
     const contract = {
-        //...node.dataItem.repository.currentItems[0],
         ...node.dataItem,
     };
     node.titleLabel = makeContractTitleLabel(contract);
+}
+function milestoneNodeEditHandler(node) {
+    console.log("milestoneNodeEditHandler", node);
+    const milestone = {
+        ...node.dataItem,
+    };
+    node.titleLabel = makeMilestoneTitleLabel(milestone);
 }
 function makeMilestoneTitleLabel(milestone) {
     return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
@@ -91434,6 +91646,7 @@ function buildTree(contractsWithChildrenInput) {
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),
             children: [],
+            AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
             editHandler: contractNodeEditHandler,
             isDeletable: false,
@@ -91451,6 +91664,8 @@ function buildTree(contractsWithChildrenInput) {
                 titleLabel: makeMilestoneTitleLabel(milestone),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
+                EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
+                editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
             };
             contractNode.children.push(milestoneNode);
@@ -91639,7 +91854,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -91916,7 +92131,7 @@ exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function CaseTypeSelectFormElement({ milestoneType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
+function CaseTypeSelector({ milestoneType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const label = "Typ Sprawy";
     const repository = ContractsController_1.caseTypesRepository;
@@ -91946,7 +92161,45 @@ function CaseTypeSelectFormElement({ milestoneType, required = false, showValida
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.CaseTypeSelectFormElement = CaseTypeSelectFormElement;
+exports.CaseTypeSelector = CaseTypeSelector;
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+function MilestoneTypeSelector({ contractType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
+    const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const label = "Typ kamienia";
+    const repository = ContractsController_1.milestoneTypesRepository;
+    function makeOptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!contractType)
+                return true;
+            if (contractType.id === item._contractType.id)
+                return true;
+            return false;
+        });
+        return filteredItems;
+    }
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ kamienia" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeOptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const myOption = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
+                    } })) }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
+}
+exports.MilestoneTypeSelector = MilestoneTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -92496,7 +92749,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
@@ -92579,6 +92832,17 @@ function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, la
     });
 }
 exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
+function MilestoneStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.MilestoneStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
+}
+exports.MilestoneStatusSelector = MilestoneStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.TaskStatus),

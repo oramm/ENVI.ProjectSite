@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -86,6 +86,17 @@ function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, la
     });
 }
 exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
+function MilestoneStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
+    return statusSelector({
+        statuses: Object.values(MainSetupReact_1.default.MilestoneStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
+}
+exports.MilestoneStatusSelector = MilestoneStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.TaskStatus),

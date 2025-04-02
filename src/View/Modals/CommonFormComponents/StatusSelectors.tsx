@@ -128,6 +128,23 @@ export function OfferInvitationMailStatusSelector({
     });
 }
 
+export function MilestoneStatusSelector({
+    showValidationInfo = true,
+    name,
+    label,
+    multiple = false,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: Object.values(MainSetup.MilestoneStatus),
+        showValidationInfo,
+        name: name ?? (multiple ? "statuses" : "status"),
+        label: label ?? name ?? (multiple ? "statuses" : "status"),
+        multiple,
+        as,
+    });
+}
+
 export function TaksStatusSelector({
     showValidationInfo = true,
     name,

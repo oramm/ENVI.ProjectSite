@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.CaseTypeSelectFormElement = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -303,7 +303,7 @@ exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function CaseTypeSelectFormElement({ milestoneType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
+function CaseTypeSelector({ milestoneType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const label = "Typ Sprawy";
     const repository = ContractsController_1.caseTypesRepository;
@@ -333,7 +333,45 @@ function CaseTypeSelectFormElement({ milestoneType, required = false, showValida
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.CaseTypeSelectFormElement = CaseTypeSelectFormElement;
+exports.CaseTypeSelector = CaseTypeSelector;
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+function MilestoneTypeSelector({ contractType, required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
+    const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const label = "Typ kamienia";
+    const repository = ContractsController_1.milestoneTypesRepository;
+    function makeOptions(repositoryDataItems) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!contractType)
+                return true;
+            if (contractType.id === item._contractType.id)
+                return true;
+            return false;
+        });
+        return filteredItems;
+    }
+    function handleOnChange(selectedOptions, field) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ kamienia" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeOptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
+                        const myOption = option;
+                        return (react_1.default.createElement("div", null,
+                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
+                    } })) }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
+}
+exports.MilestoneTypeSelector = MilestoneTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')

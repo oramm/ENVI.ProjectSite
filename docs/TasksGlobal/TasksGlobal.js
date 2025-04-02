@@ -40,6 +40,7 @@ const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
+const MilestoneModalButtons_1 = require("./Modals/Milestone/MilestoneModalButtons");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -137,13 +138,18 @@ function makeContractTitleLabel(contract) {
     return label;
 }
 function contractNodeEditHandler(node) {
-    const dataItem = node.dataItem;
     console.log("contractNodeEditHandler", node);
     const contract = {
-        //...node.dataItem.repository.currentItems[0],
         ...node.dataItem,
     };
     node.titleLabel = makeContractTitleLabel(contract);
+}
+function milestoneNodeEditHandler(node) {
+    console.log("milestoneNodeEditHandler", node);
+    const milestone = {
+        ...node.dataItem,
+    };
+    node.titleLabel = makeMilestoneTitleLabel(milestone);
 }
 function makeMilestoneTitleLabel(milestone) {
     return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
@@ -164,6 +170,7 @@ function buildTree(contractsWithChildrenInput) {
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),
             children: [],
+            AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
             editHandler: contractNodeEditHandler,
             isDeletable: false,
@@ -181,6 +188,8 @@ function buildTree(contractsWithChildrenInput) {
                 titleLabel: makeMilestoneTitleLabel(milestone),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
+                EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
+                editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
             };
             contractNode.children.push(milestoneNode);

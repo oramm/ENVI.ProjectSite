@@ -76,6 +76,13 @@ export default class MainSetup {
         RETURNED_2ND_PART: "Zwrócona 100%",
     };
 
+    static MilestoneStatus = {
+        NOT_STARTED: "Nie rozpoczęty",
+        IN_PROGRESS: "W trakcie",
+        FINISHED: "Zakończony",
+        ARCHIVAL: "Archiwalny",
+    };
+
     static TaskStatus = {
         BACKLOG: "Backlog",
         NOT_STARTED: "Nie rozpoczęty",

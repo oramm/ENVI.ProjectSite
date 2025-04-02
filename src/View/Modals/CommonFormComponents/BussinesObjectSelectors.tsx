@@ -23,7 +23,7 @@ import {
     ExternalOffer,
     FinancialAidProgrammeData,
     FocusAreaData,
-    Milestone,
+    MilestoneData,
     MilestoneType,
     NeedData,
     OtherContract,
@@ -32,7 +32,7 @@ import {
     PersonData,
     ProjectData,
 } from "../../../../Typings/bussinesTypes";
-import { caseTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
+import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 
 type ProjectSelectorProps = {
@@ -724,7 +724,7 @@ export function ContractTypeSelectFormElement({
     );
 }
 
-type CaseTypeSelectFormElementProps = {
+type CaseTypeSelectorProps = {
     milestoneType?: MilestoneType;
     showValidationInfo?: boolean;
     required?: boolean;
@@ -739,13 +739,13 @@ type CaseTypeSelectFormElementProps = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-export function CaseTypeSelectFormElement({
+export function CaseTypeSelector({
     milestoneType,
     required = false,
     showValidationInfo = true,
     multiple = false,
     name = "_type",
-}: CaseTypeSelectFormElementProps) {
+}: CaseTypeSelectorProps) {
     const {
         control,
         watch,
@@ -784,6 +784,89 @@ export function CaseTypeSelectFormElement({
                             labelKey="name"
                             multiple={multiple}
                             options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz typ --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as CaseType;
+                                return (
+                                    <div>
+                                        <span>{myOption.name}</span>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type ContractMilestoneTypeSelectorProps = {
+    contractType?: ContractType;
+    showValidationInfo?: boolean;
+    required?: boolean;
+    multiple?: boolean;
+    name?: "_type" | "_caseType";
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function MilestoneTypeSelector({
+    contractType,
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = "_type",
+}: ContractMilestoneTypeSelectorProps) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const label = "Typ kamienia";
+    const repository = milestoneTypesRepository;
+
+    function makeOptions(repositoryDataItems: MilestoneType[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!contractType) return true;
+            if (contractType.id === item._contractType.id) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: "Wybierz typ kamienia" } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={makeOptions(repository.items)}
                             onChange={(items) => handleOnChange(items, field)}
                             selected={field.value ? (multiple ? field.value : [field.value]) : []}
                             placeholder="-- Wybierz typ --"
@@ -1040,7 +1123,7 @@ interface CaseSelectMenuElementProps {
     _project?: ProjectData;
     _contract?: Contract;
     _offer?: OurOffer | ExternalOffer;
-    _milestone?: Milestone;
+    _milestone?: MilestoneData;
     readonly?: boolean;
     showValidationInfo?: boolean;
     multiple?: boolean;

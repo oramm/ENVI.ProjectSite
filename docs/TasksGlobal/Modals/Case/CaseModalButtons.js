@@ -16,15 +16,14 @@ function CaseEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             modalTitle: "Edycja sprawy",
             repository: TasksGlobalController_1.casesRepository,
             initialData: initialData,
-            makeValidationSchema: initialData._type.isUniquePerMilestone ?
-                CaseValidationSchema_1.makeUniqueCaseValidationSchema : CaseValidationSchema_1.makeMultipleCaseValidationSchema
+            makeValidationSchema: CaseValidationSchema_1.makeCaseValidationSchema,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
 exports.CaseEditModalButton = CaseEditModalButton;
-function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps }) {
+function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             contextData,
@@ -32,7 +31,7 @@ function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonPr
             additionalModalBodyProps: { SpecificContractModalBody: CaseModalBody_1.CaseModalBody },
             modalTitle: "Nowa sprawa",
             repository: TasksGlobalController_1.casesRepository,
-            makeValidationSchema: CaseValidationSchema_1.makeMultipleCaseValidationSchema,
+            makeValidationSchema: CaseValidationSchema_1.makeCaseValidationSchema,
         }, buttonProps: {
             buttonCaption: "Dodaj sprawę",
             buttonVariant: "outline-success",

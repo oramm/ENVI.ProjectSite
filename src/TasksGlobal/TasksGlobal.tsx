@@ -2,7 +2,7 @@ import React, { ComponentType, createContext, useContext, useEffect, useState } 
 import { Button, Card as Container, Col, Row } from "react-bootstrap";
 import {
     Case,
-    Milestone,
+    MilestoneData,
     OtherContract,
     OurContract,
     PersonData,
@@ -33,6 +33,7 @@ import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
 import { RowStructure } from "../View/Resultsets/FilterableTable/FilterableTableTypes";
+import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -185,16 +186,22 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
 }
 
 function contractNodeEditHandler(node: SectionNode<Task>) {
-    const dataItem = node.dataItem as OurContract | OtherContract;
     console.log("contractNodeEditHandler", node);
     const contract = {
-        //...node.dataItem.repository.currentItems[0],
         ...(node.dataItem as OurContract | OtherContract),
     };
     node.titleLabel = makeContractTitleLabel(contract);
 }
 
-function makeMilestoneTitleLabel(milestone: Milestone) {
+function milestoneNodeEditHandler(node: SectionNode<Task>) {
+    console.log("milestoneNodeEditHandler", node);
+    const milestone = {
+        ...(node.dataItem as MilestoneData),
+    };
+    node.titleLabel = makeMilestoneTitleLabel(milestone);
+}
+
+function makeMilestoneTitleLabel(milestone: MilestoneData) {
     return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
 }
 
@@ -206,7 +213,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
     const contractNodes: SectionNode<Task>[] = [];
 
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
-        const contractNode = {
+        const contractNode: SectionNode<Task> = {
             id: "contract" + contract.id,
             isInAccordion: true,
             level: 1,
@@ -216,6 +223,9 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),
             children: [] as SectionNode<Task>[],
+            AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
+                SpecificAddNewModalButtonProps<RepositoryDataItem>
+            >,
             EditButtonComponent: ContractEditModalButton as unknown as ComponentType<
                 SpecificEditModalButtonProps<RepositoryDataItem>
             >,
@@ -237,7 +247,11 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 children: [] as SectionNode<Task>[],
                 AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<
                     SpecificAddNewModalButtonProps<RepositoryDataItem>
-                >, // Dostosuj do Twojego komponentu
+                >,
+                EditButtonComponent: MilestoneEditModalButton as unknown as ComponentType<
+                    SpecificEditModalButtonProps<RepositoryDataItem>
+                >,
+                editHandler: milestoneNodeEditHandler,
                 isDeletable: true,
             };
             contractNode.children.push(milestoneNode);

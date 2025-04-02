@@ -52,7 +52,7 @@ function CaseModalBody({ isEditing, initialData, contextData: contextData }) {
         return true;
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.CaseTypeSelectFormElement, { milestoneType: _parent._type }),
+        !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.CaseTypeSelector, { milestoneType: _parent._type }),
         shoulShowCaseNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa sprawy"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),

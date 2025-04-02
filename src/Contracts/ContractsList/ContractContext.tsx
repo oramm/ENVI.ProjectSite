@@ -2,7 +2,7 @@ import React, { createContext, useContext } from "react";
 import {
     Case,
     CaseType,
-    Milestone,
+    MilestoneData,
     MilestoneType,
     OtherContract,
     OurContract,
@@ -18,8 +18,8 @@ const ContractContext = createContext<{
     setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>;
     miletonesTypes?: MilestoneType[] | undefined;
     setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>;
-    milestones?: Milestone[] | undefined;
-    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>;
+    milestones?: MilestoneData[] | undefined;
+    setMilestones?: React.Dispatch<React.SetStateAction<MilestoneData[] | undefined>>;
     cases?: Case[] | undefined;
     setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>;
     tasks?: Task[] | undefined;
@@ -35,8 +35,8 @@ type ContractProviderProps = {
     setCaseTypes?: React.Dispatch<React.SetStateAction<CaseType[] | undefined>>;
     miletonesTypes?: MilestoneType[] | undefined;
     setMiletonesTypes?: React.Dispatch<React.SetStateAction<MilestoneType[] | undefined>>;
-    milestones?: Milestone[] | undefined;
-    setMilestones?: React.Dispatch<React.SetStateAction<Milestone[] | undefined>>;
+    milestones?: MilestoneData[] | undefined;
+    setMilestones?: React.Dispatch<React.SetStateAction<MilestoneData[] | undefined>>;
     cases?: Case[] | undefined;
     setCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>;
     tasks?: Task[] | undefined;

@@ -58,6 +58,12 @@ MainSetup.SecurityStatus = {
     RETURNED_1ST_PART: "Zwrócona 70%",
     RETURNED_2ND_PART: "Zwrócona 100%",
 };
+MainSetup.MilestoneStatus = {
+    NOT_STARTED: "Nie rozpoczęty",
+    IN_PROGRESS: "W trakcie",
+    FINISHED: "Zakończony",
+    ARCHIVAL: "Archiwalny",
+};
 MainSetup.TaskStatus = {
     BACKLOG: "Backlog",
     NOT_STARTED: "Nie rozpoczęty",

@@ -110,7 +110,7 @@ export interface ContractRangeData {
     description: string;
 }
 
-export interface Milestone extends RepositoryDataItem {
+export interface MilestoneData extends RepositoryDataItem {
     name: string;
     number?: number;
     description?: string;
@@ -134,7 +134,7 @@ export interface Case extends RepositoryDataItem {
     number?: number;
     description?: string;
     gdFolderId?: string;
-    _parent: Milestone;
+    _parent: MilestoneData;
     _type: CaseType;
     _folderName?: string;
     _displayNumber?: string;
