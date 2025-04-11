@@ -32,6 +32,7 @@ import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
+import ToolsDate from "../React/ToolsDate";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -189,7 +190,12 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
-    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    const dates: string = milestone._dates
+        .map((d) => {
+            return `[${d.startDate.toString().split("T")[0]} - ${d.endDate.toString().split("T")[0]}]`;
+        })
+        .join(", ");
+    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates}`;
 }
 
 function makeCaseTitleLabel(caseItem: Case) {

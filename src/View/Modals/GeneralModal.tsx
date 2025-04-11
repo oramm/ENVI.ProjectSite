@@ -27,6 +27,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     fieldsToUpdate?: string[];
     shouldRetrieveDataBeforeEdit?: boolean;
+    size?: "sm" | "lg" | "xl" | undefined;
 };
 
 export function GeneralModal<DataItemType extends RepositoryDataItem = RepositoryDataItem>({
@@ -44,6 +45,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     makeValidationSchema: validationSchema,
     fieldsToUpdate,
     shouldRetrieveDataBeforeEdit = false,
+    size = "lg",
 }: GeneralModalProps<DataItemType>) {
     const [dataObjectFromServer, setDataObjectFromServer] = useState<DataItemType | undefined>(undefined);
     const [isLoadingData, setIsLoadingData] = useState(false);
@@ -204,7 +206,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     return (
         <Modal
-            size="lg"
+            size={size}
             show={show}
             onHide={onClose}
             onClick={(e: any) => e.stopPropagation()}

@@ -74,22 +74,6 @@ function MilestonesList() {
             react_1.default.createElement(react_1.default.Fragment, null, milestone.name),
             milestone.status && react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: milestone.status })));
     }
-    function renderEndDate(milestone) {
-        const { endDate } = milestone;
-        if (!endDate)
-            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty zako\u0144czenia");
-        const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null, endDate),
-            react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))));
-    }
-    function renderStartDate(milestone) {
-        const { startDate } = milestone;
-        if (!startDate)
-            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty rozpocz\u0119cia");
-        return react_1.default.createElement("div", null, startDate);
-    }
     function handleEditObject(object) {
         setMilestones(milestones.map((o) => (o.id === object.id ? object : o)));
         setExternalUpdate((prevState) => prevState + 1);
@@ -115,17 +99,8 @@ function MilestonesList() {
                 header: "Projekt",
                 renderTdBody: (milestone) => react_1.default.createElement(react_1.default.Fragment, null, milestone._contract?._project.ourId),
             },
-            {
-                header: "Oznaczenie",
-                renderTdBody: (milestone) => react_1.default.createElement(react_1.default.Fragment, null, "ourId" in milestone ? milestone.ourId : ""),
-            },
             { header: "Numer", objectAttributeToShow: "number" },
             { header: "Nazwa", renderTdBody: (milestone) => renderName(milestone) },
-            {
-                header: "Rozpoczęcie",
-                renderTdBody: (milestone) => renderStartDate(milestone),
-            },
-            { header: "Zakończenie", renderTdBody: (milestone) => renderEndDate(milestone) },
         ];
         const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {

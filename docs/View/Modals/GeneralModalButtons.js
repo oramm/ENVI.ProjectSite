@@ -47,7 +47,7 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
  * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
  * @param buttonProps - właściwości przycisku
  */
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, }, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -62,7 +62,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
                 contextData: contextData,
-            }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })));
+            }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, size: size })));
 }
 exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */
@@ -85,7 +85,7 @@ function GeneraEditButton(buttonProps) {
  *
  */
 function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, repository, makeValidationSchema: validationSchema, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, repository, makeValidationSchema: validationSchema, size, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -99,7 +99,7 @@ contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubt
                 isEditing: false,
                 contextData: contextData,
                 additionalProps: additionalModalBodyProps,
-            } })));
+            }, size: size })));
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
@@ -122,7 +122,7 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSub
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, subtitle: modalSubtitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
-function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, }, children, }) {
+function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, size, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -137,6 +137,6 @@ function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBod
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
                 contextData: contextData,
-            }, fieldsToUpdate: fieldsToUpdate })));
+            }, fieldsToUpdate: fieldsToUpdate, size: size })));
 }
 exports.PartialEditTrigger = PartialEditTrigger;

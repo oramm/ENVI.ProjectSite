@@ -17,6 +17,7 @@ function MilestoneEditModalButton({ modalProps: { onEdit, initialData }, buttonP
             repository: TasksGlobalController_1.milestonesRepository,
             initialData: initialData,
             makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+            size: "xl",
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
@@ -32,6 +33,7 @@ function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, but
             modalTitle: "Nowy kamień milowy",
             repository: TasksGlobalController_1.milestonesRepository,
             makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+            size: "xl",
         }, buttonProps: {
             buttonCaption: "Dodaj kamień milowy",
             buttonVariant: "outline-success",

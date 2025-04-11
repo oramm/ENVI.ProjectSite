@@ -90989,21 +90989,38 @@ const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/C
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const CommonComponentsController_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
+const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
-    const { register, reset, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, reset, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
+    const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
+        control,
+        name: "_dates",
+    });
     const _type = watch("_type");
     const _contract = (initialData?._contract || contextData);
+    const processedDates = processDates(); // Przetworzone daty
+    function processDates() {
+        const dates = initialData?._dates;
+        if (!dates || dates.length === 0)
+            return []; // Pusta tablica, jeśli brak dat
+        return dates.map((d) => ({
+            ...d,
+            startDate: d.startDate ? d.startDate.split("T")[0] : "",
+            endDate: d.endDate ? d.endDate.split("T")[0] : "",
+        }));
+    }
     (0, react_1.useEffect)(() => {
         const resetData = {
             _contract,
             _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || "",
-            startDate: initialData?.startDate,
-            endDate: initialData?.endDate,
+            _dates: processedDates,
             status: initialData?.status,
         };
         reset(resetData);
+        replace(processedDates);
         trigger();
     }, [initialData, reset, trigger, _contract]);
     function shouldShowNameField() {
@@ -91013,21 +91030,43 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
             return false;
         return true;
     }
+    function hasAnyDateError(errors, index) {
+        return (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.startDate`) || (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.endDate`);
+    }
+    function renderDates() {
+        return fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.startDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.startDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.startDate`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.endDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.endDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.endDate`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.description` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), ...register(`_dates.${index}.description`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-end" },
+                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => remove(index) }, "Usu\u0144")))));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),
         shouldShowNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name", className: "mb-2" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors }))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate", as: react_bootstrap_1.Col },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.startDate, isValid: !errors?.startDate, ...register("startDate") }),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "startDate", errors: errors })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.endDate, isValid: !errors?.endDate, ...register("endDate") }),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "endDate", errors: errors }))),
+        renderDates(),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-primary", onClick: () => append({
+                        startDate: "",
+                        endDate: "",
+                        description: "",
+                    }) }, "+ Dodaj przedzia\u0142 dat"))),
         react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: true }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
@@ -91065,6 +91104,7 @@ function MilestoneEditModalButton({ modalProps: { onEdit, initialData }, buttonP
             repository: TasksGlobalController_1.milestonesRepository,
             initialData: initialData,
             makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+            size: "xl",
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
@@ -91080,6 +91120,7 @@ function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, but
             modalTitle: "Nowy kamień milowy",
             repository: TasksGlobalController_1.milestonesRepository,
             makeValidationSchema: MilestoneValidationSchema_1.makeMilestoneValidationSchema,
+            size: "xl",
         }, buttonProps: {
             buttonCaption: "Dodaj kamień milowy",
             buttonVariant: "outline-success",
@@ -91138,16 +91179,21 @@ function makeMilestoneValidationSchema(isEditing) {
         }),
         description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
         status: Yup.string().required("Status jest wymagany"),
-        startDate: Yup.date()
-            .transform((value, originalValue) => (originalValue === "" ? null : value))
-            .nullable()
-            .typeError("Nieprawidłowy format daty rozpoczęcia")
-            .max(Yup.ref("endDate"), "Data rozpoczęcia nie może być późniejsza niż data zakończenia"),
-        endDate: Yup.date()
-            .transform((value, originalValue) => (originalValue === "" ? null : value))
-            .nullable()
-            .typeError("Nieprawidłowy format daty zakończenia")
-            .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+        _dates: Yup.array()
+            .of(Yup.object().shape({
+            startDate: Yup.date()
+                .nullable()
+                .typeError("Nieprawidłowy format daty rozpoczęcia")
+                .required("Data rozpoczęcia jest wymagana")
+                .max(Yup.ref("endDate"), "Rozpoczęcie nie mze być po zakończeniu"),
+            endDate: Yup.date()
+                .nullable()
+                .typeError("Nieprawidłowy format daty zakończenia")
+                .required("Data zakończenia jest wymagana")
+                .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+            description: Yup.string().nullable().max(300, "Opis dla okresu może mieć maksymalnie 300 znaków"),
+        }))
+            .min(1, "Przynajmniej jeden przedział daty musi być podany"),
     });
 }
 exports.makeMilestoneValidationSchema = makeMilestoneValidationSchema;
@@ -91572,7 +91618,12 @@ function milestoneNodeEditHandler(node) {
     node.titleLabel = makeMilestoneTitleLabel(milestone);
 }
 function makeMilestoneTitleLabel(milestone) {
-    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    const dates = milestone._dates
+        .map((d) => {
+        return `[${d.startDate.toString().split("T")[0]} - ${d.endDate.toString().split("T")[0]}]`;
+    })
+        .join(", ");
+    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates}`;
 }
 function makeCaseTitleLabel(caseItem) {
     return `${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
@@ -93062,7 +93113,7 @@ const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules
 __webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
+function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -93191,7 +93242,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 react_1.default.createElement("h5", null, title),
                 subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: size, show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true }, renderHeader()),
@@ -93265,7 +93316,7 @@ const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponent
  * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
  * @param buttonProps - właściwości przycisku
  */
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, }, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -93280,7 +93331,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
                 contextData: contextData,
-            }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })));
+            }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, size: size })));
 }
 exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */
@@ -93303,7 +93354,7 @@ function GeneraEditButton(buttonProps) {
  *
  */
 function GeneralAddNewModalButton({ modalProps: { onAddNew, // funkcja z obiektu nadrzędnego wywoływana po dodaniu nowego elementu
-contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, repository, makeValidationSchema: validationSchema, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
+contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, repository, makeValidationSchema: validationSchema, size, }, buttonProps: { buttonCaption, buttonVariant = "outline-primary", buttonSize = "sm", buttonIsActive = false, buttonIsDisabled = false, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -93317,7 +93368,7 @@ contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubt
                 isEditing: false,
                 contextData: contextData,
                 additionalProps: additionalModalBodyProps,
-            } })));
+            }, size: size })));
 }
 exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
@@ -93340,7 +93391,7 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSub
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, subtitle: modalSubtitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
-function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, }, children, }) {
+function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, size, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
         setShowForm(true);
@@ -93355,7 +93406,7 @@ function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBod
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
                 contextData: contextData,
-            }, fieldsToUpdate: fieldsToUpdate })));
+            }, fieldsToUpdate: fieldsToUpdate, size: size })));
 }
 exports.PartialEditTrigger = PartialEditTrigger;
 
@@ -94195,7 +94246,7 @@ exports["default"] = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-2", key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
+        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
 }

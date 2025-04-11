@@ -220,7 +220,6 @@ function Sections<DataItemType extends RepositoryDataItem>({
             {sections.map((section, index) => {
                 return (
                     <Card
-                        className="mb-2"
                         key={section.dataItem.id + section.type}
                         bg="light"
                         border="light"

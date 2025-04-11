@@ -115,8 +115,7 @@ export interface MilestoneData extends RepositoryDataItem {
     number?: number;
     description?: string;
     status?: string;
-    startDate?: string;
-    endDate?: string;
+    _dates: MilestoneDateData[];
     gdFolderId?: string;
     _type: MilestoneType;
     _contract?: OurContract | OtherContract;
@@ -127,6 +126,15 @@ export interface MilestoneData extends RepositoryDataItem {
     _folderNumber?: string;
     _folderName?: string;
     _gdFolderUrl?: string;
+}
+
+export interface MilestoneDateData {
+    id: number;
+    milestoneId: number;
+    startDate: string;
+    endDate: string;
+    description?: string | null;
+    lastUpdated: string;
 }
 
 export interface Case extends RepositoryDataItem {

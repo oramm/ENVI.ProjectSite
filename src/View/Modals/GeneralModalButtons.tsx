@@ -41,6 +41,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
         fieldsToUpdate,
         shouldRetrieveDataBeforeEdit,
         contextData,
+        size,
     },
 }: GeneralEditModalButtonProps<DataItemType>) {
     const [showForm, setShowForm] = useState(false);
@@ -74,6 +75,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 }}
                 fieldsToUpdate={fieldsToUpdate}
                 shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+                size={size}
             />
         </>
     );
@@ -127,6 +129,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
         modalSubtitle,
         repository,
         makeValidationSchema: validationSchema,
+        size,
     },
     buttonProps: {
         buttonCaption,
@@ -171,6 +174,7 @@ export function GeneralAddNewModalButton<DataItemType extends RepositoryDataItem
                     contextData: contextData,
                     additionalProps: additionalModalBodyProps,
                 }}
+                size={size}
             />
         </>
     );
@@ -225,6 +229,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
         makeValidationSchema,
         fieldsToUpdate,
         contextData,
+        size,
     },
     children,
 }: GeneralEditModalButtonProps<DataItemType> & { children: JSX.Element }) {
@@ -260,6 +265,7 @@ export function PartialEditTrigger<DataItemType extends RepositoryDataItem = Rep
                     contextData: contextData,
                 }}
                 fieldsToUpdate={fieldsToUpdate}
+                size={size}
             />
         </>
     );

@@ -36,7 +36,7 @@ const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
-function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, }) {
+function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -165,7 +165,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 react_1.default.createElement("h5", null, title),
                 subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: "lg", show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { size: size, show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true }, renderHeader()),

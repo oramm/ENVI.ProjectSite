@@ -30,21 +30,38 @@ const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormCompon
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
+const CommonComponentsController_1 = require("../../../View/Resultsets/CommonComponentsController");
+const react_hook_form_1 = require("react-hook-form");
 function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
-    const { register, reset, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, reset, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
+    const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
+        control,
+        name: "_dates",
+    });
     const _type = watch("_type");
     const _contract = (initialData?._contract || contextData);
+    const processedDates = processDates(); // Przetworzone daty
+    function processDates() {
+        const dates = initialData?._dates;
+        if (!dates || dates.length === 0)
+            return []; // Pusta tablica, jeśli brak dat
+        return dates.map((d) => ({
+            ...d,
+            startDate: d.startDate ? d.startDate.split("T")[0] : "",
+            endDate: d.endDate ? d.endDate.split("T")[0] : "",
+        }));
+    }
     (0, react_1.useEffect)(() => {
         const resetData = {
             _contract,
             _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || "",
-            startDate: initialData?.startDate,
-            endDate: initialData?.endDate,
+            _dates: processedDates,
             status: initialData?.status,
         };
         reset(resetData);
+        replace(processedDates);
         trigger();
     }, [initialData, reset, trigger, _contract]);
     function shouldShowNameField() {
@@ -54,21 +71,43 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
             return false;
         return true;
     }
+    function hasAnyDateError(errors, index) {
+        return (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.startDate`) || (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.endDate`);
+    }
+    function renderDates() {
+        return fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.startDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.startDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.startDate`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.endDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.endDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.endDate`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.description` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), ...register(`_dates.${index}.description`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-end" },
+                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => remove(index) }, "Usu\u0144")))));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),
         shouldShowNameField() && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name", className: "mb-2" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors }))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "startDate", as: react_bootstrap_1.Col },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.startDate, isValid: !errors?.startDate, ...register("startDate") }),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "startDate", errors: errors })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "endDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: !!errors?.endDate, isValid: !errors?.endDate, ...register("endDate") }),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "endDate", errors: errors }))),
+        renderDates(),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-primary", onClick: () => append({
+                        startDate: "",
+                        endDate: "",
+                        description: "",
+                    }) }, "+ Dodaj przedzia\u0142 dat"))),
         react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: true }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),

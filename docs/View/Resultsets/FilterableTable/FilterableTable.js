@@ -148,7 +148,7 @@ exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-2", key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
+        return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light", style: { marginTop: "10px" } },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
 }

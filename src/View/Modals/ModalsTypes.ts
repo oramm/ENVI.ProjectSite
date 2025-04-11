@@ -26,6 +26,7 @@ type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = Repo
     repository: RepositoryReact<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     contextData?: unknown;
+    size?: "sm" | "lg" | "xl" | undefined;
 };
 
 export type GeneralModalButtonButtonProps = {

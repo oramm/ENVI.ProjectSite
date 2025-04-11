@@ -19,6 +19,7 @@ export function MilestoneEditModalButton({
                 repository: milestonesRepository,
                 initialData: initialData,
                 makeValidationSchema: makeMilestoneValidationSchema,
+                size: "xl",
             }}
             buttonProps={{
                 ...buttonProps,
@@ -42,6 +43,7 @@ export function MilestoneAddNewModalButton({
                 modalTitle: "Nowy kamień milowy",
                 repository: milestonesRepository,
                 makeValidationSchema: makeMilestoneValidationSchema,
+                size: "xl",
             }}
             buttonProps={{
                 buttonCaption: "Dodaj kamień milowy",

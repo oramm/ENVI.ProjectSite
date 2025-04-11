@@ -38,16 +38,21 @@ function makeMilestoneValidationSchema(isEditing) {
         }),
         description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
         status: Yup.string().required("Status jest wymagany"),
-        startDate: Yup.date()
-            .transform((value, originalValue) => (originalValue === "" ? null : value))
-            .nullable()
-            .typeError("Nieprawidłowy format daty rozpoczęcia")
-            .max(Yup.ref("endDate"), "Data rozpoczęcia nie może być późniejsza niż data zakończenia"),
-        endDate: Yup.date()
-            .transform((value, originalValue) => (originalValue === "" ? null : value))
-            .nullable()
-            .typeError("Nieprawidłowy format daty zakończenia")
-            .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+        _dates: Yup.array()
+            .of(Yup.object().shape({
+            startDate: Yup.date()
+                .nullable()
+                .typeError("Nieprawidłowy format daty rozpoczęcia")
+                .required("Data rozpoczęcia jest wymagana")
+                .max(Yup.ref("endDate"), "Rozpoczęcie nie mze być po zakończeniu"),
+            endDate: Yup.date()
+                .nullable()
+                .typeError("Nieprawidłowy format daty zakończenia")
+                .required("Data zakończenia jest wymagana")
+                .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+            description: Yup.string().nullable().max(300, "Opis dla okresu może mieć maksymalnie 300 znaków"),
+        }))
+            .min(1, "Przynajmniej jeden przedział daty musi być podany"),
     });
 }
 exports.makeMilestoneValidationSchema = makeMilestoneValidationSchema;

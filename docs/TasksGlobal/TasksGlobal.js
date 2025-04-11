@@ -144,7 +144,12 @@ function milestoneNodeEditHandler(node) {
     node.titleLabel = makeMilestoneTitleLabel(milestone);
 }
 function makeMilestoneTitleLabel(milestone) {
-    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    const dates = milestone._dates
+        .map((d) => {
+        return `[${d.startDate.toString().split("T")[0]} - ${d.endDate.toString().split("T")[0]}]`;
+    })
+        .join(", ");
+    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates}`;
 }
 function makeCaseTitleLabel(caseItem) {
     return `${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
