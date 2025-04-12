@@ -91620,7 +91620,9 @@ function milestoneNodeEditHandler(node) {
 function makeMilestoneTitleLabel(milestone) {
     const dates = milestone._dates
         .map((d) => {
-        return `[${d.startDate.toString().split("T")[0]} - ${d.endDate.toString().split("T")[0]}]`;
+        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+        return `[${startDate} - ${endDate}]`;
     })
         .join(", ");
     return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates}`;
