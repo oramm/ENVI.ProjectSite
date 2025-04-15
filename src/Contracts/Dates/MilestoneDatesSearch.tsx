@@ -12,17 +12,24 @@ export default function MilestoneDatesSearch({ title }: { title: string }) {
     }, [title]);
 
     function renderRow(item: MilestoneDateData) {
+        if (!item.id) return <>"⚠️ brak ID"</>;
+        const _contract = item._milestone?._contract;
+        const _milestone = item._milestone;
         return (
             <>
-                {item.id ? item.id : "⚠️ brak ID"}
-                <h6>
-                    {item._milestone?._contract?._ourIdOrNumber_Alias} | {item._milestone?._type.name}{" "}
-                    {item._milestone?.name || ""}
-                </h6>
-                <div className="text-muted">{item._milestone?._contract?.name || "⚠️ Brak nazwy kontraktu"}</div>
-                <div>
-                    Od: <strong>{ToolsDate.dateISOToDMY(item.startDate)}</strong> do{" "}
-                    <strong>{ToolsDate.dateISOToDMY(item.endDate)}</strong>
+                <span className="text-info">
+                    [{_contract?.projectOurId}] {_contract?._ourIdOrNumber_Alias} | {_milestone?._type.name}{" "}
+                    {_milestone?.name || ""}
+                </span>
+                <div className="mb-2">
+                    {item._milestone?.description || ""} {item.description || ""}
+                </div>
+                <div className="text-muted mb-2">
+                    Kontrakt: [{_contract?._type?.name}] {_contract?.name || "⚠️ Brak nazwy kontraktu"}
+                </div>
+                <div className="mb-2">
+                    Od: <span className="fs-4">{ToolsDate.dateISOToDMY(item.startDate)}</span> do:{" "}
+                    <span className="fs-4">{ToolsDate.dateISOToDMY(item.endDate)}</span>
                 </div>
                 <div className="text-secondary small">
                     Ostatnia aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(item.lastUpdated)}

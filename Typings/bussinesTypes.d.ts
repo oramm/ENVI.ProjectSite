@@ -60,6 +60,7 @@ export interface Contract extends RepositoryDataItem {
     endDate?: string;
     guaranteeEndDate?: string;
     _project: ProjectData;
+    projectOurId?: string;
     status: string;
     gdFolderId?: string;
     meetingProtocolsGdFolderId?: string;

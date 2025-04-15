@@ -83409,21 +83409,35 @@ function MilestoneDatesSearch({ title }) {
         document.title = title;
     }, [title]);
     function renderRow(item) {
+        if (!item.id)
+            return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
+        const _contract = item._milestone?._contract;
+        const _milestone = item._milestone;
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            item.id ? item.id : "⚠️ brak ID",
-            react_1.default.createElement("h6", null,
-                item._milestone?._contract?._ourIdOrNumber_Alias,
+            react_1.default.createElement("span", { className: "text-info" },
+                "[",
+                _contract?.projectOurId,
+                "] ",
+                _contract?._ourIdOrNumber_Alias,
                 " | ",
-                item._milestone?._type.name,
+                _milestone?._type.name,
                 " ",
-                item._milestone?.name || ""),
-            react_1.default.createElement("div", { className: "text-muted" }, item._milestone?._contract?.name || "⚠️ Brak nazwy kontraktu"),
-            react_1.default.createElement("div", null,
+                _milestone?.name || ""),
+            react_1.default.createElement("div", { className: "mb-2" },
+                item._milestone?.description || "",
+                " ",
+                item.description || ""),
+            react_1.default.createElement("div", { className: "text-muted mb-2" },
+                "Kontrakt: [",
+                _contract?._type?.name,
+                "] ",
+                _contract?.name || "⚠️ Brak nazwy kontraktu"),
+            react_1.default.createElement("div", { className: "mb-2" },
                 "Od: ",
-                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(item.startDate)),
-                " do",
+                react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+                " do:",
                 " ",
-                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(item.endDate))),
+                react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
             react_1.default.createElement("div", { className: "text-secondary small" },
                 "Ostatnia aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
