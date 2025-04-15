@@ -134,6 +134,7 @@ export interface MilestoneDateData {
     startDate: string;
     endDate: string;
     description?: string | null;
+    _milestone?: MilestoneData;
     lastUpdated: string;
 }
 

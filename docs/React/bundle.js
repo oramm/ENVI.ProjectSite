@@ -83230,6 +83230,377 @@ exports["default"] = SecuritiesSearch;
 
 /***/ }),
 
+/***/ "./src/Contracts/Dates/MilestoneDatesController.ts":
+/*!*********************************************************!*\
+  !*** ./src/Contracts/Dates/MilestoneDatesController.ts ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.milestoneDatesRepository = void 0;
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+exports.milestoneDatesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "milestoneDates",
+        addNewRoute: "milestoneDate",
+        editRoute: "milestoneDate",
+        deleteRoute: "milestoneDate",
+    },
+    name: "milestoneDates",
+});
+exports.personsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "persons",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "milestoneDates-persons",
+});
+exports.projectsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "projects",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "milestoneDates-projects",
+});
+exports.contractsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "contracts",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "milestoneDates-contracts",
+});
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Dates/MilestoneDatesFilterBody.tsx":
+/*!**********************************************************!*\
+  !*** ./src/Contracts/Dates/MilestoneDatesFilterBody.tsx ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MilestoneDatesFilterBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const MilestoneDatesController_1 = __webpack_require__(/*! ./MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+function MilestoneDatesFilterBody() {
+    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
+    const _project = watch("_project");
+    (0, react_1.useEffect)(() => {
+        setValue("_contract", undefined);
+    }, [_project]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, xl: 2 },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, xl: 2 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: MilestoneDatesController_1.projectsRepository, showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12, xl: 5 },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: MilestoneDatesController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 3 },
+                react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, name: "contractStatuses", label: "Statusy kontratu" }))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false }),
+            react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false }),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
+                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: MilestoneDatesController_1.personsRepository, showValidationInfo: false }))),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })))));
+}
+exports.MilestoneDatesFilterBody = MilestoneDatesFilterBody;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Dates/MilestoneDatesSearch.tsx":
+/*!******************************************************!*\
+  !*** ./src/Contracts/Dates/MilestoneDatesSearch.tsx ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const MilestoneDatesController_1 = __webpack_require__(/*! ./MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
+const MilestoneDateButtons_1 = __webpack_require__(/*! ./Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
+const MilestoneDatesFilterBody_1 = __webpack_require__(/*! ./MilestoneDatesFilterBody */ "./src/Contracts/Dates/MilestoneDatesFilterBody.tsx");
+function MilestoneDatesSearch({ title }) {
+    (0, react_1.useEffect)(() => {
+        document.title = title;
+    }, [title]);
+    function renderRow(item) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            item.id ? item.id : "⚠️ brak ID",
+            react_1.default.createElement("h6", null,
+                item._milestone?._contract?._ourIdOrNumber_Alias,
+                " | ",
+                item._milestone?._type.name,
+                " ",
+                item._milestone?.name || ""),
+            react_1.default.createElement("div", { className: "text-muted" }, item._milestone?._contract?.name || "⚠️ Brak nazwy kontraktu"),
+            react_1.default.createElement("div", null,
+                "Od: ",
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+                " do",
+                " ",
+                react_1.default.createElement("strong", null, ToolsDate_1.default.dateISOToDMY(item.endDate))),
+            react_1.default.createElement("div", { className: "text-secondary small" },
+                "Ostatnia aktualizacja: ",
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
+    }
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ header: "Zakres czasowy", renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
+}
+exports["default"] = MilestoneDatesSearch;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx":
+/*!*************************************************************!*\
+  !*** ./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MilestoneDateEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const MilestoneDateModalBody_1 = __webpack_require__(/*! ./MilestoneDateModalBody */ "./src/Contracts/Dates/Modals/MilestoneDateModalBody.tsx");
+const MilestoneDatesController_1 = __webpack_require__(/*! ../MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
+const MilestoneDateValidationSchema_1 = __webpack_require__(/*! ./MilestoneDateValidationSchema */ "./src/Contracts/Dates/Modals/MilestoneDateValidationSchema.ts");
+function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit,
+            ModalBodyComponent: MilestoneDateModalBody_1.MilestoneDateModalBody,
+            modalTitle: "Edycja daty kamienia milowego",
+            repository: MilestoneDatesController_1.milestoneDatesRepository,
+            initialData,
+            makeValidationSchema: MilestoneDateValidationSchema_1.makeMilestoneDateValidationSchema,
+        }, buttonProps: {
+            buttonVariant: "outline-primary",
+        } }));
+}
+exports.MilestoneDateEditModalButton = MilestoneDateEditModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Dates/Modals/MilestoneDateModalBody.tsx":
+/*!***************************************************************!*\
+  !*** ./src/Contracts/Dates/Modals/MilestoneDateModalBody.tsx ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MilestoneDateModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const CommonComponentsController_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
+function MilestoneDateModalBody(props) {
+    const { isEditing, initialData } = props;
+    const { register, reset, setValue, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            id: initialData?.id,
+            _milestone: initialData?._milestone,
+            description: initialData?.description || "",
+            startDate: initialData?.startDate.split("T")[0] || "",
+            endDate: initialData?.endDate.split("T")[0] || "",
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    function hasAnyDateError(errors) {
+        return (0, CommonComponentsController_1.hasError)(errors, `startDate`) || (0, CommonComponentsController_1.hasError)(errors, `endDate`);
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis roli", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `startDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors), isValid: !hasAnyDateError(errors), ...register(`startDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `startDate`, errors: errors }))),
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `endDate` },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors), isValid: !hasAnyDateError(errors), ...register(`endDate`) }),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `endDate`, errors: errors }))))));
+}
+exports.MilestoneDateModalBody = MilestoneDateModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Contracts/Dates/Modals/MilestoneDateValidationSchema.ts":
+/*!*********************************************************************!*\
+  !*** ./src/Contracts/Dates/Modals/MilestoneDateValidationSchema.ts ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeMilestoneDateValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+function makeMilestoneDateValidationSchema(isEditing) {
+    return Yup.object().shape({
+        description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
+        startDate: Yup.date()
+            .nullable()
+            .typeError("Nieprawidłowy format daty rozpoczęcia")
+            .required("Data rozpoczęcia jest wymagana")
+            .max(Yup.ref("endDate"), "Rozpoczęcie nie mze być po zakończeniu"),
+        endDate: Yup.date()
+            .nullable()
+            .typeError("Nieprawidłowy format daty zakończenia")
+            .required("Data zakończenia jest wymagana")
+            .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
+    });
+}
+exports.makeMilestoneDateValidationSchema = makeMilestoneDateValidationSchema;
+
+
+/***/ }),
+
 /***/ "./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx":
 /*!******************************************************************!*\
   !*** ./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx ***!
@@ -89789,7 +90160,11 @@ function MainMenu() {
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/roles", className: isActive("/contracts/roles") },
                                 "Role kontrakowe",
                                 " ",
-                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "beta")),
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "nowe")),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/dates", className: isActive("/contracts/dates") },
+                                "Terminy",
+                                " ",
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "danger", text: "light" }, "beta")),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu", className: isActive("/contracts/znwu") }, "ZNWU"))),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury")),
@@ -89947,6 +90322,7 @@ const ApplicationCallsSearch_1 = __importDefault(__webpack_require__(/*! ../../f
 const ContractRangesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/ContractRanges/ContractRangesSearch */ "./src/Admin/ContractRanges/ContractRangesSearch.tsx"));
 const OffersMainView_1 = __importDefault(__webpack_require__(/*! ../../Offers/OffersList/OffersMainView */ "./src/Offers/OffersList/OffersMainView.tsx"));
 const RolesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Roles/RolesSearch */ "./src/Contracts/Roles/RolesSearch.tsx"));
+const MilestoneDatesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Dates/MilestoneDatesSearch */ "./src/Contracts/Dates/MilestoneDatesSearch.tsx"));
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -90004,6 +90380,7 @@ function AppRoutes() {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(MainContent_1.default, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/roles", element: react_1.default.createElement(RolesSearch_1.default, { title: "Role kontrakowe" }) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/dates", element: react_1.default.createElement(MilestoneDatesSearch_1.default, { title: "Terminy kamieni milowych" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),

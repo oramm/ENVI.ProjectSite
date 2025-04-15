@@ -41,6 +41,16 @@ export default function MainMenu() {
                                     >
                                         Role kontrakowe{" "}
                                         <Badge bg="primary" text="light">
+                                            nowe
+                                        </Badge>
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as={Link}
+                                        to="/contracts/dates"
+                                        className={isActive("/contracts/dates")}
+                                    >
+                                        Terminy{" "}
+                                        <Badge bg="danger" text="light">
                                             beta
                                         </Badge>
                                     </NavDropdown.Item>
