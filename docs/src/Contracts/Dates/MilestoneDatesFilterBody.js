@@ -36,8 +36,22 @@ const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/Gene
 const StatusSelectors_1 = require("../../View/Modals/CommonFormComponents/StatusSelectors");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 function MilestoneDatesFilterBody() {
-    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
+    const { register, watch, setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            searchText: "test",
+            contractStatuses: [
+                MainSetupReact_1.default.ContractStatuses.NOT_STARTED,
+                MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
+                MainSetupReact_1.default.ContractStatuses.FINISHED,
+            ],
+            milestoneStatuses: MainSetupReact_1.default.MilestoneDatesFilterInitState.STATUSES,
+        };
+        reset(resetData);
+        trigger();
+        console.log("resetData", resetData);
+    }, []);
     (0, react_1.useEffect)(() => {
         setValue("_contract", undefined);
     }, [_project]);
@@ -56,13 +70,15 @@ function MilestoneDatesFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false }),
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false }),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Administrator kontraktu"),
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: MilestoneDatesController_1.personsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })))));
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: false, name: "milestoneStatuses", label: "Statusy kamieni milowych", multiple: true })))));
 }
 exports.MilestoneDatesFilterBody = MilestoneDatesFilterBody;

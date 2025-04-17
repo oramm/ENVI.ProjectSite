@@ -49,7 +49,7 @@ function MilestoneDateModalBody(props) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis roli", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis do tego terminu", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
             react_1.default.createElement(react_bootstrap_1.Col, null,

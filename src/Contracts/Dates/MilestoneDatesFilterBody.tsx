@@ -10,13 +10,31 @@ import {
 } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { contractsRepository, personsRepository, projectsRepository } from "./MilestoneDatesController";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
-import { ContractStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import {
+    ContractStatusSelector,
+    MilestoneStatusSelector,
+} from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import MainSetup from "../../React/MainSetupReact";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 export function MilestoneDatesFilterBody() {
-    const { register, watch, setValue } = useFormContext();
-
+    const { register, watch, setValue, reset, trigger } = useFormContext();
     const _project = watch("_project");
+
+    useEffect(() => {
+        const resetData = {
+            searchText: "test",
+            contractStatuses: [
+                MainSetup.ContractStatuses.NOT_STARTED,
+                MainSetup.ContractStatuses.IN_PROGRESS,
+                MainSetup.ContractStatuses.FINISHED,
+            ],
+            milestoneStatuses: MainSetup.MilestoneDatesFilterInitState.STATUSES,
+        };
+        reset(resetData);
+        trigger();
+        console.log("resetData", resetData);
+    }, []);
 
     useEffect(() => {
         setValue("_contract", undefined);
@@ -71,8 +89,8 @@ export function MilestoneDatesFilterBody() {
                     toName="endDateTo"
                     showValidationInfo={false}
                 />
-                <Form.Group as={Col} xs={12} md={8} lg={4} xl={4} controlId="_person">
-                    <Form.Label>Osoba</Form.Label>
+                <Form.Group as={Col} sm={12} md={8} lg={4} xl={4} controlId="_person">
+                    <Form.Label>Administrator kontraktu</Form.Label>
                     <PersonSelector name="_person" repository={personsRepository} showValidationInfo={false} />
                 </Form.Group>
             </Row>
@@ -82,6 +100,14 @@ export function MilestoneDatesFilterBody() {
                 </Form.Group>
                 <Form.Group as={Col} xl={4}>
                     <ContractRangeSelector repository={MainSetup.contractRangesRepository} showValidationInfo={false} />
+                </Form.Group>
+                <Form.Group as={Col} xl={4}>
+                    <MilestoneStatusSelector
+                        showValidationInfo={false}
+                        name="milestoneStatuses"
+                        label="Statusy kamieni milowych"
+                        multiple={true}
+                    />
                 </Form.Group>
             </Row>
         </>

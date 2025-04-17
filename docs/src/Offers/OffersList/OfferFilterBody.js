@@ -34,7 +34,7 @@ const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const StatusSelectors_1 = require("../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
 function OffersFilterBody() {
-    const { reset, register, setValue, watch, trigger } = (0, FormContext_1.useFormContext)();
+    const { reset, register, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
             searchText: "",

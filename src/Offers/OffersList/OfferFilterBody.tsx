@@ -6,7 +6,7 @@ import { OfferBondStatusSelector, OfferStatusSelector } from "../../View/Modals/
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OffersFilterBody() {
-    const { reset, register, setValue, watch, trigger } = useFormContext();
+    const { reset, register, trigger } = useFormContext();
 
     useEffect(() => {
         const resetData = {

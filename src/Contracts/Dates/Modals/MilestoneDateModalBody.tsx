@@ -40,7 +40,7 @@ export function MilestoneDateModalBody(props: ModalBodyProps<MilestoneDateData>)
                 <Form.Control
                     as="textarea"
                     rows={2}
-                    placeholder="Podaj opis roli"
+                    placeholder="Podaj opis do tego terminu"
                     isInvalid={!!errors?.description}
                     isValid={!errors?.description}
                     {...register("description")}

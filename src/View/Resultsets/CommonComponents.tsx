@@ -234,6 +234,33 @@ export function ContractStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function MilestoneStatusBadge({ status }: { status: string }) {
+    let variant;
+    let textMode: Color = "light";
+    switch (status) {
+        case MainSetup.MilestoneStatus.NOT_STARTED:
+            variant = "secondary";
+            break;
+        case MainSetup.MilestoneStatus.IN_PROGRESS:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetup.MilestoneStatus.FINISHED:
+            variant = "success";
+            break;
+        case MainSetup.MilestoneStatus.ARCHIVAL:
+            variant = "dark";
+            break;
+        default:
+            variant = "secondary";
+    }
+    return (
+        <Badge bg={variant} text={textMode}>
+            {status}
+        </Badge>
+    );
+}
+
 export function SecurityStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = "light";

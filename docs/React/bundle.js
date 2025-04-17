@@ -80126,6 +80126,28 @@ function makeNodesHash(arr){
 
 /***/ }),
 
+/***/ "./Typings/typeGuards.ts":
+/*!*******************************!*\
+  !*** ./Typings/typeGuards.ts ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isOtherContract = exports.isOurContract = void 0;
+function isOurContract(x) {
+    return !!x?._type?.isOur;
+}
+exports.isOurContract = isOurContract;
+function isOtherContract(x) {
+    return x?._type?.isOur === false;
+}
+exports.isOtherContract = isOtherContract;
+
+
+/***/ }),
+
 /***/ "./src/Admin/Cities/CitiesController.ts":
 /*!**********************************************!*\
   !*** ./src/Admin/Cities/CitiesController.ts ***!
@@ -83329,8 +83351,22 @@ const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonForm
 const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function MilestoneDatesFilterBody() {
-    const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
+    const { register, watch, setValue, reset, trigger } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            searchText: "test",
+            contractStatuses: [
+                MainSetupReact_1.default.ContractStatuses.NOT_STARTED,
+                MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
+                MainSetupReact_1.default.ContractStatuses.FINISHED,
+            ],
+            milestoneStatuses: MainSetupReact_1.default.MilestoneDatesFilterInitState.STATUSES,
+        };
+        reset(resetData);
+        trigger();
+        console.log("resetData", resetData);
+    }, []);
     (0, react_1.useEffect)(() => {
         setValue("_contract", undefined);
     }, [_project]);
@@ -83349,14 +83385,16 @@ function MilestoneDatesFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false }),
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false }),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Administrator kontraktu"),
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: MilestoneDatesController_1.personsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })))));
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
+                react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: false, name: "milestoneStatuses", label: "Statusy kamieni milowych", multiple: true })))));
 }
 exports.MilestoneDatesFilterBody = MilestoneDatesFilterBody;
 
@@ -83404,6 +83442,8 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDat
 const MilestoneDatesController_1 = __webpack_require__(/*! ./MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
 const MilestoneDateButtons_1 = __webpack_require__(/*! ./Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
 const MilestoneDatesFilterBody_1 = __webpack_require__(/*! ./MilestoneDatesFilterBody */ "./src/Contracts/Dates/MilestoneDatesFilterBody.tsx");
+const typeGuards_1 = __webpack_require__(/*! ../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 function MilestoneDatesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -83413,6 +83453,7 @@ function MilestoneDatesSearch({ title }) {
             return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
         const _contract = item._milestone?._contract;
         const _milestone = item._milestone;
+        const _admin = (0, typeGuards_1.isOurContract)(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-info" },
                 "[",
@@ -83422,7 +83463,9 @@ function MilestoneDatesSearch({ title }) {
                 " | ",
                 _milestone?._type.name,
                 " ",
-                _milestone?.name || ""),
+                _milestone?.name || "",
+                " ",
+                react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: _milestone?.status })),
             react_1.default.createElement("div", { className: "mb-2" },
                 item._milestone?.description || "",
                 " ",
@@ -83431,7 +83474,12 @@ function MilestoneDatesSearch({ title }) {
                 "Kontrakt: [",
                 _contract?._type?.name,
                 "] ",
-                _contract?.name || "⚠️ Brak nazwy kontraktu"),
+                _contract?.name || "⚠️ Brak nazwy kontraktu",
+                " ",
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: _contract?.status })),
+            react_1.default.createElement("div", { className: "text-muted mb-2" },
+                "Administrator: ",
+                _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"),
             react_1.default.createElement("div", { className: "mb-2" },
                 "Od: ",
                 react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
@@ -83542,7 +83590,7 @@ function MilestoneDateModalBody(props) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis roli", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj opis do tego terminu", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
             react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -88345,7 +88393,7 @@ const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/Mai
 const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function OffersFilterBody() {
-    const { reset, register, setValue, watch, trigger } = (0, FormContext_1.useFormContext)();
+    const { reset, register, trigger } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
         const resetData = {
             searchText: "",
@@ -89555,6 +89603,15 @@ MainSetup.OffersFilterInitState = {
     SUBMISSION_FROM: ToolsDate_1.default.addDays(new Date(), -180).toISOString().slice(0, 10),
     SUBMISSION_TO: ToolsDate_1.default.addDays(new Date(), +40).toISOString().slice(0, 10),
     STATUSES: [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.DONE],
+};
+MainSetup.MilestoneDatesFilterInitState = {
+    START_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    START_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
+    STATUSES: [
+        MainSetup.MilestoneStatus.NOT_STARTED,
+        MainSetup.MilestoneStatus.IN_PROGRESS,
+        MainSetup.MilestoneStatus.FINISHED,
+    ],
 };
 MainSetup.OffersInvitationMailFilterInitState = {
     INCOMING_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -7).toISOString().slice(0, 10),
@@ -93841,7 +93898,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
@@ -93988,6 +94045,29 @@ function ContractStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
+function MilestoneStatusBadge({ status }) {
+    let variant;
+    let textMode = "light";
+    switch (status) {
+        case MainSetupReact_1.default.MilestoneStatus.NOT_STARTED:
+            variant = "secondary";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.FINISHED:
+            variant = "success";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.ARCHIVAL:
+            variant = "dark";
+            break;
+        default:
+            variant = "secondary";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.MilestoneStatusBadge = MilestoneStatusBadge;
 function SecurityStatusBadge({ status }) {
     let variant;
     let textMode = "light";

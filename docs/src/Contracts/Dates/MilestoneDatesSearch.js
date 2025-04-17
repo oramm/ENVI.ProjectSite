@@ -32,6 +32,8 @@ const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
 const MilestoneDatesController_1 = require("./MilestoneDatesController");
 const MilestoneDateButtons_1 = require("./Modals/MilestoneDateButtons");
 const MilestoneDatesFilterBody_1 = require("./MilestoneDatesFilterBody");
+const typeGuards_1 = require("../../../Typings/typeGuards");
+const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 function MilestoneDatesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -41,6 +43,7 @@ function MilestoneDatesSearch({ title }) {
             return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
         const _contract = item._milestone?._contract;
         const _milestone = item._milestone;
+        const _admin = (0, typeGuards_1.isOurContract)(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-info" },
                 "[",
@@ -50,7 +53,9 @@ function MilestoneDatesSearch({ title }) {
                 " | ",
                 _milestone?._type.name,
                 " ",
-                _milestone?.name || ""),
+                _milestone?.name || "",
+                " ",
+                react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: _milestone?.status })),
             react_1.default.createElement("div", { className: "mb-2" },
                 item._milestone?.description || "",
                 " ",
@@ -59,7 +64,12 @@ function MilestoneDatesSearch({ title }) {
                 "Kontrakt: [",
                 _contract?._type?.name,
                 "] ",
-                _contract?.name || "⚠️ Brak nazwy kontraktu"),
+                _contract?.name || "⚠️ Brak nazwy kontraktu",
+                " ",
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: _contract?.status })),
+            react_1.default.createElement("div", { className: "text-muted mb-2" },
+                "Administrator: ",
+                _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"),
             react_1.default.createElement("div", { className: "mb-2" },
                 "Od: ",
                 react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),

@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -173,6 +173,29 @@ function ContractStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
+function MilestoneStatusBadge({ status }) {
+    let variant;
+    let textMode = "light";
+    switch (status) {
+        case MainSetupReact_1.default.MilestoneStatus.NOT_STARTED:
+            variant = "secondary";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS:
+            variant = "warning";
+            textMode = "dark";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.FINISHED:
+            variant = "success";
+            break;
+        case MainSetupReact_1.default.MilestoneStatus.ARCHIVAL:
+            variant = "dark";
+            break;
+        default:
+            variant = "secondary";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+exports.MilestoneStatusBadge = MilestoneStatusBadge;
 function SecurityStatusBadge({ status }) {
     let variant;
     let textMode = "light";
