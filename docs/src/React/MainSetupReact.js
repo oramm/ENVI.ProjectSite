@@ -186,8 +186,8 @@ MainSetup.OffersFilterInitState = {
     STATUSES: [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.DONE],
 };
 MainSetup.MilestoneDatesFilterInitState = {
-    START_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
-    START_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
+    END_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    END_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
     STATUSES: [
         MainSetup.MilestoneStatus.NOT_STARTED,
         MainSetup.MilestoneStatus.IN_PROGRESS,

@@ -224,8 +224,8 @@ export default class MainSetup {
     };
 
     static readonly MilestoneDatesFilterInitState = {
-        START_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
-        START_DATE_TO: ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10),
+        END_DATE_FROM: ToolsDate.addDays(new Date(), -365).toISOString().slice(0, 10),
+        END_DATE_TO: ToolsDate.addDays(new Date(), +600).toISOString().slice(0, 10),
         STATUSES: [
             MainSetup.MilestoneStatus.NOT_STARTED,
             MainSetup.MilestoneStatus.IN_PROGRESS,

@@ -83355,17 +83355,11 @@ function MilestoneDatesFilterBody() {
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {
         const resetData = {
-            searchText: "test",
-            contractStatuses: [
-                MainSetupReact_1.default.ContractStatuses.NOT_STARTED,
-                MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
-                MainSetupReact_1.default.ContractStatuses.FINISHED,
-            ],
             milestoneStatuses: MainSetupReact_1.default.MilestoneDatesFilterInitState.STATUSES,
+            endDateFrom: MainSetupReact_1.default.MilestoneDatesFilterInitState.END_DATE_FROM,
         };
         reset(resetData);
         trigger();
-        console.log("resetData", resetData);
     }, []);
     (0, react_1.useEffect)(() => {
         setValue("_contract", undefined);
@@ -89605,8 +89599,8 @@ MainSetup.OffersFilterInitState = {
     STATUSES: [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.DONE],
 };
 MainSetup.MilestoneDatesFilterInitState = {
-    START_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
-    START_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
+    END_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    END_DATE_TO: ToolsDate_1.default.addDays(new Date(), +600).toISOString().slice(0, 10),
     STATUSES: [
         MainSetup.MilestoneStatus.NOT_STARTED,
         MainSetup.MilestoneStatus.IN_PROGRESS,

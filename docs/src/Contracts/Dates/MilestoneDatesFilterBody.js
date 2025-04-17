@@ -40,17 +40,11 @@ function MilestoneDatesFilterBody() {
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {
         const resetData = {
-            searchText: "test",
-            contractStatuses: [
-                MainSetupReact_1.default.ContractStatuses.NOT_STARTED,
-                MainSetupReact_1.default.ContractStatuses.IN_PROGRESS,
-                MainSetupReact_1.default.ContractStatuses.FINISHED,
-            ],
             milestoneStatuses: MainSetupReact_1.default.MilestoneDatesFilterInitState.STATUSES,
+            endDateFrom: MainSetupReact_1.default.MilestoneDatesFilterInitState.END_DATE_FROM,
         };
         reset(resetData);
         trigger();
-        console.log("resetData", resetData);
     }, []);
     (0, react_1.useEffect)(() => {
         setValue("_contract", undefined);

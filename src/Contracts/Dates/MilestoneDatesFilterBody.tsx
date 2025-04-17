@@ -15,7 +15,6 @@ import {
     MilestoneStatusSelector,
 } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import MainSetup from "../../React/MainSetupReact";
-import { text } from "@fortawesome/fontawesome-svg-core";
 
 export function MilestoneDatesFilterBody() {
     const { register, watch, setValue, reset, trigger } = useFormContext();
@@ -23,17 +22,11 @@ export function MilestoneDatesFilterBody() {
 
     useEffect(() => {
         const resetData = {
-            searchText: "test",
-            contractStatuses: [
-                MainSetup.ContractStatuses.NOT_STARTED,
-                MainSetup.ContractStatuses.IN_PROGRESS,
-                MainSetup.ContractStatuses.FINISHED,
-            ],
             milestoneStatuses: MainSetup.MilestoneDatesFilterInitState.STATUSES,
+            endDateFrom: MainSetup.MilestoneDatesFilterInitState.END_DATE_FROM,
         };
         reset(resetData);
         trigger();
-        console.log("resetData", resetData);
     }, []);
 
     useEffect(() => {
