@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, Alert, Spinner, Container, Placeholder, Row, Col } from "react-bootstrap";
-import { useForm, FieldValues } from "react-hook-form";
+import { Modal, Button, Form, Alert, Spinner, Container, Placeholder, Row, Col, ProgressBar } from "react-bootstrap";
+import { useForm, FieldValues, set } from "react-hook-form";
 import RepositoryReact from "../../React/RepositoryReact";
 import { FormProvider } from "./FormContext";
 import { parseFieldValuestoFormData as parseFieldValuesToFormData } from "../Resultsets/CommonComponentsController";
@@ -11,6 +11,8 @@ import { ModalBodyProps } from "./ModalsTypes";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ErrorBoundary from "./ErrorBoundary";
 import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
+import { SessionTask } from "../../../Typings/sessionTypes";
+import { render } from "react-dom";
 
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
@@ -52,6 +54,11 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     const [errorMessage, setErrorMessage] = useState("");
     const [requestPending, setRequestPending] = useState(false);
+    const [progressData, setProgressData] = useState<{ text: string; percent?: number }>({
+        text: "",
+        percent: undefined,
+    });
+
     const formMethods = useForm({
         defaultValues: {},
         mode: "onChange",
@@ -59,6 +66,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     });
 
     useEffect(() => {
+        setErrorMessage("");
+        setProgressData({ text: "" });
         async function fetchData() {
             await loadDataObject();
         }
@@ -85,6 +94,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     async function handleSubmitRepository(data: FieldValues) {
         try {
             setErrorMessage("");
+            setProgressData({ text: "" });
             setRequestPending(true);
 
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
@@ -158,7 +168,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             };
         }
 
-        const newObject = await repository.addNewItem(data);
+        const newObject = await repository.addNewItem(data, undefined, handleProgress);
         if (onAddNew) onAddNew(newObject);
     }
 
@@ -204,6 +214,39 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         );
     }
 
+    function handleProgress(sessionTask: SessionTask) {
+        makeProgressMessage(sessionTask);
+    }
+
+    function makeProgressMessage(sessionTask: SessionTask) {
+        if (!sessionTask.progressMesage) return "";
+        if (sessionTask.status === "error") {
+            setProgressData({ text: sessionTask.error || "" });
+            return "";
+        }
+        const percent = sessionTask.percent !== undefined ? sessionTask.percent : "";
+        const message = `Postęp: ${percent}% ${sessionTask.progressMesage}`;
+        setProgressData({ text: message, percent: sessionTask.percent });
+    }
+
+    function renderProgressBar() {
+        //stara wersja
+        if (progressData.percent === undefined && progressData.text === "") return null;
+        if (progressData.percent === undefined)
+            return <div className="text-muted small me-3 mb-2">{progressData.text}</div>;
+        return (
+            <div className="w-100 mb-2">
+                <ProgressBar
+                    now={progressData.percent ?? 0}
+                    label={`${progressData.percent ?? 0}%`}
+                    variant="info"
+                    style={{ height: "0.6rem" }}
+                />
+                <div className="text-muted small mt-1">{progressData.text}</div>
+            </div>
+        );
+    }
+
     return (
         <Modal
             size={size}
@@ -217,24 +260,39 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                     <Modal.Header closeButton={true}>{renderHeader()}</Modal.Header>
                     <Modal.Body>{renderFormBody()}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={onClose}>
-                            Anuluj
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            disabled={!formMethods.formState.isValid || requestPending || isLoadingData}
-                        >
-                            Zatwierdź{" "}
-                            {requestPending && (
-                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                            )}
-                        </Button>
+                        <Row className="w-100 align-items-center text-end">
+                            <Col xs="12" sm="8" className="W-100">
+                                {renderProgressBar()}
+                            </Col>
+                            <Col className="text-end">
+                                <Button variant="secondary" className="me-2 mb-2" onClick={onClose}>
+                                    Anuluj
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant="primary"
+                                    className="mb-2"
+                                    disabled={!formMethods.formState.isValid || requestPending || isLoadingData}
+                                >
+                                    <span className="d-inline-flex align-items-center">
+                                        Zatwierdź
+                                        {requestPending && (
+                                            <Spinner
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                className="ms-2"
+                                            />
+                                        )}
+                                    </span>
+                                </Button>
+                            </Col>
+                        </Row>
                     </Modal.Footer>
                 </Form>
             </ErrorBoundary>
         </Modal>
     );
 }
-
-function ModalFooter() {}

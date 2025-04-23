@@ -40,9 +40,10 @@ function FocusAreasSearch({ title }) {
     return (react_1.default.createElement(FilterableTable_1.default, { id: "focus-areas", title: title, FilterBodyComponent: FocusAreasFilterBody_1.FocusAreasFilterBody, tableStructure: [
             {
                 header: "Program",
+                colMd: 4,
                 renderTdBody: (focusArea) => (0, FinancialAidProgrammesSearch_1.renderFinancialAidProgramme)(focusArea._financialAidProgramme),
             },
-            { header: "Działanie", renderTdBody: renderFocusArea },
+            { header: "Działanie", renderTdBody: renderFocusArea, colMd: 7 },
         ], AddNewButtonComponents: [FocusAreaModalButtons_1.FocusAreaAddNewModalButton], EditButtonComponent: FocusAreaModalButtons_1.FocusAreaEditModalButton, isDeletable: true, repository: FocusAreasController_1.focusAreasRepository, selectedObjectRoute: "/focusArea/" }));
 }
 exports.default = FocusAreasSearch;

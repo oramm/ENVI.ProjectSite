@@ -36,10 +36,10 @@ function EntitiesSearch({ title }) {
         document.title = title;
     }, [title]);
     return (react_1.default.createElement(FilterableTable_1.default, { id: "entities", title: title, FilterBodyComponent: EntityFilterBody_1.EntitiesFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Adres", objectAttributeToShow: "address" },
-            { header: "NIP", objectAttributeToShow: "taxNumber" },
-            { header: "Telefon", objectAttributeToShow: "phone" },
+            { header: "Nazwa", objectAttributeToShow: "name", colMd: 4 },
+            { header: "Adres", objectAttributeToShow: "address", colMd: 3 },
+            { header: "NIP", objectAttributeToShow: "taxNumber", colMd: 2 },
+            { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
         ], AddNewButtonComponents: [EntityModalButtons_1.EntityAddNewModalButton], EditButtonComponent: EntityModalButtons_1.EntityEditModalButton, isDeletable: true, repository: EntitiesController_1.entitiesRepository, selectedObjectRoute: "/entity/" }));
 }
 exports.default = EntitiesSearch;

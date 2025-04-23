@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 import { FilterableTableRow } from "./FilterableTableRow";
 import ErrorBoundary from "../../Modals/ErrorBoundary";
+import { isStr } from "react-toastify/dist/utils";
 
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
     showTableHeader: boolean;
@@ -27,39 +28,41 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);
 
+    function setStrippedClassName() {
+        if (objectsToShow.length < 5 || !isStriped) return "";
+        if (isStriped && objectsToShow.length > 5) return "table-striped";
+        return "";
+    }
+
     return (
         <>
-            <div>
+            <Table className={setStrippedClassName()} hover size="sm">
                 {showTableHeader && (
-                    <Row className="fw-bold text-secondary d-none d-md-flex">
-                        {tableStructure.map((column, index) => (
-                            <Col key={column.header || index} {...getColSize(column)} className="text-center">
-                                {renderHeaderBody(column)}
-                            </Col>
-                        ))}
-                    </Row>
+                    <thead>
+                        <tr>
+                            {tableStructure.map((column, index) => (
+                                <th key={column.header || index}>{renderHeaderBody(column)}</th>
+                            ))}
+                        </tr>
+                    </thead>
                 )}
-                <div className="d-flex flex-column gap-2">
-                    {objectsToShow.map((dataObject, index) => {
+                <tbody>
+                    {objectsToShow.map((dataObject) => {
                         const isActive = dataObject.id === activeRowId;
-                        const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
-
                         return (
                             <ErrorBoundary key={dataObject.id}>
-                                <div>
-                                    <FilterableTableRow<DataItemType>
-                                        //key={dataObject.id}
-                                        dataObject={dataObject}
-                                        isActive={isActive}
-                                        isStriped={isStripedRow}
-                                        onRowClick={onRowClick}
-                                    />
-                                </div>
+                                <FilterableTableRow<DataItemType>
+                                    //key={dataObject.id}
+                                    dataObject={dataObject}
+                                    isActive={isActive}
+                                    isStriped={isStriped}
+                                    onRowClick={onRowClick}
+                                />
                             </ErrorBoundary>
                         );
                     })}
-                </div>
-            </div>
+                </tbody>
+            </Table>
         </>
     );
 }
@@ -68,13 +71,4 @@ export function renderHeaderBody<DataItemType extends RepositoryDataItem>(column
     if (column.header) return column.header;
     if (!column.renderThBody) return "";
     return column.renderThBody();
-}
-
-export function getColSize(column: RowStructure<any>) {
-    return {
-        xs: 12,
-        sm: column.colSm || 11,
-        md: column.colMd,
-        lg: column.colLg,
-    };
 }

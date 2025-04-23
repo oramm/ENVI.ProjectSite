@@ -23687,7 +23687,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n", "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D","sourcesContent":[".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n\r\n.row-hover:hover {\r\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\r\n    transition: background-color 0.15s ease-in-out;\r\n    cursor: pointer;\r\n}\r\n", "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D;;AAEA;IACI,+CAA+C,EAAE,oBAAoB;IACrE,8CAA8C;IAC9C,eAAe;AACnB","sourcesContent":[".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n\r\n.row-hover:hover {\r\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\r\n    transition: background-color 0.15s ease-in-out;\r\n    cursor: pointer;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -81291,15 +81291,28 @@ function ContractOurDetails() {
                         react_1.default.createElement("div", null, "Faktury")),
                     react_1.default.createElement(react_bootstrap_1.Col, { sm: 12 },
                         react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: "", tableStructure: [
-                                { header: "Numer", objectAttributeToShow: "number" },
-                                { header: "Sprzedaż", objectAttributeToShow: "issueDate" },
+                                { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
                                 {
-                                    header: "status",
-                                    renderTdBody: (invoice) => (react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
+                                    header: "Sprzedaż",
+                                    renderTdBody: (invoice) => (react_1.default.createElement("div", { className: "text-end" }, invoice.issueDate)),
+                                    colMd: 2,
                                 },
-                                { header: "Wysłano", objectAttributeToShow: "sentDate" },
-                                { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue },
-                                { header: "Termin płatności", objectAttributeToShow: "paymentDeadline" },
+                                {
+                                    header: "Status",
+                                    renderTdBody: (invoice) => (react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })),
+                                    colMd: 1,
+                                },
+                                {
+                                    header: "Wysłano",
+                                    renderTdBody: (invoice) => (react_1.default.createElement("div", { className: "text-end" }, invoice.sentDate)),
+                                    colMd: 2,
+                                },
+                                { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 2 },
+                                {
+                                    header: "Termin płatności",
+                                    renderTdBody: (invoice) => (react_1.default.createElement("div", { className: "text-end" }, invoice.paymentDeadline)),
+                                    colMd: 2,
+                                },
                             ], initialObjects: invoices, repository: ContractsController_1.invoicesRepository, selectedObjectRoute: "/invoice/", isDeletable: false, externalUpdate: externalUpdate })))),
             react_1.default.createElement("p", { className: "tekst-muted small" },
                 "Koordynator(ka): ",
@@ -81898,11 +81911,16 @@ function ContractsSearch({ title }) {
             {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
+                colLg: 2,
             },
-            { header: "Oznaczenie", renderTdBody: (contract) => renderName(contract) },
-            { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
-            { header: "Zakończenie", objectAttributeToShow: "endDate" },
-            { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate" },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (contract) => renderName(contract),
+                colLg: 6,
+            },
+            { header: "Rozpoczęcie", objectAttributeToShow: "startDate", colLg: 1 },
+            { header: "Zakończenie", objectAttributeToShow: "endDate", colLg: 1 },
+            { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate", colLg: 1 },
         ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: ContractsController_1.contractsRepository, selectedObjectRoute: "/contract/", shouldRetrieveDataBeforeEdit: true }));
 }
 exports["default"] = ContractsSearch;
@@ -83142,22 +83160,22 @@ function SecuritiesSearch({ title }) {
         if (security.value === undefined)
             return react_1.default.createElement(react_1.default.Fragment, null);
         const formatedValue = Tools_1.default.formatNumber(value);
-        return react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: security,
                 ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyValue,
                 makeValidationSchema: SecurityValidationSchema_1.securityValueValidationSchema,
                 repository: ContractsController_1.securitiesRepository,
-                modalTitle: 'Edycja wartości',
+                modalTitle: "Edycja wartości",
                 onEdit: handleEditObject,
-                fieldsToUpdate: fieldsToUpdate
+                fieldsToUpdate: fieldsToUpdate,
             } },
-            react_1.default.createElement("div", { className: "text-end" }, formatedValue));
+            react_1.default.createElement("div", { className: "text-end" }, formatedValue)));
     }
     function renderValue(security) {
-        return renderValueGeneric(security, security.value, ['value']);
+        return renderValueGeneric(security, security.value, ["value"]);
     }
     function renderReturnedValue(security) {
-        return renderValueGeneric(security, security.returnedValue, ['returnedValue']);
+        return renderValueGeneric(security, security.returnedValue, ["returnedValue"]);
     }
     function renderRemainingValue(security) {
         if (security.value === undefined)
@@ -83166,86 +83184,98 @@ function SecuritiesSearch({ title }) {
         return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
     }
     function renderType(isCash) {
-        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? 'Gotówka' : 'Gwarancja');
+        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? "Gotówka" : "Gwarancja");
     }
     function renderFirstPartExpiryDate(security) {
         let element;
         if (!security.firstPartExpiryDate)
             element = react_1.default.createElement(react_1.default.Fragment, null, security._contract.startDate);
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.firstPartExpiryDate);
-        element = react_1.default.createElement(react_1.default.Fragment, null,
+        element = (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.firstPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
-        return react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: security,
                 ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyDates,
                 makeValidationSchema: SecurityValidationSchema_1.suecurityDatesValidationSchema,
                 repository: ContractsController_1.securitiesRepository,
-                modalTitle: 'Edycja dat',
+                modalTitle: "Edycja dat",
                 onEdit: handleEditObject,
-                fieldsToUpdate: ['firstPartExpiryDate', 'secondPartExpiryDate']
-            } }, element);
+                fieldsToUpdate: ["firstPartExpiryDate", "secondPartExpiryDate"],
+            } }, element));
     }
     function renderSecondPartExpiryDate(security) {
         let element;
         if (!security.secondPartExpiryDate)
-            element = react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || 'Sprawdź w umowie');
+            element = react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || "Sprawdź w umowie");
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.secondPartExpiryDate);
-        element = react_1.default.createElement(react_1.default.Fragment, null,
+        element = (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.secondPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
-        return react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: security,
                 ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyDates,
                 makeValidationSchema: SecurityValidationSchema_1.suecurityDatesValidationSchema,
                 repository: ContractsController_1.securitiesRepository,
-                modalTitle: 'Edycja dat',
+                modalTitle: "Edycja dat",
                 onEdit: handleEditObject,
-                fieldsToUpdate: ['firstPartExpiryDate', 'secondPartExpiryDate']
-            } }, element);
+                fieldsToUpdate: ["firstPartExpiryDate", "secondPartExpiryDate"],
+            } }, element));
     }
     function renderDescription(security) {
         if (!security.description)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: security,
                     ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyDescritpion,
                     makeValidationSchema: SecurityValidationSchema_1.securityDescriptionValidationSchema,
                     repository: ContractsController_1.securitiesRepository,
-                    modalTitle: 'Edycja opisu',
+                    modalTitle: "Edycja opisu",
                     onEdit: handleEditObject,
-                    fieldsToUpdate: ['description']
+                    fieldsToUpdate: ["description"],
                 } },
                 react_1.default.createElement(react_1.default.Fragment, null, security.description)),
-            ' ',
+            " ",
             react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                     initialData: security,
                     ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyStatus,
                     makeValidationSchema: SecurityValidationSchema_1.securityStatusValidationSchema,
                     repository: ContractsController_1.securitiesRepository,
-                    modalTitle: 'Edycja statusu',
+                    modalTitle: "Edycja statusu",
                     onEdit: handleEditObject,
-                    fieldsToUpdate: ['description']
+                    fieldsToUpdate: ["description"],
                 } },
-                react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status })));
+                react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status }))));
     }
     function handleEditObject(object) {
         setSecurities(ContractsController_1.securitiesRepository.items.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate(prevState => prevState + 1);
+        setExternalUpdate((prevState) => prevState + 1);
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: 'securities', title: title, FilterBodyComponent: SecuritiesFilterBody_1.SecuritiesFilterBody, tableStructure: [
-            { header: 'Typ', renderTdBody: (security) => renderType(security.isCash) },
-            { header: 'Oznaczenie', renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId) },
-            { header: 'Wartość', renderTdBody: (security) => renderValue(security) },
-            { header: 'Zwrócono', renderTdBody: (security) => renderReturnedValue(security) },
-            { header: 'Do zwrotu', renderTdBody: (security) => renderRemainingValue(security) },
-            { header: '70% Wygasa', renderTdBody: (security) => renderFirstPartExpiryDate(security) },
-            { header: '30% Wygasa', renderTdBody: (security) => renderSecondPartExpiryDate(security) },
-            { header: 'Uwagi', renderTdBody: (security) => renderDescription(security) },
-        ], AddNewButtonComponents: [SecurityModalButtons_1.SecurityCashAddNewModalButton, SecurityModalButtons_1.SecurityGuaranteeAddNewModalButton], EditButtonComponent: SecurityModalButtons_1.SecurityEditModalButton, isDeletable: true, repository: ContractsController_1.securitiesRepository, selectedObjectRoute: '/contract/', initialObjects: securities, externalUpdate: externalUpdate }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "securities", title: title, FilterBodyComponent: SecuritiesFilterBody_1.SecuritiesFilterBody, tableStructure: [
+            { header: "Typ", renderTdBody: (security) => renderType(security.isCash), colMd: 2 },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId),
+                colMd: 2,
+            },
+            { header: "Wartość", renderTdBody: (security) => renderValue(security), colMd: 1 },
+            { header: "Zwrócono", renderTdBody: (security) => renderReturnedValue(security), colMd: 1 },
+            { header: "Do zwrotu", renderTdBody: (security) => renderRemainingValue(security), colMd: 1 },
+            {
+                header: "70% Wygasa",
+                renderTdBody: (security) => renderFirstPartExpiryDate(security),
+                colMd: 1,
+            },
+            {
+                header: "30% Wygasa",
+                renderTdBody: (security) => renderSecondPartExpiryDate(security),
+                colMd: 1,
+            },
+            { header: "Uwagi", renderTdBody: (security) => renderDescription(security), colMd: 2 },
+        ], AddNewButtonComponents: [SecurityModalButtons_1.SecurityCashAddNewModalButton, SecurityModalButtons_1.SecurityGuaranteeAddNewModalButton], EditButtonComponent: SecurityModalButtons_1.SecurityEditModalButton, isDeletable: true, repository: ContractsController_1.securitiesRepository, selectedObjectRoute: "/contract/", initialObjects: securities, externalUpdate: externalUpdate }));
 }
 exports["default"] = SecuritiesSearch;
 
@@ -83448,43 +83478,51 @@ function MilestoneDatesSearch({ title }) {
         const _contract = item._milestone?._contract;
         const _milestone = item._milestone;
         const _admin = (0, typeGuards_1.isOurContract)(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("span", { className: "text-info" },
-                "[",
-                _contract?.projectOurId,
-                "] ",
-                _contract?._ourIdOrNumber_Alias,
-                " | ",
-                _milestone?._type.name,
+        return (react_1.default.createElement("div", null,
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("span", null,
+                    "[",
+                    _contract?.projectOurId,
+                    "] ",
+                    _contract?._ourIdOrNumber_Alias),
                 " ",
-                _milestone?.name || "",
+                "| ",
+                react_1.default.createElement("span", { className: "fw-bold" }, _milestone?._type.name),
+                " ",
+                react_1.default.createElement("span", null, _milestone?.name || ""),
                 " ",
                 react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: _milestone?.status })),
             react_1.default.createElement("div", { className: "mb-2" },
-                item._milestone?.description || "",
-                " ",
-                item.description || ""),
-            react_1.default.createElement("div", { className: "text-muted mb-2" },
-                "Kontrakt: [",
-                _contract?._type?.name,
-                "] ",
-                _contract?.name || "⚠️ Brak nazwy kontraktu",
-                " ",
-                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: _contract?.status })),
-            react_1.default.createElement("div", { className: "text-muted mb-2" },
-                "Administrator: ",
-                _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"),
+                react_1.default.createElement("div", { className: "text-dark" }, item._milestone?.description),
+                react_1.default.createElement("div", { className: "text-muted small" }, item.description)),
+            react_1.default.createElement("div", { className: "mb-2 small text-muted" },
+                react_1.default.createElement("div", null,
+                    "Kontrakt:",
+                    " ",
+                    react_1.default.createElement("span", { className: "fw-semibold" },
+                        "[",
+                        _contract?._type?.name,
+                        "] ",
+                        _contract?.name || "⚠️ Brak nazwy kontraktu"),
+                    " ",
+                    react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: _contract?.status })),
+                react_1.default.createElement("div", null,
+                    "Administrator:",
+                    " ",
+                    react_1.default.createElement("span", { className: "fw-semibold" }, _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"))),
             react_1.default.createElement("div", { className: "mb-2" },
-                "Od: ",
-                react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
-                " do:",
+                react_1.default.createElement("span", { className: "fw-bold" }, "Od:"),
                 " ",
-                react_1.default.createElement("span", { className: "fs-4" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
+                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+                " ",
+                react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
+                " ",
+                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
             react_1.default.createElement("div", { className: "text-secondary small" },
                 "Ostatnia aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ header: "Zakres czasowy", renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, showTableHeader: false, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
 }
 exports["default"] = MilestoneDatesSearch;
 
@@ -84315,10 +84353,10 @@ function EntitiesSearch({ title }) {
         document.title = title;
     }, [title]);
     return (react_1.default.createElement(FilterableTable_1.default, { id: "entities", title: title, FilterBodyComponent: EntityFilterBody_1.EntitiesFilterBody, tableStructure: [
-            { header: "Nazwa", objectAttributeToShow: "name" },
-            { header: "Adres", objectAttributeToShow: "address" },
-            { header: "NIP", objectAttributeToShow: "taxNumber" },
-            { header: "Telefon", objectAttributeToShow: "phone" },
+            { header: "Nazwa", objectAttributeToShow: "name", colMd: 4 },
+            { header: "Adres", objectAttributeToShow: "address", colMd: 3 },
+            { header: "NIP", objectAttributeToShow: "taxNumber", colMd: 2 },
+            { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
         ], AddNewButtonComponents: [EntityModalButtons_1.EntityAddNewModalButton], EditButtonComponent: EntityModalButtons_1.EntityEditModalButton, isDeletable: true, repository: EntitiesController_1.entitiesRepository, selectedObjectRoute: "/entity/" }));
 }
 exports["default"] = EntitiesSearch;
@@ -84693,11 +84731,16 @@ function InvoiceDetails() {
                                 invoice.description),
                             " "))))),
                 invoiceItems ? (react_1.default.createElement(FilterableTable_1.default, { id: "invoiceItems", title: "", initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
-                        { header: "Opis", objectAttributeToShow: "description" },
-                        { header: "Netto", renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._netValue)) },
+                        { header: "Opis", objectAttributeToShow: "description", colMd: 7 },
+                        {
+                            header: "Netto",
+                            renderTdBody: (item) => (react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(item._netValue))),
+                            colMd: 2,
+                        },
                         {
                             header: "Brutto",
-                            renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._grossValue)),
+                            renderTdBody: (item) => (react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(item._grossValue))),
+                            colMd: 2,
                         },
                     ] })) : (react_1.default.createElement(react_1.default.Fragment, null,
                     "\"\u0141adowanie pozycji faktury...\" ",
@@ -84882,25 +84925,25 @@ function InvoicesSearch({ title }) {
         document.title = title;
     }, [title]);
     function makeEntityLabel(invoice) {
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            invoice._entity.name,
-            " ",
-            ' ',
-            " ",
-            react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status })));
+        return react_1.default.createElement("div", null, invoice._entity.name);
     }
     function renderInvoiceTotaValue(invoice) {
-        return react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue)));
+        return (react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue))));
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: 'invoices', title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
-            { header: 'Umowa', renderTdBody: (invoice) => react_1.default.createElement(react_1.default.Fragment, null, invoice._contract.ourId) },
-            { header: 'Numer', objectAttributeToShow: 'number' },
-            { header: 'Sprzedaż', objectAttributeToShow: 'issueDate' },
-            { header: 'Wysłano', objectAttributeToShow: 'sentDate' },
-            { header: 'Odbiorca', renderTdBody: makeEntityLabel },
-            { header: 'Netto, zł', renderTdBody: renderInvoiceTotaValue },
-            { header: 'Termin płatności', objectAttributeToShow: 'paymentDeadline' },
-        ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: '/invoice/' }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
+            { header: "Umowa", renderTdBody: (invoice) => react_1.default.createElement(react_1.default.Fragment, null, invoice._contract.ourId), colMd: 1 },
+            { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+            { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
+            { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
+            { header: "Odbiorca", renderTdBody: makeEntityLabel, colMd: 4 },
+            { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
+            { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
+            {
+                header: "Status",
+                renderTdBody: (invoice) => react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status }),
+                colMd: 1,
+            },
+        ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: "/invoice/" }));
 }
 exports["default"] = InvoicesSearch;
 
@@ -85803,11 +85846,11 @@ function LettersSearch({ title }) {
             renderLastEvent(letter)));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "contractsLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
-            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
-            { header: "Utworzono", objectAttributeToShow: "creationDate" },
-            { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-            { header: "Dane Pisma", renderTdBody: renderRowContent },
-            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
+            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colLg: 1 },
+            { header: "Utworzono", objectAttributeToShow: "creationDate", colLg: 1 },
+            { header: "Wysłano", objectAttributeToShow: "registrationDate", colLg: 1 },
+            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 5 },
+            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
 exports["default"] = LettersSearch;
@@ -86495,12 +86538,12 @@ function OffersLettersSearch({ title }) {
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "offersLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
-            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
-            { header: "Utworzono", objectAttributeToShow: "creationDate" },
-            { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Dotyczy", objectAttributeToShow: "description" },
-            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
+            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colMd: 1 },
+            { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
+            { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
+            { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+            { header: "Dotyczy", objectAttributeToShow: "description", colMd: 5 },
+            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
 exports["default"] = OffersLettersSearch;
@@ -88766,10 +88809,7 @@ function OffersSearch({ title }) {
             " ",
             react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [
-            //{ renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcons },
-            { header: undefined, renderTdBody: renderRowContent },
-        ], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }
 exports["default"] = OffersSearch;
 
@@ -89092,13 +89132,19 @@ function PersonsSearch({ title }) {
         return react_1.default.createElement(react_1.default.Fragment, null, person._entity.name);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [
-            { header: "Imię", objectAttributeToShow: "name" },
-            { header: "Nazwisko", objectAttributeToShow: "surname" },
-            { header: "Telefon", objectAttributeToShow: "phone" },
-            { header: "Email", objectAttributeToShow: "email" },
-            { header: "Firma", renderTdBody: (person) => renderEntityName(person) },
-            { header: "Stanowisko", objectAttributeToShow: "position" },
-            { header: "Opis", objectAttributeToShow: "comment" },
+            {
+                header: "Imię i nazwisko",
+                renderTdBody: (person) => (react_1.default.createElement(react_1.default.Fragment, null,
+                    person.name,
+                    " ",
+                    person.surname)),
+                colMd: 2,
+            },
+            { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
+            { header: "Email", objectAttributeToShow: "email", colMd: 2 },
+            { header: "Firma", renderTdBody: (person) => renderEntityName(person), colMd: 2 },
+            { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
+            { header: "Opis", objectAttributeToShow: "comment", colMd: 2 },
         ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/" }));
 }
 exports["default"] = PersonsSearch;
@@ -89882,14 +89928,20 @@ function ContractsList() {
             {
                 header: "Rozpoczęcie",
                 renderTdBody: (contract) => renderStartDate(contract),
+                colMd: 2,
             },
-            { header: "Zakończenie", renderTdBody: (contract) => renderEndDate(contract) },
+            {
+                header: "Zakończenie",
+                renderTdBody: (contract) => renderEndDate(contract),
+                colMd: 2,
+            },
         ];
         const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
             tableStructure.push({
                 header: "Do rozliczenia",
                 renderTdBody: (contract) => renderRemainingValue(contract),
+                colMd: 2,
             });
         }
         return tableStructure;
@@ -90019,13 +90071,12 @@ function SecuritiesList() {
                         MainSetupReact_1.default.SecurityStatus.RETURNED_1ST_PART,
                     ],
                     secondPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
-                }
+                },
             ]);
             setSecurities(securities);
-            setExternalUpdate(prevState => prevState + 1);
+            setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
-        ;
         fetchData();
     }, []);
     function renderValue(value) {
@@ -90035,62 +90086,89 @@ function SecuritiesList() {
         return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
     }
     function renderType(isCash) {
-        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? 'Gotówka' : 'Gwarancja');
+        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? "Gotówka" : "Gwarancja");
     }
     function renderFirstPartExpiryDate(security) {
         if (!security.firstPartExpiryDate)
             return react_1.default.createElement(react_1.default.Fragment, null, security._contract.startDate);
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.firstPartExpiryDate);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.firstPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
     }
     function renderSecondPartExpiryDate(security) {
         if (!security.secondPartExpiryDate)
-            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || 'Sprawdź w umowie');
+            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || "Sprawdź w umowie");
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.secondPartExpiryDate);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.secondPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
     }
     function renderDescription(security) {
         if (!security.description)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
                 security.description,
                 " ",
-                ' ',
                 react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: security,
                         ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyStatus,
                         makeValidationSchema: SecurityValidationSchema_1.securityDescriptionValidationSchema,
                         repository: MainWindowController_1.securitiesRepository,
-                        modalTitle: 'Edycja statusu',
+                        modalTitle: "Edycja statusu",
                         onEdit: handleEditObject,
-                        fieldsToUpdate: ['description']
+                        fieldsToUpdate: ["description"],
                     } },
-                    react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status }))));
+                    react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status })))));
     }
     function handleEditObject(object) {
         setSecurities(securities.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate(prevState => prevState + 1);
+        setExternalUpdate((prevState) => prevState + 1);
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "ZNWu do zwrotu"),
-            react_1.default.createElement(FilterableTable_1.default, { id: 'securities', title: '', tableStructure: [
-                    { header: 'Typ', renderTdBody: (security) => renderType(security.isCash) },
-                    { header: 'Oznaczenie', renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId) },
-                    { header: 'Wartość', renderTdBody: (security) => renderValue(security.value) },
-                    { header: 'Zwrócono', renderTdBody: (security) => renderValue(security.returnedValue) },
-                    { header: 'Do zwrotu', renderTdBody: (security) => renderValue(security._remainingValue) },
-                    { header: '70% Wygasa', renderTdBody: (security) => renderFirstPartExpiryDate(security) },
-                    { header: '30% Wygasa', renderTdBody: (security) => renderSecondPartExpiryDate(security) },
-                    { header: 'Uwagi', renderTdBody: (security) => renderDescription(security) },
-                ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: '/contract/', externalUpdate: externalUpdate, initialObjects: securities }))));
+            react_1.default.createElement(FilterableTable_1.default, { id: "securities", title: "", tableStructure: [
+                    { header: "Typ", renderTdBody: (security) => renderType(security.isCash), colMd: 1 },
+                    {
+                        header: "Oznaczenie",
+                        renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId),
+                        colMd: 2,
+                    },
+                    {
+                        header: "Wartość",
+                        renderTdBody: (security) => renderValue(security.value),
+                        colMd: 1,
+                    },
+                    {
+                        header: "Zwrócono",
+                        renderTdBody: (security) => renderValue(security.returnedValue),
+                        colMd: 1,
+                    },
+                    {
+                        header: "Do zwrotu",
+                        renderTdBody: (security) => renderValue(security._remainingValue),
+                        colMd: 1,
+                    },
+                    {
+                        header: "70% Wygasa",
+                        renderTdBody: (security) => renderFirstPartExpiryDate(security),
+                        colMd: 2,
+                    },
+                    {
+                        header: "30% Wygasa",
+                        renderTdBody: (security) => renderSecondPartExpiryDate(security),
+                        colMd: 2,
+                    },
+                    {
+                        header: "Uwagi",
+                        renderTdBody: (security) => renderDescription(security),
+                        colMd: 2,
+                    },
+                ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: "/contract/", externalUpdate: externalUpdate, initialObjects: securities }))));
 }
 exports["default"] = SecuritiesList;
 
@@ -90699,13 +90777,89 @@ class RepositoryReact {
         console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
         return newItemFromServer;
     }
+    /**
+     * Dodaje nowy obiekt do bazy danych.
+     * Obsługuje dwa tryby:
+     *  - stary backend: zwraca gotowy obiekt (DataItemType)
+     *  - nowy backend: zwraca taskId → frontend odpytuje backend aż zakończy przetwarzanie
+     */
+    async addNewItemAsync(newItem, deleteId, specialActionRoute, onProgress) {
+        // 1. Budujemy ścieżkę do endpointu
+        const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
+        // 2. Przygotowanie opcji fetch
+        const requestOptions = {
+            method: "POST",
+            credentials: "include", // uwzględnij ciasteczka/sesję
+        };
+        // 3. Konfiguracja żądania dla FormData vs JSON
+        if (newItem instanceof FormData) {
+            requestOptions.body = newItem;
+        }
+        else {
+            if (deleteId)
+                delete newItem.id;
+            requestOptions.headers = {
+                "Content-Type": "application/json",
+            };
+            ToolsDate_1.default.convertDatesToUTC(newItem); // standaryzuj daty
+            requestOptions.body = JSON.stringify(newItem);
+        }
+        // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
+        const response = await this.fetchWithRetry(urlPath, requestOptions);
+        if (onProgress && response.taskId)
+            onProgress(response);
+        // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
+        if (response && !response.taskId) {
+            const item = response;
+            this.items.push(item);
+            this.currentItems = [item];
+            this.saveToSessionStorage();
+            console.log("%s:: synchronicznie utworzono: %o", this.name, item);
+            return item;
+        }
+        // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
+        const taskId = response.taskId;
+        const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
+        let statusResponse = {
+            status: "processing",
+        };
+        // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
+        for (let i = 0; i < 60; i++) {
+            await new Promise((res) => setTimeout(res, 2000));
+            statusResponse = await this.fetchWithRetry(statusUrl, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (onProgress)
+                onProgress(statusResponse);
+            console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
+            if (statusResponse.status !== "processing")
+                break;
+        }
+        if (statusResponse.status === "processing") {
+            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+        }
+        // 8. Obsługa błędu z backendu
+        if (statusResponse.status === "error") {
+            throw new Error("Błąd backendu: " + statusResponse.error);
+        }
+        // 9. Gotowy przetworzony obiekt z backendu
+        const newItemFromServer = statusResponse.result;
+        // 10. Zapisanie do repozytorium i sessionStorage
+        this.items.push(newItemFromServer);
+        this.currentItems = [newItemFromServer];
+        this.saveToSessionStorage();
+        console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
+        return newItemFromServer;
+    }
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItem(newItem, specialActionRoute) {
-        return this.addItem(newItem, true, specialActionRoute);
+    async addNewItem(newItem, specialActionRoute, onProgress) {
+        return this.addNewItemAsync(newItem, true, specialActionRoute, onProgress);
     }
     /** Kopiuje obiekt do bazy danych i do repozytorium */
     async copyItem(newItem, specialActionRoute = this.actionRoutes.copyRoute) {
-        return this.addItem(newItem, false, specialActionRoute);
+        return this.addNewItemAsync(newItem, false, specialActionRoute);
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
@@ -92009,7 +92163,7 @@ function TasksGlobal() {
                 " "),
             react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
                 react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement("div", { className: "d-flex justify-content-end" },
@@ -92021,9 +92175,12 @@ function TasksGlobal() {
                         {
                             header: "Nazwa",
                             renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                            colLg: 11,
                         },
                     ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
+                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
         react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
 }
 exports["default"] = TasksGlobal;
@@ -93562,12 +93719,18 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
+    const [progressData, setProgressData] = (0, react_1.useState)({
+        text: "",
+        percent: undefined,
+    });
     const formMethods = (0, react_hook_form_1.useForm)({
         defaultValues: {},
         mode: "onChange",
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined,
     });
     (0, react_1.useEffect)(() => {
+        setErrorMessage("");
+        setProgressData({ text: "" });
         async function fetchData() {
             await loadDataObject();
         }
@@ -93591,6 +93754,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
     async function handleSubmitRepository(data) {
         try {
             setErrorMessage("");
+            setProgressData({ text: "" });
             setRequestPending(true);
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
             const hasFiles = Object.values(data).some((value) => value instanceof FileList || value instanceof File);
@@ -93665,7 +93829,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 _contextData: modalBodyProps.contextData,
             };
         }
-        const newObject = await repository.addNewItem(data);
+        const newObject = await repository.addNewItem(data, undefined, handleProgress);
         if (onAddNew)
             onAddNew(newObject);
     }
@@ -93686,20 +93850,46 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 react_1.default.createElement("h5", null, title),
                 subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
+    function handleProgress(sessionTask) {
+        makeProgressMessage(sessionTask);
+    }
+    function makeProgressMessage(sessionTask) {
+        if (!sessionTask.progressMesage)
+            return "";
+        if (sessionTask.status === "error") {
+            setProgressData({ text: sessionTask.error || "" });
+            return "";
+        }
+        const percent = sessionTask.percent !== undefined ? sessionTask.percent : "";
+        const message = `Postęp: ${percent}% ${sessionTask.progressMesage}`;
+        setProgressData({ text: message, percent: sessionTask.percent });
+    }
+    function renderProgressBar() {
+        //stara wersja
+        if (progressData.percent === undefined && progressData.text === "")
+            return null;
+        if (progressData.percent === undefined)
+            return react_1.default.createElement("div", { className: "text-muted small me-3 mb-2" }, progressData.text);
+        return (react_1.default.createElement("div", { className: "w-100 mb-2" },
+            react_1.default.createElement(react_bootstrap_1.ProgressBar, { now: progressData.percent ?? 0, label: `${progressData.percent ?? 0}%`, variant: "info", style: { height: "0.6rem" } }),
+            react_1.default.createElement("div", { className: "text-muted small mt-1" }, progressData.text)));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: size, show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true }, renderHeader()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Body, null, renderFormBody()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
-                        "Zatwierd\u017A",
-                        " ",
-                        requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" }))))))));
+                    react_1.default.createElement(react_bootstrap_1.Row, { className: "w-100 align-items-center text-end" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { xs: "12", sm: "8", className: "W-100" }, renderProgressBar()),
+                        react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
+                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", className: "me-2 mb-2", onClick: onClose }, "Anuluj"),
+                            react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", className: "mb-2", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
+                                react_1.default.createElement("span", { className: "d-inline-flex align-items-center" },
+                                    "Zatwierd\u017A",
+                                    requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))))))))));
 }
 exports.GeneralModal = GeneralModal;
-function ModalFooter() { }
 
 
 /***/ }),
@@ -94958,13 +95148,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
+exports.getRowClass = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
-function FilterableTableRow({ dataObject, isActive, onRowClick, }) {
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
+function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -94977,15 +95169,15 @@ function FilterableTableRow({ dataObject, isActive, onRowClick, }) {
             return columnStructure.renderTdBody(dataObject, isActive);
         return "";
     }
-    return (react_1.default.createElement("tr", { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
+    return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
             if (selectedObjectRoute)
                 navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
-        }, className: isActive ? "active" : "" },
+        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
-            return react_1.default.createElement("td", { key: key }, tdBodyRender(column, dataObject));
+            return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement("td", { align: "center" },
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
             react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
@@ -95021,6 +95213,20 @@ function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, 
         }, buttonProps: buttonProps }));
 }
 exports.DeleteModalButton = DeleteModalButton;
+/**
+ * Returns a string with the class names for the row based on the active state and striped row state.
+ */
+function getRowClass({ isActive, isStriped }) {
+    return [
+        "p-3 mb-2 rounded shadow-sm",
+        isStriped && !isActive && "bg-light rounded shadow-sm",
+        isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
+        !isActive && "row-hover",
+    ]
+        .filter(Boolean)
+        .join(" ");
+}
+exports.getRowClass = getRowClass;
 
 
 /***/ }),
@@ -95060,13 +95266,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderHeaderBody = exports.ResultSetTable = void 0;
+exports.getColSize = exports.renderHeaderBody = exports.ResultSetTable = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ./FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ../../Modals/ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
-function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
+function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStriped = true, }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
@@ -95074,15 +95280,16 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, }) {
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Table, { className: objectsToShow.length > 5 ? "table-striped" : "", hover: true, size: "sm" },
-            showTableHeader && (react_1.default.createElement("thead", null,
-                react_1.default.createElement("tr", null, tableStructure.map((column, index) => (react_1.default.createElement("th", { key: column.header || index }, renderHeaderBody(column))))))),
-            react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
+        react_1.default.createElement("div", null,
+            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
+            react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
                 const isActive = dataObject.id === activeRowId;
+                const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
                 return (react_1.default.createElement(ErrorBoundary_1.default, { key: dataObject.id },
-                    react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
-                        //key={dataObject.id}
-                        dataObject: dataObject, isActive: isActive, onRowClick: onRowClick })));
+                    react_1.default.createElement("div", null,
+                        react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
+                            //key={dataObject.id}
+                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: onRowClick }))));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;
@@ -95094,6 +95301,15 @@ function renderHeaderBody(column) {
     return column.renderThBody();
 }
 exports.renderHeaderBody = renderHeaderBody;
+function getColSize(column) {
+    return {
+        xs: 12,
+        sm: column.colSm || 11,
+        md: column.colMd,
+        lg: column.colLg,
+    };
+}
+exports.getColSize = getColSize;
 
 
 /***/ }),
@@ -95421,9 +95637,14 @@ function ApplicationCallsSearch({ title }) {
             {
                 header: "Program",
                 renderTdBody: (applicationCall) => (0, FinancialAidProgrammesSearch_1.renderFinancialAidProgramme)(applicationCall._focusArea._financialAidProgramme),
+                colMd: 3,
             },
-            { header: "Działanie", renderTdBody: (applicationCall) => (0, FocusAreasSearch_1.renderFocusArea)(applicationCall._focusArea) },
-            { header: "Nabór", renderTdBody: renderApplicationCall },
+            {
+                header: "Działanie",
+                renderTdBody: (applicationCall) => (0, FocusAreasSearch_1.renderFocusArea)(applicationCall._focusArea),
+                colMd: 5,
+            },
+            { header: "Nabór", renderTdBody: renderApplicationCall, colMd: 3 },
         ], AddNewButtonComponents: [ApplicationCallModalButtons_1.ApplicationCallAddNewModalButton], EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, isDeletable: true, repository: ApplicationCallsController_1.applicationCallsRepository, selectedObjectRoute: "/applicationCall/" }));
 }
 exports["default"] = ApplicationCallsSearch;
@@ -95754,9 +95975,10 @@ function FocusAreasSearch({ title }) {
     return (react_1.default.createElement(FilterableTable_1.default, { id: "focus-areas", title: title, FilterBodyComponent: FocusAreasFilterBody_1.FocusAreasFilterBody, tableStructure: [
             {
                 header: "Program",
+                colMd: 4,
                 renderTdBody: (focusArea) => (0, FinancialAidProgrammesSearch_1.renderFinancialAidProgramme)(focusArea._financialAidProgramme),
             },
-            { header: "Działanie", renderTdBody: renderFocusArea },
+            { header: "Działanie", renderTdBody: renderFocusArea, colMd: 7 },
         ], AddNewButtonComponents: [FocusAreaModalButtons_1.FocusAreaAddNewModalButton], EditButtonComponent: FocusAreaModalButtons_1.FocusAreaEditModalButton, isDeletable: true, repository: FocusAreasController_1.focusAreasRepository, selectedObjectRoute: "/focusArea/" }));
 }
 exports["default"] = FocusAreasSearch;
@@ -96028,7 +96250,7 @@ function FinancialAidProgrammesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ header: "Program", renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
 }
 exports["default"] = FinancialAidProgrammesSearch;
 function renderFinancialAidProgramme(financialAidProgramme) {
@@ -96483,12 +96705,13 @@ function NeedsSearch({ title }) {
         return react_1.default.createElement(react_1.default.Fragment, null);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "needs", title: title, FilterBodyComponent: NeedsFilterBody_1.NeedsFilterBody, tableStructure: [
-            { header: "Potrzeba", renderTdBody: renderNeedData },
-            { header: "Klient", renderTdBody: renderClient },
-            { header: "Przypisane działania", renderTdBody: renderFocusAreas },
+            { header: "Potrzeba", renderTdBody: renderNeedData, colMd: 3 },
+            { header: "Klient", renderTdBody: renderClient, colMd: 2 },
+            { header: "Przypisane działania", renderTdBody: renderFocusAreas, colMd: 3 },
             {
                 header: "Przypisany nabór",
                 renderTdBody: renderApplicationCallWithContext,
+                colMd: 3,
             },
         ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }

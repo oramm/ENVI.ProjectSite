@@ -93,7 +93,7 @@ function TasksGlobal() {
                 " "),
             react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
                 react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: 2 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
+            react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement("div", { className: "d-flex justify-content-end" },
@@ -105,9 +105,12 @@ function TasksGlobal() {
                         {
                             header: "Nazwa",
                             renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                            colLg: 11,
                         },
                     ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
+            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
+                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
         react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
 }
 exports.default = TasksGlobal;

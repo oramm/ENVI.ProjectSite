@@ -148,17 +148,36 @@ export default function ContractOurDetails() {
                                 id="invoices"
                                 title=""
                                 tableStructure={[
-                                    { header: "Numer", objectAttributeToShow: "number" },
-                                    { header: "Sprzedaż", objectAttributeToShow: "issueDate" },
+                                    { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
                                     {
-                                        header: "status",
+                                        header: "Sprzedaż",
+                                        renderTdBody: (invoice: Invoice) => (
+                                            <div className="text-end">{invoice.issueDate}</div>
+                                        ),
+                                        colMd: 2,
+                                    },
+                                    {
+                                        header: "Status",
                                         renderTdBody: (invoice: Invoice) => (
                                             <InvoiceStatusBadge status={invoice.status} />
                                         ),
+                                        colMd: 1,
                                     },
-                                    { header: "Wysłano", objectAttributeToShow: "sentDate" },
-                                    { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue },
-                                    { header: "Termin płatności", objectAttributeToShow: "paymentDeadline" },
+                                    {
+                                        header: "Wysłano",
+                                        renderTdBody: (invoice: Invoice) => (
+                                            <div className="text-end">{invoice.sentDate}</div>
+                                        ),
+                                        colMd: 2,
+                                    },
+                                    { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 2 },
+                                    {
+                                        header: "Termin płatności",
+                                        renderTdBody: (invoice: Invoice) => (
+                                            <div className="text-end">{invoice.paymentDeadline}</div>
+                                        ),
+                                        colMd: 2,
+                                    },
                                 ]}
                                 initialObjects={invoices}
                                 repository={invoicesRepository}

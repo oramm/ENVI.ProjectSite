@@ -16,10 +16,10 @@ export default function EntitiesSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={EntitiesFilterBody}
             tableStructure={[
-                { header: "Nazwa", objectAttributeToShow: "name" },
-                { header: "Adres", objectAttributeToShow: "address" },
-                { header: "NIP", objectAttributeToShow: "taxNumber" },
-                { header: "Telefon", objectAttributeToShow: "phone" },
+                { header: "Nazwa", objectAttributeToShow: "name", colMd: 4 },
+                { header: "Adres", objectAttributeToShow: "address", colMd: 3 },
+                { header: "NIP", objectAttributeToShow: "taxNumber", colMd: 2 },
+                { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
             ]}
             AddNewButtonComponents={[EntityAddNewModalButton]}
             EditButtonComponent={EntityEditModalButton}

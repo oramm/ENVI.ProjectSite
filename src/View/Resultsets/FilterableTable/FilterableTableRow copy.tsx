@@ -7,13 +7,10 @@ import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "..
 import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
-import { Col, Row } from "react-bootstrap";
-import { getColSize } from "./ResultSetTable";
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType;
     isActive: boolean;
-    isStriped: boolean;
     onDoubleClick?: (object: DataItemType) => void;
     onRowClick: (id: number) => void;
 };
@@ -21,7 +18,6 @@ export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
 export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
     dataObject,
     isActive,
-    isStriped,
     onRowClick,
 }: FilterTableRowProps<DataItemType>): JSX.Element {
     const navigate = useNavigate();
@@ -45,23 +41,19 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
     }
 
     return (
-        <Row
+        <tr
             onClick={(e) => onRowClick(dataObject.id)}
             onDoubleClick={() => {
                 if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
             }}
-            className={`${getRowClass({ isActive, isStriped })} p-3 mb-2`}
+            className={`${isActive ? "active" : ""}`}
         >
             {tableStructure.map((column, index) => {
                 const key = String(column.objectAttributeToShow || index);
-                return (
-                    <Col key={key} {...getColSize(column)} xs={isActive ? 11 : 12}>
-                        {tdBodyRender(column, dataObject)}
-                    </Col>
-                );
+                return <td key={key}>{tdBodyRender(column, dataObject)}</td>;
             })}
             {isActive && (
-                <Col align="center" xs="1" className="d-flex justify-content-center">
+                <td align="center">
                     <RowActionMenu
                         dataObject={dataObject}
                         handleEditObject={handleEditObject}
@@ -70,9 +62,9 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                         isDeletable={isDeletable}
                         shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
                     />
-                </Col>
+                </td>
             )}
-        </Row>
+        </tr>
     );
 }
 
@@ -167,18 +159,4 @@ export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
             buttonProps={buttonProps}
         />
     );
-}
-
-/**
- * Returns a string with the class names for the row based on the active state and striped row state.
- */
-export function getRowClass({ isActive, isStriped }: { isActive: boolean; isStriped: boolean }) {
-    return [
-        "p-3 mb-2 rounded shadow-sm",
-        isStriped && !isActive && "bg-light rounded shadow-sm",
-        isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
-        !isActive && "row-hover",
-    ]
-        .filter(Boolean)
-        .join(" ");
 }

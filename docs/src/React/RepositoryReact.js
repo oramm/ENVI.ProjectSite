@@ -208,13 +208,89 @@ class RepositoryReact {
         console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
         return newItemFromServer;
     }
+    /**
+     * Dodaje nowy obiekt do bazy danych.
+     * Obsługuje dwa tryby:
+     *  - stary backend: zwraca gotowy obiekt (DataItemType)
+     *  - nowy backend: zwraca taskId → frontend odpytuje backend aż zakończy przetwarzanie
+     */
+    async addNewItemAsync(newItem, deleteId, specialActionRoute, onProgress) {
+        // 1. Budujemy ścieżkę do endpointu
+        const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
+        // 2. Przygotowanie opcji fetch
+        const requestOptions = {
+            method: "POST",
+            credentials: "include", // uwzględnij ciasteczka/sesję
+        };
+        // 3. Konfiguracja żądania dla FormData vs JSON
+        if (newItem instanceof FormData) {
+            requestOptions.body = newItem;
+        }
+        else {
+            if (deleteId)
+                delete newItem.id;
+            requestOptions.headers = {
+                "Content-Type": "application/json",
+            };
+            ToolsDate_1.default.convertDatesToUTC(newItem); // standaryzuj daty
+            requestOptions.body = JSON.stringify(newItem);
+        }
+        // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
+        const response = await this.fetchWithRetry(urlPath, requestOptions);
+        if (onProgress && response.taskId)
+            onProgress(response);
+        // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
+        if (response && !response.taskId) {
+            const item = response;
+            this.items.push(item);
+            this.currentItems = [item];
+            this.saveToSessionStorage();
+            console.log("%s:: synchronicznie utworzono: %o", this.name, item);
+            return item;
+        }
+        // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
+        const taskId = response.taskId;
+        const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
+        let statusResponse = {
+            status: "processing",
+        };
+        // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
+        for (let i = 0; i < 60; i++) {
+            await new Promise((res) => setTimeout(res, 2000));
+            statusResponse = await this.fetchWithRetry(statusUrl, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (onProgress)
+                onProgress(statusResponse);
+            console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
+            if (statusResponse.status !== "processing")
+                break;
+        }
+        if (statusResponse.status === "processing") {
+            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+        }
+        // 8. Obsługa błędu z backendu
+        if (statusResponse.status === "error") {
+            throw new Error("Błąd backendu: " + statusResponse.error);
+        }
+        // 9. Gotowy przetworzony obiekt z backendu
+        const newItemFromServer = statusResponse.result;
+        // 10. Zapisanie do repozytorium i sessionStorage
+        this.items.push(newItemFromServer);
+        this.currentItems = [newItemFromServer];
+        this.saveToSessionStorage();
+        console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
+        return newItemFromServer;
+    }
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItem(newItem, specialActionRoute) {
-        return this.addItem(newItem, true, specialActionRoute);
+    async addNewItem(newItem, specialActionRoute, onProgress) {
+        return this.addNewItemAsync(newItem, true, specialActionRoute, onProgress);
     }
     /** Kopiuje obiekt do bazy danych i do repozytorium */
     async copyItem(newItem, specialActionRoute = this.actionRoutes.copyRoute) {
-        return this.addItem(newItem, false, specialActionRoute);
+        return this.addNewItemAsync(newItem, false, specialActionRoute);
     }
     /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt

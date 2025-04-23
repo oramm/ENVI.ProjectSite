@@ -18,7 +18,7 @@ export default function FinancialAidProgrammesSearch({ title }: { title: string 
             id="financialAidProgrammes"
             title={title}
             FilterBodyComponent={FinancialAidProgrammesFilterBody}
-            tableStructure={[{ header: "Program", renderTdBody: renderFinancialAidProgramme }]}
+            tableStructure={[{ renderTdBody: renderFinancialAidProgramme }]}
             AddNewButtonComponents={[FinancialAidProgrammeAddNewModalButton]}
             EditButtonComponent={FinancialAidProgrammeEditModalButton}
             isDeletable={true}

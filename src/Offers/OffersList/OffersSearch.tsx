@@ -226,10 +226,7 @@ export default function OffersSearch({ title }: { title?: string }) {
             id="Offers"
             title={title}
             FilterBodyComponent={OffersFilterBody}
-            tableStructure={[
-                //{ renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIcons },
-                { header: undefined, renderTdBody: renderRowContent },
-            ]}
+            tableStructure={[{ header: undefined, renderTdBody: renderRowContent }]}
             AddNewButtonComponents={[OurOfferAddNewModalButton, ExternalOfferAddNewModalButton]}
             EditButtonComponent={OfferEditModalButton}
             isDeletable={true}

@@ -20,13 +20,20 @@ export default function PersonsSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={PersonsFilterBody}
             tableStructure={[
-                { header: "Imię", objectAttributeToShow: "name" },
-                { header: "Nazwisko", objectAttributeToShow: "surname" },
-                { header: "Telefon", objectAttributeToShow: "phone" },
-                { header: "Email", objectAttributeToShow: "email" },
-                { header: "Firma", renderTdBody: (person: PersonData) => renderEntityName(person) },
-                { header: "Stanowisko", objectAttributeToShow: "position" },
-                { header: "Opis", objectAttributeToShow: "comment" },
+                {
+                    header: "Imię i nazwisko",
+                    renderTdBody: (person: PersonData) => (
+                        <>
+                            {person.name} {person.surname}
+                        </>
+                    ),
+                    colMd: 2,
+                },
+                { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
+                { header: "Email", objectAttributeToShow: "email", colMd: 2 },
+                { header: "Firma", renderTdBody: (person: PersonData) => renderEntityName(person), colMd: 2 },
+                { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
+                { header: "Opis", objectAttributeToShow: "comment", colMd: 2 },
             ]}
             AddNewButtonComponents={[PersonAddNewModalButton]}
             EditButtonComponent={PersonEditModalButton}

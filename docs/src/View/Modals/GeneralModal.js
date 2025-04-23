@@ -41,12 +41,18 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
+    const [progressData, setProgressData] = (0, react_1.useState)({
+        text: "",
+        percent: undefined,
+    });
     const formMethods = (0, react_hook_form_1.useForm)({
         defaultValues: {},
         mode: "onChange",
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema(isEditing)) : undefined,
     });
     (0, react_1.useEffect)(() => {
+        setErrorMessage("");
+        setProgressData({ text: "" });
         async function fetchData() {
             await loadDataObject();
         }
@@ -70,6 +76,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
     async function handleSubmitRepository(data) {
         try {
             setErrorMessage("");
+            setProgressData({ text: "" });
             setRequestPending(true);
             // Sprawdź, czy obiekt data zawiera jakiekolwiek pliki
             const hasFiles = Object.values(data).some((value) => value instanceof FileList || value instanceof File);
@@ -144,7 +151,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 _contextData: modalBodyProps.contextData,
             };
         }
-        const newObject = await repository.addNewItem(data);
+        const newObject = await repository.addNewItem(data, undefined, handleProgress);
         if (onAddNew)
             onAddNew(newObject);
     }
@@ -165,17 +172,43 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
                 react_1.default.createElement("h5", null, title),
                 subtitle && react_1.default.createElement("div", { className: "text-muted small", dangerouslySetInnerHTML: { __html: subtitle } }))));
     }
+    function handleProgress(sessionTask) {
+        makeProgressMessage(sessionTask);
+    }
+    function makeProgressMessage(sessionTask) {
+        if (!sessionTask.progressMesage)
+            return "";
+        if (sessionTask.status === "error") {
+            setProgressData({ text: sessionTask.error || "" });
+            return "";
+        }
+        const percent = sessionTask.percent !== undefined ? sessionTask.percent : "";
+        const message = `Postęp: ${percent}% ${sessionTask.progressMesage}`;
+        setProgressData({ text: message, percent: sessionTask.percent });
+    }
+    function renderProgressBar() {
+        //stara wersja
+        if (progressData.percent === undefined && progressData.text === "")
+            return null;
+        if (progressData.percent === undefined)
+            return react_1.default.createElement("div", { className: "text-muted small me-3 mb-2" }, progressData.text);
+        return (react_1.default.createElement("div", { className: "w-100 mb-2" },
+            react_1.default.createElement(react_bootstrap_1.ProgressBar, { now: progressData.percent ?? 0, label: `${progressData.percent ?? 0}%`, variant: "info", style: { height: "0.6rem" } }),
+            react_1.default.createElement("div", { className: "text-muted small mt-1" }, progressData.text)));
+    }
     return (react_1.default.createElement(react_bootstrap_1.Modal, { size: size, show: show, onHide: onClose, onClick: (e) => e.stopPropagation(), onDoubleClick: (e) => e.stopPropagation() },
         react_1.default.createElement(ErrorBoundary_1.default, null,
             react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitRepository) },
                 react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true }, renderHeader()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Body, null, renderFormBody()),
                 react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
-                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: onClose }, "Anuluj"),
-                    react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
-                        "Zatwierd\u017A",
-                        " ",
-                        requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" }))))))));
+                    react_1.default.createElement(react_bootstrap_1.Row, { className: "w-100 align-items-center text-end" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { xs: "12", sm: "8", className: "W-100" }, renderProgressBar()),
+                        react_1.default.createElement(react_bootstrap_1.Col, { className: "text-end" },
+                            react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", className: "me-2 mb-2", onClick: onClose }, "Anuluj"),
+                            react_1.default.createElement(react_bootstrap_1.Button, { type: "submit", variant: "primary", className: "mb-2", disabled: !formMethods.formState.isValid || requestPending || isLoadingData },
+                                react_1.default.createElement("span", { className: "d-inline-flex align-items-center" },
+                                    "Zatwierd\u017A",
+                                    requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))))))))));
 }
 exports.GeneralModal = GeneralModal;
-function ModalFooter() { }

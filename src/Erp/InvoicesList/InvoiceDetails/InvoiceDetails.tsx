@@ -166,11 +166,20 @@ export default function InvoiceDetails() {
                             AddNewButtonComponents={[InvoiceItemAddNewModalButton]}
                             EditButtonComponent={InvoiceItemEditModalButton}
                             tableStructure={[
-                                { header: "Opis", objectAttributeToShow: "description" },
-                                { header: "Netto", renderTdBody: (item) => <>{Tools.formatNumber(item._netValue)}</> },
+                                { header: "Opis", objectAttributeToShow: "description", colMd: 7 },
+                                {
+                                    header: "Netto",
+                                    renderTdBody: (item) => (
+                                        <div className="text-end">{Tools.formatNumber(item._netValue)}</div>
+                                    ),
+                                    colMd: 2,
+                                },
                                 {
                                     header: "Brutto",
-                                    renderTdBody: (item) => <>{Tools.formatNumber(item._grossValue)}</>,
+                                    renderTdBody: (item) => (
+                                        <div className="text-end">{Tools.formatNumber(item._grossValue)}</div>
+                                    ),
+                                    colMd: 2,
                                 },
                             ]}
                         />

@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getColSize = exports.renderHeaderBody = exports.ResultSetTable = void 0;
+exports.renderHeaderBody = exports.ResultSetTable = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
@@ -39,17 +39,23 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
         const objectsToShow = filteredObjects || objects;
         setObjectsToShow(objectsToShow);
     }, [objects, filteredObjects]);
+    function setStrippedClassName() {
+        if (objectsToShow.length < 5 || !isStriped)
+            return "";
+        if (isStriped && objectsToShow.length > 5)
+            return "table-striped";
+        return "";
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", null,
-            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
-            react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
+        react_1.default.createElement(react_bootstrap_1.Table, { className: setStrippedClassName(), hover: true, size: "sm" },
+            showTableHeader && (react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null, tableStructure.map((column, index) => (react_1.default.createElement("th", { key: column.header || index }, renderHeaderBody(column))))))),
+            react_1.default.createElement("tbody", null, objectsToShow.map((dataObject) => {
                 const isActive = dataObject.id === activeRowId;
-                const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
                 return (react_1.default.createElement(ErrorBoundary_1.default, { key: dataObject.id },
-                    react_1.default.createElement("div", null,
-                        react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
-                            //key={dataObject.id}
-                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: onRowClick }))));
+                    react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
+                        //key={dataObject.id}
+                        dataObject: dataObject, isActive: isActive, isStriped: isStriped, onRowClick: onRowClick })));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;
@@ -61,12 +67,3 @@ function renderHeaderBody(column) {
     return column.renderThBody();
 }
 exports.renderHeaderBody = renderHeaderBody;
-function getColSize(column) {
-    return {
-        xs: 12,
-        sm: column.colSm || 11,
-        md: column.colMd,
-        lg: column.colLg,
-    };
-}
-exports.getColSize = getColSize;

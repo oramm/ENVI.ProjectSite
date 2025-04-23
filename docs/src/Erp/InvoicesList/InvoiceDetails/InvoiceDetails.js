@@ -137,11 +137,16 @@ function InvoiceDetails() {
                                 invoice.description),
                             " "))))),
                 invoiceItems ? (react_1.default.createElement(FilterableTable_1.default, { id: "invoiceItems", title: "", initialObjects: invoiceItems, repository: InvoicesController_1.invoiceItemsRepository, AddNewButtonComponents: [InvoiceItemModalButtons_1.InvoiceItemAddNewModalButton], EditButtonComponent: InvoiceItemModalButtons_1.InvoiceItemEditModalButton, tableStructure: [
-                        { header: "Opis", objectAttributeToShow: "description" },
-                        { header: "Netto", renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._netValue)) },
+                        { header: "Opis", objectAttributeToShow: "description", colMd: 7 },
+                        {
+                            header: "Netto",
+                            renderTdBody: (item) => (react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(item._netValue))),
+                            colMd: 2,
+                        },
                         {
                             header: "Brutto",
-                            renderTdBody: (item) => react_1.default.createElement(react_1.default.Fragment, null, Tools_1.default.formatNumber(item._grossValue)),
+                            renderTdBody: (item) => (react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(item._grossValue))),
+                            colMd: 2,
                         },
                     ] })) : (react_1.default.createElement(react_1.default.Fragment, null,
                     "\"\u0141adowanie pozycji faktury...\" ",

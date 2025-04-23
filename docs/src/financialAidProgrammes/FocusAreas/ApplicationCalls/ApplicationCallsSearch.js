@@ -43,9 +43,14 @@ function ApplicationCallsSearch({ title }) {
             {
                 header: "Program",
                 renderTdBody: (applicationCall) => (0, FinancialAidProgrammesSearch_1.renderFinancialAidProgramme)(applicationCall._focusArea._financialAidProgramme),
+                colMd: 3,
             },
-            { header: "Działanie", renderTdBody: (applicationCall) => (0, FocusAreasSearch_1.renderFocusArea)(applicationCall._focusArea) },
-            { header: "Nabór", renderTdBody: renderApplicationCall },
+            {
+                header: "Działanie",
+                renderTdBody: (applicationCall) => (0, FocusAreasSearch_1.renderFocusArea)(applicationCall._focusArea),
+                colMd: 5,
+            },
+            { header: "Nabór", renderTdBody: renderApplicationCall, colMd: 3 },
         ], AddNewButtonComponents: [ApplicationCallModalButtons_1.ApplicationCallAddNewModalButton], EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, isDeletable: true, repository: ApplicationCallsController_1.applicationCallsRepository, selectedObjectRoute: "/applicationCall/" }));
 }
 exports.default = ApplicationCallsSearch;

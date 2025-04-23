@@ -39,13 +39,19 @@ function PersonsSearch({ title }) {
         return react_1.default.createElement(react_1.default.Fragment, null, person._entity.name);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [
-            { header: "Imię", objectAttributeToShow: "name" },
-            { header: "Nazwisko", objectAttributeToShow: "surname" },
-            { header: "Telefon", objectAttributeToShow: "phone" },
-            { header: "Email", objectAttributeToShow: "email" },
-            { header: "Firma", renderTdBody: (person) => renderEntityName(person) },
-            { header: "Stanowisko", objectAttributeToShow: "position" },
-            { header: "Opis", objectAttributeToShow: "comment" },
+            {
+                header: "Imię i nazwisko",
+                renderTdBody: (person) => (react_1.default.createElement(react_1.default.Fragment, null,
+                    person.name,
+                    " ",
+                    person.surname)),
+                colMd: 2,
+            },
+            { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
+            { header: "Email", objectAttributeToShow: "email", colMd: 2 },
+            { header: "Firma", renderTdBody: (person) => renderEntityName(person), colMd: 2 },
+            { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
+            { header: "Opis", objectAttributeToShow: "comment", colMd: 2 },
         ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/" }));
 }
 exports.default = PersonsSearch;

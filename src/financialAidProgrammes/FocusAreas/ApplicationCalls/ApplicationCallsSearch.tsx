@@ -23,9 +23,14 @@ export default function ApplicationCallsSearch({ title }: { title: string }) {
                     header: "Program",
                     renderTdBody: (applicationCall) =>
                         renderFinancialAidProgramme(applicationCall._focusArea._financialAidProgramme),
+                    colMd: 3,
                 },
-                { header: "Działanie", renderTdBody: (applicationCall) => renderFocusArea(applicationCall._focusArea) },
-                { header: "Nabór", renderTdBody: renderApplicationCall },
+                {
+                    header: "Działanie",
+                    renderTdBody: (applicationCall) => renderFocusArea(applicationCall._focusArea),
+                    colMd: 5,
+                },
+                { header: "Nabór", renderTdBody: renderApplicationCall, colMd: 3 },
             ]}
             AddNewButtonComponents={[ApplicationCallAddNewModalButton]}
             EditButtonComponent={ApplicationCallEditModalButton}

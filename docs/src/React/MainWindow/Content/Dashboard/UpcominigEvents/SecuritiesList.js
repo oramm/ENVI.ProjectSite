@@ -64,13 +64,12 @@ function SecuritiesList() {
                         MainSetupReact_1.default.SecurityStatus.RETURNED_1ST_PART,
                     ],
                     secondPartExpiryDateTo: expiryDateTo.toISOString().slice(0, 10),
-                }
+                },
             ]);
             setSecurities(securities);
-            setExternalUpdate(prevState => prevState + 1);
+            setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);
         }
-        ;
         fetchData();
     }, []);
     function renderValue(value) {
@@ -80,61 +79,88 @@ function SecuritiesList() {
         return react_1.default.createElement("div", { className: "text-end" }, formatedValue);
     }
     function renderType(isCash) {
-        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? 'Gotówka' : 'Gwarancja');
+        return react_1.default.createElement(react_1.default.Fragment, null, isCash ? "Gotówka" : "Gwarancja");
     }
     function renderFirstPartExpiryDate(security) {
         if (!security.firstPartExpiryDate)
             return react_1.default.createElement(react_1.default.Fragment, null, security._contract.startDate);
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.firstPartExpiryDate);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.firstPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
     }
     function renderSecondPartExpiryDate(security) {
         if (!security.secondPartExpiryDate)
-            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || 'Sprawdź w umowie');
+            return react_1.default.createElement(react_1.default.Fragment, null, security._contract.guaranteeEndDate || "Sprawdź w umowie");
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(security.secondPartExpiryDate);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, security.secondPartExpiryDate),
-            daysLeft < 30 ? react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft })) : '');
+            daysLeft < 30 ? (react_1.default.createElement("div", null,
+                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))) : ("")));
     }
     function renderDescription(security) {
         if (!security.description)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        return react_1.default.createElement(react_1.default.Fragment, null,
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null,
                 security.description,
                 " ",
-                ' ',
                 react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                         initialData: security,
                         ModalBodyComponent: SecurityModalBodiesPartial_1.SecurityModalBodyStatus,
                         makeValidationSchema: SecurityValidationSchema_1.securityDescriptionValidationSchema,
                         repository: MainWindowController_1.securitiesRepository,
-                        modalTitle: 'Edycja statusu',
+                        modalTitle: "Edycja statusu",
                         onEdit: handleEditObject,
-                        fieldsToUpdate: ['description']
+                        fieldsToUpdate: ["description"],
                     } },
-                    react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status }))));
+                    react_1.default.createElement(CommonComponents_1.SecurityStatusBadge, { status: security.status })))));
     }
     function handleEditObject(object) {
         setSecurities(securities.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate(prevState => prevState + 1);
+        setExternalUpdate((prevState) => prevState + 1);
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "ZNWu do zwrotu"),
-            react_1.default.createElement(FilterableTable_1.default, { id: 'securities', title: '', tableStructure: [
-                    { header: 'Typ', renderTdBody: (security) => renderType(security.isCash) },
-                    { header: 'Oznaczenie', renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId) },
-                    { header: 'Wartość', renderTdBody: (security) => renderValue(security.value) },
-                    { header: 'Zwrócono', renderTdBody: (security) => renderValue(security.returnedValue) },
-                    { header: 'Do zwrotu', renderTdBody: (security) => renderValue(security._remainingValue) },
-                    { header: '70% Wygasa', renderTdBody: (security) => renderFirstPartExpiryDate(security) },
-                    { header: '30% Wygasa', renderTdBody: (security) => renderSecondPartExpiryDate(security) },
-                    { header: 'Uwagi', renderTdBody: (security) => renderDescription(security) },
-                ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: '/contract/', externalUpdate: externalUpdate, initialObjects: securities }))));
+            react_1.default.createElement(FilterableTable_1.default, { id: "securities", title: "", tableStructure: [
+                    { header: "Typ", renderTdBody: (security) => renderType(security.isCash), colMd: 1 },
+                    {
+                        header: "Oznaczenie",
+                        renderTdBody: (security) => react_1.default.createElement(react_1.default.Fragment, null, security._contract.ourId),
+                        colMd: 2,
+                    },
+                    {
+                        header: "Wartość",
+                        renderTdBody: (security) => renderValue(security.value),
+                        colMd: 1,
+                    },
+                    {
+                        header: "Zwrócono",
+                        renderTdBody: (security) => renderValue(security.returnedValue),
+                        colMd: 1,
+                    },
+                    {
+                        header: "Do zwrotu",
+                        renderTdBody: (security) => renderValue(security._remainingValue),
+                        colMd: 1,
+                    },
+                    {
+                        header: "70% Wygasa",
+                        renderTdBody: (security) => renderFirstPartExpiryDate(security),
+                        colMd: 2,
+                    },
+                    {
+                        header: "30% Wygasa",
+                        renderTdBody: (security) => renderSecondPartExpiryDate(security),
+                        colMd: 2,
+                    },
+                    {
+                        header: "Uwagi",
+                        renderTdBody: (security) => renderDescription(security),
+                        colMd: 2,
+                    },
+                ], isDeletable: true, repository: MainWindowController_1.securitiesRepository, selectedObjectRoute: "/contract/", externalUpdate: externalUpdate, initialObjects: securities }))));
 }
 exports.default = SecuritiesList;

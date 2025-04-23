@@ -23,15 +23,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRowClass = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
+exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
 const react_1 = __importStar(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../../Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
-const react_bootstrap_1 = require("react-bootstrap");
-const ResultSetTable_1 = require("./ResultSetTable");
-function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
+function FilterableTableRow({ dataObject, isActive, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -44,15 +42,15 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             return columnStructure.renderTdBody(dataObject, isActive);
         return "";
     }
-    return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
+    return (react_1.default.createElement("tr", { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
             if (selectedObjectRoute)
                 navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+        }, className: `${isActive ? "active" : ""}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
-            return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
+            return react_1.default.createElement("td", { key: key }, tdBodyRender(column, dataObject));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
+        isActive && (react_1.default.createElement("td", { align: "center" },
             react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
@@ -88,17 +86,3 @@ function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, 
         }, buttonProps: buttonProps }));
 }
 exports.DeleteModalButton = DeleteModalButton;
-/**
- * Returns a string with the class names for the row based on the active state and striped row state.
- */
-function getRowClass({ isActive, isStriped }) {
-    return [
-        "p-3 mb-2 rounded shadow-sm",
-        isStriped && !isActive && "bg-light rounded shadow-sm",
-        isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
-        !isActive && "row-hover",
-    ]
-        .filter(Boolean)
-        .join(" ");
-}
-exports.getRowClass = getRowClass;

@@ -36,7 +36,7 @@ function FinancialAidProgrammesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ header: "Program", renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
 }
 exports.default = FinancialAidProgrammesSearch;
 function renderFinancialAidProgramme(financialAidProgramme) {

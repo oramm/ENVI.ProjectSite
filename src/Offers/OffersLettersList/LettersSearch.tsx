@@ -53,12 +53,12 @@ export default function OffersLettersSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={LettersFilterBody}
             tableStructure={[
-                { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody },
-                { header: "Utworzono", objectAttributeToShow: "creationDate" },
-                { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-                { header: "Numer", objectAttributeToShow: "number" },
-                { header: "Dotyczy", objectAttributeToShow: "description" },
-                { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
+                { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colMd: 1 },
+                { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
+                { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
+                { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+                { header: "Dotyczy", objectAttributeToShow: "description", colMd: 5 },
+                { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}
             EditButtonComponent={LetterEditModalButton}

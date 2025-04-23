@@ -146,14 +146,20 @@ function ContractsList() {
             {
                 header: "Rozpoczęcie",
                 renderTdBody: (contract) => renderStartDate(contract),
+                colMd: 2,
             },
-            { header: "Zakończenie", renderTdBody: (contract) => renderEndDate(contract) },
+            {
+                header: "Zakończenie",
+                renderTdBody: (contract) => renderEndDate(contract),
+                colMd: 2,
+            },
         ];
         const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
             tableStructure.push({
                 header: "Do rozliczenia",
                 renderTdBody: (contract) => renderRemainingValue(contract),
+                colMd: 2,
             });
         }
         return tableStructure;

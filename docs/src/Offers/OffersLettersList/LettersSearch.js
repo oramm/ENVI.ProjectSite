@@ -63,12 +63,12 @@ function OffersLettersSearch({ title }) {
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "offersLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
-            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody },
-            { header: "Utworzono", objectAttributeToShow: "creationDate" },
-            { header: "Wysłano", objectAttributeToShow: "registrationDate" },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Dotyczy", objectAttributeToShow: "description" },
-            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel },
+            { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colMd: 1 },
+            { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
+            { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
+            { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+            { header: "Dotyczy", objectAttributeToShow: "description", colMd: 5 },
+            { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
 exports.default = OffersLettersSearch;

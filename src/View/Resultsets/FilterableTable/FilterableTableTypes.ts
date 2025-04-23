@@ -39,6 +39,9 @@ export type FilterBodyProps = {};
 export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     header?: string;
     objectAttributeToShow?: keyof DataItemType;
+    colMd?: number; // Added for column width in medium screens
+    colSm?: number; // Added for column width in small screens
+    colLg?: number; // Added for column width in large screens
     renderTdBody?: (dataItem: DataItemType, isActive?: boolean) => JSX.Element;
     renderThBody?: () => JSX.Element;
     submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];

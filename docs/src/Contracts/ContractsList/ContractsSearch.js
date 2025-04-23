@@ -67,11 +67,16 @@ function ContractsSearch({ title }) {
             {
                 header: "Projekt",
                 renderTdBody: (contract) => react_1.default.createElement(react_1.default.Fragment, null, contract._project.ourId),
+                colLg: 2,
             },
-            { header: "Oznaczenie", renderTdBody: (contract) => renderName(contract) },
-            { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
-            { header: "Zakończenie", objectAttributeToShow: "endDate" },
-            { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate" },
+            {
+                header: "Oznaczenie",
+                renderTdBody: (contract) => renderName(contract),
+                colLg: 6,
+            },
+            { header: "Rozpoczęcie", objectAttributeToShow: "startDate", colLg: 1 },
+            { header: "Zakończenie", objectAttributeToShow: "endDate", colLg: 1 },
+            { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate", colLg: 1 },
         ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: ContractsController_1.contractsRepository, selectedObjectRoute: "/contract/", shouldRetrieveDataBeforeEdit: true }));
 }
 exports.default = ContractsSearch;

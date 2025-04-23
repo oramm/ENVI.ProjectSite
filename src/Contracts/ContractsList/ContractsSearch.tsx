@@ -58,11 +58,16 @@ export default function ContractsSearch({ title }: { title: string }) {
                 {
                     header: "Projekt",
                     renderTdBody: (contract: OurContract | OtherContract) => <>{contract._project.ourId}</>,
+                    colLg: 2,
                 },
-                { header: "Oznaczenie", renderTdBody: (contract: OurContract | OtherContract) => renderName(contract) },
-                { header: "Rozpoczęcie", objectAttributeToShow: "startDate" },
-                { header: "Zakończenie", objectAttributeToShow: "endDate" },
-                { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate" },
+                {
+                    header: "Oznaczenie",
+                    renderTdBody: (contract: OurContract | OtherContract) => renderName(contract),
+                    colLg: 6,
+                },
+                { header: "Rozpoczęcie", objectAttributeToShow: "startDate", colLg: 1 },
+                { header: "Zakończenie", objectAttributeToShow: "endDate", colLg: 1 },
+                { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate", colLg: 1 },
             ]}
             AddNewButtonComponents={[OurContractAddNewModalButton, OtherContractAddNewModalButton]}
             EditButtonComponent={ContractEditModalButton}

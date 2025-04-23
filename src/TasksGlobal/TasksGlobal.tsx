@@ -95,7 +95,7 @@ export default function TasksGlobal() {
                 <Col md={2}>
                     <TaskStatusBadge status={task.status} />
                 </Col>
-                <Col md={2}>{task._owner && `${task._owner.name} ${task._owner.surname}`}</Col>
+                <Col md={3}>{task._owner && `${task._owner.name} ${task._owner.surname}`}</Col>
             </Row>
         );
     }
@@ -122,6 +122,7 @@ export default function TasksGlobal() {
                                 {
                                     header: "Nazwa",
                                     renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
+                                    colLg: 11,
                                 },
                             ]}
                             onRowClick={setSelectedProject}
@@ -137,7 +138,9 @@ export default function TasksGlobal() {
                                 FilterBodyComponent={undefined}
                                 EditButtonComponent={TaskEditModalButton}
                                 initialSections={buildTree(contractsWithChildren)}
-                                tableStructure={[{ header: "Zadania", renderTdBody: renderTaskRowInCaseSection }]}
+                                tableStructure={[
+                                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                                ]}
                                 externalUpdate={externalUpdate}
                             />
                         ) : (

@@ -164,8 +164,13 @@ export default function ContractsList() {
             {
                 header: "Rozpoczęcie",
                 renderTdBody: (contract: OurContract | OtherContract) => renderStartDate(contract),
+                colMd: 2,
             },
-            { header: "Zakończenie", renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract) },
+            {
+                header: "Zakończenie",
+                renderTdBody: (contract: OurContract | OtherContract) => renderEndDate(contract),
+                colMd: 2,
+            },
         ];
 
         const allowedRoles = [MainSetup.SystemRoles.ADMIN.systemName, MainSetup.SystemRoles.ENVI_MANAGER.systemName];
@@ -174,6 +179,7 @@ export default function ContractsList() {
             tableStructure.push({
                 header: "Do rozliczenia",
                 renderTdBody: (contract) => renderRemainingValue(contract),
+                colMd: 2,
             });
         }
         return tableStructure;

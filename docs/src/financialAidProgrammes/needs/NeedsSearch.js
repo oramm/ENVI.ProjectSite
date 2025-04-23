@@ -68,12 +68,13 @@ function NeedsSearch({ title }) {
         return react_1.default.createElement(react_1.default.Fragment, null);
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "needs", title: title, FilterBodyComponent: NeedsFilterBody_1.NeedsFilterBody, tableStructure: [
-            { header: "Potrzeba", renderTdBody: renderNeedData },
-            { header: "Klient", renderTdBody: renderClient },
-            { header: "Przypisane działania", renderTdBody: renderFocusAreas },
+            { header: "Potrzeba", renderTdBody: renderNeedData, colMd: 3 },
+            { header: "Klient", renderTdBody: renderClient, colMd: 2 },
+            { header: "Przypisane działania", renderTdBody: renderFocusAreas, colMd: 3 },
             {
                 header: "Przypisany nabór",
                 renderTdBody: renderApplicationCallWithContext,
+                colMd: 3,
             },
         ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }

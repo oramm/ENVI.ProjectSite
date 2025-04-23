@@ -19,9 +19,10 @@ export default function FocusAreasSearch({ title }: { title: string }) {
             tableStructure={[
                 {
                     header: "Program",
+                    colMd: 4,
                     renderTdBody: (focusArea) => renderFinancialAidProgramme(focusArea._financialAidProgramme),
                 },
-                { header: "Działanie", renderTdBody: renderFocusArea },
+                { header: "Działanie", renderTdBody: renderFocusArea, colMd: 7 },
             ]}
             AddNewButtonComponents={[FocusAreaAddNewModalButton]}
             EditButtonComponent={FocusAreaEditModalButton}
