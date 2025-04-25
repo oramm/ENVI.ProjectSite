@@ -154,7 +154,12 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             ...data,
             _contextData: modalBodyProps.contextData as object,
         } as DataItemType;
-        const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
+        const editedObject = await repository.editItem(
+            objectToEdit,
+            specialActionRoute,
+            fieldsToUpdate,
+            handleProgress
+        );
         if (onEdit) onEdit(editedObject);
     }
 

@@ -174,58 +174,6 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         }
     }
 
-    /** Funkcja pomocnicza do dodawania nowych elementów */
-    private async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
-        const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
-
-        const requestKey = JSON.stringify({ url: urlPath, body: newItem });
-
-        if (this.pendingRequests.has(requestKey)) {
-            return this.pendingRequests.get(requestKey);
-        }
-
-        const requestOptions: RequestInit = {
-            method: "POST",
-            credentials: "include",
-        };
-
-        if (newItem instanceof FormData) {
-            requestOptions.body = newItem;
-        } else {
-            if (deleteId) {
-                delete newItem.id;
-            }
-            requestOptions.headers = {
-                ...requestOptions.headers,
-                ["Content-Type"]: "application/json",
-            };
-            ToolsDate.convertDatesToUTC(newItem);
-            requestOptions.body = JSON.stringify(newItem);
-        }
-
-        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-
-        this.pendingRequests.set(requestKey, fetchPromise);
-        const newItemFromServer: DataItemType = await fetchPromise;
-
-        if ("errorMessage" in newItemFromServer) {
-            console.error("Error from server: %o", newItemFromServer.errorMessage);
-            throw new Error(`Błąd serwera: ${newItemFromServer.errorMessage}`);
-        }
-
-        if ("authorizeUrl" in newItemFromServer) window.open(newItemFromServer.authorizeUrl as string);
-
-        const noBlobNewItem = { ...newItemFromServer };
-        this.items.push(noBlobNewItem);
-        this.currentItems = [newItemFromServer];
-        this.saveToSessionStorage();
-        console.log("%s:: utworzono i zapisano: %o", this.name, newItemFromServer);
-        return newItemFromServer as DataItemType;
-    }
-
     /**
      * Dodaje nowy obiekt do bazy danych.
      * Obsługuje dwa tryby:
@@ -331,7 +279,12 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
      * @param _fieldsToUpdate - tablica z nazwami pól, które mają być zaktualizowane. Nazwa z podkreśleniem ze względu na serwer
      */
-    async editItem(item: DataItemType | FormData, specialActionRoute?: string, _fieldsToUpdate?: string[]) {
+    async editItem(
+        item: DataItemType | FormData,
+        specialActionRoute?: string,
+        _fieldsToUpdate?: string[],
+        onProgress?: (task: SessionTask) => void
+    ) {
         const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
         const itemId = item instanceof FormData ? item.get("id") : item.id;
         const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
@@ -362,18 +315,54 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 this.pendingRequests.delete(requestKey);
             });
             this.pendingRequests.set(requestKey, fetchPromise);
-            const resultObject = await fetchPromise;
-            if ("authorizeUrl" in resultObject) {
-                window.open(resultObject.authorizeUrl as string);
+
+            const response = await fetchPromise;
+
+            // 🆕 Jeśli backend zwraca taskId — włącz polling
+            if (response && response.taskId) {
+                if (onProgress) onProgress(response);
+                const taskId = response.taskId;
+                const statusUrl = `${MainSetup.serverUrl}contractStatus/${taskId}`;
+
+                let statusResponse: SessionTask = { status: "processing" };
+                for (let i = 0; i < 60; i++) {
+                    await new Promise((res) => setTimeout(res, 2000));
+                    statusResponse = await this.fetchWithRetry(statusUrl, {
+                        method: "GET",
+                        credentials: "include",
+                    });
+                    if (onProgress) onProgress(statusResponse);
+                    console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
+                    if (statusResponse.status !== "processing") break;
+                }
+
+                if (statusResponse.status === "processing") {
+                    throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+                }
+
+                if (statusResponse.status === "error") {
+                    throw new Error("Błąd backendu: " + statusResponse.error);
+                }
+
+                const editedItemFromServer: DataItemType = statusResponse.result;
+                this.replaceCurrentItemById(editedItemFromServer.id, editedItemFromServer);
+                this.items = this.items.map((x) => (x.id === editedItemFromServer.id ? editedItemFromServer : x));
+                this.saveToSessionStorage();
+                return editedItemFromServer;
+            }
+
+            // 🔁 Stara wersja (od razu gotowy obiekt)
+            if ("authorizeUrl" in response) {
+                window.open(response.authorizeUrl as string);
                 console.log("Konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
                 return item as DataItemType;
             }
 
-            this.replaceCurrentItemById(resultObject.id, resultObject);
-            this.items = this.items.map((item) => (item.id === resultObject.id ? resultObject : item));
+            this.replaceCurrentItemById(response.id, response);
+            this.items = this.items.map((x) => (x.id === response.id ? response : x));
             this.saveToSessionStorage();
-            console.log("Obiekt po edycji z serwera: %o", resultObject);
-            return resultObject;
+            console.log("Obiekt po edycji z serwera: %o", response);
+            return response;
         } catch (error) {
             console.error(error);
             throw error;

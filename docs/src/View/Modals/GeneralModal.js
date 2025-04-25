@@ -137,7 +137,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
             ...data,
             _contextData: modalBodyProps.contextData,
         };
-        const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate);
+        const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate, handleProgress);
         if (onEdit)
             onEdit(editedObject);
     }
