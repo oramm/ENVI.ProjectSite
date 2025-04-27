@@ -34,6 +34,10 @@ const MilestoneDateButtons_1 = require("./Modals/MilestoneDateButtons");
 const MilestoneDatesFilterBody_1 = require("./MilestoneDatesFilterBody");
 const typeGuards_1 = require("../../../Typings/typeGuards");
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
+const MilestoneDateBodiesPartial_1 = require("./Modals/MilestoneDateBodiesPartial");
+const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
+const react_bootstrap_1 = require("react-bootstrap");
 function MilestoneDatesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -57,7 +61,7 @@ function MilestoneDatesSearch({ title }) {
                 " ",
                 react_1.default.createElement("span", null, _milestone?.name || ""),
                 " ",
-                react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: _milestone?.status })),
+                renderMilestoneStatus(item)),
             react_1.default.createElement("div", { className: "mb-2" },
                 react_1.default.createElement("div", { className: "text-dark" }, item._milestone?.description),
                 react_1.default.createElement("div", { className: "text-muted small" }, item.description)),
@@ -71,7 +75,7 @@ function MilestoneDatesSearch({ title }) {
                         "] ",
                         _contract?.name || "⚠️ Brak nazwy kontraktu"),
                     " ",
-                    react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: _contract?.status })),
+                    renderContractStatus(item)),
                 react_1.default.createElement("div", null,
                     "Administrator:",
                     " ",
@@ -87,6 +91,36 @@ function MilestoneDatesSearch({ title }) {
             react_1.default.createElement("div", { className: "text-secondary small" },
                 "Ostatnia aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
+    }
+    function renderContractStatus(item) {
+        if (!item._milestone?._contract?.status)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                repository: MilestoneDatesController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateContract",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: item._milestone?._contract?.status || "" })));
+    }
+    function renderMilestoneStatus(item) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                repository: MilestoneDatesController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateMilestone",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: item._milestone?.status || "" })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, showTableHeader: false, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
 }

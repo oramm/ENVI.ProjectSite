@@ -13,6 +13,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
 import { SessionTask } from "../../../Typings/sessionTypes";
 import { render } from "react-dom";
+import merge from "lodash.merge";
 
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
@@ -123,6 +124,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         data.append("id", currentDataItem.id.toString());
 
         appendContextData(currentDataItem, data);
+        // dołącz oryginalne dane jako JSON-string
+        data.append("_originalData", JSON.stringify(currentDataItem));
         const editedObject = await repository.editItem(data as FormData, specialActionRoute, fieldsToUpdate);
         if (onEdit) onEdit(editedObject);
     }
@@ -132,7 +135,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         for (const key in currentDataItem) {
             if (!data.has(key)) {
                 const value = currentDataItem[key];
-
                 // Check if the value is an object and not a Blob, then convert it to a JSON string
                 if (typeof value === "object" && value !== null && !(value instanceof Blob)) {
                     data.append(key, JSON.stringify(value));
@@ -149,11 +151,14 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEditWithoutFiles(data: FieldValues) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = {
-            ...currentDataItem,
-            ...data,
-            _contextData: modalBodyProps.contextData as object,
-        } as DataItemType;
+        const objectToEdit = merge(
+            {},
+            currentDataItem,
+            data,
+            { _contextData: modalBodyProps.contextData },
+            { _originalData: currentDataItem } // oryginalne dane
+        ) as DataItemType;
+
         const editedObject = await repository.editItem(
             objectToEdit,
             specialActionRoute,

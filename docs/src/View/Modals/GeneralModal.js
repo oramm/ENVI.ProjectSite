@@ -36,6 +36,7 @@ const yup_1 = require("@hookform/resolvers/yup");
 require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
+const lodash_merge_1 = __importDefault(require("lodash.merge"));
 function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
@@ -106,6 +107,8 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
         const currentDataItem = { ...repository.currentItems[0] };
         data.append("id", currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
+        // dołącz oryginalne dane jako JSON-string
+        data.append("_originalData", JSON.stringify(currentDataItem));
         const editedObject = await repository.editItem(data, specialActionRoute, fieldsToUpdate);
         if (onEdit)
             onEdit(editedObject);
@@ -132,11 +135,8 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
     }
     async function handleEditWithoutFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        const objectToEdit = {
-            ...currentDataItem,
-            ...data,
-            _contextData: modalBodyProps.contextData,
-        };
+        const objectToEdit = (0, lodash_merge_1.default)({}, currentDataItem, data, { _contextData: modalBodyProps.contextData }, { _originalData: currentDataItem } // oryginalne dane
+        );
         const editedObject = await repository.editItem(objectToEdit, specialActionRoute, fieldsToUpdate, handleProgress);
         if (onEdit)
             onEdit(editedObject);
