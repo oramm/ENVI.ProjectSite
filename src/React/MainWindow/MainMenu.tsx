@@ -40,7 +40,7 @@ export default function MainMenu() {
                                         className={isActive("/contracts/roles")}
                                     >
                                         Role kontrakowe{" "}
-                                        <Badge bg="primary" text="light">
+                                        <Badge bg="info" text="light">
                                             nowe
                                         </Badge>
                                     </NavDropdown.Item>
@@ -50,8 +50,8 @@ export default function MainMenu() {
                                         className={isActive("/contracts/dates")}
                                     >
                                         Terminy{" "}
-                                        <Badge bg="danger" text="light">
-                                            beta
+                                        <Badge bg="info" text="light">
+                                            nowe
                                         </Badge>
                                     </NavDropdown.Item>
                                     <NavDropdown.Item
@@ -59,7 +59,10 @@ export default function MainMenu() {
                                         to="/contracts/znwu"
                                         className={isActive("/contracts/znwu")}
                                     >
-                                        ZNWU
+                                        ZNWU{" "}
+                                        <Badge bg="info" text="light">
+                                            nowe
+                                        </Badge>
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             )}

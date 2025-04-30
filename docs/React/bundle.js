@@ -95417,12 +95417,15 @@ function MainMenu() {
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/roles", className: isActive("/contracts/roles") },
                                 "Role kontrakowe",
                                 " ",
-                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "nowe")),
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")),
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/dates", className: isActive("/contracts/dates") },
                                 "Terminy",
                                 " ",
-                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "danger", text: "light" }, "beta")),
-                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu", className: isActive("/contracts/znwu") }, "ZNWU"))),
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")),
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/contracts/znwu", className: isActive("/contracts/znwu") },
+                                "ZNWU",
+                                " ",
+                                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")))),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury")),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -100289,7 +100292,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
     function toggleMenu() {
         setIsMenuExpanded((prevState) => !prevState);
     }
-    return (react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement("div", { className: `d-flex ${layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"}` },
         dataObject._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl }),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
         EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }, buttonProps: { layout } })),

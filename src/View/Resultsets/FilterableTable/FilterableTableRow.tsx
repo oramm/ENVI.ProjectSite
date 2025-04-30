@@ -107,7 +107,11 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     }
 
     return (
-        <>
+        <div
+            className={`d-flex ${
+                layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"
+            }`}
+        >
             {dataObject._gdFolderUrl && <GDFolderIconLink layout={layout} folderUrl={dataObject._gdFolderUrl} />}
             {dataObject._documentOpenUrl && (
                 <GDDocFileIconLink layout={layout} folderUrl={dataObject._documentOpenUrl} />
@@ -145,7 +149,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                     )}
                 </>
             )}
-        </>
+        </div>
     );
 }
 
