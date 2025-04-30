@@ -6,11 +6,12 @@ import { milestoneDatesRepository } from "./MilestoneDatesController";
 import { MilestoneDateEditModalButton } from "./Modals/MilestoneDateButtons";
 import { MilestoneDatesFilterBody } from "./MilestoneDatesFilterBody";
 import { isOurContract } from "../../../Typings/typeGuards";
-import { ContractStatusBadge, MilestoneStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, DaysLeftBadge, MilestoneStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
 import { ContractModalBodyStatus, MilestoneModalBodyStatus } from "./Modals/MilestoneDateBodiesPartial";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 import { Alert } from "react-bootstrap";
+import MainSetup from "../../React/MainSetupReact";
 
 export default function MilestoneDatesSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -63,7 +64,8 @@ export default function MilestoneDatesSearch({ title }: { title: string }) {
                     <span className="fw-bold">Od:</span>{" "}
                     <span className="fs-5">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
                     <span className="fw-bold">do:</span>{" "}
-                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span>
+                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span>{" "}
+                    <span>{renderDaysLeft(item)}</span>
                 </div>
 
                 {/* Ostatnia aktualizacja */}
@@ -113,6 +115,18 @@ export default function MilestoneDatesSearch({ title }: { title: string }) {
                 <MilestoneStatusBadge status={item._milestone?.status || ""} />
             </PartialEditTrigger>
         );
+    }
+
+    function renderDaysLeft(item: MilestoneDateData) {
+        if (
+            !item._milestone?.status ||
+            ![MainSetup.MilestoneStatus.IN_PROGRESS, MainSetup.MilestoneStatus.NOT_STARTED].includes(
+                item._milestone.status
+            )
+        )
+            return null;
+        const daysLeft = ToolsDate.countDaysLeftTo(item.endDate);
+        return <DaysLeftBadge daysLeft={daysLeft} />;
     }
 
     return (

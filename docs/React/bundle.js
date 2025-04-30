@@ -88415,6 +88415,7 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralM
 const MilestoneDateBodiesPartial_1 = __webpack_require__(/*! ./Modals/MilestoneDateBodiesPartial */ "./src/Contracts/Dates/Modals/MilestoneDateBodiesPartial.tsx");
 const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 function MilestoneDatesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -88464,7 +88465,9 @@ function MilestoneDatesSearch({ title }) {
                 " ",
                 react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
                 " ",
-                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
+                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
+                " ",
+                react_1.default.createElement("span", null, renderDaysLeft(item))),
             react_1.default.createElement("div", { className: "text-secondary small" },
                 "Ostatnia aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
@@ -88498,6 +88501,13 @@ function MilestoneDatesSearch({ title }) {
                 //makeValidationSchema: contractStatusValidationSchema,
             } },
             react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: item._milestone?.status || "" })));
+    }
+    function renderDaysLeft(item) {
+        if (!item._milestone?.status ||
+            ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
+            return null;
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(item.endDate);
+        return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, showTableHeader: false, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
 }
