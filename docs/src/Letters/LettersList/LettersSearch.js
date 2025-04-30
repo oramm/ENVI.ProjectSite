@@ -38,6 +38,9 @@ const react_bootstrap_1 = require("react-bootstrap");
 const Tools_1 = __importDefault(require("../../React/Tools"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
+const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
+const LetterModalBodiesPartial_1 = require("./Modals/LetterModalBodiesPartial");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -92,13 +95,26 @@ function LettersSearch({ title }) {
             " ",
             letter._lastEvent._editor.surname));
     }
+    function renderStatus(letter) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: letter,
+                modalTitle: `Edycja statusu pisma ${letter.number}`,
+                modalSubtitle: `Dotyczy: ${letter.description}`,
+                repository: LettersController_1.lettersRepository,
+                ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+            } },
+            react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
+    }
     function renderRowContent(letter, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             letter.number && (react_1.default.createElement("div", null,
                 "Numer: ",
                 react_1.default.createElement("strong", null, letter.number),
                 " ",
-                react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status }))),
+                renderStatus(letter))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
                 letter.description),

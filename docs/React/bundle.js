@@ -90815,6 +90815,9 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
+const LetterModalBodiesPartial_1 = __webpack_require__(/*! ./Modals/LetterModalBodiesPartial */ "./src/Letters/LettersList/Modals/LetterModalBodiesPartial.tsx");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -90869,13 +90872,26 @@ function LettersSearch({ title }) {
             " ",
             letter._lastEvent._editor.surname));
     }
+    function renderStatus(letter) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: letter,
+                modalTitle: `Edycja statusu pisma ${letter.number}`,
+                modalSubtitle: `Dotyczy: ${letter.description}`,
+                repository: LettersController_1.lettersRepository,
+                ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+            } },
+            react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
+    }
     function renderRowContent(letter, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             letter.number && (react_1.default.createElement("div", null,
                 "Numer: ",
                 react_1.default.createElement("strong", null, letter.number),
                 " ",
-                react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status }))),
+                renderStatus(letter))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
                 letter.description),
@@ -90964,6 +90980,57 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));
 }
 exports.IncomingLetterModalBody = IncomingLetterModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Letters/LettersList/Modals/LetterModalBodiesPartial.tsx":
+/*!*********************************************************************!*\
+  !*** ./src/Letters/LettersList/Modals/LetterModalBodiesPartial.tsx ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LetterModalBodyStatus = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+function LetterModalBodyStatus({ initialData }) {
+    const { setValue } = (0, FormContext_1.useFormContext)();
+    const isOurLetter = initialData?.isOur;
+    if (initialData?.isOur === undefined)
+        return react_1.default.createElement(react_1.default.Fragment, null, "\u26A0\uFE0F Brak danych pisma");
+    (0, react_1.useEffect)(() => {
+        setValue("status", initialData?.status || "", { shouldValidate: true });
+    }, [initialData, setValue]);
+    return isOurLetter ? react_1.default.createElement(StatusSelectors_1.OurLetterStatusSelector, null) : react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null);
+}
+exports.LetterModalBodyStatus = LetterModalBodyStatus;
 
 
 /***/ }),

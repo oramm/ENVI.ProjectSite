@@ -8,7 +8,7 @@ import {
     OurLetterAddNewModalButton,
     ExportOurLetterContractToPDFButton,
 } from "./Modals/LetterModalButtons";
-import { EntityData, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
+import { EntityData, IncomingLetterContract, Letter, OurLetterContract } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import ToolsDate from "../../React/ToolsDate";
@@ -16,6 +16,9 @@ import { Alert } from "react-bootstrap";
 import Tools from "../../React/Tools";
 import MainSetup from "../../React/MainSetupReact";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
+import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
+import { LetterModalBodyStatus } from "./Modals/LetterModalBodiesPartial";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -98,12 +101,31 @@ export default function LettersSearch({ title }: { title: string }) {
         );
     }
 
+    function renderStatus(letter: OurLetterContract | IncomingLetterContract) {
+        const { handleEditObject } = useFilterableTableContext<OurLetterContract | IncomingLetterContract>();
+        return (
+            <PartialEditTrigger
+                modalProps={{
+                    initialData: letter,
+                    modalTitle: `Edycja statusu pisma ${letter.number}`,
+                    modalSubtitle: `Dotyczy: ${letter.description}`,
+                    repository: lettersRepository,
+                    ModalBodyComponent: LetterModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ["status"],
+                }}
+            >
+                <LetterStatusBadge status={letter.status || ""} />
+            </PartialEditTrigger>
+        );
+    }
+
     function renderRowContent(letter: OurLetterContract | IncomingLetterContract, isActive: boolean = false) {
         return (
             <>
                 {letter.number && (
                     <div>
-                        Numer: <strong>{letter.number}</strong> <LetterStatusBadge status={letter.status} />
+                        Numer: <strong>{letter.number}</strong> {renderStatus(letter)}
                     </div>
                 )}
                 <div className="mt-2" style={{ whiteSpace: "pre-line" }}>
