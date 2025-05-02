@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Navbar, Nav, Container, Button, Offcanvas, NavDropdown, Badge } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import MainSetup from "../MainSetupReact";
+import MainController from "../MainControllerReact";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function MainMenu() {
     const location = useLocation();
@@ -128,6 +131,26 @@ export default function MainMenu() {
                                     </NavDropdown>
                                 </>
                             )}
+                        </Nav>
+                        <Nav className="ms-auto">
+                            <NavDropdown
+                                title={
+                                    <>
+                                        <FontAwesomeIcon icon={faCircleUser} className="me-2" />
+                                        {MainSetup.currentUser.userName}
+                                    </>
+                                }
+                                id="user-nav-dropdown"
+                            >
+                                <NavDropdown.Item
+                                    onClick={async () => {
+                                        await MainController.logout();
+                                        window.location.reload();
+                                    }}
+                                >
+                                    Wyloguj się
+                                </NavDropdown.Item>
+                            </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

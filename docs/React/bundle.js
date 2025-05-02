@@ -94509,6 +94509,27 @@ class MainController {
         await this.setRepostories();
         console.log("Repositories loaded");
     }
+    static async isSessionSet() {
+        const response = await fetch(MainSetupReact_1.default.serverUrl + "session", {
+            credentials: "include",
+        });
+        const sessionInfo = await response.json();
+        console.log("Session info", sessionInfo);
+        if (sessionInfo.userData) {
+            MainSetupReact_1.default.currentUser = sessionInfo.userData;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    static async logout() {
+        await fetch(MainSetupReact_1.default.serverUrl + "logout", {
+            method: "POST",
+            credentials: "include",
+        });
+        //MainSetup.currentUser = undefined;
+    }
     static async setRepostories() {
         const personsEnviRepository = new RepositoryReact_1.default({
             name: "personsEnvi",
@@ -95399,6 +95420,9 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const MainControllerReact_1 = __importDefault(__webpack_require__(/*! ../MainControllerReact */ "./src/React/MainControllerReact.ts"));
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
     function isActive(path) {
@@ -95444,7 +95468,15 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/cities" }, "Miasta"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/contractRanges" },
                                     "Zakresy kontrakt\u00F3w",
-                                    " "))))))))));
+                                    " "))))),
+                    react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
+                        react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCircleUser, className: "me-2" }),
+                                MainSetupReact_1.default.currentUser.userName), id: "user-nav-dropdown" },
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
+                                    await MainControllerReact_1.default.logout();
+                                    window.location.reload();
+                                } }, "Wyloguj si\u0119"))))))));
 }
 exports["default"] = MainMenu;
 
@@ -95593,8 +95625,10 @@ function App() {
     (0, react_1.useEffect)(() => {
         async function fetchData() {
             try {
-                await MainControllerReact_1.default.main();
-                setIsReady(true);
+                const isLoggedIn = await MainControllerReact_1.default.isSessionSet();
+                setIsLoggedIn(isLoggedIn);
+                if (isLoggedIn)
+                    await MainControllerReact_1.default.main();
             }
             catch (error) {
                 if (error instanceof Error) {
@@ -95603,11 +95637,14 @@ function App() {
                 }
                 return;
             }
+            finally {
+                setIsReady(true);
+            }
         }
         fetchData();
     }, []);
     // Handle the server's response
-    const handleServerResponse = (response) => {
+    function handleServerResponse(response) {
         if (response.userData) {
             MainSetupReact_1.default.currentUser = response.userData;
             setIsLoggedIn(true);
@@ -95616,22 +95653,20 @@ function App() {
             console.error("Authentication failed:", response.error);
             setErrorMessage(response.errorMessage);
         }
-    };
-    if (errorMessage)
-        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
-            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" },
-                " ",
-                errorMessage)));
-    else if (isReady) {
-        return isLoggedIn ? (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0" },
-            react_1.default.createElement(AppRoutes, null),
-            react_1.default.createElement(Footer_1.default, null))) : (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
-            react_1.default.createElement("div", null,
-                react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse }))));
     }
-    else
+    if (!isReady) {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
+    }
+    if (!isLoggedIn) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
+            errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-3" }, errorMessage)),
+            react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse })));
+    }
+    // zalogowany użytkownik
+    return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0" },
+        react_1.default.createElement(AppRoutes, null),
+        react_1.default.createElement(Footer_1.default, null)));
 }
 function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },

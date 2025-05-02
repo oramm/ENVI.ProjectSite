@@ -10,6 +10,27 @@ class MainController {
         await this.setRepostories();
         console.log("Repositories loaded");
     }
+    static async isSessionSet() {
+        const response = await fetch(MainSetupReact_1.default.serverUrl + "session", {
+            credentials: "include",
+        });
+        const sessionInfo = await response.json();
+        console.log("Session info", sessionInfo);
+        if (sessionInfo.userData) {
+            MainSetupReact_1.default.currentUser = sessionInfo.userData;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    static async logout() {
+        await fetch(MainSetupReact_1.default.serverUrl + "logout", {
+            method: "POST",
+            credentials: "include",
+        });
+        //MainSetup.currentUser = undefined;
+    }
     static async setRepostories() {
         const personsEnviRepository = new RepositoryReact_1.default({
             name: "personsEnvi",

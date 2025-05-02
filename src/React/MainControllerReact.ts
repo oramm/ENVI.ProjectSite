@@ -8,6 +8,29 @@ export default class MainController {
         console.log("Repositories loaded");
     }
 
+    static async isSessionSet() {
+        const response = await fetch(MainSetup.serverUrl + "session", {
+            credentials: "include",
+        });
+        const sessionInfo = await response.json();
+        console.log("Session info", sessionInfo);
+
+        if (sessionInfo.userData) {
+            MainSetup.currentUser = sessionInfo.userData;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static async logout() {
+        await fetch(MainSetup.serverUrl + "logout", {
+            method: "POST",
+            credentials: "include",
+        });
+        //MainSetup.currentUser = undefined;
+    }
+
     static async setRepostories() {
         const personsEnviRepository = new RepositoryReact<PersonData>({
             name: "personsEnvi",

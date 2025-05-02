@@ -7,6 +7,9 @@ const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
+const MainControllerReact_1 = __importDefault(require("../MainControllerReact"));
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function MainMenu() {
     const location = (0, react_router_dom_1.useLocation)();
     function isActive(path) {
@@ -52,6 +55,14 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/cities" }, "Miasta"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/contractRanges" },
                                     "Zakresy kontrakt\u00F3w",
-                                    " "))))))))));
+                                    " "))))),
+                    react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
+                        react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCircleUser, className: "me-2" }),
+                                MainSetupReact_1.default.currentUser.userName), id: "user-nav-dropdown" },
+                            react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
+                                    await MainControllerReact_1.default.logout();
+                                    window.location.reload();
+                                } }, "Wyloguj si\u0119"))))))));
 }
 exports.default = MainMenu;

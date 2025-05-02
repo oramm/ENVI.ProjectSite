@@ -32,6 +32,7 @@ import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearc
 import OffersMainView from "../../Offers/OffersList/OffersMainView";
 import RolesSearch from "../../Contracts/Roles/RolesSearch";
 import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
+import { set } from "react-hook-form";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -45,20 +46,23 @@ function App() {
     useEffect(() => {
         async function fetchData() {
             try {
-                await MainController.main();
-                setIsReady(true);
+                const isLoggedIn = await MainController.isSessionSet();
+                setIsLoggedIn(isLoggedIn);
+                if (isLoggedIn) await MainController.main();
             } catch (error) {
                 if (error instanceof Error) {
                     console.error(error);
                     setErrorMessage(`${error.message}`);
                 }
                 return;
+            } finally {
+                setIsReady(true);
             }
         }
         fetchData();
     }, []);
     // Handle the server's response
-    const handleServerResponse = (response: any) => {
+    function handleServerResponse(response: any) {
         if (response.userData) {
             MainSetup.currentUser = response.userData;
             setIsLoggedIn(true);
@@ -66,33 +70,36 @@ function App() {
             console.error("Authentication failed:", response.error);
             setErrorMessage(response.errorMessage);
         }
-    };
+    }
 
-    if (errorMessage)
-        return (
-            <Container className="d-flex justify-content-center align-items-center min-vh-100">
-                <Alert variant="danger"> {errorMessage}</Alert>
-            </Container>
-        );
-    else if (isReady) {
-        return isLoggedIn ? (
-            <Container fluid className="d-flex flex-column min-vh-100 p-0">
-                <AppRoutes />
-                <Footer />
-            </Container>
-        ) : (
-            <Container className="d-flex justify-content-center align-items-center min-vh-100">
-                <div>
-                    <GoogleButton onServerResponse={handleServerResponse} />
-                </div>
-            </Container>
-        );
-    } else
+    if (!isReady) {
         return (
             <Container className="d-flex justify-content-center align-items-center min-vh-100">
                 <SpinnerBootstrap />
             </Container>
         );
+    }
+
+    if (!isLoggedIn) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center min-vh-100 flex-column">
+                {errorMessage && (
+                    <Alert variant="danger" className="mb-3">
+                        {errorMessage}
+                    </Alert>
+                )}
+                <GoogleButton onServerResponse={handleServerResponse} />
+            </Container>
+        );
+    }
+
+    // zalogowany użytkownik
+    return (
+        <Container fluid className="d-flex flex-column min-vh-100 p-0">
+            <AppRoutes />
+            <Footer />
+        </Container>
+    );
 }
 
 function AppRoutes() {
