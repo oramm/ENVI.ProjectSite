@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
-const ToolsDate_1 = __importDefault(require("./ToolsDate"));
+const ToolsDate_1 = __importDefault(require("./Tools/ToolsDate"));
+const ToolsFetch_1 = __importDefault(require("./Tools/ToolsFetch"));
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -88,7 +89,7 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = this.fetchWithRetry(url.toString(), {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -114,7 +115,7 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = this.fetchWithRetry(url.toString(), {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -132,37 +133,6 @@ class RepositoryReact {
         this.saveToSessionStorage();
         console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
         return this.currentItems[0];
-    }
-    /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url, options, retries = 3, delay = 1000) {
-        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        for (let i = 0; i < retries; i++) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    const errorDetails = await response.json();
-                    throw new Error(errorDetails.errorMessage);
-                }
-                return await response.json();
-            }
-            catch (error) {
-                if (i < retries - 1) {
-                    await sleep(delay);
-                }
-                else {
-                    console.error(error);
-                    if (error instanceof TypeError) {
-                        throw new Error(`Próbowałem ${retries} razy. Brak połączenia z serwerem, sprawdź połączenie internetowe`);
-                    }
-                    else if (error instanceof Error) {
-                        throw new Error(`Mimo ${retries} prób serwer zwrócił błąd: ${error.message}`);
-                    }
-                    else {
-                        throw new Error("Nieznany błąd po stronie klienta");
-                    }
-                }
-            }
-        }
     }
     /**
      * Dodaje nowy obiekt do bazy danych.
@@ -193,7 +163,7 @@ class RepositoryReact {
             requestOptions.body = JSON.stringify(newItem);
         }
         // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
-        const response = await this.fetchWithRetry(urlPath, requestOptions);
+        const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
         if (onProgress && response.taskId)
             onProgress(response);
         // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
@@ -207,26 +177,8 @@ class RepositoryReact {
         }
         // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
         const taskId = response.taskId;
-        const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
-        let statusResponse = {
-            status: "processing",
-        };
         // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
-        for (let i = 0; i < 60; i++) {
-            await new Promise((res) => setTimeout(res, 2000));
-            statusResponse = await this.fetchWithRetry(statusUrl, {
-                method: "GET",
-                credentials: "include",
-            });
-            if (onProgress)
-                onProgress(statusResponse);
-            console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
-            if (statusResponse.status !== "processing")
-                break;
-        }
-        if (statusResponse.status === "processing") {
-            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
-        }
+        const statusResponse = await this.pollTask(taskId, onProgress);
         // 8. Obsługa błędu z backendu
         if (statusResponse.status === "error") {
             throw new Error("Błąd backendu: " + statusResponse.error);
@@ -281,7 +233,7 @@ class RepositoryReact {
             requestOptions.body = JSON.stringify({ ...item, _fieldsToUpdate });
         }
         try {
-            const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
                 this.pendingRequests.delete(requestKey);
             });
             this.pendingRequests.set(requestKey, fetchPromise);
@@ -291,23 +243,7 @@ class RepositoryReact {
                 if (onProgress)
                     onProgress(response);
                 const taskId = response.taskId;
-                const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
-                let statusResponse = { status: "processing" };
-                for (let i = 0; i < 60; i++) {
-                    await new Promise((res) => setTimeout(res, 2000));
-                    statusResponse = await this.fetchWithRetry(statusUrl, {
-                        method: "GET",
-                        credentials: "include",
-                    });
-                    if (onProgress)
-                        onProgress(statusResponse);
-                    console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
-                    if (statusResponse.status !== "processing")
-                        break;
-                }
-                if (statusResponse.status === "processing") {
-                    throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
-                }
+                const statusResponse = await this.pollTask(taskId, onProgress);
                 if (statusResponse.status === "error") {
                     throw new Error("Błąd backendu: " + statusResponse.error);
                 }
@@ -399,7 +335,7 @@ class RepositoryReact {
         };
         ToolsDate_1.default.convertDatesToUTC(item);
         requestOptions.body = JSON.stringify({ ...item });
-        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
             this.pendingRequests.delete(requestKey);
         });
         this.pendingRequests.set(requestKey, fetchPromise);
@@ -410,10 +346,23 @@ class RepositoryReact {
         this.items = [];
         this.currentItems = [];
     }
+    async pollTask(taskId, onProgress) {
+        const statusUrl = `${MainSetupReact_1.default.serverUrl}sessionTaskStatus/${taskId}`;
+        for (let i = 0; i < 60; i++) {
+            await new Promise((res) => setTimeout(res, 2000));
+            const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (onProgress)
+                onProgress(statusResponse);
+            if (statusResponse.status !== "processing")
+                return statusResponse;
+        }
+        throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+    }
     makeRequestHeaders() {
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        return myHeaders;
+        return { "Content-Type": "application/json" };
     }
 }
 exports.default = RepositoryReact;

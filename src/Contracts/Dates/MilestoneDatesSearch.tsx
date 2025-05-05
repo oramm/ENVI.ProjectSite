@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { MilestoneDateData, OtherContract, OurContract } from "../../../Typings/bussinesTypes";
-import ToolsDate from "../../React/ToolsDate";
+import ToolsDate from "../../React/Tools/ToolsDate";
 import { milestoneDatesRepository } from "./MilestoneDatesController";
 import { MilestoneDateEditModalButton } from "./Modals/MilestoneDateButtons";
 import { MilestoneDatesFilterBody } from "./MilestoneDatesFilterBody";

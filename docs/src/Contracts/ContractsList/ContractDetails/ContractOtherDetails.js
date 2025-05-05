@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const ContractsController_1 = require("../ContractsController");
 const ContractDetailsContext_1 = require("./ContractDetailsContext");
 function ContractOtherDetails() {

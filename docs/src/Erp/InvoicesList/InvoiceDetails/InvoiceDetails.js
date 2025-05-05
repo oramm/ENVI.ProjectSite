@@ -30,14 +30,14 @@ exports.useInvoice = exports.InvoiceProvider = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const InvoicesController_1 = require("../InvoicesController");
 const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
-const Tools_1 = __importDefault(require("../../../React/Tools"));
+const Tools_1 = __importDefault(require("../../../React/Tools/Tools"));
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);

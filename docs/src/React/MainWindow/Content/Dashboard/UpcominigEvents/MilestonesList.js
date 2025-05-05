@@ -31,8 +31,8 @@ const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../../../View/Resultsets/FilterableTable/FilterableTable"));
 const MainSetupReact_1 = __importDefault(require("../../../../MainSetupReact"));
-const Tools_1 = __importDefault(require("../../../../Tools"));
-const ToolsDate_1 = __importDefault(require("../../../../ToolsDate"));
+const Tools_1 = __importDefault(require("../../../../Tools/Tools"));
+const ToolsDate_1 = __importDefault(require("../../../../Tools/ToolsDate"));
 const MainWindowController_1 = require("../../../MainWindowController");
 function MilestonesList() {
     const [milestones, setMilestones] = (0, react_1.useState)([]);

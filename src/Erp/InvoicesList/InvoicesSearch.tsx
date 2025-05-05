@@ -5,7 +5,7 @@ import { InvoiceEditModalButton, InvoiceAddNewModalButton } from "./Modals/Invoi
 import { Invoice } from "../../../Typings/bussinesTypes";
 import { InvoiceStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { invoicesRepository } from "./InvoicesController";
-import Tools from "../../React/Tools";
+import Tools from "../../React/Tools/Tools";
 
 export default function InvoicesSearch({ title }: { title: string }) {
     useEffect(() => {

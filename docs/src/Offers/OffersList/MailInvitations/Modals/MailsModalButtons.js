@@ -33,7 +33,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const MailsToCheckList_1 = __importDefault(require("../MailsToCheckList"));
 const OfferModalButtons_1 = require("../../Modals/OfferModalButtons");
-const ToolsDate_1 = __importDefault(require("../../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../../React/Tools/ToolsDate"));
 function SetAsGoodToOfferButton({ onError }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);

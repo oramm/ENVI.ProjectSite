@@ -10,7 +10,7 @@ import { useFilterableTableContext } from "../../../View/Resultsets/FilterableTa
 import { MailModalBodyStatus } from "./Modals/MailModalBodiesPartial";
 import { makeMailStatusValidationSchema } from "./Modals/MailValidationSchema";
 import { MailInvitationsFilterBody } from "./MailInvitationsFilterBody";
-import ToolsDate from "../../../React/ToolsDate";
+import ToolsDate from "../../../React/Tools/ToolsDate";
 
 export default function MailInvitationsList() {
     function renderRowContent(dataItem: OfferInvitationMailToProcessData, isActive: boolean = false) {

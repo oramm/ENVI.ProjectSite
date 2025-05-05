@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
-import ToolsDate from "../../../React/ToolsDate";
+import ToolsDate from "../../../React/Tools/ToolsDate";
 import ErrorBoundary from "../../../View/Modals/ErrorBoundary";
 import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
@@ -10,7 +10,7 @@ import { invoiceItemsRepository, invoicesRepository } from "../InvoicesControlle
 import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from "../Modals/InvoiceItemModalButtons";
 import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/InvoiceModalButtons";
 import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
-import Tools from "../../../React/Tools";
+import Tools from "../../../React/Tools/Tools";
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);

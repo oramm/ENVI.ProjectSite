@@ -6,7 +6,7 @@ import {
     PersonSelectorPreloaded,
 } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useContract } from "../../ContractContext";
-import ToolsDate from "../../../../React/ToolsDate";
+import ToolsDate from "../../../../React/Tools/ToolsDate";
 import { casesRepository } from "../../ContractsController";
 import MainSetup from "../../../../React/MainSetupReact";
 import { TaksStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";

@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Container, Card, Col, Row, Button, Alert, Placeholder } from "react-bootstrap";
 import { ContractsSettlementData, Invoice, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
-import Tools from "../../../React/Tools";
-import ToolsDate from "../../../React/ToolsDate";
+import Tools from "../../../React/Tools/Tools";
+import ToolsDate from "../../../React/Tools/ToolsDate";
 import { InvoiceStatusBadge, MyTooltip } from "../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { contractsSettlementRepository, invoicesRepository } from "../ContractsController";

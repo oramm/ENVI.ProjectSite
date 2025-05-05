@@ -1,6 +1,7 @@
 export interface UserData {
     enviId: number;
-    googleId: string;
+    googleId?: string;
+    microsoftId?: string;
     systemEmail: string;
     userName: string;
     picture: string;

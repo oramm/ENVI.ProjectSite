@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ToolsDate_1 = __importDefault(require("./ToolsDate"));
+const ToolsDate_1 = __importDefault(require("./Tools/ToolsDate"));
 class MainSetup {
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem("Current User"));

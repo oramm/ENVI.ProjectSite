@@ -32,7 +32,7 @@ import { ContractEditModalButton } from "./Modals/ContractModalButtons";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
 import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
-import ToolsDate from "../React/ToolsDate";
+import ToolsDate from "../React/Tools/ToolsDate";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider

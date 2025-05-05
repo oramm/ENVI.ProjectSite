@@ -36,12 +36,12 @@ const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const react_bootstrap_1 = require("react-bootstrap");
 const OfferBondModalButtons_1 = require("./OfferBonds/Modals/OfferBondModalButtons");
-const Tools_1 = __importDefault(require("../../React/Tools"));
+const Tools_1 = __importDefault(require("../../React/Tools/Tools"));
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
 const OfferModalBodiesPartial_1 = require("./Modals/OfferModalBodiesPartial");
 const OfferValidationSchema_1 = require("./Modals/OfferValidationSchema");
 const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
-const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const SendOfferModalButtons_1 = require("./Modals/SendOffer/SendOfferModalButtons");
 function OffersSearch({ title }) {

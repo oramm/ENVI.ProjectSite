@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hasError = exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
-const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
 function parseFieldValuesToParams(data) {
     const params = {};

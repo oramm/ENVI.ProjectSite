@@ -32,7 +32,7 @@ const InvoiceFilterBody_1 = require("./InvoiceFilterBody");
 const InvoiceModalButtons_1 = require("./Modals/InvoiceModalButtons");
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const InvoicesController_1 = require("./InvoicesController");
-const Tools_1 = __importDefault(require("../../React/Tools"));
+const Tools_1 = __importDefault(require("../../React/Tools/Tools"));
 function InvoicesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;

@@ -8,8 +8,8 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { OtherContract, OurContract, ProjectData } from "../../../../Typings/bussinesTypes";
 import { contractRangesRepository, projectsRepository } from "../ContractsController";
-import ToolsDate from "../../../React/ToolsDate";
-import ToolsForms from "../../../React/ToolsForms";
+import ToolsDate from "../../../React/Tools/ToolsDate";
+import ToolsForms from "../../../React/Tools/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 

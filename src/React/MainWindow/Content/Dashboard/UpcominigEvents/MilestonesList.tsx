@@ -6,8 +6,8 @@ import { PartialEditTrigger } from "../../../../../View/Modals/GeneralModalButto
 import { ContractStatusBadge, DaysLeftBadge, MyTooltip } from "../../../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../../../View/Resultsets/FilterableTable/FilterableTable";
 import MainSetup from "../../../../MainSetupReact";
-import Tools from "../../../../Tools";
-import ToolsDate from "../../../../ToolsDate";
+import Tools from "../../../../Tools/Tools";
+import ToolsDate from "../../../../Tools/ToolsDate";
 import { milestonesRepository } from "../../../MainWindowController";
 import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Section";
 import { RowStructure } from "../../../../../View/Resultsets/FilterableTable/FilterableTableTypes";

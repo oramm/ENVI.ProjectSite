@@ -32,7 +32,7 @@ const OffersController_1 = require("../OffersController");
 const MailsToCheckFilterBody_1 = require("./MailsToCheckFilterBody");
 const MailsModalButtons_1 = require("./Modals/MailsModalButtons");
 const react_bootstrap_1 = require("react-bootstrap");
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 function MailsToCheckList({ show, handleClose }) {
     const [activeMailBody, setActiveMailBody] = (0, react_1.useState)("");
     const [activeMailId, setActiveMailId] = (0, react_1.useState)(null);

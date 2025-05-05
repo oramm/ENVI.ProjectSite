@@ -30,8 +30,8 @@ exports.ContractModalBodyDates = exports.ContractModalBodyName = exports.Contrac
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
-const ToolsForms_1 = __importDefault(require("../../../React/ToolsForms"));
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsForms_1 = __importDefault(require("../../../React/Tools/ToolsForms"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function ContractModalBodyStatus({ initialData }) {

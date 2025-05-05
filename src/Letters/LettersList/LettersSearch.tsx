@@ -11,9 +11,9 @@ import {
 import { EntityData, IncomingLetterContract, Letter, OurLetterContract } from "../../../Typings/bussinesTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import ToolsDate from "../../React/ToolsDate";
+import ToolsDate from "../../React/Tools/ToolsDate";
 import { Alert } from "react-bootstrap";
-import Tools from "../../React/Tools";
+import Tools from "../../React/Tools/Tools";
 import MainSetup from "../../React/MainSetupReact";
 import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";

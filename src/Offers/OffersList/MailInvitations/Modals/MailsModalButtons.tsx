@@ -4,7 +4,7 @@ import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../../View/Resultsets/CommonComponents";
 import MailsToCheckList from "../MailsToCheckList";
 import { OurOfferAddNewModalButton } from "../../Modals/OfferModalButtons";
-import ToolsDate from "../../../../React/ToolsDate";
+import ToolsDate from "../../../../React/Tools/ToolsDate";
 
 export function SetAsGoodToOfferButton({ onError }: { onError: (error: Error) => void }) {
     const [requestPending, setRequestPending] = useState(false);

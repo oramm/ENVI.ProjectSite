@@ -31,7 +31,7 @@ const FilterableTable_1 = __importDefault(require("../../View/Resultsets/Filtera
 const RoleFilterBody_1 = require("./RoleFilterBody");
 const RolesController_1 = require("./RolesController");
 const RoleModalButtons_1 = require("./Modals/RoleModalButtons");
-const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;

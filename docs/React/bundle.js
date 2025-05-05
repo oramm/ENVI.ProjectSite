@@ -85793,7 +85793,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ContractModalBodiesPartial_1 = __webpack_require__(/*! ../Modals/ContractModalBodiesPartial */ "./src/Contracts/ContractsList/Modals/ContractModalBodiesPartial.tsx");
@@ -86054,7 +86054,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const ContractsController_1 = __webpack_require__(/*! ../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const ContractDetailsContext_1 = __webpack_require__(/*! ./ContractDetailsContext */ "./src/Contracts/ContractsList/ContractDetails/ContractDetailsContext.tsx");
 function ContractOtherDetails() {
@@ -86141,8 +86141,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools */ "./src/React/Tools.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const ContractsController_1 = __webpack_require__(/*! ../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
@@ -86493,7 +86493,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const ContractContext_1 = __webpack_require__(/*! ../../ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
@@ -86568,7 +86568,7 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const ContractContext_1 = __webpack_require__(/*! ../../ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const StatusSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -86910,8 +86910,8 @@ exports.ContractModalBodyDates = exports.ContractModalBodyName = exports.Contrac
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const ToolsForms_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsForms */ "./src/React/ToolsForms.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsForms_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function ContractModalBodyStatus({ initialData }) {
@@ -87027,8 +87027,8 @@ const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/C
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const ContractsController_1 = __webpack_require__(/*! ../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
-const ToolsForms_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsForms */ "./src/React/ToolsForms.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const ToolsForms_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts"));
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 function ContractModalBody({ isEditing, initialData }) {
@@ -88083,8 +88083,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools */ "./src/React/Tools.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -88405,7 +88405,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MilestoneDatesController_1 = __webpack_require__(/*! ./MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
 const MilestoneDateButtons_1 = __webpack_require__(/*! ./Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
 const MilestoneDatesFilterBody_1 = __webpack_require__(/*! ./MilestoneDatesFilterBody */ "./src/Contracts/Dates/MilestoneDatesFilterBody.tsx");
@@ -89266,7 +89266,7 @@ const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Res
 const RoleFilterBody_1 = __webpack_require__(/*! ./RoleFilterBody */ "./src/Contracts/Roles/RoleFilterBody.tsx");
 const RolesController_1 = __webpack_require__(/*! ./RolesController */ "./src/Contracts/Roles/RolesController.ts");
 const RoleModalButtons_1 = __webpack_require__(/*! ./Modals/RoleModalButtons */ "./src/Contracts/Roles/Modals/RoleModalButtons.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 function RolesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -89671,14 +89671,14 @@ exports.useInvoice = exports.InvoiceProvider = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const InvoicesController_1 = __webpack_require__(/*! ../InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts");
 const InvoiceItemModalButtons_1 = __webpack_require__(/*! ../Modals/InvoiceItemModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceItemModalButtons.tsx");
 const InvoiceModalButtons_1 = __webpack_require__(/*! ../Modals/InvoiceModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceModalButtons.tsx");
 const InvoiceValidationSchema_1 = __webpack_require__(/*! ../Modals/InvoiceValidationSchema */ "./src/Erp/InvoicesList/Modals/InvoiceValidationSchema.ts");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools */ "./src/React/Tools.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -89966,7 +89966,7 @@ const InvoiceFilterBody_1 = __webpack_require__(/*! ./InvoiceFilterBody */ "./sr
 const InvoiceModalButtons_1 = __webpack_require__(/*! ./Modals/InvoiceModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceModalButtons.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const InvoicesController_1 = __webpack_require__(/*! ./InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 function InvoicesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -90820,9 +90820,9 @@ const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/
 const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
 const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -92151,7 +92151,7 @@ const FilterableTableContext_1 = __webpack_require__(/*! ../../../View/Resultset
 const MailModalBodiesPartial_1 = __webpack_require__(/*! ./Modals/MailModalBodiesPartial */ "./src/Offers/OffersList/MailInvitations/Modals/MailModalBodiesPartial.tsx");
 const MailValidationSchema_1 = __webpack_require__(/*! ./Modals/MailValidationSchema */ "./src/Offers/OffersList/MailInvitations/Modals/MailValidationSchema.ts");
 const MailInvitationsFilterBody_1 = __webpack_require__(/*! ./MailInvitationsFilterBody */ "./src/Offers/OffersList/MailInvitations/MailInvitationsFilterBody.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 function MailInvitationsList() {
     function renderRowContent(dataItem, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -92311,7 +92311,7 @@ const OffersController_1 = __webpack_require__(/*! ../OffersController */ "./src
 const MailsToCheckFilterBody_1 = __webpack_require__(/*! ./MailsToCheckFilterBody */ "./src/Offers/OffersList/MailInvitations/MailsToCheckFilterBody.tsx");
 const MailsModalButtons_1 = __webpack_require__(/*! ./Modals/MailsModalButtons */ "./src/Offers/OffersList/MailInvitations/Modals/MailsModalButtons.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 function MailsToCheckList({ show, handleClose }) {
     const [activeMailBody, setActiveMailBody] = (0, react_1.useState)("");
     const [activeMailId, setActiveMailId] = (0, react_1.useState)(null);
@@ -92508,7 +92508,7 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const MailsToCheckList_1 = __importDefault(__webpack_require__(/*! ../MailsToCheckList */ "./src/Offers/OffersList/MailInvitations/MailsToCheckList.tsx"));
 const OfferModalButtons_1 = __webpack_require__(/*! ../../Modals/OfferModalButtons */ "./src/Offers/OffersList/Modals/OfferModalButtons.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 function SetAsGoodToOfferButton({ onError }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
@@ -93760,12 +93760,12 @@ const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-s
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const OfferBondModalButtons_1 = __webpack_require__(/*! ./OfferBonds/Modals/OfferBondModalButtons */ "./src/Offers/OffersList/OfferBonds/Modals/OfferBondModalButtons.tsx");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools */ "./src/React/Tools.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const OfferModalBodiesPartial_1 = __webpack_require__(/*! ./Modals/OfferModalBodiesPartial */ "./src/Offers/OffersList/Modals/OfferModalBodiesPartial.tsx");
 const OfferValidationSchema_1 = __webpack_require__(/*! ./Modals/OfferValidationSchema */ "./src/Offers/OffersList/Modals/OfferValidationSchema.ts");
 const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const SendOfferModalButtons_1 = __webpack_require__(/*! ./Modals/SendOffer/SendOfferModalButtons */ "./src/Offers/OffersList/Modals/SendOffer/SendOfferModalButtons.tsx");
 function OffersSearch({ title }) {
@@ -94597,7 +94597,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 class MainSetup {
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem("Current User"));
@@ -94951,8 +94951,8 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals
 const CommonComponents_1 = __webpack_require__(/*! ../../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools */ "./src/React/Tools.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../ToolsDate */ "./src/React/ToolsDate.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
 const FilterableTableContext_1 = __webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 function ContractsList() {
@@ -95176,8 +95176,8 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals
 const CommonComponents_1 = __webpack_require__(/*! ../../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools */ "./src/React/Tools.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../ToolsDate */ "./src/React/ToolsDate.ts"));
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
 function SecuritiesList() {
     const [securities, setSecurities] = (0, react_1.useState)([]);
@@ -95725,7 +95725,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ./Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ./Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -95809,7 +95810,7 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = this.fetchWithRetry(url.toString(), {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -95835,7 +95836,7 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = this.fetchWithRetry(url.toString(), {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
             method: "POST",
             headers: {
                 ...this.makeRequestHeaders(),
@@ -95853,37 +95854,6 @@ class RepositoryReact {
         this.saveToSessionStorage();
         console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
         return this.currentItems[0];
-    }
-    /** Funkcja pomocnicza do ponawiania żądań */
-    async fetchWithRetry(url, options, retries = 3, delay = 1000) {
-        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        for (let i = 0; i < retries; i++) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    const errorDetails = await response.json();
-                    throw new Error(errorDetails.errorMessage);
-                }
-                return await response.json();
-            }
-            catch (error) {
-                if (i < retries - 1) {
-                    await sleep(delay);
-                }
-                else {
-                    console.error(error);
-                    if (error instanceof TypeError) {
-                        throw new Error(`Próbowałem ${retries} razy. Brak połączenia z serwerem, sprawdź połączenie internetowe`);
-                    }
-                    else if (error instanceof Error) {
-                        throw new Error(`Mimo ${retries} prób serwer zwrócił błąd: ${error.message}`);
-                    }
-                    else {
-                        throw new Error("Nieznany błąd po stronie klienta");
-                    }
-                }
-            }
-        }
     }
     /**
      * Dodaje nowy obiekt do bazy danych.
@@ -95914,7 +95884,7 @@ class RepositoryReact {
             requestOptions.body = JSON.stringify(newItem);
         }
         // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
-        const response = await this.fetchWithRetry(urlPath, requestOptions);
+        const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
         if (onProgress && response.taskId)
             onProgress(response);
         // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
@@ -95928,26 +95898,8 @@ class RepositoryReact {
         }
         // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
         const taskId = response.taskId;
-        const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
-        let statusResponse = {
-            status: "processing",
-        };
         // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
-        for (let i = 0; i < 60; i++) {
-            await new Promise((res) => setTimeout(res, 2000));
-            statusResponse = await this.fetchWithRetry(statusUrl, {
-                method: "GET",
-                credentials: "include",
-            });
-            if (onProgress)
-                onProgress(statusResponse);
-            console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
-            if (statusResponse.status !== "processing")
-                break;
-        }
-        if (statusResponse.status === "processing") {
-            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
-        }
+        const statusResponse = await this.pollTask(taskId, onProgress);
         // 8. Obsługa błędu z backendu
         if (statusResponse.status === "error") {
             throw new Error("Błąd backendu: " + statusResponse.error);
@@ -96002,7 +95954,7 @@ class RepositoryReact {
             requestOptions.body = JSON.stringify({ ...item, _fieldsToUpdate });
         }
         try {
-            const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
                 this.pendingRequests.delete(requestKey);
             });
             this.pendingRequests.set(requestKey, fetchPromise);
@@ -96012,23 +95964,7 @@ class RepositoryReact {
                 if (onProgress)
                     onProgress(response);
                 const taskId = response.taskId;
-                const statusUrl = `${MainSetupReact_1.default.serverUrl}contractStatus/${taskId}`;
-                let statusResponse = { status: "processing" };
-                for (let i = 0; i < 60; i++) {
-                    await new Promise((res) => setTimeout(res, 2000));
-                    statusResponse = await this.fetchWithRetry(statusUrl, {
-                        method: "GET",
-                        credentials: "include",
-                    });
-                    if (onProgress)
-                        onProgress(statusResponse);
-                    console.log(statusResponse.percent, statusResponse.progressMesage, statusResponse.status);
-                    if (statusResponse.status !== "processing")
-                        break;
-                }
-                if (statusResponse.status === "processing") {
-                    throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
-                }
+                const statusResponse = await this.pollTask(taskId, onProgress);
                 if (statusResponse.status === "error") {
                     throw new Error("Błąd backendu: " + statusResponse.error);
                 }
@@ -96120,7 +96056,7 @@ class RepositoryReact {
         };
         ToolsDate_1.default.convertDatesToUTC(item);
         requestOptions.body = JSON.stringify({ ...item });
-        const fetchPromise = this.fetchWithRetry(urlPath, requestOptions).finally(() => {
+        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
             this.pendingRequests.delete(requestKey);
         });
         this.pendingRequests.set(requestKey, fetchPromise);
@@ -96131,10 +96067,23 @@ class RepositoryReact {
         this.items = [];
         this.currentItems = [];
     }
+    async pollTask(taskId, onProgress) {
+        const statusUrl = `${MainSetupReact_1.default.serverUrl}sessionTaskStatus/${taskId}`;
+        for (let i = 0; i < 60; i++) {
+            await new Promise((res) => setTimeout(res, 2000));
+            const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
+                method: "GET",
+                credentials: "include",
+            });
+            if (onProgress)
+                onProgress(statusResponse);
+            if (statusResponse.status !== "processing")
+                return statusResponse;
+        }
+        throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+    }
     makeRequestHeaders() {
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        return myHeaders;
+        return { "Content-Type": "application/json" };
     }
 }
 exports["default"] = RepositoryReact;
@@ -96142,10 +96091,10 @@ exports["default"] = RepositoryReact;
 
 /***/ }),
 
-/***/ "./src/React/Tools.ts":
-/*!****************************!*\
-  !*** ./src/React/Tools.ts ***!
-  \****************************/
+/***/ "./src/React/Tools/Tools.ts":
+/*!**********************************!*\
+  !*** ./src/React/Tools/Tools.ts ***!
+  \**********************************/
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -96283,10 +96232,10 @@ Tools.getLabelFromKey = (key, options, defaultLabel = "Nieznana wartość") => {
 
 /***/ }),
 
-/***/ "./src/React/ToolsDate.ts":
-/*!********************************!*\
-  !*** ./src/React/ToolsDate.ts ***!
-  \********************************/
+/***/ "./src/React/Tools/ToolsDate.ts":
+/*!**************************************!*\
+  !*** ./src/React/Tools/ToolsDate.ts ***!
+  \**************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -96445,10 +96394,62 @@ exports["default"] = ToolsDate;
 
 /***/ }),
 
-/***/ "./src/React/ToolsForms.ts":
-/*!*********************************!*\
-  !*** ./src/React/ToolsForms.ts ***!
-  \*********************************/
+/***/ "./src/React/Tools/ToolsFetch.ts":
+/*!***************************************!*\
+  !*** ./src/React/Tools/ToolsFetch.ts ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class ToolsFetch {
+    static async fetchJsonWithSafeError(url, options = {}, customErrorMsg) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(errorDetails.errorMessage);
+            }
+            return await response.json();
+        }
+        catch (error) {
+            if (error instanceof TypeError) {
+                throw new Error(customErrorMsg || `Brak połączenia z serwerem, sprawdź połączenie internetowe`);
+            }
+            else if (error instanceof Error) {
+                throw new Error(customErrorMsg || error.message);
+            }
+            else {
+                throw new Error(customErrorMsg || `Nieznany błąd klienta`);
+            }
+        }
+    }
+    /** Funkcja pomocnicza do ponawiania żądań */
+    static async fetchWithRetry(url, options, retries = 3, delay = 1000, customErrorMsg) {
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        for (let i = 0; i < retries; i++) {
+            try {
+                return await this.fetchJsonWithSafeError(url, options, customErrorMsg);
+            }
+            catch (error) {
+                if (i < retries - 1)
+                    await sleep(delay);
+                else
+                    throw error;
+            }
+        }
+    }
+}
+exports["default"] = ToolsFetch;
+
+
+/***/ }),
+
+/***/ "./src/React/Tools/ToolsForms.ts":
+/*!***************************************!*\
+  !*** ./src/React/Tools/ToolsForms.ts ***!
+  \***************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -98358,7 +98359,7 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/Modals/FormContext.ts");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CommonComponentsController_1 = __webpack_require__(/*! ../../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
@@ -99677,7 +99678,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.hasError = exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/ToolsDate */ "./src/React/ToolsDate.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
 function parseFieldValuesToParams(data) {
     const params = {};

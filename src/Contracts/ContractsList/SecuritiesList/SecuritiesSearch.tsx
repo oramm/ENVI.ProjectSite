@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Security } from "../../../../Typings/bussinesTypes";
-import Tools from "../../../React/Tools";
-import ToolsDate from "../../../React/ToolsDate";
+import Tools from "../../../React/Tools/Tools";
+import ToolsDate from "../../../React/Tools/ToolsDate";
 import { PartialEditTrigger } from "../../../View/Modals/GeneralModalButtons";
 import { DaysLeftBadge, SecurityStatusBadge } from "../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";

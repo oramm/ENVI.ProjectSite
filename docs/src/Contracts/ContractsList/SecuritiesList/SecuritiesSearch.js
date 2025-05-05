@@ -27,8 +27,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
-const Tools_1 = __importDefault(require("../../../React/Tools"));
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const Tools_1 = __importDefault(require("../../../React/Tools/Tools"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));

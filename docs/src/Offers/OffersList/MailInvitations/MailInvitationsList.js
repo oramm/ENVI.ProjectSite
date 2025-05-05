@@ -14,7 +14,7 @@ const FilterableTableContext_1 = require("../../../View/Resultsets/FilterableTab
 const MailModalBodiesPartial_1 = require("./Modals/MailModalBodiesPartial");
 const MailValidationSchema_1 = require("./Modals/MailValidationSchema");
 const MailInvitationsFilterBody_1 = require("./MailInvitationsFilterBody");
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 function MailInvitationsList() {
     function renderRowContent(dataItem, isActive = false) {
         return (react_1.default.createElement(react_1.default.Fragment, null,

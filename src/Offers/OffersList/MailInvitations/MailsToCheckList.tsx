@@ -5,7 +5,7 @@ import { MailsToCheckFilterBody } from "./MailsToCheckFilterBody";
 import { SetAsGoodToOfferButton } from "./Modals/MailsModalButtons";
 import { Button, Modal } from "react-bootstrap";
 import { MailData } from "../../../../Typings/bussinesTypes";
-import ToolsDate from "../../../React/ToolsDate";
+import ToolsDate from "../../../React/Tools/ToolsDate";
 
 export default function MailsToCheckList({ show, handleClose }: { show: boolean; handleClose: () => void }) {
     const [activeMailBody, setActiveMailBody] = useState<string>("");

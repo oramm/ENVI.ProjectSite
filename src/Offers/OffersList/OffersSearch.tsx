@@ -18,12 +18,12 @@ import {
     OfferBondDeleteModalButton,
     OfferBondEditModalButton,
 } from "./OfferBonds/Modals/OfferBondModalButtons";
-import Tools from "../../React/Tools";
+import Tools from "../../React/Tools/Tools";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
 import { OfferModalBodyStatus } from "./Modals/OfferModalBodiesPartial";
 import { makeOfferStatusValidationSchema } from "./Modals/OfferValidationSchema";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
-import ToolsDate from "../../React/ToolsDate";
+import ToolsDate from "../../React/Tools/ToolsDate";
 import MainSetup from "../../React/MainSetupReact";
 import { SendAnotherOfferModalButton, SendOfferModalButton } from "./Modals/SendOffer/SendOfferModalButtons";
 

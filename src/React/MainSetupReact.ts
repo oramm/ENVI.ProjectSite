@@ -9,7 +9,7 @@ import {
     User,
 } from "../../Typings/bussinesTypes";
 import RepositoryReact from "./RepositoryReact";
-import ToolsDate from "./ToolsDate";
+import ToolsDate from "./Tools/ToolsDate";
 
 export default class MainSetup {
     static projectsRepository: RepositoryReact<ProjectData>;

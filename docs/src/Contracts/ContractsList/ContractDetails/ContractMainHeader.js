@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const ToolsDate_1 = __importDefault(require("../../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 const ContractModalBodiesPartial_1 = require("../Modals/ContractModalBodiesPartial");

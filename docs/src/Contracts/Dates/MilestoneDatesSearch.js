@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
-const ToolsDate_1 = __importDefault(require("../../React/ToolsDate"));
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 const MilestoneDatesController_1 = require("./MilestoneDatesController");
 const MilestoneDateButtons_1 = require("./Modals/MilestoneDateButtons");
 const MilestoneDatesFilterBody_1 = require("./MilestoneDatesFilterBody");
