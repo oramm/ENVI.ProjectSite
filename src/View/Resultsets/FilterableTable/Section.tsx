@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Accordion } from "react-bootstrap";
+import { Accordion, Col, Row } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
@@ -82,45 +82,35 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     const navigate = useNavigate();
     const { handleDeleteSection, handleEditSection, handleAddSection } = useFilterableTableContext<DataItemType>();
     const { selectedObjectRoute, dataItem } = sectionNode;
+
     function makeTitleStyle() {
         const nodeLevel = sectionNode.level;
         return {
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
-            color: `rgb(${50}, ${130}, ${50})`,
-        };
-    }
-
-    function makeSectionStyle() {
-        return {
-            display: "flex",
-            alignItems: "center",
-            background: !sectionNode.isInAccordion ? "aliceblue" : undefined,
+            color: `rgb(50, 130, 50)`,
         };
     }
 
     return (
         <div
-            style={makeSectionStyle()}
+            className="d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1"
+            onClick={() => onClick(sectionNode)}
             onDoubleClick={() => {
                 if (selectedObjectRoute) navigate(selectedObjectRoute + dataItem.id);
             }}
         >
-            <div
-                className={isActive ? "active" : ""}
-                onClick={() => onClick(sectionNode)}
-                key={sectionNode.id}
-                style={makeTitleStyle()}
-            >
-                {sectionNode.titleLabel}
+            <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+                <span style={makeTitleStyle()}>{sectionNode.titleLabel}</span>
+                {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
+                    <span className="tekst-muted small">
+                        [{sectionNode.leaves?.length || sectionNode.children.length} pozycji]
+                    </span>
+                )}
             </div>
-            {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
-                <div className="ms-1 tekst-muted small">{` [${
-                    sectionNode.leaves?.length || sectionNode.children.length
-                } pozycji]`}</div>
-            )}
-            {isActive ? (
-                <div className="section-action-menu">
+
+            {isActive && (
+                <div className="d-flex align-items-center gap-2 section-action-menu">
                     <RowActionMenu
                         dataObject={sectionNode.dataItem}
                         isDeletable={!!sectionNode.isDeletable}
@@ -139,7 +129,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         />
                     )}
                 </div>
-            ) : null}
+            )}
         </div>
     );
 }

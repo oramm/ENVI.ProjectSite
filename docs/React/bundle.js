@@ -100531,28 +100531,25 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
         return {
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
-            color: `rgb(${50}, ${130}, ${50})`,
+            color: `rgb(50, 130, 50)`,
         };
     }
-    function makeSectionStyle() {
-        return {
-            display: "flex",
-            alignItems: "center",
-            background: !sectionNode.isInAccordion ? "aliceblue" : undefined,
-        };
-    }
-    return (react_1.default.createElement("div", { style: makeSectionStyle(), onDoubleClick: () => {
+    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1", onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (selectedObjectRoute)
                 navigate(selectedObjectRoute + dataItem.id);
         } },
-        react_1.default.createElement("div", { className: isActive ? "active" : "", onClick: () => onClick(sectionNode), key: sectionNode.id, style: makeTitleStyle() }, sectionNode.titleLabel),
-        (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("div", { className: "ms-1 tekst-muted small" }, ` [${sectionNode.leaves?.length || sectionNode.children.length} pozycji]`)),
-        isActive ? (react_1.default.createElement("div", { className: "section-action-menu" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2", style: { cursor: "pointer" } },
+            react_1.default.createElement("span", { style: makeTitleStyle() }, sectionNode.titleLabel),
+            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
+                "[",
+                sectionNode.leaves?.length || sectionNode.children.length,
+                " pozycji]"))),
+        isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,
-                } })))) : null));
+                } }))))));
 }
 function SectionBody({ sectionNode, resulsetTableProps, onClick, }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
