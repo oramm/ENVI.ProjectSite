@@ -169,7 +169,7 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
     const manager = "ourId" in contract ? (contract._manager as PersonData) : undefined;
     const ourId = "ourId" in contract ? contract.ourId : undefined;
 
-    let label = "K: ";
+    let label = "Umowa: ";
     label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
     if (contract.alias) label += ` [${contract.alias || ""}] `;
     if (manager) label += ` ${manager.name} ${manager.surname}`;
@@ -200,11 +200,14 @@ function makeMilestoneTitleLabel(milestone: MilestoneData) {
             return `[${startDate} - ${endDate}]`;
         })
         .join(", ");
-    return `M: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates}`;
+    const uniqueicon = milestone._type.isUniquePerContract ? "🔐" : "♾";
+    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${
+        milestone.name || ""
+    } ${dates} ${uniqueicon}`;
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
-    return `${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
+    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
