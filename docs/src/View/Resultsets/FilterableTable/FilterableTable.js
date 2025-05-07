@@ -97,8 +97,18 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             setSections(editNode(sections, activeSectionId, object));
     }
     function handleDeleteObject(objectId) {
-        setObjects(objects.filter((o) => o.id !== objectId));
+        if (!sections.length)
+            setObjects(objects.filter((o) => o.id !== objectId));
+        else
+            setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();
+    }
+    function removeLeafFromSections(nodes, leafId) {
+        return nodes.map((node) => ({
+            ...node,
+            children: removeLeafFromSections(node.children, leafId),
+            leaves: node.leaves?.filter((leaf) => leaf.id !== leafId),
+        }));
     }
     function handleAddSection(sectionDataObject) {
         setSections(addNode(sections, activeSectionId, sectionDataObject));

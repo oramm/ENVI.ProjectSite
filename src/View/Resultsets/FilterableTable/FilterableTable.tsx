@@ -95,8 +95,20 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function handleDeleteObject(objectId: number) {
-        setObjects(objects.filter((o) => o.id !== objectId));
+        if (!sections.length) setObjects(objects.filter((o) => o.id !== objectId));
+        else setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();
+    }
+
+    function removeLeafFromSections(
+        nodes: SectionNode<LeafDataItemType>[],
+        leafId: number
+    ): SectionNode<LeafDataItemType>[] {
+        return nodes.map((node) => ({
+            ...node,
+            children: removeLeafFromSections(node.children, leafId),
+            leaves: node.leaves?.filter((leaf) => leaf.id !== leafId),
+        }));
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
