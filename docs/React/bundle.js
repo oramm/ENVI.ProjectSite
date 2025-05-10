@@ -100535,7 +100535,11 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
             color: `rgb(50, 130, 50)`,
         };
     }
-    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1", onClick: () => onClick(sectionNode), onDoubleClick: () => {
+    const headerStyle = {
+        backgroundColor: "aliceblue",
+        borderRadius: "0.25rem",
+    };
+    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (selectedObjectRoute)
                 navigate(selectedObjectRoute + dataItem.id);
         } },
