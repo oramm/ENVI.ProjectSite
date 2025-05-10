@@ -97251,6 +97251,7 @@ const CaseModalButtons_1 = __webpack_require__(/*! ./Modals/Case/CaseModalButton
 const ContractModalButtons_1 = __webpack_require__(/*! ./Modals/ContractModalButtons */ "./src/TasksGlobal/Modals/ContractModalButtons.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MilestoneModalButtons_1 = __webpack_require__(/*! ./Modals/Milestone/MilestoneModalButtons */ "./src/TasksGlobal/Modals/Milestone/MilestoneModalButtons.tsx");
+const Symbols_1 = __webpack_require__(/*! ../View/Symbols */ "./src/View/Symbols.ts");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -97365,11 +97366,12 @@ function makeMilestoneTitleLabel(milestone) {
         return `[${startDate} - ${endDate}]`;
     })
         .join(", ");
-    const uniqueicon = milestone._type.isUniquePerContract ? "🔐" : "♾";
+    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(milestone._type.isUniquePerContract);
     return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
+    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(caseItem._type.isUniquePerMilestone);
+    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
@@ -100561,6 +100563,24 @@ function SectionBody({ sectionNode, resulsetTableProps, onClick, }) {
         sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick }))),
         sectionNode.leaves && (react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves }))));
 }
+
+
+/***/ }),
+
+/***/ "./src/View/Symbols.ts":
+/*!*****************************!*\
+  !*** ./src/View/Symbols.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getUniqueSymbol = void 0;
+function getUniqueSymbol(isUnique) {
+    return isUnique ? "🔐" : "♾";
+}
+exports.getUniqueSymbol = getUniqueSymbol;
 
 
 /***/ }),

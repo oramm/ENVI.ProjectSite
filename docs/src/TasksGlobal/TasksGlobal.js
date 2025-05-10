@@ -40,6 +40,7 @@ const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
 const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const MilestoneModalButtons_1 = require("./Modals/Milestone/MilestoneModalButtons");
+const Symbols_1 = require("../View/Symbols");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -154,11 +155,12 @@ function makeMilestoneTitleLabel(milestone) {
         return `[${startDate} - ${endDate}]`;
     })
         .join(", ");
-    const uniqueicon = milestone._type.isUniquePerContract ? "🔐" : "♾";
+    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(milestone._type.isUniquePerContract);
     return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
+    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(caseItem._type.isUniquePerMilestone);
+    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
