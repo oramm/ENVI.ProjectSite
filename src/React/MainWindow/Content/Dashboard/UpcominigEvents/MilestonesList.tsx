@@ -1,48 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
-import { OurContract, OtherContract, SystemRoleName, MilestoneData } from "../../../../../../Typings/bussinesTypes";
+import { Alert, Card } from "react-bootstrap";
+import { MilestoneDateData, OtherContract, OurContract } from "../../../../../../Typings/bussinesTypes";
 
 import { PartialEditTrigger } from "../../../../../View/Modals/GeneralModalButtons";
-import { ContractStatusBadge, DaysLeftBadge, MyTooltip } from "../../../../../View/Resultsets/CommonComponents";
+import {
+    ContractStatusBadge,
+    DaysLeftBadge,
+    MilestoneStatusBadge,
+    MyTooltip,
+} from "../../../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../../../View/Resultsets/FilterableTable/FilterableTable";
 import MainSetup from "../../../../MainSetupReact";
 import Tools from "../../../../Tools/Tools";
 import ToolsDate from "../../../../Tools/ToolsDate";
-import { milestonesRepository } from "../../../MainWindowController";
 import { SectionNode } from "../../../../../View/Resultsets/FilterableTable/Section";
 import { RowStructure } from "../../../../../View/Resultsets/FilterableTable/FilterableTableTypes";
+import { milestoneDatesRepository } from "../../../MainWindowController";
+import {
+    ContractModalBodyStatus,
+    MilestoneModalBodyStatus,
+} from "../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial";
+import { useFilterableTableContext } from "../../../../../View/Resultsets/FilterableTable/FilterableTableContext";
+import { isOurContract } from "../../../../../../Typings/typeGuards";
 
 export default function MilestonesList() {
-    const [milestones, setMilestones] = useState([] as MilestoneData[]);
-    const [ourMilestones, setOurMilestones] = useState<MilestoneData[]>([]);
-    const [otherMilestones, setOtherMilestones] = useState<MilestoneData[]>([]);
+    const [milestoneDates, setMilestoneDates] = useState([] as MilestoneDateData[]);
+    const [sections, setSections] = useState([] as SectionNode<MilestoneDateData>[]);
 
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(false);
 
     useEffect(() => {
+        document.title = "Główna";
+    }, []);
+
+    useEffect(() => {
         async function fetchData() {
             setDataLoaded(false);
-            const endDateTo = ToolsDate.addDays(new Date(), 30);
-            const milestones = (await Promise.all([
-                milestonesRepository.loadItemsFromServerPOST([
-                    {
-                        status: [MainSetup.ContractStatuses.IN_PROGRESS, MainSetup.ContractStatuses.NOT_STARTED],
-                        endDateTo: endDateTo.toISOString().slice(0, 10),
-                        getRemainingValue: true,
-                        _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
-                    },
-                ]),
-            ])) as MilestoneData[];
-            setMilestones(milestones);
-            setOurMilestones(milestones.filter((m) => m._contract?._type.isOur));
-            setOtherMilestones(milestones.filter((m) => !m._contract?._type.isOur));
-            setExternalUpdate((prevState) => prevState + 1);
+            const endDateTo = ToolsDate.addDays(new Date(), -130);
+            const milestones = await milestoneDatesRepository.loadItemsFromServerPOST([
+                {
+                    milestoneStatuses: [MainSetup.MilestoneStatus.IN_PROGRESS, MainSetup.MilestoneStatus.NOT_STARTED],
+                    endDateTo: endDateTo.toISOString().slice(0, 10),
+                    getRemainingValue: true,
+                    _admin: filterByCurrentUser() ? MainSetup.getCurrentUserAsPerson() : undefined,
+                },
+            ]);
+            setMilestoneDates(milestones);
             setDataLoaded(true);
         }
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        const ourMilestones = milestoneDates.filter((m) => m._milestone?._contract?._type.isOur);
+        const otherMilestones = milestoneDates.filter((m) => !m._milestone?._contract?._type.isOur);
+        setSections(buildTree(ourMilestones, otherMilestones));
+        setExternalUpdate((prevState) => prevState + 1);
+    }, [milestoneDates]);
+
     /**
      * Filtrowanie będzie tylko dla użytkowników z uprawnieniami poniżej ENVI_MANAGER i ADMIN
      */
@@ -51,22 +68,119 @@ export default function MilestonesList() {
         return !privilegedRoles.includes(MainSetup.currentUser.systemRoleName);
     }
 
-    function renderName(milestone: MilestoneData) {
+    function renderRow(item: MilestoneDateData) {
+        if (!item.id) return <>"⚠️ brak ID"</>;
+
+        const _contract = item._milestone?._contract;
+        const _milestone = item._milestone;
+        const _admin = isOurContract(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
+
         return (
-            <>
-                <>{milestone.name}</>
-                {milestone.status && <ContractStatusBadge status={milestone.status} />}
-            </>
+            <div>
+                {/* Nagłówek */}
+                <div className="mb-2">
+                    <span>
+                        [{_contract?.projectOurId}] {_contract?._ourIdOrNumber_Alias}
+                    </span>{" "}
+                    | <span className="fw-bold">{_milestone?._type.name}</span> <span>{_milestone?.name || ""}</span>{" "}
+                    {renderMilestoneStatus(item)}
+                </div>
+
+                {/* Opis */}
+                <div className="mb-2">
+                    <div className="text-dark">{item._milestone?.description}</div>
+                    <div className="text-muted small">{item.description}</div>
+                </div>
+
+                {/* Kontrakt i admin */}
+                <div className="mb-2 small text-muted">
+                    <div>
+                        Kontrakt:{" "}
+                        <span className="fw-semibold">
+                            [{_contract?._type?.name}] {_contract?.name || "⚠️ Brak nazwy kontraktu"}
+                        </span>{" "}
+                        {renderContractStatus(item)}
+                    </div>
+                    <div>
+                        Administrator:{" "}
+                        <span className="fw-semibold">
+                            {_admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Daty */}
+                <div className="mb-2">
+                    <span className="fw-bold">Od:</span>{" "}
+                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
+                    <span className="fw-bold">do:</span>{" "}
+                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span>{" "}
+                    <span>{renderDaysLeft(item)}</span>
+                </div>
+
+                {/* Ostatnia aktualizacja */}
+                <div className="text-secondary small">
+                    Ostatnia aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(item.lastUpdated)}
+                </div>
+            </div>
         );
     }
 
-    function handleEditObject(object: MilestoneData) {
-        setMilestones(milestones.map((o) => (o.id === object.id ? object : o)));
-        setExternalUpdate((prevState) => prevState + 1);
+    function renderContractStatus(item: MilestoneDateData) {
+        if (!item._milestone?._contract?.status) return <Alert variant="danger">Brak statusu</Alert>;
+        const { handleEditObject } = useFilterableTableContext<MilestoneDateData>();
+        return (
+            <PartialEditTrigger
+                modalProps={{
+                    initialData: item,
+                    modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                    repository: milestoneDatesRepository,
+                    ModalBodyComponent: ContractModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ["status"],
+                    specialActionRoute: "milestoneDateContract",
+                    //makeValidationSchema: contractStatusValidationSchema,
+                }}
+            >
+                <ContractStatusBadge status={item._milestone?._contract?.status || ""} />
+            </PartialEditTrigger>
+        );
     }
 
-    function renderRemainingValue(milestone: MilestoneData) {
-        const _contract = milestone._contract as OurContract | OtherContract;
+    function renderMilestoneStatus(item: MilestoneDateData) {
+        const { handleEditObject } = useFilterableTableContext<MilestoneDateData>();
+        return (
+            <PartialEditTrigger
+                modalProps={{
+                    initialData: item,
+                    modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                    repository: milestoneDatesRepository,
+                    ModalBodyComponent: MilestoneModalBodyStatus,
+                    onEdit: handleEditObject,
+                    fieldsToUpdate: ["status"],
+                    specialActionRoute: "milestoneDateMilestone",
+                    //makeValidationSchema: contractStatusValidationSchema,
+                }}
+            >
+                <MilestoneStatusBadge status={item._milestone?.status || ""} />
+            </PartialEditTrigger>
+        );
+    }
+
+    function renderDaysLeft(item: MilestoneDateData) {
+        if (
+            !item._milestone?.status ||
+            ![MainSetup.MilestoneStatus.IN_PROGRESS, MainSetup.MilestoneStatus.NOT_STARTED].includes(
+                item._milestone.status
+            )
+        )
+            return null;
+        const daysLeft = ToolsDate.countDaysLeftTo(item.endDate);
+        return <DaysLeftBadge daysLeft={daysLeft} />;
+    }
+
+    function renderRemainingValue(milestoneDate: MilestoneDateData) {
+        const _contract = milestoneDate._milestone?._contract as OurContract | OtherContract;
         if (!_contract) return <>Brak kontraktu</>;
         const ourId = "ourId" in _contract ? _contract.ourId : "";
         if (!ourId || !_contract._remainingNotIssuedValue || !_contract._remainingNotScheduledValue) return <></>;
@@ -88,14 +202,7 @@ export default function MilestonesList() {
     }
 
     function makeTablestructure() {
-        const tableStructure: RowStructure<MilestoneData>[] = [
-            {
-                header: "Projekt",
-                renderTdBody: (milestone: MilestoneData) => <>{milestone._contract?._project.ourId}</>,
-            },
-            { header: "Numer", objectAttributeToShow: "number" },
-            { header: "Nazwa", renderTdBody: (milestone: MilestoneData) => renderName(milestone) },
-        ];
+        const tableStructure: RowStructure<MilestoneDateData>[] = [{ renderTdBody: renderRow }];
 
         const allowedRoles = [MainSetup.SystemRoles.ADMIN.systemName, MainSetup.SystemRoles.ENVI_MANAGER.systemName];
 
@@ -111,14 +218,15 @@ export default function MilestonesList() {
     return (
         <Card>
             <Card.Body>
-                <Card.Title>Kończące się kamienie milowe</Card.Title>
-                <FilterableTable<MilestoneData>
+                <Card.Title>Najbliższe terminy</Card.Title>
+                <FilterableTable<MilestoneDateData>
                     id="milestones"
                     title={""}
-                    initialSections={buildTree(ourMilestones, otherMilestones)}
+                    showTableHeader={false}
+                    initialSections={sections}
                     tableStructure={makeTablestructure()}
                     isDeletable={false}
-                    repository={milestonesRepository}
+                    repository={milestoneDatesRepository}
                     selectedObjectRoute={"/milestone/"}
                     externalUpdate={externalUpdate}
                 />
@@ -129,27 +237,30 @@ export default function MilestonesList() {
 
 type DateEditTriggerProps = {
     date: string;
-    milestone: MilestoneData;
-    onEdit: (milestone: MilestoneData) => void;
+    milestone: MilestoneDateData;
+    onEdit: (milestone: MilestoneDateData) => void;
 };
 
 function DateEditTrigger({ date, milestone, onEdit }: DateEditTriggerProps) {
     return date ? ToolsDate.dateYMDtoDMY(date) : "Jeszcze nie ustalono";
 }
 
-function buildTree(ourMilestones: MilestoneData[], otherMilestones: MilestoneData[]): SectionNode<MilestoneData>[] {
-    const milestoneGroupNodes: SectionNode<MilestoneData>[] = [
+function buildTree(
+    ourMilestoneDates: MilestoneDateData[],
+    otherMilestoneDates: MilestoneDateData[]
+): SectionNode<MilestoneDateData>[] {
+    const milestoneGroupNodes: SectionNode<MilestoneDateData>[] = [
         {
             id: "milestoneGroupOur",
             isInAccordion: true,
             level: 1,
             type: "milestoneGroup",
             childrenNodesType: "milestone",
-            repository: milestonesRepository,
+            repository: milestoneDatesRepository,
             dataItem: { id: 1 },
             titleLabel: "Kontrakty ENVI",
             children: [],
-            leaves: [...ourMilestones],
+            leaves: [...ourMilestoneDates],
             isDeletable: false,
         },
         {
@@ -158,11 +269,11 @@ function buildTree(ourMilestones: MilestoneData[], otherMilestones: MilestoneDat
             level: 1,
             type: "milestoneGroup",
             childrenNodesType: "milestone",
-            repository: milestonesRepository,
+            repository: milestoneDatesRepository,
             dataItem: { id: 2 },
             titleLabel: "Pozostałe kontrakty",
             children: [],
-            leaves: [...otherMilestones],
+            leaves: [...otherMilestoneDates],
             isDeletable: false,
         },
     ];

@@ -155,11 +155,11 @@ function makeMilestoneTitleLabel(milestone) {
         return `[${startDate} - ${endDate}]`;
     })
         .join(", ");
-    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(milestone._type.isUniquePerContract);
+    const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
     return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(caseItem._type.isUniquePerMilestone);
+    const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
     return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
 }
 function buildTree(contractsWithChildrenInput) {

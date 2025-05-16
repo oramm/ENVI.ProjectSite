@@ -1,16 +1,29 @@
-// LatestNews.tsx
-import React from 'react';
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+// News.tsx
+import React from "react";
+import Card from "react-bootstrap/Card";
+import ListGroup from "react-bootstrap/ListGroup";
 
-export default function News() {
+interface NewsProps {
+    title?: string;
+    className?: string;
+    style?: React.CSSProperties;
+    items?: string[];
+}
+
+export default function News({
+    title = "Nowości w PS",
+    className,
+    style,
+    items = ["Dodano ZNWU", "Dodano panel główny"],
+}: NewsProps) {
     return (
-        <Card>
-            <Card.Header>Nowości w PS</Card.Header>
+        <Card className={className} style={style}>
+            <Card.Header>{title}</Card.Header>
             <ListGroup variant="flush">
-                <ListGroup.Item>Dodano ZNWU</ListGroup.Item>
-                <ListGroup.Item>Dodano panel główny</ListGroup.Item>
+                {items.map((item, index) => (
+                    <ListGroup.Item key={index}>{item}</ListGroup.Item>
+                ))}
             </ListGroup>
         </Card>
     );
-};
+}

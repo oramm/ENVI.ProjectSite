@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.casesRepository = exports.tasksRepository = exports.milestonesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
+exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../RepositoryReact"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -23,14 +23,14 @@ exports.securitiesRepository = new RepositoryReact_1.default({
     },
     name: "securities",
 });
-exports.milestonesRepository = new RepositoryReact_1.default({
+exports.milestoneDatesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: "milestones",
-        addNewRoute: "",
-        editRoute: "",
-        deleteRoute: "",
+        getRoute: "milestoneDates",
+        addNewRoute: "milestoneDate",
+        editRoute: "milestoneDate",
+        deleteRoute: "milestoneDate",
     },
-    name: "milestones",
+    name: "milestoneDates",
 });
 exports.tasksRepository = new RepositoryReact_1.default({
     actionRoutes: {

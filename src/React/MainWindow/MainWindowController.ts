@@ -1,4 +1,12 @@
-import { Case, MilestoneData, OtherContract, OurContract, Security, Task } from "../../../Typings/bussinesTypes";
+import {
+    Case,
+    MilestoneData,
+    MilestoneDateData,
+    OtherContract,
+    OurContract,
+    Security,
+    Task,
+} from "../../../Typings/bussinesTypes";
 
 import RepositoryReact from "../RepositoryReact";
 
@@ -22,14 +30,14 @@ export const securitiesRepository = new RepositoryReact<Security>({
     name: "securities",
 });
 
-export const milestonesRepository = new RepositoryReact<MilestoneData>({
+export const milestoneDatesRepository = new RepositoryReact<MilestoneDateData>({
     actionRoutes: {
-        getRoute: "milestones",
-        addNewRoute: "",
-        editRoute: "",
-        deleteRoute: "",
+        getRoute: "milestoneDates",
+        addNewRoute: "milestoneDate",
+        editRoute: "milestoneDate",
+        deleteRoute: "milestoneDate",
     },
-    name: "milestones",
+    name: "milestoneDates",
 });
 
 export const tasksRepository = new RepositoryReact<Task>({

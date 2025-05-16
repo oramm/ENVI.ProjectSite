@@ -19,7 +19,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
-import MainContent from "./Content/MainContent";
 import EntitiesSearch from "../../Entities/EntitiesSearch";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
@@ -33,6 +32,7 @@ import OffersMainView from "../../Offers/OffersList/OffersMainView";
 import RolesSearch from "../../Contracts/Roles/RolesSearch";
 import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
 import { set } from "react-hook-form";
+import Dashboard from "./Content/Dashboard/Dashboard";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -95,7 +95,7 @@ function App() {
 
     // zalogowany użytkownik
     return (
-        <Container fluid className="d-flex flex-column min-vh-100 p-0">
+        <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
             <AppRoutes />
             <Footer />
         </Container>
@@ -106,36 +106,41 @@ function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
-            <Routes>
-                <Route path="/" element={<MainContent />} />
-                <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
-                <Route path="/contracts/dates" element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />} />
-                <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
-                <Route path="/contract/:id" element={<ContractMainViewTabs />} />
-                <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
-                <Route path="/invoice/:id" element={<InvoiceDetails />} />
-                <Route path="/tasksGlobal" element={<TasksGlobal />} />
-                <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
-                <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
-                <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
-                <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
-                <Route path="/offers" element={<OffersMainView title="Oferty" />} />
-                <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
-                <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
-                <Route
-                    path="/financialAidProgrammes"
-                    element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
-                />
-                <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
-                <Route
-                    path="/financialAidProgrammes/applicationCalls"
-                    element={<ApplicationCallsSearch title="Nabory" />}
-                />
-                <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
-                {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
-            </Routes>
+            <div className="mt-3 mb-3">
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
+                    <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
+                    <Route
+                        path="/contracts/dates"
+                        element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />}
+                    />
+                    <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
+                    <Route path="/contract/:id" element={<ContractMainViewTabs />} />
+                    <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
+                    <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
+                    <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                    <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                    <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
+                    <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
+                    <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                    <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
+                    <Route path="/offers" element={<OffersMainView title="Oferty" />} />
+                    <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
+                    <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
+                    <Route
+                        path="/financialAidProgrammes"
+                        element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
+                    />
+                    <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
+                    <Route
+                        path="/financialAidProgrammes/applicationCalls"
+                        element={<ApplicationCallsSearch title="Nabory" />}
+                    />
+                    <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
+                    {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
+                </Routes>
+            </div>
         </HashRouter>
     );
 }

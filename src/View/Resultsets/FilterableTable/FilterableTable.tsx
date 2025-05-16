@@ -179,7 +179,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                     )}
                 </Row>
                 {FilterBodyComponent && (
-                    <Row>
+                    <Row className="bg-light p-3 rounded-3 mb-3">
                         <FilterPanel FilterBodyComponent={FilterBodyComponent} repository={repository} />
                     </Row>
                 )}

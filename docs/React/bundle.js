@@ -94839,14 +94839,18 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const UpcomingEvents_1 = __importDefault(__webpack_require__(/*! ./UpcomingEvents */ "./src/React/MainWindow/Content/Dashboard/UpcomingEvents.tsx"));
+const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
+const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/MainWindow/Content/News.tsx"));
 function Dashboard() {
-    return (react_1.default.createElement(react_bootstrap_1.Container, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
-                react_1.default.createElement(UpcomingEvents_1.default, null)))));
+    return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" }),
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
+            react_1.default.createElement(UpcomingEvents_1.default, null)),
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
+            react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }),
+            react_1.default.createElement(News_1.default, { className: "mb-3 bg-white" }))));
 }
 exports["default"] = Dashboard;
-;
 
 
 /***/ }),
@@ -94867,14 +94871,16 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
-function MyData() {
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
+function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
+    const { userName, systemEmail, systemRoleName } = MainSetupReact_1.default.currentUser;
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Moje Dane"),
+            react_1.default.createElement(react_bootstrap_1.Card.Title, null, title),
             react_1.default.createElement("div", null,
-                react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.userName),
-                react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.systemEmail),
-                react_1.default.createElement("div", null, MainSetupReact_1.default.currentUser.systemRoleName)))));
+                react_1.default.createElement("div", null, userName),
+                react_1.default.createElement("div", null, systemEmail),
+                react_1.default.createElement("div", null, systemRoleName)),
+            renderExtraContent && react_1.default.createElement("div", { className: "mt-2" }, renderExtraContent()))));
 }
 exports["default"] = MyData;
 
@@ -94894,13 +94900,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const ContractsList_1 = __importDefault(__webpack_require__(/*! ./UpcominigEvents/ContractsList */ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/ContractsList.tsx"));
 const SecuritiesList_1 = __importDefault(__webpack_require__(/*! ./UpcominigEvents/SecuritiesList */ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/SecuritiesList.tsx"));
+const MilestonesList_1 = __importDefault(__webpack_require__(/*! ./UpcominigEvents/MilestonesList */ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx"));
 function UpcomingEvents() {
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", { className: 'mb-3' },
-            react_1.default.createElement(ContractsList_1.default, null)),
-        react_1.default.createElement("div", { className: 'mb-3' },
+        react_1.default.createElement("div", { className: "mb-3 bg-white" },
+            react_1.default.createElement(MilestonesList_1.default, null)),
+        react_1.default.createElement("div", { className: "mb-3" },
             react_1.default.createElement(SecuritiesList_1.default, null))));
 }
 exports["default"] = UpcomingEvents;
@@ -94908,10 +94914,10 @@ exports["default"] = UpcomingEvents;
 
 /***/ }),
 
-/***/ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/ContractsList.tsx":
-/*!**********************************************************************************!*\
-  !*** ./src/React/MainWindow/Content/Dashboard/UpcominigEvents/ContractsList.tsx ***!
-  \**********************************************************************************/
+/***/ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx":
+/*!***********************************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx ***!
+  \***********************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -94945,8 +94951,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const ContractModalBodiesPartial_1 = __webpack_require__(/*! ../../../../../Contracts/ContractsList/Modals/ContractModalBodiesPartial */ "./src/Contracts/ContractsList/Modals/ContractModalBodiesPartial.tsx");
-const ContractValidationSchema_1 = __webpack_require__(/*! ../../../../../Contracts/ContractsList/Modals/ContractValidationSchema */ "./src/Contracts/ContractsList/Modals/ContractValidationSchema.ts");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -94954,33 +94958,40 @@ const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../Mai
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
+const MilestoneDateBodiesPartial_1 = __webpack_require__(/*! ../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial */ "./src/Contracts/Dates/Modals/MilestoneDateBodiesPartial.tsx");
 const FilterableTableContext_1 = __webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
-function ContractsList() {
-    const [contracts, setContracts] = (0, react_1.useState)([]);
-    const [ourContracts, setOurContracts] = (0, react_1.useState)([]);
-    const [otherContracts, setOtherContracts] = (0, react_1.useState)([]);
+const typeGuards_1 = __webpack_require__(/*! ../../../../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
+function MilestonesList() {
+    const [milestoneDates, setMilestoneDates] = (0, react_1.useState)([]);
+    const [sections, setSections] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
     (0, react_1.useEffect)(() => {
+        document.title = "Główna";
+    }, []);
+    (0, react_1.useEffect)(() => {
         async function fetchData() {
             setDataLoaded(false);
-            const endDateTo = ToolsDate_1.default.addDays(new Date(), 30);
-            const contracts = (await MainWindowController_1.contractsRepository.loadItemsFromServerPOST([
+            const endDateTo = ToolsDate_1.default.addDays(new Date(), -130);
+            const milestones = await MainWindowController_1.milestoneDatesRepository.loadItemsFromServerPOST([
                 {
-                    statuses: [MainSetupReact_1.default.ContractStatuses.IN_PROGRESS, MainSetupReact_1.default.ContractStatuses.NOT_STARTED],
+                    milestoneStatuses: [MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED],
                     endDateTo: endDateTo.toISOString().slice(0, 10),
                     getRemainingValue: true,
                     _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
                 },
-            ]));
-            setContracts(contracts);
-            setOurContracts(contracts.filter((c) => c._type.isOur));
-            setOtherContracts(contracts.filter((c) => !c._type.isOur));
-            setExternalUpdate((prevState) => prevState + 1);
+            ]);
+            setMilestoneDates(milestones);
             setDataLoaded(true);
         }
         fetchData();
     }, []);
+    (0, react_1.useEffect)(() => {
+        const ourMilestones = milestoneDates.filter((m) => m._milestone?._contract?._type.isOur);
+        const otherMilestones = milestoneDates.filter((m) => !m._milestone?._contract?._type.isOur);
+        setSections(buildTree(ourMilestones, otherMilestones));
+        setExternalUpdate((prevState) => prevState + 1);
+    }, [milestoneDates]);
     /**
      * Filtrowanie będzie tylko dla użytkowników z uprawnieniami poniżej ENVI_MANAGER i ADMIN
      */
@@ -94988,146 +94999,160 @@ function ContractsList() {
         const privilegedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         return !privilegedRoles.includes(MainSetupReact_1.default.currentUser.systemRoleName);
     }
-    function renderName(contract) {
-        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
-                    initialData: contract,
-                    modalTitle: "Edycja nazwy",
-                    repository: MainWindowController_1.contractsRepository,
-                    ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyName,
-                    onEdit: handleEditObject,
-                    fieldsToUpdate: ["name"],
-                    makeValidationSchema: ContractValidationSchema_1.contractNameValidationSchema,
-                } },
-                react_1.default.createElement(react_1.default.Fragment, null, contract.name)),
-            " ",
-            react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
-                    initialData: contract,
-                    modalTitle: "Edycja statusu",
-                    repository: MainWindowController_1.contractsRepository,
-                    ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyStatus,
-                    onEdit: handleEditObject,
-                    fieldsToUpdate: ["status"],
-                    makeValidationSchema: ContractValidationSchema_1.contractStatusValidationSchema,
-                } },
-                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))));
-    }
-    function renderEndDate(contract) {
-        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        const { endDate } = contract;
-        if (!endDate)
-            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty zako\u0144czenia");
-        const daysLeft = ToolsDate_1.default.countDaysLeftTo(endDate);
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
-                react_1.default.createElement(DateEditTrigger, { contract: contract, date: endDate, onEdit: handleEditObject })),
-            react_1.default.createElement("div", null,
-                react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft }))));
-    }
-    function renderStartDate(contract) {
-        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        const { startDate } = contract;
-        if (!startDate)
-            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak daty rozpocz\u0119cia");
+    function renderRow(item) {
+        if (!item.id)
+            return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
+        const _contract = item._milestone?._contract;
+        const _milestone = item._milestone;
+        const _admin = (0, typeGuards_1.isOurContract)(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement(DateEditTrigger, { contract: contract, date: startDate, onEdit: handleEditObject })));
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("span", null,
+                    "[",
+                    _contract?.projectOurId,
+                    "] ",
+                    _contract?._ourIdOrNumber_Alias),
+                " ",
+                "| ",
+                react_1.default.createElement("span", { className: "fw-bold" }, _milestone?._type.name),
+                " ",
+                react_1.default.createElement("span", null, _milestone?.name || ""),
+                " ",
+                renderMilestoneStatus(item)),
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("div", { className: "text-dark" }, item._milestone?.description),
+                react_1.default.createElement("div", { className: "text-muted small" }, item.description)),
+            react_1.default.createElement("div", { className: "mb-2 small text-muted" },
+                react_1.default.createElement("div", null,
+                    "Kontrakt:",
+                    " ",
+                    react_1.default.createElement("span", { className: "fw-semibold" },
+                        "[",
+                        _contract?._type?.name,
+                        "] ",
+                        _contract?.name || "⚠️ Brak nazwy kontraktu"),
+                    " ",
+                    renderContractStatus(item)),
+                react_1.default.createElement("div", null,
+                    "Administrator:",
+                    " ",
+                    react_1.default.createElement("span", { className: "fw-semibold" }, _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"))),
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("span", { className: "fw-bold" }, "Od:"),
+                " ",
+                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+                " ",
+                react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
+                " ",
+                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
+                " ",
+                react_1.default.createElement("span", null, renderDaysLeft(item))),
+            react_1.default.createElement("div", { className: "text-secondary small" },
+                "Ostatnia aktualizacja: ",
+                ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
     }
-    function renderRemainingValue(contract) {
-        const ourId = "ourId" in contract ? contract.ourId : "";
-        if (!ourId || !contract._remainingNotIssuedValue || !contract._remainingNotScheduledValue)
+    function renderContractStatus(item) {
+        if (!item._milestone?._contract?.status)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                repository: MainWindowController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateContract",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: item._milestone?._contract?.status || "" })));
+    }
+    function renderMilestoneStatus(item) {
+        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                repository: MainWindowController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateMilestone",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: item._milestone?.status || "" })));
+    }
+    function renderDaysLeft(item) {
+        if (!item._milestone?.status ||
+            ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
+            return null;
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(item.endDate);
+        return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
+    }
+    function renderRemainingValue(milestoneDate) {
+        const _contract = milestoneDate._milestone?._contract;
+        if (!_contract)
+            return react_1.default.createElement(react_1.default.Fragment, null, "Brak kontraktu");
+        const ourId = "ourId" in _contract ? _contract.ourId : "";
+        if (!ourId || !_contract._remainingNotIssuedValue || !_contract._remainingNotScheduledValue)
             return react_1.default.createElement(react_1.default.Fragment, null);
-        const formatedNotScheduledValue = Tools_1.default.formatNumber(contract._remainingNotScheduledValue || 0, 0);
-        const formatedNotIssuedValue = Tools_1.default.formatNumber(contract._remainingNotIssuedValue || 0, 0);
+        const formatedNotScheduledValue = Tools_1.default.formatNumber(_contract._remainingNotScheduledValue || 0, 0);
+        const formatedNotIssuedValue = Tools_1.default.formatNumber(_contract._remainingNotIssuedValue || 0, 0);
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wys\u0142anych faktur a warto\u015Bci\u0105 umowy", placement: "right" },
                 react_1.default.createElement("div", { className: "text-end text-success" }, formatedNotIssuedValue)),
             react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy", placement: "right" },
                 react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue))));
     }
-    function renderContractData(contract) {
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
-                contract._project.ourId,
-                " | ",
-                react_1.default.createElement("strong", null, "ourId" in contract ? `${contract.ourId} | ` : ""),
-                contract.number),
-            react_1.default.createElement("div", null, renderName(contract))));
-    }
     function makeTablestructure() {
-        const tableStructure = [
-            {
-                header: "Kontrakt",
-                renderTdBody: (contract) => renderContractData(contract),
-            },
-            {
-                header: "Rozpoczęcie",
-                renderTdBody: (contract) => renderStartDate(contract),
-                colMd: 2,
-            },
-            {
-                header: "Zakończenie",
-                renderTdBody: (contract) => renderEndDate(contract),
-                colMd: 2,
-            },
-        ];
+        const tableStructure = [{ renderTdBody: renderRow }];
         const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
         if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
             tableStructure.push({
                 header: "Do rozliczenia",
-                renderTdBody: (contract) => renderRemainingValue(contract),
-                colMd: 2,
+                renderTdBody: (milestone) => renderRemainingValue(milestone),
             });
         }
         return tableStructure;
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Ko\u0144cz\u0105ce si\u0119 Kontrakty"),
-            react_1.default.createElement(FilterableTable_1.default, { id: "contracts", title: "", initialSections: buildTree(ourContracts, otherContracts), tableStructure: makeTablestructure(), isDeletable: false, repository: MainWindowController_1.contractsRepository, selectedObjectRoute: "/contract/", externalUpdate: externalUpdate }))));
+            react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Najbli\u017Csze terminy"),
+            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
 }
-exports["default"] = ContractsList;
-function DateEditTrigger({ date, contract, onEdit }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
-            initialData: contract,
-            modalTitle: "Edycja dat",
-            repository: MainWindowController_1.contractsRepository,
-            ModalBodyComponent: ContractModalBodiesPartial_1.ContractModalBodyDates,
-            onEdit: onEdit,
-            fieldsToUpdate: ["startDate", "endDate", "guaranteeEndDate"],
-            makeValidationSchema: ContractValidationSchema_1.contractDatesValidationSchema,
-        } }, react_1.default.createElement(react_1.default.Fragment, null, date ? ToolsDate_1.default.dateYMDtoDMY(date) : "Jeszcze nie ustalono")));
+exports["default"] = MilestonesList;
+function DateEditTrigger({ date, milestone, onEdit }) {
+    return date ? ToolsDate_1.default.dateYMDtoDMY(date) : "Jeszcze nie ustalono";
 }
-function buildTree(ourContracts, otherContracts) {
-    const contractGroupNodes = [
+function buildTree(ourMilestoneDates, otherMilestoneDates) {
+    const milestoneGroupNodes = [
         {
-            id: "contractGroupOur",
+            id: "milestoneGroupOur",
             isInAccordion: true,
             level: 1,
-            type: "contractGroup",
-            childrenNodesType: "contract",
-            repository: MainWindowController_1.contractsRepository,
+            type: "milestoneGroup",
+            childrenNodesType: "milestone",
+            repository: MainWindowController_1.milestoneDatesRepository,
             dataItem: { id: 1 },
             titleLabel: "Kontrakty ENVI",
             children: [],
-            leaves: [...ourContracts],
+            leaves: [...ourMilestoneDates],
             isDeletable: false,
         },
         {
-            id: "contractGroupOther",
+            id: "milestoneGroupOther",
             isInAccordion: true,
             level: 1,
-            type: "contractGroup",
-            childrenNodesType: "contract",
-            repository: MainWindowController_1.contractsRepository,
+            type: "milestoneGroup",
+            childrenNodesType: "milestone",
+            repository: MainWindowController_1.milestoneDatesRepository,
             dataItem: { id: 2 },
             titleLabel: "Pozostałe kontrakty",
             children: [],
-            leaves: [...otherContracts],
+            leaves: [...otherMilestoneDates],
             isDeletable: false,
         },
     ];
-    return contractGroupNodes;
+    return milestoneGroupNodes;
 }
 
 
@@ -95310,39 +95335,6 @@ exports["default"] = SecuritiesList;
 
 /***/ }),
 
-/***/ "./src/React/MainWindow/Content/MainContent.tsx":
-/*!******************************************************!*\
-  !*** ./src/React/MainWindow/Content/MainContent.tsx ***!
-  \******************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const Dashboard_1 = __importDefault(__webpack_require__(/*! ./Dashboard/Dashboard */ "./src/React/MainWindow/Content/Dashboard/Dashboard.tsx"));
-const MyData_1 = __importDefault(__webpack_require__(/*! ./Dashboard/MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
-const News_1 = __importDefault(__webpack_require__(/*! ./News */ "./src/React/MainWindow/Content/News.tsx"));
-function MainContent() {
-    return (react_1.default.createElement("div", { className: "pt-4 bg-light" },
-        react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 9 },
-                    react_1.default.createElement(Dashboard_1.default, null)),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
-                    react_1.default.createElement("div", { className: "mb-3" },
-                        react_1.default.createElement(MyData_1.default, null)),
-                    react_1.default.createElement(News_1.default, null))))));
-}
-exports["default"] = MainContent;
-
-
-/***/ }),
-
 /***/ "./src/React/MainWindow/Content/News.tsx":
 /*!***********************************************!*\
   !*** ./src/React/MainWindow/Content/News.tsx ***!
@@ -95355,19 +95347,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-// LatestNews.tsx
+// News.tsx
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Card_1 = __importDefault(__webpack_require__(/*! react-bootstrap/Card */ "./node_modules/react-bootstrap/esm/Card.js"));
 const ListGroup_1 = __importDefault(__webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js"));
-function News() {
-    return (react_1.default.createElement(Card_1.default, null,
-        react_1.default.createElement(Card_1.default.Header, null, "Nowo\u015Bci w PS"),
-        react_1.default.createElement(ListGroup_1.default, { variant: "flush" },
-            react_1.default.createElement(ListGroup_1.default.Item, null, "Dodano ZNWU"),
-            react_1.default.createElement(ListGroup_1.default.Item, null, "Dodano panel g\u0142\u00F3wny"))));
+function News({ title = "Nowości w PS", className, style, items = ["Dodano ZNWU", "Dodano panel główny"], }) {
+    return (react_1.default.createElement(Card_1.default, { className: className, style: style },
+        react_1.default.createElement(Card_1.default.Header, null, title),
+        react_1.default.createElement(ListGroup_1.default, { variant: "flush" }, items.map((item, index) => (react_1.default.createElement(ListGroup_1.default.Item, { key: index }, item))))));
 }
 exports["default"] = News;
-;
 
 
 /***/ }),
@@ -95495,7 +95484,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.casesRepository = exports.tasksRepository = exports.milestonesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
+exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95515,14 +95504,14 @@ exports.securitiesRepository = new RepositoryReact_1.default({
     },
     name: "securities",
 });
-exports.milestonesRepository = new RepositoryReact_1.default({
+exports.milestoneDatesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: "milestones",
-        addNewRoute: "",
-        editRoute: "",
-        deleteRoute: "",
+        getRoute: "milestoneDates",
+        addNewRoute: "milestoneDate",
+        editRoute: "milestoneDate",
+        deleteRoute: "milestoneDate",
     },
-    name: "milestones",
+    name: "milestoneDates",
 });
 exports.tasksRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95602,7 +95591,6 @@ __webpack_require__(/*! react-toastify/dist/ReactToastify.css */ "./node_modules
 const ContractMainViewTabs_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs */ "./src/Contracts/ContractsList/ContractDetails/ContractMainViewTabs.tsx");
 const TasksGlobal_1 = __importDefault(__webpack_require__(/*! ../../TasksGlobal/TasksGlobal */ "./src/TasksGlobal/TasksGlobal.tsx"));
 const SecuritiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch */ "./src/Contracts/ContractsList/SecuritiesList/SecuritiesSearch.tsx"));
-const MainContent_1 = __importDefault(__webpack_require__(/*! ./Content/MainContent */ "./src/React/MainWindow/Content/MainContent.tsx"));
 const EntitiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Entities/EntitiesSearch */ "./src/Entities/EntitiesSearch.tsx"));
 const PersonsSearch_1 = __importDefault(__webpack_require__(/*! ../../Persons/PersonsSearch */ "./src/Persons/PersonsSearch.tsx"));
 const CitiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/Cities/CitiesSearch */ "./src/Admin/Cities/CitiesSearch.tsx"));
@@ -95615,6 +95603,7 @@ const ContractRangesSearch_1 = __importDefault(__webpack_require__(/*! ../../Adm
 const OffersMainView_1 = __importDefault(__webpack_require__(/*! ../../Offers/OffersList/OffersMainView */ "./src/Offers/OffersList/OffersMainView.tsx"));
 const RolesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Roles/RolesSearch */ "./src/Contracts/Roles/RolesSearch.tsx"));
 const MilestoneDatesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Dates/MilestoneDatesSearch */ "./src/Contracts/Dates/MilestoneDatesSearch.tsx"));
+const Dashboard_1 = __importDefault(__webpack_require__(/*! ./Content/Dashboard/Dashboard */ "./src/React/MainWindow/Content/Dashboard/Dashboard.tsx"));
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -95664,35 +95653,36 @@ function App() {
             react_1.default.createElement(GoogleLoginButton_1.default, { onServerResponse: handleServerResponse })));
     }
     // zalogowany użytkownik
-    return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0" },
+    return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },
         react_1.default.createElement(AppRoutes, null),
         react_1.default.createElement(Footer_1.default, null)));
 }
 function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
-        react_1.default.createElement(react_router_dom_1.Routes, null,
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(MainContent_1.default, null) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/roles", element: react_1.default.createElement(RolesSearch_1.default, { title: "Role kontrakowe" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/dates", element: react_1.default.createElement(MilestoneDatesSearch_1.default, { title: "Terminy kamieni milowych" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/applicationCalls", element: react_1.default.createElement(ApplicationCallsSearch_1.default, { title: "Nabory" }) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }))));
+        react_1.default.createElement("div", { className: "mt-3 mb-3" },
+            react_1.default.createElement(react_router_dom_1.Routes, null,
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/roles", element: react_1.default.createElement(RolesSearch_1.default, { title: "Role kontrakowe" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/dates", element: react_1.default.createElement(MilestoneDatesSearch_1.default, { title: "Terminy kamieni milowych" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/applicationCalls", element: react_1.default.createElement(ApplicationCallsSearch_1.default, { title: "Nabory" }) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) })))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
@@ -97366,11 +97356,11 @@ function makeMilestoneTitleLabel(milestone) {
         return `[${startDate} - ${endDate}]`;
     })
         .join(", ");
-    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(milestone._type.isUniquePerContract);
+    const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
     return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
 }
 function makeCaseTitleLabel(caseItem) {
-    const uniqueicon = (0, Symbols_1.getUniqueSymbol)(caseItem._type.isUniquePerMilestone);
+    const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
     return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
 }
 function buildTree(contractsWithChildrenInput) {
@@ -100041,7 +100031,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject } }),
                     index < AddNewButtonComponents.length - 1 && " ")))))),
-            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, null,
+            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
@@ -100576,11 +100566,11 @@ function SectionBody({ sectionNode, resulsetTableProps, onClick, }) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getUniqueSymbol = void 0;
-function getUniqueSymbol(isUnique) {
+exports.getSymbolByUniqueness = void 0;
+function getSymbolByUniqueness(isUnique) {
     return isUnique ? "🔐" : "♾";
 }
-exports.getUniqueSymbol = getUniqueSymbol;
+exports.getSymbolByUniqueness = getSymbolByUniqueness;
 
 
 /***/ }),
