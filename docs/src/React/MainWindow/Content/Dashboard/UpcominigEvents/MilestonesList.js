@@ -38,6 +38,7 @@ const MainWindowController_1 = require("../../../MainWindowController");
 const MilestoneDateBodiesPartial_1 = require("../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial");
 const FilterableTableContext_1 = require("../../../../../View/Resultsets/FilterableTable/FilterableTableContext");
 const typeGuards_1 = require("../../../../../../Typings/typeGuards");
+const MilestoneDateButtons_1 = require("../../../../../Contracts/Dates/Modals/MilestoneDateButtons");
 function MilestonesList() {
     const [milestoneDates, setMilestoneDates] = (0, react_1.useState)([]);
     const [sections, setSections] = (0, react_1.useState)([]);
@@ -194,7 +195,7 @@ function MilestonesList() {
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Najbli\u017Csze terminy"),
-            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
+            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
 }
 exports.default = MilestonesList;
 function DateEditTrigger({ date, milestone, onEdit }) {

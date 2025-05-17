@@ -149,7 +149,6 @@ export default function TasksGlobal() {
                     </Col>
                 </Row>
             )}
-            <Row className="d-flex justify-content-end">Tabela zadań będzie tu dodana w przyszłości.</Row>
         </Container>
     );
 }
@@ -232,6 +231,8 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 SpecificEditModalButtonProps<RepositoryDataItem>
             >,
             editHandler: contractNodeEditHandler,
+            shouldRetrieveDataBeforeEdit: true,
+            specialRetrieveActionRoute: "contracts",
             isDeletable: false,
         };
         contractNodes.push(contractNode);

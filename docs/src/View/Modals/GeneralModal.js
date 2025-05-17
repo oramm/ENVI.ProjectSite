@@ -37,7 +37,7 @@ require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
 const lodash_merge_1 = __importDefault(require("lodash.merge"));
-function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
+function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, specialRetrieveActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -63,7 +63,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
         setIsLoadingData(true);
-        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
+        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
         if (dataObjectFromServer) {
             repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
             repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);

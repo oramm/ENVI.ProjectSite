@@ -29,6 +29,8 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     isInAccordion?: boolean;
     isDeletable?: boolean;
     editHandler?: (node: SectionNode<LeafDataItemType>) => void;
+    shouldRetrieveDataBeforeEdit?: boolean;
+    specialRetrieveActionRoute?: string;
     selectedObjectRoute?: string;
 };
 
@@ -121,6 +123,8 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         EditButtonComponent={sectionNode.EditButtonComponent}
                         handleEditObject={handleEditSection}
                         handleDeleteObject={handleDeleteSection}
+                        shouldRetrieveDataBeforeEdit={sectionNode.shouldRetrieveDataBeforeEdit}
+                        specialRetrieveActionRoute={sectionNode.specialRetrieveActionRoute}
                         layout="horizontal"
                         sectionRepository={sectionNode.repository}
                     />

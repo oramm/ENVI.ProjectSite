@@ -87153,7 +87153,7 @@ const ContractValidationSchema_1 = __webpack_require__(/*! ./ContractValidationS
 const OtherContractModalBody_1 = __webpack_require__(/*! ./OtherContractModalBody */ "./src/Contracts/ContractsList/Modals/OtherContractModalBody.tsx");
 const OurContractModalBody_1 = __webpack_require__(/*! ./OurContractModalBody */ "./src/Contracts/ContractsList/Modals/OurContractModalBody.tsx");
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
+function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute }, buttonProps, }) {
     if (!repository)
         throw new Error("repository is required");
     return `ourId` in initialData ? (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -87164,6 +87164,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema,
             shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
@@ -94961,6 +94962,7 @@ const MainWindowController_1 = __webpack_require__(/*! ../../../MainWindowContro
 const MilestoneDateBodiesPartial_1 = __webpack_require__(/*! ../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial */ "./src/Contracts/Dates/Modals/MilestoneDateBodiesPartial.tsx");
 const FilterableTableContext_1 = __webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const typeGuards_1 = __webpack_require__(/*! ../../../../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
+const MilestoneDateButtons_1 = __webpack_require__(/*! ../../../../../Contracts/Dates/Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
 function MilestonesList() {
     const [milestoneDates, setMilestoneDates] = (0, react_1.useState)([]);
     const [sections, setSections] = (0, react_1.useState)([]);
@@ -95117,7 +95119,7 @@ function MilestonesList() {
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
             react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Najbli\u017Csze terminy"),
-            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
+            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
 }
 exports["default"] = MilestonesList;
 function DateEditTrigger({ date, milestone, onEdit }) {
@@ -96651,9 +96653,11 @@ exports.OtherContractAddNewModalButton = exports.OurContractAddNewModalButton = 
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const ContractModalButtons_1 = __webpack_require__(/*! ../../Contracts/ContractsList/Modals/ContractModalButtons */ "./src/Contracts/ContractsList/Modals/ContractModalButtons.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
-function ContractEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
+            shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
             initialData,
             repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
@@ -97312,8 +97316,7 @@ function TasksGlobal() {
                     ], onRowClick: setSelectedProject })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
                     { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
+                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))))));
 }
 exports["default"] = TasksGlobal;
 function LoadingMessage({ selectedProject }) {
@@ -97379,6 +97382,8 @@ function buildTree(contractsWithChildrenInput) {
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
             editHandler: contractNodeEditHandler,
+            shouldRetrieveDataBeforeEdit: true,
+            specialRetrieveActionRoute: "contracts",
             isDeletable: false,
         };
         contractNodes.push(contractNode);
@@ -98849,7 +98854,7 @@ __webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const lodash_merge_1 = __importDefault(__webpack_require__(/*! lodash.merge */ "./node_modules/lodash.merge/index.js"));
-function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
+function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, specialRetrieveActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
@@ -98875,7 +98880,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, on
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
         setIsLoadingData(true);
-        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }]))[0];
+        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
         if (dataObjectFromServer) {
             repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
             repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
@@ -99084,7 +99089,7 @@ const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponent
  * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
  * @param buttonProps - właściwości przycisku
  */
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, specialRetrieveActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -99094,7 +99099,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GeneraEditButton, { ...buttonProps, onClick: handleOpen }),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, specialRetrieveActionRoute: specialRetrieveActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,
@@ -99930,7 +99935,7 @@ const Section_1 = __webpack_require__(/*! ./Section */ "./src/View/Resultsets/Fi
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, }) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
@@ -100024,7 +100029,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -100201,7 +100206,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.useFilterableTableContext = exports.FilterableTableProvider = exports.FilterableTableContext = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 exports.FilterableTableContext = (0, react_1.createContext)({
-    id: '',
+    id: "",
     objects: [],
     sections: [],
     repository: {},
@@ -100214,17 +100219,18 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     handleEditSection: () => { },
     handleDeleteSection: () => { },
     setSections: () => { },
-    selectedObjectRoute: '',
+    selectedObjectRoute: "",
     activeRowId: 0,
-    activeSectionId: '',
+    activeSectionId: "",
     EditButtonComponent: undefined,
     isDeletable: true,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
+    specialRetrieveActionRoute: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
-    return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
+    return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
             objects,
             setObjects: setObjects,
@@ -100245,13 +100251,14 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             isDeletable,
             externalUpdate,
             shouldRetrieveDataBeforeEdit,
-        } }, children);
+            specialRetrieveActionRoute,
+        } }, children));
 }
 exports.FilterableTableProvider = FilterableTableProvider;
 function useFilterableTableContext() {
     const context = react_1.default.useContext(exports.FilterableTableContext);
     if (!context) {
-        throw new Error('useMyContext must be used under MyContextProvider');
+        throw new Error("useMyContext must be used under MyContextProvider");
     }
     return context;
 }
@@ -100303,7 +100310,7 @@ const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columnStructure, dataObject) {
         if (columnStructure.objectAttributeToShow !== undefined) {
             const key = columnStructure.objectAttributeToShow;
@@ -100322,10 +100329,10 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
         isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })))));
+            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, submenuItems = [], }) {
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -100334,7 +100341,12 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
     return (react_1.default.createElement("div", { className: `d-flex ${layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"}` },
         dataObject._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl }),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
-        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }, buttonProps: { layout } })),
+        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: {
+                onEdit: handleEditObject,
+                initialData: dataObject,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
+            }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),
             isMenuExpanded && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -100542,7 +100554,7 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
         isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
-            react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: "horizontal", sectionRepository: sectionNode.repository }),
+            react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,

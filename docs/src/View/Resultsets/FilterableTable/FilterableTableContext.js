@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFilterableTableContext = exports.FilterableTableProvider = exports.FilterableTableContext = void 0;
 const react_1 = __importStar(require("react"));
 exports.FilterableTableContext = (0, react_1.createContext)({
-    id: '',
+    id: "",
     objects: [],
     sections: [],
     repository: {},
@@ -39,17 +39,18 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     handleEditSection: () => { },
     handleDeleteSection: () => { },
     setSections: () => { },
-    selectedObjectRoute: '',
+    selectedObjectRoute: "",
     activeRowId: 0,
-    activeSectionId: '',
+    activeSectionId: "",
     EditButtonComponent: undefined,
     isDeletable: true,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
+    specialRetrieveActionRoute: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
-    return react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
+    return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
             objects,
             setObjects: setObjects,
@@ -70,13 +71,14 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             isDeletable,
             externalUpdate,
             shouldRetrieveDataBeforeEdit,
-        } }, children);
+            specialRetrieveActionRoute,
+        } }, children));
 }
 exports.FilterableTableProvider = FilterableTableProvider;
 function useFilterableTableContext() {
     const context = react_1.default.useContext(exports.FilterableTableContext);
     if (!context) {
-        throw new Error('useMyContext must be used under MyContextProvider');
+        throw new Error("useMyContext must be used under MyContextProvider");
     }
     return context;
 }

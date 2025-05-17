@@ -22,6 +22,7 @@ type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataI
     isEditing: boolean;
     onEdit?: (object: DataItemType) => void;
     specialActionRoute?: string;
+    specialRetrieveActionRoute?: string;
     onAddNew?: (object: DataItemType) => void;
     onClose: () => void;
     repository: RepositoryReact<DataItemType>;
@@ -39,6 +40,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
     subtitle,
     isEditing,
     specialActionRoute,
+    specialRetrieveActionRoute,
     onEdit,
     onAddNew,
     onClose,
@@ -79,7 +81,10 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing) return;
         setIsLoadingData(true);
         const dataObjectFromServer = (
-            await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }])
+            await repository.loadItemsFromServerPOST(
+                [{ id: modalBodyProps.initialData?.id }],
+                specialRetrieveActionRoute
+            )
         )[0];
         if (dataObjectFromServer) {
             repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);

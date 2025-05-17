@@ -22,6 +22,7 @@ import {
 } from "../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial";
 import { useFilterableTableContext } from "../../../../../View/Resultsets/FilterableTable/FilterableTableContext";
 import { isOurContract } from "../../../../../../Typings/typeGuards";
+import { MilestoneDateEditModalButton } from "../../../../../Contracts/Dates/Modals/MilestoneDateButtons";
 
 export default function MilestonesList() {
     const [milestoneDates, setMilestoneDates] = useState([] as MilestoneDateData[]);
@@ -226,6 +227,7 @@ export default function MilestonesList() {
                     initialSections={sections}
                     tableStructure={makeTablestructure()}
                     isDeletable={false}
+                    EditButtonComponent={MilestoneDateEditModalButton}
                     repository={milestoneDatesRepository}
                     selectedObjectRoute={"/milestone/"}
                     externalUpdate={externalUpdate}

@@ -62,6 +62,7 @@ type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = 
     GeneralModalButtonModalProps<DataItemType> & {
         onEdit: (object: DataItemType) => void;
         specialActionRoute?: string;
+        specialRetrieveActionRoute?: string;
         initialData: DataItemType;
         fieldsToUpdate?: string[];
         shouldRetrieveDataBeforeEdit?: boolean;

@@ -12,7 +12,7 @@ const ContractValidationSchema_1 = require("./ContractValidationSchema");
 const OtherContractModalBody_1 = require("./OtherContractModalBody");
 const OurContractModalBody_1 = require("./OurContractModalBody");
 /** przycisk i modal edycji OurCOntract lub OtherContract */
-function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
+function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute }, buttonProps, }) {
     if (!repository)
         throw new Error("repository is required");
     return `ourId` in initialData ? (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -23,6 +23,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.ourContractValidationSchema,
             shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",

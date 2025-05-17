@@ -47,7 +47,7 @@ const CommonComponents_1 = require("../Resultsets/CommonComponents");
  * - shouldRetrieveDataBeforeEdit - czy powinno być pobrane dane przed edycją
  * @param buttonProps - właściwości przycisku
  */
-function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
+function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActionRoute, specialRetrieveActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit, contextData, size, }, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     async function handleOpen() {
         setShowForm(true);
@@ -57,7 +57,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GeneraEditButton, { ...buttonProps, onClick: handleOpen }),
-        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
+        react_1.default.createElement(GeneralModal_1.GeneralModal, { onClose: handleClose, show: showForm, isEditing: true, title: modalTitle, subtitle: modalSubtitle, repository: repository, onEdit: onEdit, specialActionRoute: specialActionRoute, specialRetrieveActionRoute: specialRetrieveActionRoute, ModalBodyComponent: ModalBodyComponent, makeValidationSchema: makeValidationSchema, modalBodyProps: {
                 isEditing: true,
                 initialData: initialData,
                 additionalProps: additionalModalBodyProps,

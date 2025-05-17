@@ -6,11 +6,11 @@ import { RowStructure } from "./FilterableTableTypes";
 import { SectionNode } from "./Section";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
-    id: string,
+    id: string;
     objects: DataItemType[];
     repository: RepositoryReact<DataItemType>;
     sections: SectionNode<DataItemType>[];
-    tableStructure: RowStructure<DataItemType>[],
+    tableStructure: RowStructure<DataItemType>[];
     handleAddObject: (object: DataItemType) => void;
     handleEditObject: (object: DataItemType) => void;
     handleDeleteObject: (objectId: number) => void;
@@ -19,36 +19,38 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     handleEditSection: (sectionObject: RepositoryDataItem) => void;
     handleDeleteSection: (sectionObjectId: number) => void;
     setSections: React.Dispatch<React.SetStateAction<SectionNode<DataItemType>[]>>;
-    selectedObjectRoute: string,
-    activeRowId: number,
-    activeSectionId: string,
-    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>,
-    isDeletable: boolean,
-    externalUpdate: number,
-    shouldRetrieveDataBeforeEdit?: boolean,
+    selectedObjectRoute: string;
+    activeRowId: number;
+    activeSectionId: string;
+    EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
+    isDeletable: boolean;
+    externalUpdate: number;
+    shouldRetrieveDataBeforeEdit?: boolean;
+    specialRetrieveActionRoute?: string;
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
-    id: '',
+    id: "",
     objects: [],
     sections: [],
     repository: {} as RepositoryReact<RepositoryDataItem>,
     tableStructure: [],
-    handleAddObject: () => { },
-    handleEditObject: () => { },
-    handleDeleteObject: () => { },
-    setObjects: () => { },
-    handleAddSection: () => { },
-    handleEditSection: () => { },
-    handleDeleteSection: () => { },
-    setSections: () => { },
-    selectedObjectRoute: '',
+    handleAddObject: () => {},
+    handleEditObject: () => {},
+    handleDeleteObject: () => {},
+    setObjects: () => {},
+    handleAddSection: () => {},
+    handleEditSection: () => {},
+    handleDeleteSection: () => {},
+    setSections: () => {},
+    selectedObjectRoute: "",
     activeRowId: 0,
-    activeSectionId: '',
+    activeSectionId: "",
     EditButtonComponent: undefined,
     isDeletable: true,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
+    specialRetrieveActionRoute: undefined,
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -72,42 +74,50 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     isDeletable = true,
     externalUpdate,
     shouldRetrieveDataBeforeEdit = false,
-    children, }: React.PropsWithChildren<FilterableTableContextProps<Item>>
-) {
-    const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>;
+    specialRetrieveActionRoute,
+    children,
+}: React.PropsWithChildren<FilterableTableContextProps<Item>>) {
+    const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<
+        FilterableTableContextProps<Item>
+    >;
 
-    return <FilterableTableContextGeneric.Provider value={{
-        id,
-        objects,
-        setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
-        repository,
-        sections,
-        setSections: setSections as React.Dispatch<React.SetStateAction<SectionNode<Item>[]>>,
-        handleAddSection,
-        handleEditSection,
-        handleDeleteSection,
-        tableStructure,
-        handleAddObject,
-        handleEditObject,
-        handleDeleteObject,
-        selectedObjectRoute,
-        activeRowId,
-        activeSectionId,
-        EditButtonComponent,
-        isDeletable,
-        externalUpdate,
-        shouldRetrieveDataBeforeEdit,
-    }}>
-        {children}
-    </FilterableTableContextGeneric.Provider>;
+    return (
+        <FilterableTableContextGeneric.Provider
+            value={{
+                id,
+                objects,
+                setObjects: setObjects as React.Dispatch<React.SetStateAction<Item[]>>,
+                repository,
+                sections,
+                setSections: setSections as React.Dispatch<React.SetStateAction<SectionNode<Item>[]>>,
+                handleAddSection,
+                handleEditSection,
+                handleDeleteSection,
+                tableStructure,
+                handleAddObject,
+                handleEditObject,
+                handleDeleteObject,
+                selectedObjectRoute,
+                activeRowId,
+                activeSectionId,
+                EditButtonComponent,
+                isDeletable,
+                externalUpdate,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
+            }}
+        >
+            {children}
+        </FilterableTableContextGeneric.Provider>
+    );
 }
 
 export function useFilterableTableContext<Item extends RepositoryDataItem>() {
     const context = React.useContext<FilterableTableContextProps<Item>>(
-        (FilterableTableContext as unknown) as React.Context<FilterableTableContextProps<Item>>
+        FilterableTableContext as unknown as React.Context<FilterableTableContextProps<Item>>
     );
     if (!context) {
-        throw new Error('useMyContext must be used under MyContextProvider');
+        throw new Error("useMyContext must be used under MyContextProvider");
     }
     return context;
 }

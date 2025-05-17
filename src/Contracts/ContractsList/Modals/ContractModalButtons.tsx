@@ -11,7 +11,7 @@ import RepositoryReact from "../../../React/RepositoryReact";
 
 /** przycisk i modal edycji OurCOntract lub OtherContract */
 export function ContractEditModalButtonGeneric({
-    modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit },
+    modalProps: { onEdit, initialData, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     if (!repository) throw new Error("repository is required");
@@ -25,6 +25,7 @@ export function ContractEditModalButtonGeneric({
                 initialData: initialData,
                 makeValidationSchema: ourContractValidationSchema,
                 shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
             }}
             buttonProps={{
                 ...buttonProps,

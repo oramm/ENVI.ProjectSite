@@ -34,6 +34,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     onRowClick,
     externalUpdate = 0,
     shouldRetrieveDataBeforeEdit = false,
+    specialRetrieveActionRoute,
 }: FilterableTableProps<LeafDataItemType>) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
 
@@ -163,6 +164,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             isDeletable={isDeletable}
             externalUpdate={externalUpdate}
             shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+            specialRetrieveActionRoute={specialRetrieveActionRoute}
         >
             <Container>
                 <Row>

@@ -6,16 +6,18 @@ import {
     OtherContractAddNewModalButtonGeneric,
     OurContractAddNewModalButtonGeneric,
 } from "../../Contracts/ContractsList/Modals/ContractModalButtons";
-import { contractsRepository, contractsWithChildrenRepository } from "../TasksGlobalController";
+import { contractsRepository } from "../TasksGlobalController";
 
 export function ContractEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
         <ContractEditModalButtonGeneric
             modalProps={{
                 onEdit,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
                 initialData,
                 repository: contractsRepository,
             }}

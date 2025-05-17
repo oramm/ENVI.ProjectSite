@@ -75,7 +75,7 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
         isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
-            react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, layout: "horizontal", sectionRepository: sectionNode.repository }),
+            react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,

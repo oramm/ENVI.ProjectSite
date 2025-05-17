@@ -33,6 +33,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         isDeletable,
         repository,
         shouldRetrieveDataBeforeEdit,
+        specialRetrieveActionRoute,
     } = useFilterableTableContext<DataItemType>();
 
     function tdBodyRender(columnStructure: RowStructure<DataItemType>, dataObject: DataItemType) {
@@ -69,6 +70,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                         handleDeleteObject={handleDeleteObject}
                         isDeletable={isDeletable}
                         shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+                        specialRetrieveActionRoute={specialRetrieveActionRoute}
                     />
                 </Col>
             )}
@@ -85,6 +87,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     isDeletable: boolean;
     layout?: "vertical" | "horizontal";
     shouldRetrieveDataBeforeEdit?: boolean;
+    specialRetrieveActionRoute?: string;
     submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];
 }
 
@@ -97,6 +100,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     layout = "vertical",
     sectionRepository,
     shouldRetrieveDataBeforeEdit = false,
+    specialRetrieveActionRoute,
     submenuItems = [],
 }: RowActionMenuProps<DataItemType>) {
     const repository = sectionRepository || useFilterableTableContext<DataItemType>().repository;
@@ -118,7 +122,12 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
             )}
             {EditButtonComponent && handleEditObject && (
                 <EditButtonComponent
-                    modalProps={{ onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }}
+                    modalProps={{
+                        onEdit: handleEditObject,
+                        initialData: dataObject,
+                        shouldRetrieveDataBeforeEdit,
+                        specialRetrieveActionRoute,
+                    }}
                     buttonProps={{ layout }}
                 />
             )}

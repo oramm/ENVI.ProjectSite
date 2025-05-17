@@ -31,6 +31,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
     modalProps: {
         onEdit,
         specialActionRoute,
+        specialRetrieveActionRoute,
         ModalBodyComponent,
         additionalModalBodyProps,
         modalTitle,
@@ -65,6 +66,7 @@ export function GeneralEditModalButton<DataItemType extends RepositoryDataItem =
                 repository={repository}
                 onEdit={onEdit}
                 specialActionRoute={specialActionRoute}
+                specialRetrieveActionRoute={specialRetrieveActionRoute}
                 ModalBodyComponent={ModalBodyComponent}
                 makeValidationSchema={makeValidationSchema}
                 modalBodyProps={{

@@ -34,7 +34,7 @@ const ResultSetTable_1 = require("./ResultSetTable");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columnStructure, dataObject) {
         if (columnStructure.objectAttributeToShow !== undefined) {
             const key = columnStructure.objectAttributeToShow;
@@ -53,10 +53,10 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
         isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit })))));
+            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, submenuItems = [], }) {
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -65,7 +65,12 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
     return (react_1.default.createElement("div", { className: `d-flex ${layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"}` },
         dataObject._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl }),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
-        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: { onEdit: handleEditObject, initialData: dataObject, shouldRetrieveDataBeforeEdit }, buttonProps: { layout } })),
+        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: {
+                onEdit: handleEditObject,
+                initialData: dataObject,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
+            }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),
             isMenuExpanded && (react_1.default.createElement(react_1.default.Fragment, null,

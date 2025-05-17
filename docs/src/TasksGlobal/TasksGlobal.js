@@ -111,8 +111,7 @@ function TasksGlobal() {
                     ], onRowClick: setSelectedProject })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
                     { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "d-flex justify-content-end" }, "Tabela zada\u0144 b\u0119dzie tu dodana w przysz\u0142o\u015Bci.")));
+                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))))));
 }
 exports.default = TasksGlobal;
 function LoadingMessage({ selectedProject }) {
@@ -178,6 +177,8 @@ function buildTree(contractsWithChildrenInput) {
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
             editHandler: contractNodeEditHandler,
+            shouldRetrieveDataBeforeEdit: true,
+            specialRetrieveActionRoute: "contracts",
             isDeletable: false,
         };
         contractNodes.push(contractNode);
