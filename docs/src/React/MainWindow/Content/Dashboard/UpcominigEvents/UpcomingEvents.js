@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
-const SecuritiesList_1 = __importDefault(require("./UpcominigEvents/SecuritiesList"));
-const MilestonesList_1 = __importDefault(require("./UpcominigEvents/MilestonesList"));
+const SecuritiesList_1 = __importDefault(require("./SecuritiesList"));
+const MilestonesList_1 = __importDefault(require("./MilestonesList"));
 function UpcomingEvents() {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", { className: "mb-3 bg-white" },

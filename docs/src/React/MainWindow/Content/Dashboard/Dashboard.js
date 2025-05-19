@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const UpcomingEvents_1 = __importDefault(require("./UpcomingEvents"));
+const UpcomingEvents_1 = __importDefault(require("./UpcominigEvents/UpcomingEvents"));
 const MyData_1 = __importDefault(require("./MyData"));
 const News_1 = __importDefault(require("../News"));
+const OffersCard_1 = __importDefault(require("./OffersCard"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
-        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" }),
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
+            react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" })),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
             react_1.default.createElement(UpcomingEvents_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },

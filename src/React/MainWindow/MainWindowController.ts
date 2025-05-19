@@ -1,9 +1,11 @@
 import {
     Case,
+    ExternalOffer,
     MilestoneData,
     MilestoneDateData,
     OtherContract,
     OurContract,
+    OurOffer,
     Security,
     Task,
 } from "../../../Typings/bussinesTypes";
@@ -58,4 +60,14 @@ export const casesRepository = new RepositoryReact<Case>({
         deleteRoute: "",
     },
     name: "cases",
+});
+
+export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
+    actionRoutes: {
+        getRoute: "offers",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "offers",
 });

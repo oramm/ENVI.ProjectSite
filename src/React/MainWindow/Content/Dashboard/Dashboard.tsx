@@ -1,13 +1,16 @@
 import React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
-import UpcomingEvents from "./UpcomingEvents";
+import UpcomingEvents from "./UpcominigEvents/UpcomingEvents";
 import MyData from "./MyData";
 import News from "../News";
+import OffersCard from "./OffersCard";
 
 export default function Dashboard() {
     return (
         <Row className="mx-3">
-            <Col md={2} className="mb-3"></Col>
+            <Col md={2} className="mb-3">
+                <OffersCard className="mb-3 bg-white" />
+            </Col>
             <Col md={8} className="mb-3">
                 <UpcomingEvents />
             </Col>

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import ContractsList from "./UpcominigEvents/ContractsList";
-import SecuritiesList from "./UpcominigEvents/SecuritiesList";
-import MilestonesList from "./UpcominigEvents/MilestonesList";
+import React from "react";
+import SecuritiesList from "./SecuritiesList";
+import MilestonesList from "./MilestonesList";
 
 export default function UpcomingEvents() {
     return (
