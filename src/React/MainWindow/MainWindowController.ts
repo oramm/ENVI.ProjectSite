@@ -1,6 +1,7 @@
 import {
     Case,
     ExternalOffer,
+    Invoice,
     MilestoneData,
     MilestoneDateData,
     OtherContract,
@@ -70,4 +71,15 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
         deleteRoute: "",
     },
     name: "offers",
+});
+
+//invoices
+export const invoicesRepository = new RepositoryReact<Invoice>({
+    actionRoutes: {
+        getRoute: "invoices",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "invoices",
 });

@@ -20,6 +20,10 @@ class ToolsDate {
         const parsedDate = utcDate.toISOString().slice(0, 10);
         return parsedDate;
     }
+    static dateToDdMmm(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("pl-PL", { day: "2-digit", month: "short" });
+    }
     /** Przetwarza wszystkie daty w obiekcie na UTC */
     static convertDatesToUTC(obj) {
         if (!obj || typeof obj !== "object")

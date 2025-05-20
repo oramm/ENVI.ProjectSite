@@ -85,17 +85,12 @@ export default function OffersCard({ className }: { className: string }) {
         );
     }
 
-    function formatDate(dateStr: string) {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString("pl-PL", { day: "2-digit", month: "short" });
-    }
-
     function renderCardTitle() {
         return (
             <div className="d-flex justify-content-between align-items-center">
                 <Card.Title className="mb-0">Oferty</Card.Title>
                 <span style={{ fontSize: "0.85em" }} className="text-secondary">
-                    {formatDate(submissionDeadlineFrom)} - {formatDate(submissionDeadlineTo)}
+                    {ToolsDate.dateToDdMmm(submissionDeadlineFrom)} - {ToolsDate.dateToDdMmm(submissionDeadlineTo)}
                 </span>
             </div>
         );
