@@ -82,52 +82,33 @@ function MilestonesList() {
             return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
         const _contract = item._milestone?._contract;
         const _milestone = item._milestone;
-        const _admin = (0, typeGuards_1.isOurContract)(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
-        return (react_1.default.createElement("div", null,
+        let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
+        if ((0, typeGuards_1.isOurContract)(_contract))
+            contractLabel += _contract?._type?.name;
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", null,
+                contractLabel,
+                " ",
+                renderContractStatus(item)),
             react_1.default.createElement("div", { className: "mb-2" },
-                react_1.default.createElement("span", null,
-                    "[",
-                    _contract?.projectOurId,
-                    "] ",
-                    _contract?._ourIdOrNumber_Alias),
+                react_1.default.createElement("span", { className: "small" }, "Kamie\u0144: "),
+                react_1.default.createElement("span", { className: "fw-bold me-1" }, _milestone?._type.name),
                 " ",
-                "| ",
-                react_1.default.createElement("span", { className: "fw-bold" }, _milestone?._type.name),
-                " ",
-                react_1.default.createElement("span", null, _milestone?.name || ""),
-                " ",
-                renderMilestoneStatus(item)),
-            react_1.default.createElement("div", { className: "mb-2" },
-                react_1.default.createElement("div", { className: "text-dark" }, item._milestone?.description),
-                react_1.default.createElement("div", { className: "text-muted small" }, item.description)),
-            react_1.default.createElement("div", { className: "mb-2 small text-muted" },
-                react_1.default.createElement("div", null,
-                    "Kontrakt:",
-                    " ",
-                    react_1.default.createElement("span", { className: "fw-semibold" },
-                        "[",
-                        _contract?._type?.name,
-                        "] ",
-                        _contract?.name || "⚠️ Brak nazwy kontraktu"),
-                    " ",
-                    renderContractStatus(item)),
-                react_1.default.createElement("div", null,
-                    "Administrator:",
-                    " ",
-                    react_1.default.createElement("span", { className: "fw-semibold" }, _admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"))),
-            react_1.default.createElement("div", { className: "mb-2" },
-                react_1.default.createElement("span", { className: "fw-bold" }, "Od:"),
-                " ",
-                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
-                " ",
-                react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
-                " ",
-                react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
-                " ",
-                react_1.default.createElement("span", null, renderDaysLeft(item))),
-            react_1.default.createElement("div", { className: "text-secondary small" },
-                "Ostatnia aktualizacja: ",
-                ToolsDate_1.default.dateToDDmmmYYYYHHMM(item.lastUpdated))));
+                react_1.default.createElement("span", { className: "me-1" }, _milestone?.name || ""),
+                renderMilestoneStatus(item),
+                react_1.default.createElement("div", null, renderDates(item)))));
+    }
+    function renderDates(item) {
+        return (react_1.default.createElement("div", { className: "mb-2" },
+            react_1.default.createElement("span", { className: "fw-bold" }, "Od:"),
+            " ",
+            react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+            " ",
+            react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
+            " ",
+            react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
+            " ",
+            react_1.default.createElement("span", null, renderDaysLeft(item))));
     }
     function renderContractStatus(item) {
         if (!item._milestone?._contract?.status)
@@ -192,10 +173,7 @@ function MilestonesList() {
         }
         return tableStructure;
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Najbli\u017Csze terminy"),
-            react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }))));
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }));
 }
 exports.default = MilestonesList;
 function DateEditTrigger({ date, milestone, onEdit }) {

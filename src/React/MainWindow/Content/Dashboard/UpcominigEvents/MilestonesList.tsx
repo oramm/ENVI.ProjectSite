@@ -74,55 +74,33 @@ export default function MilestonesList() {
 
         const _contract = item._milestone?._contract;
         const _milestone = item._milestone;
-        const _admin = isOurContract(_contract) ? _contract?._admin : _contract?._ourContract?._admin;
+        let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
+
+        if (isOurContract(_contract)) contractLabel += _contract?._type?.name;
 
         return (
-            <div>
-                {/* Nagłówek */}
+            <>
+                <div>
+                    {contractLabel} {renderContractStatus(item)}
+                </div>
                 <div className="mb-2">
-                    <span>
-                        [{_contract?.projectOurId}] {_contract?._ourIdOrNumber_Alias}
-                    </span>{" "}
-                    | <span className="fw-bold">{_milestone?._type.name}</span> <span>{_milestone?.name || ""}</span>{" "}
+                    <span className="small">Kamień: </span>
+                    <span className="fw-bold me-1">{_milestone?._type.name}</span>{" "}
+                    <span className="me-1">{_milestone?.name || ""}</span>
                     {renderMilestoneStatus(item)}
+                    <div>{renderDates(item)}</div>
                 </div>
+            </>
+        );
+    }
 
-                {/* Opis */}
-                <div className="mb-2">
-                    <div className="text-dark">{item._milestone?.description}</div>
-                    <div className="text-muted small">{item.description}</div>
-                </div>
-
-                {/* Kontrakt i admin */}
-                <div className="mb-2 small text-muted">
-                    <div>
-                        Kontrakt:{" "}
-                        <span className="fw-semibold">
-                            [{_contract?._type?.name}] {_contract?.name || "⚠️ Brak nazwy kontraktu"}
-                        </span>{" "}
-                        {renderContractStatus(item)}
-                    </div>
-                    <div>
-                        Administrator:{" "}
-                        <span className="fw-semibold">
-                            {_admin ? `${_admin.name} ${_admin.surname}` : "⚠️ brak administratora"}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Daty */}
-                <div className="mb-2">
-                    <span className="fw-bold">Od:</span>{" "}
-                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
-                    <span className="fw-bold">do:</span>{" "}
-                    <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span>{" "}
-                    <span>{renderDaysLeft(item)}</span>
-                </div>
-
-                {/* Ostatnia aktualizacja */}
-                <div className="text-secondary small">
-                    Ostatnia aktualizacja: {ToolsDate.dateToDDmmmYYYYHHMM(item.lastUpdated)}
-                </div>
+    function renderDates(item: MilestoneDateData) {
+        return (
+            <div className="mb-2">
+                <span className="fw-bold">Od:</span>{" "}
+                <span className="fs-5">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
+                <span className="fw-bold">do:</span>{" "}
+                <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span> <span>{renderDaysLeft(item)}</span>
             </div>
         );
     }
@@ -217,23 +195,18 @@ export default function MilestonesList() {
     }
 
     return (
-        <Card>
-            <Card.Body>
-                <Card.Title>Najbliższe terminy</Card.Title>
-                <FilterableTable<MilestoneDateData>
-                    id="milestones"
-                    title={""}
-                    showTableHeader={false}
-                    initialSections={sections}
-                    tableStructure={makeTablestructure()}
-                    isDeletable={false}
-                    EditButtonComponent={MilestoneDateEditModalButton}
-                    repository={milestoneDatesRepository}
-                    selectedObjectRoute={"/milestone/"}
-                    externalUpdate={externalUpdate}
-                />
-            </Card.Body>
-        </Card>
+        <FilterableTable<MilestoneDateData>
+            id="milestones"
+            title={""}
+            showTableHeader={false}
+            initialSections={sections}
+            tableStructure={makeTablestructure()}
+            isDeletable={false}
+            EditButtonComponent={MilestoneDateEditModalButton}
+            repository={milestoneDatesRepository}
+            selectedObjectRoute={"/milestone/"}
+            externalUpdate={externalUpdate}
+        />
     );
 }
 
