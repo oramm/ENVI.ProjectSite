@@ -52,7 +52,7 @@ export default function OffersCard({ className }: { className: string }) {
         const visibleData = expanded ? sectionData : sectionData.slice(0, INITIAL_VISIBLE);
 
         return (
-            <ListGroup.Item className="p-0 border-0">
+            <ListGroup.Item key={status} className="p-0 border-0">
                 <div className="d-flex align-items-center list-group-item-action" onClick={onToggle}>
                     <span className="d-flex align-items-center flex-grow-1" style={{ cursor: "pointer" }}>
                         <span style={{ fontSize: 14, width: 14 }}>{statusIcons[status]}</span>
