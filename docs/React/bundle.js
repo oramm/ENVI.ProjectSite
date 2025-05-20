@@ -95289,7 +95289,7 @@ function MilestonesList() {
         if ((0, typeGuards_1.isOurContract)(_contract))
             contractLabel += _contract?._type?.name;
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", null,
+            react_1.default.createElement("div", { className: "mb-2" },
                 contractLabel,
                 " ",
                 renderContractStatus(item)),
@@ -95303,11 +95303,11 @@ function MilestonesList() {
     }
     function renderDates(item) {
         return (react_1.default.createElement("div", { className: "mb-2" },
-            react_1.default.createElement("span", { className: "fw-bold" }, "Od:"),
+            react_1.default.createElement("span", { className: "small" }, "Od:"),
             " ",
             react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
             " ",
-            react_1.default.createElement("span", { className: "fw-bold" }, "do:"),
+            react_1.default.createElement("span", { className: "small" }, "do:"),
             " ",
             react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
             " ",

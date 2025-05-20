@@ -80,7 +80,7 @@ export default function MilestonesList() {
 
         return (
             <>
-                <div>
+                <div className="mb-2">
                     {contractLabel} {renderContractStatus(item)}
                 </div>
                 <div className="mb-2">
@@ -97,10 +97,10 @@ export default function MilestonesList() {
     function renderDates(item: MilestoneDateData) {
         return (
             <div className="mb-2">
-                <span className="fw-bold">Od:</span>{" "}
+                <span className="small">Od:</span>{" "}
                 <span className="fs-5">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
-                <span className="fw-bold">do:</span>{" "}
-                <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span> <span>{renderDaysLeft(item)}</span>
+                <span className="small">do:</span> <span className="fs-5">{ToolsDate.dateISOToDMY(item.endDate)}</span>{" "}
+                <span>{renderDaysLeft(item)}</span>
             </div>
         );
     }
