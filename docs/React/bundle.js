@@ -90379,7 +90379,7 @@ const InvoiceIssueModalBody_1 = __webpack_require__(/*! ./InvoiceIssueModalBody 
 const InvoiceSetAsSentModalBody_1 = __webpack_require__(/*! ./InvoiceSetAsSentModalBody */ "./src/Erp/InvoicesList/Modals/InvoiceSetAsSentModalBody.tsx");
 const InvoicesController_1 = __webpack_require__(/*! ../InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts");
 /** przycisk i modal edycji Invoice */
-function InvoiceEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
@@ -90387,6 +90387,7 @@ function InvoiceEditModalButton({ modalProps: { onEdit, initialData }, buttonPro
             repository: InvoicesController_1.invoicesRepository,
             initialData: initialData,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
+            shouldRetrieveDataBeforeEdit,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",
@@ -94843,13 +94844,13 @@ const UpcomingEvents_1 = __importDefault(__webpack_require__(/*! ./UpcominigEven
 const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
 const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/MainWindow/Content/News.tsx"));
 const OffersCard_1 = __importDefault(__webpack_require__(/*! ./OffersCard */ "./src/React/MainWindow/Content/Dashboard/OffersCard.tsx"));
-const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const InvoicesCardTest_1 = __importDefault(__webpack_require__(/*! ./InvoicesCardTest */ "./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" }))),
+            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCardTest_1.default, { className: "mb-3 bg-white" }))),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
             react_1.default.createElement(UpcomingEvents_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
@@ -94861,10 +94862,10 @@ exports["default"] = Dashboard;
 
 /***/ }),
 
-/***/ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx":
-/*!*****************************************************************!*\
-  !*** ./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx ***!
-  \*****************************************************************/
+/***/ "./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx":
+/*!*********************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx ***!
+  \*********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -94897,11 +94898,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
+const InvoiceModalButtons_1 = __webpack_require__(/*! ../../../../Erp/InvoicesList/Modals/InvoiceModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceModalButtons.tsx");
 const invoiceStatusIcons = {
     "Na później": "⏳",
     "Do zrobienia": "📝",
@@ -94911,11 +94913,14 @@ const invoiceStatusIcons = {
     "Do korekty": "✏️",
     Wycofana: "🚫",
 };
-function InvoicesCard({ className }) {
-    const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
+function InvoicesCardNEW({ className }) {
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
-    const [data, setData] = (0, react_1.useState)(undefined);
-    const INITIAL_VISIBLE = 0;
+    const [data, setData] = (0, react_1.useState)([]);
+    const [cardData, setCardData] = (0, react_1.useState)({
+        header: { title: "", daysBeforeToday: 30, daysAfterToday: 14 },
+        sections: [],
+        sectionAttributeName: "status",
+    });
     // Przykład zakresu dat – podmień na logikę pod projekt!
     const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
     const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
@@ -94934,42 +94939,42 @@ function InvoicesCard({ className }) {
         }
         fetchData();
     }, []);
-    function renderInvoiceStatusSection(params) {
-        const { sectionData, status, expanded, onToggle } = params;
-        const visibleData = expanded ? sectionData : sectionData.slice(0, INITIAL_VISIBLE);
-        const totalValue = Tools_1.default.formatNumber(getTotalValue(sectionData)) + " zł";
-        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: status, className: "p-0 border-0" },
-            react_1.default.createElement("div", { className: "d-flex align-items-center list-group-item-action", style: { cursor: "pointer" }, onClick: onToggle },
-                react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1" },
-                    react_1.default.createElement("span", { style: { fontSize: 14, width: 14 } }, invoiceStatusIcons[status] || "📄"),
-                    react_1.default.createElement("span", { className: "ms-2 fw-semibold" }, status)),
-                react_1.default.createElement("span", { className: "d-flex align-items-center" },
-                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark" }, sectionData.length),
-                    react_1.default.createElement("span", { className: "text-secondary small ms-2", style: { fontSize: "0.9em" } }, expanded ? "▼" : "▸"))),
-            react_1.default.createElement("div", { className: "ps-4" },
-                react_1.default.createElement("span", { className: "small text-secondary" },
-                    "\u0141\u0105cznie: ",
-                    totalValue)),
-            react_1.default.createElement("ul", { className: "ps-4 mt-2 mb-2", style: { listStyleType: "none" } }, visibleData.map((invoice) => renderListItem(invoice)))));
+    (0, react_1.useEffect)(() => {
+        if (dataLoaded && data.length > 0) {
+            const uniqueStatuses = Array.from(new Set(data.map((inv) => inv.status)));
+            const cardSections = uniqueStatuses.map((status) => ({
+                icon: invoiceStatusIcons[status] || "📄",
+                key: status,
+                label: status,
+            }));
+            setCardData({
+                header: {
+                    title: "Faktury",
+                    daysBeforeToday: 60,
+                    daysAfterToday: 30,
+                },
+                sections: cardSections,
+                sectionAttributeName: "status",
+            });
+        }
+    }, [dataLoaded, data]);
+    function renderItemSubtitle({ sectionData }) {
+        const invoicesInSection = data.filter((inv) => inv.status === sectionData.key);
+        const totalValue = Tools_1.default.formatNumber(getTotalValue(invoicesInSection)) + " zł";
+        return react_1.default.createElement("span", null,
+            "\u0141\u0105cznie: ",
+            totalValue);
     }
-    function renderListItem(invoice) {
-        return (react_1.default.createElement("li", { key: invoice.id, className: "mb-2 d-flex align-items-center" },
+    function renderListItem({ object }) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small flex-grow-1" },
-                react_1.default.createElement("span", { className: "fw-semibold" }, invoice._contract.ourId),
+                react_1.default.createElement("span", { className: "fw-semibold" }, object._contract.ourId),
                 ", ",
-                invoice.number || invoice._contract._city?.name),
+                object.number || object._contract._city?.name),
             react_1.default.createElement("span", { className: "text-secondary small text-end ms-2", style: { minWidth: 70 } },
                 react_1.default.createElement("span", { className: "fw-light" },
-                    Tools_1.default.formatNumber(invoice._totalNetValue || 0),
+                    Tools_1.default.formatNumber(object._totalNetValue || 0),
                     " z\u0142"))));
-    }
-    function renderCardTitle() {
-        return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, "Faktury"),
-            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
-                ToolsDate_1.default.dateToDdMmm(issueDateFrom),
-                " - ",
-                ToolsDate_1.default.dateToDdMmm(issueDateTo))));
     }
     function getTotalValue(invoices = []) {
         return invoices.reduce((acc, inv) => {
@@ -94979,42 +94984,9 @@ function InvoicesCard({ className }) {
             return acc + (isNaN(num) ? 0 : num);
         }, 0);
     }
-    function handleToggle(status) {
-        setExpandedStatus((prev) => ({
-            ...prev,
-            [status]: !prev[status],
-        }));
-    }
-    if (!dataLoaded) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Faktury"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "spinner-border spinner-border-sm", role: "status", "aria-hidden": "true" })))));
-    }
-    if (!data || data.length === 0) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Faktury"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "text-secondary" }, "Brak faktur do wy\u015Bwietlenia")))));
-    }
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            renderCardTitle(),
-            react_1.default.createElement(react_bootstrap_1.ListGroup, { variant: "flush", className: "mt-3" }, Object.values(MainSetupReact_1.default.InvoiceStatuses).map((status) => {
-                const invoicesInStatus = data.filter((inv) => inv.status === status);
-                if (invoicesInStatus.length === 0)
-                    return null;
-                return renderInvoiceStatusSection({
-                    sectionData: invoicesInStatus,
-                    status,
-                    expanded: expandedStatus[status] || false,
-                    onToggle: () => handleToggle(status),
-                });
-            })))));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderItemSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false }));
 }
-exports["default"] = InvoicesCard;
+exports["default"] = InvoicesCardNEW;
 
 
 /***/ }),
@@ -99899,6 +99871,281 @@ function hasError(errors, path) {
     return current && current.type ? true : false;
 }
 exports.hasError = hasError;
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx":
+/*!*************************************************************!*\
+  !*** ./src/View/Resultsets/DashboardCard/DashboardCard.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext  */ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const RowActionMenu_1 = __importDefault(__webpack_require__(/*! ./RowActionMenu */ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx"));
+const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, selectedObjectRoute = "", initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
+    const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
+    const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
+    const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    (0, react_1.useEffect)(() => {
+        setObjects(initialObjects);
+    }, [initialObjects]);
+    const INITIAL_VISIBLE = 0;
+    const dateFrom = ToolsDate_1.default.addDays(new Date(), -(cardData.header.daysBeforeToday ?? 0))
+        .toISOString()
+        .slice(0, 10);
+    const dateTo = ToolsDate_1.default.addDays(new Date(), cardData.header.daysAfterToday ?? 0)
+        .toISOString()
+        .slice(0, 10);
+    function handleEditObject(object) {
+        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+    }
+    function handleDeleteObject(objectId) {
+        setObjects(objects.filter((o) => o.id !== objectId));
+    }
+    function handleToggle(sectionKey) {
+        setExpandedStatus((prev) => ({
+            ...prev,
+            [sectionKey]: !prev[sectionKey],
+        }));
+    }
+    function handleRowClick(id) {
+        setActiveRowId(id);
+        repository.addToCurrentItems(id);
+        if (onRowClick) {
+            onRowClick(repository.currentItems[0]);
+        }
+    }
+    function renderCardTitle() {
+        return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
+            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, cardData.header.title),
+            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
+                ToolsDate_1.default.dateToDdMmm(dateFrom),
+                " - ",
+                ToolsDate_1.default.dateToDdMmm(dateTo))));
+    }
+    function renderSection(params) {
+        const { objectsInSection, expanded, sectionData } = params;
+        const visibleData = expanded ? objectsInSection : objectsInSection.slice(0, INITIAL_VISIBLE);
+        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: sectionData.key, className: "p-0 border-0" },
+            react_1.default.createElement("div", { className: "list-group-item-action", style: { cursor: "pointer", display: "flex", flexDirection: "column" }, onClick: () => handleToggle(sectionData.key) },
+                react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between w-100" },
+                    react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1" },
+                        react_1.default.createElement("span", { style: { fontSize: 14, width: 14 } }, sectionData.icon),
+                        react_1.default.createElement("span", { className: "ms-2 fw-semibold" }, sectionData.label || sectionData.key)),
+                    react_1.default.createElement("span", { className: "d-flex align-items-center" },
+                        react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark" }, objectsInSection.length),
+                        react_1.default.createElement("span", { className: "text-secondary small ms-2", style: { fontSize: "0.9em" } }, expanded ? "▼" : "▸"))),
+                SectionSubtittle && (react_1.default.createElement("div", { className: "ms-4 pt-1 small text-secondary" },
+                    react_1.default.createElement(SectionSubtittle, { sectionData: sectionData })))),
+            react_1.default.createElement("ul", { className: "ps-4 mt-2 mb-2", style: { listStyleType: "none" } }, visibleData.map((object) => renderListItem(object)))));
+    }
+    function renderListItem(object) {
+        const isActive = object.id === activeRowId;
+        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
+            react_1.default.createElement(ListItem, { object: object, onClick: () => handleRowClick(object.id) }),
+            isActive && (react_1.default.createElement("span", { className: "ms-2" },
+                react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
+    }
+    if (!cardData.sections?.length) {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData ? cardData.header.title : "Ładowanie..."),
+                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
+    }
+    return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+        react_1.default.createElement(react_bootstrap_1.Card, { className: className },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                renderCardTitle(),
+                react_1.default.createElement(react_bootstrap_1.ListGroup, { variant: "flush", className: "mt-3" }, cardData.sections.map((sectionData) => {
+                    const objectsInSection = objects.filter((object) => sectionData.key === object[cardData.sectionAttributeName]);
+                    if (objectsInSection.length === 0)
+                        return null;
+                    return renderSection({
+                        objectsInSection,
+                        sectionData,
+                        expanded: expandedStatus[sectionData.key] || false,
+                    });
+                }))))));
+}
+exports["default"] = DashboardCard;
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx":
+/*!*********************************************************************!*\
+  !*** ./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useDashboardCardContext = exports.DashboardCardProvider = exports.DashboardCardContext = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+exports.DashboardCardContext = (0, react_1.createContext)({
+    objects: [],
+    repository: {},
+    cardData: {},
+    handleEditObject: () => { },
+    handleDeleteObject: () => { },
+    setObjects: () => { },
+    selectedObjectRoute: "",
+    activeRowId: 0,
+    EditButtonComponent: undefined,
+    isDeletable: true,
+    shouldRetrieveDataBeforeEdit: false,
+    specialRetrieveActionRoute: undefined,
+});
+function DashboardCardProvider({ objects, setObjects, repository, handleEditObject, handleDeleteObject, cardData, selectedObjectRoute, activeRowId, EditButtonComponent, isDeletable = true, shouldRetrieveDataBeforeEdit = true, specialRetrieveActionRoute, children, }) {
+    const DashboardCardContextGeneric = exports.DashboardCardContext;
+    return (react_1.default.createElement(DashboardCardContextGeneric.Provider, { value: {
+            objects,
+            setObjects: setObjects,
+            repository,
+            cardData,
+            handleEditObject,
+            handleDeleteObject,
+            selectedObjectRoute,
+            activeRowId,
+            EditButtonComponent,
+            isDeletable,
+            shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
+        } }, children));
+}
+exports.DashboardCardProvider = DashboardCardProvider;
+function useDashboardCardContext() {
+    const context = react_1.default.useContext(exports.DashboardCardContext);
+    if (!context) {
+        throw new Error("useMyContext must be used under MyContextProvider");
+    }
+    return context;
+}
+exports.useDashboardCardContext = useDashboardCardContext;
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx":
+/*!*************************************************************!*\
+  !*** ./src/View/Resultsets/DashboardCard/RowActionMenu.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const FilterableTableRow_1 = __webpack_require__(/*! ../FilterableTable/FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
+const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext  */ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx");
+function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
+    const repository = (0, DashboardCardContext_1.useDashboardCardContext)().repository;
+    const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
+    function toggleMenu() {
+        setIsMenuExpanded((prevState) => !prevState);
+    }
+    return (react_1.default.createElement("div", { className: `d-flex ${layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"}` },
+        dataObject._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl }),
+        dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
+        EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: {
+                onEdit: handleEditObject,
+                initialData: dataObject,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
+            }, buttonProps: { layout } })),
+        isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),
+            isMenuExpanded && (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(FilterableTableRow_1.DeleteModalButton, { modalProps: { onDelete: handleDeleteObject, initialData: dataObject, repository }, buttonProps: { layout } }),
+                submenuItems.map((SubmenuItem, index) => handleEditObject && (react_1.default.createElement(SubmenuItem, { key: index, modalProps: {
+                        onEdit: handleEditObject,
+                        initialData: dataObject,
+                        repository: repository,
+                    }, buttonProps: { layout, buttonCaption: "Edytuj" } })))))))));
+}
+exports["default"] = RowActionMenu;
 
 
 /***/ }),

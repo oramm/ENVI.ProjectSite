@@ -15,7 +15,7 @@ const InvoiceIssueModalBody_1 = require("./InvoiceIssueModalBody");
 const InvoiceSetAsSentModalBody_1 = require("./InvoiceSetAsSentModalBody");
 const InvoicesController_1 = require("../InvoicesController");
 /** przycisk i modal edycji Invoice */
-function InvoiceEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
@@ -23,6 +23,7 @@ function InvoiceEditModalButton({ modalProps: { onEdit, initialData }, buttonPro
             repository: InvoicesController_1.invoicesRepository,
             initialData: initialData,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
+            shouldRetrieveDataBeforeEdit,
         }, buttonProps: {
             ...buttonProps,
             buttonVariant: "outline-success",

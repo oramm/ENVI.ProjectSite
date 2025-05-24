@@ -17,7 +17,7 @@ import { invoicesRepository } from "../InvoicesController";
 
 /** przycisk i modal edycji Invoice */
 export function InvoiceEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit },
     buttonProps,
 }: SpecificEditModalButtonProps<Invoice>) {
     return (
@@ -29,6 +29,7 @@ export function InvoiceEditModalButton({
                 repository: invoicesRepository,
                 initialData: initialData,
                 makeValidationSchema: makeInvoiceValidationSchema,
+                shouldRetrieveDataBeforeEdit,
             }}
             buttonProps={{
                 ...buttonProps,
