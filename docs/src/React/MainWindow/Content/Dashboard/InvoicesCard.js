@@ -27,12 +27,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
-const react_bootstrap_1 = require("react-bootstrap");
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
 const MainWindowController_1 = require("../../MainWindowController");
 const ToolsDate_1 = __importDefault(require("../../../Tools/ToolsDate"));
 const Tools_1 = __importDefault(require("../../../Tools/Tools"));
-const invoiceStatusIcons = {
+const DashboardCard_1 = __importDefault(require("../../../../View/Resultsets/DashboardCard/DashboardCard"));
+const InvoiceModalButtons_1 = require("../../../../Erp/InvoicesList/Modals/InvoiceModalButtons");
+const useDashboardCardData_1 = require("../../../../View/Resultsets/DashboardCard/useDashboardCardData");
+const sectionIcons = {
     "Na później": "⏳",
     "Do zrobienia": "📝",
     Zrobiona: "✅",
@@ -42,64 +44,44 @@ const invoiceStatusIcons = {
     Wycofana: "🚫",
 };
 function InvoicesCard({ className }) {
-    const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
-    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
-    const [data, setData] = (0, react_1.useState)(undefined);
-    const INITIAL_VISIBLE = 0;
-    // Przykład zakresu dat – podmień na logikę pod projekt!
-    const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
-    const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
-    (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const invoices = (await MainWindowController_1.invoicesRepository.loadItemsFromServerPOST([
-                {
-                    statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
-                    issueDateFrom,
-                    issueDateTo,
-                },
-            ]));
-            setData(invoices);
-            setDataLoaded(true);
-        }
-        fetchData();
+    const initCardData = {
+        header: {
+            title: "Faktury",
+            daysBeforeToday: 45,
+            daysAfterToday: 14,
+        },
+        sectionAttributeName: "status",
+    };
+    const fetchData = (0, react_1.useCallback)(async () => {
+        const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
+        const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
+                issueDateFrom,
+                issueDateTo,
+            },
+        ];
+        return (await MainWindowController_1.invoicesRepository.loadItemsFromServerPOST(orConditions));
     }, []);
-    function renderInvoiceStatusSection(params) {
-        const { sectionData, status, expanded, onToggle } = params;
-        const visibleData = expanded ? sectionData : sectionData.slice(0, INITIAL_VISIBLE);
-        const totalValue = Tools_1.default.formatNumber(getTotalValue(sectionData)) + " zł";
-        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: status, className: "p-0 border-0" },
-            react_1.default.createElement("div", { className: "d-flex align-items-center list-group-item-action", style: { cursor: "pointer" }, onClick: onToggle },
-                react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1" },
-                    react_1.default.createElement("span", { style: { fontSize: 14, width: 14 } }, invoiceStatusIcons[status] || "📄"),
-                    react_1.default.createElement("span", { className: "ms-2 fw-semibold" }, status)),
-                react_1.default.createElement("span", { className: "d-flex align-items-center" },
-                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark" }, sectionData.length),
-                    react_1.default.createElement("span", { className: "text-secondary small ms-2", style: { fontSize: "0.9em" } }, expanded ? "▼" : "▸"))),
-            react_1.default.createElement("div", { className: "ps-4" },
-                react_1.default.createElement("span", { className: "small text-secondary" },
-                    "\u0141\u0105cznie: ",
-                    totalValue)),
-            react_1.default.createElement("ul", { className: "ps-4 mt-2 mb-2", style: { listStyleType: "none" } }, visibleData.map((invoice) => renderListItem(invoice)))));
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionIcons, fetchData);
+    function renderSectionSubtitle({ sectionData }) {
+        const invoicesInSection = data.filter((object) => object.status === sectionData.key);
+        const totalValue = Tools_1.default.formatNumber(getTotalValue(invoicesInSection)) + " zł";
+        return react_1.default.createElement("span", null,
+            "\u0141\u0105cznie: ",
+            totalValue);
     }
-    function renderListItem(invoice) {
-        return (react_1.default.createElement("li", { key: invoice.id, className: "mb-2 d-flex align-items-center" },
+    function renderListItem({ object }) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small flex-grow-1" },
-                react_1.default.createElement("span", { className: "fw-semibold" }, invoice._contract.ourId),
+                react_1.default.createElement("span", { className: "fw-semibold" }, object._contract.ourId),
                 ", ",
-                invoice.number || invoice._contract._city?.name),
+                object.number || object._contract._city?.name),
             react_1.default.createElement("span", { className: "text-secondary small text-end ms-2", style: { minWidth: 70 } },
                 react_1.default.createElement("span", { className: "fw-light" },
-                    Tools_1.default.formatNumber(invoice._totalNetValue || 0),
+                    Tools_1.default.formatNumber(object._totalNetValue || 0),
                     " z\u0142"))));
-    }
-    function renderCardTitle() {
-        return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, "Faktury"),
-            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
-                ToolsDate_1.default.dateToDdMmm(issueDateFrom),
-                " - ",
-                ToolsDate_1.default.dateToDdMmm(issueDateTo))));
     }
     function getTotalValue(invoices = []) {
         return invoices.reduce((acc, inv) => {
@@ -109,39 +91,6 @@ function InvoicesCard({ className }) {
             return acc + (isNaN(num) ? 0 : num);
         }, 0);
     }
-    function handleToggle(status) {
-        setExpandedStatus((prev) => ({
-            ...prev,
-            [status]: !prev[status],
-        }));
-    }
-    if (!dataLoaded) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Faktury"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "spinner-border spinner-border-sm", role: "status", "aria-hidden": "true" })))));
-    }
-    if (!data || data.length === 0) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Faktury"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "text-secondary" }, "Brak faktur do wy\u015Bwietlenia")))));
-    }
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            renderCardTitle(),
-            react_1.default.createElement(react_bootstrap_1.ListGroup, { variant: "flush", className: "mt-3" }, Object.values(MainSetupReact_1.default.InvoiceStatuses).map((status) => {
-                const invoicesInStatus = data.filter((inv) => inv.status === status);
-                if (invoicesInStatus.length === 0)
-                    return null;
-                return renderInvoiceStatusSection({
-                    sectionData: invoicesInStatus,
-                    status,
-                    expanded: expandedStatus[status] || false,
-                    onToggle: () => handleToggle(status),
-                });
-            })))));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/" }));
 }
 exports.default = InvoicesCard;

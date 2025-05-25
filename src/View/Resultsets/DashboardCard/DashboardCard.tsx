@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Badge, Card, ListGroup } from "react-bootstrap";
 import { DashboardCardProvider, useDashboardCardContext } from "./DashboardCardContext ";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
@@ -17,7 +18,8 @@ export type DashboardCardProps<DataItemType extends RepositoryDataItem = Reposit
     repository: RepositoryReact<DataItemType>;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
-    selectedObjectRoute?: string;
+    detailsRoute?: string;
+    getDetailsId?: (object: DataItemType) => number | string;
     initialObjects: DataItemType[];
     onRowClick?: (object: DataItemType) => void;
     externalUpdate?: number;
@@ -50,7 +52,8 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     ListItem,
     EditButtonComponent,
     isDeletable = true,
-    selectedObjectRoute = "",
+    detailsRoute = "",
+    getDetailsId,
     initialObjects,
     onRowClick,
     shouldRetrieveDataBeforeEdit = false,
@@ -60,6 +63,8 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     const [expandedStatus, setExpandedStatus] = useState<Record<string, boolean>>({});
     const [activeRowId, setActiveRowId] = useState(0);
     const [objects, setObjects] = useState(initialObjects);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         setObjects(initialObjects);
@@ -94,6 +99,11 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }
+    }
+
+    function handleRowDoubleClick(object: DataItemType) {
+        const detailsId = getDetailsId ? getDetailsId(object) : object.id;
+        if (detailsRoute) navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
     }
 
     function renderCardTitle() {
@@ -158,6 +168,7 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
             <li
                 key={object.id}
                 onClick={() => handleRowClick(object.id)}
+                onDoubleClick={() => handleRowDoubleClick(object)}
                 className={`mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}`}
             >
                 <ListItem object={object} onClick={() => handleRowClick(object.id)} />
@@ -195,7 +206,7 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
             handleEditObject={handleEditObject}
             handleDeleteObject={handleDeleteObject}
             setObjects={setObjects}
-            selectedObjectRoute={selectedObjectRoute}
+            selectedObjectRoute={detailsRoute}
             EditButtonComponent={EditButtonComponent}
             isDeletable={isDeletable}
             shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}

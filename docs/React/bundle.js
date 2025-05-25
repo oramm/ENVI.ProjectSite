@@ -94845,12 +94845,12 @@ const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/Reac
 const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/MainWindow/Content/News.tsx"));
 const OffersCard_1 = __importDefault(__webpack_require__(/*! ./OffersCard */ "./src/React/MainWindow/Content/Dashboard/OffersCard.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const InvoicesCardTest_1 = __importDefault(__webpack_require__(/*! ./InvoicesCardTest */ "./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx"));
+const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCardTest_1.default, { className: "mb-3 bg-white" }))),
+            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" }))),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
             react_1.default.createElement(UpcomingEvents_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
@@ -94862,10 +94862,10 @@ exports["default"] = Dashboard;
 
 /***/ }),
 
-/***/ "./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx":
-/*!*********************************************************************!*\
-  !*** ./src/React/MainWindow/Content/Dashboard/InvoicesCardTest.tsx ***!
-  \*********************************************************************/
+/***/ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx ***!
+  \*****************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -94904,7 +94904,8 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/Tools
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
 const InvoiceModalButtons_1 = __webpack_require__(/*! ../../../../Erp/InvoicesList/Modals/InvoiceModalButtons */ "./src/Erp/InvoicesList/Modals/InvoiceModalButtons.tsx");
-const invoiceStatusIcons = {
+const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
+const sectionIcons = {
     "Na później": "⏳",
     "Do zrobienia": "📝",
     Zrobiona: "✅",
@@ -94913,53 +94914,30 @@ const invoiceStatusIcons = {
     "Do korekty": "✏️",
     Wycofana: "🚫",
 };
-function InvoicesCardNEW({ className }) {
-    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
-    const [data, setData] = (0, react_1.useState)([]);
-    const [cardData, setCardData] = (0, react_1.useState)({
-        header: { title: "", daysBeforeToday: 30, daysAfterToday: 14 },
-        sections: [],
+function InvoicesCard({ className }) {
+    const initCardData = {
+        header: {
+            title: "Faktury",
+            daysBeforeToday: 45,
+            daysAfterToday: 14,
+        },
         sectionAttributeName: "status",
-    });
-    // Przykład zakresu dat – podmień na logikę pod projekt!
-    const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
-    const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
-    (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const invoices = (await MainWindowController_1.invoicesRepository.loadItemsFromServerPOST([
-                {
-                    statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
-                    issueDateFrom,
-                    issueDateTo,
-                },
-            ]));
-            setData(invoices);
-            setDataLoaded(true);
-        }
-        fetchData();
+    };
+    const fetchData = (0, react_1.useCallback)(async () => {
+        const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
+        const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
+                issueDateFrom,
+                issueDateTo,
+            },
+        ];
+        return (await MainWindowController_1.invoicesRepository.loadItemsFromServerPOST(orConditions));
     }, []);
-    (0, react_1.useEffect)(() => {
-        if (dataLoaded && data.length > 0) {
-            const uniqueStatuses = Array.from(new Set(data.map((inv) => inv.status)));
-            const cardSections = uniqueStatuses.map((status) => ({
-                icon: invoiceStatusIcons[status] || "📄",
-                key: status,
-                label: status,
-            }));
-            setCardData({
-                header: {
-                    title: "Faktury",
-                    daysBeforeToday: 60,
-                    daysAfterToday: 30,
-                },
-                sections: cardSections,
-                sectionAttributeName: "status",
-            });
-        }
-    }, [dataLoaded, data]);
-    function renderItemSubtitle({ sectionData }) {
-        const invoicesInSection = data.filter((inv) => inv.status === sectionData.key);
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionIcons, fetchData);
+    function renderSectionSubtitle({ sectionData }) {
+        const invoicesInSection = data.filter((object) => object.status === sectionData.key);
         const totalValue = Tools_1.default.formatNumber(getTotalValue(invoicesInSection)) + " zł";
         return react_1.default.createElement("span", null,
             "\u0141\u0105cznie: ",
@@ -94984,9 +94962,9 @@ function InvoicesCardNEW({ className }) {
             return acc + (isNaN(num) ? 0 : num);
         }, 0);
     }
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderItemSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false }));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/" }));
 }
-exports["default"] = InvoicesCardNEW;
+exports["default"] = InvoicesCard;
 
 
 /***/ }),
@@ -95059,11 +95037,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
-const statusIcons = {
+const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
+const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
+const sectionsIcons = {
     "Składamy czy nie?": "❓",
     "Do złożenia": "📝",
     "Czekamy na wynik": "⏳",
@@ -95074,92 +95053,38 @@ const statusIcons = {
     "Nie składamy": "🛑",
 };
 function OffersCard({ className }) {
-    const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
-    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
-    const [data, setData] = (0, react_1.useState)(undefined);
-    const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -90).toISOString().slice(0, 10);
-    const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
-    (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const offers = await MainWindowController_1.offersRepository.loadItemsFromServerPOST([
-                {
-                    statuses: Object.values(MainSetupReact_1.default.OfferStatus),
-                    submissionDeadlineFrom,
-                    submissionDeadlineTo,
-                },
-            ]);
-            setData(offers);
-            setDataLoaded(true);
-        }
-        fetchData();
+    const defaultCardData = {
+        header: {
+            title: "Oferty",
+            daysBeforeToday: 30,
+            daysAfterToday: 14,
+        },
+        sectionAttributeName: "status",
+    };
+    const fetchData = (0, react_1.useCallback)(async () => {
+        const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -30).toISOString().slice(0, 10);
+        const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), 14).toISOString().slice(0, 10);
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetupReact_1.default.OfferStatus),
+                submissionDeadlineFrom,
+                submissionDeadlineTo,
+            },
+        ];
+        return (await MainWindowController_1.offersRepository.loadItemsFromServerPOST(orConditions));
     }, []);
-    function renderOfferStatusSection(params) {
-        const { sectionData, status, expanded, onToggle } = params;
-        const INITIAL_VISIBLE = 0;
-        const visibleData = expanded ? sectionData : sectionData.slice(0, INITIAL_VISIBLE);
-        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: status, className: "p-0 border-0" },
-            react_1.default.createElement("div", { className: "d-flex align-items-center list-group-item-action", onClick: onToggle },
-                react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1", style: { cursor: "pointer" } },
-                    react_1.default.createElement("span", { style: { fontSize: 14, width: 14 } }, statusIcons[status]),
-                    react_1.default.createElement("span", { className: "ms-2 fw-semibold" }, status)),
-                react_1.default.createElement("span", { className: "d-flex align-items-center" },
-                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark" }, sectionData.length),
-                    react_1.default.createElement("span", { className: "text-secondary small ms-2", style: { fontSize: "0.9em" } }, expanded ? "▼" : "▸"))),
-            react_1.default.createElement("ul", { className: "ps-4 mt-2 mb-2", style: { listStyleType: "none" } }, visibleData.map((offer, i) => renderOfferListItem(offer)))));
-    }
-    function renderOfferListItem(offer) {
-        return (react_1.default.createElement("li", { key: `${offer.id}` },
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(defaultCardData, sectionsIcons, fetchData);
+    function renderOfferListItem({ object }) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small" },
-                react_1.default.createElement("span", { className: "fw-semibold" }, offer._city.name),
+                react_1.default.createElement("span", { className: "fw-semibold" }, object._city.name),
                 ", ",
-                offer._type.name,
+                object._type.name,
                 ",",
                 " ",
-                react_1.default.createElement("span", { className: "fw-light" }, offer.alias))));
+                react_1.default.createElement("span", { className: "fw-light" }, object.alias))));
     }
-    function renderCardTitle() {
-        return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, "Oferty"),
-            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
-                ToolsDate_1.default.dateToDdMmm(submissionDeadlineFrom),
-                " - ",
-                ToolsDate_1.default.dateToDdMmm(submissionDeadlineTo))));
-    }
-    function handleToggle(status) {
-        setExpandedStatus((prev) => ({
-            ...prev,
-            [status]: !prev[status],
-        }));
-    }
-    if (!dataLoaded) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Oferty"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "spinner-border spinner-border-sm", role: "status", "aria-hidden": "true" })))));
-    }
-    if (!data || data.length === 0) {
-        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, "Oferty"),
-                react_1.default.createElement("div", { className: "text-center" },
-                    react_1.default.createElement("span", { className: "text-secondary" }, "Brak ofert do wy\u015Bwietlenia")))));
-    }
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            renderCardTitle(),
-            react_1.default.createElement(react_bootstrap_1.ListGroup, { variant: "flush", className: "mt-3" }, Object.values(MainSetupReact_1.default.OfferStatus).map((status) => {
-                const offersInStatus = data.filter((o) => o.status === status);
-                if (offersInStatus.length === 0)
-                    return null;
-                return renderOfferStatusSection({
-                    sectionData: offersInStatus,
-                    status,
-                    expanded: expandedStatus[status] || false,
-                    onToggle: () => handleToggle(status),
-                });
-            })))));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false }));
 }
 exports["default"] = OffersCard;
 
@@ -95613,7 +95538,7 @@ exports.offersRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "offers",
         addNewRoute: "",
-        editRoute: "",
+        editRoute: "offer",
         deleteRoute: "",
     },
     name: "offers",
@@ -95623,7 +95548,7 @@ exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "invoices",
         addNewRoute: "",
-        editRoute: "",
+        editRoute: "invoice",
         deleteRoute: "",
     },
     name: "invoices",
@@ -99911,15 +99836,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext  */ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const RowActionMenu_1 = __importDefault(__webpack_require__(/*! ./RowActionMenu */ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, selectedObjectRoute = "", initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
     const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    const navigate = (0, react_router_dom_1.useNavigate)();
     (0, react_1.useEffect)(() => {
         setObjects(initialObjects);
     }, [initialObjects]);
@@ -99949,6 +99876,11 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             onRowClick(repository.currentItems[0]);
         }
     }
+    function handleRowDoubleClick(object) {
+        const detailsId = getDetailsId ? getDetailsId(object) : object.id;
+        if (detailsRoute)
+            navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
+    }
     function renderCardTitle() {
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
             react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, cardData.header.title),
@@ -99975,7 +99907,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     }
     function renderListItem(object) {
         const isActive = object.id === activeRowId;
-        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
+        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), onDoubleClick: () => handleRowDoubleClick(object), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
             react_1.default.createElement(ListItem, { object: object, onClick: () => handleRowClick(object.id) }),
             isActive && (react_1.default.createElement("span", { className: "ms-2" },
                 react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
@@ -99986,7 +99918,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
                 react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData ? cardData.header.title : "Ładowanie..."),
                 react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
     }
-    return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: detailsRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Card, { className: className },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 renderCardTitle(),
@@ -100146,6 +100078,58 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                     }, buttonProps: { layout, buttonCaption: "Edytuj" } })))))))));
 }
 exports["default"] = RowActionMenu;
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts":
+/*!*******************************************************************!*\
+  !*** ./src/View/Resultsets/DashboardCard/useDashboardCardData.ts ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useDashboardCardData = void 0;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
+    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
+    const [data, setData] = (0, react_1.useState)([]);
+    const [cardData, setCardData] = (0, react_1.useState)({
+        ...config,
+        sections: [],
+    });
+    function defaultBuildSections(data, sectionAttributeName, icons) {
+        const keys = Array.from(new Set(data.map((object) => String(object[sectionAttributeName]))));
+        return keys.map((key) => ({
+            icon: icons[key] || "📄",
+            key,
+            label: key,
+        }));
+    }
+    (0, react_1.useEffect)(() => {
+        async function fetchAndSetData() {
+            setDataLoaded(false);
+            const fetched = await fetchDataFn();
+            setData(fetched);
+            setDataLoaded(true);
+        }
+        fetchAndSetData();
+    }, [fetchDataFn]);
+    (0, react_1.useEffect)(() => {
+        if (dataLoaded && data.length > 0) {
+            setCardData({
+                ...config,
+                sections: buildCustomSections
+                    ? buildCustomSections(data)
+                    : defaultBuildSections(data, config.sectionAttributeName, icons),
+            });
+        }
+    }, [dataLoaded, data, buildCustomSections, icons]);
+    return { dataLoaded, data, cardData };
+}
+exports.useDashboardCardData = useDashboardCardData;
 
 
 /***/ }),

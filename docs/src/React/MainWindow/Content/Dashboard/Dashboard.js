@@ -10,12 +10,12 @@ const MyData_1 = __importDefault(require("./MyData"));
 const News_1 = __importDefault(require("../News"));
 const OffersCard_1 = __importDefault(require("./OffersCard"));
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
-const InvoicesCardTest_1 = __importDefault(require("./InvoicesCardTest"));
+const InvoicesCard_1 = __importDefault(require("./InvoicesCard"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCardTest_1.default, { className: "mb-3 bg-white" }))),
+            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" }))),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
             react_1.default.createElement(UpcomingEvents_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },

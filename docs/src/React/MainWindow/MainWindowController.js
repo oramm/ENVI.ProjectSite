@@ -54,7 +54,7 @@ exports.offersRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "offers",
         addNewRoute: "",
-        editRoute: "",
+        editRoute: "offer",
         deleteRoute: "",
     },
     name: "offers",
@@ -64,7 +64,7 @@ exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "invoices",
         addNewRoute: "",
-        editRoute: "",
+        editRoute: "invoice",
         deleteRoute: "",
     },
     name: "invoices",

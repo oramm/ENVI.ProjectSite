@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import MainSetup from "../../../MainSetupReact";
 import { invoicesRepository } from "../../MainWindowController";
 import ToolsDate from "../../../Tools/ToolsDate";
@@ -9,8 +9,9 @@ import DashboardCard, {
     DashboardCardSectionData,
 } from "../../../../View/Resultsets/DashboardCard/DashboardCard";
 import { InvoiceEditModalButton } from "../../../../Erp/InvoicesList/Modals/InvoiceModalButtons";
+import { useDashboardCardData } from "../../../../View/Resultsets/DashboardCard/useDashboardCardData";
 
-const invoiceStatusIcons: Record<string, string> = {
+const sectionIcons: Record<string, string> = {
     "Na później": "⏳",
     "Do zrobienia": "📝",
     Zrobiona: "✅",
@@ -20,58 +21,32 @@ const invoiceStatusIcons: Record<string, string> = {
     Wycofana: "🚫",
 };
 
-export default function InvoicesCardNEW({ className }: { className: string }) {
-    const [dataLoaded, setDataLoaded] = useState(false);
-    const [data, setData] = useState<Invoice[]>([]);
-    const [cardData, setCardData] = useState<DashboardCardData<Invoice>>({
-        header: { title: "", daysBeforeToday: 30, daysAfterToday: 14 },
-        sections: [],
-        sectionAttributeName: "status",
-    });
-
-    // Przykład zakresu dat – podmień na logikę pod projekt!
-    const issueDateFrom = ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10);
-    const issueDateTo = ToolsDate.addDays(new Date(), 30).toISOString().slice(0, 10);
-
-    useEffect(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const invoices = (await invoicesRepository.loadItemsFromServerPOST([
-                {
-                    statuses: Object.values(MainSetup.InvoiceStatuses),
-                    issueDateFrom,
-                    issueDateTo,
-                },
-            ])) as Invoice[];
-            setData(invoices);
-            setDataLoaded(true);
-        }
-        fetchData();
+export default function InvoicesCard({ className }: { className: string }) {
+    const initCardData = {
+        header: {
+            title: "Faktury",
+            daysBeforeToday: 45,
+            daysAfterToday: 14,
+        },
+        sectionAttributeName: "status" as keyof Invoice,
+    };
+    const fetchData = useCallback(async () => {
+        const issueDateFrom = ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10);
+        const issueDateTo = ToolsDate.addDays(new Date(), 30).toISOString().slice(0, 10);
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetup.InvoiceStatuses),
+                issueDateFrom,
+                issueDateTo,
+            },
+        ];
+        return (await invoicesRepository.loadItemsFromServerPOST(orConditions)) as Invoice[];
     }, []);
 
-    useEffect(() => {
-        if (dataLoaded && data.length > 0) {
-            const uniqueStatuses = Array.from(new Set(data.map((inv) => inv.status)));
-            const cardSections: DashboardCardSectionData[] = uniqueStatuses.map((status) => ({
-                icon: invoiceStatusIcons[status] || "📄",
-                key: status,
-                label: status,
-            }));
+    const { dataLoaded, data, cardData } = useDashboardCardData<Invoice>(initCardData, sectionIcons, fetchData);
 
-            setCardData({
-                header: {
-                    title: "Faktury",
-                    daysBeforeToday: 60,
-                    daysAfterToday: 30,
-                },
-                sections: cardSections,
-                sectionAttributeName: "status",
-            });
-        }
-    }, [dataLoaded, data]);
-
-    function renderItemSubtitle({ sectionData }: { sectionData: DashboardCardSectionData }) {
-        const invoicesInSection = data.filter((inv) => inv.status === sectionData.key);
+    function renderSectionSubtitle({ sectionData }: { sectionData: DashboardCardSectionData }) {
+        const invoicesInSection = data.filter((object) => object.status === sectionData.key);
         const totalValue = Tools.formatNumber(getTotalValue(invoicesInSection)) + " zł";
 
         return <span>Łącznie: {totalValue}</span>;
@@ -108,11 +83,12 @@ export default function InvoicesCardNEW({ className }: { className: string }) {
             initialObjects={data}
             repository={invoicesRepository}
             ListItem={renderListItem}
-            SectionSubtittle={renderItemSubtitle}
+            SectionSubtittle={renderSectionSubtitle}
             className={className}
             isDeletable={false}
             EditButtonComponent={InvoiceEditModalButton}
             shouldRetrieveDataBeforeEdit={false}
+            detailsRoute="/invoice/"
         />
     );
 }

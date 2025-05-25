@@ -27,15 +27,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
+const react_router_dom_1 = require("react-router-dom");
 const react_bootstrap_1 = require("react-bootstrap");
 const DashboardCardContext_1 = require("./DashboardCardContext ");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const RowActionMenu_1 = __importDefault(require("./RowActionMenu"));
 const CommonComponents_1 = require("../CommonComponents");
-function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, selectedObjectRoute = "", initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
     const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
+    const navigate = (0, react_router_dom_1.useNavigate)();
     (0, react_1.useEffect)(() => {
         setObjects(initialObjects);
     }, [initialObjects]);
@@ -65,6 +67,11 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             onRowClick(repository.currentItems[0]);
         }
     }
+    function handleRowDoubleClick(object) {
+        const detailsId = getDetailsId ? getDetailsId(object) : object.id;
+        if (detailsRoute)
+            navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
+    }
     function renderCardTitle() {
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
             react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, cardData.header.title),
@@ -91,7 +98,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     }
     function renderListItem(object) {
         const isActive = object.id === activeRowId;
-        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
+        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), onDoubleClick: () => handleRowDoubleClick(object), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
             react_1.default.createElement(ListItem, { object: object, onClick: () => handleRowClick(object.id) }),
             isActive && (react_1.default.createElement("span", { className: "ms-2" },
                 react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
@@ -102,7 +109,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
                 react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData ? cardData.header.title : "Ładowanie..."),
                 react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
     }
-    return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: detailsRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Card, { className: className },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 renderCardTitle(),

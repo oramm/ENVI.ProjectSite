@@ -5,7 +5,7 @@ import MyData from "./MyData";
 import News from "../News";
 import OffersCard from "./OffersCard";
 import MainSetup from "../../../MainSetupReact";
-import InvoicesCardNEW from "./InvoicesCard";
+import InvoicesCard from "./InvoicesCard";
 
 export default function Dashboard() {
     return (
@@ -13,7 +13,7 @@ export default function Dashboard() {
             <Col md={2} className="mb-3">
                 <OffersCard className="mb-3 bg-white" />
                 {["ADMIN", "ENVI_MANAGER"].includes(MainSetup.currentUser.systemRoleName) && (
-                    <InvoicesCardNEW className="mb-3 bg-white" />
+                    <InvoicesCard className="mb-3 bg-white" />
                 )}
             </Col>
             <Col md={8} className="mb-3">

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Card, ListGroup, Badge } from "react-bootstrap";
+import React, { useCallback } from "react";
 import MainSetup from "../../../MainSetupReact";
 import { offersRepository } from "../../MainWindowController";
 import ToolsDate from "../../../Tools/ToolsDate";
 import { ExternalOffer, OurOffer } from "../../../../../Typings/bussinesTypes";
+import DashboardCard, { DashboardCardData } from "../../../../View/Resultsets/DashboardCard/DashboardCard";
+import { useDashboardCardData } from "../../../../View/Resultsets/DashboardCard/useDashboardCardData";
 
-const statusIcons: Record<string, string> = {
+const sectionsIcons: Record<string, string> = {
     "Składamy czy nie?": "❓",
     "Do złożenia": "📝",
     "Czekamy na wynik": "⏳",
@@ -17,135 +18,56 @@ const statusIcons: Record<string, string> = {
 };
 
 export default function OffersCard({ className }: { className: string }) {
-    const [expandedStatus, setExpandedStatus] = useState<Record<string, boolean>>({});
-    const [dataLoaded, setDataLoaded] = useState(false);
-    const [data, setData] = useState<(OurOffer | ExternalOffer)[] | undefined>(undefined);
+    const defaultCardData: DashboardCardData<OurOffer | ExternalOffer> = {
+        header: {
+            title: "Oferty",
+            daysBeforeToday: 30,
+            daysAfterToday: 14,
+        },
+        sectionAttributeName: "status",
+    };
 
-    const submissionDeadlineFrom = ToolsDate.addDays(new Date(), -90).toISOString().slice(0, 10);
-    const submissionDeadlineTo = ToolsDate.addDays(new Date(), 30).toISOString().slice(0, 10);
+    const fetchData = useCallback(async () => {
+        const submissionDeadlineFrom = ToolsDate.addDays(new Date(), -30).toISOString().slice(0, 10);
+        const submissionDeadlineTo = ToolsDate.addDays(new Date(), 14).toISOString().slice(0, 10);
 
-    useEffect(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const offers = await offersRepository.loadItemsFromServerPOST([
-                {
-                    statuses: Object.values(MainSetup.OfferStatus),
-                    submissionDeadlineFrom,
-                    submissionDeadlineTo,
-                },
-            ]);
-
-            setData(offers);
-            setDataLoaded(true);
-        }
-        fetchData();
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetup.OfferStatus), // <- popraw, jeśli np. OfferStatuses!
+                submissionDeadlineFrom,
+                submissionDeadlineTo,
+            },
+        ];
+        return (await offersRepository.loadItemsFromServerPOST(orConditions)) as (OurOffer | ExternalOffer)[];
     }, []);
 
-    function renderOfferStatusSection<T>(params: {
-        sectionData: (OurOffer | ExternalOffer)[];
-        status: string;
-        expanded: boolean;
-        onToggle: () => void;
-    }) {
-        const { sectionData, status, expanded, onToggle } = params;
-        const INITIAL_VISIBLE = 0;
-        const visibleData = expanded ? sectionData : sectionData.slice(0, INITIAL_VISIBLE);
+    const { dataLoaded, data, cardData } = useDashboardCardData<OurOffer | ExternalOffer>(
+        defaultCardData,
+        sectionsIcons,
+        fetchData
+    );
 
+    function renderOfferListItem({ object }: { object: OurOffer | ExternalOffer }) {
         return (
-            <ListGroup.Item key={status} className="p-0 border-0">
-                <div className="d-flex align-items-center list-group-item-action" onClick={onToggle}>
-                    <span className="d-flex align-items-center flex-grow-1" style={{ cursor: "pointer" }}>
-                        <span style={{ fontSize: 14, width: 14 }}>{statusIcons[status]}</span>
-                        <span className="ms-2 fw-semibold">{status}</span>
-                    </span>
-                    <span className="d-flex align-items-center">
-                        <Badge bg="light" text="dark">
-                            {sectionData.length}
-                        </Badge>
-                        <span className="text-secondary small ms-2" style={{ fontSize: "0.9em" }}>
-                            {expanded ? "▼" : "▸"}
-                        </span>
-                    </span>
-                </div>
-                <ul className="ps-4 mt-2 mb-2" style={{ listStyleType: "none" }}>
-                    {visibleData.map((offer, i) => renderOfferListItem(offer))}
-                </ul>
-            </ListGroup.Item>
-        );
-    }
-
-    function renderOfferListItem(offer: OurOffer | ExternalOffer) {
-        return (
-            <li key={`${offer.id}`}>
+            <>
                 <span className="text-secondary small">
-                    <span className="fw-semibold">{offer._city.name}</span>, {offer._type.name},{" "}
-                    <span className="fw-light">{offer.alias}</span>
+                    <span className="fw-semibold">{object._city.name}</span>, {object._type.name},{" "}
+                    <span className="fw-light">{object.alias}</span>
                 </span>
-            </li>
+            </>
         );
     }
 
-    function renderCardTitle() {
-        return (
-            <div className="d-flex justify-content-between align-items-center">
-                <Card.Title className="mb-0">Oferty</Card.Title>
-                <span style={{ fontSize: "0.85em" }} className="text-secondary">
-                    {ToolsDate.dateToDdMmm(submissionDeadlineFrom)} - {ToolsDate.dateToDdMmm(submissionDeadlineTo)}
-                </span>
-            </div>
-        );
-    }
-
-    function handleToggle(status: string) {
-        setExpandedStatus((prev) => ({
-            ...prev,
-            [status]: !prev[status],
-        }));
-    }
-
-    if (!dataLoaded) {
-        return (
-            <Card className={className}>
-                <Card.Body>
-                    <Card.Title>Oferty</Card.Title>
-                    <div className="text-center">
-                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    </div>
-                </Card.Body>
-            </Card>
-        );
-    }
-
-    if (!data || data.length === 0) {
-        return (
-            <Card className={className}>
-                <Card.Body>
-                    <Card.Title>Oferty</Card.Title>
-                    <div className="text-center">
-                        <span className="text-secondary">Brak ofert do wyświetlenia</span>
-                    </div>
-                </Card.Body>
-            </Card>
-        );
-    }
     return (
-        <Card className={className}>
-            <Card.Body>
-                {renderCardTitle()}
-                <ListGroup variant="flush" className="mt-3">
-                    {(Object.values(MainSetup.OfferStatus) as string[]).map((status) => {
-                        const offersInStatus = data.filter((o) => o.status === status);
-                        if (offersInStatus.length === 0) return null;
-
-                        return renderOfferStatusSection({
-                            sectionData: offersInStatus,
-                            status,
-                            expanded: expandedStatus[status] || false,
-                            onToggle: () => handleToggle(status),
-                        });
-                    })}
-                </ListGroup>
-            </Card.Body>
-        </Card>
+        <DashboardCard<OurOffer | ExternalOffer>
+            cardData={cardData}
+            dataLoaded={dataLoaded}
+            initialObjects={data}
+            repository={offersRepository}
+            ListItem={renderOfferListItem}
+            className={className}
+            isDeletable={false}
+            // Możesz dodać EditButtonComponent, shouldRetrieveDataBeforeEdit itd. jeśli chcesz
+        />
     );
 }
