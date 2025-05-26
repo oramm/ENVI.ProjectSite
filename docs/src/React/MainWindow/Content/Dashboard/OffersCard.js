@@ -32,6 +32,7 @@ const MainWindowController_1 = require("../../MainWindowController");
 const ToolsDate_1 = __importDefault(require("../../../Tools/ToolsDate"));
 const DashboardCard_1 = __importDefault(require("../../../../View/Resultsets/DashboardCard/DashboardCard"));
 const useDashboardCardData_1 = require("../../../../View/Resultsets/DashboardCard/useDashboardCardData");
+const OfferModalButtons_1 = require("../../../../Offers/OffersList/Modals/OfferModalButtons");
 const sectionsIcons = {
     "Składamy czy nie?": "❓",
     "Do złożenia": "📝",
@@ -74,6 +75,6 @@ function OffersCard({ className }) {
                 " ",
                 react_1.default.createElement("span", { className: "fw-light" }, object.alias))));
     }
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false }));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }
 exports.default = OffersCard;

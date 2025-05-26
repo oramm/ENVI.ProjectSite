@@ -89,6 +89,7 @@ export default function InvoicesCard({ className }: { className: string }) {
             EditButtonComponent={InvoiceEditModalButton}
             shouldRetrieveDataBeforeEdit={false}
             detailsRoute="/invoice/"
+            headerRoute="/invoices"
         />
     );
 }

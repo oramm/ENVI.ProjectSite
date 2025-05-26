@@ -5,6 +5,7 @@ import ToolsDate from "../../../Tools/ToolsDate";
 import { ExternalOffer, OurOffer } from "../../../../../Typings/bussinesTypes";
 import DashboardCard, { DashboardCardData } from "../../../../View/Resultsets/DashboardCard/DashboardCard";
 import { useDashboardCardData } from "../../../../View/Resultsets/DashboardCard/useDashboardCardData";
+import { OfferEditModalButton } from "../../../../Offers/OffersList/Modals/OfferModalButtons";
 
 const sectionsIcons: Record<string, string> = {
     "Składamy czy nie?": "❓",
@@ -67,7 +68,8 @@ export default function OffersCard({ className }: { className: string }) {
             ListItem={renderOfferListItem}
             className={className}
             isDeletable={false}
-            // Możesz dodać EditButtonComponent, shouldRetrieveDataBeforeEdit itd. jeśli chcesz
+            headerRoute="/offers"
+            EditButtonComponent={OfferEditModalButton}
         />
     );
 }

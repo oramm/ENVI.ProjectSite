@@ -33,7 +33,7 @@ const DashboardCardContext_1 = require("./DashboardCardContext ");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const RowActionMenu_1 = __importDefault(require("./RowActionMenu"));
 const CommonComponents_1 = require("../CommonComponents");
-function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, }) {
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, }) {
     const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -72,9 +72,13 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         if (detailsRoute)
             navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
     }
+    function handleHeaderClick() {
+        if (headerRoute)
+            navigate(headerRoute, { state: { repository } });
+    }
     function renderCardTitle() {
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
-            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0" }, cardData.header.title),
+            react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0", onClick: () => handleHeaderClick(), style: { cursor: "pointer" } }, cardData.header.title),
             react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
                 ToolsDate_1.default.dateToDdMmm(dateFrom),
                 " - ",
@@ -83,7 +87,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     function renderSection(params) {
         const { objectsInSection, expanded, sectionData } = params;
         const visibleData = expanded ? objectsInSection : objectsInSection.slice(0, INITIAL_VISIBLE);
-        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: sectionData.key, className: "p-0 border-0" },
+        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: sectionData.key, className: `p-0 border-0${expanded ? " bg-primary bg-opacity-10" : ""}` },
             react_1.default.createElement("div", { className: "list-group-item-action", style: { cursor: "pointer", display: "flex", flexDirection: "column" }, onClick: () => handleToggle(sectionData.key) },
                 react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between w-100" },
                     react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1" },
@@ -98,9 +102,9 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     }
     function renderListItem(object) {
         const isActive = object.id === activeRowId;
-        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), onDoubleClick: () => handleRowDoubleClick(object), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}` },
-            react_1.default.createElement(ListItem, { object: object, onClick: () => handleRowClick(object.id) }),
-            isActive && (react_1.default.createElement("span", { className: "ms-2" },
+        return (react_1.default.createElement("li", { key: object.id, onClick: () => handleRowClick(object.id), onDoubleClick: () => handleRowDoubleClick(object), className: `mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}`, style: { justifyContent: "space-between" } },
+            react_1.default.createElement(ListItem, { object: object }),
+            isActive && (react_1.default.createElement("span", { className: "ms-2 d-flex justify-content-end flex-grow-1", style: { minWidth: 0 } },
                 react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
     }
     if (!cardData.sections?.length) {

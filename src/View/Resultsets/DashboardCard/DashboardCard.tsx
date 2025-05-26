@@ -26,6 +26,7 @@ export type DashboardCardProps<DataItemType extends RepositoryDataItem = Reposit
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     className?: string;
+    headerRoute?: string;
 };
 
 export type DashboardCardData<DataItemType> = {
@@ -59,6 +60,7 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
     className,
+    headerRoute,
 }: DashboardCardProps<DataItemType>) {
     const [expandedStatus, setExpandedStatus] = useState<Record<string, boolean>>({});
     const [activeRowId, setActiveRowId] = useState(0);
@@ -106,10 +108,16 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         if (detailsRoute) navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
     }
 
+    function handleHeaderClick() {
+        if (headerRoute) navigate(headerRoute, { state: { repository } });
+    }
+
     function renderCardTitle() {
         return (
             <div className="d-flex justify-content-between align-items-center">
-                <Card.Title className="mb-0">{cardData.header.title}</Card.Title>
+                <Card.Title className="mb-0" onClick={() => handleHeaderClick()} style={{ cursor: "pointer" }}>
+                    {cardData.header.title}
+                </Card.Title>
                 <span style={{ fontSize: "0.85em" }} className="text-secondary">
                     {ToolsDate.dateToDdMmm(dateFrom)} - {ToolsDate.dateToDdMmm(dateTo)}
                 </span>
@@ -125,7 +133,10 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         const { objectsInSection, expanded, sectionData } = params;
         const visibleData = expanded ? objectsInSection : objectsInSection.slice(0, INITIAL_VISIBLE);
         return (
-            <ListGroup.Item key={sectionData.key} className="p-0 border-0">
+            <ListGroup.Item
+                key={sectionData.key}
+                className={`p-0 border-0${expanded ? " bg-primary bg-opacity-10" : ""}`}
+            >
                 <div
                     className="list-group-item-action"
                     style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}
@@ -170,10 +181,11 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
                 onClick={() => handleRowClick(object.id)}
                 onDoubleClick={() => handleRowDoubleClick(object)}
                 className={`mb-2 d-flex align-items-center${isActive ? " bg-primary bg-opacity-10" : ""}`}
+                style={{ justifyContent: "space-between" }}
             >
-                <ListItem object={object} onClick={() => handleRowClick(object.id)} />
+                <ListItem object={object} />
                 {isActive && (
-                    <span className="ms-2">
+                    <span className="ms-2 d-flex justify-content-end flex-grow-1" style={{ minWidth: 0 }}>
                         <RowActionMenu
                             dataObject={object}
                             handleEditObject={handleEditObject}

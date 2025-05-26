@@ -91,6 +91,6 @@ function InvoicesCard({ className }) {
             return acc + (isNaN(num) ? 0 : num);
         }, 0);
     }
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/" }));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/", headerRoute: "/invoices" }));
 }
 exports.default = InvoicesCard;
