@@ -95087,11 +95087,18 @@ function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
     const { userName, systemEmail, systemRoleName } = MainSetupReact_1.default.currentUser;
     return (react_1.default.createElement(react_bootstrap_1.Card, { className: className, style: style },
         react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            react_1.default.createElement(react_bootstrap_1.Card.Title, null, title),
-            react_1.default.createElement("div", null,
-                react_1.default.createElement("div", null, userName),
-                react_1.default.createElement("div", null, systemEmail),
-                react_1.default.createElement("div", null, systemRoleName)),
+            react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },
+                react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0", style: { fontWeight: 600, fontSize: 18 } }, title)),
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("div", { className: "d-flex align-items-center mb-1" },
+                    react_1.default.createElement("span", { style: { fontSize: 18, marginRight: 8 } }, "\uD83D\uDC64"),
+                    react_1.default.createElement("span", { className: "fw-semibold text-secondary small" }, userName)),
+                react_1.default.createElement("div", { className: "d-flex align-items-center mb-1" },
+                    react_1.default.createElement("span", { style: { fontSize: 18, marginRight: 8 } }, "\u2709\uFE0F"),
+                    react_1.default.createElement("span", { className: "text-secondary small" }, systemEmail)),
+                react_1.default.createElement("div", { className: "d-flex align-items-center" },
+                    react_1.default.createElement("span", { style: { fontSize: 18, marginRight: 8 } }, "\uD83D\uDD11"),
+                    react_1.default.createElement("span", { className: "text-secondary small" }, systemRoleName))),
             renderExtraContent && react_1.default.createElement("div", { className: "mt-2" }, renderExtraContent()))));
 }
 exports["default"] = MyData;
@@ -95458,11 +95465,11 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const Card_1 = __importDefault(__webpack_require__(/*! react-bootstrap/Card */ "./node_modules/react-bootstrap/esm/Card.js"));
 const ListGroup_1 = __importDefault(__webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js"));
 function News({ title = "Nowości w PS", className, style, items = [
-    "[2025-05-26] Zmieniono kartę ApplicationCallsCard – poprawki statusów i repozytorium.",
-    "[2025-05-26] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-26] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-25] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-24] Refaktoryzacja dashboardu (commit: dashboard)",
+    "[2025-05-26] Karta Nabory: dynamiczne statusy i ikony zgodne z ustawieniami systemu, dane pobierane automatycznie z bazy naborów.",
+    "[2025-05-24] Nowe karty na głównym panelu: Oferty, Faktury, Nabory – szybki przegląd i łatwa nawigacja.",
+    "[2025-05-24] Wszystkie karty: jednolity wygląd, klikalne nagłówki sekcji, intuicyjne menu akcji po prawej stronie.",
+    "[2025-05-24] Statusy i ikonki w kartach zgodne z konfiguracją systemu – łatwo rozpoznasz każdy typ sprawy.",
+    "[2025-05-24] Ulepszone ładowanie danych i obsługa pustych list – przejrzyste komunikaty i widoczny wskaźnik ładowania.",
 ], }) {
     return (react_1.default.createElement(Card_1.default, { className: className, style: style },
         react_1.default.createElement(Card_1.default.Body, null,

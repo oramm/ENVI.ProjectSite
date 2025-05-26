@@ -8,11 +8,11 @@ const react_1 = __importDefault(require("react"));
 const Card_1 = __importDefault(require("react-bootstrap/Card"));
 const ListGroup_1 = __importDefault(require("react-bootstrap/ListGroup"));
 function News({ title = "Nowości w PS", className, style, items = [
-    "[2025-05-26] Zmieniono kartę ApplicationCallsCard – poprawki statusów i repozytorium.",
-    "[2025-05-26] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-26] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-25] Drobne poprawki w kodzie (commit: poprawki)",
-    "[2025-05-24] Refaktoryzacja dashboardu (commit: dashboard)",
+    "[2025-05-26] Karta Nabory: dynamiczne statusy i ikony zgodne z ustawieniami systemu, dane pobierane automatycznie z bazy naborów.",
+    "[2025-05-24] Nowe karty na głównym panelu: Oferty, Faktury, Nabory – szybki przegląd i łatwa nawigacja.",
+    "[2025-05-24] Wszystkie karty: jednolity wygląd, klikalne nagłówki sekcji, intuicyjne menu akcji po prawej stronie.",
+    "[2025-05-24] Statusy i ikonki w kartach zgodne z konfiguracją systemu – łatwo rozpoznasz każdy typ sprawy.",
+    "[2025-05-24] Ulepszone ładowanie danych i obsługa pustych list – przejrzyste komunikaty i widoczny wskaźnik ładowania.",
 ], }) {
     return (react_1.default.createElement(Card_1.default, { className: className, style: style },
         react_1.default.createElement(Card_1.default.Body, null,
