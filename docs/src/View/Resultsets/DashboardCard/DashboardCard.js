@@ -87,8 +87,8 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     function renderSection(params) {
         const { objectsInSection, expanded, sectionData } = params;
         const visibleData = expanded ? objectsInSection : objectsInSection.slice(0, INITIAL_VISIBLE);
-        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: sectionData.key, className: `p-0 border-0${expanded ? " bg-primary bg-opacity-10" : ""}` },
-            react_1.default.createElement("div", { className: "list-group-item-action", style: { cursor: "pointer", display: "flex", flexDirection: "column" }, onClick: () => handleToggle(sectionData.key) },
+        return (react_1.default.createElement(react_bootstrap_1.ListGroup.Item, { key: sectionData.key, className: "p-0 border-0" },
+            react_1.default.createElement("div", { className: `list-group-item-action${expanded ? " bg-primary bg-opacity-10" : ""}`, style: { cursor: "pointer", display: "flex", flexDirection: "column" }, onClick: () => handleToggle(sectionData.key) },
                 react_1.default.createElement("div", { className: "d-flex align-items-center justify-content-between w-100" },
                     react_1.default.createElement("span", { className: "d-flex align-items-center flex-grow-1" },
                         react_1.default.createElement("span", { style: { fontSize: 14, width: 14 } }, sectionData.icon),

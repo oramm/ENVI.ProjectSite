@@ -133,12 +133,9 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         const { objectsInSection, expanded, sectionData } = params;
         const visibleData = expanded ? objectsInSection : objectsInSection.slice(0, INITIAL_VISIBLE);
         return (
-            <ListGroup.Item
-                key={sectionData.key}
-                className={`p-0 border-0${expanded ? " bg-primary bg-opacity-10" : ""}`}
-            >
+            <ListGroup.Item key={sectionData.key} className="p-0 border-0">
                 <div
-                    className="list-group-item-action"
+                    className={`list-group-item-action${expanded ? " bg-primary bg-opacity-10" : ""}`}
                     style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}
                     onClick={() => handleToggle(sectionData.key)}
                 >
