@@ -35,21 +35,19 @@ export function useDashboardCardData<DataItemType>(
             setDataLoaded(false);
             const fetched = await fetchDataFn();
             setData(fetched);
-            setDataLoaded(true);
         }
         fetchAndSetData();
     }, [fetchDataFn]);
 
     useEffect(() => {
-        if (dataLoaded && data.length > 0) {
-            setCardData({
-                ...config,
-                sections: buildCustomSections
-                    ? buildCustomSections(data)
-                    : defaultBuildSections(data, config.sectionAttributeName, icons),
-            });
-        }
-    }, [dataLoaded, data, buildCustomSections, icons]);
+        setCardData({
+            ...config,
+            sections: buildCustomSections
+                ? buildCustomSections(data)
+                : defaultBuildSections(data, config.sectionAttributeName, icons),
+        });
+        setDataLoaded(true);
+    }, [data, buildCustomSections, icons]);
 
     return { dataLoaded, data, cardData };
 }

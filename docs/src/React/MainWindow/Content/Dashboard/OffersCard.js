@@ -44,7 +44,7 @@ const sectionsIcons = {
     "Nie składamy": "🛑",
 };
 function OffersCard({ className }) {
-    const defaultCardData = {
+    const initCardData = {
         header: {
             title: "Oferty",
             daysBeforeToday: 30,
@@ -53,8 +53,12 @@ function OffersCard({ className }) {
         sectionAttributeName: "status",
     };
     const fetchData = (0, react_1.useCallback)(async () => {
-        const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -30).toISOString().slice(0, 10);
-        const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), 14).toISOString().slice(0, 10);
+        const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday)
+            .toISOString()
+            .slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetupReact_1.default.OfferStatus),
@@ -64,7 +68,7 @@ function OffersCard({ className }) {
         ];
         return (await MainWindowController_1.offersRepository.loadItemsFromServerPOST(orConditions));
     }, []);
-    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(defaultCardData, sectionsIcons, fetchData);
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchData);
     function renderOfferListItem({ object }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small" },

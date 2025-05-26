@@ -1,4 +1,5 @@
 import {
+    ApplicationCallData,
     Case,
     ExternalOffer,
     Invoice,
@@ -19,7 +20,7 @@ export const contractsRepository = new RepositoryReact<OurContract | OtherContra
         editRoute: "contract",
         deleteRoute: "",
     },
-    name: "dashboardContracts",
+    name: "dashBoard-Contracts",
 });
 
 export const securitiesRepository = new RepositoryReact<Security>({
@@ -29,7 +30,7 @@ export const securitiesRepository = new RepositoryReact<Security>({
         editRoute: "security",
         deleteRoute: "security",
     },
-    name: "securities",
+    name: "dashBoard-securities",
 });
 
 export const milestoneDatesRepository = new RepositoryReact<MilestoneDateData>({
@@ -39,7 +40,7 @@ export const milestoneDatesRepository = new RepositoryReact<MilestoneDateData>({
         editRoute: "milestoneDate",
         deleteRoute: "milestoneDate",
     },
-    name: "milestoneDates",
+    name: "dashBoard-milestoneDates",
 });
 
 export const tasksRepository = new RepositoryReact<Task>({
@@ -72,7 +73,6 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
     name: "offers",
 });
 
-//invoices
 export const invoicesRepository = new RepositoryReact<Invoice>({
     actionRoutes: {
         getRoute: "invoices",
@@ -80,5 +80,15 @@ export const invoicesRepository = new RepositoryReact<Invoice>({
         editRoute: "invoice",
         deleteRoute: "",
     },
-    name: "invoices",
+    name: "dashBoard-invoices",
+});
+
+export const applicationCallsRepository = new RepositoryReact<ApplicationCallData>({
+    actionRoutes: {
+        getRoute: "applicationCalls",
+        addNewRoute: "",
+        editRoute: "applicationCall",
+        deleteRoute: "",
+    },
+    name: "dashBoard-applicationCalls",
 });

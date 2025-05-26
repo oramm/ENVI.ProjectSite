@@ -196,16 +196,29 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
             </li>
         );
     }
-    if (!cardData.sections?.length) {
+
+    if (!dataLoaded) {
         return (
             <Card className={className}>
                 <Card.Body>
-                    <Card.Title>{cardData ? cardData.header.title : "Ładowanie..."}</Card.Title>
+                    <Card.Title>{cardData.header.title}</Card.Title>
                     <SpinnerBootstrap />
                 </Card.Body>
             </Card>
         );
     }
+
+    if (!cardData.sections?.length) {
+        return (
+            <Card className={className}>
+                <Card.Body>
+                    <Card.Title>{cardData.header.title}</Card.Title>
+                    <div className="text-secondary">Brak danych do wyświetlenia.</div>
+                </Card.Body>
+            </Card>
+        );
+    }
+
     return (
         <DashboardCardProvider<DataItemType>
             objects={objects}
@@ -225,12 +238,11 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
                 <Card.Body>
                     {renderCardTitle()}
                     <ListGroup variant="flush" className="mt-3">
-                        {cardData.sections.map((sectionData) => {
+                        {cardData.sections!.map((sectionData) => {
                             const objectsInSection = objects.filter(
                                 (object) => sectionData.key === object[cardData.sectionAttributeName]
                             );
                             if (objectsInSection.length === 0) return null;
-
                             return renderSection({
                                 objectsInSection,
                                 sectionData,

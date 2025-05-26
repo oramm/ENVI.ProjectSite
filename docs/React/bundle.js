@@ -94826,6 +94826,98 @@ MainSetup.RoleGroups = {
 
 /***/ }),
 
+/***/ "./src/React/MainWindow/Content/Dashboard/ApplicationCallsCard.tsx":
+/*!*************************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/ApplicationCallsCard.tsx ***!
+  \*************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
+const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
+const ApplicationCallModalButtons_1 = __webpack_require__(/*! ../../../../financialAidProgrammes/FocusAreas/ApplicationCalls/Modals/ApplicationCallModalButtons */ "./src/financialAidProgrammes/FocusAreas/ApplicationCalls/Modals/ApplicationCallModalButtons.tsx");
+const sectionIcons = {
+    Nieznany: "❓",
+    Zaplanowany: "🗓️",
+    Otwarty: "📂",
+    Zamknięty: "🔒",
+};
+function ApplicationCallsCard({ className }) {
+    const initCardData = {
+        header: {
+            title: "Nabory",
+            daysBeforeToday: 100,
+            daysAfterToday: 100,
+        },
+        sectionAttributeName: "status",
+    };
+    const fetchData = (0, react_1.useCallback)(async () => {
+        const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
+        const orConditions = [
+            {
+                statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
+                endDateFrom,
+                endDateTo,
+            },
+        ];
+        return (await MainWindowController_1.applicationCallsRepository.loadItemsFromServerPOST(orConditions));
+    }, []);
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionIcons, fetchData);
+    function renderSectionSubtitle({ sectionData }) {
+        const objectsInSection = data.filter((object) => object.status === sectionData.key);
+        return react_1.default.createElement("span", null);
+    }
+    function renderListItem({ object }) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("span", { className: "text-secondary small flex-grow-1" },
+                react_1.default.createElement("span", { className: "fw-semibold" }, object._focusArea.alias),
+                ", ",
+                react_1.default.createElement("span", { className: "fw-light" }, object.description)),
+            react_1.default.createElement("span", { className: "text-secondary small text-end ms-2", style: { minWidth: 70 } },
+                react_1.default.createElement("span", { className: "fw-light" }, object.endDate && ToolsDate_1.default.dateToDdMmm(object.endDate)))));
+    }
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.applicationCallsRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, shouldRetrieveDataBeforeEdit: false, headerRoute: "/financialAidProgrammes/applicationCalls" }));
+}
+exports["default"] = ApplicationCallsCard;
+
+
+/***/ }),
+
 /***/ "./src/React/MainWindow/Content/Dashboard/Dashboard.tsx":
 /*!**************************************************************!*\
   !*** ./src/React/MainWindow/Content/Dashboard/Dashboard.tsx ***!
@@ -94846,14 +94938,16 @@ const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/M
 const OffersCard_1 = __importDefault(__webpack_require__(/*! ./OffersCard */ "./src/React/MainWindow/Content/Dashboard/OffersCard.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx"));
+const ApplicationCallsCard_1 = __importDefault(__webpack_require__(/*! ./ApplicationCallsCard */ "./src/React/MainWindow/Content/Dashboard/ApplicationCallsCard.tsx"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
-        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(OffersCard_1.default, { className: "mb-3 bg-white" }),
-            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" }))),
-        react_1.default.createElement(react_bootstrap_1.Col, { md: 8, className: "mb-3" },
+            ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
+            react_1.default.createElement(ApplicationCallsCard_1.default, { className: "mb-3 bg-white" })),
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
             react_1.default.createElement(UpcomingEvents_1.default, null)),
-        react_1.default.createElement(react_bootstrap_1.Col, { md: 2, className: "mb-3" },
+        react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }),
             react_1.default.createElement(News_1.default, { className: "mb-3 bg-white" }))));
 }
@@ -94924,8 +95018,12 @@ function InvoicesCard({ className }) {
         sectionAttributeName: "status",
     };
     const fetchData = (0, react_1.useCallback)(async () => {
-        const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -60).toISOString().slice(0, 10);
-        const issueDateTo = ToolsDate_1.default.addDays(new Date(), 30).toISOString().slice(0, 10);
+        const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const issueDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday)
+            .toISOString()
+            .slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
@@ -95054,7 +95152,7 @@ const sectionsIcons = {
     "Nie składamy": "🛑",
 };
 function OffersCard({ className }) {
-    const defaultCardData = {
+    const initCardData = {
         header: {
             title: "Oferty",
             daysBeforeToday: 30,
@@ -95063,8 +95161,12 @@ function OffersCard({ className }) {
         sectionAttributeName: "status",
     };
     const fetchData = (0, react_1.useCallback)(async () => {
-        const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -30).toISOString().slice(0, 10);
-        const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), 14).toISOString().slice(0, 10);
+        const submissionDeadlineFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const submissionDeadlineTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday)
+            .toISOString()
+            .slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetupReact_1.default.OfferStatus),
@@ -95074,7 +95176,7 @@ function OffersCard({ className }) {
         ];
         return (await MainWindowController_1.offersRepository.loadItemsFromServerPOST(orConditions));
     }, []);
-    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(defaultCardData, sectionsIcons, fetchData);
+    const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchData);
     function renderOfferListItem({ object }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small" },
@@ -95488,7 +95590,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
+exports.applicationCallsRepository = exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95497,7 +95599,7 @@ exports.contractsRepository = new RepositoryReact_1.default({
         editRoute: "contract",
         deleteRoute: "",
     },
-    name: "dashboardContracts",
+    name: "dashBoard-Contracts",
 });
 exports.securitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95506,7 +95608,7 @@ exports.securitiesRepository = new RepositoryReact_1.default({
         editRoute: "security",
         deleteRoute: "security",
     },
-    name: "securities",
+    name: "dashBoard-securities",
 });
 exports.milestoneDatesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95515,7 +95617,7 @@ exports.milestoneDatesRepository = new RepositoryReact_1.default({
         editRoute: "milestoneDate",
         deleteRoute: "milestoneDate",
     },
-    name: "milestoneDates",
+    name: "dashBoard-milestoneDates",
 });
 exports.tasksRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95544,7 +95646,6 @@ exports.offersRepository = new RepositoryReact_1.default({
     },
     name: "offers",
 });
-//invoices
 exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "invoices",
@@ -95552,7 +95653,16 @@ exports.invoicesRepository = new RepositoryReact_1.default({
         editRoute: "invoice",
         deleteRoute: "",
     },
-    name: "invoices",
+    name: "dashBoard-invoices",
+});
+exports.applicationCallsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "applicationCalls",
+        addNewRoute: "",
+        editRoute: "applicationCall",
+        deleteRoute: "",
+    },
+    name: "dashBoard-applicationCalls",
 });
 
 
@@ -99917,11 +100027,17 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             isActive && (react_1.default.createElement("span", { className: "ms-2 d-flex justify-content-end flex-grow-1", style: { minWidth: 0 } },
                 react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
     }
+    if (!dataLoaded) {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData.header.title),
+                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
+    }
     if (!cardData.sections?.length) {
         return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData ? cardData.header.title : "Ładowanie..."),
-                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData.header.title),
+                react_1.default.createElement("div", { className: "text-secondary" }, "Brak danych do wy\u015Bwietlenia."))));
     }
     return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: detailsRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Card, { className: className },
@@ -100118,20 +100234,18 @@ function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
             setDataLoaded(false);
             const fetched = await fetchDataFn();
             setData(fetched);
-            setDataLoaded(true);
         }
         fetchAndSetData();
     }, [fetchDataFn]);
     (0, react_1.useEffect)(() => {
-        if (dataLoaded && data.length > 0) {
-            setCardData({
-                ...config,
-                sections: buildCustomSections
-                    ? buildCustomSections(data)
-                    : defaultBuildSections(data, config.sectionAttributeName, icons),
-            });
-        }
-    }, [dataLoaded, data, buildCustomSections, icons]);
+        setCardData({
+            ...config,
+            sections: buildCustomSections
+                ? buildCustomSections(data)
+                : defaultBuildSections(data, config.sectionAttributeName, icons),
+        });
+        setDataLoaded(true);
+    }, [data, buildCustomSections, icons]);
     return { dataLoaded, data, cardData };
 }
 exports.useDashboardCardData = useDashboardCardData;

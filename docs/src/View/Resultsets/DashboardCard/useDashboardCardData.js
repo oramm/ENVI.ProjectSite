@@ -22,20 +22,18 @@ function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
             setDataLoaded(false);
             const fetched = await fetchDataFn();
             setData(fetched);
-            setDataLoaded(true);
         }
         fetchAndSetData();
     }, [fetchDataFn]);
     (0, react_1.useEffect)(() => {
-        if (dataLoaded && data.length > 0) {
-            setCardData({
-                ...config,
-                sections: buildCustomSections
-                    ? buildCustomSections(data)
-                    : defaultBuildSections(data, config.sectionAttributeName, icons),
-            });
-        }
-    }, [dataLoaded, data, buildCustomSections, icons]);
+        setCardData({
+            ...config,
+            sections: buildCustomSections
+                ? buildCustomSections(data)
+                : defaultBuildSections(data, config.sectionAttributeName, icons),
+        });
+        setDataLoaded(true);
+    }, [data, buildCustomSections, icons]);
     return { dataLoaded, data, cardData };
 }
 exports.useDashboardCardData = useDashboardCardData;

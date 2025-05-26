@@ -30,71 +30,52 @@ const react_1 = __importStar(require("react"));
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
 const MainWindowController_1 = require("../../MainWindowController");
 const ToolsDate_1 = __importDefault(require("../../../Tools/ToolsDate"));
-const Tools_1 = __importDefault(require("../../../Tools/Tools"));
 const DashboardCard_1 = __importDefault(require("../../../../View/Resultsets/DashboardCard/DashboardCard"));
-const InvoiceModalButtons_1 = require("../../../../Erp/InvoicesList/Modals/InvoiceModalButtons");
 const useDashboardCardData_1 = require("../../../../View/Resultsets/DashboardCard/useDashboardCardData");
+const ApplicationCallModalButtons_1 = require("../../../../financialAidProgrammes/FocusAreas/ApplicationCalls/Modals/ApplicationCallModalButtons");
 const sectionIcons = {
-    "Na później": "⏳",
-    "Do zrobienia": "📝",
-    Zrobiona: "✅",
-    Wysłana: "📤",
-    Zapłacona: "💸",
-    "Do korekty": "✏️",
-    Wycofana: "🚫",
+    Nieznany: "❓",
+    Zaplanowany: "🗓️",
+    Otwarty: "📂",
+    Zamknięty: "🔒",
 };
-function InvoicesCard({ className }) {
+function ApplicationCallsCard({ className }) {
     const initCardData = {
         header: {
-            title: "Faktury",
-            daysBeforeToday: 45,
-            daysAfterToday: 14,
+            title: "Nabory",
+            daysBeforeToday: 100,
+            daysAfterToday: 100,
         },
         sectionAttributeName: "status",
     };
     const fetchData = (0, react_1.useCallback)(async () => {
-        const issueDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+        const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
             .toISOString()
             .slice(0, 10);
-        const issueDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday)
-            .toISOString()
-            .slice(0, 10);
+        const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const orConditions = [
             {
-                statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
-                issueDateFrom,
-                issueDateTo,
+                statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
+                endDateFrom,
+                endDateTo,
             },
         ];
-        return (await MainWindowController_1.invoicesRepository.loadItemsFromServerPOST(orConditions));
+        return (await MainWindowController_1.applicationCallsRepository.loadItemsFromServerPOST(orConditions));
     }, []);
     const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionIcons, fetchData);
     function renderSectionSubtitle({ sectionData }) {
-        const invoicesInSection = data.filter((object) => object.status === sectionData.key);
-        const totalValue = Tools_1.default.formatNumber(getTotalValue(invoicesInSection)) + " zł";
-        return react_1.default.createElement("span", null,
-            "\u0141\u0105cznie: ",
-            totalValue);
+        const objectsInSection = data.filter((object) => object.status === sectionData.key);
+        return react_1.default.createElement("span", null);
     }
     function renderListItem({ object }) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small flex-grow-1" },
-                react_1.default.createElement("span", { className: "fw-semibold" }, object._contract.ourId),
+                react_1.default.createElement("span", { className: "fw-semibold" }, object._focusArea.alias),
                 ", ",
-                object.number || object._contract._city?.name),
+                react_1.default.createElement("span", { className: "fw-light" }, object.description)),
             react_1.default.createElement("span", { className: "text-secondary small text-end ms-2", style: { minWidth: 70 } },
-                react_1.default.createElement("span", { className: "fw-light" },
-                    Tools_1.default.formatNumber(object._totalNetValue || 0),
-                    " z\u0142"))));
+                react_1.default.createElement("span", { className: "fw-light" }, object.endDate && ToolsDate_1.default.dateToDdMmm(object.endDate)))));
     }
-    function getTotalValue(invoices = []) {
-        return invoices.reduce((acc, inv) => {
-            // Zamieni wszystko (number, undefined, string) na string, więc replace zawsze istnieje
-            const raw = inv._totalNetValue;
-            const num = parseFloat(String(raw).replace(",", "."));
-            return acc + (isNaN(num) ? 0 : num);
-        }, 0);
-    }
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/", headerRoute: "/invoices" }));
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.applicationCallsRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, shouldRetrieveDataBeforeEdit: false, headerRoute: "/financialAidProgrammes/applicationCalls" }));
 }
-exports.default = InvoicesCard;
+exports.default = ApplicationCallsCard;

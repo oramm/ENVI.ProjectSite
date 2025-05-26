@@ -19,7 +19,7 @@ const sectionsIcons: Record<string, string> = {
 };
 
 export default function OffersCard({ className }: { className: string }) {
-    const defaultCardData: DashboardCardData<OurOffer | ExternalOffer> = {
+    const initCardData: DashboardCardData<OurOffer | ExternalOffer> = {
         header: {
             title: "Oferty",
             daysBeforeToday: 30,
@@ -29,8 +29,12 @@ export default function OffersCard({ className }: { className: string }) {
     };
 
     const fetchData = useCallback(async () => {
-        const submissionDeadlineFrom = ToolsDate.addDays(new Date(), -30).toISOString().slice(0, 10);
-        const submissionDeadlineTo = ToolsDate.addDays(new Date(), 14).toISOString().slice(0, 10);
+        const submissionDeadlineFrom = ToolsDate.addDays(new Date(), -initCardData.header.daysBeforeToday!)
+            .toISOString()
+            .slice(0, 10);
+        const submissionDeadlineTo = ToolsDate.addDays(new Date(), initCardData.header.daysAfterToday!)
+            .toISOString()
+            .slice(0, 10);
 
         const orConditions = [
             {
@@ -43,7 +47,7 @@ export default function OffersCard({ className }: { className: string }) {
     }, []);
 
     const { dataLoaded, data, cardData } = useDashboardCardData<OurOffer | ExternalOffer>(
-        defaultCardData,
+        initCardData,
         sectionsIcons,
         fetchData
     );

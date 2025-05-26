@@ -31,8 +31,12 @@ export default function InvoicesCard({ className }: { className: string }) {
         sectionAttributeName: "status" as keyof Invoice,
     };
     const fetchData = useCallback(async () => {
-        const issueDateFrom = ToolsDate.addDays(new Date(), -60).toISOString().slice(0, 10);
-        const issueDateTo = ToolsDate.addDays(new Date(), 30).toISOString().slice(0, 10);
+        const issueDateFrom = ToolsDate.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const issueDateTo = ToolsDate.addDays(new Date(), initCardData.header.daysAfterToday)
+            .toISOString()
+            .slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetup.InvoiceStatuses),

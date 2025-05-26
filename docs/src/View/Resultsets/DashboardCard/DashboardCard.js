@@ -107,11 +107,17 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             isActive && (react_1.default.createElement("span", { className: "ms-2 d-flex justify-content-end flex-grow-1", style: { minWidth: 0 } },
                 react_1.default.createElement(RowActionMenu_1.default, { dataObject: object, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, layout: "horizontal" })))));
     }
+    if (!dataLoaded) {
+        return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData.header.title),
+                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
+    }
     if (!cardData.sections?.length) {
         return (react_1.default.createElement(react_bootstrap_1.Card, { className: className },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData ? cardData.header.title : "Ładowanie..."),
-                react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))));
+                react_1.default.createElement(react_bootstrap_1.Card.Title, null, cardData.header.title),
+                react_1.default.createElement("div", { className: "text-secondary" }, "Brak danych do wy\u015Bwietlenia."))));
     }
     return (react_1.default.createElement(DashboardCardContext_1.DashboardCardProvider, { objects: objects, cardData: cardData, activeRowId: activeRowId, repository: repository, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, selectedObjectRoute: detailsRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Card, { className: className },

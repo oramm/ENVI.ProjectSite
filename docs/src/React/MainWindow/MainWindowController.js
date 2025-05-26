@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
+exports.applicationCallsRepository = exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(require("../RepositoryReact"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -12,7 +12,7 @@ exports.contractsRepository = new RepositoryReact_1.default({
         editRoute: "contract",
         deleteRoute: "",
     },
-    name: "dashboardContracts",
+    name: "dashBoard-Contracts",
 });
 exports.securitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -21,7 +21,7 @@ exports.securitiesRepository = new RepositoryReact_1.default({
         editRoute: "security",
         deleteRoute: "security",
     },
-    name: "securities",
+    name: "dashBoard-securities",
 });
 exports.milestoneDatesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -30,7 +30,7 @@ exports.milestoneDatesRepository = new RepositoryReact_1.default({
         editRoute: "milestoneDate",
         deleteRoute: "milestoneDate",
     },
-    name: "milestoneDates",
+    name: "dashBoard-milestoneDates",
 });
 exports.tasksRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -59,7 +59,6 @@ exports.offersRepository = new RepositoryReact_1.default({
     },
     name: "offers",
 });
-//invoices
 exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "invoices",
@@ -67,5 +66,14 @@ exports.invoicesRepository = new RepositoryReact_1.default({
         editRoute: "invoice",
         deleteRoute: "",
     },
-    name: "invoices",
+    name: "dashBoard-invoices",
+});
+exports.applicationCallsRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "applicationCalls",
+        addNewRoute: "",
+        editRoute: "applicationCall",
+        deleteRoute: "",
+    },
+    name: "dashBoard-applicationCalls",
 });
