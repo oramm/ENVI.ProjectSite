@@ -16,7 +16,7 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
         editRoute: "offer",
         deleteRoute: "offer",
     },
-    name: "offers",
+    name: "offers-list",
 });
 
 export const mailsToCheckRepository = new RepositoryReact<MailData>({

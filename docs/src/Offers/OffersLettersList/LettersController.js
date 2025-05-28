@@ -21,7 +21,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-letters",
 });
 exports.milestonesRepository = new RepositoryReact_1.default({
     actionRoutes: {

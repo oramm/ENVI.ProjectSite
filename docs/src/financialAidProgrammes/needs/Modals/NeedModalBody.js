@@ -47,6 +47,9 @@ function NeedModalBody({ isEditing, initialData }) {
         reset(resetData);
         trigger();
     }, [initialData, reset, trigger]);
+    (0, react_1.useEffect)(() => {
+        console.log("Application call changed", watch("_applicationCall"));
+    }, [watch("_applicationCall")]);
     const _focusAreas = watch("_focusAreas");
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,

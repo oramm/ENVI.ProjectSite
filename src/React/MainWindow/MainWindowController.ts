@@ -70,7 +70,7 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
         editRoute: "offer",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-dashBoard",
 });
 
 export const invoicesRepository = new RepositoryReact<Invoice>({

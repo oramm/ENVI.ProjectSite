@@ -91549,7 +91549,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-letters",
 });
 exports.milestonesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -92832,65 +92832,70 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/Gener
 const OfferValidationSchema_1 = __webpack_require__(/*! ./OfferValidationSchema */ "./src/Offers/OffersList/Modals/OfferValidationSchema.ts");
 const ExternalOfferModalBody_1 = __webpack_require__(/*! ./ExternalOfferModalBody */ "./src/Offers/OffersList/Modals/ExternalOfferModalBody.tsx");
 const OurOfferModalBody_1 = __webpack_require__(/*! ./OurOfferModalBody */ "./src/Offers/OffersList/Modals/OurOfferModalBody.tsx");
-const OffersController_1 = __webpack_require__(/*! ../OffersController */ "./src/Offers/OffersList/OffersController.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const OffersController_1 = __webpack_require__(/*! ../OffersController */ "./src/Offers/OffersList/OffersController.ts"); // tylko dla ExportOurOfferToPDFButton
 /** przycisk i modal edycji Offer */
-function OfferEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function OfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
         console.log("OfferEditModalButton initialData", initialData);
     }, [initialData]);
-    return initialData.isOur ? (react_1.default.createElement(OurOfferEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ExternalOfferEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+    return initialData.isOur ? (react_1.default.createElement(OurOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps })) : (react_1.default.createElement(ExternalOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps }));
 }
 exports.OfferEditModalButton = OfferEditModalButton;
-function OurOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function OurOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Edycja oferty - szablon ENVI",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
         }, buttonProps: {
             buttonVariant: "outline-success",
+            ...buttonProps,
         } }));
 }
 exports.OurOfferEditModalButton = OurOfferEditModalButton;
-function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle }, }) {
+function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Rejestruj ofertę - szablon ENVI",
             modalSubtitle,
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
             contextData,
         }, buttonProps: {
             buttonCaption: "Rejestruj ENVI",
             buttonVariant: "outline-success",
+            ...buttonProps,
         } }));
 }
 exports.OurOfferAddNewModalButton = OurOfferAddNewModalButton;
-function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Edycja oferty - formularz Zamawiającego",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
-        }, buttonProps: {} }));
+        }, buttonProps: {
+            ...buttonProps,
+        } }));
 }
 exports.ExternalOfferEditModalButton = ExternalOfferEditModalButton;
-function ExternalOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
+function ExternalOfferAddNewModalButton({ modalProps: { onAddNew, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Nowa oferta - formularz Zamawiającego",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj ofertę",
+            ...buttonProps,
         } }));
 }
 exports.ExternalOfferAddNewModalButton = ExternalOfferAddNewModalButton;
@@ -92900,6 +92905,7 @@ function ExportOurOfferToPDFButton({ onError, ourOffer, }) {
     async function handleClick() {
         try {
             setRequestPending(true);
+            // UWAGA: tu nadal używamy offersRepository z OffersController, bo to nie jest modal edycji
             await OffersController_1.offersRepository.fetch("exportOurOfferToPDF", ourOffer);
             setRequestPending(false);
             setShowSuccessToast(true);
@@ -93394,17 +93400,16 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OfferBondDeleteModalButton = exports.OfferBondAddNewModalButton = exports.OfferBondEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-const OffersController_1 = __webpack_require__(/*! ../../OffersController */ "./src/Offers/OffersList/OffersController.ts");
 const OfferBondModalBody_1 = __webpack_require__(/*! ./OfferBondModalBody */ "./src/Offers/OffersList/OfferBonds/Modals/OfferBondModalBody.tsx");
 const OfferBondValidationSchema_1 = __importDefault(__webpack_require__(/*! ./OfferBondValidationSchema */ "./src/Offers/OffersList/OfferBonds/Modals/OfferBondValidationSchema.ts"));
 const FilterableTableContext_1 = __webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
-function OfferBondEditModalButton({ modalProps: { initialData } }) {
+function OfferBondEditModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Edycja wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferBondValidationSchema_1.default,
             specialActionRoute: "editOfferBond",
@@ -93414,13 +93419,13 @@ function OfferBondEditModalButton({ modalProps: { initialData } }) {
         } }));
 }
 exports.OfferBondEditModalButton = OfferBondEditModalButton;
-function OfferBondAddNewModalButton({ modalProps: { initialData }, }) {
+function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Dodaj wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferBondValidationSchema_1.default,
             specialActionRoute: "addNewOfferBond",
@@ -93430,13 +93435,13 @@ function OfferBondAddNewModalButton({ modalProps: { initialData }, }) {
         } }));
 }
 exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
-function OfferBondDeleteModalButton({ modalProps: { initialData }, }) {
+function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Usuń wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             //makeValidationSchema: makeOfferBondValidationSchema,
             specialActionRoute: "deleteOfferBond",
@@ -93593,7 +93598,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "offer",
         deleteRoute: "offer",
     },
-    name: "offers",
+    name: "offers-list",
 });
 exports.mailsToCheckRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -93899,7 +93904,12 @@ function OffersSearch({ title }) {
         if (offer.isOur)
             return null;
         if (!offer._offerBond)
-            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } })));
+            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                } })));
         return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2 mb-2", style: { whiteSpace: "pre-line" } },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 react_1.default.createElement("div", { className: "card-title h6" },
@@ -93921,9 +93931,19 @@ function OffersSearch({ title }) {
     }
     function renderOfferBondMenu(offer) {
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }),
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                }, buttonProps: { layout: "horizontal" } }),
             " ",
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                }, buttonProps: { layout: "horizontal" } })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }
@@ -95661,7 +95681,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "offer",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-dashBoard",
 });
 exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -99966,7 +99986,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext  */ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx");
+const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext */ "./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const RowActionMenu_1 = __importDefault(__webpack_require__(/*! ./RowActionMenu */ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -100076,10 +100096,10 @@ exports["default"] = DashboardCard;
 
 /***/ }),
 
-/***/ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx":
-/*!*********************************************************************!*\
-  !*** ./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx ***!
-  \*********************************************************************/
+/***/ "./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx":
+/*!********************************************************************!*\
+  !*** ./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx ***!
+  \********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -100189,7 +100209,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ../FilterableTable/FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
-const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext  */ "./src/View/Resultsets/DashboardCard/DashboardCardContext .tsx");
+const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext */ "./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx");
 function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = (0, DashboardCardContext_1.useDashboardCardContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
@@ -100204,6 +100224,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                 initialData: dataObject,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                repository,
             }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),
@@ -100840,6 +100861,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                 initialData: dataObject,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                repository: repository,
             }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),
@@ -102117,6 +102139,9 @@ function NeedModalBody({ isEditing, initialData }) {
         reset(resetData);
         trigger();
     }, [initialData, reset, trigger]);
+    (0, react_1.useEffect)(() => {
+        console.log("Application call changed", watch("_applicationCall"));
+    }, [watch("_applicationCall")]);
     const _focusAreas = watch("_focusAreas");
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,

@@ -4,7 +4,7 @@ import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton } from "../CommonComponents";
 import { DeleteModalButton } from "../FilterableTable/FilterableTableRow";
-import { useDashboardCardContext } from "./DashboardCardContext ";
+import { useDashboardCardContext } from "./DashboardCardContext";
 
 interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     dataObject: DataItemType;
@@ -53,6 +53,7 @@ export default function RowActionMenu<DataItemType extends RepositoryDataItem>({
                         initialData: dataObject,
                         shouldRetrieveDataBeforeEdit,
                         specialRetrieveActionRoute,
+                        repository,
                     }}
                     buttonProps={{ layout }}
                 />

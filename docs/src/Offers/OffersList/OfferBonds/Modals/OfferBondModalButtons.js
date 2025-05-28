@@ -6,17 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OfferBondDeleteModalButton = exports.OfferBondAddNewModalButton = exports.OfferBondEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
-const OffersController_1 = require("../../OffersController");
 const OfferBondModalBody_1 = require("./OfferBondModalBody");
 const OfferBondValidationSchema_1 = __importDefault(require("./OfferBondValidationSchema"));
 const FilterableTableContext_1 = require("../../../../View/Resultsets/FilterableTable/FilterableTableContext");
-function OfferBondEditModalButton({ modalProps: { initialData } }) {
+function OfferBondEditModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Edycja wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferBondValidationSchema_1.default,
             specialActionRoute: "editOfferBond",
@@ -26,13 +25,13 @@ function OfferBondEditModalButton({ modalProps: { initialData } }) {
         } }));
 }
 exports.OfferBondEditModalButton = OfferBondEditModalButton;
-function OfferBondAddNewModalButton({ modalProps: { initialData }, }) {
+function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Dodaj wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferBondValidationSchema_1.default,
             specialActionRoute: "addNewOfferBond",
@@ -42,13 +41,13 @@ function OfferBondAddNewModalButton({ modalProps: { initialData }, }) {
         } }));
 }
 exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
-function OfferBondDeleteModalButton({ modalProps: { initialData }, }) {
+function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: handleEditObject,
             ModalBodyComponent: OfferBondModalBody_1.OfferBondModalBody,
             modalTitle: "Usuń wadium",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             //makeValidationSchema: makeOfferBondValidationSchema,
             specialActionRoute: "deleteOfferBond",

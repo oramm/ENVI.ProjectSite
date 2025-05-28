@@ -35,6 +35,10 @@ export function NeedModalBody({ isEditing, initialData }: ModalBodyProps<NeedDat
         trigger();
     }, [initialData, reset, trigger]);
 
+    useEffect(() => {
+        console.log("Application call changed", watch("_applicationCall"));
+    }, [watch("_applicationCall")]);
+
     const _focusAreas = watch("_focusAreas") as FocusAreaData[] | undefined;
 
     return (

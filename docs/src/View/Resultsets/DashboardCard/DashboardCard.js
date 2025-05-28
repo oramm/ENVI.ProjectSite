@@ -29,7 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const react_bootstrap_1 = require("react-bootstrap");
-const DashboardCardContext_1 = require("./DashboardCardContext ");
+const DashboardCardContext_1 = require("./DashboardCardContext");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const RowActionMenu_1 = __importDefault(require("./RowActionMenu"));
 const CommonComponents_1 = require("../CommonComponents");

@@ -57,7 +57,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "offer",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-dashBoard",
 });
 exports.invoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {

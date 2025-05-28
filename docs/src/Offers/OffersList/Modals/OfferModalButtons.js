@@ -29,65 +29,70 @@ const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons"
 const OfferValidationSchema_1 = require("./OfferValidationSchema");
 const ExternalOfferModalBody_1 = require("./ExternalOfferModalBody");
 const OurOfferModalBody_1 = require("./OurOfferModalBody");
-const OffersController_1 = require("../OffersController");
 const react_bootstrap_1 = require("react-bootstrap");
 const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const OffersController_1 = require("../OffersController"); // tylko dla ExportOurOfferToPDFButton
 /** przycisk i modal edycji Offer */
-function OfferEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
+function OfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     (0, react_1.useEffect)(() => {
         console.log("OfferEditModalButton initialData", initialData);
     }, [initialData]);
-    return initialData.isOur ? (react_1.default.createElement(OurOfferEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ExternalOfferEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
+    return initialData.isOur ? (react_1.default.createElement(OurOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps })) : (react_1.default.createElement(ExternalOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps }));
 }
 exports.OfferEditModalButton = OfferEditModalButton;
-function OurOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function OurOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Edycja oferty - szablon ENVI",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
         }, buttonProps: {
             buttonVariant: "outline-success",
+            ...buttonProps,
         } }));
 }
 exports.OurOfferEditModalButton = OurOfferEditModalButton;
-function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle }, }) {
+function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: OurOfferModalBody_1.OurOfferModalBody,
             modalTitle: "Rejestruj ofertę - szablon ENVI",
             modalSubtitle,
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             makeValidationSchema: OfferValidationSchema_1.makeOurOfferValidationSchema,
             contextData,
         }, buttonProps: {
             buttonCaption: "Rejestruj ENVI",
             buttonVariant: "outline-success",
+            ...buttonProps,
         } }));
 }
 exports.OurOfferAddNewModalButton = OurOfferAddNewModalButton;
-function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Edycja oferty - formularz Zamawiającego",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
-        }, buttonProps: {} }));
+        }, buttonProps: {
+            ...buttonProps,
+        } }));
 }
 exports.ExternalOfferEditModalButton = ExternalOfferEditModalButton;
-function ExternalOfferAddNewModalButton({ modalProps: { onAddNew }, }) {
+function ExternalOfferAddNewModalButton({ modalProps: { onAddNew, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew,
             ModalBodyComponent: ExternalOfferModalBody_1.ExternalOfferModalBody,
             modalTitle: "Nowa oferta - formularz Zamawiającego",
-            repository: OffersController_1.offersRepository,
+            repository: repository,
             makeValidationSchema: OfferValidationSchema_1.makeOtherOfferValidationSchema,
         }, buttonProps: {
             buttonCaption: "Rejestruj ofertę",
+            ...buttonProps,
         } }));
 }
 exports.ExternalOfferAddNewModalButton = ExternalOfferAddNewModalButton;
@@ -97,6 +102,7 @@ function ExportOurOfferToPDFButton({ onError, ourOffer, }) {
     async function handleClick() {
         try {
             setRequestPending(true);
+            // UWAGA: tu nadal używamy offersRepository z OffersController, bo to nie jest modal edycji
             await OffersController_1.offersRepository.fetch("exportOurOfferToPDF", ourOffer);
             setRequestPending(false);
             setShowSuccessToast(true);

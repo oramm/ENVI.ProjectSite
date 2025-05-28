@@ -173,7 +173,12 @@ function OffersSearch({ title }) {
         if (offer.isOur)
             return null;
         if (!offer._offerBond)
-            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer } })));
+            return (isActive && (react_1.default.createElement(OfferBondModalButtons_1.OfferBondAddNewModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                } })));
         return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2 mb-2", style: { whiteSpace: "pre-line" } },
             react_1.default.createElement(react_bootstrap_1.Card.Body, null,
                 react_1.default.createElement("div", { className: "card-title h6" },
@@ -195,9 +200,19 @@ function OffersSearch({ title }) {
     }
     function renderOfferBondMenu(offer) {
         return (react_1.default.createElement("div", null,
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } }),
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondEditModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                }, buttonProps: { layout: "horizontal" } }),
             " ",
-            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: { onEdit: () => { }, initialData: offer, contextData: offer }, buttonProps: { layout: "horizontal" } })));
+            react_1.default.createElement(OfferBondModalButtons_1.OfferBondDeleteModalButton, { modalProps: {
+                    repository: OffersController_1.offersRepository,
+                    onEdit: () => { },
+                    initialData: offer,
+                    contextData: offer,
+                }, buttonProps: { layout: "horizontal" } })));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }

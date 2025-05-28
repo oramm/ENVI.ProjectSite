@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableRow_1 = require("../FilterableTable/FilterableTableRow");
-const DashboardCardContext_1 = require("./DashboardCardContext ");
+const DashboardCardContext_1 = require("./DashboardCardContext");
 function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = (0, DashboardCardContext_1.useDashboardCardContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
@@ -41,6 +41,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                 initialData: dataObject,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                repository,
             }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),

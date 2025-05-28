@@ -127,6 +127,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                         initialData: dataObject,
                         shouldRetrieveDataBeforeEdit,
                         specialRetrieveActionRoute,
+                        repository: repository as RepositoryReact<any>,
                     }}
                     buttonProps={{ layout }}
                 />

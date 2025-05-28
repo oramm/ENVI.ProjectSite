@@ -5,13 +5,14 @@ import { makeOtherOfferValidationSchema, makeOurOfferValidationSchema } from "./
 import { ExternalOfferModalBody } from "./ExternalOfferModalBody";
 import { OurOfferModalBody } from "./OurOfferModalBody";
 import { ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
-import { offersRepository } from "../OffersController";
 import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../View/Resultsets/CommonComponents";
+import { offersRepository } from "../OffersController"; // tylko dla ExportOurOfferToPDFButton
+import RepositoryReact from "../../../React/RepositoryReact";
 
 /** przycisk i modal edycji Offer */
 export function OfferEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, repository },
     buttonProps,
 }: SpecificEditModalButtonProps<OurOffer | ExternalOffer>) {
     useEffect(() => {
@@ -19,35 +20,38 @@ export function OfferEditModalButton({
     }, [initialData]);
 
     return initialData.isOur ? (
-        <OurOfferEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+        <OurOfferEditModalButton modalProps={{ onEdit, initialData, repository }} buttonProps={buttonProps} />
     ) : (
-        <ExternalOfferEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+        <ExternalOfferEditModalButton modalProps={{ onEdit, initialData, repository }} buttonProps={buttonProps} />
     );
 }
 
 export function OurOfferEditModalButton({
-    modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurOffer>) {
+    modalProps: { onEdit, initialData, repository },
+    buttonProps,
+}: SpecificEditModalButtonProps<OurOffer | ExternalOffer>) {
     return (
         <GeneralEditModalButton<OurOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurOfferModalBody,
                 modalTitle: "Edycja oferty - szablon ENVI",
-                repository: offersRepository,
-                initialData: initialData,
+                repository: repository as RepositoryReact<OurOffer>,
+                initialData: initialData as OurOffer,
                 makeValidationSchema: makeOurOfferValidationSchema,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
+                ...buttonProps,
             }}
         />
     );
 }
 
 export function OurOfferAddNewModalButton({
-    modalProps: { onAddNew, contextData, modalSubtitle },
-}: SpecificAddNewModalButtonProps<OurOffer>) {
+    modalProps: { onAddNew, contextData, modalSubtitle, repository },
+    buttonProps,
+}: SpecificAddNewModalButtonProps<OurOffer | ExternalOffer>) {
     return (
         <GeneralAddNewModalButton<OurOffer>
             modalProps={{
@@ -55,50 +59,56 @@ export function OurOfferAddNewModalButton({
                 ModalBodyComponent: OurOfferModalBody,
                 modalTitle: "Rejestruj ofertę - szablon ENVI",
                 modalSubtitle,
-                repository: offersRepository,
+                repository: repository as RepositoryReact<OurOffer>,
                 makeValidationSchema: makeOurOfferValidationSchema,
                 contextData,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj ENVI",
                 buttonVariant: "outline-success",
+                ...buttonProps,
             }}
         />
     );
 }
 
 export function ExternalOfferEditModalButton({
-    modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<ExternalOffer>) {
+    modalProps: { onEdit, initialData, repository },
+    buttonProps,
+}: SpecificEditModalButtonProps<OurOffer | ExternalOffer>) {
     return (
         <GeneralEditModalButton<ExternalOffer>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: ExternalOfferModalBody,
                 modalTitle: "Edycja oferty - formularz Zamawiającego",
-                repository: offersRepository,
-                initialData: initialData,
+                repository: repository as RepositoryReact<ExternalOffer>,
+                initialData: initialData as ExternalOffer,
                 makeValidationSchema: makeOtherOfferValidationSchema,
             }}
-            buttonProps={{}}
+            buttonProps={{
+                ...buttonProps,
+            }}
         />
     );
 }
 
 export function ExternalOfferAddNewModalButton({
-    modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<ExternalOffer>) {
+    modalProps: { onAddNew, repository },
+    buttonProps,
+}: SpecificAddNewModalButtonProps<OurOffer | ExternalOffer>) {
     return (
         <GeneralAddNewModalButton<ExternalOffer>
             modalProps={{
                 onAddNew,
                 ModalBodyComponent: ExternalOfferModalBody,
                 modalTitle: "Nowa oferta - formularz Zamawiającego",
-                repository: offersRepository,
+                repository: repository as RepositoryReact<ExternalOffer>,
                 makeValidationSchema: makeOtherOfferValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj ofertę",
+                ...buttonProps,
             }}
         />
     );
@@ -117,6 +127,7 @@ export function ExportOurOfferToPDFButton({
     async function handleClick() {
         try {
             setRequestPending(true);
+            // UWAGA: tu nadal używamy offersRepository z OffersController, bo to nie jest modal edycji
             await offersRepository.fetch("exportOurOfferToPDF", ourOffer);
             setRequestPending(false);
             setShowSuccessToast(true);

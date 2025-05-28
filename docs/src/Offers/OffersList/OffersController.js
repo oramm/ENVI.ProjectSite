@@ -12,7 +12,7 @@ exports.offersRepository = new RepositoryReact_1.default({
         editRoute: "offer",
         deleteRoute: "offer",
     },
-    name: "offers",
+    name: "offers-list",
 });
 exports.mailsToCheckRepository = new RepositoryReact_1.default({
     actionRoutes: {

@@ -181,7 +181,12 @@ export default function OffersSearch({ title }: { title?: string }) {
             return (
                 isActive && (
                     <OfferBondAddNewModalButton
-                        modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                        modalProps={{
+                            repository: offersRepository,
+                            onEdit: () => {},
+                            initialData: offer,
+                            contextData: offer,
+                        }}
                     />
                 )
             );
@@ -210,11 +215,21 @@ export default function OffersSearch({ title }: { title?: string }) {
         return (
             <div>
                 <OfferBondEditModalButton
-                    modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                    modalProps={{
+                        repository: offersRepository,
+                        onEdit: () => {},
+                        initialData: offer,
+                        contextData: offer,
+                    }}
                     buttonProps={{ layout: "horizontal" }}
                 />{" "}
                 <OfferBondDeleteModalButton
-                    modalProps={{ onEdit: () => {}, initialData: offer, contextData: offer }}
+                    modalProps={{
+                        repository: offersRepository,
+                        onEdit: () => {},
+                        initialData: offer,
+                        contextData: offer,
+                    }}
                     buttonProps={{ layout: "horizontal" }}
                 />
             </div>

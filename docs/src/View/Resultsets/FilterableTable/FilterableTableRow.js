@@ -70,6 +70,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                 initialData: dataObject,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                repository: repository,
             }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(CommonComponents_1.MenuExpandIconButton, { layout: layout, onClick: toggleMenu }),

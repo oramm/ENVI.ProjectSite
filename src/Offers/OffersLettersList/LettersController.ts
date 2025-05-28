@@ -27,7 +27,7 @@ export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
         editRoute: "",
         deleteRoute: "",
     },
-    name: "offers",
+    name: "offers-letters",
 });
 
 export const milestonesRepository = new RepositoryReact<MilestoneData>({
