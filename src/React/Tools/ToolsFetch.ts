@@ -1,4 +1,5 @@
 import { ErrorServerResponse } from "../../../Typings/bussinesTypes";
+import MainSetup from "../MainSetupReact";
 
 export default class ToolsFetch {
     static async fetchJsonWithSafeError(url: string, options: RequestInit = {}, customErrorMsg?: string) {
@@ -33,6 +34,40 @@ export default class ToolsFetch {
                 if (i < retries - 1) await sleep(delay);
                 else throw error;
             }
+        }
+    }
+
+    /**
+     * Wysyła raport błędu klienta na serwer
+     * @param error - błąd do zgłoszenia
+     * @param additionalData - dodatkowe dane kontekstowe
+     */
+    static async sendClientErrorReport(error: unknown, additionalData?: any) {
+        try {
+            const errorData = {
+                error: error instanceof Error ? error.message + "\n\n" + error.stack : String(error),
+                url: window.location.href,
+                timestamp: new Date().toISOString(),
+                additionalData: {
+                    ...additionalData,
+                    userAgent: navigator.userAgent,
+                    repositoryName: additionalData?.repositoryName,
+                    action: additionalData?.action,
+                },
+            };
+
+            await fetch(MainSetup.serverUrl + "client-error", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(errorData),
+            });
+
+            console.log("Raport błędu klienta został wysłany na serwer");
+        } catch (reportError) {
+            console.error("Nie udało się wysłać raportu błędu klienta:", reportError);
         }
     }
 }

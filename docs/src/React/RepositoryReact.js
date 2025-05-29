@@ -89,23 +89,34 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
-            method: "POST",
-            headers: {
-                ...this.makeRequestHeaders(),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ orConditions }),
-            credentials: "include",
-        }).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        this.items = (await fetchPromise);
-        this.currentItems = [];
-        this.saveToSessionStorage();
-        console.log(this.name + " NodeJS: %o", this.items);
-        return this.items;
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orConditions }),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            this.items = (await fetchPromise);
+            this.currentItems = [];
+            this.saveToSessionStorage();
+            console.log(this.name + " NodeJS: %o", this.items);
+            return this.items;
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadItemsFromServerPOST",
+                orConditions,
+                actionRoute,
+            });
+            throw error;
+        }
     }
     async loadCurrentItemDetailsFromServerPOST(specialActionRoute) {
         const conditions = { id: this.currentItems[0].id };
@@ -115,24 +126,35 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
-            method: "POST",
-            headers: {
-                ...this.makeRequestHeaders(),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(conditions),
-            credentials: "include",
-        }).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        const detailedItem = (await fetchPromise);
-        this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
-        this.currentItems[0] = detailedItem;
-        this.saveToSessionStorage();
-        console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
-        return this.currentItems[0];
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(conditions),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const detailedItem = (await fetchPromise);
+            this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
+            this.currentItems[0] = detailedItem;
+            this.saveToSessionStorage();
+            console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
+            return this.currentItems[0];
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadCurrentItemDetailsFromServerPOST",
+                conditions,
+                actionRoute,
+            });
+            throw error;
+        }
     }
     /**
      * Dodaje nowy obiekt do bazy danych.
@@ -162,35 +184,46 @@ class RepositoryReact {
             ToolsDate_1.default.convertDatesToUTC(newItem); // standaryzuj daty
             requestOptions.body = JSON.stringify(newItem);
         }
-        // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
-        const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
-        if (onProgress && response.taskId)
-            onProgress(response);
-        // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
-        if (response && !response.taskId) {
-            const item = response;
-            this.items.push(item);
-            this.currentItems = [item];
+        try {
+            // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
+            const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
+            if (onProgress && response.taskId)
+                onProgress(response);
+            // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
+            if (response && !response.taskId) {
+                const item = response;
+                this.items.push(item);
+                this.currentItems = [item];
+                this.saveToSessionStorage();
+                console.log("%s:: synchronicznie utworzono: %o", this.name, item);
+                return item;
+            }
+            // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
+            const taskId = response.taskId;
+            // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
+            const statusResponse = await this.pollTask(taskId, onProgress);
+            // 8. Obsługa błędu z backendu
+            if (statusResponse.status === "error") {
+                throw new Error("Błąd backendu: " + statusResponse.error);
+            }
+            // 9. Gotowy przetworzony obiekt z backendu
+            const newItemFromServer = statusResponse.result;
+            // 10. Zapisanie do repozytorium i sessionStorage
+            this.items.push(newItemFromServer);
+            this.currentItems = [newItemFromServer];
             this.saveToSessionStorage();
-            console.log("%s:: synchronicznie utworzono: %o", this.name, item);
-            return item;
+            console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
+            return newItemFromServer;
         }
-        // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
-        const taskId = response.taskId;
-        // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
-        const statusResponse = await this.pollTask(taskId, onProgress);
-        // 8. Obsługa błędu z backendu
-        if (statusResponse.status === "error") {
-            throw new Error("Błąd backendu: " + statusResponse.error);
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "addNewItemAsync",
+                actionRoute,
+                itemType: newItem instanceof FormData ? "FormData" : "JSON",
+            });
+            throw error;
         }
-        // 9. Gotowy przetworzony obiekt z backendu
-        const newItemFromServer = statusResponse.result;
-        // 10. Zapisanie do repozytorium i sessionStorage
-        this.items.push(newItemFromServer);
-        this.currentItems = [newItemFromServer];
-        this.saveToSessionStorage();
-        console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
-        return newItemFromServer;
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItem(newItem, specialActionRoute, onProgress) {
@@ -266,6 +299,13 @@ class RepositoryReact {
             return response;
         }
         catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "editItem",
+                actionRoute,
+                itemId,
+                itemType: item instanceof FormData ? "FormData" : "JSON",
+            });
             console.error(error);
             throw error;
         }
@@ -288,6 +328,12 @@ class RepositoryReact {
             });
         }
         catch (networkError) {
+            ToolsFetch_1.default.sendClientErrorReport(networkError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "network",
+            });
             console.error("Network error: ", networkError);
             throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
         }
@@ -296,6 +342,12 @@ class RepositoryReact {
             result = await response.json();
         }
         catch (parseError) {
+            ToolsFetch_1.default.sendClientErrorReport(parseError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "parse",
+            });
             console.error("Failed to parse response: ", parseError);
             throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
         }
@@ -313,6 +365,12 @@ class RepositoryReact {
             console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
         }
         catch (localUpdateError) {
+            ToolsFetch_1.default.sendClientErrorReport(localUpdateError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "localUpdate",
+            });
             console.error("Failed to update local state: ", localUpdateError);
             throw new Error("Błąd podczas aktualizacji lokalnego stanu.");
         }
@@ -322,8 +380,7 @@ class RepositoryReact {
      * Wykonuje zapytanie do serwera
      * @param actionRoute - ścieżka do akcji na serwerze
      * @param item
-     */
-    async fetch(actionRoute, item) {
+     */ async fetch(actionRoute, item) {
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
         const requestOptions = {
@@ -335,12 +392,23 @@ class RepositoryReact {
         };
         ToolsDate_1.default.convertDatesToUTC(item);
         requestOptions.body = JSON.stringify({ ...item });
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        const resultObject = await fetchPromise;
-        return resultObject;
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const resultObject = await fetchPromise;
+            return resultObject;
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "fetch",
+                actionRoute,
+                itemId: item?.id,
+            });
+            throw error;
+        }
     }
     clearData() {
         this.items = [];
@@ -348,18 +416,28 @@ class RepositoryReact {
     }
     async pollTask(taskId, onProgress) {
         const statusUrl = `${MainSetupReact_1.default.serverUrl}sessionTaskStatus/${taskId}`;
-        for (let i = 0; i < 60; i++) {
-            await new Promise((res) => setTimeout(res, 2000));
-            const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
-                method: "GET",
-                credentials: "include",
-            });
-            if (onProgress)
-                onProgress(statusResponse);
-            if (statusResponse.status !== "processing")
-                return statusResponse;
+        try {
+            for (let i = 0; i < 60; i++) {
+                await new Promise((res) => setTimeout(res, 2000));
+                const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (onProgress)
+                    onProgress(statusResponse);
+                if (statusResponse.status !== "processing")
+                    return statusResponse;
+            }
+            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
         }
-        throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "pollTask",
+                taskId,
+            });
+            throw error;
+        }
     }
     makeRequestHeaders() {
         return { "Content-Type": "application/json" };

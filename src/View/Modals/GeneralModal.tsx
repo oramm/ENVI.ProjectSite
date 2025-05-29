@@ -12,8 +12,8 @@ import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ErrorBoundary from "./ErrorBoundary";
 import { SpinnerBootstrap } from "../Resultsets/CommonComponents";
 import { SessionTask } from "../../../Typings/sessionTypes";
-import { render } from "react-dom";
 import merge from "lodash.merge";
+import ToolsFetch from "../../React/Tools/ToolsFetch";
 
 type GeneralModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     show: boolean;
@@ -67,7 +67,6 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         mode: "onChange",
         resolver: validationSchema ? yupResolver(validationSchema(isEditing)) : undefined,
     });
-
     useEffect(() => {
         setErrorMessage("");
         setProgressData({ text: "" });
@@ -77,28 +76,68 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
         fetchData();
     }, [show]);
 
+    // Sprawdź repository przy pierwszym renderze
+    useEffect(() => {
+        if (!repository) {
+            const error = new Error("Repository is undefined in GeneralModal");
+            ToolsFetch.sendClientErrorReport(error, {
+                action: "GeneralModal_repository_validation",
+                modalTitle: title,
+                isEditing,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+        }
+    }, []);
+
     async function loadDataObject() {
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing) return;
-        setIsLoadingData(true);
-        const dataObjectFromServer = (
-            await repository.loadItemsFromServerPOST(
-                [{ id: modalBodyProps.initialData?.id }],
-                specialRetrieveActionRoute
-            )
-        )[0];
-        if (dataObjectFromServer) {
-            repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
-            repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
-        } else {
-            throw new Error("Nie znaleziono obiektu");
+
+        if (!repository) {
+            const error = new Error("Repository is undefined in loadDataObject");
+            ToolsFetch.sendClientErrorReport(error, {
+                action: "GeneralModal_loadDataObject",
+                modalTitle: title,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+            return;
         }
 
-        setDataObjectFromServer(dataObjectFromServer as DataItemType);
-        setIsLoadingData(false);
-    }
+        setIsLoadingData(true);
+        try {
+            const dataObjectFromServer = (
+                await repository.loadItemsFromServerPOST(
+                    [{ id: modalBodyProps.initialData?.id }],
+                    specialRetrieveActionRoute
+                )
+            )[0];
+            if (dataObjectFromServer) {
+                repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+                repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+            } else {
+                throw new Error("Nie znaleziono obiektu");
+            }
 
+            setDataObjectFromServer(dataObjectFromServer as DataItemType);
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_loadDataObject_fetch",
+                modalTitle: title,
+                itemId: modalBodyProps.initialData?.id,
+            });
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            }
+        } finally {
+            setIsLoadingData(false);
+        }
+    }
     async function handleSubmitRepository(data: FieldValues) {
         try {
+            if (!repository) {
+                throw new Error("Repository nie został przekazany do modala");
+            }
+
             setErrorMessage("");
             setProgressData({ text: "" });
             setRequestPending(true);
@@ -120,6 +159,12 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             setRequestPending(false);
         } catch (error) {
             if (error instanceof Error) setErrorMessage(error.message);
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_handleSubmit_" + (isEditing ? "edit" : "add"),
+                modalTitle: title,
+                hasRepository: !!repository,
+            });
             setRequestPending(false);
         }
     }

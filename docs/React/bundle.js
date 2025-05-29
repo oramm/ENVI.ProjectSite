@@ -95970,23 +95970,34 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
-            method: "POST",
-            headers: {
-                ...this.makeRequestHeaders(),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ orConditions }),
-            credentials: "include",
-        }).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        this.items = (await fetchPromise);
-        this.currentItems = [];
-        this.saveToSessionStorage();
-        console.log(this.name + " NodeJS: %o", this.items);
-        return this.items;
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orConditions }),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            this.items = (await fetchPromise);
+            this.currentItems = [];
+            this.saveToSessionStorage();
+            console.log(this.name + " NodeJS: %o", this.items);
+            return this.items;
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadItemsFromServerPOST",
+                orConditions,
+                actionRoute,
+            });
+            throw error;
+        }
     }
     async loadCurrentItemDetailsFromServerPOST(specialActionRoute) {
         const conditions = { id: this.currentItems[0].id };
@@ -95996,24 +96007,35 @@ class RepositoryReact {
         if (this.pendingRequests.has(requestKey)) {
             return this.pendingRequests.get(requestKey);
         }
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
-            method: "POST",
-            headers: {
-                ...this.makeRequestHeaders(),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(conditions),
-            credentials: "include",
-        }).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        const detailedItem = (await fetchPromise);
-        this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
-        this.currentItems[0] = detailedItem;
-        this.saveToSessionStorage();
-        console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
-        return this.currentItems[0];
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(conditions),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const detailedItem = (await fetchPromise);
+            this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
+            this.currentItems[0] = detailedItem;
+            this.saveToSessionStorage();
+            console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
+            return this.currentItems[0];
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadCurrentItemDetailsFromServerPOST",
+                conditions,
+                actionRoute,
+            });
+            throw error;
+        }
     }
     /**
      * Dodaje nowy obiekt do bazy danych.
@@ -96043,35 +96065,46 @@ class RepositoryReact {
             ToolsDate_1.default.convertDatesToUTC(newItem); // standaryzuj daty
             requestOptions.body = JSON.stringify(newItem);
         }
-        // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
-        const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
-        if (onProgress && response.taskId)
-            onProgress(response);
-        // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
-        if (response && !response.taskId) {
-            const item = response;
-            this.items.push(item);
-            this.currentItems = [item];
+        try {
+            // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
+            const response = await ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions);
+            if (onProgress && response.taskId)
+                onProgress(response);
+            // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
+            if (response && !response.taskId) {
+                const item = response;
+                this.items.push(item);
+                this.currentItems = [item];
+                this.saveToSessionStorage();
+                console.log("%s:: synchronicznie utworzono: %o", this.name, item);
+                return item;
+            }
+            // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
+            const taskId = response.taskId;
+            // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
+            const statusResponse = await this.pollTask(taskId, onProgress);
+            // 8. Obsługa błędu z backendu
+            if (statusResponse.status === "error") {
+                throw new Error("Błąd backendu: " + statusResponse.error);
+            }
+            // 9. Gotowy przetworzony obiekt z backendu
+            const newItemFromServer = statusResponse.result;
+            // 10. Zapisanie do repozytorium i sessionStorage
+            this.items.push(newItemFromServer);
+            this.currentItems = [newItemFromServer];
             this.saveToSessionStorage();
-            console.log("%s:: synchronicznie utworzono: %o", this.name, item);
-            return item;
+            console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
+            return newItemFromServer;
         }
-        // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
-        const taskId = response.taskId;
-        // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
-        const statusResponse = await this.pollTask(taskId, onProgress);
-        // 8. Obsługa błędu z backendu
-        if (statusResponse.status === "error") {
-            throw new Error("Błąd backendu: " + statusResponse.error);
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "addNewItemAsync",
+                actionRoute,
+                itemType: newItem instanceof FormData ? "FormData" : "JSON",
+            });
+            throw error;
         }
-        // 9. Gotowy przetworzony obiekt z backendu
-        const newItemFromServer = statusResponse.result;
-        // 10. Zapisanie do repozytorium i sessionStorage
-        this.items.push(newItemFromServer);
-        this.currentItems = [newItemFromServer];
-        this.saveToSessionStorage();
-        console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
-        return newItemFromServer;
     }
     /** Dodaje obiekt do bazy danych i do repozytorium */
     async addNewItem(newItem, specialActionRoute, onProgress) {
@@ -96147,6 +96180,13 @@ class RepositoryReact {
             return response;
         }
         catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "editItem",
+                actionRoute,
+                itemId,
+                itemType: item instanceof FormData ? "FormData" : "JSON",
+            });
             console.error(error);
             throw error;
         }
@@ -96169,6 +96209,12 @@ class RepositoryReact {
             });
         }
         catch (networkError) {
+            ToolsFetch_1.default.sendClientErrorReport(networkError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "network",
+            });
             console.error("Network error: ", networkError);
             throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
         }
@@ -96177,6 +96223,12 @@ class RepositoryReact {
             result = await response.json();
         }
         catch (parseError) {
+            ToolsFetch_1.default.sendClientErrorReport(parseError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "parse",
+            });
             console.error("Failed to parse response: ", parseError);
             throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
         }
@@ -96194,6 +96246,12 @@ class RepositoryReact {
             console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
         }
         catch (localUpdateError) {
+            ToolsFetch_1.default.sendClientErrorReport(localUpdateError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                itemId: id,
+                errorType: "localUpdate",
+            });
             console.error("Failed to update local state: ", localUpdateError);
             throw new Error("Błąd podczas aktualizacji lokalnego stanu.");
         }
@@ -96203,8 +96261,7 @@ class RepositoryReact {
      * Wykonuje zapytanie do serwera
      * @param actionRoute - ścieżka do akcji na serwerze
      * @param item
-     */
-    async fetch(actionRoute, item) {
+     */ async fetch(actionRoute, item) {
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
         const requestOptions = {
@@ -96216,12 +96273,23 @@ class RepositoryReact {
         };
         ToolsDate_1.default.convertDatesToUTC(item);
         requestOptions.body = JSON.stringify({ ...item });
-        const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
-            this.pendingRequests.delete(requestKey);
-        });
-        this.pendingRequests.set(requestKey, fetchPromise);
-        const resultObject = await fetchPromise;
-        return resultObject;
+        try {
+            const fetchPromise = ToolsFetch_1.default.fetchWithRetry(urlPath, requestOptions).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const resultObject = await fetchPromise;
+            return resultObject;
+        }
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "fetch",
+                actionRoute,
+                itemId: item?.id,
+            });
+            throw error;
+        }
     }
     clearData() {
         this.items = [];
@@ -96229,18 +96297,28 @@ class RepositoryReact {
     }
     async pollTask(taskId, onProgress) {
         const statusUrl = `${MainSetupReact_1.default.serverUrl}sessionTaskStatus/${taskId}`;
-        for (let i = 0; i < 60; i++) {
-            await new Promise((res) => setTimeout(res, 2000));
-            const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
-                method: "GET",
-                credentials: "include",
-            });
-            if (onProgress)
-                onProgress(statusResponse);
-            if (statusResponse.status !== "processing")
-                return statusResponse;
+        try {
+            for (let i = 0; i < 60; i++) {
+                await new Promise((res) => setTimeout(res, 2000));
+                const statusResponse = await ToolsFetch_1.default.fetchWithRetry(statusUrl, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (onProgress)
+                    onProgress(statusResponse);
+                if (statusResponse.status !== "processing")
+                    return statusResponse;
+            }
+            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
         }
-        throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "pollTask",
+                taskId,
+            });
+            throw error;
+        }
     }
     makeRequestHeaders() {
         return { "Content-Type": "application/json" };
@@ -96562,11 +96640,15 @@ exports["default"] = ToolsDate;
 /*!***************************************!*\
   !*** ./src/React/Tools/ToolsFetch.ts ***!
   \***************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 class ToolsFetch {
     static async fetchJsonWithSafeError(url, options = {}, customErrorMsg) {
         try {
@@ -96602,6 +96684,38 @@ class ToolsFetch {
                 else
                     throw error;
             }
+        }
+    }
+    /**
+     * Wysyła raport błędu klienta na serwer
+     * @param error - błąd do zgłoszenia
+     * @param additionalData - dodatkowe dane kontekstowe
+     */
+    static async sendClientErrorReport(error, additionalData) {
+        try {
+            const errorData = {
+                error: error instanceof Error ? error.message + "\n\n" + error.stack : String(error),
+                url: window.location.href,
+                timestamp: new Date().toISOString(),
+                additionalData: {
+                    ...additionalData,
+                    userAgent: navigator.userAgent,
+                    repositoryName: additionalData?.repositoryName,
+                    action: additionalData?.action,
+                },
+            };
+            await fetch(MainSetupReact_1.default.serverUrl + "client-error", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(errorData),
+            });
+            console.log("Raport błędu klienta został wysłany na serwer");
+        }
+        catch (reportError) {
+            console.error("Nie udało się wysłać raportu błędu klienta:", reportError);
         }
     }
 }
@@ -99026,6 +99140,7 @@ __webpack_require__(/*! ../../Css/styles.css */ "./src/Css/styles.css");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ./ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const lodash_merge_1 = __importDefault(__webpack_require__(/*! lodash.merge */ "./node_modules/lodash.merge/index.js"));
+const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
 function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, specialRetrieveActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
@@ -99048,23 +99163,62 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         fetchData();
     }, [show]);
+    // Sprawdź repository przy pierwszym renderze
+    (0, react_1.useEffect)(() => {
+        if (!repository) {
+            const error = new Error("Repository is undefined in GeneralModal");
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                action: "GeneralModal_repository_validation",
+                modalTitle: title,
+                isEditing,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+        }
+    }, []);
     async function loadDataObject() {
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
+        if (!repository) {
+            const error = new Error("Repository is undefined in loadDataObject");
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                action: "GeneralModal_loadDataObject",
+                modalTitle: title,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+            return;
+        }
         setIsLoadingData(true);
-        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
-        if (dataObjectFromServer) {
-            repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
-            repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+        try {
+            const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
+            if (dataObjectFromServer) {
+                repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+                repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+            }
+            else {
+                throw new Error("Nie znaleziono obiektu");
+            }
+            setDataObjectFromServer(dataObjectFromServer);
         }
-        else {
-            throw new Error("Nie znaleziono obiektu");
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_loadDataObject_fetch",
+                modalTitle: title,
+                itemId: modalBodyProps.initialData?.id,
+            });
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            }
         }
-        setDataObjectFromServer(dataObjectFromServer);
-        setIsLoadingData(false);
+        finally {
+            setIsLoadingData(false);
+        }
     }
     async function handleSubmitRepository(data) {
         try {
+            if (!repository) {
+                throw new Error("Repository nie został przekazany do modala");
+            }
             setErrorMessage("");
             setProgressData({ text: "" });
             setRequestPending(true);
@@ -99089,6 +99243,12 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         catch (error) {
             if (error instanceof Error)
                 setErrorMessage(error.message);
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_handleSubmit_" + (isEditing ? "edit" : "add"),
+                modalTitle: title,
+                hasRepository: !!repository,
+            });
             setRequestPending(false);
         }
     }
@@ -100549,7 +100709,10 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
-                    react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
+                    react_1.default.createElement(ButtonComponent, { modalProps: {
+                            onAddNew: handleAddObject,
+                            // repository
+                        } }),
                     index < AddNewButtonComponents.length - 1 && " ")))))),
             FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),

@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 class ToolsFetch {
     static async fetchJsonWithSafeError(url, options = {}, customErrorMsg) {
         try {
@@ -35,6 +39,38 @@ class ToolsFetch {
                 else
                     throw error;
             }
+        }
+    }
+    /**
+     * Wysyła raport błędu klienta na serwer
+     * @param error - błąd do zgłoszenia
+     * @param additionalData - dodatkowe dane kontekstowe
+     */
+    static async sendClientErrorReport(error, additionalData) {
+        try {
+            const errorData = {
+                error: error instanceof Error ? error.message + "\n\n" + error.stack : String(error),
+                url: window.location.href,
+                timestamp: new Date().toISOString(),
+                additionalData: {
+                    ...additionalData,
+                    userAgent: navigator.userAgent,
+                    repositoryName: additionalData?.repositoryName,
+                    action: additionalData?.action,
+                },
+            };
+            await fetch(MainSetupReact_1.default.serverUrl + "client-error", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(errorData),
+            });
+            console.log("Raport błędu klienta został wysłany na serwer");
+        }
+        catch (reportError) {
+            console.error("Nie udało się wysłać raportu błędu klienta:", reportError);
         }
     }
 }

@@ -37,6 +37,7 @@ require("../../Css/styles.css");
 const ErrorBoundary_1 = __importDefault(require("./ErrorBoundary"));
 const CommonComponents_1 = require("../Resultsets/CommonComponents");
 const lodash_merge_1 = __importDefault(require("lodash.merge"));
+const ToolsFetch_1 = __importDefault(require("../../React/Tools/ToolsFetch"));
 function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, specialRetrieveActionRoute, onEdit, onAddNew, onClose, repository, ModalBodyComponent, modalBodyProps, makeValidationSchema: validationSchema, fieldsToUpdate, shouldRetrieveDataBeforeEdit = false, size = "lg", }) {
     const [dataObjectFromServer, setDataObjectFromServer] = (0, react_1.useState)(undefined);
     const [isLoadingData, setIsLoadingData] = (0, react_1.useState)(false);
@@ -59,23 +60,62 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         fetchData();
     }, [show]);
+    // Sprawdź repository przy pierwszym renderze
+    (0, react_1.useEffect)(() => {
+        if (!repository) {
+            const error = new Error("Repository is undefined in GeneralModal");
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                action: "GeneralModal_repository_validation",
+                modalTitle: title,
+                isEditing,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+        }
+    }, []);
     async function loadDataObject() {
         if (!show || !shouldRetrieveDataBeforeEdit || !isEditing)
             return;
+        if (!repository) {
+            const error = new Error("Repository is undefined in loadDataObject");
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                action: "GeneralModal_loadDataObject",
+                modalTitle: title,
+            });
+            setErrorMessage("Błąd: Repository nie został przekazany do modala");
+            return;
+        }
         setIsLoadingData(true);
-        const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
-        if (dataObjectFromServer) {
-            repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
-            repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+        try {
+            const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
+            if (dataObjectFromServer) {
+                repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+                repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
+            }
+            else {
+                throw new Error("Nie znaleziono obiektu");
+            }
+            setDataObjectFromServer(dataObjectFromServer);
         }
-        else {
-            throw new Error("Nie znaleziono obiektu");
+        catch (error) {
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_loadDataObject_fetch",
+                modalTitle: title,
+                itemId: modalBodyProps.initialData?.id,
+            });
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            }
         }
-        setDataObjectFromServer(dataObjectFromServer);
-        setIsLoadingData(false);
+        finally {
+            setIsLoadingData(false);
+        }
     }
     async function handleSubmitRepository(data) {
         try {
+            if (!repository) {
+                throw new Error("Repository nie został przekazany do modala");
+            }
             setErrorMessage("");
             setProgressData({ text: "" });
             setRequestPending(true);
@@ -100,6 +140,12 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         catch (error) {
             if (error instanceof Error)
                 setErrorMessage(error.message);
+            ToolsFetch_1.default.sendClientErrorReport(error, {
+                repositoryName: repository?.name,
+                action: "GeneralModal_handleSubmit_" + (isEditing ? "edit" : "add"),
+                modalTitle: title,
+                hasRepository: !!repository,
+            });
             setRequestPending(false);
         }
     }

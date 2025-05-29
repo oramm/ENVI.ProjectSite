@@ -173,7 +173,12 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                         <Col md="auto">
                             {AddNewButtonComponents.map((ButtonComponent, index) => (
                                 <React.Fragment key={index}>
-                                    <ButtonComponent modalProps={{ onAddNew: handleAddObject, repository }} />
+                                    <ButtonComponent
+                                        modalProps={{
+                                            onAddNew: handleAddObject,
+                                            // repository
+                                        }}
+                                    />
                                     {index < AddNewButtonComponents.length - 1 && " "}
                                 </React.Fragment>
                             ))}
