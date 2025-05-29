@@ -100709,10 +100709,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
-                    react_1.default.createElement(ButtonComponent, { modalProps: {
-                            onAddNew: handleAddObject,
-                            // repository
-                        } }),
+                    react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
                     index < AddNewButtonComponents.length - 1 && " ")))))),
             FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
