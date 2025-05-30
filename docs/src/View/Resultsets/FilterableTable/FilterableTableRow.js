@@ -34,7 +34,7 @@ const ResultSetTable_1 = require("./ResultSetTable");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleCopyObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleCopyObject, handleDeleteObject, EditButtonComponent, isDeletable, isCopyable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columnStructure, dataObject) {
         if (columnStructure.objectAttributeToShow !== undefined) {
             const key = columnStructure.objectAttributeToShow;
@@ -54,10 +54,10 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         }),
         isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
             " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
+function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -75,7 +75,7 @@ function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditBut
                 repository: repository,
             }, buttonProps: { layout } })),
         " ",
-        handleCopyObject && (react_1.default.createElement(CopyModalButton, { modalProps: {
+        isCopyable && handleCopyObject && (react_1.default.createElement(CopyModalButton, { modalProps: {
                 onCopy: handleCopyObject,
                 initialData: dataObject,
                 repository: repository,

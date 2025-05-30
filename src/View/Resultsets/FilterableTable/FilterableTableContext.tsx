@@ -25,6 +25,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     activeSectionId: string;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable: boolean;
+    isCopyable: boolean;
     externalUpdate: number;
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
@@ -50,6 +51,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     activeSectionId: "",
     EditButtonComponent: undefined,
     isDeletable: true,
+    isCopyable: false,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
@@ -75,6 +77,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     activeSectionId,
     EditButtonComponent,
     isDeletable = true,
+    isCopyable = false,
     externalUpdate,
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
@@ -106,6 +109,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 activeSectionId,
                 EditButtonComponent,
                 isDeletable,
+                isCopyable,
                 externalUpdate,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,

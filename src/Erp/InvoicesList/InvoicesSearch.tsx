@@ -52,6 +52,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             AddNewButtonComponents={[InvoiceAddNewModalButton]}
             EditButtonComponent={InvoiceEditModalButton}
             isDeletable={true}
+            isCopyable={true}
             repository={invoicesRepository}
             selectedObjectRoute={"/invoice/"}
         />

@@ -36,6 +36,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         handleDeleteObject,
         EditButtonComponent,
         isDeletable,
+        isCopyable,
         repository,
         shouldRetrieveDataBeforeEdit,
         specialRetrieveActionRoute,
@@ -76,6 +77,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                         EditButtonComponent={EditButtonComponent}
                         handleDeleteObject={handleDeleteObject}
                         isDeletable={isDeletable}
+                        isCopyable={isCopyable}
                         shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
                         specialRetrieveActionRoute={specialRetrieveActionRoute}
                     />
@@ -93,6 +95,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     handleDeleteObject?: (objectId: number) => void;
     isDeletable: boolean;
+    isCopyable?: boolean;
     layout?: "vertical" | "horizontal";
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
@@ -106,6 +109,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     EditButtonComponent,
     handleDeleteObject,
     isDeletable,
+    isCopyable = false,
     layout = "vertical",
     sectionRepository,
     shouldRetrieveDataBeforeEdit = false,
@@ -141,7 +145,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                     buttonProps={{ layout }}
                 />
             )}{" "}
-            {handleCopyObject && (
+            {isCopyable && handleCopyObject && (
                 <CopyModalButton
                     modalProps={{
                         onCopy: handleCopyObject,

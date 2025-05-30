@@ -15,6 +15,7 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
+    isCopyable?: boolean;
     FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
     initialObjects?: DataItemType[];

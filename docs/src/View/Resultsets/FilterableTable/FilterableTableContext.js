@@ -45,11 +45,12 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     activeSectionId: "",
     EditButtonComponent: undefined,
     isDeletable: true,
+    isCopyable: false,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -71,6 +72,7 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             activeSectionId,
             EditButtonComponent,
             isDeletable,
+            isCopyable,
             externalUpdate,
             shouldRetrieveDataBeforeEdit,
             specialRetrieveActionRoute,

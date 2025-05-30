@@ -63,6 +63,6 @@ function InvoicesSearch({ title }) {
                 renderTdBody: (invoice) => react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status }),
                 colMd: 1,
             },
-        ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: "/invoice/" }));
+        ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, isCopyable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: "/invoice/" }));
 }
 exports.default = InvoicesSearch;
