@@ -12,8 +12,15 @@ export default function InvoicesSearch({ title }: { title: string }) {
         document.title = title;
     }, [title]);
 
-    function makeEntityLabel(invoice: Invoice) {
-        return <div>{invoice._entity.name}</div>;
+    function renderRow(invoice: Invoice, isActive?: boolean) {
+        return (
+            <>
+                <div className="fw-bold">{invoice._contract?.ourId}</div>
+                <div>{invoice._entity.name} </div>
+                {invoice.description && <div className="text-muted small"> {invoice.description}</div>}
+                {isActive && <div className="mt-2"></div>}
+            </>
+        );
     }
 
     function renderInvoiceTotaValue(invoice: Invoice) {
@@ -30,11 +37,10 @@ export default function InvoicesSearch({ title }: { title: string }) {
             title={title}
             FilterBodyComponent={InvoicesFilterBody}
             tableStructure={[
-                { header: "Umowa", renderTdBody: (invoice: Invoice) => <>{invoice._contract.ourId}</>, colMd: 1 },
                 { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+                { header: "Dane faktury", renderTdBody: renderRow, colMd: 5 },
                 { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
                 { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
-                { header: "Odbiorca", renderTdBody: makeEntityLabel, colMd: 4 },
                 { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
                 { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
                 {

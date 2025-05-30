@@ -5,11 +5,12 @@ import ConfirmModal from "./ConfirmModal";
 import { GeneralModal } from "./GeneralModal";
 import {
     GeneralAddNewModalButtonProps,
+    GeneralCopyModalButtonProps,
     GeneralDeleteModalButtonProps,
     GeneralEditModalButtonProps,
     GeneralModalButtonButtonProps,
 } from "./ModalsTypes";
-import { DeleteIconButton, EditIconButton } from "../Resultsets/CommonComponents";
+import { DeleteIconButton, EditIconButton, CopyIconButton } from "../Resultsets/CommonComponents";
 
 /**
  *
@@ -201,7 +202,6 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
         await repository.deleteItemNodeJS(initialData.id);
         onDelete(initialData.id);
     }
-
     return (
         <>
             <DeleteIconButton layout={layout} onClick={handleOpen} />
@@ -213,6 +213,46 @@ export function GeneralDeleteModalButton<DataItemType extends RepositoryDataItem
                 subtitle={modalSubtitle}
                 onConfirm={handleDelete}
                 prompt={`Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?`}
+            />
+        </>
+    );
+}
+
+/** Wyświetla ikonę kopiowania podłączoną do Modala - nie przyjmuje ButtonProps */
+export function GeneralCopyModalButton<DataItemType extends RepositoryDataItem>({
+    modalProps: { onCopy, modalTitle, modalSubtitle, initialData, repository },
+    buttonProps,
+}: GeneralCopyModalButtonProps<DataItemType>) {
+    const [showForm, setShowForm] = useState(false);
+    const { layout = "vertical" } = { ...buttonProps };
+
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    async function handleCopy() {
+        const copiedData = await repository.copyItem(initialData);
+        onCopy(copiedData);
+        handleClose();
+    }
+
+    const itemName = "name" in initialData ? initialData?.name : "obiekt";
+    const defaultTitle = modalTitle || "Kopiowanie";
+    const defaultPrompt = `Czy na pewno chcesz skopiować ${itemName}?`;
+
+    return (
+        <>
+            <CopyIconButton layout={layout} onClick={handleOpen} />
+
+            <ConfirmModal
+                onClose={handleClose}
+                show={showForm}
+                title={defaultTitle}
+                subtitle={modalSubtitle}
+                onConfirm={handleCopy}
+                prompt={defaultPrompt}
             />
         </>
     );

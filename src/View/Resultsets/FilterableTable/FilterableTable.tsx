@@ -94,6 +94,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             updateSnapshot();
         } else setSections(editNode(sections, activeSectionId, object));
     }
+    function handleCopyObject(object: LeafDataItemType) {
+        setObjects([...objects, object]);
+        updateSnapshot();
+    }
 
     function handleDeleteObject(objectId: number) {
         if (!sections.length) setObjects(objects.filter((o) => o.id !== objectId));
@@ -153,6 +157,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             tableStructure={tableStructure}
             handleAddObject={handleAddObject}
             handleEditObject={handleEditObject}
+            handleCopyObject={handleCopyObject}
             handleDeleteObject={handleDeleteObject}
             setObjects={setObjects}
             setSections={setSections}

@@ -37,18 +37,25 @@ function InvoicesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function makeEntityLabel(invoice) {
-        return react_1.default.createElement("div", null, invoice._entity.name);
+    function renderRow(invoice, isActive) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "fw-bold" }, invoice._contract?.ourId),
+            react_1.default.createElement("div", null,
+                invoice._entity.name,
+                " "),
+            invoice.description && react_1.default.createElement("div", { className: "text-muted small" },
+                " ",
+                invoice.description),
+            isActive && react_1.default.createElement("div", { className: "mt-2" })));
     }
     function renderInvoiceTotaValue(invoice) {
         return (react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue))));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
-            { header: "Umowa", renderTdBody: (invoice) => react_1.default.createElement(react_1.default.Fragment, null, invoice._contract.ourId), colMd: 1 },
             { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+            { header: "Dane faktury", renderTdBody: renderRow, colMd: 5 },
             { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
             { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
-            { header: "Odbiorca", renderTdBody: makeEntityLabel, colMd: 4 },
             { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
             { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
             {

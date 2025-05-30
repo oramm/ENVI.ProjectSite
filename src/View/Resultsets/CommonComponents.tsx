@@ -163,6 +163,10 @@ export function DeleteIconButton({ layout, onClick }: SpecificIconButtonProps) {
     return <IconButton icon={faTrash} layout={layout} onClick={onClick} className="text-danger" />;
 }
 
+export function CopyIconButton({ layout, onClick }: SpecificIconButtonProps) {
+    return <IconButton icon={faCopy} layout={layout} onClick={onClick} className="text-info" />;
+}
+
 export function MenuExpandIconButton({ layout, onClick }: SpecificIconButtonProps) {
     const icon = layout === "vertical" ? faEllipsisV : faEllipsisH;
     return <IconButton icon={icon} layout={layout} onClick={onClick} className="text-secondary" />;

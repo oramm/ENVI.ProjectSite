@@ -9,7 +9,7 @@ import {
 } from "./InvoiceValidationSchema";
 import { Invoice } from "../../../../Typings/bussinesTypes";
 import { useInvoice } from "../InvoiceDetails/InvoiceDetails";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import MainSetup from "../../../React/MainSetupReact";
 import { InvoiceIssueModalBody } from "./InvoiceIssueModalBody";
 import { InvoiceSetAsSentModalBody } from "./InvoiceSetAsSentModalBody";
@@ -60,12 +60,35 @@ export function InvoiceAddNewModalButton({
     );
 }
 
-export function CopyButton({ onError }: { onError: (error: Error) => void }) {
-    const { invoice } = useInvoice();
+export function CopyButton({
+    onError,
+    invoice: passedInvoice,
+}: {
+    onError: (error: Error) => void;
+    invoice?: Invoice;
+}) {
+    const [requestPending, setRequestPending] = React.useState(false);
+
+    // Spróbuj uzyskać fakturę z kontekstu, ale nie rzucaj błędem jeśli nie jest dostępna
+    let contextInvoice: Invoice | null = null;
+    try {
+        const invoiceContext = useInvoice();
+        contextInvoice = invoiceContext.invoice;
+    } catch {
+        // Hook nie jest dostępny w tym kontekście
+    }
+    const invoice = passedInvoice || contextInvoice;
+
+    if (!invoice) {
+        console.error("CopyButton: Brak faktury do skopiowania");
+        return null;
+    }
 
     async function handleClick() {
         try {
+            setRequestPending(true);
             await invoicesRepository.copyItem(invoice);
+            setRequestPending(false);
         } catch (error) {
             if (error instanceof Error) {
                 onError(error);
@@ -75,7 +98,12 @@ export function CopyButton({ onError }: { onError: (error: Error) => void }) {
 
     return (
         <Button key="Kopiuj" variant="outline-secondary" size="sm" onClick={handleClick}>
-            Kopiuj
+            <span className="d-inline-flex align-items-center">
+                Kopiuj
+                {requestPending && (
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="ms-2" />
+                )}
+            </span>
         </Button>
     );
 }

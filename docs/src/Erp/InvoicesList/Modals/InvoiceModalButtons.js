@@ -44,11 +44,27 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
         } }));
 }
 exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
-function CopyButton({ onError }) {
-    const { invoice } = (0, InvoiceDetails_1.useInvoice)();
+function CopyButton({ onError, invoice: passedInvoice, }) {
+    const [requestPending, setRequestPending] = react_1.default.useState(false);
+    // Spróbuj uzyskać fakturę z kontekstu, ale nie rzucaj błędem jeśli nie jest dostępna
+    let contextInvoice = null;
+    try {
+        const invoiceContext = (0, InvoiceDetails_1.useInvoice)();
+        contextInvoice = invoiceContext.invoice;
+    }
+    catch {
+        // Hook nie jest dostępny w tym kontekście
+    }
+    const invoice = passedInvoice || contextInvoice;
+    if (!invoice) {
+        console.error("CopyButton: Brak faktury do skopiowania");
+        return null;
+    }
     async function handleClick() {
         try {
+            setRequestPending(true);
             await InvoicesController_1.invoicesRepository.copyItem(invoice);
+            setRequestPending(false);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -56,7 +72,10 @@ function CopyButton({ onError }) {
             }
         }
     }
-    return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick }, "Kopiuj"));
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick },
+        react_1.default.createElement("span", { className: "d-inline-flex align-items-center" },
+            "Kopiuj",
+            requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))));
 }
 exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus, }) {

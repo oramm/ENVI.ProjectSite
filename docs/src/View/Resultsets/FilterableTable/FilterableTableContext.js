@@ -33,6 +33,7 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     tableStructure: [],
     handleAddObject: () => { },
     handleEditObject: () => { },
+    handleCopyObject: () => { },
     handleDeleteObject: () => { },
     setObjects: () => { },
     handleAddSection: () => { },
@@ -48,7 +49,7 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -63,6 +64,7 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             tableStructure,
             handleAddObject,
             handleEditObject,
+            handleCopyObject,
             handleDeleteObject,
             selectedObjectRoute,
             activeRowId,

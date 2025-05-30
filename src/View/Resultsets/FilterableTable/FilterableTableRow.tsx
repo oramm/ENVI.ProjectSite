@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
-import { GeneralDeleteModalButton } from "../../Modals/GeneralModalButtons";
-import { SpecificDeleteModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
-import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton } from "../CommonComponents";
+import { GeneralDeleteModalButton, GeneralCopyModalButton } from "../../Modals/GeneralModalButtons";
+import {
+    SpecificDeleteModalButtonProps,
+    SpecificEditModalButtonProps,
+    SpecificCopyModalButtonProps,
+} from "../../Modals/ModalsTypes";
+import { GDDocFileIconLink, GDFolderIconLink, MenuExpandIconButton, CopyIconButton } from "../CommonComponents";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 import { Col, Row } from "react-bootstrap";
@@ -28,6 +32,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
     const { selectedObjectRoute, tableStructure } = useFilterableTableContext<DataItemType>();
     const {
         handleEditObject,
+        handleCopyObject,
         handleDeleteObject,
         EditButtonComponent,
         isDeletable,
@@ -63,9 +68,11 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
             })}
             {isActive && (
                 <Col align="center" xs="1" className="d-flex justify-content-center">
+                    {" "}
                     <RowActionMenu
                         dataObject={dataObject}
                         handleEditObject={handleEditObject}
+                        handleCopyObject={handleCopyObject}
                         EditButtonComponent={EditButtonComponent}
                         handleDeleteObject={handleDeleteObject}
                         isDeletable={isDeletable}
@@ -82,6 +89,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     dataObject: DataItemType;
     sectionRepository?: RepositoryReact;
     handleEditObject?: (object: DataItemType) => void;
+    handleCopyObject?: (object: DataItemType) => void;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     handleDeleteObject?: (objectId: number) => void;
     isDeletable: boolean;
@@ -94,6 +102,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
 export function RowActionMenu<DataItemType extends RepositoryDataItem>({
     dataObject,
     handleEditObject,
+    handleCopyObject,
     EditButtonComponent,
     handleDeleteObject,
     isDeletable,
@@ -119,7 +128,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
             {dataObject._gdFolderUrl && <GDFolderIconLink layout={layout} folderUrl={dataObject._gdFolderUrl} />}
             {dataObject._documentOpenUrl && (
                 <GDDocFileIconLink layout={layout} folderUrl={dataObject._documentOpenUrl} />
-            )}
+            )}{" "}
             {EditButtonComponent && handleEditObject && (
                 <EditButtonComponent
                     modalProps={{
@@ -128,6 +137,16 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                         shouldRetrieveDataBeforeEdit,
                         specialRetrieveActionRoute,
                         repository: repository as RepositoryReact<any>,
+                    }}
+                    buttonProps={{ layout }}
+                />
+            )}{" "}
+            {handleCopyObject && (
+                <CopyModalButton
+                    modalProps={{
+                        onCopy: handleCopyObject,
+                        initialData: dataObject,
+                        repository: repository as RepositoryReact<DataItemType>,
                     }}
                     buttonProps={{ layout }}
                 />
@@ -174,6 +193,26 @@ export function DeleteModalButton<DataItemType extends RepositoryDataItem>({
         <GeneralDeleteModalButton<DataItemType>
             modalProps={{
                 onDelete,
+                modalTitle,
+                repository,
+                initialData,
+            }}
+            buttonProps={buttonProps}
+        />
+    );
+}
+
+export function CopyModalButton<DataItemType extends RepositoryDataItem>({
+    modalProps: { onCopy, initialData, repository },
+    buttonProps,
+}: SpecificCopyModalButtonProps<DataItemType>) {
+    const name = "name" in initialData ? initialData.name : undefined;
+    const modalTitle = "Kopiowanie " + (name || "wybranego elementu");
+
+    return (
+        <GeneralCopyModalButton<DataItemType>
+            modalProps={{
+                onCopy,
                 modalTitle,
                 repository,
                 initialData,

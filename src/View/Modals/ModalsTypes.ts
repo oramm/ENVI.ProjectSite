@@ -94,6 +94,23 @@ export type GeneralDeleteModalButtonProps<DataItemType extends RepositoryDataIte
     buttonProps?: GeneralDeleteModalButtonButtonProps;
 };
 
+type GeneralCopyModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralModalButtonModalProps<DataItemType>,
+    "ModalBodyComponent"
+> & {
+    onCopy: (copiedData: DataItemType) => void;
+    initialData: DataItemType;
+};
+
+type GeneralCopyModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    buttonCaption?: string;
+};
+
+export type GeneralCopyModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralCopyModalButtonModalProps<DataItemType>;
+    buttonProps?: GeneralCopyModalButtonButtonProps;
+};
+
 type SpecificAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
     GeneralAddNewModalButtonModalProps<DataItemType>,
     "ModalBodyComponent" | "modalTitle" | "repository"
@@ -136,6 +153,22 @@ type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;
 export type SpecificDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: SpecificDeleteModalButtonModalProps<DataItemType>;
     buttonProps?: SpecificDeleteModalButtonButtonProps;
+};
+
+type SpecificCopyModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralCopyModalButtonModalProps<DataItemType>,
+    "ModalBodyComponent" | "modalTitle" | "repository"
+> & {
+    onCopy: (copiedData: DataItemType) => void;
+    initialData: DataItemType;
+    repository: RepositoryReact<DataItemType>;
+};
+
+type SpecificCopyModalButtonButtonProps = GeneralCopyModalButtonButtonProps;
+
+export type SpecificCopyModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: SpecificCopyModalButtonModalProps<DataItemType>;
+    buttonProps?: SpecificCopyModalButtonButtonProps;
 };
 
 export type additionalFieldsKeysValue = {

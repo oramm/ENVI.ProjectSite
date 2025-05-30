@@ -13,6 +13,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     tableStructure: RowStructure<DataItemType>[];
     handleAddObject: (object: DataItemType) => void;
     handleEditObject: (object: DataItemType) => void;
+    handleCopyObject: (object: DataItemType) => void;
     handleDeleteObject: (objectId: number) => void;
     setObjects: React.Dispatch<React.SetStateAction<DataItemType[]>>;
     handleAddSection: (sectionObject: RepositoryDataItem) => void;
@@ -37,6 +38,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     tableStructure: [],
     handleAddObject: () => {},
     handleEditObject: () => {},
+    handleCopyObject: () => {},
     handleDeleteObject: () => {},
     setObjects: () => {},
     handleAddSection: () => {},
@@ -65,6 +67,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     setSections,
     handleAddSection,
     handleEditSection,
+    handleCopyObject,
     handleDeleteSection,
     tableStructure,
     selectedObjectRoute,
@@ -96,6 +99,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 tableStructure,
                 handleAddObject,
                 handleEditObject,
+                handleCopyObject,
                 handleDeleteObject,
                 selectedObjectRoute,
                 activeRowId,

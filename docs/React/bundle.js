@@ -89972,18 +89972,25 @@ function InvoicesSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
-    function makeEntityLabel(invoice) {
-        return react_1.default.createElement("div", null, invoice._entity.name);
+    function renderRow(invoice, isActive) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "fw-bold" }, invoice._contract?.ourId),
+            react_1.default.createElement("div", null,
+                invoice._entity.name,
+                " "),
+            invoice.description && react_1.default.createElement("div", { className: "text-muted small" },
+                " ",
+                invoice.description),
+            isActive && react_1.default.createElement("div", { className: "mt-2" })));
     }
     function renderInvoiceTotaValue(invoice) {
         return (react_1.default.createElement(react_1.default.Fragment, null, invoice._totalNetValue && react_1.default.createElement("div", { className: "text-end" }, Tools_1.default.formatNumber(invoice._totalNetValue))));
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
-            { header: "Umowa", renderTdBody: (invoice) => react_1.default.createElement(react_1.default.Fragment, null, invoice._contract.ourId), colMd: 1 },
             { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
+            { header: "Dane faktury", renderTdBody: renderRow, colMd: 5 },
             { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
             { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
-            { header: "Odbiorca", renderTdBody: makeEntityLabel, colMd: 4 },
             { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
             { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
             {
@@ -90408,11 +90415,27 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
         } }));
 }
 exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
-function CopyButton({ onError }) {
-    const { invoice } = (0, InvoiceDetails_1.useInvoice)();
+function CopyButton({ onError, invoice: passedInvoice, }) {
+    const [requestPending, setRequestPending] = react_1.default.useState(false);
+    // Spróbuj uzyskać fakturę z kontekstu, ale nie rzucaj błędem jeśli nie jest dostępna
+    let contextInvoice = null;
+    try {
+        const invoiceContext = (0, InvoiceDetails_1.useInvoice)();
+        contextInvoice = invoiceContext.invoice;
+    }
+    catch {
+        // Hook nie jest dostępny w tym kontekście
+    }
+    const invoice = passedInvoice || contextInvoice;
+    if (!invoice) {
+        console.error("CopyButton: Brak faktury do skopiowania");
+        return null;
+    }
     async function handleClick() {
         try {
+            setRequestPending(true);
             await InvoicesController_1.invoicesRepository.copyItem(invoice);
+            setRequestPending(false);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -90420,7 +90443,10 @@ function CopyButton({ onError }) {
             }
         }
     }
-    return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick }, "Kopiuj"));
+    return (react_1.default.createElement(react_bootstrap_1.Button, { key: "Kopiuj", variant: "outline-secondary", size: "sm", onClick: handleClick },
+        react_1.default.createElement("span", { className: "d-inline-flex align-items-center" },
+            "Kopiuj",
+            requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))));
 }
 exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus, }) {
@@ -99400,7 +99426,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PartialEditTrigger = exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = void 0;
+exports.PartialEditTrigger = exports.GeneralCopyModalButton = exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ConfirmModal_1 = __importDefault(__webpack_require__(/*! ./ConfirmModal */ "./src/View/Modals/ConfirmModal.tsx"));
@@ -99496,6 +99522,29 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSub
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, subtitle: modalSubtitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
 exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
+/** Wyświetla ikonę kopiowania podłączoną do Modala - nie przyjmuje ButtonProps */
+function GeneralCopyModalButton({ modalProps: { onCopy, modalTitle, modalSubtitle, initialData, repository }, buttonProps, }) {
+    const [showForm, setShowForm] = (0, react_1.useState)(false);
+    const { layout = "vertical" } = { ...buttonProps };
+    function handleOpen() {
+        setShowForm(true);
+    }
+    function handleClose() {
+        setShowForm(false);
+    }
+    async function handleCopy() {
+        const copiedData = await repository.copyItem(initialData);
+        onCopy(copiedData);
+        handleClose();
+    }
+    const itemName = "name" in initialData ? initialData?.name : "obiekt";
+    const defaultTitle = modalTitle || "Kopiowanie";
+    const defaultPrompt = `Czy na pewno chcesz skopiować ${itemName}?`;
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(CommonComponents_1.CopyIconButton, { layout: layout, onClick: handleOpen }),
+        react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: defaultTitle, subtitle: modalSubtitle, onConfirm: handleCopy, prompt: defaultPrompt })));
+}
+exports.GeneralCopyModalButton = GeneralCopyModalButton;
 function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, size, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -99553,7 +99602,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.CopyIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
@@ -99639,6 +99688,10 @@ function DeleteIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faTrash, layout: layout, onClick: onClick, className: "text-danger" });
 }
 exports.DeleteIconButton = DeleteIconButton;
+function CopyIconButton({ layout, onClick }) {
+    return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faCopy, layout: layout, onClick: onClick, className: "text-info" });
+}
+exports.CopyIconButton = CopyIconButton;
 function MenuExpandIconButton({ layout, onClick }) {
     const icon = layout === "vertical" ? free_solid_svg_icons_1.faEllipsisV : free_solid_svg_icons_1.faEllipsisH;
     return react_1.default.createElement(IconButton, { icon: icon, layout: layout, onClick: onClick, className: "text-secondary" });
@@ -100665,6 +100718,10 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         else
             setSections(editNode(sections, activeSectionId, object));
     }
+    function handleCopyObject(object) {
+        setObjects([...objects, object]);
+        updateSnapshot();
+    }
     function handleDeleteObject(objectId) {
         if (!sections.length)
             setObjects(objects.filter((o) => o.id !== objectId));
@@ -100704,7 +100761,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -100888,6 +100945,7 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     tableStructure: [],
     handleAddObject: () => { },
     handleEditObject: () => { },
+    handleCopyObject: () => { },
     handleDeleteObject: () => { },
     setObjects: () => { },
     handleAddSection: () => { },
@@ -100903,7 +100961,7 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -100918,6 +100976,7 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             tableStructure,
             handleAddObject,
             handleEditObject,
+            handleCopyObject,
             handleDeleteObject,
             selectedObjectRoute,
             activeRowId,
@@ -100974,7 +101033,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getRowClass = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
+exports.getRowClass = exports.CopyModalButton = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -100985,7 +101044,7 @@ const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const { handleEditObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { handleEditObject, handleCopyObject, handleDeleteObject, EditButtonComponent, isDeletable, repository, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute, } = (0, FilterableTableContext_1.useFilterableTableContext)();
     function tdBodyRender(columnStructure, dataObject) {
         if (columnStructure.objectAttributeToShow !== undefined) {
             const key = columnStructure.objectAttributeToShow;
@@ -101004,10 +101063,11 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
         isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+            " ",
+            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
 }
 exports.FilterableTableRow = FilterableTableRow;
-function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
+function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
     function toggleMenu() {
@@ -101016,11 +101076,18 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
     return (react_1.default.createElement("div", { className: `d-flex ${layout === "vertical" ? "flex-column align-items-start" : "flex-row align-items-center"}` },
         dataObject._gdFolderUrl && react_1.default.createElement(CommonComponents_1.GDFolderIconLink, { layout: layout, folderUrl: dataObject._gdFolderUrl }),
         dataObject._documentOpenUrl && (react_1.default.createElement(CommonComponents_1.GDDocFileIconLink, { layout: layout, folderUrl: dataObject._documentOpenUrl })),
+        " ",
         EditButtonComponent && handleEditObject && (react_1.default.createElement(EditButtonComponent, { modalProps: {
                 onEdit: handleEditObject,
                 initialData: dataObject,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                repository: repository,
+            }, buttonProps: { layout } })),
+        " ",
+        handleCopyObject && (react_1.default.createElement(CopyModalButton, { modalProps: {
+                onCopy: handleCopyObject,
+                initialData: dataObject,
                 repository: repository,
             }, buttonProps: { layout } })),
         isDeletable && handleDeleteObject && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -101045,6 +101112,17 @@ function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, 
         }, buttonProps: buttonProps }));
 }
 exports.DeleteModalButton = DeleteModalButton;
+function CopyModalButton({ modalProps: { onCopy, initialData, repository }, buttonProps, }) {
+    const name = "name" in initialData ? initialData.name : undefined;
+    const modalTitle = "Kopiowanie " + (name || "wybranego elementu");
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralCopyModalButton, { modalProps: {
+            onCopy,
+            modalTitle,
+            repository,
+            initialData,
+        }, buttonProps: buttonProps }));
+}
+exports.CopyModalButton = CopyModalButton;
 /**
  * Returns a string with the class names for the row based on the active state and striped row state.
  */
