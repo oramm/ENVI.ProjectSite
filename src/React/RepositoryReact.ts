@@ -158,6 +158,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 action: "loadCurrentItemDetailsFromServerPOST",
                 conditions,
                 actionRoute,
+                item: this.currentItems[0] || null,
             });
             throw error;
         }
@@ -238,6 +239,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 action: "addNewItemAsync",
                 actionRoute,
                 itemType: newItem instanceof FormData ? "FormData" : "JSON",
+                item: newItem,
             });
             throw error;
         }
@@ -336,6 +338,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 actionRoute,
                 itemId,
                 itemType: item instanceof FormData ? "FormData" : "JSON",
+                item,
+                _fieldsToUpdate,
             });
             console.error(error);
             throw error;
@@ -362,8 +366,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsFetch.sendClientErrorReport(networkError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
                 errorType: "network",
+                item: oldItem,
             });
             console.error("Network error: ", networkError);
             throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
@@ -376,8 +380,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsFetch.sendClientErrorReport(parseError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
                 errorType: "parse",
+                item: oldItem,
             });
             console.error("Failed to parse response: ", parseError);
             throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
@@ -401,7 +405,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             ToolsFetch.sendClientErrorReport(localUpdateError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
+                item: oldItem,
                 errorType: "localUpdate",
             });
             console.error("Failed to update local state: ", localUpdateError);
@@ -414,7 +418,8 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * Wykonuje zapytanie do serwera
      * @param actionRoute - ścieżka do akcji na serwerze
      * @param item
-     */ async fetch(actionRoute: string, item?: DataItemType) {
+     */
+    async fetch(actionRoute: string, item?: DataItemType) {
         const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
 
@@ -441,7 +446,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
                 repositoryName: this.name,
                 action: "fetch",
                 actionRoute,
-                itemId: item?.id,
+                item,
             });
             throw error;
         }

@@ -97,6 +97,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
             ToolsFetch.sendClientErrorReport(error, {
                 action: "GeneralModal_loadDataObject",
                 modalTitle: title,
+                item: modalBodyProps.initialData,
             });
             setErrorMessage("Błąd: Repository nie został przekazany do modala");
             return;
@@ -124,6 +125,7 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                 action: "GeneralModal_loadDataObject_fetch",
                 modalTitle: title,
                 itemId: modalBodyProps.initialData?.id,
+                item: modalBodyProps.initialData || null,
             });
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -164,6 +166,9 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                 action: "GeneralModal_handleSubmit_" + (isEditing ? "edit" : "add"),
                 modalTitle: title,
                 hasRepository: !!repository,
+                currentitem: isEditing ? repository?.currentItems?.[0] : undefined,
+                item: modalBodyProps.initialData,
+                _fieldsToUpdate: isEditing ? fieldsToUpdate : undefined,
             });
             setRequestPending(false);
         }

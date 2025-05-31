@@ -96059,6 +96059,7 @@ class RepositoryReact {
                 action: "loadCurrentItemDetailsFromServerPOST",
                 conditions,
                 actionRoute,
+                item: this.currentItems[0] || null,
             });
             throw error;
         }
@@ -96128,6 +96129,7 @@ class RepositoryReact {
                 action: "addNewItemAsync",
                 actionRoute,
                 itemType: newItem instanceof FormData ? "FormData" : "JSON",
+                item: newItem,
             });
             throw error;
         }
@@ -96212,6 +96214,8 @@ class RepositoryReact {
                 actionRoute,
                 itemId,
                 itemType: item instanceof FormData ? "FormData" : "JSON",
+                item,
+                _fieldsToUpdate,
             });
             console.error(error);
             throw error;
@@ -96238,8 +96242,8 @@ class RepositoryReact {
             ToolsFetch_1.default.sendClientErrorReport(networkError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
                 errorType: "network",
+                item: oldItem,
             });
             console.error("Network error: ", networkError);
             throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
@@ -96252,8 +96256,8 @@ class RepositoryReact {
             ToolsFetch_1.default.sendClientErrorReport(parseError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
                 errorType: "parse",
+                item: oldItem,
             });
             console.error("Failed to parse response: ", parseError);
             throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
@@ -96275,7 +96279,7 @@ class RepositoryReact {
             ToolsFetch_1.default.sendClientErrorReport(localUpdateError, {
                 repositoryName: this.name,
                 action: "deleteItemNodeJS",
-                itemId: id,
+                item: oldItem,
                 errorType: "localUpdate",
             });
             console.error("Failed to update local state: ", localUpdateError);
@@ -96287,7 +96291,8 @@ class RepositoryReact {
      * Wykonuje zapytanie do serwera
      * @param actionRoute - ścieżka do akcji na serwerze
      * @param item
-     */ async fetch(actionRoute, item) {
+     */
+    async fetch(actionRoute, item) {
         const urlPath = `${MainSetupReact_1.default.serverUrl}${actionRoute}`;
         const requestKey = JSON.stringify({ url: urlPath, body: item });
         const requestOptions = {
@@ -96312,7 +96317,7 @@ class RepositoryReact {
                 repositoryName: this.name,
                 action: "fetch",
                 actionRoute,
-                itemId: item?.id,
+                item,
             });
             throw error;
         }
@@ -99209,6 +99214,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
             ToolsFetch_1.default.sendClientErrorReport(error, {
                 action: "GeneralModal_loadDataObject",
                 modalTitle: title,
+                item: modalBodyProps.initialData,
             });
             setErrorMessage("Błąd: Repository nie został przekazany do modala");
             return;
@@ -99231,6 +99237,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
                 action: "GeneralModal_loadDataObject_fetch",
                 modalTitle: title,
                 itemId: modalBodyProps.initialData?.id,
+                item: modalBodyProps.initialData || null,
             });
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -99274,6 +99281,9 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
                 action: "GeneralModal_handleSubmit_" + (isEditing ? "edit" : "add"),
                 modalTitle: title,
                 hasRepository: !!repository,
+                currentitem: isEditing ? repository?.currentItems?.[0] : undefined,
+                item: modalBodyProps.initialData,
+                _fieldsToUpdate: isEditing ? fieldsToUpdate : undefined,
             });
             setRequestPending(false);
         }
