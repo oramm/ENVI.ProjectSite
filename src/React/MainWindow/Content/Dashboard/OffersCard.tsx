@@ -53,11 +53,15 @@ export default function OffersCard({ className }: { className: string }) {
     );
 
     function renderOfferListItem({ object }: { object: OurOffer | ExternalOffer }) {
+        const statusesWithDeadline = [MainSetup.OfferStatus.TO_DO, MainSetup.OfferStatus.DECISION_PENDING];
+        const showDeadline = statusesWithDeadline.includes(object.status!) && object.submissionDeadline;
+
         return (
             <>
                 <span className="text-secondary small">
                     <span className="fw-semibold">{object._city.name}</span>, {object._type.name},{" "}
                     <span className="fw-light">{object.alias}</span>
+                    {showDeadline && <span> | {ToolsDate.dateToDdMmm(object.submissionDeadline!)}</span>}
                 </span>
             </>
         );

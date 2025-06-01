@@ -70,6 +70,8 @@ function OffersCard({ className }) {
     }, []);
     const { dataLoaded, data, cardData } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchData);
     function renderOfferListItem({ object }) {
+        const statusesWithDeadline = [MainSetupReact_1.default.OfferStatus.TO_DO, MainSetupReact_1.default.OfferStatus.DECISION_PENDING];
+        const showDeadline = statusesWithDeadline.includes(object.status) && object.submissionDeadline;
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("span", { className: "text-secondary small" },
                 react_1.default.createElement("span", { className: "fw-semibold" }, object._city.name),
@@ -77,7 +79,10 @@ function OffersCard({ className }) {
                 object._type.name,
                 ",",
                 " ",
-                react_1.default.createElement("span", { className: "fw-light" }, object.alias))));
+                react_1.default.createElement("span", { className: "fw-light" }, object.alias),
+                showDeadline && react_1.default.createElement("span", null,
+                    " | ",
+                    ToolsDate_1.default.dateToDdMmm(object.submissionDeadline)))));
     }
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }

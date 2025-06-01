@@ -15,7 +15,7 @@ import {
     OfferFormSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
 import { OfferStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOffer | ExternalOffer>) {
     const {
