@@ -76,24 +76,33 @@ export default function MilestoneDateItem({ object: item, onClick }: MilestoneDa
             </PartialEditTrigger>
         );
     }
-
     return (
-        <div onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
-            <div className="mb-2">
-                {contractLabel}
+        <div onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }} className="p-2 border-bottom w-100">
+            {/* Kontrakt */}
+            <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="fw-semibold">{contractLabel}</span>
                 {renderContractStatus(item)}
             </div>
-            <div className="mb-2">
-                <span className="small">Kamień: </span>
-                <span className="fw-bold me-1">{_milestone?._type.name}</span>{" "}
-                <span className="me-1">{_milestone?.name || ""}</span>
+
+            {/* Kamień milowy */}
+            <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="small text-muted">Kamień:</span>
+                <span className="fw-bold">{_milestone?._type.name}</span>
+                {_milestone?.name && <span className="text-secondary">({_milestone.name})</span>}
                 {renderMilestoneStatus(item)}
-                <div className="mt-1">
-                    <span className="small">Od:</span>{" "}
-                    <span className="fs-6">{ToolsDate.dateISOToDMY(item.startDate)}</span>{" "}
-                    <span className="small">do:</span>{" "}
-                    <span className="fs-6">{ToolsDate.dateISOToDMY(item.endDate)}</span> {renderDaysLeft()}
+            </div>
+
+            {/* Daty */}
+            <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center gap-1">
+                    <span className="small text-muted">Od:</span>
+                    <span className="badge bg-light text-dark">{ToolsDate.dateISOToDMY(item.startDate)}</span>
                 </div>
+                <div className="d-flex align-items-center gap-1">
+                    <span className="small text-muted">do:</span>
+                    <span className="badge bg-light text-dark">{ToolsDate.dateISOToDMY(item.endDate)}</span>
+                </div>
+                {renderDaysLeft()}
             </div>
         </div>
     );
