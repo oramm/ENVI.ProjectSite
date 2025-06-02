@@ -33,7 +33,7 @@ const DashboardCardContext_1 = require("./DashboardCardContext");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const RowActionMenu_1 = __importDefault(require("./RowActionMenu"));
 const CommonComponents_1 = require("../CommonComponents");
-function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, }) {
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, onEditComplete, processEditedObject, }) {
     const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -49,7 +49,8 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         .toISOString()
         .slice(0, 10);
     function handleEditObject(object) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+        const processedObject = processEditedObject ? processEditedObject(object) : object;
+        setObjects(objects.map((o) => (o.id === object.id ? processedObject : o)));
     }
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));

@@ -35,7 +35,7 @@ function ContractModalBodyStatus({ initialData }) {
             shouldValidate: true,
         });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { name: "_milestone._contract.status" });
+    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { name: "_milestone._contract.status", label: "Status kontraktu" });
 }
 exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function MilestoneModalBodyStatus({ initialData }) {

@@ -7,6 +7,7 @@ import OffersCard from "./OffersCard";
 import MainSetup from "../../../MainSetupReact";
 import InvoicesCard from "./InvoicesCard";
 import ApplicationCallsCard from "./ApplicationCallsCard";
+import MilestonesCard from "./MilestonesCard";
 
 export default function Dashboard() {
     return (
@@ -19,7 +20,9 @@ export default function Dashboard() {
                 <ApplicationCallsCard className="mb-3 bg-white" />
             </Col>
             <Col md={6} className="mb-3">
-                <UpcomingEvents />
+                <MilestonesCard />
+
+                {/* <UpcomingEvents /> */}
             </Col>
             <Col md={3} className="mb-3">
                 <MyData className="mb-3 bg-white" />

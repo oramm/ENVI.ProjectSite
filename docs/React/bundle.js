@@ -88561,7 +88561,7 @@ function ContractModalBodyStatus({ initialData }) {
             shouldValidate: true,
         });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { name: "_milestone._contract.status" });
+    return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { name: "_milestone._contract.status", label: "Status kontraktu" });
 }
 exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function MilestoneModalBodyStatus({ initialData }) {
@@ -94978,13 +94978,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const UpcomingEvents_1 = __importDefault(__webpack_require__(/*! ./UpcominigEvents/UpcomingEvents */ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/UpcomingEvents.tsx"));
 const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
 const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/MainWindow/Content/News.tsx"));
 const OffersCard_1 = __importDefault(__webpack_require__(/*! ./OffersCard */ "./src/React/MainWindow/Content/Dashboard/OffersCard.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx"));
 const ApplicationCallsCard_1 = __importDefault(__webpack_require__(/*! ./ApplicationCallsCard */ "./src/React/MainWindow/Content/Dashboard/ApplicationCallsCard.tsx"));
+const MilestonesCard_1 = __importDefault(__webpack_require__(/*! ./MilestonesCard */ "./src/React/MainWindow/Content/Dashboard/MilestonesCard.tsx"));
 function Dashboard() {
     return (react_1.default.createElement(react_bootstrap_1.Row, { className: "mx-3" },
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
@@ -94992,7 +94992,7 @@ function Dashboard() {
             ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(InvoicesCard_1.default, { className: "mb-3 bg-white" })),
             react_1.default.createElement(ApplicationCallsCard_1.default, { className: "mb-3 bg-white" })),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
-            react_1.default.createElement(UpcomingEvents_1.default, null)),
+            react_1.default.createElement(MilestonesCard_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }),
             react_1.default.createElement(News_1.default, { className: "mb-3 bg-white" }))));
@@ -95109,6 +95109,187 @@ function InvoicesCard({ className }) {
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/", headerRoute: "/invoices" }));
 }
 exports["default"] = InvoicesCard;
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/Content/Dashboard/MilestoneDateItem.tsx":
+/*!**********************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/MilestoneDateItem.tsx ***!
+  \**********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const typeGuards_1 = __webpack_require__(/*! ../../../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const DashboardCardContext_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCardContext */ "./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx");
+const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const MilestoneDateBodiesPartial_1 = __webpack_require__(/*! ../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial */ "./src/Contracts/Dates/Modals/MilestoneDateBodiesPartial.tsx");
+function MilestoneDateItem({ object: item, onClick }) {
+    if (!item.id)
+        return react_1.default.createElement(react_1.default.Fragment, null, "\u26A0\uFE0F brak ID");
+    const _contract = item._milestone?._contract;
+    const _milestone = item._milestone;
+    let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
+    if ((0, typeGuards_1.isOurContract)(_contract))
+        contractLabel += _contract?._type?.name;
+    function renderDaysLeft() {
+        if (!item._milestone?.status ||
+            ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
+            return null;
+        const daysLeft = ToolsDate_1.default.countDaysLeftTo(item.endDate);
+        return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
+    }
+    function renderContractStatus(item) {
+        if (!item._milestone?._contract?.status)
+            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
+        const { handleEditObject } = (0, DashboardCardContext_1.useDashboardCardContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                repository: MainWindowController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateContract",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: item._milestone?._contract?.status || "" })));
+    }
+    function renderMilestoneStatus(item) {
+        const { handleEditObject } = (0, DashboardCardContext_1.useDashboardCardContext)();
+        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
+                initialData: item,
+                modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                repository: MainWindowController_1.milestoneDatesRepository,
+                ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
+                onEdit: handleEditObject,
+                fieldsToUpdate: ["status"],
+                specialActionRoute: "milestoneDateMilestone",
+                //makeValidationSchema: contractStatusValidationSchema,
+            } },
+            react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: item._milestone?.status || "" })));
+    }
+    return (react_1.default.createElement("div", { onClick: onClick, style: { cursor: onClick ? "pointer" : "default" } },
+        react_1.default.createElement("div", { className: "mb-2" },
+            contractLabel,
+            renderContractStatus(item)),
+        react_1.default.createElement("div", { className: "mb-2" },
+            react_1.default.createElement("span", { className: "small" }, "Kamie\u0144: "),
+            react_1.default.createElement("span", { className: "fw-bold me-1" }, _milestone?._type.name),
+            " ",
+            react_1.default.createElement("span", { className: "me-1" }, _milestone?.name || ""),
+            renderMilestoneStatus(item),
+            react_1.default.createElement("div", { className: "mt-1" },
+                react_1.default.createElement("span", { className: "small" }, "Od:"),
+                " ",
+                react_1.default.createElement("span", { className: "fs-6" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
+                " ",
+                react_1.default.createElement("span", { className: "small" }, "do:"),
+                " ",
+                react_1.default.createElement("span", { className: "fs-6" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
+                " ",
+                renderDaysLeft()))));
+}
+exports["default"] = MilestoneDateItem;
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/Content/Dashboard/MilestonesCard.tsx":
+/*!*******************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/MilestonesCard.tsx ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
+const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
+const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
+const MilestoneDateItem_1 = __importDefault(__webpack_require__(/*! ./MilestoneDateItem */ "./src/React/MainWindow/Content/Dashboard/MilestoneDateItem.tsx"));
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const typeGuards_1 = __webpack_require__(/*! ../../../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const MilestoneDateButtons_1 = __webpack_require__(/*! ../../../../Contracts/Dates/Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
+const sectionsIcons = {
+    "Po terminie": "🚨",
+    "Kończące się do 7 dni": "⚡",
+    "Kończące się do 30 dni": "⏰",
+    "Pozostałe nadchodzące": "📅",
+};
+function MilestonesCard() {
+    const initCardData = {
+        header: {
+            title: "Kamienie milowe",
+            daysBeforeToday: 100,
+            daysAfterToday: 30,
+        },
+        sectionAttributeName: "timeCategory",
+    };
+    const fetchMilestones = (0, react_1.useCallback)(async () => {
+        const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
+            .toISOString()
+            .slice(0, 10);
+        const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
+        const milestones = await MainWindowController_1.milestoneDatesRepository.loadItemsFromServerPOST([
+            {
+                milestoneStatuses: [MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED],
+                endDateFrom,
+                endDateTo,
+            },
+        ]);
+        // Process milestones to add time category
+        return MainWindowController_1.MilestonesBusinessLogic.processCollection(milestones);
+    }, []);
+    const processEditedObject = MainWindowController_1.MilestonesBusinessLogic.addTimeCategory;
+    const { dataLoaded, data: processedMilestones, cardData, } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchMilestones);
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, repository: MainWindowController_1.milestoneDatesRepository, ListItem: MilestoneDateItem_1.default, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, detailsRoute: "/projects/details", getDetailsId: (milestone) => {
+            const contract = milestone._milestone?._contract;
+            if (!contract)
+                return "";
+            return (0, typeGuards_1.isOurContract)(contract) ? contract.ourId : contract.projectOurId || "";
+        }, initialObjects: processedMilestones, shouldRetrieveDataBeforeEdit: true, processEditedObject: processEditedObject }));
+}
+exports["default"] = MilestonesCard;
 
 
 /***/ }),
@@ -95248,253 +95429,6 @@ function OffersCard({ className }) {
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }
 exports["default"] = OffersCard;
-
-
-/***/ }),
-
-/***/ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx":
-/*!***********************************************************************************!*\
-  !*** ./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx ***!
-  \***********************************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-const CommonComponents_1 = __webpack_require__(/*! ../../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/Tools */ "./src/React/Tools/Tools.ts"));
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
-const MainWindowController_1 = __webpack_require__(/*! ../../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
-const MilestoneDateBodiesPartial_1 = __webpack_require__(/*! ../../../../../Contracts/Dates/Modals/MilestoneDateBodiesPartial */ "./src/Contracts/Dates/Modals/MilestoneDateBodiesPartial.tsx");
-const FilterableTableContext_1 = __webpack_require__(/*! ../../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
-const typeGuards_1 = __webpack_require__(/*! ../../../../../../Typings/typeGuards */ "./Typings/typeGuards.ts");
-const MilestoneDateButtons_1 = __webpack_require__(/*! ../../../../../Contracts/Dates/Modals/MilestoneDateButtons */ "./src/Contracts/Dates/Modals/MilestoneDateButtons.tsx");
-function MilestonesList() {
-    const [milestoneDates, setMilestoneDates] = (0, react_1.useState)([]);
-    const [sections, setSections] = (0, react_1.useState)([]);
-    const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
-    const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
-    (0, react_1.useEffect)(() => {
-        document.title = "Główna";
-    }, []);
-    (0, react_1.useEffect)(() => {
-        async function fetchData() {
-            setDataLoaded(false);
-            const endDateTo = ToolsDate_1.default.addDays(new Date(), -130);
-            const milestones = await MainWindowController_1.milestoneDatesRepository.loadItemsFromServerPOST([
-                {
-                    milestoneStatuses: [MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED],
-                    endDateTo: endDateTo.toISOString().slice(0, 10),
-                    getRemainingValue: true,
-                    _admin: filterByCurrentUser() ? MainSetupReact_1.default.getCurrentUserAsPerson() : undefined,
-                },
-            ]);
-            setMilestoneDates(milestones);
-            setDataLoaded(true);
-        }
-        fetchData();
-    }, []);
-    (0, react_1.useEffect)(() => {
-        const ourMilestones = milestoneDates.filter((m) => m._milestone?._contract?._type.isOur);
-        const otherMilestones = milestoneDates.filter((m) => !m._milestone?._contract?._type.isOur);
-        setSections(buildTree(ourMilestones, otherMilestones));
-        setExternalUpdate((prevState) => prevState + 1);
-    }, [milestoneDates]);
-    /**
-     * Filtrowanie będzie tylko dla użytkowników z uprawnieniami poniżej ENVI_MANAGER i ADMIN
-     */
-    function filterByCurrentUser() {
-        const privilegedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
-        return !privilegedRoles.includes(MainSetupReact_1.default.currentUser.systemRoleName);
-    }
-    function renderRow(item) {
-        if (!item.id)
-            return react_1.default.createElement(react_1.default.Fragment, null, "\"\u26A0\uFE0F brak ID\"");
-        const _contract = item._milestone?._contract;
-        const _milestone = item._milestone;
-        let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
-        if ((0, typeGuards_1.isOurContract)(_contract))
-            contractLabel += _contract?._type?.name;
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "mb-2" },
-                contractLabel,
-                " ",
-                renderContractStatus(item)),
-            react_1.default.createElement("div", { className: "mb-2" },
-                react_1.default.createElement("span", { className: "small" }, "Kamie\u0144: "),
-                react_1.default.createElement("span", { className: "fw-bold me-1" }, _milestone?._type.name),
-                " ",
-                react_1.default.createElement("span", { className: "me-1" }, _milestone?.name || ""),
-                renderMilestoneStatus(item),
-                react_1.default.createElement("div", null, renderDates(item)))));
-    }
-    function renderDates(item) {
-        return (react_1.default.createElement("div", { className: "mb-2" },
-            react_1.default.createElement("span", { className: "small" }, "Od:"),
-            " ",
-            react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.startDate)),
-            " ",
-            react_1.default.createElement("span", { className: "small" }, "do:"),
-            " ",
-            react_1.default.createElement("span", { className: "fs-5" }, ToolsDate_1.default.dateISOToDMY(item.endDate)),
-            " ",
-            react_1.default.createElement("span", null, renderDaysLeft(item))));
-    }
-    function renderContractStatus(item) {
-        if (!item._milestone?._contract?.status)
-            return react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak statusu");
-        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
-                initialData: item,
-                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
-                repository: MainWindowController_1.milestoneDatesRepository,
-                ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
-                onEdit: handleEditObject,
-                fieldsToUpdate: ["status"],
-                specialActionRoute: "milestoneDateContract",
-                //makeValidationSchema: contractStatusValidationSchema,
-            } },
-            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: item._milestone?._contract?.status || "" })));
-    }
-    function renderMilestoneStatus(item) {
-        const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
-        return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
-                initialData: item,
-                modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
-                repository: MainWindowController_1.milestoneDatesRepository,
-                ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
-                onEdit: handleEditObject,
-                fieldsToUpdate: ["status"],
-                specialActionRoute: "milestoneDateMilestone",
-                //makeValidationSchema: contractStatusValidationSchema,
-            } },
-            react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: item._milestone?.status || "" })));
-    }
-    function renderDaysLeft(item) {
-        if (!item._milestone?.status ||
-            ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
-            return null;
-        const daysLeft = ToolsDate_1.default.countDaysLeftTo(item.endDate);
-        return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
-    }
-    function renderRemainingValue(milestoneDate) {
-        const _contract = milestoneDate._milestone?._contract;
-        if (!_contract)
-            return react_1.default.createElement(react_1.default.Fragment, null, "Brak kontraktu");
-        const ourId = "ourId" in _contract ? _contract.ourId : "";
-        if (!ourId || !_contract._remainingNotIssuedValue || !_contract._remainingNotScheduledValue)
-            return react_1.default.createElement(react_1.default.Fragment, null);
-        const formatedNotScheduledValue = Tools_1.default.formatNumber(_contract._remainingNotScheduledValue || 0, 0);
-        const formatedNotIssuedValue = Tools_1.default.formatNumber(_contract._remainingNotIssuedValue || 0, 0);
-        return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wys\u0142anych faktur a warto\u015Bci\u0105 umowy", placement: "right" },
-                react_1.default.createElement("div", { className: "text-end text-success" }, formatedNotIssuedValue)),
-            react_1.default.createElement(CommonComponents_1.MyTooltip, { content: "R\u00F3\u017Cnica pomi\u0119dzy warto\u015Bci\u0105 wszystkich  faktur w witrynie a warto\u015Bci\u0105 umowy", placement: "right" },
-                react_1.default.createElement("div", { className: "text-end text-danger" }, formatedNotScheduledValue))));
-    }
-    function makeTablestructure() {
-        const tableStructure = [{ renderTdBody: renderRow }];
-        const allowedRoles = [MainSetupReact_1.default.SystemRoles.ADMIN.systemName, MainSetupReact_1.default.SystemRoles.ENVI_MANAGER.systemName];
-        if (MainSetupReact_1.default.isRoleAllowed(allowedRoles)) {
-            tableStructure.push({
-                header: "Do rozliczenia",
-                renderTdBody: (milestone) => renderRemainingValue(milestone),
-            });
-        }
-        return tableStructure;
-    }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "milestones", title: "", showTableHeader: false, initialSections: sections, tableStructure: makeTablestructure(), isDeletable: false, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, repository: MainWindowController_1.milestoneDatesRepository, selectedObjectRoute: "/milestone/", externalUpdate: externalUpdate }));
-}
-exports["default"] = MilestonesList;
-function DateEditTrigger({ date, milestone, onEdit }) {
-    return date ? ToolsDate_1.default.dateYMDtoDMY(date) : "Jeszcze nie ustalono";
-}
-function buildTree(ourMilestoneDates, otherMilestoneDates) {
-    const milestoneGroupNodes = [
-        {
-            id: "milestoneGroupOur",
-            isInAccordion: true,
-            level: 1,
-            type: "milestoneGroup",
-            childrenNodesType: "milestone",
-            repository: MainWindowController_1.milestoneDatesRepository,
-            dataItem: { id: 1 },
-            titleLabel: "Kontrakty ENVI",
-            children: [],
-            leaves: [...ourMilestoneDates],
-            isDeletable: false,
-        },
-        {
-            id: "milestoneGroupOther",
-            isInAccordion: true,
-            level: 1,
-            type: "milestoneGroup",
-            childrenNodesType: "milestone",
-            repository: MainWindowController_1.milestoneDatesRepository,
-            dataItem: { id: 2 },
-            titleLabel: "Pozostałe kontrakty",
-            children: [],
-            leaves: [...otherMilestoneDates],
-            isDeletable: false,
-        },
-    ];
-    return milestoneGroupNodes;
-}
-
-
-/***/ }),
-
-/***/ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/UpcomingEvents.tsx":
-/*!***********************************************************************************!*\
-  !*** ./src/React/MainWindow/Content/Dashboard/UpcominigEvents/UpcomingEvents.tsx ***!
-  \***********************************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const MilestonesList_1 = __importDefault(__webpack_require__(/*! ./MilestonesList */ "./src/React/MainWindow/Content/Dashboard/UpcominigEvents/MilestonesList.tsx"));
-function UpcomingEvents() {
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", { className: "mb-3 bg-white" },
-            react_1.default.createElement(MilestonesList_1.default, null))));
-}
-exports["default"] = UpcomingEvents;
 
 
 /***/ }),
@@ -95658,7 +95592,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.applicationCallsRepository = exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
+exports.MilestonesBusinessLogic = exports.applicationCallsRepository = exports.invoicesRepository = exports.offersRepository = exports.casesRepository = exports.tasksRepository = exports.milestoneDatesRepository = exports.securitiesRepository = exports.contractsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -95732,6 +95666,31 @@ exports.applicationCallsRepository = new RepositoryReact_1.default({
     },
     name: "dashBoard-applicationCalls",
 });
+class MilestonesBusinessLogic {
+}
+exports.MilestonesBusinessLogic = MilestonesBusinessLogic;
+MilestonesBusinessLogic.addTimeCategory = (milestone) => {
+    const now = new Date();
+    const endDate = new Date(milestone.endDate);
+    const daysUntilEnd = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    let timeCategory;
+    if (daysUntilEnd < 0) {
+        timeCategory = "Po terminie";
+    }
+    else if (daysUntilEnd <= 7) {
+        timeCategory = "Kończące się do 7 dni";
+    }
+    else if (daysUntilEnd <= 30) {
+        timeCategory = "Kończące się do 30 dni";
+    }
+    else {
+        timeCategory = "Pozostałe nadchodzące";
+    }
+    return { ...milestone, timeCategory };
+};
+MilestonesBusinessLogic.processCollection = (milestones) => {
+    return milestones.map(MilestonesBusinessLogic.addTimeCategory);
+};
 
 
 /***/ }),
@@ -100218,7 +100177,7 @@ const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext */
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const RowActionMenu_1 = __importDefault(__webpack_require__(/*! ./RowActionMenu */ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
-function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, }) {
+function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, onEditComplete, processEditedObject, }) {
     const [expandedStatus, setExpandedStatus] = (0, react_1.useState)({});
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [objects, setObjects] = (0, react_1.useState)(initialObjects);
@@ -100234,7 +100193,8 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         .toISOString()
         .slice(0, 10);
     function handleEditObject(object) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+        const processedObject = processEditedObject ? processEditedObject(object) : object;
+        setObjects(objects.map((o) => (o.id === object.id ? processedObject : o)));
     }
     function handleDeleteObject(objectId) {
         setObjects(objects.filter((o) => o.id !== objectId));

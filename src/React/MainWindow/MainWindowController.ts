@@ -12,6 +12,7 @@ import {
 } from "../../../Typings/bussinesTypes";
 
 import RepositoryReact from "../RepositoryReact";
+import ToolsDate from "../Tools/ToolsDate";
 
 export const contractsRepository = new RepositoryReact<OurContract | OtherContract>({
     actionRoutes: {
@@ -92,3 +93,28 @@ export const applicationCallsRepository = new RepositoryReact<ApplicationCallDat
     },
     name: "dashBoard-applicationCalls",
 });
+
+export class MilestonesBusinessLogic {
+    static addTimeCategory = (milestone: MilestoneDateData): MilestoneDateData & { timeCategory: string } => {
+        const now = new Date();
+        const endDate = new Date(milestone.endDate);
+        const daysUntilEnd = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+        let timeCategory: string;
+        if (daysUntilEnd < 0) {
+            timeCategory = "Po terminie";
+        } else if (daysUntilEnd <= 7) {
+            timeCategory = "Kończące się do 7 dni";
+        } else if (daysUntilEnd <= 30) {
+            timeCategory = "Kończące się do 30 dni";
+        } else {
+            timeCategory = "Pozostałe nadchodzące";
+        }
+
+        return { ...milestone, timeCategory };
+    };
+
+    static processCollection = (milestones: MilestoneDateData[]): (MilestoneDateData & { timeCategory: string })[] => {
+        return milestones.map(MilestonesBusinessLogic.addTimeCategory);
+    };
+}

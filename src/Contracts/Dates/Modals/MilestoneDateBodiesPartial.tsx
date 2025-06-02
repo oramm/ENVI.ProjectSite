@@ -16,7 +16,7 @@ export function ContractModalBodyStatus({ initialData }: ModalBodyProps<Mileston
         });
     }, [initialData, setValue]);
 
-    return <ContractStatusSelector name="_milestone._contract.status" />;
+    return <ContractStatusSelector name="_milestone._contract.status" label="Status kontraktu" />;
 }
 
 export function MilestoneModalBodyStatus({ initialData }: ModalBodyProps<MilestoneDateData>) {

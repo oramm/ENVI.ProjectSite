@@ -27,6 +27,8 @@ export type DashboardCardProps<DataItemType extends RepositoryDataItem = Reposit
     specialRetrieveActionRoute?: string;
     className?: string;
     headerRoute?: string;
+    onEditComplete?: () => void;
+    processEditedObject?: (object: any) => DataItemType;
 };
 
 export type DashboardCardData<DataItemType> = {
@@ -61,6 +63,8 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     specialRetrieveActionRoute,
     className,
     headerRoute,
+    onEditComplete,
+    processEditedObject,
 }: DashboardCardProps<DataItemType>) {
     const [expandedStatus, setExpandedStatus] = useState<Record<string, boolean>>({});
     const [activeRowId, setActiveRowId] = useState(0);
@@ -81,7 +85,8 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         .slice(0, 10);
 
     function handleEditObject(object: DataItemType) {
-        setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+        const processedObject = processEditedObject ? processEditedObject(object) : object;
+        setObjects(objects.map((o) => (o.id === object.id ? processedObject : o)));
     }
 
     function handleDeleteObject(objectId: number) {
