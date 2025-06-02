@@ -1,21 +1,24 @@
 import React from "react";
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
+import { SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
+import { GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { MilestoneDateData } from "../../../../Typings/bussinesTypes";
 import { MilestoneDateModalBody } from "./MilestoneDateModalBody";
-import { milestoneDatesRepository } from "../MilestoneDatesController";
 import { makeMilestoneDateValidationSchema } from "./MilestoneDateValidationSchema";
 
 export function MilestoneDateEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, repository },
 }: SpecificEditModalButtonProps<MilestoneDateData>) {
+    if (!repository) {
+        throw new Error("repository is required");
+    }
+
     return (
         <GeneralEditModalButton<MilestoneDateData>
             modalProps={{
                 onEdit,
                 ModalBodyComponent: MilestoneDateModalBody,
                 modalTitle: "Edycja daty kamienia milowego",
-                repository: milestoneDatesRepository,
+                repository,
                 initialData,
                 makeValidationSchema: makeMilestoneDateValidationSchema,
             }}

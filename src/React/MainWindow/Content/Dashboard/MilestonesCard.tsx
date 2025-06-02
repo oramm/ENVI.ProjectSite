@@ -1,8 +1,5 @@
 import React, { useCallback } from "react";
-import DashboardCard, {
-    DashboardCardData,
-    DashboardCardSectionData,
-} from "../../../../View/Resultsets/DashboardCard/DashboardCard";
+import DashboardCard, { DashboardCardData } from "../../../../View/Resultsets/DashboardCard/DashboardCard";
 import { useDashboardCardData } from "../../../../View/Resultsets/DashboardCard/useDashboardCardData";
 import { milestoneDatesRepository, MilestonesBusinessLogic } from "../../MainWindowController";
 import MilestoneDateItem from "./MilestoneDateItem";

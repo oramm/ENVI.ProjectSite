@@ -7,14 +7,16 @@ exports.MilestoneDateEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const MilestoneDateModalBody_1 = require("./MilestoneDateModalBody");
-const MilestoneDatesController_1 = require("../MilestoneDatesController");
 const MilestoneDateValidationSchema_1 = require("./MilestoneDateValidationSchema");
-function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData, repository }, }) {
+    if (!repository) {
+        throw new Error("repository is required");
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit,
             ModalBodyComponent: MilestoneDateModalBody_1.MilestoneDateModalBody,
             modalTitle: "Edycja daty kamienia milowego",
-            repository: MilestoneDatesController_1.milestoneDatesRepository,
+            repository,
             initialData,
             makeValidationSchema: MilestoneDateValidationSchema_1.makeMilestoneDateValidationSchema,
         }, buttonProps: {

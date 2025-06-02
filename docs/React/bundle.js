@@ -88593,14 +88593,16 @@ exports.MilestoneDateEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const MilestoneDateModalBody_1 = __webpack_require__(/*! ./MilestoneDateModalBody */ "./src/Contracts/Dates/Modals/MilestoneDateModalBody.tsx");
-const MilestoneDatesController_1 = __webpack_require__(/*! ../MilestoneDatesController */ "./src/Contracts/Dates/MilestoneDatesController.ts");
 const MilestoneDateValidationSchema_1 = __webpack_require__(/*! ./MilestoneDateValidationSchema */ "./src/Contracts/Dates/Modals/MilestoneDateValidationSchema.ts");
-function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData }, }) {
+function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData, repository }, }) {
+    if (!repository) {
+        throw new Error("repository is required");
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit,
             ModalBodyComponent: MilestoneDateModalBody_1.MilestoneDateModalBody,
             modalTitle: "Edycja daty kamienia milowego",
-            repository: MilestoneDatesController_1.milestoneDatesRepository,
+            repository,
             initialData,
             makeValidationSchema: MilestoneDateValidationSchema_1.makeMilestoneDateValidationSchema,
         }, buttonProps: {
