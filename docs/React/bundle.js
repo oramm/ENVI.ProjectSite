@@ -90388,12 +90388,12 @@ const InvoiceIssueModalBody_1 = __webpack_require__(/*! ./InvoiceIssueModalBody 
 const InvoiceSetAsSentModalBody_1 = __webpack_require__(/*! ./InvoiceSetAsSentModalBody */ "./src/Erp/InvoicesList/Modals/InvoiceSetAsSentModalBody.tsx");
 const InvoicesController_1 = __webpack_require__(/*! ../InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts");
 /** przycisk i modal edycji Invoice */
-function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
+function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
             ModalBodyComponent: InvoiceModalBody_1.InvoiceModalBody,
             modalTitle: "Edycja faktury",
-            repository: InvoicesController_1.invoicesRepository,
+            repository: repository,
             initialData: initialData,
             makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
             shouldRetrieveDataBeforeEdit,

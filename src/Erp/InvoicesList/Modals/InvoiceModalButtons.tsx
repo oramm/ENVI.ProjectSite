@@ -14,10 +14,11 @@ import MainSetup from "../../../React/MainSetupReact";
 import { InvoiceIssueModalBody } from "./InvoiceIssueModalBody";
 import { InvoiceSetAsSentModalBody } from "./InvoiceSetAsSentModalBody";
 import { invoicesRepository } from "../InvoicesController";
+import RepositoryReact from "../../../React/RepositoryReact";
 
 /** przycisk i modal edycji Invoice */
 export function InvoiceEditModalButton({
-    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit },
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, repository },
     buttonProps,
 }: SpecificEditModalButtonProps<Invoice>) {
     return (
@@ -26,7 +27,7 @@ export function InvoiceEditModalButton({
                 onEdit: onEdit,
                 ModalBodyComponent: InvoiceModalBody,
                 modalTitle: "Edycja faktury",
-                repository: invoicesRepository,
+                repository: repository as RepositoryReact<Invoice>,
                 initialData: initialData,
                 makeValidationSchema: makeInvoiceValidationSchema,
                 shouldRetrieveDataBeforeEdit,
