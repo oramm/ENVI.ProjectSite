@@ -46,7 +46,6 @@ export default function TasksGlobal() {
         if (!selectedProject) return;
         async function fetchData() {
             setDataLoaded(false);
-
             const [contractsWithChildren] = await Promise.all([
                 contractsWithChildrenRepository.loadItemsFromServerPOST([
                     {
@@ -57,6 +56,7 @@ export default function TasksGlobal() {
                 caseTypesRepository.loadItemsFromServerPOST(),
                 milestoneTypesRepository.loadItemsFromServerPOST(),
             ]);
+
             setContractsWithCildren(contractsWithChildren);
             setExternalUpdate((prevState) => prevState + 1);
             setDataLoaded(true);

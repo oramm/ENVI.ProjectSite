@@ -3,7 +3,6 @@ import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
-import ErrorBoundary from "../../../View/Modals/ErrorBoundary";
 import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
 import FilterableTable from "../../../View/Resultsets/FilterableTable/FilterableTable";
 import { invoiceItemsRepository, invoicesRepository } from "../InvoicesController";
@@ -65,6 +64,7 @@ export default function InvoiceDetails() {
                         onEdit: setInvoice,
                         initialData: invoice,
                         makeValidationSchema: makeInvoiceValidationSchema,
+                        repository: invoicesRepository,
                     }}
                     buttonProps={{ buttonCaption: "Edytuj Fakturę" }}
                 />

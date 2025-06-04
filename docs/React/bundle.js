@@ -89724,6 +89724,7 @@ function InvoiceDetails() {
                     onEdit: setInvoice,
                     initialData: invoice,
                     makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
+                    repository: InvoicesController_1.invoicesRepository,
                 }, buttonProps: { buttonCaption: "Edytuj Fakturę" } })));
     }
     if (!invoice) {
