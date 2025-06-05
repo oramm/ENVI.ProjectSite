@@ -89696,8 +89696,10 @@ function InvoiceDetails() {
             const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
-                if (invoiceData)
+                if (invoiceData) {
                     setInvoice(invoiceData);
+                    InvoicesController_1.invoicesRepository.addToCurrentItems(invoiceData.id);
+                }
                 setInvoiceItems(itemsData);
                 document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             }
@@ -96402,7 +96404,7 @@ class Tools {
         return true;
     }
     /* https://www.sitepoint.com/sort-an-array-of-objects-in-javascript/
-     * sprawdza który oiekt jest większy - do użycia w Array.sort()
+     * sprawdza który obiekt jest większy - do użycia w Array.sort()
      * @param {type} key - nazwa atrybutu obiektu
      * @param {type} order
      * @returns {Function}

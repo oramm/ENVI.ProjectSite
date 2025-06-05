@@ -27,7 +27,10 @@ export default function InvoiceDetails() {
             const fetchItems = invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
-                if (invoiceData) setInvoice(invoiceData);
+                if (invoiceData) {
+                    setInvoice(invoiceData);
+                    invoicesRepository.addToCurrentItems(invoiceData.id);
+                }
                 setInvoiceItems(itemsData);
                 document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             } catch (error) {

@@ -66,7 +66,7 @@ class Tools {
         return true;
     }
     /* https://www.sitepoint.com/sort-an-array-of-objects-in-javascript/
-     * sprawdza który oiekt jest większy - do użycia w Array.sort()
+     * sprawdza który obiekt jest większy - do użycia w Array.sort()
      * @param {type} key - nazwa atrybutu obiektu
      * @param {type} order
      * @returns {Function}

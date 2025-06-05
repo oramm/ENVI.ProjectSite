@@ -52,8 +52,10 @@ function InvoiceDetails() {
             const fetchItems = InvoicesController_1.invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
                 const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
-                if (invoiceData)
+                if (invoiceData) {
                     setInvoice(invoiceData);
+                    InvoicesController_1.invoicesRepository.addToCurrentItems(invoiceData.id);
+                }
                 setInvoiceItems(itemsData);
                 document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             }
