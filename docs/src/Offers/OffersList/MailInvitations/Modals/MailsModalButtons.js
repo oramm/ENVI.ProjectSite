@@ -82,6 +82,7 @@ function AddOurOfferFromMailButton({ onError }) {
             contextData: { mail: { ...OffersController_1.mailInvitationsRepository.currentItems[0] } },
             onAddNew: handleClick,
             modalSubtitle,
+            repository: OffersController_1.offersRepository,
         }, buttonProps: { buttonCaption: "Rejestruj ofertę" } }));
 }
 exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;

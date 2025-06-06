@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { mailInvitationsRepository, mailsToCheckRepository } from "../../OffersController";
+import { mailInvitationsRepository, mailsToCheckRepository, offersRepository } from "../../OffersController";
 import { Button, Spinner } from "react-bootstrap";
 import { SuccessToast } from "../../../../View/Resultsets/CommonComponents";
 import MailsToCheckList from "../MailsToCheckList";
@@ -67,6 +67,7 @@ export function AddOurOfferFromMailButton({ onError }: { onError: (error: Error)
                 contextData: { mail: { ...mailInvitationsRepository.currentItems[0] } },
                 onAddNew: handleClick,
                 modalSubtitle,
+                repository: offersRepository,
             }}
             buttonProps={{ buttonCaption: "Rejestruj ofertę" }}
         />
