@@ -1,0 +1,61 @@
+import {
+    Case,
+    Contract,
+    EntityData,
+    ExternalOffer,
+    IncomingLetterOffer,
+    MilestoneData,
+    OurLetterOffer,
+    OurOffer,
+} from "../../../Typings/bussinesTypes";
+import RepositoryReact from "../../React/RepositoryReact";
+
+export const lettersRepository = new RepositoryReact<OurLetterOffer | IncomingLetterOffer>({
+    actionRoutes: {
+        getRoute: "offersLetters",
+        addNewRoute: "letterReact",
+        editRoute: "letter",
+        deleteRoute: "letter",
+    },
+    name: "offersLetters",
+});
+
+export const offersRepository = new RepositoryReact<OurOffer | ExternalOffer>({
+    actionRoutes: {
+        getRoute: "offers",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "offers-letters",
+});
+
+export const milestonesRepository = new RepositoryReact<MilestoneData>({
+    actionRoutes: {
+        getRoute: "milestones",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "milestones",
+});
+
+export const casesRepository = new RepositoryReact<Case>({
+    actionRoutes: {
+        getRoute: "cases",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
+    },
+    name: "cases",
+});
+
+export const entitiesRepository = new RepositoryReact<EntityData>({
+    actionRoutes: {
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
+    },
+    name: "entities",
+});

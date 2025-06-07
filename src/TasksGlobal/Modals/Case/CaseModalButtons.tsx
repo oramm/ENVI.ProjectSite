@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
-import { Case } from '../../../../Typings/bussinesTypes';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
+import React, { useEffect } from "react";
+import { Case } from "../../../../Typings/bussinesTypes";
+import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { casesRepository } from '../../TasksGlobalController';
-import { CaseModalBody } from './CaseModalBody';
-import { makeMultipleCaseValidationSchema, makeUniqueCaseValidationSchema } from './CaseValidationSchema';
+import { casesRepository } from "../../TasksGlobalController";
+import { CaseModalBody } from "./CaseModalBody";
+import { makeCaseValidationSchema } from "./CaseValidationSchema";
 
 export function CaseEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
 }: SpecificEditModalButtonProps<Case>) {
-
     return (
         <GeneralEditModalButton<Case>
             modalProps={{
@@ -19,8 +18,7 @@ export function CaseEditModalButton({
                 modalTitle: "Edycja sprawy",
                 repository: casesRepository,
                 initialData: initialData,
-                makeValidationSchema: initialData._type.isUniquePerMilestone ?
-                    makeUniqueCaseValidationSchema : makeMultipleCaseValidationSchema
+                makeValidationSchema: makeCaseValidationSchema,
             }}
             buttonProps={{
                 ...buttonProps,
@@ -32,7 +30,7 @@ export function CaseEditModalButton({
 
 export function CaseAddNewModalButton({
     modalProps: { onAddNew, contextData },
-    buttonProps
+    buttonProps,
 }: SpecificAddNewModalButtonProps<Case>) {
     return (
         <GeneralAddNewModalButton
@@ -43,7 +41,7 @@ export function CaseAddNewModalButton({
                 additionalModalBodyProps: { SpecificContractModalBody: CaseModalBody },
                 modalTitle: "Nowa sprawa",
                 repository: casesRepository,
-                makeValidationSchema: makeMultipleCaseValidationSchema,
+                makeValidationSchema: makeCaseValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Dodaj sprawę",

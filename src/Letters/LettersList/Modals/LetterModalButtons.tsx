@@ -1,49 +1,41 @@
-import React, { useEffect } from 'react';
-import { GeneralAddNewModalButton, GeneralEditModalButton } from '../../../View/Modals/GeneralModalButtons';
+import React, { useEffect, useState } from "react";
+import { GeneralAddNewModalButton, GeneralEditModalButton } from "../../../View/Modals/GeneralModalButtons";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../../View/Modals/ModalsTypes";
-import { ProjectSelectorModalBody } from './LetterModalBody';
-import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from './LetterValidationSchema';
-import { IncomingLetterModalBody } from './IncomingLetterModalBody';
-import { OurLetterModalBody } from './OurLetterModalBody';
-import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
-import { lettersRepository } from '../LettersController';
-
+import { ProjectSelectorModalBody } from "./LetterModalBody";
+import { makeOtherLetterValidationSchema, ourLetterValidationSchema } from "./LetterValidationSchema";
+import { IncomingLetterModalBody } from "./IncomingLetterModalBody";
+import { OurLetterModalBody } from "./OurLetterModalBody";
+import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { lettersRepository } from "../LettersController";
+import { Button, Spinner } from "react-bootstrap";
+import { SuccessToast } from "../../../View/Resultsets/CommonComponents";
 
 /** przycisk i modal edycji Letter */
 export function LetterEditModalButton({
     modalProps: { onEdit, initialData },
     buttonProps,
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
+    useEffect(() => {}, [initialData]);
 
-    useEffect(() => {
-        console.log("LetterEditModalButton initialData", initialData);
-    }, [initialData]);
-
-    return (
-        initialData.isOur
-            ? <OurLetterEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
-            : <IncomingLetterEditModalButton
-                modalProps={{ onEdit, initialData }}
-                buttonProps={buttonProps}
-            />
+    return initialData.isOur ? (
+        <OurLetterEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
+    ) : (
+        <IncomingLetterEditModalButton modalProps={{ onEdit, initialData }} buttonProps={buttonProps} />
     );
 }
 
 export function OurLetterEditModalButton({
-    modalProps: { onEdit, initialData, },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+    modalProps: { onEdit, initialData },
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: OurLetterModalBody,
                 modalTitle: "Edycja pisma wychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                makeValidationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema,
             }}
             buttonProps={{
                 buttonVariant: "outline-success",
@@ -54,16 +46,16 @@ export function OurLetterEditModalButton({
 
 export function OurLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
                 additionalModalBodyProps: { SpecificLetterModalBody: OurLetterModalBody },
                 modalTitle: "Rejestruj pismo wychodzące",
                 repository: lettersRepository,
-                makeValidationSchema: ourLetterValidationSchema
+                makeValidationSchema: ourLetterValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj wychodzące",
@@ -75,16 +67,16 @@ export function OurLetterAddNewModalButton({
 
 export function IncomingLetterEditModalButton({
     modalProps: { onEdit, initialData },
-}: SpecificEditModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificEditModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralEditModalButton<OurLetter | IncomingLetter>
+        <GeneralEditModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onEdit: onEdit,
                 ModalBodyComponent: IncomingLetterModalBody,
                 modalTitle: "Edycja pisma przychodzącego",
                 repository: lettersRepository,
                 initialData: initialData,
-                makeValidationSchema: makeOtherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema,
             }}
             buttonProps={{}}
         />
@@ -93,20 +85,59 @@ export function IncomingLetterEditModalButton({
 
 export function IncomingLetterAddNewModalButton({
     modalProps: { onAddNew },
-}: SpecificAddNewModalButtonProps<OurLetter | IncomingLetter>) {
+}: SpecificAddNewModalButtonProps<OurLetterContract | IncomingLetterContract>) {
     return (
-        <GeneralAddNewModalButton<OurLetter | IncomingLetter>
+        <GeneralAddNewModalButton<OurLetterContract | IncomingLetterContract>
             modalProps={{
                 onAddNew: onAddNew,
                 ModalBodyComponent: ProjectSelectorModalBody,
-                additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody, },// additional props for ProjectSelectorModalBody
+                additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody }, // additional props for ProjectSelectorModalBody
                 modalTitle: "Nowe pismo przychodzące",
                 repository: lettersRepository,
-                makeValidationSchema: makeOtherLetterValidationSchema
+                makeValidationSchema: makeOtherLetterValidationSchema,
             }}
             buttonProps={{
                 buttonCaption: "Rejestruj przychodzące",
             }}
         />
+    );
+}
+
+export function ExportOurLetterContractToPDFButton({
+    onError,
+    ourLetterContract,
+}: {
+    onError: (error: Error) => void;
+    ourLetterContract: OurLetterContract;
+}) {
+    const [requestPending, setRequestPending] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+    async function handleClick() {
+        try {
+            setRequestPending(true);
+            await lettersRepository.fetch("exportOurLetterToPDF", ourLetterContract);
+            setRequestPending(false);
+            setShowSuccessToast(true);
+        } catch (error) {
+            if (error instanceof Error) {
+                setRequestPending(false);
+                onError(error);
+            }
+        }
+    }
+
+    return (
+        <>
+            <Button key="Exportuj do PDF" variant="outline-secondary" size="sm" onClick={handleClick}>
+                Exportuj do PDF{" "}
+                {requestPending && <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />}
+            </Button>
+            <SuccessToast
+                message="Eksport do PDF zakończył się powodzeniem!"
+                show={showSuccessToast}
+                onClose={() => setShowSuccessToast(false)}
+            />
+        </>
     );
 }

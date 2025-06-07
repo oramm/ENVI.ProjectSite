@@ -3,42 +3,48 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { SectionNode } from "./Section";
+import * as yup from "yup";
 
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    id: string,
-    title: string,
-    showTableHeader?: boolean,
-    initialSections?: SectionNode<DataItemType>[],
-    tableStructure: RowStructure<DataItemType>[],
-    repository: RepositoryReact<DataItemType>,
-    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[]
+    id: string;
+    title?: string;
+    showTableHeader?: boolean;
+    initialSections?: SectionNode<DataItemType>[];
+    tableStructure: RowStructure<DataItemType>[];
+    repository: RepositoryReact<DataItemType>;
+    AddNewButtonComponents?: React.ComponentType<SpecificAddNewModalButtonProps<DataItemType>>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable?: boolean;
+    isCopyable?: boolean;
     FilterBodyComponent?: React.ComponentType<FilterBodyProps>;
     selectedObjectRoute?: string;
     initialObjects?: DataItemType[];
     onRowClick?: (object: DataItemType) => void;
     externalUpdate?: number;
     shouldRetrieveDataBeforeEdit?: boolean;
-}
+    specialRetrieveActionRoute?: string;
+};
 
 export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    criteria: FieldValues,
-    storedObjects: DataItemType[],
-}
+    criteria: FieldValues;
+    storedObjects: DataItemType[];
+};
 
 export type FilterPanelProps = {
     FilterBodyComponent: React.ComponentType<FilterBodyProps>;
-    repository: RepositoryReact,
-    onIsReadyChange: React.Dispatch<React.SetStateAction<boolean>>,
-}
+    repository: RepositoryReact;
+    validationSchema?: yup.ObjectSchema<any> | undefined;
+};
 
 export type FilterBodyProps = {};
 
-
 export type RowStructure<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
-    header?: string,
-    objectAttributeToShow?: string,
-    renderTdBody?: (dataItem: DataItemType) => JSX.Element
-    renderThBody?: () => JSX.Element
+    header?: string;
+    objectAttributeToShow?: keyof DataItemType;
+    colMd?: number; // Added for column width in medium screens
+    colSm?: number; // Added for column width in small screens
+    colLg?: number; // Added for column width in large screens
+    renderTdBody?: (dataItem: DataItemType, isActive?: boolean) => JSX.Element;
+    renderThBody?: () => JSX.Element;
+    submenuItems?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>[];
 };

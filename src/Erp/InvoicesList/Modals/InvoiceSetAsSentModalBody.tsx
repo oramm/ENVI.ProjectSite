@@ -1,22 +1,28 @@
-import React, { useEffect } from 'react';
-import { ErrorMessage } from '../../../View/Modals/CommonFormComponents';
-import { Form } from 'react-bootstrap';
-import { useFormContext } from '../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
-import { Invoice } from '../../../../Typings/bussinesTypes';
+import React, { useEffect } from "react";
+import { Form } from "react-bootstrap";
+import { useFormContext } from "../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
+import { Invoice } from "../../../../Typings/bussinesTypes";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoiceSetAsSentModalBody({ initialData }: ModalBodyProps<Invoice>) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
+    const {
+        register,
+        reset,
+        setValue,
+        watch,
+        formState: { dirtyFields, errors, isValid },
+        trigger,
+    } = useFormContext();
 
     useEffect(() => {
-        console.log('InvoiceModalBody useEffect', initialData);
+        console.log("InvoiceModalBody useEffect", initialData);
         const resetData = {
             sentDate: initialData?.sentDate || new Date().toISOString().slice(0, 10),
         };
         reset(resetData);
         trigger();
     }, [initialData, reset]);
-
 
     return (
         <>
@@ -26,9 +32,9 @@ export function InvoiceSetAsSentModalBody({ initialData }: ModalBodyProps<Invoic
                     type="date"
                     isValid={!errors.sentDate}
                     isInvalid={!!errors.sentDate}
-                    {...register('sentDate')}
+                    {...register("sentDate")}
                 />
-                <ErrorMessage name='sentDate' errors={errors} />
+                <ErrorMessage name="sentDate" errors={errors} />
             </Form.Group>
         </>
     );

@@ -1,21 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { ErrorMessage, MyAsyncTypeahead } from '../../../View/Modals/CommonFormComponents';
-import { LetterModalBody } from './LetterModalBody';
-import { useFormContext } from '../../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../../View/Modals/ModalsTypes';
-import { IncomingLetter, OurLetter } from '../../../../Typings/bussinesTypes';
-import { entitiesRepository } from '../LettersController';
+import React, { useEffect, useRef, useState } from "react";
+import { Form } from "react-bootstrap";
+import { LetterModalBody } from "./LetterModalBody";
+import { useFormContext } from "../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
+import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { entitiesRepository } from "../LettersController";
+import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { IncomingLetterStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import MainSetup from "../../../React/MainSetupReact";
 
 /**Wywoływana w ProjectsSelector jako props  */
-export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | IncomingLetter>) {
+export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState: { errors }, control } = useFormContext();
+    const {
+        register,
+        setValue,
+        watch,
+        formState: { errors },
+        control,
+    } = useFormContext();
 
     useEffect(() => {
-        setValue('_entitiesMain', initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
-        setValue('number', initialData?.number || '', { shouldDirty: false, shouldValidate: true });
-
+        setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
+        setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
+        setValue("status", initialData?.status || MainSetup.IncomingLetterStatus.RESPONSE_REQUIRED, {
+            shouldDirty: false,
+            shouldValidate: true,
+        });
     }, [initialData, setValue]);
 
     return (
@@ -23,26 +35,19 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetter | Incomi
             <Form.Group controlId="number">
                 <Form.Label>Numer pisma</Form.Label>
                 <Form.Control
-                    type='text'
+                    type="text"
                     placeholder="Podaj numer"
                     isInvalid={!!errors?.number}
                     isValid={!errors?.number}
-                    {...register('number')}
+                    {...register("number")}
                 />
-                <ErrorMessage errors={errors} name={'number'} />
+                <ErrorMessage errors={errors} name={"number"} />
             </Form.Group>
-            <LetterModalBody
-                {...props}
-            />
+            <LetterModalBody {...props} />
+            <IncomingLetterStatusSelector />
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
-                <MyAsyncTypeahead
-                    name='_entitiesMain'
-                    labelKey='name'
-                    repository={entitiesRepository}
-                    multiple={true}
-                />
-                <ErrorMessage errors={errors} name={'_entitiesMain'} />
+                <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
             </Form.Group>
         </>
     );

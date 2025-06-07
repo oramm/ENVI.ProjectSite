@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Accordion } from 'react-bootstrap';
-import { RepositoryDataItem } from '../../../../Typings/bussinesTypes';
-import { FilterableTableProvider, useFilterableTableContext } from './FilterableTableContext';
-import { FilterPanel } from './FilterPanel';
-import { ResultSetTable, ResultSetTableProps } from './ResultSetTable';
-import { Section, SectionNode } from './Section';
-import { FilterableTableProps, FilterableTableSnapShot } from './FilterableTableTypes';
-
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Accordion } from "react-bootstrap";
+import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
+import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
+import { FilterPanel } from "./FilterPanel";
+import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
+import { Section, SectionNode } from "./Section";
+import { FilterableTableProps, FilterableTableSnapShot } from "./FilterableTableTypes";
 
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
  * @param tableStructure struktura tabeli (nagłówki i atrybuty obiektów do wyświetlenia w kolumnach lub funkcja zwracająca komponenty do wyświetlenia w kolumnach)
  * @param repository repozytorium z danymi
- * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden) 
+ * @param AddNewButtonComponents komponenty przycisków dodawania nowych obiektów (domyślnie jeden)
  * @param EditButtonComponent komponent przycisku edycji obiektu
  * @param isDeletable czy można usuwać obiekty z tabeli (domyślnie true)
  * @param FilterBodyComponent komponent zawartości filtra
@@ -29,17 +28,21 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     AddNewButtonComponents = [],
     EditButtonComponent,
     isDeletable = true,
+    isCopyable = false,
     FilterBodyComponent,
-    selectedObjectRoute = '',
+    selectedObjectRoute = "",
     initialObjects = undefined,
     onRowClick,
     externalUpdate = 0,
-    shouldRetrieveDataBeforeEdit = false
+    shouldRetrieveDataBeforeEdit = false,
+    specialRetrieveActionRoute,
 }: FilterableTableProps<LeafDataItemType>) {
+    const snapshotName = `filtersableTableSnapshot_${id}`;
+
     const [isReady, setIsReady] = useState(true);
     const [activeRowId, setActiveRowId] = useState(0);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
-    const [activeSectionId, setActiveSectionId] = useState('');
+    const [activeSectionId, setActiveSectionId] = useState("");
     const [objects, setObjects] = useState(initObjects());
 
     function initObjects() {
@@ -54,7 +57,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }
 
     function getObjectsFromStorage() {
-        const snapshotName = `filtersableTableSnapshot_${id}`;
         const storedSnapshot = sessionStorage.getItem(snapshotName);
         if (!storedSnapshot) return;
 
@@ -62,26 +64,57 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         return storedObjects;
     }
 
-    useEffect(() => {
-        if (initialObjects)
-            setObjects(initialObjects);
-        console.log("Aktualizacja obiektów:", initialObjects);
-    }, [externalUpdate]);
+    function updateSnapshot() {
+        const currentSnapshot = sessionStorage.getItem(snapshotName);
+        if (!currentSnapshot) return;
 
+        const updatedFilterableTableSnapshot: FilterableTableSnapShot<LeafDataItemType> = {
+            criteria: JSON.parse(currentSnapshot) as FilterableTableSnapShot<LeafDataItemType>,
+            storedObjects: repository.items,
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+    }
+
+    useEffect(() => {
+        if (initialObjects) {
+            setObjects(initialObjects);
+        }
+        if (initialSections.length > 0) {
+            setSections(initialSections);
+        }
+    }, [externalUpdate]);
 
     function handleAddObject(object: LeafDataItemType) {
         setObjects([...objects, object]);
+        updateSnapshot();
     }
 
     function handleEditObject(object: LeafDataItemType) {
-        if (!sections.length)
+        if (!sections.length) {
             setObjects(objects.map((o) => (o.id === object.id ? object : o)));
-        else
-            setSections(editNode(sections, activeSectionId, object));
+            updateSnapshot();
+        } else setSections(editNode(sections, activeSectionId, object));
+    }
+    function handleCopyObject(object: LeafDataItemType) {
+        setObjects([...objects, object]);
+        updateSnapshot();
     }
 
     function handleDeleteObject(objectId: number) {
-        setObjects(objects.filter((o) => o.id !== objectId));
+        if (!sections.length) setObjects(objects.filter((o) => o.id !== objectId));
+        else setSections(removeLeafFromSections(sections, objectId));
+        updateSnapshot();
+    }
+
+    function removeLeafFromSections(
+        nodes: SectionNode<LeafDataItemType>[],
+        leafId: number
+    ): SectionNode<LeafDataItemType>[] {
+        return nodes.map((node) => ({
+            ...node,
+            children: removeLeafFromSections(node.children, leafId),
+            leaves: node.leaves?.filter((leaf) => leaf.id !== leafId),
+        }));
     }
 
     function handleAddSection(sectionDataObject: RepositoryDataItem) {
@@ -99,19 +132,20 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     function handleHeaderClick(sectionNode: SectionNode<LeafDataItemType>) {
         const repository = sectionNode.repository;
         setActiveSectionId(sectionNode.id);
-        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu 
+        //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
         repository.addToCurrentItems(sectionNode.dataItem.id);
-        console.log('handleHeaderClick', repository.currentItems);
+        console.log("handleHeaderClick", repository.currentItems);
     }
 
-    function handleRowClick(id: number) {
+    const handleRowClick = (id: number) => {
         setActiveRowId(id);
         repository.addToCurrentItems(id);
-        console.log('handleRowClick', repository.currentItems);
-        if (onRowClick) { onRowClick(repository.currentItems[0]) }
-    }
+        if (onRowClick) {
+            onRowClick(repository.currentItems[0]);
+        }
+    };
 
     return (
         <FilterableTableProvider<LeafDataItemType>
@@ -124,6 +158,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             tableStructure={tableStructure}
             handleAddObject={handleAddObject}
             handleEditObject={handleEditObject}
+            handleCopyObject={handleCopyObject}
             handleDeleteObject={handleDeleteObject}
             setObjects={setObjects}
             setSections={setSections}
@@ -133,59 +168,55 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             selectedObjectRoute={selectedObjectRoute}
             EditButtonComponent={EditButtonComponent}
             isDeletable={isDeletable}
+            isCopyable={isCopyable}
             externalUpdate={externalUpdate}
             shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+            specialRetrieveActionRoute={specialRetrieveActionRoute}
         >
             <Container>
                 <Row>
-                    <Col>
-                        {title && <TableTitle title={title} />}
-                    </Col>
-                    {AddNewButtonComponents &&
+                    <Col>{title && <TableTitle title={title} />}</Col>
+                    {AddNewButtonComponents && (
                         <Col md="auto">
                             {AddNewButtonComponents.map((ButtonComponent, index) => (
                                 <React.Fragment key={index}>
-                                    <ButtonComponent
-                                        modalProps={{ onAddNew: handleAddObject }}
-                                    />
-                                    {index < AddNewButtonComponents.length - 1 && ' '}
+                                    <ButtonComponent modalProps={{ onAddNew: handleAddObject, repository }} />
+                                    {index < AddNewButtonComponents.length - 1 && " "}
                                 </React.Fragment>
                             ))}
                         </Col>
-                    }
+                    )}
                 </Row>
-                {FilterBodyComponent &&
-                    <Row>
-                        <FilterPanel
-                            FilterBodyComponent={FilterBodyComponent}
-                            repository={repository}
-                            onIsReadyChange={(isReady) => {
-                                setIsReady(isReady);
-                            }}
-                        />
+                {FilterBodyComponent && (
+                    <Row className="bg-light p-3 rounded-3 mb-3">
+                        <FilterPanel FilterBodyComponent={FilterBodyComponent} repository={repository} />
                     </Row>
-                }
-                {!isReady && <Row><progress style={{ height: "5px" }} /></Row>}
+                )}
+                {!isReady && (
+                    <Row>
+                        <progress className="mt-1 mb-1" style={{ height: "5px" }} />
+                    </Row>
+                )}
                 <Row>
                     <Col>
-                        <p className='tekst-muted small'>
-                            {objects && `Znaleziono: ${objects.length} pozycji`}
-                        </p>
-                        {(initialSections?.length > 0 ?
+                        {initialSections?.length > 0 ? (
                             <Sections
                                 onClick={handleHeaderClick}
                                 resulsetTableProps={{
                                     showTableHeader: showTableHeader,
                                     onRowClick: handleRowClick,
-                                    onIsReadyChange: (isReady) => { setIsReady(isReady) }
                                 }}
                             />
-                            :
-                            <ResultSetTable<LeafDataItemType>
-                                showTableHeader={showTableHeader}
-                                onRowClick={handleRowClick}
-                                onIsReadyChange={(isReady) => { setIsReady(isReady); }}
-                            />
+                        ) : (
+                            <>
+                                <p className="tekst-muted small">
+                                    {objects && `Znaleziono: ${objects.length} pozycji`}
+                                </p>
+                                <ResultSetTable<LeafDataItemType>
+                                    showTableHeader={showTableHeader}
+                                    onRowClick={handleRowClick}
+                                />
+                            </>
                         )}
                     </Col>
                 </Row>
@@ -195,13 +226,13 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 }
 
 export type SectionsProps<DataItemType extends RepositoryDataItem> = {
-    resulsetTableProps: ResultSetTableProps<DataItemType>,
-    onClick: (sectionNode: SectionNode<DataItemType>) => void
-}
+    resulsetTableProps: ResultSetTableProps<DataItemType>;
+    onClick: (sectionNode: SectionNode<DataItemType>) => void;
+};
 
 function Sections<DataItemType extends RepositoryDataItem>({
     resulsetTableProps,
-    onClick
+    onClick,
 }: SectionsProps<DataItemType>) {
     const { sections } = useFilterableTableContext<DataItemType>();
 
@@ -209,64 +240,84 @@ function Sections<DataItemType extends RepositoryDataItem>({
         <>
             {sections.map((section, index) => {
                 return (
-                    <Card
-                        key={section.dataItem.id + section.type}
-                        bg='light'
-                        border='light'
-                        style={{ marginTop: '10px' }}
-                    >
+                    <Card key={section.dataItem.id + section.type} bg="light" border="light">
                         <Section<DataItemType>
                             key={section.dataItem.id + section.type}
                             sectionNode={section}
                             resulsetTableProps={resulsetTableProps}
                             onClick={onClick}
                         />
-                    </Card>)
+                    </Card>
+                );
             })}
         </>
     );
 }
 
 export function TableTitle({ title }: { title: string }) {
-    return <h1>{title}</h1>
+    return <h1>{title}</h1>;
 }
 
-// Funkcja do aktualizacji węzłów
+/** Funkcja do aktualizacji węzłów
+ * jeśli edytujemy sekcję to zaczynamy od najwyższego poziomu drzewa i schodzimy do spodu szukając sekcji
+ * jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia i go edytujemy
+ * @param nodes tablica węzłów
+ * @param sectionId id węzła sekcji do edycji - dla liscia jest to id sekcji głównej
+ * @param newData nowe dane węzła lub liścia
+ */
 function editNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
     sectionId: string,
     newData: RepositoryDataItem
 ): SectionNode<LeafDataItemType>[] {
-    return nodes.map(node => {
-        if (node.id === sectionId) {
-            // Znaleziono węzeł do zaktualizowania, zwracamy nowe dane
+    return nodes.map((node) => {
+        const nodeTypeToEdit = nodeTypeToBeEdited(node, newData);
+        if (nodeTypeToEdit === "SECTION") {
+            if (node.id !== sectionId) {
+                // bieżący węzeł to nie ten szukany, przeszukujemy dzieci
+                return {
+                    ...node,
+                    children: editNode(node.children, sectionId, newData),
+                };
+            }
+            // Edytujemy sekcję Znaleziono węzeł do zaktualizowania
             const newSectionNode = { ...node };
             newSectionNode.dataItem = newData;
             if (newSectionNode.editHandler) newSectionNode.editHandler(newSectionNode);
             return newSectionNode;
-        } else {
-            // Nie znaleziono węzła do zaktualizowania, przeszukujemy dzieci
+        } //jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia
+        else if (nodeTypeToEdit === "LEAF") {
+            //mamy sekcję nadrzędną dla szukanego liścia
+            if (node.editHandler) node.editHandler(node);
             return {
                 ...node,
-                children: editNode(node.children, sectionId, newData),
-                leaves: node.leaves ? editLeafDataItem(node.leaves, newData.id, newData) : undefined,
+                children: node.children && editNode(node.children, sectionId, newData),
+                leaves: node.leaves && editLeafDataItem(node.leaves, newData),
             };
         }
+        throw new Error(`Zły typ węzła}`);
     });
 }
 
-// Funkcja do aktualizacji liści
+function nodeTypeToBeEdited<LeafDataItemType extends RepositoryDataItem>(
+    node: SectionNode<LeafDataItemType>,
+    newData: RepositoryDataItem
+) {
+    if (newData.id === node.dataItem.id) return "SECTION";
+    return "LEAF";
+}
+
+/**Funkcja do aktualizacji liści */
 function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
     leaves: LeafDataItemType[],
-    id: number,
     newData: RepositoryDataItem
 ): LeafDataItemType[] {
-    return leaves.map(leaf =>
-        leaf.id === id
+    return leaves.map((leaf) =>
+        leaf.id === newData.id
             ? {
-                ...leaf,
-                ...newData,
-            }
+                  ...leaf,
+                  ...newData,
+              }
             : leaf
     );
 }
@@ -275,9 +326,9 @@ function editLeafDataItem<LeafDataItemType extends RepositoryDataItem>(
 function addNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
     parentId: string,
-    newData: RepositoryDataItem,
+    newData: RepositoryDataItem
 ): SectionNode<LeafDataItemType>[] {
-    return nodes.map(node => {
+    return nodes.map((node) => {
         if (node.id === parentId) {
             // Jeśli rodzic ma już liście, dodajemy nowe dane jako liść
             if (node.leaves) {
@@ -288,7 +339,7 @@ function addNode<LeafDataItemType extends RepositoryDataItem>(
                     leaves: [...node.leaves, newLeaf],
                 };
             }
-            const newNodeType = node.childrenNodesType || '';
+            const newNodeType = node.childrenNodesType || "";
 
             // W przeciwnym razie dodajemy nowe dane jako węzeł
             const newChild: SectionNode<LeafDataItemType> = {
@@ -298,7 +349,7 @@ function addNode<LeafDataItemType extends RepositoryDataItem>(
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: 'nowy tytuł',
+                titleLabel: "nowy tytuł",
                 children: [],
                 leaves: [],
             };
@@ -319,7 +370,7 @@ function addNode<LeafDataItemType extends RepositoryDataItem>(
 
 function deleteNode<LeafDataItemType extends RepositoryDataItem>(
     nodes: SectionNode<LeafDataItemType>[],
-    nodeId: string,
+    nodeId: string
 ): SectionNode<LeafDataItemType>[] {
     return nodes.reduce<SectionNode<LeafDataItemType>[]>((newNodes, node) => {
         if (node.id === nodeId) {
@@ -329,7 +380,7 @@ function deleteNode<LeafDataItemType extends RepositoryDataItem>(
             // Jeśli id nie pasuje, przeszukujemy dzieci
             const newNode = {
                 ...node,
-                children: deleteNode(node.children, nodeId)
+                children: deleteNode(node.children, nodeId),
             };
             return [...newNodes, newNode];
         }

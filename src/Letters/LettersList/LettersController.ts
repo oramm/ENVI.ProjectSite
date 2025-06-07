@@ -1,63 +1,71 @@
-import { Case, Contract, Entity, IncomingLetter, Milestone, OtherContract, OurContract, OurLetter, Project } from "../../../Typings/bussinesTypes";
+import {
+    Case,
+    EntityData,
+    IncomingLetterContract,
+    MilestoneData,
+    OtherContract,
+    OurContract,
+    OurLetterContract,
+    ProjectData,
+} from "../../../Typings/bussinesTypes";
 import RepositoryReact from "../../React/RepositoryReact";
 
-
-export const lettersRepository = new RepositoryReact<OurLetter | IncomingLetter>({
+export const lettersRepository = new RepositoryReact<OurLetterContract | IncomingLetterContract>({
     actionRoutes: {
-        getRoute: 'letters',
-        addNewRoute: 'letterReact',
-        editRoute: 'letter',
-        deleteRoute: 'letter'
+        getRoute: "contractsLetters",
+        addNewRoute: "letterReact",
+        editRoute: "letter",
+        deleteRoute: "letter",
     },
-    name: 'letters'
+    name: "contractsLetters",
 });
 
-export const projectsRepository = new RepositoryReact<Project>({
+export const projectsRepository = new RepositoryReact<ProjectData>({
     actionRoutes: {
-        getRoute: 'projects',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "projects",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'projects'
+    name: "projects",
 });
 
 export const contractsRepository = new RepositoryReact<OurContract | OtherContract>({
     actionRoutes: {
-        getRoute: 'contracts',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "contracts",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'contracts'
+    name: "contracts",
 });
 
-export const milestonesRepository = new RepositoryReact<Milestone>({
+export const milestonesRepository = new RepositoryReact<MilestoneData>({
     actionRoutes: {
-        getRoute: 'milestones',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "milestones",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'milestones'
+    name: "milestones",
 });
 
 export const casesRepository = new RepositoryReact<Case>({
     actionRoutes: {
-        getRoute: 'cases',
-        addNewRoute: '',
-        editRoute: '',
-        deleteRoute: ''
+        getRoute: "cases",
+        addNewRoute: "",
+        editRoute: "",
+        deleteRoute: "",
     },
-    name: 'cases'
+    name: "cases",
 });
 
-export const entitiesRepository = new RepositoryReact<Entity>({
+export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
-        getRoute: 'entities',
-        addNewRoute: 'entity',
-        editRoute: 'entity',
-        deleteRoute: 'entity'
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
     },
-    name: 'entities'
+    name: "entities",
 });

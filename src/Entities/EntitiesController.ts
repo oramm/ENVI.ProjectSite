@@ -1,12 +1,12 @@
-import { Entity } from "../../Typings/bussinesTypes";
+import { EntityData } from "../../Typings/bussinesTypes";
 import RepositoryReact from "../React/RepositoryReact";
 
-export const entitiesRepository = new RepositoryReact<Entity>({
+export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
-        getRoute: 'entities',
-        addNewRoute: 'entity',
-        editRoute: 'entity',
-        deleteRoute: 'entity'
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
     },
-    name: 'entities'
+    name: "entities",
 });

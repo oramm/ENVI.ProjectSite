@@ -1,0 +1,1215 @@
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
+import { Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form/dist/types";
+import "../../../Css/styles.css";
+
+import MainSetup from "../../../React/MainSetupReact";
+import RepositoryReact from "../../../React/RepositoryReact";
+import { useFormContext } from "../FormContext";
+import { Controller } from "react-hook-form";
+import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/types";
+import {
+    ApplicationCallData,
+    Case,
+    CaseType,
+    CityData,
+    Contract,
+    ContractRangeData,
+    ContractType,
+    DocumentTemplate,
+    EntityData,
+    ExternalOffer,
+    FinancialAidProgrammeData,
+    FocusAreaData,
+    MilestoneData,
+    MilestoneType,
+    NeedData,
+    OtherContract,
+    OurContract,
+    OurOffer,
+    PersonData,
+    ProjectData,
+} from "../../../../Typings/bussinesTypes";
+import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
+import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
+
+type ProjectSelectorProps = {
+    repository: RepositoryReact;
+    showValidationInfo?: boolean;
+    name?: string;
+    disabled?: boolean;
+};
+
+/**
+ * Komponent formularza wyboru projektu
+ * @param repository Repozytorium projektów
+ * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
+export function ProjectSelector({
+    name = "_project",
+    repository,
+    showValidationInfo = true,
+    disabled = false,
+}: ProjectSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: unknown) {
+        const optionTyped = option as ProjectData;
+        return (
+            <div>
+                <span>{optionTyped.ourId}</span>
+                <div className="text-muted small text-wrap">{optionTyped.alias}</div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <Form.Label>Projekt</Form.Label>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="ourId"
+                repository={repository}
+                //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
+                showValidationInfo={showValidationInfo}
+                renderMenuItemChildren={renderOption}
+                multiple={false}
+            />
+        </>
+    );
+}
+
+export type CitySelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function CitySelector({
+    name = "_city",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: CitySelectorProps) {
+    function renderOption(option: any) {
+        const typedOption = option as CityData;
+        return (
+            <div>
+                <span>{typedOption.name}</span>
+                <span className="text-muted small"> {typedOption.code}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type EntitySelectorProps = {
+    name: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function EntitySelector({
+    name,
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: EntitySelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any, props: any) {
+        const typedOption = option as EntityData;
+
+        return (
+            <div>
+                <span>{typedOption.name}</span>
+                <div className="text-muted small text-wrap">{typedOption.address}</div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type OfferSelectFormElementProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    readOnly?: boolean;
+};
+
+export function OfferSelectFormElement({
+    name = "_offer",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    readOnly = false,
+}: OfferSelectFormElementProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const typedOption = option as OurOffer | ExternalOffer;
+        return (
+            <div>
+                <span>
+                    {typedOption._type.name} {` `}
+                    {typedOption._city.name} {` | `}
+                    {typedOption.alias} {` | `}
+                    {typedOption.submissionDeadline}
+                </span>
+                <div className="text-muted small text-wrap">{typedOption.employerName}</div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="alias"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                showValidationInfo={showValidationInfo}
+                readOnly={readOnly}
+            />
+        </>
+    );
+}
+
+export type FinancialAidProgrammeSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function FinancialAidProgrammeSelector({
+    name = "_financialAidProgramme",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: FinancialAidProgrammeSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as FinancialAidProgrammeData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type FocusAreaSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+    _financialAidProgramme?: FinancialAidProgrammeData;
+};
+
+export function FocusAreaSelector({
+    name = "_focusArea",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+    _financialAidProgramme,
+}: FocusAreaSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as FocusAreaData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                contextSearchParams={{
+                    _financialAidProgramme,
+                }}
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+type FocusAreaSelector1Props = {
+    repository: RepositoryReact<FocusAreaData>;
+    _financialAidProgramme: FinancialAidProgrammeData;
+    showValidationInfo?: boolean;
+    required?: boolean;
+    multiple?: boolean;
+    name?: string;
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function FocusAreaSelectorPrefilled({
+    repository,
+    _financialAidProgramme,
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = "_focusArea",
+}: FocusAreaSelector1Props) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const [options, setOptions] = useState<any[]>([]);
+
+    const label = "Działanie";
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (_financialAidProgramme) await repository.loadItemsFromServerPOST([{ _financialAidProgramme }]);
+            else repository.clearData();
+            setOptions(repository.items);
+            setValue(name, multiple ? [] : null);
+        };
+        fetchData();
+    }, [_financialAidProgramme]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: "Wybierz działanie" } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${name}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={options}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz działanie --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const optionTyped = option as FocusAreaData;
+                                return (
+                                    <div>
+                                        <span>{optionTyped.alias}</span>
+                                        <div className="text-muted small text-wrap">{optionTyped.name}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+export type ApplicationCallSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+    _financialAidProgramme?: FinancialAidProgrammeData;
+    _focusArea?: FocusAreaData | FocusAreaData[];
+};
+
+export function ApplicationCallSelector({
+    name = "_applicationCall",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+    _financialAidProgramme,
+    _focusArea,
+}: ApplicationCallSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: unknown) {
+        const optionTyped = option as ApplicationCallData;
+        console.log("renderOption - Option: ", option); // Log the option being rendered
+        return (
+            <div>
+                <span>{optionTyped.description}</span>
+                <div className="text-muted small text-wrap">
+                    {optionTyped.endDate} {optionTyped.status}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="description"
+                searchKey="searchText"
+                contextSearchParams={{
+                    _financialAidProgramme,
+                    _focusArea,
+                }}
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type ClientNeedSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function ClientNeedSelector({
+    name = "_need",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: ClientNeedSelectorProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: any) {
+        const optionTyped = option as NeedData;
+        return (
+            <div>
+                <span>{optionTyped.name}</span>
+                <div className="text-muted small text-wrap">
+                    {optionTyped._client?.name} | {optionTyped.status}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="name"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+export type ContractSelectFormElementProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    typesToInclude?: "our" | "other" | "all";
+    repository: RepositoryReact;
+    _project?: ProjectData;
+    readOnly?: boolean;
+};
+
+export function ContractSelector({
+    name = "_contract",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    typesToInclude = "all",
+    _project,
+    readOnly = false,
+}: ContractSelectFormElementProps) {
+    const {
+        formState: { errors },
+    } = useFormContext();
+
+    function renderOption(option: unknown) {
+        const optionTyped = option as OurContract | OtherContract;
+        const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
+        return (
+            <div>
+                <span>{mainLabel}</span>
+                <div className="text-muted small text-wrap">{optionTyped.alias || optionTyped.name}</div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="_ourIdOrNumber_Name"
+                searchKey="searchText"
+                contextSearchParams={{
+                    typesToInclude: typesToInclude,
+                    _project: _project,
+                }}
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                showValidationInfo={showValidationInfo}
+                readOnly={readOnly}
+            />
+        </>
+    );
+}
+
+interface ContractRangeSelectorProps {
+    repository: any;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    name?: string;
+}
+
+export function ContractRangeSelector({
+    repository,
+    showValidationInfo = true,
+    multiple = true,
+    name = "_contractRanges",
+}: ContractRangeSelectorProps) {
+    const {
+        control,
+        setValue,
+        getValues,
+        formState: { errors },
+    } = useFormContext();
+    const [options, setOptions] = useState<ContractRangeData[]>([]);
+
+    const label = "Zakresy";
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await repository.loadItemsFromServerPOST();
+            setOptions(repository.items);
+            const currentValue = getValues(name);
+            if (multiple) {
+                if (!Array.isArray(currentValue) || currentValue.length === 0) {
+                    setValue(name, []);
+                }
+            } else {
+                if (!currentValue) {
+                    setValue(name, null);
+                }
+            }
+        };
+        fetchData();
+    }, [repository, setValue, multiple, name]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${name}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={options}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz zakresy kontraktu --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const optionTyped = option as ContractRangeData;
+                                return (
+                                    <div>
+                                        <span>{optionTyped.name}</span>
+                                        <div className="text-muted small text-wrap">{optionTyped.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type ContractTypeSelectFormElementProps = {
+    typesToInclude?: "our" | "other" | "all";
+    showValidationInfo?: boolean;
+    required?: boolean;
+    multiple?: boolean;
+    name?: "_type" | "_contractType";
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function ContractTypeSelectFormElement({
+    typesToInclude = "all",
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = "_type",
+}: ContractTypeSelectFormElementProps) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const label = "Typ Kontraktu";
+    const repository = MainSetup.contractTypesRepository;
+
+    function makeoptions(repositoryDataItems: ContractType[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (typesToInclude === "all") return true;
+            if (typesToInclude === "our" && item.isOur) return true;
+            if (typesToInclude === "other" && !item.isOur) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: "Wybierz typ kontraktu" } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz typ --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const optionTyped = option as ContractType;
+                                return (
+                                    <div>
+                                        <span>{optionTyped.name}</span>
+                                        <div className="text-muted small text-wrap">{optionTyped.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type CaseTypeSelectorProps = {
+    milestoneType?: MilestoneType;
+    showValidationInfo?: boolean;
+    required?: boolean;
+    multiple?: boolean;
+    name?: "_type" | "_caseType";
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function CaseTypeSelector({
+    milestoneType,
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = "_type",
+}: CaseTypeSelectorProps) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const label = "Typ Sprawy";
+    const repository = caseTypesRepository;
+
+    function makeoptions(repositoryDataItems: CaseType[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!milestoneType) return true;
+            if (milestoneType.id === item._milestoneType.id) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: "Wybierz typ sprawy" } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz typ --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as CaseType;
+                                return (
+                                    <div>
+                                        <span>{myOption.name}</span>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type ContractMilestoneTypeSelectorProps = {
+    contractType?: ContractType;
+    showValidationInfo?: boolean;
+    required?: boolean;
+    multiple?: boolean;
+    name?: "_type" | "_caseType";
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function MilestoneTypeSelector({
+    contractType,
+    required = false,
+    showValidationInfo = true,
+    multiple = false,
+    name = "_type",
+}: ContractMilestoneTypeSelectorProps) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const label = "Typ kamienia";
+    const repository = milestoneTypesRepository;
+
+    function makeOptions(repositoryDataItems: MilestoneType[]) {
+        const filteredItems = repositoryDataItems.filter((item) => {
+            if (!contractType) return true;
+            if (contractType.id === item._contractType.id) return true;
+            return false;
+        });
+        return filteredItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    rules={{ required: { value: required, message: "Wybierz typ kamienia" } }}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={multiple}
+                            options={makeOptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            placeholder="-- Wybierz typ --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as CaseType;
+                                return (
+                                    <div>
+                                        <span>{myOption.name}</span>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+type OurLetterTemplateSelectFormElementProps = {
+    showValidationInfo?: boolean;
+    _cases: Case[];
+};
+
+/**
+ * Komponent formularza wyboru typu kontraktu
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
+ * @param typesToInclude 'our' | 'other' | 'all' - jakie typy kontraktów mają być wyświetlane (domyślnie 'all')
+ * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
+ * @param required czy pole jest wymagane (walidacja) - domyślnie false
+ */
+export function OurLetterTemplateSelector({
+    showValidationInfo = true,
+    _cases = [],
+}: OurLetterTemplateSelectFormElementProps) {
+    const {
+        control,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const name = "_template";
+    const label = "Szablon pisma";
+    const repository = MainSetup.documentTemplatesRepository;
+
+    function makeoptions(templates: DocumentTemplate[]) {
+        const filteredTemplates = templates.filter((template) => {
+            return (
+                !template._contents.caseTypeId ||
+                _cases.some((caseItem) => caseItem._type.id === template._contents.caseTypeId)
+            );
+        });
+        return filteredTemplates;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
+        const valueToBeSent = selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Form.Group controlId={label}>
+            <Form.Label>{label}</Form.Label>
+            <>
+                <Controller
+                    name={name}
+                    control={control}
+                    render={({ field }) => (
+                        <Typeahead
+                            id={`${label}-controlled`}
+                            labelKey="name"
+                            multiple={false}
+                            options={makeoptions(repository.items)}
+                            onChange={(items) => handleOnChange(items, field)}
+                            selected={field.value ? [field.value] : []}
+                            placeholder="-- Wybierz szablon --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option, props, index) => {
+                                const myOption = option as DocumentTemplate;
+                                return (
+                                    <div>
+                                        <span>{myOption._nameContentsAlias}</span>
+                                        <div className="text-muted small text-wrap">{myOption.description}</div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    )}
+                />
+                <ErrorMessage errors={errors} name={name} />
+            </>
+        </Form.Group>
+    );
+}
+
+export type PersonSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+    repository: RepositoryReact;
+    allowNew?: boolean;
+};
+
+export function PersonSelector({
+    name = "_person",
+    showValidationInfo = true,
+    multiple = false,
+    repository,
+    allowNew = false,
+}: PersonSelectorProps) {
+    function renderOption(option: any) {
+        const typedOption = option as PersonData;
+        return (
+            <>
+                <div>{typedOption._nameSurnameEmail}</div>
+                <div className="text-muted small text-wrap"> {typedOption._entity.name}</div>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <MyAsyncTypeahead
+                name={name}
+                labelKey="_nameSurnameEmail"
+                searchKey="searchText"
+                repository={repository}
+                renderMenuItemChildren={renderOption}
+                multiple={multiple}
+                allowNew={allowNew}
+                showValidationInfo={showValidationInfo}
+            />
+        </>
+    );
+}
+
+type PersonsSelectorProps = {
+    label: string;
+    name: string;
+    repository: RepositoryReact<PersonData>;
+    multiple?: boolean;
+    showValidationInfo?: boolean;
+};
+/**
+ * Komponent formularza wyboru osoby
+ * @param label oznaczenie pola formularza
+ * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
+ */
+export function PersonSelectorPreloaded({
+    label,
+    name,
+    repository,
+    multiple = false,
+    showValidationInfo = true,
+}: PersonsSelectorProps) {
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+
+    function makeoptions(repositoryDataItems: (PersonData & { _nameSurname: string })[]) {
+        repositoryDataItems.map((item) => (item._nameSurname = `${item.name} ${item.surname}`));
+        return repositoryDataItems;
+    }
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = selectedOptions.length > 0 ? (multiple ? selectedOptions : selectedOptions[0]) : null;
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    function handleSelected(field: ControllerRenderProps<any, string>) {
+        const currentValue = (field.value ? (multiple ? field.value : [field.value]) : []) as (PersonData & {
+            _nameSurname: string;
+        })[];
+        return makeoptions(currentValue);
+    }
+
+    return (
+        <>
+            <Form.Label>{label}</Form.Label>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => (
+                    <Typeahead
+                        id={`${label}-controlled`}
+                        labelKey="_nameSurname"
+                        options={makeoptions(repository.items as (PersonData & { _nameSurname: string })[])}
+                        onChange={(items) => handleOnChange(items, field)}
+                        selected={handleSelected(field)}
+                        placeholder="-- Wybierz osobę --"
+                        multiple={multiple}
+                        isValid={showValidationInfo ? !errors?.[name] : undefined}
+                        isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                    />
+                )}
+            />
+            <ErrorMessage errors={errors} name={name} />
+        </>
+    );
+}
+
+function groupByMilestone(cases: Case[]) {
+    return cases.reduce<Record<string, Case[]>>((groups, item) => {
+        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+        return groups;
+    }, {});
+}
+
+function renderCaseMenu(
+    results: Case[],
+    menuProps: any,
+    state: TypeaheadManagerChildProps,
+    groupedResults: Record<string, Case[]>,
+    milestoneNames: string[]
+) {
+    let index = 0;
+
+    const items = milestoneNames.map((milestoneName) => (
+        <Fragment key={milestoneName}>
+            {index !== 0 && <Menu.Divider />}
+            <Menu.Header>{milestoneName}</Menu.Header>
+            {groupedResults[milestoneName].map((item) => {
+                const menuItem = (
+                    <MenuItem key={index} option={item} position={index}>
+                        {item._type.folderNumber} {item._type.name} {item._folderName}
+                    </MenuItem>
+                );
+
+                index += 1;
+                return menuItem;
+            })}
+        </Fragment>
+    ));
+
+    return <Menu {...menuProps}>{items}</Menu>;
+}
+
+interface CaseSelectMenuElementProps {
+    name?: string;
+    repository: RepositoryReact<Case>;
+    _project?: ProjectData;
+    _contract?: Contract;
+    _offer?: OurOffer | ExternalOffer;
+    _milestone?: MilestoneData;
+    readonly?: boolean;
+    showValidationInfo?: boolean;
+    multiple?: boolean;
+}
+
+/**
+ * Pole wyboru sprawy z repozytorium pogrupowane po Milestonach
+ * @param name nazwa pola formularza (musi być zgodna z nazwą pola w obiekcie)
+ * @param repository repozytorium z którego pobierane są dane
+ * @param multiple czy można wybrać wiele opcji
+ * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
+ * @param readOnly czy pole jest tylko do odczytu (domyślnie false)
+ * @param _contract kontrakt do którego należy wybrana sprawa
+ */
+
+export function CaseSelectMenuElement({
+    name = "_case",
+    readonly = false,
+    _contract,
+    _offer,
+    repository,
+    showValidationInfo = true,
+    multiple = true,
+}: CaseSelectMenuElementProps) {
+    const [options, setOptions] = useState<any[]>([]);
+
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (_contract) {
+                await repository.loadItemsFromServerPOST([
+                    { contractId: _contract.id, milestoneParentType: "CONTRACT" },
+                ]);
+                setOptions(repository.items);
+            } else if (_offer) {
+                await repository.loadItemsFromServerPOST([{ offerId: _offer.id, milestoneParentType: "OFFER" }]);
+                setOptions(repository.items);
+            } else {
+                repository.clearData();
+            }
+        };
+        fetchData();
+    }, [_contract, _offer]);
+
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
+        setValue(name, valueToBeSent);
+        field.onChange(valueToBeSent);
+    }
+
+    return (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field }) => (
+                <Typeahead
+                    id={`${name}-typeahead`}
+                    labelKey="_typeFolderNumber_TypeName_Number_Name"
+                    multiple={multiple}
+                    options={options}
+                    onChange={(items) => handleOnChange(items, field)}
+                    renderMenu={(results, menuProps, state) => {
+                        const groupedResults = groupByMilestone(results as Case[]);
+                        const milestoneNames = Object.keys(groupedResults).sort();
+                        return renderCaseMenu(results as Case[], menuProps, state, groupedResults, milestoneNames);
+                    }}
+                    selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                    placeholder="-- Wybierz sprawę --"
+                    isValid={showValidationInfo ? !errors?.[name] : undefined}
+                    isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                    renderMenuItemChildren={(option, props, index) => {
+                        const myOption = option as Case;
+                        return (
+                            <div>
+                                <span>{myOption._typeFolderNumber_TypeName_Number_Name}</span>
+                                <div className="text-muted small text-wrap">{myOption.description}</div>
+                            </div>
+                        );
+                    }}
+                />
+            )}
+        />
+    );
+}

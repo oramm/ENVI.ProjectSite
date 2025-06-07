@@ -1,6 +1,6 @@
-import { FieldValues } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
-import ToolsDate from "../../React/ToolsDate";
+import ToolsDate from "../../React/Tools/ToolsDate";
 
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
 export function parseFieldValuesToParams(data: FieldValues) {
@@ -38,13 +38,13 @@ export function parseFieldValuestoFormData(data: FieldValues) {
 }
 
 function processElement(element: any) {
-    let parsedValue = '';
+    let parsedValue = "";
     switch (typeof element) {
-        case 'string':
-        case 'number':
+        case "string":
+        case "number":
             parsedValue = element.toString();
             break;
-        case 'object':
+        case "object":
             if (element instanceof Date) {
                 parsedValue = ToolsDate.toUTC(element);
             } else {
@@ -56,23 +56,45 @@ function processElement(element: any) {
     return parsedValue;
 }
 
-/** Aktualizuje dane obiektu na podstawie danych z formularza 
+/** Aktualizuje dane obiektu na podstawie danych z formularza
  * działa na kopii obiektu, nie zmienia obiektu w repozytorium
  */
-export function updateObject(formData: FormData, obj: RepositoryDataItem): RepositoryDataItem {
+export function updateObject(formData: FormData, obj: any) {
     const updatedObj = { ...obj };
     formData.forEach((value, key) => {
         if (updatedObj.hasOwnProperty(key)) {
-            if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('[')))
+            if (typeof value === "string" && (value.startsWith("{") || value.startsWith("[")))
                 try {
                     updatedObj[key] = JSON.parse(value);
                 } catch (e) {
                     updatedObj[key] = value;
                 }
-            else
-                updatedObj[key] = value;
-        } else
-            console.log(`Form data key ${key} does not match any attribute in current object`);
+            else updatedObj[key] = value;
+        } else console.log(`Form data key ${key} does not match any attribute in current object`);
     });
     return updatedObj;
+}
+
+interface NestedFieldErrors extends FieldErrors {
+    [key: string]: NestedFieldErrors | any;
+}
+
+/**
+ * Zwraca true jeśli w obiekcie errors jest błąd dla podanej ścieżki
+ * @param errors obiekt błędów
+ * @param path ścieżka do sprawdzenia
+ * @returns true jeśli błąd istnieje
+ * @example hasError(errors, "_offerBond.paymentData")
+ */
+export function hasError(errors: NestedFieldErrors, path: string) {
+    const keys = path.split(".");
+    let current: any = errors;
+    for (let key of keys) {
+        if (current && current[key]) {
+            current = current[key];
+        } else {
+            return false; // No error at this path
+        }
+    }
+    return current && current.type ? true : false;
 }

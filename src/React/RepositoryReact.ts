@@ -1,7 +1,8 @@
-import { useParams } from "react-router-dom";
-import { RepositoryDataItem } from "../../Typings/bussinesTypes";
+import { ErrorServerResponse, RepositoryDataItem } from "../../Typings/bussinesTypes";
+import { SessionTask } from "../../Typings/sessionTypes";
 import MainSetup from "./MainSetupReact";
-import ToolsDate from "./ToolsDate";
+import ToolsDate from "./Tools/ToolsDate";
+import ToolsFetch from "./Tools/ToolsFetch";
 
 export default class RepositoryReact<DataItemType extends RepositoryDataItem = RepositoryDataItem> {
     actionRoutes: ActionRoutes;
@@ -9,40 +10,39 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     currentItems: DataItemType[] = [];
     name: string;
     isMultiSelect: boolean = false;
+    pendingRequests: Map<string, Promise<any>> = new Map();
 
-    constructor(initParameter: { name: string, actionRoutes: ActionRoutes }) {
+    constructor(initParameter: { name: string; actionRoutes: ActionRoutes }) {
         //console.log('tworzę repozytorium: %o', initParameter);
         this.name = initParameter.name;
         this.actionRoutes = initParameter.actionRoutes;
         this.items = [];
     }
 
-    /**dodaje element domyślny wg jego Id 
+    /**dodaje element domyślny wg jego Id
      * - jeżeli jest to lista wielokrotnego wyboru, to dodaje do listy
      * - jeżeli jest to lista jednokrotnego wyboru, to zastępuje element
-    */
+     */
     addToCurrentItems(id: number) {
-        const itemSelected = this.items.find(item => item.id === id);
-        if (!itemSelected) throw new Error('Nie znaleziono elementu o id: ' + id);
-        if (this.isMultiSelect)
-            this.currentItems.push(itemSelected);
-        else
-            this.currentItems[0] = itemSelected;
+        const itemSelected = this.items.find((item) => item.id === id);
+        if (!itemSelected) throw new Error("Nie znaleziono elementu o id: " + id);
+        if (this.isMultiSelect) this.currentItems.push(itemSelected);
+        else this.currentItems[0] = itemSelected;
     }
 
-    deleteFromCurrentItemsById(id: number) {
-        const index = this.currentItems.findIndex(item => item.id === id);
+    protected deleteFromCurrentItemsById(id: number) {
+        const index = this.currentItems.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1);
     }
 
     replaceCurrentItemById(id: number, editedItem: DataItemType) {
-        const index = this.currentItems.findIndex(item => item.id === id);
+        const index = this.currentItems.findIndex((item) => item.id === id);
         this.currentItems.splice(index, 1, editedItem);
     }
 
     replaceItemById(id: number, editedItem: DataItemType) {
-        const index = this.items.findIndex(item => item.id === id);
-        this.currentItems.splice(index, 1, editedItem);
+        const index = this.items.findIndex((item) => item.id === id);
+        this.items.splice(index, 1, editedItem);
     }
 
     saveToSessionStorage() {
@@ -53,26 +53,24 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * - jeżeli nie ma obiektów w sessionstorage, to ładuje je z serwera
      */
     async loadItemFromRouter(id: number) {
-        if (!id) throw new Error('Nie podano id obiektu do załadowania');
+        if (!id) throw new Error("Nie podano id obiektu do załadowania");
 
-        if (this.items.length === 0)
-            this.loadFromSessionStorage();
+        if (this.items.length === 0) this.loadFromSessionStorage();
         if (this.items.length === 0) {
             await this.loadItemsFromServerPOST([{ id }]);
         }
-        if (this.items.length === 0)
-            throw new Error('Nie znaleziono elementów w repozytorium: ' + this.name);
+        if (this.items.length === 0) throw new Error("Nie znaleziono elementów w repozytorium: " + this.name);
 
         // Znajdź i zwróć żądany element
-        const item = this.items.find(item => item.id === id);
+        const item = this.items.find((item) => item.id === id);
         if (!item) {
-            throw new Error('Nie znaleziono obiektu z podanym id: ' + id);
+            throw new Error("Nie znaleziono obiektu z podanym id: " + id);
         }
         return item;
     }
 
     /**Ładuje items z sessionstorage i resetuje currentitems */
-    loadFromSessionStorage() {
+    protected loadFromSessionStorage() {
         const JSONFromSessionStorage = sessionStorage.getItem(this.name);
         if (!JSONFromSessionStorage) return;
         const data = JSON.parse(JSONFromSessionStorage);
@@ -80,7 +78,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             this.items = data.items;
             this.currentItems = [];
         }
-        console.log(this.name + ' items from SessionStorage: %o', this.items);
+        console.log(this.name + " items from SessionStorage: %o", this.items);
     }
     /**
      * Ładuje items z serwera i resetuje currentitems
@@ -90,133 +88,263 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
     async loadItemsFromServerPOST(orConditions: any[] = [], specialActionRoute?: string) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
+        const requestKey = JSON.stringify({ url: url.toString(), body: orConditions });
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                ...this.makeRequestHeaders(),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ orConditions }),
-            credentials: 'include',
-        });
-        if (!response.ok) throw new Error(response.statusText);
-        const loadedItems = await response.json();
-        this.items = loadedItems;
-        this.currentItems = [];
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
 
-        console.log(this.name + ' NodeJS: %o', this.items);
-        return this.items;
+        try {
+            const fetchPromise = ToolsFetch.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orConditions }),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+
+            this.items = (await fetchPromise) as DataItemType[];
+            this.currentItems = [];
+            this.saveToSessionStorage();
+            console.log(this.name + " NodeJS: %o", this.items);
+            return this.items;
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadItemsFromServerPOST",
+                orConditions,
+                actionRoute,
+            });
+            throw error;
+        }
+    }
+    async loadCurrentItemDetailsFromServerPOST(specialActionRoute: string) {
+        const conditions = { id: this.currentItems[0].id };
+        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
+        const url = new URL(MainSetup.serverUrl + actionRoute);
+        const requestKey = JSON.stringify({ url: url.toString(), body: conditions });
+
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
+
+        try {
+            const fetchPromise = ToolsFetch.fetchWithRetry(url.toString(), {
+                method: "POST",
+                headers: {
+                    ...this.makeRequestHeaders(),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(conditions),
+                credentials: "include",
+            }).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const detailedItem = (await fetchPromise) as DataItemType;
+            this.items = this.items.map((item) => (item.id === detailedItem.id ? detailedItem : item));
+            this.currentItems[0] = detailedItem;
+            this.saveToSessionStorage();
+            console.log("CurrentItemDetailsLoaded: " + this.name + ": %o", this.items);
+            return this.currentItems[0];
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "loadCurrentItemDetailsFromServerPOST",
+                conditions,
+                actionRoute,
+                item: this.currentItems[0] || null,
+            });
+            throw error;
+        }
     }
 
+    /**
+     * Dodaje nowy obiekt do bazy danych.
+     * Obsługuje dwa tryby:
+     *  - stary backend: zwraca gotowy obiekt (DataItemType)
+     *  - nowy backend: zwraca taskId → frontend odpytuje backend aż zakończy przetwarzanie
+     */
+    async addNewItemAsync(
+        newItem: any | FormData,
+        deleteId: boolean,
+        specialActionRoute?: string,
+        onProgress?: (task: SessionTask) => void
+    ) {
+        // 1. Budujemy ścieżkę do endpointu
+        const actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
 
-
-    /** Funkcja pomocnicza do dodawania nowych elementów */
-    async addItem(newItem: any | FormData, deleteId: boolean, specialActionRoute?: string) {
+        // 2. Przygotowanie opcji fetch
         const requestOptions: RequestInit = {
-            method: 'POST',
-            credentials: 'include',
+            method: "POST",
+            credentials: "include", // uwzględnij ciasteczka/sesję
         };
 
+        // 3. Konfiguracja żądania dla FormData vs JSON
         if (newItem instanceof FormData) {
             requestOptions.body = newItem;
         } else {
-            if (deleteId) {
-                delete newItem.id;
-            }
+            if (deleteId) delete newItem.id;
             requestOptions.headers = {
-                ...requestOptions.headers,
-                ['Content-Type']: 'application/json',
+                "Content-Type": "application/json",
             };
+            ToolsDate.convertDatesToUTC(newItem); // standaryzuj daty
             requestOptions.body = JSON.stringify(newItem);
         }
-        let actionRoute = specialActionRoute || this.actionRoutes.addNewRoute;
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
-        const resultRawResponse = await fetch(
-            urlPath,
-            requestOptions
-        );
 
-        const newItemFromServer: DataItemType = await resultRawResponse.json();
+        try {
+            // 4. Wyślij żądanie – może zwrócić taskId (nowa wersja) lub gotowy obiekt (stara wersja)
+            const response = await ToolsFetch.fetchWithRetry(urlPath, requestOptions);
+            if (onProgress && response.taskId) onProgress(response);
+            // 5. Jeśli brak taskId — to stara wersja backendu, zwrócono gotowy obiekt
+            if (response && !response.taskId) {
+                const item = response as DataItemType;
+                this.items.push(item);
+                this.currentItems = [item];
+                this.saveToSessionStorage();
+                console.log("%s:: synchronicznie utworzono: %o", this.name, item);
+                return item;
+            }
 
-        if (newItemFromServer.errorMessage) {
-            console.error('Error from server: %o', newItemFromServer.errorMessage);
-            throw new Error(`Błąd serwera: ${newItemFromServer.errorMessage}`);
+            // 6. Mamy taskId – zaczynamy polling do zakończenia zadania
+            const taskId = response.taskId;
+
+            // 7. Polling: co 2s aż task zakończy (max 60 prób = 2 min)
+            const statusResponse = await this.pollTask(taskId, onProgress);
+
+            // 8. Obsługa błędu z backendu
+            if (statusResponse.status === "error") {
+                throw new Error("Błąd backendu: " + statusResponse.error);
+            }
+
+            // 9. Gotowy przetworzony obiekt z backendu
+            const newItemFromServer: DataItemType = statusResponse.result;
+
+            // 10. Zapisanie do repozytorium i sessionStorage
+            this.items.push(newItemFromServer);
+            this.currentItems = [newItemFromServer];
+            this.saveToSessionStorage();
+
+            console.log("%s:: asynchronicznie utworzono: %o", this.name, newItemFromServer);
+            return newItemFromServer;
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "addNewItemAsync",
+                actionRoute,
+                itemType: newItem instanceof FormData ? "FormData" : "JSON",
+                item: newItem,
+            });
+            throw error;
         }
-
-        if (newItemFromServer.authorizeUrl)
-            window.open(newItemFromServer.authorizeUrl);
-
-        const noBlobNewItem = { ...newItemFromServer };
-        delete noBlobNewItem._blobEnviObjects;
-
-        this.items.push(noBlobNewItem);
-        this.currentItems = [newItemFromServer];
-        console.log('%s:: utworzono i zapisano: %o', this.name, newItemFromServer);
-        return newItemFromServer as DataItemType;
     }
 
     /** Dodaje obiekt do bazy danych i do repozytorium */
-    async addNewItem(newItem: any | FormData, specialActionRoute?: string) {
-        return this.addItem(newItem, true, specialActionRoute);
+    async addNewItem(newItem: any | FormData, specialActionRoute?: string, onProgress?: (task: SessionTask) => void) {
+        return this.addNewItemAsync(newItem, true, specialActionRoute, onProgress);
     }
 
     /** Kopiuje obiekt do bazy danych i do repozytorium */
     async copyItem(newItem: any | FormData, specialActionRoute: string | undefined = this.actionRoutes.copyRoute) {
-        return this.addItem(newItem, false, specialActionRoute);
+        return this.addNewItemAsync(newItem, false, specialActionRoute);
     }
 
+    /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium
+     * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
+     * @param item obiekt do edycji
+     * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute
+     *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
+     * @param _fieldsToUpdate - tablica z nazwami pól, które mają być zaktualizowane. Nazwa z podkreśleniem ze względu na serwer
+     */
+    async editItem(
+        item: DataItemType | FormData,
+        specialActionRoute?: string,
+        _fieldsToUpdate?: string[],
+        onProgress?: (task: SessionTask) => void
+    ) {
+        const actionRoute = specialActionRoute || this.actionRoutes.editRoute;
+        const itemId = item instanceof FormData ? item.get("id") : item.id;
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${itemId}`;
+        const requestKey = JSON.stringify({ url: urlPath, body: item });
+        if (this.pendingRequests.has(requestKey)) {
+            return this.pendingRequests.get(requestKey);
+        }
 
-    /** Edytuje obiekt w bazie danych i aktualizuje go w Repozytorium 
-      * aktualizuje te currentItemy, które mają ten sam id co edytowany obiekt
-      * @param item obiekt do edycji
-      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż editRoute 
-      *     podajemy tylko nazwę routa bez '/' i parametrów (domyślnie undefined)
-      */
-    async editItem(item: DataItemType | FormData, specialActionRoute?: string, fieldsToUpdate?: string[]) {
         const requestOptions: RequestInit = {
-            method: 'PUT',
-            credentials: 'include',
+            method: "PUT",
+            credentials: "include",
         };
 
         if (item instanceof FormData) {
-            if (fieldsToUpdate) item.append('fieldsToUpdate', JSON.stringify(fieldsToUpdate))
+            if (_fieldsToUpdate) item.append("_fieldsToUpdate", JSON.stringify(_fieldsToUpdate));
             requestOptions.body = item;
         } else {
             requestOptions.headers = {
                 ...requestOptions.headers,
-                ['Content-Type']: 'application/json',
+                ["Content-Type"]: "application/json",
             };
             ToolsDate.convertDatesToUTC(item);
-            requestOptions.body = JSON.stringify({ ...item, ...fieldsToUpdate });
-        }
-        const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.editRoute;
-        const urlPath = `${MainSetup.serverUrl}${actionRoute}/${item instanceof FormData ? item.get('id') : item.id}`;
-
-        const resultRawResponse = await fetch(
-            urlPath,
-            requestOptions
-        );
-
-        const resultObject = await resultRawResponse.json() as DataItemType;
-
-        if (resultRawResponse.status >= 400) {
-            console.error('Error from server: %o', resultObject.errorMessage);
-            throw new Error(`Błąd serwera: ${resultObject.errorMessage}`);
+            requestOptions.body = JSON.stringify({ ...item, _fieldsToUpdate });
         }
 
-        if (resultObject.authorizeUrl) {
-            window.open(resultObject.authorizeUrl);
-            console.log('konieczna autoryzacja w Google - nie wyedytowano obiektu %o', item);
-            return item as DataItemType;
-        }
+        try {
+            const fetchPromise = ToolsFetch.fetchWithRetry(urlPath, requestOptions).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
 
-        this.replaceItemById(resultObject.id, resultObject);
-        this.replaceCurrentItemById(resultObject.id, resultObject);
-        console.log('obiekt po edycji z serwera: %o', resultObject);
-        return resultObject;
+            const response = await fetchPromise;
+
+            // 🆕 Jeśli backend zwraca taskId — włącz polling
+            if (response && response.taskId) {
+                if (onProgress) onProgress(response);
+                const taskId = response.taskId;
+
+                const statusResponse = await this.pollTask(taskId, onProgress);
+
+                if (statusResponse.status === "error") {
+                    throw new Error("Błąd backendu: " + statusResponse.error);
+                }
+
+                const editedItemFromServer: DataItemType = statusResponse.result;
+                this.replaceCurrentItemById(editedItemFromServer.id, editedItemFromServer);
+                this.items = this.items.map((x) => (x.id === editedItemFromServer.id ? editedItemFromServer : x));
+                this.saveToSessionStorage();
+                return editedItemFromServer;
+            }
+
+            // 🔁 Stara wersja (od razu gotowy obiekt)
+            if ("authorizeUrl" in response) {
+                window.open(response.authorizeUrl as string);
+                console.log("Konieczna autoryzacja w Google - nie wyedytowano obiektu %o", item);
+                return item as DataItemType;
+            }
+
+            this.replaceCurrentItemById(response.id, response);
+            this.items = this.items.map((x) => (x.id === response.id ? response : x));
+            this.saveToSessionStorage();
+            console.log("Obiekt po edycji z serwera: %o", response);
+            return response;
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "editItem",
+                actionRoute,
+                itemId,
+                itemType: item instanceof FormData ? "FormData" : "JSON",
+                item,
+                _fieldsToUpdate,
+            });
+            console.error(error);
+            throw error;
+        }
     }
-
 
     /**usuwa obiekt z bazy danych i usuwa go z Repozytorium
      * usuwa te currentItemy, które mają ten sam id co usuwany obiekt
@@ -224,34 +352,103 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      */
     async deleteItemNodeJS(id: number) {
         const oldItem = this.items.find((item) => item.id == id);
-        if (!oldItem) throw new Error('Nie znaleziono obiektu do usunięcia');
+        if (!oldItem) throw new Error("Nie znaleziono obiektu do usunięcia");
+
+        let response;
         try {
-            const response = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + '/' + oldItem.id, {
-                method: 'DELETE',
+            response = await fetch(MainSetup.serverUrl + this.actionRoutes.deleteRoute + "/" + oldItem.id, {
+                method: "DELETE",
                 headers: this.makeRequestHeaders(),
-                credentials: 'include',
-                body: JSON.stringify(oldItem)
+                credentials: "include",
+                body: JSON.stringify(oldItem),
             });
+        } catch (networkError) {
+            ToolsFetch.sendClientErrorReport(networkError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                errorType: "network",
+                item: oldItem,
+            });
+            console.error("Network error: ", networkError);
+            throw new Error("Błąd sieci, nie udało się połączyć z serwerem.");
+        }
 
-            const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            ToolsFetch.sendClientErrorReport(parseError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                errorType: "parse",
+                item: oldItem,
+            });
+            console.error("Failed to parse response: ", parseError);
+            throw new Error("Nie udało się przetworzyć odpowiedzi z serwera.");
+        }
 
-            if (result.errorMessage) {
-                console.error('Error from server: %s', result.errorMessage);
-                throw new Error(`Błąd serwera: ${result.errorMessage}`);
-            }
+        if (result.errorMessage) {
+            console.error("Error from server: %s", result.errorMessage);
+            throw new Error(`Błąd serwera: ${result.errorMessage}`);
+        }
 
-            if (result.authorizeUrl) {
-                window.open(result.authorizeUrl);
-            }
+        if (result.authorizeUrl) {
+            window.open(result.authorizeUrl);
+        }
 
+        try {
             this.deleteFromCurrentItemsById(oldItem.id);
             this.items = this.items.filter((item) => item.id != oldItem.id);
-            console.log('%s:: usunięto obiekt: %o', this.name, oldItem);
+            this.saveToSessionStorage();
+            console.log("%s:: usunięto obiekt: %o", this.name, oldItem);
+        } catch (localUpdateError) {
+            ToolsFetch.sendClientErrorReport(localUpdateError, {
+                repositoryName: this.name,
+                action: "deleteItemNodeJS",
+                item: oldItem,
+                errorType: "localUpdate",
+            });
+            console.error("Failed to update local state: ", localUpdateError);
+            throw new Error("Błąd podczas aktualizacji lokalnego stanu.");
+        }
 
-            return oldItem;
-        } catch (err) {
-            this.items.push(oldItem);
-            this.deleteFromCurrentItemsById(oldItem.id);
+        return oldItem;
+    }
+    /**
+     * Wykonuje zapytanie do serwera
+     * @param actionRoute - ścieżka do akcji na serwerze
+     * @param item
+     */
+    async fetch(actionRoute: string, item?: DataItemType) {
+        const urlPath = `${MainSetup.serverUrl}${actionRoute}`;
+        const requestKey = JSON.stringify({ url: urlPath, body: item });
+
+        const requestOptions: RequestInit = {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                ["Content-Type"]: "application/json",
+            },
+        };
+
+        ToolsDate.convertDatesToUTC(item);
+        requestOptions.body = JSON.stringify({ ...item });
+
+        try {
+            const fetchPromise = ToolsFetch.fetchWithRetry(urlPath, requestOptions).finally(() => {
+                this.pendingRequests.delete(requestKey);
+            });
+            this.pendingRequests.set(requestKey, fetchPromise);
+            const resultObject = await fetchPromise;
+            return resultObject;
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "fetch",
+                actionRoute,
+                item,
+            });
+            throw error;
         }
     }
 
@@ -259,11 +456,31 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         this.items = [];
         this.currentItems = [];
     }
+    protected async pollTask(taskId: string, onProgress?: (task: SessionTask) => void): Promise<SessionTask> {
+        const statusUrl = `${MainSetup.serverUrl}sessionTaskStatus/${taskId}`;
+        try {
+            for (let i = 0; i < 60; i++) {
+                await new Promise((res) => setTimeout(res, 2000));
+                const statusResponse = await ToolsFetch.fetchWithRetry(statusUrl, {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (onProgress) onProgress(statusResponse);
+                if (statusResponse.status !== "processing") return statusResponse;
+            }
+            throw new Error("Przekroczono limit czasu oczekiwania na zakończenie zadania.");
+        } catch (error) {
+            ToolsFetch.sendClientErrorReport(error, {
+                repositoryName: this.name,
+                action: "pollTask",
+                taskId,
+            });
+            throw error;
+        }
+    }
 
     private makeRequestHeaders() {
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        return myHeaders;
+        return { "Content-Type": "application/json" };
     }
 }
 
@@ -273,4 +490,4 @@ export type ActionRoutes = {
     editRoute: string;
     deleteRoute: string;
     copyRoute?: string;
-}
+};

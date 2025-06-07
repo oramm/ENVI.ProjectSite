@@ -16,15 +16,17 @@ export type ModalBodyProps<DataItemType extends RepositoryDataItem = RepositoryD
     initialData?: DataItemType;
     contextData?: unknown;
     additionalProps?: any;
-}
+};
 
 type GeneralModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     ModalBodyComponent: React.ComponentType<ModalBodyProps<DataItemType>>;
     additionalModalBodyProps?: any;
     modalTitle: string;
+    modalSubtitle?: string;
     repository: RepositoryReact<DataItemType>;
     makeValidationSchema?: (isEditing: boolean) => yup.ObjectSchema<any>;
     contextData?: unknown;
+    size?: "sm" | "lg" | "xl" | undefined;
 };
 
 export type GeneralModalButtonButtonProps = {
@@ -33,7 +35,7 @@ export type GeneralModalButtonButtonProps = {
     buttonSize?: ButtonProps["size"];
     buttonIsActive?: boolean;
     buttonIsDisabled?: boolean;
-    layout?: 'vertical' | 'horizontal';
+    layout?: "vertical" | "horizontal";
 };
 
 export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
@@ -41,10 +43,11 @@ export type GeneralModalButtonProps<DataItemType extends RepositoryDataItem = Re
     buttonProps: GeneralModalButtonButtonProps;
 };
 
-type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
-    onAddNew: (object: DataItemType) => void;
-    initialData?: DataItemType;
-};
+type GeneralAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
+    GeneralModalButtonModalProps<DataItemType> & {
+        onAddNew: (object: DataItemType) => void;
+        initialData?: DataItemType;
+    };
 
 type GeneralAddNewModalButtonButtonProps = GeneralModalButtonButtonProps & {
     buttonCaption: string;
@@ -55,13 +58,15 @@ export type GeneralAddNewModalButtonProps<DataItemType extends RepositoryDataIte
     buttonProps: GeneralAddNewModalButtonButtonProps;
 };
 
-type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = GeneralModalButtonModalProps<DataItemType> & {
-    onEdit: (object: DataItemType) => void;
-    specialActionRoute?: string;
-    initialData: DataItemType;
-    fieldsToUpdate?: string[];
-    shouldRetrieveDataBeforeEdit?: boolean;
-};
+type GeneralEditModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> =
+    GeneralModalButtonModalProps<DataItemType> & {
+        onEdit: (object: DataItemType) => void;
+        specialActionRoute?: string;
+        specialRetrieveActionRoute?: string;
+        initialData: DataItemType;
+        fieldsToUpdate?: string[];
+        shouldRetrieveDataBeforeEdit?: boolean;
+    };
 
 export type GeneralEditModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralEditModalButtonModalProps<DataItemType>;
@@ -87,6 +92,23 @@ type GeneralDeleteModalButtonButtonProps = GeneralModalButtonButtonProps & {
 export type GeneralDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: GeneralDeleteModalButtonModalProps<DataItemType>;
     buttonProps?: GeneralDeleteModalButtonButtonProps;
+};
+
+type GeneralCopyModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralModalButtonModalProps<DataItemType>,
+    "ModalBodyComponent"
+> & {
+    onCopy: (copiedData: DataItemType) => void;
+    initialData: DataItemType;
+};
+
+type GeneralCopyModalButtonButtonProps = GeneralModalButtonButtonProps & {
+    buttonCaption?: string;
+};
+
+export type GeneralCopyModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: GeneralCopyModalButtonModalProps<DataItemType>;
+    buttonProps?: GeneralCopyModalButtonButtonProps;
 };
 
 type SpecificAddNewModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
@@ -131,6 +153,22 @@ type SpecificDeleteModalButtonButtonProps = GeneralDeleteModalButtonButtonProps;
 export type SpecificDeleteModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     modalProps: SpecificDeleteModalButtonModalProps<DataItemType>;
     buttonProps?: SpecificDeleteModalButtonButtonProps;
+};
+
+type SpecificCopyModalButtonModalProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = Omit<
+    GeneralCopyModalButtonModalProps<DataItemType>,
+    "ModalBodyComponent" | "modalTitle" | "repository"
+> & {
+    onCopy: (copiedData: DataItemType) => void;
+    initialData: DataItemType;
+    repository: RepositoryReact<DataItemType>;
+};
+
+type SpecificCopyModalButtonButtonProps = GeneralCopyModalButtonButtonProps;
+
+export type SpecificCopyModalButtonProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    modalProps: SpecificCopyModalButtonModalProps<DataItemType>;
+    buttonProps?: SpecificCopyModalButtonButtonProps;
 };
 
 export type additionalFieldsKeysValue = {

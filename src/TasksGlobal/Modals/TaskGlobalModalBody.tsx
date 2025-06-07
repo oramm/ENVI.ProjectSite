@@ -1,30 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Col, Form, Row } from 'react-bootstrap';
-import { Task } from '../../../Typings/bussinesTypes';
-import MainSetup from '../../React/MainSetupReact';
-import { ErrorMessage, PersonSelectFormElement, TaksStatusSelectFormElement } from '../../View/Modals/CommonFormComponents';
-import { useFormContext } from '../../View/Modals/FormContext';
-import { ModalBodyProps } from '../../View/Modals/ModalsTypes';
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, Col, Form, Row } from "react-bootstrap";
+import { Task } from "../../../Typings/bussinesTypes";
+import MainSetup from "../../React/MainSetupReact";
+import { PersonSelectorPreloaded } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { useFormContext } from "../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../View/Modals/ModalsTypes";
+import { TaksStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
+import { ErrorMessage } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
-export function TaskGlobalModalBody({ isEditing, initialData, contextData }: ModalBodyProps<Task>) {
-    const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger } = useFormContext();
-    const _case = initialData?._case || contextData;
+export function TaskGlobalModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Task>) {
+    const {
+        register,
+        reset,
+        setValue,
+        watch,
+        formState: { dirtyFields, errors, isValid },
+        trigger,
+    } = useFormContext();
+    const _case = initialData?._parent || contextData;
 
     useEffect(() => {
-        console.log('TaskModalBody useEffect', initialData);
+        console.log("TaskModalBody useEffect", initialData);
         const resetData = {
             _case,
             name: initialData?.name,
-            description: initialData?.description || '',
+            description: initialData?.description || "",
             deadline: initialData?.deadline || new Date().toISOString().slice(0, 10),
-            daysToPay: initialData?.daysToPay,
-            status: initialData?.status || MainSetup.TaskStatuses.BACKLOG,
+            status: initialData?.status || MainSetup.TaskStatus.BACKLOG,
             _owner: initialData?._owner || MainSetup.getCurrentUserAsPerson(),
         };
         reset(resetData);
         trigger();
     }, [initialData, reset]);
-
 
     return (
         <>
@@ -36,9 +43,9 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData }: Mod
                     placeholder="Podaj nazwę"
                     isInvalid={!!errors?.name}
                     isValid={!errors?.name}
-                    {...register('name')}
+                    {...register("name")}
                 />
-                <ErrorMessage name='name' errors={errors} />
+                <ErrorMessage name="name" errors={errors} />
             </Form.Group>
             <Form.Group controlId="description">
                 <Form.Label>Uwagi</Form.Label>
@@ -48,9 +55,9 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData }: Mod
                     placeholder="Dodaj komentarz"
                     isValid={!errors?.description}
                     isInvalid={!!errors?.description}
-                    {...register('description')}
+                    {...register("description")}
                 />
-                <ErrorMessage name='description' errors={errors} />
+                <ErrorMessage name="description" errors={errors} />
             </Form.Group>
             <Form.Group controlId="deadline">
                 <Form.Label>Termin</Form.Label>
@@ -58,15 +65,15 @@ export function TaskGlobalModalBody({ isEditing, initialData, contextData }: Mod
                     type="date"
                     isValid={!errors.deadline}
                     isInvalid={!!errors.deadline}
-                    {...register('deadline')}
+                    {...register("deadline")}
                 />
-                <ErrorMessage name='deadline' errors={errors} />
+                <ErrorMessage name="deadline" errors={errors} />
             </Form.Group>
-            <TaksStatusSelectFormElement />
+            <TaksStatusSelector />
             <Form.Group controlId="_owner">
-                <PersonSelectFormElement
-                    label='Właściciel'
-                    name='_owner'
+                <PersonSelectorPreloaded
+                    label="Właściciel"
+                    name="_owner"
                     repository={MainSetup.personsEnviRepository}
                 />
             </Form.Group>

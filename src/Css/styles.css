@@ -12,3 +12,17 @@
 .icon-horizontal {
     margin-right: 10px;
 }
+
+.nav-separator {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-weight: bold;
+    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */
+}
+
+.row-hover:hover {
+    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */
+    transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
+}

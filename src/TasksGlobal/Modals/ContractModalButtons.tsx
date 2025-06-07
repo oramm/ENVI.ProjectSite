@@ -1,20 +1,25 @@
-import React, { useEffect } from 'react';
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from '../../View/Modals/ModalsTypes';
-import { OtherContract, OurContract, Project } from '../../../Typings/bussinesTypes';
-import { ContractEditModalButtonGeneric, OtherContractAddNewModalButtonGeneric, OurContractAddNewModalButtonGeneric } from '../../Contracts/ContractsList/Modals/ContractModalButtons';
-import { contractsRepository, contractsWithChildrenRepository } from '../TasksGlobalController';
-
+import React, { useEffect } from "react";
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../View/Modals/ModalsTypes";
+import { OtherContract, OurContract, ProjectData } from "../../../Typings/bussinesTypes";
+import {
+    ContractEditModalButtonGeneric,
+    OtherContractAddNewModalButtonGeneric,
+    OurContractAddNewModalButtonGeneric,
+} from "../../Contracts/ContractsList/Modals/ContractModalButtons";
+import { contractsRepository } from "../TasksGlobalController";
 
 export function ContractEditModalButton({
-    modalProps: { onEdit, initialData },
+    modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute },
     buttonProps,
 }: SpecificEditModalButtonProps<OurContract | OtherContract>) {
     return (
         <ContractEditModalButtonGeneric
             modalProps={{
                 onEdit,
+                shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
                 initialData,
-                repository: contractsRepository
+                repository: contractsRepository,
             }}
             buttonProps={buttonProps}
         />
@@ -23,13 +28,13 @@ export function ContractEditModalButton({
 
 export function OurContractAddNewModalButton({
     modalProps: { onAddNew },
-    buttonProps
+    buttonProps,
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     return (
         <OurContractAddNewModalButtonGeneric
             modalProps={{
                 onAddNew,
-                repository: contractsRepository
+                repository: contractsRepository,
             }}
             buttonProps={buttonProps}
         />
@@ -38,13 +43,13 @@ export function OurContractAddNewModalButton({
 
 export function OtherContractAddNewModalButton({
     modalProps: { onAddNew },
-    buttonProps
+    buttonProps,
 }: SpecificAddNewModalButtonProps<OurContract | OtherContract>) {
     return (
         <OtherContractAddNewModalButtonGeneric
             modalProps={{
                 onAddNew,
-                repository: contractsRepository
+                repository: contractsRepository,
             }}
             buttonProps={buttonProps}
         />

@@ -1,8 +1,8 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { StrictMode, useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import ContractsSearch from "../../Contracts/ContractsList/ContractsSearch";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
 import GoogleButton from "../GoogleLoginButton";
@@ -13,103 +13,143 @@ import Footer from "./Footer";
 import LettersSearch from "../../Letters/LettersList/LettersSearch";
 import InvoicesSearch from "../../Erp/InvoicesList/InvoicesSearch";
 import InvoiceDetails from "../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
-import MainContent from "./Content/MainContent";
 import EntitiesSearch from "../../Entities/EntitiesSearch";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
+import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
+import FinancialAidProgrammesSearch from "../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch";
+import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
+import NeedsSearch from "../../financialAidProgrammes/needs/NeedsSearch";
+import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
+import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
+import OffersMainView from "../../Offers/OffersList/OffersMainView";
+import RolesSearch from "../../Contracts/Roles/RolesSearch";
+import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
+import { set } from "react-hook-form";
+import Dashboard from "./Content/Dashboard/Dashboard";
 
-const isGithubPages = window.location.hostname === 'ps.envi.com.pl';
-//const rootPath = isGithubPages ? '/React/' :'/envi.projectsite/docs/React/';
-const rootPath = '/';
-console.log('rootPath', rootPath);
+const rootPath = "/";
+console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isReady, setIsReady] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('' as string | null);
+    const [errorMessage, setErrorMessage] = useState("" as string | null);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                await MainController.main();
-                setIsReady(true);
+                const isLoggedIn = await MainController.isSessionSet();
+                setIsLoggedIn(isLoggedIn);
+                if (isLoggedIn) await MainController.main();
             } catch (error) {
                 if (error instanceof Error) {
                     console.error(error);
-                    setErrorMessage(`${error.name} ${error.message}`);
+                    setErrorMessage(`${error.message}`);
                 }
                 return;
+            } finally {
+                setIsReady(true);
             }
         }
         fetchData();
     }, []);
     // Handle the server's response
-    const handleServerResponse = (response: any) => {
+    function handleServerResponse(response: any) {
         if (response.userData) {
             MainSetup.currentUser = response.userData;
             setIsLoggedIn(true);
         } else {
-            console.log('Authentication failed:', response.error);
+            console.error("Authentication failed:", response.error);
+            setErrorMessage(response.errorMessage);
         }
-    };
+    }
 
-    if (errorMessage)
+    if (!isReady) {
         return (
-            <div>
-                <h1>Ups! mamy błąd</h1>
-                <Alert variant="danger"> {errorMessage}</Alert>
-            </div>
-        )
-    else if (isReady) {
-        return isLoggedIn ? (
-            <>
-                <AppRoutes />
-                <Footer />
-            </>
-
-        ) : (
-            <GoogleButton onServerResponse={handleServerResponse} />
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
+                <SpinnerBootstrap />
+            </Container>
         );
     }
-    else
-        return <SpinnerBootstrap />
+
+    if (!isLoggedIn) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center min-vh-100 flex-column">
+                {errorMessage && (
+                    <Alert variant="danger" className="mb-3">
+                        {errorMessage}
+                    </Alert>
+                )}
+                <GoogleButton onServerResponse={handleServerResponse} />
+            </Container>
+        );
+    }
+
+    // zalogowany użytkownik
+    return (
+        <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
+            <AppRoutes />
+            <Footer />
+        </Container>
+    );
 }
 
 function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
-            <Routes>
-                <Route path="/" element={<MainContent />} />
-                <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
-                <Route path="/contract/:id" element={<ContractMainViewTabs />} />
-                <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
-                <Route path="/invoice/:id" element={<InvoiceDetails />} />
-                <Route path="/tasksGlobal" element={<TasksGlobal />} />
-                <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
-                <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
-                <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
-                {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
-            </Routes>
+            <div className="mt-3 mb-3">
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
+                    <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
+                    <Route
+                        path="/contracts/dates"
+                        element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />}
+                    />
+                    <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
+                    <Route path="/contract/:id" element={<ContractMainViewTabs />} />
+                    <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
+                    <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
+                    <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                    <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                    <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
+                    <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
+                    <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                    <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
+                    <Route path="/offers" element={<OffersMainView title="Oferty" />} />
+                    <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
+                    <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
+                    <Route
+                        path="/financialAidProgrammes"
+                        element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
+                    />
+                    <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
+                    <Route
+                        path="/financialAidProgrammes/applicationCalls"
+                        element={<ApplicationCallsSearch title="Nabory" />}
+                    />
+                    <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
+                    {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
+                </Routes>
+            </div>
         </HashRouter>
     );
 }
-
 
 export async function renderApp() {
     const root = document.getElementById("root");
 
     if (!root) return;
-    if (process.env.MODE === 'development')
+    if (process.env.MODE === "development")
         ReactDOM.createRoot(root).render(
             <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
                 <StrictMode>

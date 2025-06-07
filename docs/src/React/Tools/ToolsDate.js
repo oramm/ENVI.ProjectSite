@@ -1,0 +1,155 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ToolsDate {
+    static isStringAYMDDate(string) {
+        var x = string.length;
+        if (string && string.length == 10) {
+            var parts = string.split("-");
+            if (parts[0].length == 4 && parts[1].length == 2 && parts[2].length == 2)
+                return true;
+        }
+        else
+            return false;
+    }
+    /** Przekształca datę na string UTC w formacie YYYY-MM-DD
+     * @param date
+     * @returns
+     */
+    static toUTC(date) {
+        const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        const parsedDate = utcDate.toISOString().slice(0, 10);
+        return parsedDate;
+    }
+    static dateToDdMmm(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("pl-PL", { day: "2-digit", month: "short" });
+    }
+    /** Przetwarza wszystkie daty w obiekcie na UTC */
+    static convertDatesToUTC(obj) {
+        if (!obj || typeof obj !== "object")
+            return;
+        for (let key in obj) {
+            if (obj[key] instanceof Date) {
+                obj[key] = this.toUTC(obj[key]);
+            }
+            else if (obj[key] && typeof obj[key] === "object") {
+                this.convertDatesToUTC(obj[key]);
+            }
+        }
+    }
+    static isStringADMYDate(string) {
+        if (string && string.length == 10) {
+            var parts = string.split("-");
+            if (parts[0].length == 2 && parts[1].length == 2 && parts[2].length == 4)
+                return true;
+        }
+        else
+            return false;
+    }
+    static isStringADate(string) {
+        if (this.isStringADMYDate(string) || this.isStringAYMDDate(string))
+            return true;
+        else
+            return false;
+    }
+    //date może być {String || Date}
+    static addDays(date, days) {
+        if (typeof date === "string" && this.isStringADate(date)) {
+            date = new Date(date);
+        }
+        if (this.isValidDate(date))
+            date.setDate(date.getDate() + days / 1);
+        return date;
+    }
+    static getNextFridayDate() {
+        var curr = new Date(); // get current date
+        var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+        var last = first + 4; // last day is the first day + 6
+        //var firstday = new Date(curr.setDate(first));
+        return new Date(curr.setDate(last));
+    }
+    static getMaxDate(dates) {
+        return new Date(Math.max.apply(null, dates));
+    }
+    static isValidDate(date) {
+        return date instanceof Date && !isNaN(date.getTime());
+    }
+    /**
+     * Konwertuje datę z formatu js (obiekt: Date) na format sql (string: "YYYY-MM-DD")
+     */
+    static dateJsToSql(jsDate) {
+        if (jsDate !== undefined) {
+            var sqlDate = new Date(jsDate).toISOString().slice(0, 10);
+            return sqlDate;
+        }
+        return jsDate;
+    }
+    static dateJStoDMY(inputDate) {
+        if (inputDate) {
+            var dd = this.addZero(inputDate.getDate());
+            var mm = this.addZero(inputDate.getMonth() + 1); //January is 0!
+            var yyyy = inputDate.getFullYear();
+            return dd + "-" + mm + "-" + yyyy;
+        }
+    }
+    static dateDMYtoYMD(inputDate) {
+        if (inputDate) {
+            var parts = inputDate.split("-");
+            if (parts[2].length == 4)
+                return parts[2] + "-" + parts[1] + "-" + parts[0];
+            else
+                return inputDate;
+        }
+    }
+    static dateYMDtoDMY(inputDate) {
+        if (!inputDate) {
+            throw new Error("The input date is null or undefined.");
+        }
+        const parts = inputDate.split("-");
+        // check if the provided string has the correct length and structure for the YMD format
+        if (parts.length !== 3 || parts[0].length !== 4 || parts[1].length !== 2 || parts[2].length !== 2) {
+            throw new Error("Invalid input date format. The input should be in YMD format.");
+        }
+        return parts[2] + "-" + parts[1] + "-" + parts[0];
+    }
+    /**
+     * Konwertuje datę z ISO ("YYYY-MM-DDTHH:MM:SSZ") na format "DD-MM-YYYY"
+     */
+    static dateISOToDMY(dateString) {
+        const date = new Date(dateString);
+        const options = {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        };
+        return new Intl.DateTimeFormat("pl-PL", options).format(date).replace(/\./g, "-");
+    }
+    /**dodaje przedrostek "0" do liczb 0-9 */
+    static addZero(num) {
+        return num.toString().padStart(2, "0");
+    }
+    /**odejmuje pierwszą datę od drugiej */
+    static dateDiff(first, second) {
+        return Math.round((second - first) / (1000 * 60 * 60 * 24));
+    }
+    static countDaysLeftTo(expiryDate) {
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const expiryDateParsed = new Date(expiryDate);
+        const diffDays = ToolsDate.dateDiff(today.getTime(), expiryDateParsed.getTime());
+        return diffDays + 1;
+    }
+    /**Formatuje datę do postaci "DD-mmm-YYYY HH:MM"
+     */
+    static dateToDDmmmYYYYHHMM(date) {
+        let dateToFormat = new Date(date);
+        return dateToFormat.toLocaleDateString("pl-PL", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }
+}
+exports.default = ToolsDate;
