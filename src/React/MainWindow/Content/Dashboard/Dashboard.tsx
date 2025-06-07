@@ -1,6 +1,5 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
-import UpcomingEvents from "./UpcominigEvents/UpcomingEvents";
 import MyData from "./MyData";
 import News from "../News";
 import OffersCard from "./OffersCard";

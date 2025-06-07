@@ -42,12 +42,12 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         setObjects(initialObjects);
     }, [initialObjects]);
     const INITIAL_VISIBLE = 0;
-    const dateFrom = ToolsDate_1.default.addDays(new Date(), -(cardData.header.daysBeforeToday ?? 0))
-        .toISOString()
-        .slice(0, 10);
-    const dateTo = ToolsDate_1.default.addDays(new Date(), cardData.header.daysAfterToday ?? 0)
-        .toISOString()
-        .slice(0, 10);
+    const dateFrom = cardData.header.daysBeforeToday !== undefined
+        ? ToolsDate_1.default.addDays(new Date(), -cardData.header.daysBeforeToday).toISOString().slice(0, 10)
+        : null;
+    const dateTo = cardData.header.daysAfterToday !== undefined
+        ? ToolsDate_1.default.addDays(new Date(), cardData.header.daysAfterToday).toISOString().slice(0, 10)
+        : null;
     function handleEditObject(object) {
         const processedObject = processEditedObject ? processEditedObject(object) : object;
         setObjects(objects.map((o) => (o.id === object.id ? processedObject : o)));
@@ -78,12 +78,22 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             navigate(headerRoute, { state: { repository } });
     }
     function renderCardTitle() {
+        let dateRangeText = "";
+        if (dateFrom && dateTo) {
+            // Obie daty istnieją - pokaż zakres
+            dateRangeText = `${ToolsDate_1.default.dateToDdMmm(dateFrom)} - ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+        }
+        else if (dateFrom) {
+            // Tylko data początkowa
+            dateRangeText = `od ${ToolsDate_1.default.dateToDdMmm(dateFrom)}`;
+        }
+        else if (dateTo) {
+            // Tylko data końcowa
+            dateRangeText = `do ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+        }
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
             react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0", onClick: () => handleHeaderClick(), style: { cursor: "pointer" } }, cardData.header.title),
-            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
-                ToolsDate_1.default.dateToDdMmm(dateFrom),
-                " - ",
-                ToolsDate_1.default.dateToDdMmm(dateTo))));
+            dateRangeText && (react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" }, dateRangeText))));
     }
     function renderSection(params) {
         const { objectsInSection, expanded, sectionData } = params;

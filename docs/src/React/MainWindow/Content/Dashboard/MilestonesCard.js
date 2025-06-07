@@ -45,20 +45,16 @@ function MilestonesCard() {
     const initCardData = {
         header: {
             title: "Kamienie milowe",
-            daysBeforeToday: 100,
+            // daysBeforeToday: 100,
             daysAfterToday: 30,
         },
         sectionAttributeName: "timeCategory",
     };
     const fetchMilestones = (0, react_1.useCallback)(async () => {
-        const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
-            .toISOString()
-            .slice(0, 10);
         const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const milestones = await MainWindowController_1.milestoneDatesRepository.loadItemsFromServerPOST([
             {
                 milestoneStatuses: [MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED],
-                endDateFrom,
                 endDateTo,
             },
         ]);
@@ -67,7 +63,7 @@ function MilestonesCard() {
     }, []);
     const processEditedObject = MainWindowController_1.MilestonesBusinessLogic.addTimeCategory;
     const { dataLoaded, data: processedMilestones, cardData, } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchMilestones);
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, repository: MainWindowController_1.milestoneDatesRepository, ListItem: MilestoneDateItem_1.default, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, detailsRoute: "/projects/details", getDetailsId: (milestone) => {
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, repository: MainWindowController_1.milestoneDatesRepository, ListItem: MilestoneDateItem_1.default, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, detailsRoute: "/projects/details", headerRoute: "/contracts", getDetailsId: (milestone) => {
             const contract = milestone._milestone?._contract;
             if (!contract)
                 return "";

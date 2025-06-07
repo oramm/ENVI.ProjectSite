@@ -20,21 +20,17 @@ export default function MilestonesCard() {
     const initCardData: DashboardCardData<MilestoneDateData & { timeCategory: string }> = {
         header: {
             title: "Kamienie milowe",
-            daysBeforeToday: 100,
+            // daysBeforeToday: 100,
             daysAfterToday: 30,
         },
         sectionAttributeName: "timeCategory",
     };
 
     const fetchMilestones = useCallback(async (): Promise<(MilestoneDateData & { timeCategory: string })[]> => {
-        const endDateFrom = ToolsDate.addDays(new Date(), -initCardData.header.daysBeforeToday!)
-            .toISOString()
-            .slice(0, 10);
         const endDateTo = ToolsDate.addDays(new Date(), initCardData.header.daysAfterToday!).toISOString().slice(0, 10);
         const milestones = await milestoneDatesRepository.loadItemsFromServerPOST([
             {
                 milestoneStatuses: [MainSetup.MilestoneStatus.IN_PROGRESS, MainSetup.MilestoneStatus.NOT_STARTED],
-                endDateFrom,
                 endDateTo,
             },
         ]);
@@ -65,6 +61,7 @@ export default function MilestonesCard() {
             EditButtonComponent={MilestoneDateEditModalButton as any}
             isDeletable={true}
             detailsRoute="/projects/details"
+            headerRoute="/contracts"
             getDetailsId={(milestone) => {
                 const contract = milestone._milestone?._contract;
                 if (!contract) return "";

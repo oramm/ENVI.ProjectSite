@@ -77,12 +77,14 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     }, [initialObjects]);
 
     const INITIAL_VISIBLE = 0;
-    const dateFrom = ToolsDate.addDays(new Date(), -(cardData.header.daysBeforeToday ?? 0))
-        .toISOString()
-        .slice(0, 10);
-    const dateTo = ToolsDate.addDays(new Date(), cardData.header.daysAfterToday ?? 0)
-        .toISOString()
-        .slice(0, 10);
+    const dateFrom =
+        cardData.header.daysBeforeToday !== undefined
+            ? ToolsDate.addDays(new Date(), -cardData.header.daysBeforeToday).toISOString().slice(0, 10)
+            : null;
+    const dateTo =
+        cardData.header.daysAfterToday !== undefined
+            ? ToolsDate.addDays(new Date(), cardData.header.daysAfterToday).toISOString().slice(0, 10)
+            : null;
 
     function handleEditObject(object: DataItemType) {
         const processedObject = processEditedObject ? processEditedObject(object) : object;
@@ -118,14 +120,29 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     }
 
     function renderCardTitle() {
+        let dateRangeText = "";
+
+        if (dateFrom && dateTo) {
+            // Obie daty istnieją - pokaż zakres
+            dateRangeText = `${ToolsDate.dateToDdMmm(dateFrom)} - ${ToolsDate.dateToDdMmm(dateTo)}`;
+        } else if (dateFrom) {
+            // Tylko data początkowa
+            dateRangeText = `od ${ToolsDate.dateToDdMmm(dateFrom)}`;
+        } else if (dateTo) {
+            // Tylko data końcowa
+            dateRangeText = `do ${ToolsDate.dateToDdMmm(dateTo)}`;
+        }
+
         return (
             <div className="d-flex justify-content-between align-items-center">
                 <Card.Title className="mb-0" onClick={() => handleHeaderClick()} style={{ cursor: "pointer" }}>
                     {cardData.header.title}
                 </Card.Title>
-                <span style={{ fontSize: "0.85em" }} className="text-secondary">
-                    {ToolsDate.dateToDdMmm(dateFrom)} - {ToolsDate.dateToDdMmm(dateTo)}
-                </span>
+                {dateRangeText && (
+                    <span style={{ fontSize: "0.85em" }} className="text-secondary">
+                        {dateRangeText}
+                    </span>
+                )}
             </div>
         );
     }

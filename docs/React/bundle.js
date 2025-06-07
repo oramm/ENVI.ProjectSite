@@ -95266,20 +95266,16 @@ function MilestonesCard() {
     const initCardData = {
         header: {
             title: "Kamienie milowe",
-            daysBeforeToday: 100,
+            // daysBeforeToday: 100,
             daysAfterToday: 30,
         },
         sectionAttributeName: "timeCategory",
     };
     const fetchMilestones = (0, react_1.useCallback)(async () => {
-        const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
-            .toISOString()
-            .slice(0, 10);
         const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const milestones = await MainWindowController_1.milestoneDatesRepository.loadItemsFromServerPOST([
             {
                 milestoneStatuses: [MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED],
-                endDateFrom,
                 endDateTo,
             },
         ]);
@@ -95288,7 +95284,7 @@ function MilestonesCard() {
     }, []);
     const processEditedObject = MainWindowController_1.MilestonesBusinessLogic.addTimeCategory;
     const { dataLoaded, data: processedMilestones, cardData, } = (0, useDashboardCardData_1.useDashboardCardData)(initCardData, sectionsIcons, fetchMilestones);
-    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, repository: MainWindowController_1.milestoneDatesRepository, ListItem: MilestoneDateItem_1.default, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, detailsRoute: "/projects/details", getDetailsId: (milestone) => {
+    return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, repository: MainWindowController_1.milestoneDatesRepository, ListItem: MilestoneDateItem_1.default, EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, detailsRoute: "/projects/details", headerRoute: "/contracts", getDetailsId: (milestone) => {
             const contract = milestone._milestone?._contract;
             if (!contract)
                 return "";
@@ -100192,12 +100188,12 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         setObjects(initialObjects);
     }, [initialObjects]);
     const INITIAL_VISIBLE = 0;
-    const dateFrom = ToolsDate_1.default.addDays(new Date(), -(cardData.header.daysBeforeToday ?? 0))
-        .toISOString()
-        .slice(0, 10);
-    const dateTo = ToolsDate_1.default.addDays(new Date(), cardData.header.daysAfterToday ?? 0)
-        .toISOString()
-        .slice(0, 10);
+    const dateFrom = cardData.header.daysBeforeToday !== undefined
+        ? ToolsDate_1.default.addDays(new Date(), -cardData.header.daysBeforeToday).toISOString().slice(0, 10)
+        : null;
+    const dateTo = cardData.header.daysAfterToday !== undefined
+        ? ToolsDate_1.default.addDays(new Date(), cardData.header.daysAfterToday).toISOString().slice(0, 10)
+        : null;
     function handleEditObject(object) {
         const processedObject = processEditedObject ? processEditedObject(object) : object;
         setObjects(objects.map((o) => (o.id === object.id ? processedObject : o)));
@@ -100228,12 +100224,22 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
             navigate(headerRoute, { state: { repository } });
     }
     function renderCardTitle() {
+        let dateRangeText = "";
+        if (dateFrom && dateTo) {
+            // Obie daty istnieją - pokaż zakres
+            dateRangeText = `${ToolsDate_1.default.dateToDdMmm(dateFrom)} - ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+        }
+        else if (dateFrom) {
+            // Tylko data początkowa
+            dateRangeText = `od ${ToolsDate_1.default.dateToDdMmm(dateFrom)}`;
+        }
+        else if (dateTo) {
+            // Tylko data końcowa
+            dateRangeText = `do ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+        }
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
             react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0", onClick: () => handleHeaderClick(), style: { cursor: "pointer" } }, cardData.header.title),
-            react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" },
-                ToolsDate_1.default.dateToDdMmm(dateFrom),
-                " - ",
-                ToolsDate_1.default.dateToDdMmm(dateTo))));
+            dateRangeText && (react_1.default.createElement("span", { style: { fontSize: "0.85em" }, className: "text-secondary" }, dateRangeText))));
     }
     function renderSection(params) {
         const { objectsInSection, expanded, sectionData } = params;
