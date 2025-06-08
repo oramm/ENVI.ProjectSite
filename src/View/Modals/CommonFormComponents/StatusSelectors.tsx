@@ -271,6 +271,7 @@ function statusSelector({
     label,
     multiple = false,
     as,
+    className = "",
 }: SpecificTextOptionProps & { statuses: string[] }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
     const resolvedLabel = label ?? resolvedName;

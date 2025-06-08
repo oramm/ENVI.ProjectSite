@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { MilestoneData, MilestoneDateData, OtherContract, OurContract } from "../../../../Typings/bussinesTypes";
 import {
@@ -21,7 +21,6 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
         trigger,
         control,
     } = useFormContext();
-
     const { fields, append, remove, replace } = useFieldArray({
         control,
         name: "_dates",
@@ -29,31 +28,41 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
 
     const _type = watch("_type");
     const _contract = (initialData?._contract || contextData) as OurContract | OtherContract;
-    const processedDates = processDates(); // Przetworzone daty
 
-    function processDates() {
-        const dates = initialData?._dates as MilestoneDateData[];
-        if (!dates || dates.length === 0) return []; // Pusta tablica, jeśli brak dat
+    // Memoize processedDates to prevent infinite loops
+    const processedDates = useMemo(() => {
+        const dates = initialData?._dates;
+        if (!dates || dates?.length === 0) return []; // Pusta tablica, jeśli brak dat
         return dates.map((d) => ({
             ...d,
             startDate: d.startDate ? d.startDate.split("T")[0] : "",
             endDate: d.endDate ? d.endDate.split("T")[0] : "",
         }));
-    }
+    }, [initialData?._dates]);
 
+    // Initialize form fields (excluding field array which is managed separately)
     useEffect(() => {
         const resetData: Partial<MilestoneData> = {
             _contract,
             _type: initialData?._type,
             name: initialData?.name,
             description: initialData?.description || "",
-            _dates: processedDates,
             status: initialData?.status,
+            // Note: _dates is excluded - field array manages this independently
         };
         reset(resetData);
+    }, [initialData, reset, _contract]); // Sync field array with processed dates (separate from form reset)
+
+    useEffect(() => {
+        console.log("Field array update:", { processedDates, fieldsLength: fields.length });
         replace(processedDates);
-        trigger();
-    }, [initialData, reset, trigger, _contract]);
+    }, [processedDates, replace]);
+
+    // Trigger validation when fields array changes
+    useEffect(() => {
+        console.log("Fields array changed, length:", fields.length);
+        trigger("_dates");
+    }, [fields.length, trigger]);
 
     function shouldShowNameField() {
         if (initialData?._type?.isUniquePerContract) return false;
@@ -64,6 +73,25 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
     function hasAnyDateError(errors: FieldErrors, index: number): boolean {
         return hasError(errors, `_dates.${index}.startDate`) || hasError(errors, `_dates.${index}.endDate`);
     }
+
+    const handleAddDateRange = useCallback(() => {
+        console.log("Adding new date range");
+        append({
+            startDate: "",
+            endDate: "",
+            description: "",
+        });
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [append]);
+
+    const handleRemoveDateRange = useCallback(
+        (index: number) => {
+            console.log("Removing date range at index:", index);
+            remove(index);
+            // Validation will be triggered automatically by useEffect watching fields.length
+        },
+        [remove]
+    );
 
     function renderDates() {
         return fields.map((field, index) => (
@@ -103,11 +131,16 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                             isValid={!hasError(errors, `_dates.${index}.description`)}
                             {...register(`_dates.${index}.description`)}
                         />
-                        <ErrorMessage name={`_dates.${index}.description`} errors={errors} />
+                        <ErrorMessage name={`_dates.${index}.description`} errors={errors} />{" "}
                     </Form.Group>
                 </Col>
                 <Col xs="auto" className="d-flex align-items-end">
-                    <button type="button" className="btn btn-outline-danger" onClick={() => remove(index)}>
+                    {" "}
+                    <button
+                        type="button"
+                        className="btn btn-outline-danger"
+                        onClick={() => handleRemoveDateRange(index)}
+                    >
                         Usuń
                     </button>
                 </Col>
@@ -118,7 +151,6 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
     return (
         <>
             {!isEditing && <MilestoneTypeSelector contractType={_contract._type} />}
-
             {shouldShowNameField() && (
                 <Form.Group controlId="name" className="mb-2">
                     <Form.Label>Nazwa</Form.Label>
@@ -132,28 +164,18 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                     />
                     <ErrorMessage name="name" errors={errors} />
                 </Form.Group>
-            )}
+            )}{" "}
             {renderDates()}
             <Row className="mb-3">
                 <Col>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={() =>
-                            append({
-                                startDate: "",
-                                endDate: "",
-                                description: "",
-                            })
-                        }
-                    >
+                    {" "}
+                    <button type="button" className="btn btn-outline-primary" onClick={handleAddDateRange}>
                         + Dodaj przedział dat
                     </button>
                 </Col>
             </Row>
-
+            <ErrorMessage name="_dates" errors={errors} />
             <MilestoneStatusSelector showValidationInfo={true} />
-
             <Form.Group controlId="description">
                 <Form.Label>Uwagi</Form.Label>
                 <Form.Control

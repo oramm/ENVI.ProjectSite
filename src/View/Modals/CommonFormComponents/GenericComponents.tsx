@@ -284,6 +284,7 @@ export type SpecificTextOptionProps = {
     label?: string;
     as?: React.ElementType;
     multiple?: boolean;
+    className?: string;
 };
 
 type ValueInPLNInputProps = {

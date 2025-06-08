@@ -174,7 +174,7 @@ function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, 
     });
 }
 exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
-function statusSelector({ statuses, showValidationInfo = true, name, label, multiple = false, as, }) {
+function statusSelector({ statuses, showValidationInfo = true, name, label, multiple = false, as, className = "", }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
     const resolvedLabel = label ?? resolvedName;
     return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: statuses, showValidationInfo: showValidationInfo, name: resolvedName, label: resolvedLabel, as: as }));

@@ -20,12 +20,10 @@ export default function Dashboard() {
             </Col>
             <Col md={6} className="mb-3">
                 <MilestonesCard />
-
-                {/* <UpcomingEvents /> */}
             </Col>
             <Col md={3} className="mb-3">
                 <MyData className="mb-3 bg-white" />
-                <News className="mb-3 bg-white" />
+                {/* <News className="mb-3 bg-white" /> */}
             </Col>
         </Row>
     );
