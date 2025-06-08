@@ -39,12 +39,19 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
         name: "_dates",
     });
     const _type = watch("_type");
-    const _contract = (initialData?._contract || contextData);
-    // Memoize processedDates to prevent infinite loops
+    const _contract = (initialData?._contract || contextData); // Memoize processedDates to prevent infinite loops
     const processedDates = (0, react_1.useMemo)(() => {
         const dates = initialData?._dates;
-        if (!dates || dates?.length === 0)
-            return []; // Pusta tablica, jeśli brak dat
+        if (!dates || dates?.length === 0) {
+            // Jeśli brak dat, zwróć jeden pusty wiersz
+            return [
+                {
+                    startDate: null,
+                    endDate: null,
+                    description: "",
+                },
+            ];
+        }
         return dates.map((d) => ({
             ...d,
             startDate: d.startDate ? d.startDate.split("T")[0] : "",
@@ -62,14 +69,13 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
             // Note: _dates is excluded - field array manages this independently
         };
         reset(resetData);
+        trigger();
     }, [initialData, reset, _contract]); // Sync field array with processed dates (separate from form reset)
     (0, react_1.useEffect)(() => {
-        console.log("Field array update:", { processedDates, fieldsLength: fields.length });
         replace(processedDates);
     }, [processedDates, replace]);
     // Trigger validation when fields array changes
     (0, react_1.useEffect)(() => {
-        console.log("Fields array changed, length:", fields.length);
         trigger("_dates");
     }, [fields.length, trigger]);
     function shouldShowNameField() {
@@ -83,7 +89,6 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
         return (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.startDate`) || (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.endDate`);
     }
     const handleAddDateRange = (0, react_1.useCallback)(() => {
-        console.log("Adding new date range");
         append({
             startDate: "",
             endDate: "",
@@ -92,30 +97,39 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
         // Validation will be triggered automatically by useEffect watching fields.length
     }, [append]);
     const handleRemoveDateRange = (0, react_1.useCallback)((index) => {
-        console.log("Removing date range at index:", index);
         remove(index);
         // Validation will be triggered automatically by useEffect watching fields.length
     }, [remove]);
+    (0, react_1.useEffect)(() => {
+        const currentValues = watch();
+        console.log("Current _dates values:", currentValues._dates);
+    }, [watch, fields]);
     function renderDates() {
         return fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.startDate` },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data rozpocz\u0119cia"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.startDate`) }),
+                    react_1.default.createElement(react_hook_form_1.Controller, { name: `_dates.${index}.startDate`, control: control, render: ({ field: { onChange, value, ...fieldProps } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...fieldProps, type: "date", value: value || "", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), onChange: (e) => {
+                                onChange(e.target.value);
+                                // Waliduj oba pola po zmianie
+                                trigger([`_dates.${index}.startDate`, `_dates.${index}.endDate`]);
+                            } })) }),
                     react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.startDate`, errors: errors }))),
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.endDate` },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zako\u0144czenia"),
-                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), ...register(`_dates.${index}.endDate`) }),
+                    react_1.default.createElement(react_hook_form_1.Controller, { name: `_dates.${index}.endDate`, control: control, render: ({ field: { onChange, value, ...fieldProps } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...fieldProps, type: "date", value: value || "", isInvalid: hasAnyDateError(errors, index), isValid: !hasAnyDateError(errors, index), onChange: (e) => {
+                                onChange(e.target.value);
+                                // Waliduj oba pola po zmianie
+                                trigger([`_dates.${index}.startDate`, `_dates.${index}.endDate`]);
+                            } })) }),
                     react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.endDate`, errors: errors }))),
             react_1.default.createElement(react_bootstrap_1.Col, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_dates.${index}.description` },
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
                     react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), ...register(`_dates.${index}.description`) }),
-                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }),
-                    " ")),
+                    react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }))),
             react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-end" },
-                " ",
                 react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => handleRemoveDateRange(index) }, "Usu\u0144")))));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,

@@ -10,7 +10,7 @@ import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { MilestoneStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { hasError } from "../../../View/Resultsets/CommonComponentsController";
-import { useFieldArray, FieldErrors } from "react-hook-form";
+import { useFieldArray, FieldErrors, Controller } from "react-hook-form";
 
 export function ContractMilestoneModalBody({ isEditing, initialData, contextData }: ModalBodyProps<MilestoneData>) {
     const {
@@ -27,12 +27,20 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
     });
 
     const _type = watch("_type");
-    const _contract = (initialData?._contract || contextData) as OurContract | OtherContract;
+    const _contract = (initialData?._contract || contextData) as OurContract | OtherContract; // Memoize processedDates to prevent infinite loops
 
-    // Memoize processedDates to prevent infinite loops
     const processedDates = useMemo(() => {
         const dates = initialData?._dates;
-        if (!dates || dates?.length === 0) return []; // Pusta tablica, jeśli brak dat
+        if (!dates || dates?.length === 0) {
+            // Jeśli brak dat, zwróć jeden pusty wiersz
+            return [
+                {
+                    startDate: null,
+                    endDate: null,
+                    description: "",
+                },
+            ];
+        }
         return dates.map((d) => ({
             ...d,
             startDate: d.startDate ? d.startDate.split("T")[0] : "",
@@ -51,16 +59,15 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
             // Note: _dates is excluded - field array manages this independently
         };
         reset(resetData);
+        trigger();
     }, [initialData, reset, _contract]); // Sync field array with processed dates (separate from form reset)
 
     useEffect(() => {
-        console.log("Field array update:", { processedDates, fieldsLength: fields.length });
         replace(processedDates);
     }, [processedDates, replace]);
 
     // Trigger validation when fields array changes
     useEffect(() => {
-        console.log("Fields array changed, length:", fields.length);
         trigger("_dates");
     }, [fields.length, trigger]);
 
@@ -75,7 +82,6 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
     }
 
     const handleAddDateRange = useCallback(() => {
-        console.log("Adding new date range");
         append({
             startDate: "",
             endDate: "",
@@ -86,7 +92,6 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
 
     const handleRemoveDateRange = useCallback(
         (index: number) => {
-            console.log("Removing date range at index:", index);
             remove(index);
             // Validation will be triggered automatically by useEffect watching fields.length
         },
@@ -99,11 +104,23 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                 <Col>
                     <Form.Group controlId={`_dates.${index}.startDate`}>
                         <Form.Label>Data rozpoczęcia</Form.Label>
-                        <Form.Control
-                            type="date"
-                            isInvalid={hasAnyDateError(errors, index)}
-                            isValid={!hasAnyDateError(errors, index)}
-                            {...register(`_dates.${index}.startDate`)}
+                        <Controller
+                            name={`_dates.${index}.startDate`}
+                            control={control}
+                            render={({ field: { onChange, value, ...fieldProps } }) => (
+                                <Form.Control
+                                    {...fieldProps}
+                                    type="date"
+                                    value={value || ""}
+                                    isInvalid={hasAnyDateError(errors, index)}
+                                    isValid={!hasAnyDateError(errors, index)}
+                                    onChange={(e) => {
+                                        onChange(e.target.value);
+                                        // Waliduj oba pola po zmianie
+                                        trigger([`_dates.${index}.startDate`, `_dates.${index}.endDate`]);
+                                    }}
+                                />
+                            )}
                         />
                         <ErrorMessage name={`_dates.${index}.startDate`} errors={errors} />
                     </Form.Group>
@@ -111,11 +128,23 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                 <Col>
                     <Form.Group controlId={`_dates.${index}.endDate`}>
                         <Form.Label>Data zakończenia</Form.Label>
-                        <Form.Control
-                            type="date"
-                            isInvalid={hasAnyDateError(errors, index)}
-                            isValid={!hasAnyDateError(errors, index)}
-                            {...register(`_dates.${index}.endDate`)}
+                        <Controller
+                            name={`_dates.${index}.endDate`}
+                            control={control}
+                            render={({ field: { onChange, value, ...fieldProps } }) => (
+                                <Form.Control
+                                    {...fieldProps}
+                                    type="date"
+                                    value={value || ""}
+                                    isInvalid={hasAnyDateError(errors, index)}
+                                    isValid={!hasAnyDateError(errors, index)}
+                                    onChange={(e) => {
+                                        onChange(e.target.value);
+                                        // Waliduj oba pola po zmianie
+                                        trigger([`_dates.${index}.startDate`, `_dates.${index}.endDate`]);
+                                    }}
+                                />
+                            )}
                         />
                         <ErrorMessage name={`_dates.${index}.endDate`} errors={errors} />
                     </Form.Group>
@@ -131,11 +160,10 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                             isValid={!hasError(errors, `_dates.${index}.description`)}
                             {...register(`_dates.${index}.description`)}
                         />
-                        <ErrorMessage name={`_dates.${index}.description`} errors={errors} />{" "}
+                        <ErrorMessage name={`_dates.${index}.description`} errors={errors} />
                     </Form.Group>
                 </Col>
                 <Col xs="auto" className="d-flex align-items-end">
-                    {" "}
                     <button
                         type="button"
                         className="btn btn-outline-danger"
