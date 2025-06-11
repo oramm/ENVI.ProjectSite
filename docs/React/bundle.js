@@ -87031,8 +87031,15 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools
 const ToolsForms_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts"));
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const CommonComponentsController_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 function ContractModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
+    const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
+        control,
+        name: "_contractRangesPerContract",
+    });
     const watchAllFields = watch();
     let startDateSugestion;
     let endDateSugestion;
@@ -87053,7 +87060,6 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
-        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
@@ -87061,6 +87067,58 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
+    // Sync field array with initial data
+    (0, react_1.useEffect)(() => {
+        const contractRangesPerContract = initialData?._contractRangesPerContract || [];
+        if (contractRangesPerContract.length === 0) {
+            // If no ranges, don't add any default rows for contract ranges
+            replace([]);
+        }
+        else {
+            replace(contractRangesPerContract);
+        }
+    }, [initialData?._contractRangesPerContract, replace]);
+    // Trigger validation when fields array changes
+    (0, react_1.useEffect)(() => {
+        trigger("_contractRangesPerContract");
+    }, [fields.length, trigger]);
+    // Debug useEffect - loguje stan formularza podczas edycji
+    (0, react_1.useEffect)(() => {
+        if (isEditing) {
+            console.log("Form state debug:", {
+                watchAllFields,
+                errors,
+                fieldsLength: fields.length,
+                initialData,
+            });
+        }
+    }, [isEditing, watchAllFields, errors, fields.length, initialData]);
+    const handleAddRange = (0, react_1.useCallback)(() => {
+        append({});
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [append]);
+    const handleRemoveRange = (0, react_1.useCallback)((index) => {
+        remove(index);
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [remove]);
+    function renderRanges() {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository, multiple: false, name: `_contractRangesPerContract.${index}._contractRange` })),
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_contractRangesPerContract.${index}.associationComment` },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+                        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_contractRangesPerContract.${index}.associationComment`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_contractRangesPerContract.${index}.associationComment`), ...register(`_contractRangesPerContract.${index}.associationComment`) }),
+                        react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_contractRangesPerContract.${index}.associationComment`, errors: errors }))),
+                react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center" },
+                    react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: "vertical", onClick: () => handleRemoveRange(index) }))))),
+            " ",
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement("button", { type: "button", className: "btn btn-outline-primary", onClick: handleAddRange }, "+ Dodaj zakres kontratu"))),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_contractRangesPerContract", errors: errors })));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer kontraktu"),
@@ -87074,7 +87132,7 @@ function ContractModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "alias" })),
-        react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository }),
+        renderRanges(),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.comment, isInvalid: !!errors?.comment, ...register("comment") }),
@@ -87277,7 +87335,7 @@ const name = Yup.string()
     .required("Nazwa jest wymagana")
     .min(3, "Nazwa musi mieć przynajmniej 3 znaki")
     .max(500, "Nazwa może mieć maksymalnie 150 znaków");
-const _contractRanges = Yup.array().min(1, "Zakresy są wymagane").required("Zakresy są wymagane");
+const _contractRangesPerContract = Yup.array().min(1, "Zakresy są wymagane").required("Zakresy są wymagane");
 const status = Yup.string().required("Status jest wymagany");
 const value = GenericComponents_1.valueValidation;
 const dateFields = {
@@ -87300,7 +87358,7 @@ const dateFields = {
 };
 const commonFields = {
     name,
-    _contractRanges,
+    _contractRangesPerContract,
     status,
     value,
     ...dateFields,
@@ -88570,7 +88628,7 @@ function MilestoneModalBodyStatus({ initialData }) {
     (0, react_1.useEffect)(() => {
         setValue("_milestone.status", initialData?._milestone?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { name: "_milestone.status" });
+    return react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { name: "_milestone.status", label: "Status kamienia" });
 }
 exports.MilestoneModalBodyStatus = MilestoneModalBodyStatus;
 
@@ -95144,9 +95202,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         return react_1.default.createElement(react_1.default.Fragment, null, "\u26A0\uFE0F brak ID");
     const _contract = item._milestone?._contract;
     const _milestone = item._milestone;
-    let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
-    if ((0, typeGuards_1.isOurContract)(_contract))
-        contractLabel += _contract?._type?.name;
+    const contractLabel = `[${_contract?._project.ourId}] ${_contract?._ourIdOrNumber_Alias}`;
     function renderDaysLeft() {
         if (!item._milestone?.status ||
             ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
@@ -95160,7 +95216,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         const { handleEditObject } = (0, DashboardCardContext_1.useDashboardCardContext)();
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: item,
-                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                modalTitle: `Edycja statusu kontraktu ${contractLabel}`,
                 repository: MainWindowController_1.milestoneDatesRepository,
                 ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
                 onEdit: handleEditObject,
@@ -95175,6 +95231,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: item,
                 modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                modalSubtitle: `Kontrakt: ${contractLabel}`,
                 repository: MainWindowController_1.milestoneDatesRepository,
                 ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
                 onEdit: handleEditObject,
@@ -95187,6 +95244,9 @@ function MilestoneDateItem({ object: item, onClick }) {
     return (react_1.default.createElement("div", { onClick: onClick, style: { cursor: onClick ? "pointer" : "default" }, className: "p-2 border-bottom w-100" },
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
             react_1.default.createElement("span", { className: "fw-semibold" }, contractLabel),
+            react_1.default.createElement("span", { className: "small text-secondary" }, (0, typeGuards_1.isOurContract)(_contract)
+                ? `${_contract?._admin?.name || ""} ${_contract?._admin?.surname || ""}`
+                : `${_contract?._type?.name} | ${_contract?._ourContract?._admin?.name || ""} ${_contract?._ourContract?._admin?.surname || ""}`),
             renderContractStatus(item)),
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
             react_1.default.createElement("span", { className: "small text-muted" }, "Kamie\u0144:"),
@@ -96967,6 +97027,7 @@ const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonF
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const CommonComponentsController_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
+const CommonComponents_1 = __webpack_require__(/*! ../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
     const { register, reset, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
     const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
@@ -97025,8 +97086,8 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
     }
     const handleAddDateRange = (0, react_1.useCallback)(() => {
         append({
-            startDate: "",
-            endDate: "",
+            startDate: null,
+            endDate: null,
             description: "",
         });
         // Validation will be triggered automatically by useEffect watching fields.length
@@ -97035,10 +97096,6 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
         remove(index);
         // Validation will be triggered automatically by useEffect watching fields.length
     }, [remove]);
-    (0, react_1.useEffect)(() => {
-        const currentValues = watch();
-        console.log("Current _dates values:", currentValues._dates);
-    }, [watch, fields]);
     function renderDates() {
         return fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
             react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -97064,8 +97121,8 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
                     react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), ...register(`_dates.${index}.description`) }),
                     react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }))),
-            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-end" },
-                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => handleRemoveDateRange(index) }, "Usu\u0144")))));
+            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center" },
+                react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: "vertical", onClick: () => handleRemoveDateRange(index) })))));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),
@@ -97860,6 +97917,7 @@ const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/Moda
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const ContractsController_1 = __webpack_require__(/*! ../../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ./GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const Symbols_1 = __webpack_require__(/*! ../../Symbols */ "./src/View/Symbols.ts");
 /**
  * Komponent formularza wyboru projektu
  * @param repository Repozytorium projektów
@@ -98150,8 +98208,12 @@ function CaseTypeSelector({ milestoneType, required = false, showValidationInfo 
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ sprawy" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
+                        const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(myOption.isUniquePerMilestone);
                         return (react_1.default.createElement("div", null,
-                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("span", null,
+                                myOption.name,
+                                " ",
+                                uniqueicon),
                             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
@@ -98188,8 +98250,12 @@ function MilestoneTypeSelector({ contractType, required = false, showValidationI
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ kamienia" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeOptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
+                        const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(myOption.isUniquePerContract);
                         return (react_1.default.createElement("div", null,
-                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("span", null,
+                                myOption.name,
+                                " ",
+                                uniqueicon),
                             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));

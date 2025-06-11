@@ -26,5 +26,5 @@ export function MilestoneModalBodyStatus({ initialData }: ModalBodyProps<Milesto
         setValue("_milestone.status", initialData?._milestone?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
 
-    return <MilestoneStatusSelector name="_milestone.status" />;
+    return <MilestoneStatusSelector name="_milestone.status" label="Status kamienia" />;
 }

@@ -34,6 +34,7 @@ import {
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
+import { getSymbolByUniqueness } from "../../Symbols";
 
 type ProjectSelectorProps = {
     repository: RepositoryReact;
@@ -791,9 +792,12 @@ export function CaseTypeSelector({
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                             renderMenuItemChildren={(option, props, index) => {
                                 const myOption = option as CaseType;
+                                const uniqueicon = getSymbolByUniqueness(myOption.isUniquePerMilestone);
                                 return (
                                     <div>
-                                        <span>{myOption.name}</span>
+                                        <span>
+                                            {myOption.name} {uniqueicon}
+                                        </span>
                                         <div className="text-muted small text-wrap">{myOption.description}</div>
                                     </div>
                                 );
@@ -873,10 +877,13 @@ export function MilestoneTypeSelector({
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                             renderMenuItemChildren={(option, props, index) => {
-                                const myOption = option as CaseType;
+                                const myOption = option as MilestoneType;
+                                const uniqueicon = getSymbolByUniqueness(myOption.isUniquePerContract);
                                 return (
                                     <div>
-                                        <span>{myOption.name}</span>
+                                        <span>
+                                            {myOption.name} {uniqueicon}
+                                        </span>
                                         <div className="text-muted small text-wrap">{myOption.description}</div>
                                     </div>
                                 );

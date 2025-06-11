@@ -18,9 +18,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         return react_1.default.createElement(react_1.default.Fragment, null, "\u26A0\uFE0F brak ID");
     const _contract = item._milestone?._contract;
     const _milestone = item._milestone;
-    let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
-    if ((0, typeGuards_1.isOurContract)(_contract))
-        contractLabel += _contract?._type?.name;
+    const contractLabel = `[${_contract?._project.ourId}] ${_contract?._ourIdOrNumber_Alias}`;
     function renderDaysLeft() {
         if (!item._milestone?.status ||
             ![MainSetupReact_1.default.MilestoneStatus.IN_PROGRESS, MainSetupReact_1.default.MilestoneStatus.NOT_STARTED].includes(item._milestone.status))
@@ -34,7 +32,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         const { handleEditObject } = (0, DashboardCardContext_1.useDashboardCardContext)();
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: item,
-                modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                modalTitle: `Edycja statusu kontraktu ${contractLabel}`,
                 repository: MainWindowController_1.milestoneDatesRepository,
                 ModalBodyComponent: MilestoneDateBodiesPartial_1.ContractModalBodyStatus,
                 onEdit: handleEditObject,
@@ -49,6 +47,7 @@ function MilestoneDateItem({ object: item, onClick }) {
         return (react_1.default.createElement(GeneralModalButtons_1.PartialEditTrigger, { modalProps: {
                 initialData: item,
                 modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                modalSubtitle: `Kontrakt: ${contractLabel}`,
                 repository: MainWindowController_1.milestoneDatesRepository,
                 ModalBodyComponent: MilestoneDateBodiesPartial_1.MilestoneModalBodyStatus,
                 onEdit: handleEditObject,
@@ -61,6 +60,9 @@ function MilestoneDateItem({ object: item, onClick }) {
     return (react_1.default.createElement("div", { onClick: onClick, style: { cursor: onClick ? "pointer" : "default" }, className: "p-2 border-bottom w-100" },
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
             react_1.default.createElement("span", { className: "fw-semibold" }, contractLabel),
+            react_1.default.createElement("span", { className: "small text-secondary" }, (0, typeGuards_1.isOurContract)(_contract)
+                ? `${_contract?._admin?.name || ""} ${_contract?._admin?.surname || ""}`
+                : `${_contract?._type?.name} | ${_contract?._ourContract?._admin?.name || ""} ${_contract?._ourContract?._admin?.surname || ""}`),
             renderContractStatus(item)),
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
             react_1.default.createElement("span", { className: "small text-muted" }, "Kamie\u0144:"),

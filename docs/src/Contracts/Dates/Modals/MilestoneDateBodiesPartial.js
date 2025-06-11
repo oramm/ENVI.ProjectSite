@@ -44,6 +44,6 @@ function MilestoneModalBodyStatus({ initialData }) {
     (0, react_1.useEffect)(() => {
         setValue("_milestone.status", initialData?._milestone?.status || "", { shouldValidate: true });
     }, [initialData, setValue]);
-    return react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { name: "_milestone.status" });
+    return react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { name: "_milestone.status", label: "Status kamienia" });
 }
 exports.MilestoneModalBodyStatus = MilestoneModalBodyStatus;

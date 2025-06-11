@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     ContractRangeSelector,
     ProjectSelector,
@@ -6,12 +6,20 @@ import {
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { OtherContract, OurContract, ProjectData } from "../../../../Typings/bussinesTypes";
+import {
+    ContractRangePerContractData,
+    OtherContract,
+    OurContract,
+    ProjectData,
+} from "../../../../Typings/bussinesTypes";
 import { contractRangesRepository, projectsRepository } from "../ContractsController";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import ToolsForms from "../../../React/Tools/ToolsForms";
 import { ErrorMessage, ValueInPLNInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { ContractStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
+import { useFieldArray } from "react-hook-form";
+import { DeleteIconButton } from "../../../View/Resultsets/CommonComponents";
+import { hasError } from "../../../View/Resultsets/CommonComponentsController";
 
 export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<OurContract | OtherContract>) {
     const {
@@ -20,7 +28,14 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         watch,
         formState: { errors },
         trigger,
+        control,
     } = useFormContext();
+
+    const { fields, append, remove, replace } = useFieldArray({
+        control,
+        name: "_contractRangesPerContract",
+    });
+
     const watchAllFields = watch();
     let startDateSugestion: string | undefined;
     let endDateSugestion: string | undefined;
@@ -37,11 +52,11 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
             .toISOString()
             .slice(0, 10);
     }
+
     useEffect(() => {
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
-        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
@@ -49,6 +64,98 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
+
+    // Sync field array with initial data
+    useEffect(() => {
+        const contractRangesPerContract = initialData?._contractRangesPerContract || [];
+        if (contractRangesPerContract.length === 0) {
+            // If no ranges, don't add any default rows for contract ranges
+            replace([]);
+        } else {
+            replace(contractRangesPerContract);
+        }
+    }, [initialData?._contractRangesPerContract, replace]);
+
+    // Trigger validation when fields array changes
+    useEffect(() => {
+        trigger("_contractRangesPerContract");
+    }, [fields.length, trigger]);
+
+    // Debug useEffect - loguje stan formularza podczas edycji
+    useEffect(() => {
+        if (isEditing) {
+            console.log("Form state debug:", {
+                watchAllFields,
+                errors,
+                fieldsLength: fields.length,
+                initialData,
+            });
+        }
+    }, [isEditing, watchAllFields, errors, fields.length, initialData]);
+
+    const handleAddRange = useCallback(() => {
+        append({} as ContractRangePerContractData);
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [append]);
+
+    const handleRemoveRange = useCallback(
+        (index: number) => {
+            remove(index);
+            // Validation will be triggered automatically by useEffect watching fields.length
+        },
+        [remove]
+    );
+
+    function renderRanges() {
+        return (
+            <>
+                {fields.map((field, index) => (
+                    <Row className="mb-2" key={field.id}>
+                        <Col>
+                            <ContractRangeSelector
+                                repository={contractRangesRepository}
+                                multiple={false}
+                                name={`_contractRangesPerContract.${index}._contractRange`}
+                            />
+                        </Col>
+                        <Col>
+                            <Form.Group controlId={`_contractRangesPerContract.${index}.associationComment`}>
+                                <Form.Label>Uwagi</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Dodaj komentarz"
+                                    isInvalid={hasError(
+                                        errors,
+                                        `_contractRangesPerContract.${index}.associationComment`
+                                    )}
+                                    isValid={
+                                        !hasError(errors, `_contractRangesPerContract.${index}.associationComment`)
+                                    }
+                                    {...register(`_contractRangesPerContract.${index}.associationComment`)}
+                                />
+                                <ErrorMessage
+                                    name={`_contractRangesPerContract.${index}.associationComment`}
+                                    errors={errors}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col xs="auto" className="d-flex align-items-center">
+                            <DeleteIconButton layout="vertical" onClick={() => handleRemoveRange(index)} />
+                        </Col>
+                    </Row>
+                ))}{" "}
+                <Row className="mb-3">
+                    <Col>
+                        <button type="button" className="btn btn-outline-primary" onClick={handleAddRange}>
+                            + Dodaj zakres kontratu
+                        </button>
+                    </Col>
+                </Row>
+                <ErrorMessage name="_contractRangesPerContract" errors={errors} />
+            </>
+        );
+    }
 
     return (
         <>
@@ -87,7 +194,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
                 />
                 <ErrorMessage errors={errors} name="alias" />
             </Form.Group>
-            <ContractRangeSelector repository={contractRangesRepository} />
+            {renderRanges()}
             <Form.Group controlId="comment">
                 <Form.Label>Opis</Form.Label>
                 <Form.Control

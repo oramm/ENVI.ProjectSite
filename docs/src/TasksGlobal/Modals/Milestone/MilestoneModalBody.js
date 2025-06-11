@@ -32,6 +32,7 @@ const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/G
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 const CommonComponentsController_1 = require("../../../View/Resultsets/CommonComponentsController");
 const react_hook_form_1 = require("react-hook-form");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
 function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
     const { register, reset, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
     const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
@@ -90,8 +91,8 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
     }
     const handleAddDateRange = (0, react_1.useCallback)(() => {
         append({
-            startDate: "",
-            endDate: "",
+            startDate: null,
+            endDate: null,
             description: "",
         });
         // Validation will be triggered automatically by useEffect watching fields.length
@@ -100,10 +101,6 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
         remove(index);
         // Validation will be triggered automatically by useEffect watching fields.length
     }, [remove]);
-    (0, react_1.useEffect)(() => {
-        const currentValues = watch();
-        console.log("Current _dates values:", currentValues._dates);
-    }, [watch, fields]);
     function renderDates() {
         return fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
             react_1.default.createElement(react_bootstrap_1.Col, null,
@@ -129,8 +126,8 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
                     react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
                     react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_dates.${index}.description`), ...register(`_dates.${index}.description`) }),
                     react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_dates.${index}.description`, errors: errors }))),
-            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-end" },
-                react_1.default.createElement("button", { type: "button", className: "btn btn-outline-danger", onClick: () => handleRemoveDateRange(index) }, "Usu\u0144")))));
+            react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center" },
+                react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: "vertical", onClick: () => handleRemoveDateRange(index) })))));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && react_1.default.createElement(BussinesObjectSelectors_1.MilestoneTypeSelector, { contractType: _contract._type }),

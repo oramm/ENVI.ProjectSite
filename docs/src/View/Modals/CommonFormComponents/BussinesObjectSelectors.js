@@ -37,6 +37,7 @@ const FormContext_1 = require("../FormContext");
 const react_hook_form_1 = require("react-hook-form");
 const ContractsController_1 = require("../../../Contracts/ContractsList/ContractsController");
 const GenericComponents_1 = require("./GenericComponents");
+const Symbols_1 = require("../../Symbols");
 /**
  * Komponent formularza wyboru projektu
  * @param repository Repozytorium projektów
@@ -327,8 +328,12 @@ function CaseTypeSelector({ milestoneType, required = false, showValidationInfo 
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ sprawy" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
+                        const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(myOption.isUniquePerMilestone);
                         return (react_1.default.createElement("div", null,
-                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("span", null,
+                                myOption.name,
+                                " ",
+                                uniqueicon),
                             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
@@ -365,8 +370,12 @@ function MilestoneTypeSelector({ contractType, required = false, showValidationI
         react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, rules: { required: { value: required, message: "Wybierz typ kamienia" } }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "name", multiple: multiple, options: makeOptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz typ --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const myOption = option;
+                        const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(myOption.isUniquePerContract);
                         return (react_1.default.createElement("div", null,
-                            react_1.default.createElement("span", null, myOption.name),
+                            react_1.default.createElement("span", null,
+                                myOption.name,
+                                " ",
+                                uniqueicon),
                             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));

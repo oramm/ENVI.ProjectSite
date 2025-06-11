@@ -11,6 +11,7 @@ import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericC
 import { MilestoneStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
 import { hasError } from "../../../View/Resultsets/CommonComponentsController";
 import { useFieldArray, FieldErrors, Controller } from "react-hook-form";
+import { DeleteIconButton } from "../../../View/Resultsets/CommonComponents";
 
 export function ContractMilestoneModalBody({ isEditing, initialData, contextData }: ModalBodyProps<MilestoneData>) {
     const {
@@ -83,8 +84,8 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
 
     const handleAddDateRange = useCallback(() => {
         append({
-            startDate: "",
-            endDate: "",
+            startDate: null,
+            endDate: null,
             description: "",
         });
         // Validation will be triggered automatically by useEffect watching fields.length
@@ -163,14 +164,8 @@ export function ContractMilestoneModalBody({ isEditing, initialData, contextData
                         <ErrorMessage name={`_dates.${index}.description`} errors={errors} />
                     </Form.Group>
                 </Col>
-                <Col xs="auto" className="d-flex align-items-end">
-                    <button
-                        type="button"
-                        className="btn btn-outline-danger"
-                        onClick={() => handleRemoveDateRange(index)}
-                    >
-                        Usuń
-                    </button>
+                <Col xs="auto" className="d-flex align-items-center">
+                    <DeleteIconButton layout="vertical" onClick={() => handleRemoveDateRange(index)} />
                 </Col>
             </Row>
         ));

@@ -36,8 +36,15 @@ const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
 const ToolsForms_1 = __importDefault(require("../../../React/Tools/ToolsForms"));
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
+const react_hook_form_1 = require("react-hook-form");
+const CommonComponents_1 = require("../../../View/Resultsets/CommonComponents");
+const CommonComponentsController_1 = require("../../../View/Resultsets/CommonComponentsController");
 function ContractModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
+    const { fields, append, remove, replace } = (0, react_hook_form_1.useFieldArray)({
+        control,
+        name: "_contractRangesPerContract",
+    });
     const watchAllFields = watch();
     let startDateSugestion;
     let endDateSugestion;
@@ -58,7 +65,6 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
-        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });
@@ -66,6 +72,58 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("endDate", endDateSugestion, { shouldValidate: true });
         setValue("guaranteeEndDate", guaranteeEndDateSugestion, { shouldValidate: true });
     }, [initialData, setValue]);
+    // Sync field array with initial data
+    (0, react_1.useEffect)(() => {
+        const contractRangesPerContract = initialData?._contractRangesPerContract || [];
+        if (contractRangesPerContract.length === 0) {
+            // If no ranges, don't add any default rows for contract ranges
+            replace([]);
+        }
+        else {
+            replace(contractRangesPerContract);
+        }
+    }, [initialData?._contractRangesPerContract, replace]);
+    // Trigger validation when fields array changes
+    (0, react_1.useEffect)(() => {
+        trigger("_contractRangesPerContract");
+    }, [fields.length, trigger]);
+    // Debug useEffect - loguje stan formularza podczas edycji
+    (0, react_1.useEffect)(() => {
+        if (isEditing) {
+            console.log("Form state debug:", {
+                watchAllFields,
+                errors,
+                fieldsLength: fields.length,
+                initialData,
+            });
+        }
+    }, [isEditing, watchAllFields, errors, fields.length, initialData]);
+    const handleAddRange = (0, react_1.useCallback)(() => {
+        append({});
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [append]);
+    const handleRemoveRange = (0, react_1.useCallback)((index) => {
+        remove(index);
+        // Validation will be triggered automatically by useEffect watching fields.length
+    }, [remove]);
+    function renderRanges() {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            fields.map((field, index) => (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2", key: field.id },
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository, multiple: false, name: `_contractRangesPerContract.${index}._contractRange` })),
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: `_contractRangesPerContract.${index}.associationComment` },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Uwagi"),
+                        react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: (0, CommonComponentsController_1.hasError)(errors, `_contractRangesPerContract.${index}.associationComment`), isValid: !(0, CommonComponentsController_1.hasError)(errors, `_contractRangesPerContract.${index}.associationComment`), ...register(`_contractRangesPerContract.${index}.associationComment`) }),
+                        react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `_contractRangesPerContract.${index}.associationComment`, errors: errors }))),
+                react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center" },
+                    react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: "vertical", onClick: () => handleRemoveRange(index) }))))),
+            " ",
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-3" },
+                react_1.default.createElement(react_bootstrap_1.Col, null,
+                    react_1.default.createElement("button", { type: "button", className: "btn btn-outline-primary", onClick: handleAddRange }, "+ Dodaj zakres kontratu"))),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "_contractRangesPerContract", errors: errors })));
+    }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer kontraktu"),
@@ -79,7 +137,7 @@ function ContractModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "alias" })),
-        react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository }),
+        renderRanges(),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.comment, isInvalid: !!errors?.comment, ...register("comment") }),

@@ -23,9 +23,8 @@ export default function MilestoneDateItem({ object: item, onClick }: MilestoneDa
 
     const _contract = item._milestone?._contract;
     const _milestone = item._milestone;
-    let contractLabel = `${_contract?._ourIdOrNumber_Alias} ` || " ";
+    const contractLabel = `[${_contract?._project.ourId}] ${_contract?._ourIdOrNumber_Alias}`;
 
-    if (isOurContract(_contract)) contractLabel += _contract?._type?.name;
     function renderDaysLeft() {
         if (
             !item._milestone?.status ||
@@ -37,14 +36,16 @@ export default function MilestoneDateItem({ object: item, onClick }: MilestoneDa
         const daysLeft = ToolsDate.countDaysLeftTo(item.endDate);
         return <DaysLeftBadge daysLeft={daysLeft} />;
     }
+
     function renderContractStatus(item: MilestoneDateData) {
         if (!item._milestone?._contract?.status) return <Alert variant="danger">Brak statusu</Alert>;
         const { handleEditObject } = useDashboardCardContext<MilestoneDateData>();
+
         return (
             <PartialEditTrigger
                 modalProps={{
                     initialData: item,
-                    modalTitle: `Edycja statusu kontraktu ${item._milestone?._contract?._ourIdOrNumber_Alias}`,
+                    modalTitle: `Edycja statusu kontraktu ${contractLabel}`,
                     repository: milestoneDatesRepository,
                     ModalBodyComponent: ContractModalBodyStatus,
                     onEdit: handleEditObject,
@@ -64,6 +65,7 @@ export default function MilestoneDateItem({ object: item, onClick }: MilestoneDa
                 modalProps={{
                     initialData: item,
                     modalTitle: `Edycja statusu kamienia milowego ${item._milestone?._FolderNumber_TypeName_Name}`,
+                    modalSubtitle: `Kontrakt: ${contractLabel}`,
                     repository: milestoneDatesRepository,
                     ModalBodyComponent: MilestoneModalBodyStatus,
                     onEdit: handleEditObject,
@@ -76,11 +78,21 @@ export default function MilestoneDateItem({ object: item, onClick }: MilestoneDa
             </PartialEditTrigger>
         );
     }
+
     return (
         <div onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }} className="p-2 border-bottom w-100">
             {/* Kontrakt */}
             <div className="d-flex align-items-center gap-2 mb-2">
                 <span className="fw-semibold">{contractLabel}</span>
+
+                <span className="small text-secondary">
+                    {isOurContract(_contract)
+                        ? `${_contract?._admin?.name || ""} ${_contract?._admin?.surname || ""}`
+                        : `${_contract?._type?.name} | ${_contract?._ourContract?._admin?.name || ""} ${
+                              _contract?._ourContract?._admin?.surname || ""
+                          }`}
+                </span>
+
                 {renderContractStatus(item)}
             </div>
 
