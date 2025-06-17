@@ -30,6 +30,7 @@ const react_hook_form_1 = require("react-hook-form");
 const FormContext_1 = require("../../Modals/FormContext");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const yup_1 = require("@hookform/resolvers/yup");
+const SessionStorageManager_1 = require("../../../React/Storage/SessionStorageManager");
 function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
     const [error, setError] = (0, react_1.useState)(null);
     const [isReady, setIsReady] = (0, react_1.useState)(true);
@@ -40,13 +41,12 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         mode: "onChange",
     });
     const snapshotName = `filtersableTableSnapshot_${id}`;
-    const { reset } = formMethods;
-    //odtwórz stan z sessionStorage
+    const { reset } = formMethods; //odtwórz stan z sessionStorage
     (0, react_1.useEffect)(() => {
-        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        const storedSnapshot = SessionStorageManager_1.SessionStorageManager.load(snapshotName);
         if (!storedSnapshot)
             return;
-        const { criteria } = JSON.parse(storedSnapshot);
+        const { criteria } = storedSnapshot;
         for (let key in criteria) {
             formMethods.setValue(key, criteria[key]);
         }
@@ -72,7 +72,7 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
             criteria: formMethods.getValues(),
             storedObjects: result,
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+        SessionStorageManager_1.SessionStorageManager.save(snapshotName, filterableTableSnapshot, `FilterPanel_${id}`);
         console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
     }
     const handleReset = () => {

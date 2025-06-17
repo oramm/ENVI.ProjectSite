@@ -6,6 +6,7 @@ import { FormProvider } from "../../Modals/FormContext";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { FilterableTableSnapShot, FilterPanelProps } from "./FilterableTableTypes";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { SessionStorageManager } from "../../../React/Storage/SessionStorageManager";
 
 export function FilterPanel<DataItemType extends RepositoryDataItem>({
     FilterBodyComponent,
@@ -24,14 +25,12 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 
     const snapshotName = `filtersableTableSnapshot_${id}`;
 
-    const { reset } = formMethods;
-
-    //odtwórz stan z sessionStorage
+    const { reset } = formMethods; //odtwórz stan z sessionStorage
     useEffect(() => {
-        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        const storedSnapshot = SessionStorageManager.load<FilterableTableSnapShot<DataItemType>>(snapshotName);
         if (!storedSnapshot) return;
 
-        const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
+        const { criteria } = storedSnapshot;
         for (let key in criteria) {
             (formMethods.setValue as (name: string, value: any) => void)(key, criteria[key]);
         }
@@ -51,13 +50,12 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
             setIsReady(true);
         }
     }
-
     function saveSnapshotToStorage(result: DataItemType[]) {
         const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
             criteria: formMethods.getValues(),
             storedObjects: result,
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+        SessionStorageManager.save(snapshotName, filterableTableSnapshot, `FilterPanel_${id}`);
         console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
     }
 

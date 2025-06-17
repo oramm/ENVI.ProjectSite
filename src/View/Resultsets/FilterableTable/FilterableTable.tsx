@@ -6,6 +6,7 @@ import { FilterPanel } from "./FilterPanel";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import { Section, SectionNode } from "./Section";
 import { FilterableTableProps, FilterableTableSnapShot } from "./FilterableTableTypes";
+import { SessionStorageManager } from "../../../React/Storage/SessionStorageManager";
 
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
@@ -55,24 +56,22 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         }
         return [];
     }
-
     function getObjectsFromStorage() {
-        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        const storedSnapshot = SessionStorageManager.load<FilterableTableSnapShot<LeafDataItemType>>(snapshotName);
         if (!storedSnapshot) return;
 
-        const { storedObjects } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
+        const { storedObjects } = storedSnapshot;
         return storedObjects;
     }
-
     function updateSnapshot() {
-        const currentSnapshot = sessionStorage.getItem(snapshotName);
+        const currentSnapshot = SessionStorageManager.load<FilterableTableSnapShot<LeafDataItemType>>(snapshotName);
         if (!currentSnapshot) return;
 
         const updatedFilterableTableSnapshot: FilterableTableSnapShot<LeafDataItemType> = {
-            criteria: JSON.parse(currentSnapshot) as FilterableTableSnapShot<LeafDataItemType>,
+            criteria: currentSnapshot.criteria,
             storedObjects: repository.items,
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+        SessionStorageManager.save(snapshotName, updatedFilterableTableSnapshot, `FilterableTable_${id}`);
     }
 
     useEffect(() => {

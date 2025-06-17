@@ -30,6 +30,7 @@ const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterPanel_1 = require("./FilterPanel");
 const ResultSetTable_1 = require("./ResultSetTable");
 const Section_1 = require("./Section");
+const SessionStorageManager_1 = require("../../../React/Storage/SessionStorageManager");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -60,21 +61,21 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         return [];
     }
     function getObjectsFromStorage() {
-        const storedSnapshot = sessionStorage.getItem(snapshotName);
+        const storedSnapshot = SessionStorageManager_1.SessionStorageManager.load(snapshotName);
         if (!storedSnapshot)
             return;
-        const { storedObjects } = JSON.parse(storedSnapshot);
+        const { storedObjects } = storedSnapshot;
         return storedObjects;
     }
     function updateSnapshot() {
-        const currentSnapshot = sessionStorage.getItem(snapshotName);
+        const currentSnapshot = SessionStorageManager_1.SessionStorageManager.load(snapshotName);
         if (!currentSnapshot)
             return;
         const updatedFilterableTableSnapshot = {
-            criteria: JSON.parse(currentSnapshot),
+            criteria: currentSnapshot.criteria,
             storedObjects: repository.items,
         };
-        sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
+        SessionStorageManager_1.SessionStorageManager.save(snapshotName, updatedFilterableTableSnapshot, `FilterableTable_${id}`);
     }
     (0, react_1.useEffect)(() => {
         if (initialObjects) {

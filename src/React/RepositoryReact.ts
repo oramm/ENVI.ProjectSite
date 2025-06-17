@@ -3,6 +3,7 @@ import { SessionTask } from "../../Typings/sessionTypes";
 import MainSetup from "./MainSetupReact";
 import ToolsDate from "./Tools/ToolsDate";
 import ToolsFetch from "./Tools/ToolsFetch";
+import { SessionStorageManager, StorageMetrics } from "./Storage/SessionStorageManager";
 
 export default class RepositoryReact<DataItemType extends RepositoryDataItem = RepositoryDataItem> {
     actionRoutes: ActionRoutes;
@@ -44,10 +45,10 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
         const index = this.items.findIndex((item) => item.id === id);
         this.items.splice(index, 1, editedItem);
     }
-
-    saveToSessionStorage() {
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+    saveToSessionStorage(): void {
+        SessionStorageManager.save(this.name, this, this.name);
     }
+
     /**pobiera obiekt z repozytorim na podstawie Id w adresie url
      * - jeżeli nie ma obiektów w repozytorium, to ładuje je z sessionstorage
      * - jeżeli nie ma obiektów w sessionstorage, to ładuje je z serwera
@@ -67,18 +68,14 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             throw new Error("Nie znaleziono obiektu z podanym id: " + id);
         }
         return item;
-    }
-
-    /**Ładuje items z sessionstorage i resetuje currentitems */
-    protected loadFromSessionStorage() {
-        const JSONFromSessionStorage = sessionStorage.getItem(this.name);
-        if (!JSONFromSessionStorage) return;
-        const data = JSON.parse(JSONFromSessionStorage);
-        if (data.items) {
+    } /**Ładuje items z sessionstorage i resetuje currentitems */
+    protected loadFromSessionStorage(): void {
+        const data = SessionStorageManager.load(this.name);
+        if (data && data.items) {
             this.items = data.items;
             this.currentItems = [];
+            console.log(`${this.name}: Załadowano z sessionStorage (${data.items.length} elementów)`);
         }
-        console.log(this.name + " items from SessionStorage: %o", this.items);
     }
     /**
      * Ładuje items z serwera i resetuje currentitems
@@ -451,10 +448,29 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
             throw error;
         }
     }
-
     clearData() {
         this.items = [];
         this.currentItems = [];
+    }
+    /**
+     * Zwraca szczegółowe metryki dotyczące sessionStorage
+     */
+    getStorageMetrics(): StorageMetrics {
+        return SessionStorageManager.getMetrics();
+    }
+
+    /**
+     * Zwraca informacje o wykrytym limicie storage
+     */
+    getStorageLimit() {
+        return SessionStorageManager.getStorageLimit();
+    }
+
+    /**
+     * Czyści dane tego repozytorium z sessionStorage
+     */
+    clearSessionStorage(): void {
+        SessionStorageManager.clear(this.name);
     }
     protected async pollTask(taskId: string, onProgress?: (task: SessionTask) => void): Promise<SessionTask> {
         const statusUrl = `${MainSetup.serverUrl}sessionTaskStatus/${taskId}`;

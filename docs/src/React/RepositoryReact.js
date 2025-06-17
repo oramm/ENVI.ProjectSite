@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
 const ToolsDate_1 = __importDefault(require("./Tools/ToolsDate"));
 const ToolsFetch_1 = __importDefault(require("./Tools/ToolsFetch"));
+const SessionStorageManager_1 = require("./Storage/SessionStorageManager");
 class RepositoryReact {
     constructor(initParameter) {
         this.currentItems = [];
@@ -42,7 +43,7 @@ class RepositoryReact {
         this.items.splice(index, 1, editedItem);
     }
     saveToSessionStorage() {
-        sessionStorage.setItem(this.name, JSON.stringify(this));
+        SessionStorageManager_1.SessionStorageManager.save(this.name, this, this.name);
     }
     /**pobiera obiekt z repozytorim na podstawie Id w adresie url
      * - jeżeli nie ma obiektów w repozytorium, to ładuje je z sessionstorage
@@ -64,18 +65,14 @@ class RepositoryReact {
             throw new Error("Nie znaleziono obiektu z podanym id: " + id);
         }
         return item;
-    }
-    /**Ładuje items z sessionstorage i resetuje currentitems */
+    } /**Ładuje items z sessionstorage i resetuje currentitems */
     loadFromSessionStorage() {
-        const JSONFromSessionStorage = sessionStorage.getItem(this.name);
-        if (!JSONFromSessionStorage)
-            return;
-        const data = JSON.parse(JSONFromSessionStorage);
-        if (data.items) {
+        const data = SessionStorageManager_1.SessionStorageManager.load(this.name);
+        if (data && data.items) {
             this.items = data.items;
             this.currentItems = [];
+            console.log(`${this.name}: Załadowano z sessionStorage (${data.items.length} elementów)`);
         }
-        console.log(this.name + " items from SessionStorage: %o", this.items);
     }
     /**
      * Ładuje items z serwera i resetuje currentitems
@@ -418,6 +415,24 @@ class RepositoryReact {
     clearData() {
         this.items = [];
         this.currentItems = [];
+    }
+    /**
+     * Zwraca szczegółowe metryki dotyczące sessionStorage
+     */
+    getStorageMetrics() {
+        return SessionStorageManager_1.SessionStorageManager.getMetrics();
+    }
+    /**
+     * Zwraca informacje o wykrytym limicie storage
+     */
+    getStorageLimit() {
+        return SessionStorageManager_1.SessionStorageManager.getStorageLimit();
+    }
+    /**
+     * Czyści dane tego repozytorium z sessionStorage
+     */
+    clearSessionStorage() {
+        SessionStorageManager_1.SessionStorageManager.clear(this.name);
     }
     async pollTask(taskId, onProgress) {
         const statusUrl = `${MainSetupReact_1.default.serverUrl}sessionTaskStatus/${taskId}`;
