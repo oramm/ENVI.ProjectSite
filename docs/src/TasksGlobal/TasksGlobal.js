@@ -126,6 +126,7 @@ function makeContractTitleLabel(contract) {
     const ourId = "ourId" in contract ? contract.ourId : undefined;
     let label = "Umowa: ";
     label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    label += ` [${contract.status}] `;
     if (contract.alias)
         label += ` [${contract.alias || ""}] `;
     if (manager)

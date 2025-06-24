@@ -94988,8 +94988,7 @@ function ApplicationCallsCard({ className }) {
     const initCardData = {
         header: {
             title: "Nabory",
-            daysBeforeToday: 100,
-            daysAfterToday: 100,
+            daysBeforeToday: 365,
         },
         sectionAttributeName: "status",
     };
@@ -94997,12 +94996,10 @@ function ApplicationCallsCard({ className }) {
         const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
             .toISOString()
             .slice(0, 10);
-        const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
                 endDateFrom,
-                endDateTo,
             },
         ];
         return (await MainWindowController_1.applicationCallsRepository.loadItemsFromServerPOST(orConditions));
@@ -96472,8 +96469,12 @@ class SessionStorageManager {
                 this.makeStorageWarning(repositoryName, currentStorageSize, estimatedSizeAfterSave);
             }
             sessionStorage.setItem(key, serializedData);
-            console.log(`✅ ${repositoryName}: Dane zapisane (${serializedData.length} znaków, ${((estimatedSizeAfterSave / storageLimit) *
-                100).toFixed(1)}% wykorzystania)`);
+            // console.log(
+            //     `✅ ${repositoryName}: Dane zapisane (${serializedData.length} znaków, ${(
+            //         (estimatedSizeAfterSave / storageLimit) *
+            //         100
+            //     ).toFixed(1)}% wykorzystania)`
+            // );
         }
         catch (error) {
             this.handleStorageError(error, key, repositoryName, data);
@@ -96786,9 +96787,16 @@ class ToolsDate {
         const parsedDate = utcDate.toISOString().slice(0, 10);
         return parsedDate;
     }
-    static dateToDdMmm(dateStr) {
+    static dateToDdMmm(dateStr, showYear = false) {
         const date = new Date(dateStr);
-        return date.toLocaleDateString("pl-PL", { day: "2-digit", month: "short" });
+        const options = {
+            day: "2-digit",
+            month: "short",
+        };
+        if (showYear) {
+            options.year = "numeric";
+        }
+        return date.toLocaleDateString("pl-PL", options);
     }
     /** Przetwarza wszystkie daty w obiekcie na UTC */
     static convertDatesToUTC(obj) {
@@ -97938,6 +97946,7 @@ function makeContractTitleLabel(contract) {
     const ourId = "ourId" in contract ? contract.ourId : undefined;
     let label = "Umowa: ";
     label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    label += ` [${contract.status}] `;
     if (contract.alias)
         label += ` [${contract.alias || ""}] `;
     if (manager)
@@ -100556,19 +100565,22 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
         if (headerRoute)
             navigate(headerRoute, { state: { repository } });
     }
+    function shouldShowYear(dateStr) {
+        return new Date(dateStr).getFullYear() !== new Date().getFullYear();
+    }
     function renderCardTitle() {
         let dateRangeText = "";
         if (dateFrom && dateTo) {
             // Obie daty istnieją - pokaż zakres
-            dateRangeText = `${ToolsDate_1.default.dateToDdMmm(dateFrom)} - ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+            dateRangeText = `${ToolsDate_1.default.dateToDdMmm(dateFrom, shouldShowYear(dateFrom))} - ${ToolsDate_1.default.dateToDdMmm(dateTo, shouldShowYear(dateTo))}`;
         }
         else if (dateFrom) {
             // Tylko data początkowa
-            dateRangeText = `od ${ToolsDate_1.default.dateToDdMmm(dateFrom)}`;
+            dateRangeText = `od ${ToolsDate_1.default.dateToDdMmm(dateFrom, shouldShowYear(dateFrom))}`;
         }
         else if (dateTo) {
             // Tylko data końcowa
-            dateRangeText = `do ${ToolsDate_1.default.dateToDdMmm(dateTo)}`;
+            dateRangeText = `do ${ToolsDate_1.default.dateToDdMmm(dateTo, shouldShowYear(dateTo))}`;
         }
         return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center" },
             react_1.default.createElement(react_bootstrap_1.Card.Title, { className: "mb-0", onClick: () => handleHeaderClick(), style: { cursor: "pointer" } }, cardData.header.title),

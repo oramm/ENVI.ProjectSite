@@ -43,8 +43,7 @@ function ApplicationCallsCard({ className }) {
     const initCardData = {
         header: {
             title: "Nabory",
-            daysBeforeToday: 100,
-            daysAfterToday: 100,
+            daysBeforeToday: 365,
         },
         sectionAttributeName: "status",
     };
@@ -52,12 +51,10 @@ function ApplicationCallsCard({ className }) {
         const endDateFrom = ToolsDate_1.default.addDays(new Date(), -initCardData.header.daysBeforeToday)
             .toISOString()
             .slice(0, 10);
-        const endDateTo = ToolsDate_1.default.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
                 endDateFrom,
-                endDateTo,
             },
         ];
         return (await MainWindowController_1.applicationCallsRepository.loadItemsFromServerPOST(orConditions));

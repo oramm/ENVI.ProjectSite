@@ -114,23 +114,28 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
         const detailsId = getDetailsId ? getDetailsId(object) : object.id;
         if (detailsRoute) navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
     }
-
     function handleHeaderClick() {
         if (headerRoute) navigate(headerRoute, { state: { repository } });
     }
 
+    function shouldShowYear(dateStr: string): boolean {
+        return new Date(dateStr).getFullYear() !== new Date().getFullYear();
+    }
+
     function renderCardTitle() {
         let dateRangeText = "";
-
         if (dateFrom && dateTo) {
             // Obie daty istnieją - pokaż zakres
-            dateRangeText = `${ToolsDate.dateToDdMmm(dateFrom)} - ${ToolsDate.dateToDdMmm(dateTo)}`;
+            dateRangeText = `${ToolsDate.dateToDdMmm(dateFrom, shouldShowYear(dateFrom))} - ${ToolsDate.dateToDdMmm(
+                dateTo,
+                shouldShowYear(dateTo)
+            )}`;
         } else if (dateFrom) {
             // Tylko data początkowa
-            dateRangeText = `od ${ToolsDate.dateToDdMmm(dateFrom)}`;
+            dateRangeText = `od ${ToolsDate.dateToDdMmm(dateFrom, shouldShowYear(dateFrom))}`;
         } else if (dateTo) {
             // Tylko data końcowa
-            dateRangeText = `do ${ToolsDate.dateToDdMmm(dateTo)}`;
+            dateRangeText = `do ${ToolsDate.dateToDdMmm(dateTo, shouldShowYear(dateTo))}`;
         }
 
         return (

@@ -24,10 +24,18 @@ export default class ToolsDate {
         const parsedDate = utcDate.toISOString().slice(0, 10);
         return parsedDate;
     }
-
-    static dateToDdMmm(dateStr: string) {
+    static dateToDdMmm(dateStr: string, showYear: boolean = false) {
         const date = new Date(dateStr);
-        return date.toLocaleDateString("pl-PL", { day: "2-digit", month: "short" });
+        const options: Intl.DateTimeFormatOptions = {
+            day: "2-digit",
+            month: "short",
+        };
+
+        if (showYear) {
+            options.year = "numeric";
+        }
+
+        return date.toLocaleDateString("pl-PL", options);
     }
 
     /** Przetwarza wszystkie daty w obiekcie na UTC */

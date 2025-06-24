@@ -133,12 +133,12 @@ export class SessionStorageManager {
 
             sessionStorage.setItem(key, serializedData);
 
-            console.log(
-                `✅ ${repositoryName}: Dane zapisane (${serializedData.length} znaków, ${(
-                    (estimatedSizeAfterSave / storageLimit) *
-                    100
-                ).toFixed(1)}% wykorzystania)`
-            );
+            // console.log(
+            //     `✅ ${repositoryName}: Dane zapisane (${serializedData.length} znaków, ${(
+            //         (estimatedSizeAfterSave / storageLimit) *
+            //         100
+            //     ).toFixed(1)}% wykorzystania)`
+            // );
         } catch (error) {
             this.handleStorageError(error, key, repositoryName, data);
         }

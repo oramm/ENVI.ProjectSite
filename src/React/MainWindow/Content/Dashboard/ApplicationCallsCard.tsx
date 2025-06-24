@@ -18,8 +18,7 @@ export default function ApplicationCallsCard({ className }: { className: string 
     const initCardData = {
         header: {
             title: "Nabory",
-            daysBeforeToday: 100,
-            daysAfterToday: 100,
+            daysBeforeToday: 365,
         },
         sectionAttributeName: "status" as keyof ApplicationCallData,
     };
@@ -27,12 +26,10 @@ export default function ApplicationCallsCard({ className }: { className: string 
         const endDateFrom = ToolsDate.addDays(new Date(), -initCardData.header.daysBeforeToday)
             .toISOString()
             .slice(0, 10);
-        const endDateTo = ToolsDate.addDays(new Date(), initCardData.header.daysAfterToday).toISOString().slice(0, 10);
         const orConditions = [
             {
                 statuses: Object.values(MainSetup.ApplicationCallStatus),
                 endDateFrom,
-                endDateTo,
             },
         ];
         return (await applicationCallsRepository.loadItemsFromServerPOST(orConditions)) as ApplicationCallData[];

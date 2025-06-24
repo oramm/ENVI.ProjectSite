@@ -170,6 +170,7 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
 
     let label = "Umowa: ";
     label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    label += ` [${contract.status}] `;
     if (contract.alias) label += ` [${contract.alias || ""}] `;
     if (manager) label += ` ${manager.name} ${manager.surname}`;
     return label;
