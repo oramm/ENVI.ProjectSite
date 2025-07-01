@@ -95478,10 +95478,15 @@ function OffersCard({ className }) {
                 object._type.name,
                 ",",
                 " ",
-                react_1.default.createElement("span", { className: "fw-light" }, object.alias),
+                react_1.default.createElement("span", { className: "fw-light" }, renderTenderLink(object) ?? object.alias),
                 showDeadline && react_1.default.createElement("span", null,
                     " | ",
                     ToolsDate_1.default.dateToDdMmm(object.submissionDeadline)))));
+    }
+    function renderTenderLink(offer) {
+        if (!("tenderUrl" in offer) || !offer.tenderUrl)
+            return null;
+        return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
     }
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }

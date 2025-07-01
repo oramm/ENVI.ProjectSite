@@ -60,10 +60,24 @@ export default function OffersCard({ className }: { className: string }) {
             <>
                 <span className="text-secondary small">
                     <span className="fw-semibold">{object._city.name}</span>, {object._type.name},{" "}
-                    <span className="fw-light">{object.alias}</span>
+                    <span className="fw-light">{renderTenderLink(object) ?? object.alias}</span>
                     {showDeadline && <span> | {ToolsDate.dateToDdMmm(object.submissionDeadline!)}</span>}
                 </span>
             </>
+        );
+    }
+
+    function renderTenderLink(offer: OurOffer | ExternalOffer) {
+        if (!("tenderUrl" in offer) || !offer.tenderUrl) return null;
+        return (
+            <a
+                href={(offer as ExternalOffer).tenderUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none"
+            >
+                {offer.alias}
+            </a>
         );
     }
 
