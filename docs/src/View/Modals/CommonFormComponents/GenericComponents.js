@@ -34,7 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
 const CommonComponentsController_1 = require("../../Resultsets/CommonComponentsController");
-function ErrorMessage({ errors, name }) {
+exports.ErrorMessage = (0, react_1.forwardRef)(({ errors, name }, ref) => {
     // Function to access nested properties
     const getNestedError = (errors, path) => {
         const keys = path.split("."); // Split the path into keys
@@ -50,9 +50,8 @@ function ErrorMessage({ errors, name }) {
         return current;
     };
     const error = getNestedError(errors, name);
-    return react_1.default.createElement(react_1.default.Fragment, null, error && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, error.message));
-}
-exports.ErrorMessage = ErrorMessage;
+    return react_1.default.createElement("div", { ref: ref }, error && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, error.message));
+});
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
@@ -106,7 +105,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
                 //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
                 return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? (multiple ? field.value : [field.value]) : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
             } }),
-        react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
+        react_1.default.createElement(exports.ErrorMessage, { errors: errors, name: name }),
         readOnly && react_1.default.createElement("input", { type: "hidden", ...register(name) })));
 }
 exports.MyAsyncTypeahead = MyAsyncTypeahead;
@@ -120,7 +119,7 @@ function TextOptionSelector({ options, showValidationInfo = true, name, as, labe
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "select", multiple: multiple, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz opcj\u0119 --"),
             options.map((option, index) => (react_1.default.createElement("option", { key: index, value: option }, option)))),
-        react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
+        react_1.default.createElement(exports.ErrorMessage, { errors: errors, name: name })));
 }
 exports.TextOptionSelector = TextOptionSelector;
 /**
@@ -152,7 +151,7 @@ function TypeaheadStringSelector({ options, showValidationInfo = true, name = "s
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name, as: as },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, makeLabel()),
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, defaultValue: multiple ? [] : "", render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: (option) => option, multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: setSelectedValue(field), placeholder: "-- Wybierz status --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option) => react_1.default.createElement(react_1.default.Fragment, null, option) })) }),
-            react_1.default.createElement(ErrorMessage, { name: name, errors: errors }))));
+            react_1.default.createElement(exports.ErrorMessage, { name: name, errors: errors }))));
 }
 exports.TypeaheadStringSelector = TypeaheadStringSelector;
 /**
@@ -160,7 +159,8 @@ exports.TypeaheadStringSelector = TypeaheadStringSelector;
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-function ValueInPLNInput({ showValidationInfo = true, name = "value" }) {
+//export function ValueInPLNInput({ showValidationInfo = true, name = "value" }: ValueInPLNInputProps) {
+exports.ValueInPLNInput = (0, react_1.forwardRef)(({ showValidationInfo = true, name = "value" }, ref) => {
     const { control, setValue, watch, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const watchedValue = watch(name);
     (0, react_1.useEffect)(() => {
@@ -170,16 +170,15 @@ function ValueInPLNInput({ showValidationInfo = true, name = "value" }) {
     if (showValidationInfo) {
         classNames.push((0, CommonComponentsController_1.hasError)(errors, name) ? "is-invalid" : "is-valid");
     }
-    return (react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement("div", { ref: ref },
         react_1.default.createElement(react_bootstrap_1.InputGroup, { className: "mb-3" },
-            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, render: ({ field }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
+            react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, render: ({ field: { ref, ...field } }) => (react_1.default.createElement(react_number_format_1.NumericFormat, { ...field, getInputRef: ref, value: watchedValue, thousandSeparator: " ", decimalSeparator: ".", decimalScale: 2, allowLeadingZeros: false, fixedDecimalScale: true, displayType: "input", allowNegative: false, onValueChange: (values) => {
                         setValue(name, values.floatValue);
                         //field.onChange(values.floatValue);
                     }, className: classNames.join(" "), valueIsNumericString: false })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
-        react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
-}
-exports.ValueInPLNInput = ValueInPLNInput;
+        react_1.default.createElement(exports.ErrorMessage, { name: name, errors: errors })));
+});
 exports.valueValidation = Yup.string()
     .typeError("Wartość jest wymagana")
     .required("Wartość jest wymagana")
@@ -213,8 +212,8 @@ exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, f
             react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: fromName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedFromValue, onChange: (e) => setValue(fromName, e.target.value, { shouldValidate: true }), className: getClassName(fromName) })) }),
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "date-to-label" }, "-"),
             react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: toName, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, type: "date", value: watchedToValue, onChange: (e) => setValue(toName, e.target.value, { shouldValidate: true }), className: getClassName(toName) })) })),
-        react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
-        react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));
+        react_1.default.createElement(exports.ErrorMessage, { name: fromName, errors: errors }),
+        react_1.default.createElement(exports.ErrorMessage, { name: toName, errors: errors })));
 });
 function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, }) {
     const { control, formState: { errors }, } = (0, FormContext_1.useFormContext)();
@@ -225,7 +224,7 @@ function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xl
                     const files = event.target.files;
                     onChange(files);
                 } })) }),
-        react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
+        react_1.default.createElement(exports.ErrorMessage, { name: name, errors: errors })));
 }
 exports.FileInput = FileInput;
 function RadioButtonGroup({ name, options }) {

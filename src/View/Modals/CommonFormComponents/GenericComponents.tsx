@@ -16,7 +16,7 @@ import { ColProps } from "react-bootstrap";
 
 export type ErrorMessageProps = { errors: FieldErrors<any>; name: string };
 
-export function ErrorMessage({ errors, name }: ErrorMessageProps) {
+export const ErrorMessage = forwardRef<HTMLDivElement, ErrorMessageProps>(({ errors, name }, ref) => {
     // Function to access nested properties
     const getNestedError = (errors: any, path: string): any => {
         const keys = path.split("."); // Split the path into keys
@@ -33,8 +33,8 @@ export function ErrorMessage({ errors, name }: ErrorMessageProps) {
 
     const error = getNestedError(errors, name);
 
-    return <>{error && <Form.Text className="text-danger">{error.message}</Form.Text>}</>;
-}
+    return <div ref={ref}>{error && <Form.Text className="text-danger">{error.message}</Form.Text>}</div>;
+});
 
 type MyAsyncTypeaheadProps = {
     name: string;
@@ -297,56 +297,60 @@ type ValueInPLNInputProps = {
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
  * @param keyLabel nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie 'value')
  */
-export function ValueInPLNInput({ showValidationInfo = true, name = "value" }: ValueInPLNInputProps) {
-    const {
-        control,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useFormContext();
-    const watchedValue = watch(name);
+//export function ValueInPLNInput({ showValidationInfo = true, name = "value" }: ValueInPLNInputProps) {
+export const ValueInPLNInput = forwardRef<HTMLDivElement, ValueInPLNInputProps>(
+    ({ showValidationInfo = true, name = "value" }, ref) => {
+        const {
+            control,
+            setValue,
+            watch,
+            formState: { errors },
+        } = useFormContext();
+        const watchedValue = watch(name);
 
-    useEffect(() => {
-        setValue(name, watchedValue ?? "", { shouldValidate: true });
-    }, [watchedValue, setValue]);
+        useEffect(() => {
+            setValue(name, watchedValue ?? "", { shouldValidate: true });
+        }, [watchedValue, setValue]);
 
-    const classNames = ["form-control"];
-    if (showValidationInfo) {
-        classNames.push(hasError(errors, name) ? "is-invalid" : "is-valid");
+        const classNames = ["form-control"];
+        if (showValidationInfo) {
+            classNames.push(hasError(errors, name) ? "is-invalid" : "is-valid");
+        }
+
+        return (
+            <div ref={ref}>
+                <InputGroup className="mb-3">
+                    <Controller
+                        control={control}
+                        name={name}
+                        render={({ field: { ref, ...field } }) => (
+                            <NumericFormat
+                                {...field}
+                                getInputRef={ref}
+                                value={watchedValue}
+                                thousandSeparator=" "
+                                decimalSeparator="."
+                                decimalScale={2}
+                                allowLeadingZeros={false}
+                                fixedDecimalScale={true}
+                                displayType="input"
+                                allowNegative={false}
+                                onValueChange={(values: NumberFormatValues) => {
+                                    setValue(name, values.floatValue);
+                                    //field.onChange(values.floatValue);
+                                }}
+                                className={classNames.join(" ")}
+                                valueIsNumericString={false}
+                            />
+                        )}
+                    />
+                    <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
+                </InputGroup>
+                <ErrorMessage name={name} errors={errors} />
+            </div>
+        );
     }
-
-    return (
-        <>
-            <InputGroup className="mb-3">
-                <Controller
-                    control={control}
-                    name={name}
-                    render={({ field }) => (
-                        <NumericFormat
-                            {...field}
-                            value={watchedValue}
-                            thousandSeparator=" "
-                            decimalSeparator="."
-                            decimalScale={2}
-                            allowLeadingZeros={false}
-                            fixedDecimalScale={true}
-                            displayType="input"
-                            allowNegative={false}
-                            onValueChange={(values: NumberFormatValues) => {
-                                setValue(name, values.floatValue);
-                                //field.onChange(values.floatValue);
-                            }}
-                            className={classNames.join(" ")}
-                            valueIsNumericString={false}
-                        />
-                    )}
-                />
-                <InputGroup.Text id="basic-addon1">PLN</InputGroup.Text>
-            </InputGroup>
-            <ErrorMessage name={name} errors={errors} />
-        </>
-    );
-}
+);
 
 export const valueValidation = Yup.string()
     .typeError("Wartość jest wymagana")
