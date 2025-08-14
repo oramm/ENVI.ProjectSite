@@ -3,6 +3,9 @@ import * as Yup from "yup";
 const todayUTC = new Date();
 todayUTC.setUTCHours(0, 0, 0, 0); // Ustawia godziny na 00:00:00 UTC
 
+const maxDate = new Date(todayUTC);
+maxDate.setDate(maxDate.getDate() + 30);
+
 const commonFields = {
     _contract: Yup.object().required("Wybierz kontrakt"),
     _cases: Yup.array().required("Wybierz sprawy"),
@@ -10,13 +13,13 @@ const commonFields = {
     description: Yup.string().required("Opis jest wymagany").max(300, "Opis może mieć maksymalnie 300 znaków"),
     creationDate: Yup.date()
         .required("Data utworzenia jest wymagana")
-        .max(todayUTC, "Data utworzenia nie może być z przyszłości")
+        .max(maxDate, "Data utworzenia nie może być późniejsza niż 30 dni od dziś")
         .test("creationDateValidation", "Pismo nie może być nadane przed utworzeniem", function (value: Date) {
             return this.parent.registrationDate >= value;
         }),
     registrationDate: Yup.date()
         //.required('Data nadania jest wymagana')
-        .max(todayUTC, "Data nadania nie może być z przyszłości")
+        .max(maxDate, "Data nadania nie może być późniejsza niż 30 dni od dziś")
         .test(
             "registrationDateValidation",
             "Pismo nie może być nadane przed utworzeniem",
