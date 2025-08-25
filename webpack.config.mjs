@@ -12,7 +12,7 @@ if (os.platform() === 'win32') {
 export default {
     entry: '/src/React/MainWindow/index.tsx',
     output: {
-        path: path.resolve(__dirname, 'docs/React'),
+        path: path.resolve(__dirname, 'docs'),
         filename: 'bundle.js',
     },
     resolve: {
