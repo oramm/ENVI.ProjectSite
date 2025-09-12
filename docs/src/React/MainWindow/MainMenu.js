@@ -63,6 +63,8 @@ function MainMenu() {
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
                                     await MainControllerReact_1.default.logout();
                                     window.location.reload();
-                                } }, "Wyloguj si\u0119"))))))));
+                                } }, "Wyloguj si\u0119"),
+                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
 exports.default = MainMenu;

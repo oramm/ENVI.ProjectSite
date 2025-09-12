@@ -94580,6 +94580,355 @@ exports.makeContractRangeValidationSchema = makeContractRangeValidationSchema;
 
 /***/ }),
 
+/***/ "./src/Admin/SystemUsers/Modals/SystemUserModalBody.tsx":
+/*!**************************************************************!*\
+  !*** ./src/Admin/SystemUsers/Modals/SystemUserModalBody.tsx ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SystemUserModalBody = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const SystemUserController_1 = __webpack_require__(/*! ../SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+function SystemUserModalBody({ isEditing, initialData }) {
+    const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    (0, react_1.useEffect)(() => {
+        const resetData = {
+            _entity: initialData?._entity || null,
+            name: initialData?.name || "",
+            surname: initialData?.surname || "",
+            position: initialData?.position || "",
+            email: initialData?.email || "",
+            cellPhone: initialData?.cellPhone || "",
+            phone: initialData?.phone || "",
+            comment: initialData?.comment || "",
+            systemRoleId: initialData?.systemRoleId || "",
+            systemEmail: initialData?.systemEmail || "",
+            //googleId: initialData?.googleId,
+            //googleRefreshToken: initialData?.googleRefreshToken,
+        };
+        reset(resetData);
+        trigger();
+    }, [initialData, reset]);
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", repository: SystemUserController_1.entitiesRepository, multiple: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Imi\u0119"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj imi\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "surname" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwisko"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj nazwisko", isInvalid: !!errors?.surname, isValid: !errors?.surname, ...register("surname") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "surname", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "email" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Email"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "email", placeholder: "Podaj email", isInvalid: !!errors?.email, isValid: !errors?.email, ...register("email") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "email", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "position" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Stanowisko"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj stanowisko", isInvalid: !!errors?.position, isValid: !errors?.position, ...register("position") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "position", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "cellPhone" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Telefon kom\u00F3rkowy"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj numer kom\u00F3rki", isInvalid: !!errors?.cellPhone, isValid: !errors?.cellPhone, ...register("cellPhone") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "cellPhone", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "phone" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Telefon"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj numer telefonu", isInvalid: !!errors?.phone, isValid: !errors?.phone, ...register("phone") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "phone", errors: errors })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "systemEmail" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Email systemowy"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "email", placeholder: "Podaj gmail do logowania", isInvalid: !!errors?.systemEmail, isValid: !errors?.systemEmail, ...register("systemEmail") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "systemEmail", errors: errors })),
+        react_1.default.createElement(BussinesObjectSelectors_1.SystemRoleSelector, { name: "systemRoleId" })));
+}
+exports.SystemUserModalBody = SystemUserModalBody;
+
+
+/***/ }),
+
+/***/ "./src/Admin/SystemUsers/Modals/SystemUserModalButtons.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/Admin/SystemUsers/Modals/SystemUserModalButtons.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SystemUserAddNewModalButton = exports.SystemUserEditModalButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const SystemUserController_1 = __webpack_require__(/*! ../SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
+const SystemUserModalBody_1 = __webpack_require__(/*! ./SystemUserModalBody */ "./src/Admin/SystemUsers/Modals/SystemUserModalBody.tsx");
+const SystemUserValidationSchema_1 = __webpack_require__(/*! ./SystemUserValidationSchema */ "./src/Admin/SystemUsers/Modals/SystemUserValidationSchema.ts");
+function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
+            onEdit: onEdit,
+            ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
+            modalTitle: "Edycja danych osoby",
+            repository: SystemUserController_1.systemUserRepository,
+            initialData: initialData,
+            makeValidationSchema: SystemUserValidationSchema_1.makeSystemUserValidationSchema,
+        }, buttonProps: {
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.SystemUserEditModalButton = SystemUserEditModalButton;
+function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
+    return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
+            onAddNew: onAddNew,
+            ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
+            modalTitle: "Dodaj użytkownika systemu",
+            repository: SystemUserController_1.systemUserRepository,
+            makeValidationSchema: SystemUserValidationSchema_1.makeSystemUserValidationSchema,
+        }, buttonProps: {
+            buttonCaption: "Dodaj użytkownika",
+            buttonVariant: "outline-success",
+        } }));
+}
+exports.SystemUserAddNewModalButton = SystemUserAddNewModalButton;
+
+
+/***/ }),
+
+/***/ "./src/Admin/SystemUsers/Modals/SystemUserValidationSchema.ts":
+/*!********************************************************************!*\
+  !*** ./src/Admin/SystemUsers/Modals/SystemUserValidationSchema.ts ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.makeSystemUserValidationSchema = void 0;
+const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
+const commonFields = {
+    _entity: Yup.object().required("Wybierz podmiot"),
+    name: Yup.string().required("Podaj imię").max(50, "Imię może mieć maksymalnie 50 znaków"),
+    surname: Yup.string().required("Podaj nazwisko").max(50, "Nazwisko może mieć maksymalnie 50 znaków"),
+    position: Yup.string().required().max(200, "Stanowisko może mieć maksymalnie 200 znaków"),
+    email: Yup.string()
+        .default("")
+        .matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, "Nieprawidłowy format email")
+        .max(50, "Email może mieć maksymalnie 50 znaków"),
+    cellphone: Yup.string().max(25, "Numer komórki może mieć maksymalnie 25 znaków"),
+    phone: Yup.string().max(25, "Numer telefonu może mieć maksymalnie 25 znaków"),
+    comment: Yup.string().max(200, "Komentarz może mieć maksymalnie 200 znaków"),
+    systemEmail: Yup.string()
+        .default("")
+        .matches(/^[a-zA-Z0-9._-]+@gmail\.com$/, "Nieprawidłowy format email, dozwolone tylko gmail.com")
+        .max(50, "Email może mieć maksymalnie 50 znaków"),
+    systemRoleId: Yup.number().required("Wybierz rolę systemową"),
+};
+function makeSystemUserValidationSchema(isEditing) {
+    return Yup.object().shape({
+        ...commonFields,
+    });
+}
+exports.makeSystemUserValidationSchema = makeSystemUserValidationSchema;
+
+
+/***/ }),
+
+/***/ "./src/Admin/SystemUsers/SystemUserController.ts":
+/*!*******************************************************!*\
+  !*** ./src/Admin/SystemUsers/SystemUserController.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.entitiesRepository = exports.systemUserRepository = void 0;
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+exports.systemUserRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "persons",
+        addNewRoute: "systemUser",
+        editRoute: "user",
+        deleteRoute: "person",
+    },
+    name: "persons",
+});
+exports.entitiesRepository = new RepositoryReact_1.default({
+    actionRoutes: {
+        getRoute: "entities",
+        addNewRoute: "entity",
+        editRoute: "entity",
+        deleteRoute: "entity",
+    },
+    name: "entities_persons",
+});
+
+
+/***/ }),
+
+/***/ "./src/Admin/SystemUsers/SystemUserFilterBody.tsx":
+/*!********************************************************!*\
+  !*** ./src/Admin/SystemUsers/SystemUserFilterBody.tsx ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PersonsFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const SystemUserController_1 = __webpack_require__(/*! ./SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+function PersonsFilterBody() {
+    const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 6, xs: 12 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 4 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", repository: SystemUserController_1.entitiesRepository, multiple: true, showValidationInfo: false }))));
+}
+exports.PersonsFilterBody = PersonsFilterBody;
+
+
+/***/ }),
+
+/***/ "./src/Admin/SystemUsers/SystemUsersSearch.tsx":
+/*!*****************************************************!*\
+  !*** ./src/Admin/SystemUsers/SystemUsersSearch.tsx ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
+const SystemUserFilterBody_1 = __webpack_require__(/*! ./SystemUserFilterBody */ "./src/Admin/SystemUsers/SystemUserFilterBody.tsx");
+const SystemUserModalButtons_1 = __webpack_require__(/*! ./Modals/SystemUserModalButtons */ "./src/Admin/SystemUsers/Modals/SystemUserModalButtons.tsx");
+const SystemUserController_1 = __webpack_require__(/*! ./SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
+function PersonsSearch({ title }) {
+    (0, react_1.useEffect)(() => {
+        document.title = title;
+    }, [title]);
+    function renderEntityName(person) {
+        return react_1.default.createElement(react_1.default.Fragment, null, person._entity.name);
+    }
+    function renderSystemRoleId(person) {
+        return react_1.default.createElement(react_1.default.Fragment, null, person.systemRoleId);
+    }
+    return (react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: SystemUserFilterBody_1.PersonsFilterBody, tableStructure: [
+            {
+                header: "Imię i nazwisko",
+                renderTdBody: (person) => (react_1.default.createElement(react_1.default.Fragment, null,
+                    person.name,
+                    " ",
+                    person.surname)),
+                colMd: 2,
+            },
+            { header: "Telefon", objectAttributeToShow: "phone", colMd: 1 },
+            { header: "Email", objectAttributeToShow: "email", colMd: 2 },
+            { header: "Firma", renderTdBody: (person) => renderEntityName(person), colMd: 2 },
+            { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
+            { header: "Email systemowy", objectAttributeToShow: "systemEmail", colMd: 2 },
+            { header: "Rola systemowa", renderTdBody: (person) => renderSystemRoleId(person), colMd: 1 },
+        ], AddNewButtonComponents: [SystemUserModalButtons_1.SystemUserAddNewModalButton], EditButtonComponent: SystemUserModalButtons_1.SystemUserEditModalButton, isDeletable: true, repository: SystemUserController_1.systemUserRepository, selectedObjectRoute: "/user/" }));
+}
+exports["default"] = PersonsSearch;
+
+
+/***/ }),
+
 /***/ "./src/Contracts/ContractsList/ContractContext.tsx":
 /*!*********************************************************!*\
   !*** ./src/Contracts/ContractsList/ContractContext.tsx ***!
@@ -104553,7 +104902,9 @@ function MainMenu() {
                             react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { onClick: async () => {
                                     await MainControllerReact_1.default.logout();
                                     window.location.reload();
-                                } }, "Wyloguj si\u0119"))))))));
+                                } }, "Wyloguj si\u0119"),
+                            ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
 exports["default"] = MainMenu;
 
@@ -104744,6 +105095,8 @@ const OffersMainView_1 = __importDefault(__webpack_require__(/*! ../../Offers/Of
 const RolesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Roles/RolesSearch */ "./src/Contracts/Roles/RolesSearch.tsx"));
 const MilestoneDatesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Dates/MilestoneDatesSearch */ "./src/Contracts/Dates/MilestoneDatesSearch.tsx"));
 const Dashboard_1 = __importDefault(__webpack_require__(/*! ./Content/Dashboard/Dashboard */ "./src/React/MainWindow/Content/Dashboard/Dashboard.tsx"));
+const SystemUsersSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/SystemUsers/SystemUsersSearch */ "./src/Admin/SystemUsers/SystemUsersSearch.tsx"));
+const ProtectedRoute_1 = __importDefault(__webpack_require__(/*! ../ProtectedRoute */ "./src/React/ProtectedRoute.tsx"));
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -104803,26 +105156,28 @@ function AppRoutes() {
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/roles", element: react_1.default.createElement(RolesSearch_1.default, { title: "Role kontrakowe" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/dates", element: react_1.default.createElement(MilestoneDatesSearch_1.default, { title: "Terminy kamieni milowych" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/applicationCalls", element: react_1.default.createElement(ApplicationCallsSearch_1.default, { title: "Nabory" }) }),
-                react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) })))));
+                react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"] }) },
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/roles", element: react_1.default.createElement(RolesSearch_1.default, { title: "Role kontrakowe" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/dates", element: react_1.default.createElement(MilestoneDatesSearch_1.default, { title: "Terminy kamieni milowych" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts/znwu", element: react_1.default.createElement(SecuritiesSearch_1.default, { title: "ZNWU ENVI" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/contract/:id", element: react_1.default.createElement(ContractMainViewTabs_1.ContractMainViewTabs, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/invoices", element: react_1.default.createElement(InvoicesSearch_1.default, { title: "Rejestr faktur" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/invoice/:id", element: react_1.default.createElement(InvoiceDetails_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/letters", element: react_1.default.createElement(LettersSearch_2.default, { title: "Oferty - pisma" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes", element: react_1.default.createElement(FinancialAidProgrammesSearch_1.default, { title: "Programy wsparcia" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/focusAreas", element: react_1.default.createElement(FocusAreasSearch_1.default, { title: "Dzia\u0142ania" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/applicationCalls", element: react_1.default.createElement(ApplicationCallsSearch_1.default, { title: "Nabory" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/systemUsers", element: react_1.default.createElement(SystemUsersSearch_1.default, { title: "Dodawanie u\u017Cytkownik\u00F3w" }) }))))));
 }
 async function renderApp() {
     const root = document.getElementById("root");
@@ -104838,6 +105193,38 @@ async function renderApp() {
 exports.renderApp = renderApp;
 console.log("production");
 renderApp();
+
+
+/***/ }),
+
+/***/ "./src/React/ProtectedRoute.tsx":
+/*!**************************************!*\
+  !*** ./src/React/ProtectedRoute.tsx ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const ProtectedRoute = ({ allowedRoles }) => {
+    const currentUser = MainSetupReact_1.default.currentUser;
+    if (!currentUser) {
+        return react_1.default.createElement(react_router_dom_1.Navigate, { to: "/", replace: true });
+    }
+    const isAuthorized = allowedRoles.includes(currentUser.systemRoleName);
+    if (!isAuthorized) {
+        console.warn(`Access denied for user ${currentUser.userName}. Required roles: ${allowedRoles.join(', ')}`);
+        return react_1.default.createElement(react_router_dom_1.Navigate, { to: "/", replace: true });
+    }
+    return react_1.default.createElement(react_router_dom_1.Outlet, null);
+};
+exports["default"] = ProtectedRoute;
 
 
 /***/ }),
@@ -106858,7 +107245,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -107353,6 +107740,17 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
             } })) }));
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
+function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true, }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const systemRolesOptions = Object.values(MainSetupReact_1.default.SystemRoles);
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rola w systemie"),
+        react_1.default.createElement(react_bootstrap_1.Form.Select, { isInvalid: !!errors?.[name], isValid: showValidationInfo ? !errors?.[name] : undefined, ...register(name) },
+            react_1.default.createElement("option", { value: "" }, "-- Wybierz rol\u0119 --"),
+            systemRolesOptions.map(role => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
+        react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
+}
+exports.SystemRoleSelector = SystemRoleSelector;
 
 
 /***/ }),

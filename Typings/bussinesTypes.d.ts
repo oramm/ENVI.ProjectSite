@@ -285,6 +285,21 @@ export interface PersonData extends RepositoryDataItem {
     _nameSurnameEmail: string;
 }
 
+export interface SystemUserData extends RepositoryDataItem {
+    name: string;
+    surname: string;
+    email: string;
+    cellPhone: string;
+    phone: string;
+    comment: string;
+    _alias: string;
+    position: string;
+    _entity: EntityData;
+    _nameSurnameEmail: string;
+    systemRoleId: string;
+    systemEmail: string;
+}
+
 export interface DocumentTemplate extends RepositoryDataItem {
     name: string;
     description: string;

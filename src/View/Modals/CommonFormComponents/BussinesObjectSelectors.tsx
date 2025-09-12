@@ -31,6 +31,7 @@ import {
     OurOffer,
     PersonData,
     ProjectData,
+    SystemRole,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
@@ -1211,5 +1212,38 @@ export function CaseSelectMenuElement({
                 />
             )}
         />
+    );
+}
+
+type SystemRoleSelectorProps = {
+    name?: string;
+    showValidationInfo?: boolean;
+};
+
+export function SystemRoleSelector({
+    name = "systemRoleId",
+    showValidationInfo = true,
+}: SystemRoleSelectorProps) {
+    const { register, formState: { errors } } = useFormContext();
+
+    const systemRolesOptions = Object.values(MainSetup.SystemRoles);
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>Rola w systemie</Form.Label>
+            <Form.Select
+                isInvalid={!!errors?.[name]}
+                isValid={showValidationInfo ? !errors?.[name] : undefined}
+                {...register(name)}
+            >
+                <option value="">-- Wybierz rolę --</option>
+                {systemRolesOptions.map(role => (
+                    <option key={role.id} value={role.id}>
+                        {role.systemName} 
+                    </option>
+                ))}
+            </Form.Select>
+            <ErrorMessage name={name} errors={errors} />
+        </Form.Group>
     );
 }

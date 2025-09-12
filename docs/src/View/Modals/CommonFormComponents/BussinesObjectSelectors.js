@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -521,3 +521,14 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
             } })) }));
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
+function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true, }) {
+    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+    const systemRolesOptions = Object.values(MainSetupReact_1.default.SystemRoles);
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rola w systemie"),
+        react_1.default.createElement(react_bootstrap_1.Form.Select, { isInvalid: !!errors?.[name], isValid: showValidationInfo ? !errors?.[name] : undefined, ...register(name) },
+            react_1.default.createElement("option", { value: "" }, "-- Wybierz rol\u0119 --"),
+            systemRolesOptions.map(role => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
+        react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
+}
+exports.SystemRoleSelector = SystemRoleSelector;

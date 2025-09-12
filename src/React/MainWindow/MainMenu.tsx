@@ -150,6 +150,15 @@ export default function MainMenu() {
                                 >
                                     Wyloguj się
                                 </NavDropdown.Item>
+                                {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
+                                MainSetup.currentUser.systemRoleName
+                                ) && (
+                                    <>
+                                        <NavDropdown.Item as={Link} to="/admin/systemUsers">
+                                            Dodaj użytkownika
+                                        </NavDropdown.Item>
+                                    </>
+                                )}
                             </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>

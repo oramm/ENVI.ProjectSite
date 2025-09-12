@@ -33,6 +33,8 @@ import RolesSearch from "../../Contracts/Roles/RolesSearch";
 import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
 import { set } from "react-hook-form";
 import Dashboard from "./Content/Dashboard/Dashboard";
+import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
+import ProtectedRoute from "../ProtectedRoute";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -109,35 +111,42 @@ function AppRoutes() {
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
-                    <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
-                    <Route
-                        path="/contracts/dates"
-                        element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />}
-                    />
-                    <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
-                    <Route path="/contract/:id" element={<ContractMainViewTabs />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                    <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
-                    <Route path="/invoice/:id" element={<InvoiceDetails />} />
-                    <Route path="/tasksGlobal" element={<TasksGlobal />} />
-                    <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
-                    <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
-                    <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
-                    <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
-                    <Route path="/offers" element={<OffersMainView title="Oferty" />} />
-                    <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
-                    <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
-                    <Route
-                        path="/financialAidProgrammes"
-                        element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
-                    />
-                    <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
-                    <Route
-                        path="/financialAidProgrammes/applicationCalls"
-                        element={<ApplicationCallsSearch title="Nabory" />}
-                    />
-                    <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
+                    <Route 
+                        element={
+                            <ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />
+                        }
+                    >
+                        <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
+                        <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
+                        <Route
+                            path="/contracts/dates"
+                            element={<MilestoneDatesSearch title={"Terminy kamieni milowych"} />}
+                        />
+                        <Route path="/contracts/znwu" element={<SecuritiesSearch title={"ZNWU ENVI"} />} />
+                        <Route path="/contract/:id" element={<ContractMainViewTabs />} />
+                        <Route path="/invoices" element={<InvoicesSearch title={"Rejestr faktur"} />} />
+                        <Route path="/invoice/:id" element={<InvoiceDetails />} />
+                        <Route path="/tasksGlobal" element={<TasksGlobal />} />
+                        <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
+                        <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
+                        <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                        <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
+                        <Route path="/offers" element={<OffersMainView title="Oferty" />} />
+                        <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
+                        <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
+                        <Route
+                            path="/financialAidProgrammes"
+                            element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
+                        />
+                        <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
+                        <Route
+                            path="/financialAidProgrammes/applicationCalls"
+                            element={<ApplicationCallsSearch title="Nabory" />}
+                        />
+                        <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
+                        <Route path="/admin/systemUsers" element={<SystemUsersSearch title="Dodawanie użytkowników" />} />
+                    </Route>
                     {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
                 </Routes>
             </div>
