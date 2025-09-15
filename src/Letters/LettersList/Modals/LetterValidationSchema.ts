@@ -28,6 +28,22 @@ const commonFields = {
                 return value >= this.parent.creationDate;
             }
         ),
+    responseDueDate: Yup.date()
+        .nullable()
+        .transform((value, originalValue) => {
+            return originalValue === "" ? null : value;
+        })
+        .test(
+            'responseDueDateValidation',
+            'Termin odpowiedzi musi być późniejszy lub równy dacie nadania',
+            function (value: Date | undefined | null) {
+                const { registrationDate } = this.parent;
+                if (!value || !registrationDate) {
+                    return true;
+                }
+                return value >= registrationDate;
+            }
+        ),
     _entitiesMain: Yup.array().required("Wybierz podmiot"),
     _editor: Yup.object().required("Podaj kto rejestruje"),
 };
@@ -43,5 +59,6 @@ export function makeOtherLetterValidationSchema(isEditing: boolean) {
     return Yup.object().shape({
         ...commonFields,
         number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
+        resopnseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
     });
 }

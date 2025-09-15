@@ -40,6 +40,7 @@ const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
+    const currentStatus = watch("status");
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
@@ -55,6 +56,10 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null),
+        currentStatus === MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_SENT && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "relatedLetterNumber" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowied\u017A IK"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", isInvalid: !!errors?.responseIKNumber, isValid: !errors?.responseIKNumber, ...register("responseIKNumber") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "responseIKNumber" }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));

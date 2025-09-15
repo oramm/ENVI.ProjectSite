@@ -219,6 +219,9 @@ export interface Letter extends GenericDocument {
     _cases: Case[];
     status: string;
     _lastEvent?: LetterEvent | null;
+    relatedLetterNumber?: string;
+    responseDueDate?: string | null;
+    responseIKNumber?: string;
 }
 
 export interface OurLetter extends Letter {

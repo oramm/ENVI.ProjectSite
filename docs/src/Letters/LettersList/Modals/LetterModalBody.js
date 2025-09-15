@@ -40,6 +40,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     const _contract = watch("_contract");
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
+    const responseDueDate = watch("responseDueDate");
     function getContractFromCases(_cases) {
         if (!_cases || _cases.length === 0)
             return undefined;
@@ -54,6 +55,8 @@ function LetterModalBody({ isEditing, initialData, }) {
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
+            relatedLetterNumber: initialData?.relatedLetterNumber || "",
+            responseDueDate: initialData?.responseDueDate || "",
         };
         if (!isEditing)
             resetData._project = _project;
@@ -66,8 +69,8 @@ function LetterModalBody({ isEditing, initialData, }) {
         setValue("_cases", undefined, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
     (0, react_1.useEffect)(() => {
-        trigger(["creationDate", "registrationDate"]);
-    }, [trigger, watch, creationDate, registrationDate]);
+        trigger(["creationDate", "registrationDate", "responseDueDate"]);
+    }, [trigger, watch, creationDate, registrationDate, responseDueDate]);
     (0, react_1.useEffect)(() => {
         setValue("registrationDate", creationDate);
     }, [setValue, creationDate]);
@@ -95,7 +98,16 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") })),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 1, placeholder: "Podaj numer powi\u0105zanego pisma", isValid: !errors?.relatedLetterNumber, isInvalid: !!errors?.relatedLetterNumber, ...register("relatedLetterNumber") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "relatedLetterNumber", errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "responseDueDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowiedzie\u0107 do"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "responseDueDate", errors: errors })))));
 }
 exports.LetterModalBody = LetterModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem pisma

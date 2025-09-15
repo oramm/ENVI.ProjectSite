@@ -18,6 +18,7 @@ import {
 } from "../../../../Typings/bussinesTypes";
 import { casesRepository, contractsRepository, projectsRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { Collapse } from "bootstrap";
 
 export function LetterModalBody({
     isEditing,
@@ -36,6 +37,7 @@ export function LetterModalBody({
     const _contract = watch("_contract");
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
+    const responseDueDate = watch("responseDueDate");
 
     function getContractFromCases(_cases: Case[] | undefined) {
         if (!_cases || _cases.length === 0) return undefined;
@@ -51,6 +53,8 @@ export function LetterModalBody({
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
+            relatedLetterNumber: initialData?.relatedLetterNumber || "",
+            responseDueDate: initialData?.responseDueDate || "",
         };
         if (!isEditing) resetData._project = _project;
         reset(resetData);
@@ -64,8 +68,8 @@ export function LetterModalBody({
     }, [_contract, _contract?.id, setValue]);
 
     useEffect(() => {
-        trigger(["creationDate", "registrationDate"]);
-    }, [trigger, watch, creationDate, registrationDate]);
+        trigger(["creationDate", "registrationDate", "responseDueDate"]);
+    }, [trigger, watch, creationDate, registrationDate, responseDueDate]);
 
     useEffect(() => {
         setValue("registrationDate", creationDate);
@@ -142,6 +146,30 @@ export function LetterModalBody({
                 <Form.Label>Plik</Form.Label>
                 <FileInput {...register("file")} />
             </Form.Group>
+            <Row>
+                <Form.Group as={Col} controlId="relatedLetterNumber">
+                    <Form.Label>Numer powiązanego pisma</Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={1}
+                        placeholder="Podaj numer powiązanego pisma"
+                        isValid={!errors?.relatedLetterNumber}
+                        isInvalid={!!errors?.relatedLetterNumber}
+                        {...register("relatedLetterNumber")}
+                    />
+                    <ErrorMessage name="relatedLetterNumber" errors={errors} />
+                </Form.Group>
+                    <Form.Group as={Col} controlId="responseDueDate">
+                    <Form.Label>Odpowiedzieć do</Form.Label>
+                    <Form.Control
+                        type="date"
+                        isValid={!errors.responseDueDate}
+                        isInvalid={!!errors.responseDueDate}
+                        {...register("responseDueDate")}
+                    />
+                    <ErrorMessage name="responseDueDate" errors={errors} />
+                </Form.Group>
+            </Row>
         </>
     );
 }

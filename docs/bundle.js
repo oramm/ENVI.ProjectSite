@@ -100262,7 +100262,19 @@ function LettersSearch({ title }) {
                 renderStatus(letter))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
-                letter.description),
+                letter.description,
+                letter.relatedLetterNumber && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "W odpowiedzi na pismo nr: ",
+                    letter.relatedLetterNumber)),
+                letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "Wymagana odpowiedzi do dnia: ",
+                    ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
+                letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "Odpowied\u017A IK: ",
+                    letter.responseIKNumber))),
             letter.isOur && react_1.default.createElement(ExportToPDFButtonWithError, { ourLetterContract: letter, isActive: isActive }),
             renderLastEvent(letter)));
     }
@@ -100270,7 +100282,7 @@ function LettersSearch({ title }) {
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colLg: 1 },
             { header: "Utworzono", objectAttributeToShow: "creationDate", colLg: 1 },
             { header: "Wysłano", objectAttributeToShow: "registrationDate", colLg: 1 },
-            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 5 },
+            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
@@ -100328,6 +100340,7 @@ const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
     const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
+    const currentStatus = watch("status");
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
@@ -100343,6 +100356,10 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null),
+        currentStatus === MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_SENT && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "relatedLetterNumber" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowied\u017A IK"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", isInvalid: !!errors?.responseIKNumber, isValid: !errors?.responseIKNumber, ...register("responseIKNumber") }),
+            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "responseIKNumber" }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));
@@ -100452,6 +100469,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     const _contract = watch("_contract");
     const creationDate = watch("creationDate");
     const registrationDate = watch("registrationDate");
+    const responseDueDate = watch("responseDueDate");
     function getContractFromCases(_cases) {
         if (!_cases || _cases.length === 0)
             return undefined;
@@ -100466,6 +100484,8 @@ function LetterModalBody({ isEditing, initialData, }) {
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
             _editor: initialData?._editor,
+            relatedLetterNumber: initialData?.relatedLetterNumber || "",
+            responseDueDate: initialData?.responseDueDate || "",
         };
         if (!isEditing)
             resetData._project = _project;
@@ -100478,8 +100498,8 @@ function LetterModalBody({ isEditing, initialData, }) {
         setValue("_cases", undefined, { shouldValidate: true });
     }, [_contract, _contract?.id, setValue]);
     (0, react_1.useEffect)(() => {
-        trigger(["creationDate", "registrationDate"]);
-    }, [trigger, watch, creationDate, registrationDate]);
+        trigger(["creationDate", "registrationDate", "responseDueDate"]);
+    }, [trigger, watch, creationDate, registrationDate, responseDueDate]);
     (0, react_1.useEffect)(() => {
         setValue("registrationDate", creationDate);
     }, [setValue, creationDate]);
@@ -100507,7 +100527,16 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") })),
+        react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 1, placeholder: "Podaj numer powi\u0105zanego pisma", isValid: !errors?.relatedLetterNumber, isInvalid: !!errors?.relatedLetterNumber, ...register("relatedLetterNumber") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "relatedLetterNumber", errors: errors })),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "responseDueDate" },
+                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowiedzie\u0107 do"),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate") }),
+                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "responseDueDate", errors: errors })))));
 }
 exports.LetterModalBody = LetterModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
@@ -100715,6 +100744,18 @@ const commonFields = {
             return true;
         return value >= this.parent.creationDate;
     }),
+    responseDueDate: Yup.date()
+        .nullable()
+        .transform((value, originalValue) => {
+        return originalValue === "" ? null : value;
+    })
+        .test('responseDueDateValidation', 'Termin odpowiedzi musi być późniejszy lub równy dacie nadania', function (value) {
+        const { registrationDate } = this.parent;
+        if (!value || !registrationDate) {
+            return true;
+        }
+        return value >= registrationDate;
+    }),
     _entitiesMain: Yup.array().required("Wybierz podmiot"),
     _editor: Yup.object().required("Podaj kto rejestruje"),
 };
@@ -100729,6 +100770,7 @@ function makeOtherLetterValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
         number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
+        resopnseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
     });
 }
 exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;

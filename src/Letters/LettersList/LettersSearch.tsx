@@ -130,6 +130,21 @@ export default function LettersSearch({ title }: { title: string }) {
                 )}
                 <div className="mt-2" style={{ whiteSpace: "pre-line" }}>
                     Dotyczy: {letter.description}
+                    {letter.relatedLetterNumber && (
+                        <>
+                            <br/>W odpowiedzi na pismo nr: {letter.relatedLetterNumber}
+                        </>
+                    )}
+                    {letter.responseDueDate && (
+                        <>
+                            <br/>Wymagana odpowiedzi do dnia: {ToolsDate.dateDMYtoYMD(ToolsDate.dateISOToDMY(letter.responseDueDate))}
+                        </>
+                    )} 
+                    {letter.responseDueDate && (
+                        <>
+                            <br/>Odpowiedź IK: {letter.responseIKNumber}
+                        </>
+                    )}                
                 </div>
                 {letter.isOur && <ExportToPDFButtonWithError ourLetterContract={letter} isActive={isActive} />}
                 {renderLastEvent(letter)}
@@ -146,7 +161,7 @@ export default function LettersSearch({ title }: { title: string }) {
                 { renderThBody: () => <i className="fa fa-inbox fa-lg"></i>, renderTdBody: renderIconTdBody, colLg: 1 },
                 { header: "Utworzono", objectAttributeToShow: "creationDate", colLg: 1 },
                 { header: "Wysłano", objectAttributeToShow: "registrationDate", colLg: 1 },
-                { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 5 },
+                { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
                 { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
             ]}
             AddNewButtonComponents={[OurLetterAddNewModalButton, IncomingLetterAddNewModalButton]}

@@ -117,7 +117,19 @@ function LettersSearch({ title }) {
                 renderStatus(letter))),
             react_1.default.createElement("div", { className: "mt-2", style: { whiteSpace: "pre-line" } },
                 "Dotyczy: ",
-                letter.description),
+                letter.description,
+                letter.relatedLetterNumber && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "W odpowiedzi na pismo nr: ",
+                    letter.relatedLetterNumber)),
+                letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "Wymagana odpowiedzi do dnia: ",
+                    ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
+                letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("br", null),
+                    "Odpowied\u017A IK: ",
+                    letter.responseIKNumber))),
             letter.isOur && react_1.default.createElement(ExportToPDFButtonWithError, { ourLetterContract: letter, isActive: isActive }),
             renderLastEvent(letter)));
     }
@@ -125,7 +137,7 @@ function LettersSearch({ title }) {
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colLg: 1 },
             { header: "Utworzono", objectAttributeToShow: "creationDate", colLg: 1 },
             { header: "Wysłano", objectAttributeToShow: "registrationDate", colLg: 1 },
-            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 5 },
+            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }

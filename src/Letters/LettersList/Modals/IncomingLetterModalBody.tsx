@@ -21,6 +21,8 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
         control,
     } = useFormContext();
 
+    const currentStatus = watch("status");
+
     useEffect(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldDirty: false, shouldValidate: true });
@@ -45,6 +47,18 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
             </Form.Group>
             <LetterModalBody {...props} />
             <IncomingLetterStatusSelector />
+            {currentStatus === MainSetup.IncomingLetterStatus.RESPONSE_SENT && (
+                <Form.Group controlId="relatedLetterNumber">
+                    <Form.Label>Odpowiedź IK</Form.Label>
+                    <Form.Control
+                        type="text"
+                        isInvalid={!!errors?.responseIKNumber}
+                        isValid={!errors?.responseIKNumber}
+                        {...register("responseIKNumber")}
+                    />
+                    <ErrorMessage errors={errors} name={"responseIKNumber"} />
+                </Form.Group>
+            )}
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
                 <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
