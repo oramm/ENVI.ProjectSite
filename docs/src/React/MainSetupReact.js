@@ -166,7 +166,7 @@ MainSetup.InvoicesFilterInitState = {
     ISSUE_DATE_TO: ToolsDate_1.default.addDays(new Date(), +10).toISOString().slice(0, 10),
 };
 MainSetup.LettersFilterInitState = {
-    CREATION_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -365).toISOString().slice(0, 10),
+    CREATION_DATE_FROM: ToolsDate_1.default.addDays(new Date(), -180).toISOString().slice(0, 10),
     CREATION_DATE_TO: ToolsDate_1.default.addDays(new Date(), +5).toISOString().slice(0, 10),
 };
 MainSetup.ContractsFilterInitState = {
