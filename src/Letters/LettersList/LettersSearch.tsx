@@ -140,7 +140,7 @@ export default function LettersSearch({ title }: { title: string }) {
                             <br/>Wymagana odpowiedzi do dnia: {ToolsDate.dateDMYtoYMD(ToolsDate.dateISOToDMY(letter.responseDueDate))}
                         </>
                     )} 
-                    {letter.responseDueDate && (
+                    {letter.responseIKNumber && (
                         <>
                             <br/>Odpowiedź IK: {letter.responseIKNumber}
                         </>

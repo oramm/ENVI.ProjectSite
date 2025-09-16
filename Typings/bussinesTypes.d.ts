@@ -220,7 +220,7 @@ export interface Letter extends GenericDocument {
     status: string;
     _lastEvent?: LetterEvent | null;
     relatedLetterNumber?: string;
-    responseDueDate?: string | null;
+    responseDueDate?: string;
     responseIKNumber?: string;
 }
 

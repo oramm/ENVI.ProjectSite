@@ -100271,7 +100271,7 @@ function LettersSearch({ title }) {
                     react_1.default.createElement("br", null),
                     "Wymagana odpowiedzi do dnia: ",
                     ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
-                letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
+                letter.responseIKNumber && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
                     "Odpowied\u017A IK: ",
                     letter.responseIKNumber))),
