@@ -100026,6 +100026,7 @@ const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 function LettersFilterBody() {
     const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
@@ -100048,6 +100049,8 @@ function LettersFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Data utworzenia", fromName: "creationDateFrom", toName: "creationDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_FROM, defaultToValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO }),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4 },
+                react_1.default.createElement(StatusSelectors_1.LetterStatusMultipleSelector, null)),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4, lg: 3, xl: 2 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -104354,7 +104357,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
-const News_1 = __importDefault(__webpack_require__(/*! ../News */ "./src/React/MainWindow/Content/News.tsx"));
+//import News from "../News";
 const OffersCard_1 = __importDefault(__webpack_require__(/*! ./OffersCard */ "./src/React/MainWindow/Content/Dashboard/OffersCard.tsx"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const InvoicesCard_1 = __importDefault(__webpack_require__(/*! ./InvoicesCard */ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx"));
@@ -104369,8 +104372,7 @@ function Dashboard() {
         react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
             react_1.default.createElement(MilestonesCard_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
-            react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }),
-            react_1.default.createElement(News_1.default, { className: "mb-3 bg-white" }))));
+            react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }))));
 }
 exports["default"] = Dashboard;
 
@@ -104800,42 +104802,6 @@ function OffersCard({ className }) {
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }
 exports["default"] = OffersCard;
-
-
-/***/ }),
-
-/***/ "./src/React/MainWindow/Content/News.tsx":
-/*!***********************************************!*\
-  !*** ./src/React/MainWindow/Content/News.tsx ***!
-  \***********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-// News.tsx
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const Card_1 = __importDefault(__webpack_require__(/*! react-bootstrap/Card */ "./node_modules/react-bootstrap/esm/Card.js"));
-const ListGroup_1 = __importDefault(__webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js"));
-function News({ title = "Nowości w PS", className, style, items = [
-    "[2025-05-26] Karta Nabory: dynamiczne statusy i ikony zgodne z ustawieniami systemu, dane pobierane automatycznie z bazy naborów.",
-    "[2025-05-24] Nowe karty na głównym panelu: Oferty, Faktury, Nabory – szybki przegląd i łatwa nawigacja.",
-    "[2025-05-24] Wszystkie karty: jednolity wygląd, klikalne nagłówki sekcji, intuicyjne menu akcji po prawej stronie.",
-    "[2025-05-24] Statusy i ikonki w kartach zgodne z konfiguracją systemu – łatwo rozpoznasz każdy typ sprawy.",
-    "[2025-05-24] Ulepszone ładowanie danych i obsługa pustych list – przejrzyste komunikaty i widoczny wskaźnik ładowania.",
-], }) {
-    return (react_1.default.createElement(Card_1.default, { className: className, style: style },
-        react_1.default.createElement(Card_1.default.Body, null,
-            react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },
-                react_1.default.createElement(Card_1.default.Title, { className: "mb-0", style: { fontWeight: 600, fontSize: 18 } }, title)),
-            react_1.default.createElement(ListGroup_1.default, { variant: "flush", className: "mt-2" }, items.length === 0 ? (react_1.default.createElement(ListGroup_1.default.Item, { className: "text-secondary" }, "Brak nowo\u015Bci do wy\u015Bwietlenia.")) : (items.map((item, index) => (react_1.default.createElement(ListGroup_1.default.Item, { key: index, className: "border-0 ps-0 pe-0 py-2 d-flex align-items-center" },
-                react_1.default.createElement("span", { style: { fontSize: 18, marginRight: 8 } }, "\uD83D\uDCF0"),
-                react_1.default.createElement("span", { className: "text-secondary small" }, item)))))))));
-}
-exports["default"] = News;
 
 
 /***/ }),
@@ -107528,6 +107494,12 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const label = "Typ Kontraktu";
     const repository = MainSetupReact_1.default.contractTypesRepository;
+    //tymczasowe, ale działa
+    if (!repository) {
+        return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Od\u015Bwie\u017C aby za\u0142adowa\u0107 typy", disabled: true })));
+    }
     function makeoptions(repositoryDataItems) {
         const filteredItems = repositoryDataItems.filter((item) => {
             if (typesToInclude === "all")
@@ -108193,7 +108165,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.LetterStatusMultipleSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
@@ -108309,6 +108281,17 @@ function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, na
     });
 }
 exports.InvoiceStatusSelector = InvoiceStatusSelector;
+function LetterStatusMultipleSelector({ showValidationInfo = true, multiple = true, name, label, as, }) {
+    return statusSelector({
+        statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
+        showValidationInfo,
+        name: "statuses",
+        label: "Statusy",
+        multiple,
+        as,
+    });
+}
+exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
 function ApplicationCallStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),

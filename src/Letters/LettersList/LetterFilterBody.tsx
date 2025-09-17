@@ -9,6 +9,7 @@ import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
 import { casesRepository, contractsRepository, projectsRepository } from "./LettersController";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
+import {LetterStatusMultipleSelector} from "../../View/Modals/CommonFormComponents/StatusSelectors";
 
 export function LettersFilterBody() {
     const { register, watch, setValue } = useFormContext();
@@ -47,6 +48,9 @@ export function LettersFilterBody() {
                     defaultFromValue={MainSetup.LettersFilterInitState.CREATION_DATE_FROM}
                     defaultToValue={MainSetup.LettersFilterInitState.CREATION_DATE_TO}
                 />
+                <Form.Group as={Col} xs={12} sm={6} md={4}>
+                    <LetterStatusMultipleSelector/>
+                </Form.Group>
                 <Form.Group as={Col} xs={12} sm={6} md={4} lg={3} xl={2}>
                     <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
                 </Form.Group>

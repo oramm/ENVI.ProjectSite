@@ -267,6 +267,12 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const label = "Typ Kontraktu";
     const repository = MainSetupReact_1.default.contractTypesRepository;
+    //tymczasowe, ale działa
+    if (!repository) {
+        return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: label },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Od\u015Bwie\u017C aby za\u0142adowa\u0107 typy", disabled: true })));
+    }
     function makeoptions(repositoryDataItems) {
         const filteredItems = repositoryDataItems.filter((item) => {
             if (typesToInclude === "all")

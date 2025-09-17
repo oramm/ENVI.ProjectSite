@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import MyData from "./MyData";
-import News from "../News";
+//import News from "../News";
 import OffersCard from "./OffersCard";
 import MainSetup from "../../../MainSetupReact";
 import InvoicesCard from "./InvoicesCard";
@@ -25,7 +25,7 @@ export default function Dashboard() {
             </Col>
             <Col md={3} className="mb-3">
                 <MyData className="mb-3 bg-white" />
-                <News className="mb-3 bg-white" />
+                {/* <News className="mb-3 bg-white" /> */}
             </Col>
         </Row>
     );

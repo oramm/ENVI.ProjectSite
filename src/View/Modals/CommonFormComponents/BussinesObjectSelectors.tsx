@@ -31,7 +31,6 @@ import {
     OurOffer,
     PersonData,
     ProjectData,
-    SystemRole,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
@@ -671,6 +670,16 @@ export function ContractTypeSelectFormElement({
     } = useFormContext();
     const label = "Typ Kontraktu";
     const repository = MainSetup.contractTypesRepository;
+ 
+    //tymczasowe, ale działa
+    if (!repository) {
+        return (
+            <Form.Group controlId={label}>
+                <Form.Label>{label}</Form.Label>
+                <Form.Control placeholder="Odśwież aby załadować typy" disabled />     
+            </Form.Group>
+        );
+    }
 
     function makeoptions(repositoryDataItems: ContractType[]) {
         const filteredItems = repositoryDataItems.filter((item) => {

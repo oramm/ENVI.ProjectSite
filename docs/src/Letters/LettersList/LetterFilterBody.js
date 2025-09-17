@@ -34,6 +34,7 @@ const FormContext_1 = require("../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const LettersController_1 = require("./LettersController");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
+const StatusSelectors_1 = require("../../View/Modals/CommonFormComponents/StatusSelectors");
 function LettersFilterBody() {
     const { register, watch, setValue } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
@@ -56,6 +57,8 @@ function LettersFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Data utworzenia", fromName: "creationDateFrom", toName: "creationDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_FROM, defaultToValue: MainSetupReact_1.default.LettersFilterInitState.CREATION_DATE_TO }),
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4 },
+                react_1.default.createElement(StatusSelectors_1.LetterStatusMultipleSelector, null)),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4, lg: 3, xl: 2 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const MyData_1 = __importDefault(require("./MyData"));
-const News_1 = __importDefault(require("../News"));
+//import News from "../News";
 const OffersCard_1 = __importDefault(require("./OffersCard"));
 const MainSetupReact_1 = __importDefault(require("../../../MainSetupReact"));
 const InvoicesCard_1 = __importDefault(require("./InvoicesCard"));
@@ -21,7 +21,6 @@ function Dashboard() {
         react_1.default.createElement(react_bootstrap_1.Col, { md: 6, className: "mb-3" },
             react_1.default.createElement(MilestonesCard_1.default, null)),
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
-            react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }),
-            react_1.default.createElement(News_1.default, { className: "mb-3 bg-white" }))));
+            react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }))));
 }
 exports.default = Dashboard;

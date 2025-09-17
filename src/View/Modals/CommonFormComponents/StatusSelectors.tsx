@@ -179,6 +179,23 @@ export function InvoiceStatusSelector({
     });
 }
 
+export function LetterStatusMultipleSelector({
+    showValidationInfo = true,
+    multiple = true,
+    name,
+    label,
+    as,
+}: SpecificTextOptionProps) {
+    return statusSelector({
+        statuses: [...Object.values(MainSetup.OurLetterStatus), ...Object.values(MainSetup.IncomingLetterStatus)],
+        showValidationInfo,
+        name: "statuses",
+        label: "Statusy",
+        multiple,
+        as,
+    });
+}
+
 export function ApplicationCallStatusSelector({
     showValidationInfo = true,
     name,

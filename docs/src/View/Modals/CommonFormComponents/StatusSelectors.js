@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.LetterStatusMultipleSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -119,6 +119,17 @@ function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, na
     });
 }
 exports.InvoiceStatusSelector = InvoiceStatusSelector;
+function LetterStatusMultipleSelector({ showValidationInfo = true, multiple = true, name, label, as, }) {
+    return statusSelector({
+        statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
+        showValidationInfo,
+        name: "statuses",
+        label: "Statusy",
+        multiple,
+        as,
+    });
+}
+exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
 function ApplicationCallStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
