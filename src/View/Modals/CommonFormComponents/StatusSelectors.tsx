@@ -180,7 +180,7 @@ export function InvoiceStatusSelector({
 }
 
 export function LetterStatusMultipleSelector({
-    showValidationInfo = true,
+    showValidationInfo = false,
     multiple = true,
     name,
     label,

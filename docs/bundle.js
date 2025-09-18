@@ -108281,7 +108281,7 @@ function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, na
     });
 }
 exports.InvoiceStatusSelector = InvoiceStatusSelector;
-function LetterStatusMultipleSelector({ showValidationInfo = true, multiple = true, name, label, as, }) {
+function LetterStatusMultipleSelector({ showValidationInfo = false, multiple = true, name, label, as, }) {
     return statusSelector({
         statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
         showValidationInfo,
