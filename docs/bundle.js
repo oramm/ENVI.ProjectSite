@@ -32077,6 +32077,60 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.icon {
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/React/MainWindow/Content/Dashboard/GoodTipToast.css":
+/*!*******************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/React/MainWindow/Content/Dashboard/GoodTipToast.css ***!
+  \*******************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `.good-tip-toast-wrapper {
+    position: relative;
+    transition: transform 400ms ease-in-out, opacity 400ms ease-in-out;
+    border-radius: 0.35rem;
+    overflow: hidden; 
+}
+
+.good-tip-toast-wrapper::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px; 
+    width: var(--progress-width, 0%);
+    background-color: #0d6efd;
+    transition: width 0.05s linear;
+    z-index: 10; 
+}
+
+.good-tip-toast-wrapper.hide {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+.good-tip-toast-wrapper.show {
+    transform: translateX(0);
+    opacity: 1;
+}`, "",{"version":3,"sources":["webpack://./src/React/MainWindow/Content/Dashboard/GoodTipToast.css"],"names":[],"mappings":"AAAA;IACI,kBAAkB;IAClB,kEAAkE;IAClE,sBAAsB;IACtB,gBAAgB;AACpB;;AAEA;IACI,WAAW;IACX,kBAAkB;IAClB,SAAS;IACT,OAAO;IACP,WAAW;IACX,gCAAgC;IAChC,yBAAyB;IACzB,8BAA8B;IAC9B,WAAW;AACf;;AAEA;IACI,2BAA2B;IAC3B,UAAU;AACd;;AAEA;IACI,wBAAwB;IACxB,UAAU;AACd","sourcesContent":[".good-tip-toast-wrapper {\r\n    position: relative;\r\n    transition: transform 400ms ease-in-out, opacity 400ms ease-in-out;\r\n    border-radius: 0.35rem;\r\n    overflow: hidden; \r\n}\r\n\r\n.good-tip-toast-wrapper::before {\r\n    content: '';\r\n    position: absolute;\r\n    bottom: 0;\r\n    left: 0;\r\n    height: 4px; \r\n    width: var(--progress-width, 0%);\r\n    background-color: #0d6efd;\r\n    transition: width 0.05s linear;\r\n    z-index: 10; \r\n}\r\n\r\n.good-tip-toast-wrapper.hide {\r\n    transform: translateX(120%);\r\n    opacity: 0;\r\n}\r\n\r\n.good-tip-toast-wrapper.show {\r\n    transform: translateX(0);\r\n    opacity: 1;\r\n}"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css":
 /*!*******************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css ***!
@@ -104379,6 +104433,172 @@ exports["default"] = Dashboard;
 
 /***/ }),
 
+/***/ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.css":
+/*!*****************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/GoodTipToast.css ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../../../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_GoodTipToast_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../../../../node_modules/css-loader/dist/cjs.js!./GoodTipToast.css */ "./node_modules/css-loader/dist/cjs.js!./src/React/MainWindow/Content/Dashboard/GoodTipToast.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_GoodTipToast_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_GoodTipToast_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_GoodTipToast_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_GoodTipToast_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
+/***/ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/React/MainWindow/Content/Dashboard/GoodTipToast.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GoodTipToast = void 0;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+__webpack_require__(/*! ./GoodTipToast.css */ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.css");
+const tips = [
+    "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.",
+    "Aktualizuj statusy kamieni milowych i kontraktów na bieżąco.",
+    "Aktualizuj daty zakończenia kamieni i kontraktów.",
+];
+function GoodTipToast({ delay = 5000 }) {
+    const [isVisible, setIsVisible] = (0, react_1.useState)(false);
+    const [tip, setTip] = (0, react_1.useState)('');
+    const [isPaused, setIsPaused] = (0, react_1.useState)(false);
+    const toastWrapperRef = (0, react_1.useRef)(null);
+    const timerRef = (0, react_1.useRef)(null);
+    const progressIntervalRef = (0, react_1.useRef)(null);
+    const startTimeRef = (0, react_1.useRef)(0);
+    const remainingTimeRef = (0, react_1.useRef)(delay);
+    (0, react_1.useEffect)(() => {
+        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        setTip(randomTip);
+        setTimeout(() => setIsVisible(true), 100);
+    }, []);
+    (0, react_1.useEffect)(() => {
+        if (!isVisible)
+            return;
+        if (isPaused) {
+            if (timerRef.current)
+                clearTimeout(timerRef.current);
+            const elapsedTime = Date.now() - startTimeRef.current;
+            remainingTimeRef.current -= elapsedTime;
+        }
+        else {
+            startTimeRef.current = Date.now();
+            if (timerRef.current)
+                clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(() => setIsVisible(false), remainingTimeRef.current);
+        }
+        return () => {
+            if (timerRef.current)
+                clearTimeout(timerRef.current);
+        };
+    }, [isPaused, isVisible]);
+    (0, react_1.useEffect)(() => {
+        if (!isVisible || isPaused) {
+            if (progressIntervalRef.current)
+                clearInterval(progressIntervalRef.current);
+            return;
+        }
+        const intervalTime = 50;
+        progressIntervalRef.current = setInterval(() => {
+            const elapsedTime = Date.now() - startTimeRef.current;
+            const totalElapsedTime = (delay - remainingTimeRef.current) + elapsedTime;
+            const percentage = (totalElapsedTime / delay) * 100;
+            if (toastWrapperRef.current) {
+                toastWrapperRef.current.style.setProperty('--progress-width', `${Math.min(percentage, 100)}%`);
+            }
+            if (totalElapsedTime >= delay) {
+                if (progressIntervalRef.current)
+                    clearInterval(progressIntervalRef.current);
+            }
+        }, intervalTime);
+        return () => {
+            if (progressIntervalRef.current)
+                clearInterval(progressIntervalRef.current);
+        };
+    }, [isPaused, isVisible, delay]);
+    return (react_1.default.createElement(react_bootstrap_1.ToastContainer, { position: "bottom-end", className: "p-3", style: { zIndex: 1050, overflowX: 'hidden' } },
+        react_1.default.createElement("div", { ref: toastWrapperRef, className: `good-tip-toast-wrapper ${isVisible ? 'show' : 'hide'}` },
+            react_1.default.createElement(react_bootstrap_1.Toast, { onClose: () => setIsVisible(false), show: true, autohide: false, onMouseEnter: () => setIsPaused(true), onMouseLeave: () => setIsPaused(false) },
+                react_1.default.createElement(react_bootstrap_1.Toast.Header, { closeButton: true },
+                    react_1.default.createElement("strong", { className: "me-auto" }, "Dobra rada")),
+                react_1.default.createElement(react_bootstrap_1.Toast.Body, { className: "good-tip-toast-body" }, tip)))));
+}
+exports.GoodTipToast = GoodTipToast;
+
+
+/***/ }),
+
 /***/ "./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx":
 /*!*****************************************************************!*\
   !*** ./src/React/MainWindow/Content/Dashboard/InvoicesCard.tsx ***!
@@ -105105,6 +105325,7 @@ const MilestoneDatesSearch_1 = __importDefault(__webpack_require__(/*! ../../Con
 const Dashboard_1 = __importDefault(__webpack_require__(/*! ./Content/Dashboard/Dashboard */ "./src/React/MainWindow/Content/Dashboard/Dashboard.tsx"));
 const SystemUsersSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/SystemUsers/SystemUsersSearch */ "./src/Admin/SystemUsers/SystemUsersSearch.tsx"));
 const ProtectedRoute_1 = __importDefault(__webpack_require__(/*! ../ProtectedRoute */ "./src/React/ProtectedRoute.tsx"));
+const GoodTipToast_1 = __webpack_require__(/*! ./Content/Dashboard/GoodTipToast */ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.tsx");
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -105161,6 +105382,7 @@ function App() {
 function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
+        react_1.default.createElement(GoodTipToast_1.GoodTipToast, null),
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),

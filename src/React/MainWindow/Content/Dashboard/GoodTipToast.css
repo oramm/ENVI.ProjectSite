@@ -1,0 +1,28 @@
+.good-tip-toast-wrapper {
+    position: relative;
+    transition: transform 400ms ease-in-out, opacity 400ms ease-in-out;
+    border-radius: 0.35rem;
+    overflow: hidden; 
+}
+
+.good-tip-toast-wrapper::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px; 
+    width: var(--progress-width, 0%);
+    background-color: #0d6efd;
+    transition: width 0.05s linear;
+    z-index: 10; 
+}
+
+.good-tip-toast-wrapper.hide {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+.good-tip-toast-wrapper.show {
+    transform: translateX(0);
+    opacity: 1;
+}

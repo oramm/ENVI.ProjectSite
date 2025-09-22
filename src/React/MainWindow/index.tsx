@@ -35,6 +35,7 @@ import { set } from "react-hook-form";
 import Dashboard from "./Content/Dashboard/Dashboard";
 import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
 import ProtectedRoute from "../ProtectedRoute";
+import { GoodTipToast } from "./Content/Dashboard/GoodTipToast";
 
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -108,6 +109,7 @@ function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
+            <GoodTipToast/>
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />

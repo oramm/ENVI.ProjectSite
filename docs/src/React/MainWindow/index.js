@@ -62,6 +62,7 @@ const MilestoneDatesSearch_1 = __importDefault(require("../../Contracts/Dates/Mi
 const Dashboard_1 = __importDefault(require("./Content/Dashboard/Dashboard"));
 const SystemUsersSearch_1 = __importDefault(require("../../Admin/SystemUsers/SystemUsersSearch"));
 const ProtectedRoute_1 = __importDefault(require("../ProtectedRoute"));
+const GoodTipToast_1 = require("./Content/Dashboard/GoodTipToast");
 const rootPath = "/";
 console.log("rootPath", rootPath);
 //const rootPath = '/envi.projectsite/docs/React/';
@@ -118,6 +119,7 @@ function App() {
 function AppRoutes() {
     return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
         react_1.default.createElement(MainMenu_1.default, null),
+        react_1.default.createElement(GoodTipToast_1.GoodTipToast, null),
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
