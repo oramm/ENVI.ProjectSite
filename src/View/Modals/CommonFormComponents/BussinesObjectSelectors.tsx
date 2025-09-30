@@ -598,27 +598,28 @@ export function ContractRangeSelector({
         fetchData();
     }, [repository, setValue, multiple, name]);
 
-    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<any, typeof name>) {
-        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
-        setValue(name, valueToBeSent);
-        field.onChange(valueToBeSent);
-    }
-
     return (
         <Form.Group controlId={name}>
             <Form.Label>{label}</Form.Label>
-            <>
-                <Controller
-                    name={name}
-                    control={control}
-                    render={({ field }) => (
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => {
+                    const formValue = (field.value || []) as any[];
+                    const currentSelection = options.filter(option => 
+                        formValue.some((item: any) => 
+                            (item?._contractRange?.id || item?.id) === option.id
+                        )
+                    );
+
+                    return (
                         <Typeahead
                             id={`${name}-controlled`}
                             labelKey="name"
                             multiple={multiple}
                             options={options}
-                            onChange={(items) => handleOnChange(items, field)}
-                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            onChange={field.onChange}
+                            selected={currentSelection}
                             placeholder="-- Wybierz zakresy kontraktu --"
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
@@ -632,10 +633,10 @@ export function ContractRangeSelector({
                                 );
                             }}
                         />
-                    )}
-                />
-                <ErrorMessage errors={errors} name={name} />
-            </>
+                    );
+                }}
+            />
+            <ErrorMessage errors={errors} name={name} />
         </Form.Group>
     );
 }

@@ -17,6 +17,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
     const {
         register,
         setValue,
+        reset,
         watch,
         formState: { errors },
         trigger,
@@ -41,7 +42,7 @@ export function ContractModalBody({ isEditing, initialData }: ModalBodyProps<Our
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
-        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
+        setValue("_contractRanges", initialData?._contractRangesPerContract || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });

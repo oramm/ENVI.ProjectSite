@@ -37,7 +37,7 @@ const ToolsForms_1 = __importDefault(require("../../../React/Tools/ToolsForms"))
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 function ContractModalBody({ isEditing, initialData }) {
-    const { register, setValue, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, reset, watch, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
     const watchAllFields = watch();
     let startDateSugestion;
     let endDateSugestion;
@@ -58,7 +58,7 @@ function ContractModalBody({ isEditing, initialData }) {
         setValue("name", initialData?.name || "", { shouldValidate: true });
         setValue("number", initialData?.number || "", { shouldValidate: true });
         setValue("alias", initialData?.alias || "", { shouldValidate: true });
-        setValue("_contractRanges", initialData?._contractRanges || [], { shouldValidate: true });
+        setValue("_contractRanges", initialData?._contractRangesPerContract || [], { shouldValidate: true });
         setValue("comment", initialData?.comment || "", { shouldValidate: true });
         setValue("value", initialData?.value || "", { shouldValidate: true });
         setValue("status", initialData?.status || "", { shouldValidate: true });

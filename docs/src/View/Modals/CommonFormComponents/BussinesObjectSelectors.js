@@ -239,21 +239,19 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
         };
         fetchData();
     }, [repository, setValue, multiple, name]);
-    function handleOnChange(selectedOptions, field) {
-        const valueToBeSent = multiple ? selectedOptions : selectedOptions[0];
-        setValue(name, valueToBeSent);
-        field.onChange(valueToBeSent);
-    }
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
-        react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: field.value ? (multiple ? field.value : [field.value]) : [], placeholder: "-- Wybierz zakresy kontraktu --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
+                const formValue = (field.value || []);
+                const currentSelection = options.filter(option => formValue.some((item) => (item?._contractRange?.id || item?.id) === option.id));
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: field.onChange, selected: currentSelection, placeholder: "-- Wybierz zakresy kontraktu --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
                             react_1.default.createElement("span", null, optionTyped.name),
                             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.description)));
-                    } })) }),
-            react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
+                    } }));
+            } }),
+        react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
 exports.ContractRangeSelector = ContractRangeSelector;
 /**
