@@ -100586,10 +100586,9 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
             react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" },
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" }, _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.LetterSelector, { name: "relatedLetterNumber", label: "Numer powi\u0105zanego pisma", repository: LettersController_1.lettersRepository, _contract: _contract })) : (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 1, placeholder: "Podaj numer powi\u0105zanego pisma", isValid: !errors?.relatedLetterNumber, isInvalid: !!errors?.relatedLetterNumber, ...register("relatedLetterNumber") }),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "relatedLetterNumber", errors: errors })),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Najpierw wybierz kontrakt", disabled: true })))),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "responseDueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowiedzie\u0107 do"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate") }),
@@ -107476,7 +107475,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -107986,6 +107985,42 @@ function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true, 
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
 }
 exports.SystemRoleSelector = SystemRoleSelector;
+/**
+ * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
+ * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
+ */
+function LetterSelector({ name, label, repository, _contract, showValidationInfo = true, }) {
+    const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    const [options, setOptions] = (0, react_1.useState)([]);
+    (0, react_1.useEffect)(() => {
+        const fetchData = async () => {
+            if (_contract?.id) {
+                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                setOptions(repository.items);
+            }
+            else {
+                setOptions([]);
+            }
+        };
+        fetchData();
+    }, [_contract, repository]);
+    function handleOnChange(selectedOptions, field) {
+        const selectedLetter = selectedOptions[0];
+        const valueToSet = selectedLetter?.number || "";
+        setValue(name, valueToSet);
+        field.onChange(valueToSet);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
+                const currentSelection = options.find((option) => option.number === field.value);
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => handleOnChange(selected, field), selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+                        react_1.default.createElement("span", null, option.number),
+                        react_1.default.createElement("div", { className: "text-muted small text-wrap" }, option.description))) }));
+            } }),
+        react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
+}
+exports.LetterSelector = LetterSelector;
 
 
 /***/ }),

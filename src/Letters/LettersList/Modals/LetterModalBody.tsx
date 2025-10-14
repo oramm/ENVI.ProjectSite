@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     CaseSelectMenuElement,
     ContractSelector,
+    LetterSelector,
     PersonSelectorPreloaded,
     ProjectSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -16,7 +17,7 @@ import {
     OurLetterContract,
     ProjectData,
 } from "../../../../Typings/bussinesTypes";
-import { casesRepository, contractsRepository, projectsRepository } from "../LettersController";
+import { casesRepository, contractsRepository, lettersRepository, projectsRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { Collapse } from "bootstrap";
 
@@ -148,16 +149,22 @@ export function LetterModalBody({
             </Form.Group>
             <Row>
                 <Form.Group as={Col} controlId="relatedLetterNumber">
-                    <Form.Label>Numer powiązanego pisma</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={1}
-                        placeholder="Podaj numer powiązanego pisma"
-                        isValid={!errors?.relatedLetterNumber}
-                        isInvalid={!!errors?.relatedLetterNumber}
-                        {...register("relatedLetterNumber")}
-                    />
-                    <ErrorMessage name="relatedLetterNumber" errors={errors} />
+                    {_contract ? (
+                        <LetterSelector
+                            name="relatedLetterNumber"
+                            label="Numer powiązanego pisma"
+                            repository={lettersRepository}
+                            _contract={_contract}
+                        />
+                    ) : (
+                        <>
+                            <Form.Label>Numer powiązanego pisma</Form.Label>
+                            <Form.Control
+                                placeholder="Najpierw wybierz kontrakt"
+                                disabled
+                            />
+                        </>
+                    )}
                 </Form.Group>
                     <Form.Group as={Col} controlId="responseDueDate">
                     <Form.Label>Odpowiedzieć do</Form.Label>

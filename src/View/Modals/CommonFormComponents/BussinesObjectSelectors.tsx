@@ -23,11 +23,13 @@ import {
     ExternalOffer,
     FinancialAidProgrammeData,
     FocusAreaData,
+    IncomingLetterContract,
     MilestoneData,
     MilestoneType,
     NeedData,
     OtherContract,
     OurContract,
+    OurLetterContract,
     OurOffer,
     PersonData,
     ProjectData,
@@ -1254,6 +1256,91 @@ export function SystemRoleSelector({
                 ))}
             </Form.Select>
             <ErrorMessage name={name} errors={errors} />
+        </Form.Group>
+    );
+}
+
+interface LetterSelectorProps {
+    name: string;
+    label: string;
+    repository: RepositoryReact<OurLetterContract | IncomingLetterContract>;
+    _contract?: Contract;
+    showValidationInfo?: boolean;
+}
+
+/**
+ * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
+ * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
+ */
+export function LetterSelector({
+    name,
+    label,
+    repository,
+    _contract,
+    showValidationInfo = true,
+}: LetterSelectorProps) {
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useFormContext();
+    const [options, setOptions] = useState<(OurLetterContract | IncomingLetterContract)[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (_contract?.id) {
+                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                setOptions(repository.items);
+            } else {
+                setOptions([]);
+            }
+        };
+        fetchData();
+    }, [_contract, repository]);
+
+    function handleOnChange(
+        selectedOptions: unknown[],
+        field: ControllerRenderProps<FieldValues, string>
+    ) {
+        const selectedLetter = selectedOptions[0] as OurLetterContract | IncomingLetterContract | undefined;
+        const valueToSet = selectedLetter?.number || "";
+        
+        setValue(name, valueToSet);
+        field.onChange(valueToSet);
+    }
+
+    return (
+        <Form.Group controlId={name}>
+            <Form.Label>{label}</Form.Label>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => {
+                    const currentSelection = options.find(
+                        (option) => option.number === field.value
+                    );
+                    
+                    return (
+                        <Typeahead
+                            id={`${name}-typeahead`}
+                            labelKey="number"
+                            options={options}
+                            onChange={(selected) => handleOnChange(selected, field)}
+                            selected={currentSelection ? [currentSelection] : []}
+                            placeholder="-- Wybierz pismo z listy --"
+                            isValid={showValidationInfo ? !errors?.[name] : undefined}
+                            isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            renderMenuItemChildren={(option: any) => (
+                                <div>
+                                    <span>{option.number}</span>
+                                    <div className="text-muted small text-wrap">{option.description}</div>
+                                </div>
+                            )}
+                        />
+                    );
+                }}
+            />
+            <ErrorMessage errors={errors} name={name} />
         </Form.Group>
     );
 }
