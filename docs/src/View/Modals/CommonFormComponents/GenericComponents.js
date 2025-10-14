@@ -73,7 +73,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
             [searchKey]: query,
             ...contextSearchParams,
         };
-        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute).then((items) => {
+        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, { skipCache: true }).then((items) => {
             setOptions(items);
             setIsLoading(false);
             if (items.length > 0 && !(labelKey in items[0]))

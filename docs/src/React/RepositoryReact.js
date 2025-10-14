@@ -82,7 +82,7 @@ class RepositoryReact {
      * @param formData - klucze i wartości do wysłania w ciele żądania jako JSON (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServerPOST(orConditions = [], specialActionRoute) {
+    async loadItemsFromServerPOST(orConditions = [], specialActionRoute, options = { skipCache: false }) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetupReact_1.default.serverUrl + actionRoute);
         const requestKey = JSON.stringify({ url: url.toString(), body: orConditions });
@@ -104,7 +104,8 @@ class RepositoryReact {
             this.pendingRequests.set(requestKey, fetchPromise);
             this.items = (await fetchPromise);
             this.currentItems = [];
-            this.saveToSessionStorage();
+            if (!options.skipCache)
+                this.saveToSessionStorage();
             console.log(this.name + " NodeJS: %o", this.items);
             return this.items;
         }

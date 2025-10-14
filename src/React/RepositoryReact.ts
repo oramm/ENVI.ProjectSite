@@ -85,7 +85,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
      * @param formData - klucze i wartości do wysłania w ciele żądania jako JSON (np. dla filtrowania)
      * @param specialActionRoute - jeżeli chcemy użyć innej ścieżki niż getRoute
      */
-    async loadItemsFromServerPOST(orConditions: any[] = [], specialActionRoute?: string) {
+    async loadItemsFromServerPOST(orConditions: any[] = [], specialActionRoute?: string, options: {skipCache?: boolean} = { skipCache: false }) {
         const actionRoute = specialActionRoute ? specialActionRoute : this.actionRoutes.getRoute;
         const url = new URL(MainSetup.serverUrl + actionRoute);
         const requestKey = JSON.stringify({ url: url.toString(), body: orConditions });
@@ -110,7 +110,7 @@ export default class RepositoryReact<DataItemType extends RepositoryDataItem = R
 
             this.items = (await fetchPromise) as DataItemType[];
             this.currentItems = [];
-            this.saveToSessionStorage();
+            if(!options.skipCache) this.saveToSessionStorage();
             console.log(this.name + " NodeJS: %o", this.items);
             return this.items;
         } catch (error) {
