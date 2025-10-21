@@ -1285,6 +1285,7 @@ export function LetterSelector({
         formState: { errors },
     } = useFormContext();
     const [options, setOptions] = useState<(OurLetterContract | IncomingLetterContract)[]>([]);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -1325,11 +1326,14 @@ export function LetterSelector({
                             id={`${name}-typeahead`}
                             labelKey="number"
                             options={options}
-                            onChange={(selected) => handleOnChange(selected, field)}
+                            onChange={(selected) => { handleOnChange(selected, field); setIsOpen(false); }}
                             selected={currentSelection ? [currentSelection] : []}
                             placeholder="-- Wybierz pismo z listy --"
                             isValid={showValidationInfo ? !errors?.[name] : undefined}
                             isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
+                            open={isOpen}
+                            onFocus={() => setIsOpen(true)}
+                            onBlur={() => setTimeout(() => setIsOpen(false), 150)}
                             renderMenuItemChildren={(option: any) => (
                                 <div>
                                     <span>{option.number}</span>

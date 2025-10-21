@@ -543,6 +543,7 @@ exports.SystemRoleSelector = SystemRoleSelector;
 function LetterSelector({ name, label, repository, _contract, showValidationInfo = true, }) {
     const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
+    const [isOpen, setIsOpen] = (0, react_1.useState)(false);
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_contract?.id) {
@@ -565,7 +566,7 @@ function LetterSelector({ name, label, repository, _contract, showValidationInfo
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 const currentSelection = options.find((option) => option.number === field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => handleOnChange(selected, field), selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => { handleOnChange(selected, field); setIsOpen(false); }, selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, open: isOpen, onFocus: () => setIsOpen(true), onBlur: () => setTimeout(() => setIsOpen(false), 150), renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                         react_1.default.createElement("span", null, option.number),
                         react_1.default.createElement("div", { className: "text-muted small text-wrap" }, option.description))) }));
             } }),
