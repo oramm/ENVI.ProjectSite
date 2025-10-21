@@ -103,7 +103,7 @@ function LettersSearch({ title }) {
                 modalSubtitle: `Dotyczy: ${letter.description}`,
                 repository: LettersController_1.lettersRepository,
                 ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
-                onEdit: handleEditObject,
+                onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
                 fieldsToUpdate: ["status"],
             } },
             react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));

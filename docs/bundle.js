@@ -100305,7 +100305,7 @@ function LettersSearch({ title }) {
                 modalSubtitle: `Dotyczy: ${letter.description}`,
                 repository: LettersController_1.lettersRepository,
                 ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
-                onEdit: handleEditObject,
+                onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
                 fieldsToUpdate: ["status"],
             } },
             react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
@@ -100535,6 +100535,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     (0, react_1.useEffect)(() => {
         const nowUTC = new Date().toISOString().split("T")[0];
         const resetData = {
+            id: initialData?.id,
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || "",
@@ -110442,7 +110443,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleEditObject(object) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
             updateSnapshot();
         }
         else

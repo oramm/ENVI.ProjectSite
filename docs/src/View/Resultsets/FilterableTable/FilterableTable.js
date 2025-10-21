@@ -90,7 +90,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleEditObject(object) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
             updateSnapshot();
         }
         else

@@ -49,6 +49,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     (0, react_1.useEffect)(() => {
         const nowUTC = new Date().toISOString().split("T")[0];
         const resetData = {
+            id: initialData?.id,
             _contract: getContractFromCases(initialData?._cases),
             _cases: initialData?._cases || [],
             description: initialData?.description || "",

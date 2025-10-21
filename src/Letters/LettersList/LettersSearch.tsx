@@ -111,7 +111,7 @@ export default function LettersSearch({ title }: { title: string }) {
                     modalSubtitle: `Dotyczy: ${letter.description}`,
                     repository: lettersRepository,
                     ModalBodyComponent: LetterModalBodyStatus,
-                    onEdit: handleEditObject,
+                    onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
                     fieldsToUpdate: ["status"],
                 }}
             >

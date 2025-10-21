@@ -91,9 +91,16 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function handleEditObject(object: LeafDataItemType) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? object : o)));
+            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
             updateSnapshot();
-        } else setSections(editNode(sections, activeSectionId, object));
+        } else
+            setSections(
+                editNode(
+                    sections,
+                    activeSectionId,
+                    object as RepositoryDataItem
+                )
+            );
     }
     function handleCopyObject(object: LeafDataItemType) {
         setObjects([...objects, object]);
