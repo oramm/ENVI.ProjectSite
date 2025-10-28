@@ -9,6 +9,9 @@ function makeCommonFields(isEditing: boolean) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+    const halfYearAgo = new Date();
+    halfYearAgo.setDate(halfYearAgo.getDate() - 180);
+
     return {
         _city: Yup.mixed()
             .test(
@@ -33,7 +36,7 @@ function makeCommonFields(isEditing: boolean) {
             ? Yup.date().required("Podaj termin składania")
             : Yup.date()
                   .required("Podaj termin składania")
-                  .min(thirtyDaysAgo, "Termin składania nie może być starszy niż 30 dni"),
+                  .min(halfYearAgo, "Termin składania nie może być starszy niż 180 dni"),
         bidProcedure: Yup.string().required("Wybierz procedurę"),
         form: Yup.string().required("Wybierz formę wysyłki"),
         _employer: Yup.mixed()
