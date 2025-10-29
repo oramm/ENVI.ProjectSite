@@ -93,14 +93,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         if (!sections.length) {
             setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
             updateSnapshot();
-        } else
-            setSections(
-                editNode(
-                    sections,
-                    activeSectionId,
-                    object as RepositoryDataItem
-                )
-            );
+        } else setSections(editNode(sections, activeSectionId, object as RepositoryDataItem));
     }
     function handleCopyObject(object: LeafDataItemType) {
         setObjects([...objects, object]);
@@ -148,7 +141,9 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     const handleRowClick = (id: number) => {
         setActiveRowId(id);
+        console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
+        console.log("currentItems:", repository.currentItems);
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }

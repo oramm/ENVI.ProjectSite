@@ -134,7 +134,9 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     const handleRowClick = (id) => {
         setActiveRowId(id);
+        console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
+        console.log("currentItems:", repository.currentItems);
         if (onRowClick) {
             onRowClick(repository.currentItems[0]);
         }
