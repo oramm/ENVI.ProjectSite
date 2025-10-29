@@ -85,24 +85,24 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         }
     }, [externalUpdate]);
     function handleAddObject(object) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
     function handleEditObject(object) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
+            setObjects([...repository.items]);
             updateSnapshot();
         }
         else
             setSections(editNode(sections, activeSectionId, object));
     }
     function handleCopyObject(object) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
     function handleDeleteObject(objectId) {
         if (!sections.length)
-            setObjects(objects.filter((o) => o.id !== objectId));
+            setObjects([...repository.items]);
         else
             setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();

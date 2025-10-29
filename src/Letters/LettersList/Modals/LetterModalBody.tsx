@@ -154,20 +154,16 @@ export function LetterModalBody({
                         <LetterSelector
                             name="relatedLetterNumber"
                             label="Numer powiązanego pisma"
-                            repository={lettersRepository}
                             _contract={_contract}
                         />
                     ) : (
                         <>
                             <Form.Label>Numer powiązanego pisma</Form.Label>
-                            <Form.Control
-                                placeholder="Najpierw wybierz kontrakt"
-                                disabled
-                            />
+                            <Form.Control placeholder="Najpierw wybierz kontrakt" disabled />
                         </>
                     )}
                 </Form.Group>
-                    <Form.Group as={Col} controlId="responseDueDate">
+                <Form.Group as={Col} controlId="responseDueDate">
                     <Form.Label>Odpowiedzieć do</Form.Label>
                     <Form.Control
                         type="date"

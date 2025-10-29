@@ -91639,7 +91639,7 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
             react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" }, _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.LetterSelector, { name: "relatedLetterNumber", label: "Numer powi\u0105zanego pisma", repository: LettersController_1.lettersRepository, _contract: _contract })) : (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" }, _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.LetterSelector, { name: "relatedLetterNumber", label: "Numer powi\u0105zanego pisma", _contract: _contract })) : (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Najpierw wybierz kontrakt", disabled: true })))),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "responseDueDate" },
@@ -98452,6 +98452,7 @@ const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-type
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/Modals/FormContext.ts");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const ContractsController_1 = __webpack_require__(/*! ../../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
@@ -98662,7 +98663,7 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 const formValue = (field.value || []);
-                const currentSelection = options.filter(option => formValue.some((item) => (item?._contractRange?.id || item?.id) === option.id));
+                const currentSelection = options.filter((option) => formValue.some((item) => (item?._contractRange?.id || item?.id) === option.id));
                 return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: "name", multiple: multiple, options: options, onChange: field.onChange, selected: currentSelection, placeholder: "-- Wybierz zakresy kontraktu --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option, props, index) => {
                         const optionTyped = option;
                         return (react_1.default.createElement("div", null,
@@ -98944,37 +98945,48 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
             } })) }));
 }
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
-function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true, }) {
-    const { register, formState: { errors } } = (0, FormContext_1.useFormContext)();
+function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }) {
+    const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const systemRolesOptions = Object.values(MainSetupReact_1.default.SystemRoles);
     return (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: name },
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rola w systemie"),
         react_1.default.createElement(react_bootstrap_1.Form.Select, { isInvalid: !!errors?.[name], isValid: showValidationInfo ? !errors?.[name] : undefined, ...register(name) },
             react_1.default.createElement("option", { value: "" }, "-- Wybierz rol\u0119 --"),
-            systemRolesOptions.map(role => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
+            systemRolesOptions.map((role) => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
 }
 exports.SystemRoleSelector = SystemRoleSelector;
 /**
  * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
  * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
+ * Uwaga: Używa własnej instancji repository, aby nie kolidować z głównym repo w FilterableTable.
  */
-function LetterSelector({ name, label, repository, _contract, showValidationInfo = true, }) {
+function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
     const { control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
     const [isOpen, setIsOpen] = (0, react_1.useState)(false);
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "contractsLetters",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "letterSelector_temp",
+    }), []);
     (0, react_1.useEffect)(() => {
         const fetchData = async () => {
             if (_contract?.id) {
-                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
-                setOptions(repository.items);
+                await localRepository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                setOptions(localRepository.items);
             }
             else {
                 setOptions([]);
             }
         };
         fetchData();
-    }, [_contract, repository]);
+    }, [_contract, localRepository]);
     function handleOnChange(selectedOptions, field) {
         const selectedLetter = selectedOptions[0];
         const valueToSet = selectedLetter?.number || "";
@@ -98985,7 +98997,10 @@ function LetterSelector({ name, label, repository, _contract, showValidationInfo
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, label),
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
                 const currentSelection = options.find((option) => option.number === field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => { handleOnChange(selected, field); setIsOpen(false); }, selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, open: isOpen, onFocus: () => setIsOpen(true), onBlur: () => setTimeout(() => setIsOpen(false), 150), renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-typeahead`, labelKey: "number", options: options, onChange: (selected) => {
+                        handleOnChange(selected, field);
+                        setIsOpen(false);
+                    }, selected: currentSelection ? [currentSelection] : [], placeholder: "-- Wybierz pismo z listy --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, open: isOpen, onFocus: () => setIsOpen(true), onBlur: () => setTimeout(() => setIsOpen(false), 150), renderMenuItemChildren: (option) => (react_1.default.createElement("div", null,
                         react_1.default.createElement("span", null, option.number),
                         react_1.default.createElement("div", { className: "text-muted small text-wrap" }, option.description))) }));
             } }),
@@ -101352,24 +101367,24 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         }
     }, [externalUpdate]);
     function handleAddObject(object) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
     function handleEditObject(object) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
+            setObjects([...repository.items]);
             updateSnapshot();
         }
         else
             setSections(editNode(sections, activeSectionId, object));
     }
     function handleCopyObject(object) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
     function handleDeleteObject(objectId) {
         if (!sections.length)
-            setObjects(objects.filter((o) => o.id !== objectId));
+            setObjects([...repository.items]);
         else
             setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();

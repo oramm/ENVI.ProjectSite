@@ -608,10 +608,8 @@ export function ContractRangeSelector({
                 control={control}
                 render={({ field }) => {
                     const formValue = (field.value || []) as any[];
-                    const currentSelection = options.filter(option => 
-                        formValue.some((item: any) => 
-                            (item?._contractRange?.id || item?.id) === option.id
-                        )
+                    const currentSelection = options.filter((option) =>
+                        formValue.some((item: any) => (item?._contractRange?.id || item?.id) === option.id)
                     );
 
                     return (
@@ -673,13 +671,13 @@ export function ContractTypeSelectFormElement({
     } = useFormContext();
     const label = "Typ Kontraktu";
     const repository = MainSetup.contractTypesRepository;
- 
+
     //tymczasowe, ale działa
     if (!repository) {
         return (
             <Form.Group controlId={label}>
                 <Form.Label>{label}</Form.Label>
-                <Form.Control placeholder="Odśwież aby załadować typy" disabled />     
+                <Form.Control placeholder="Odśwież aby załadować typy" disabled />
             </Form.Group>
         );
     }
@@ -1232,11 +1230,11 @@ type SystemRoleSelectorProps = {
     showValidationInfo?: boolean;
 };
 
-export function SystemRoleSelector({
-    name = "systemRoleId",
-    showValidationInfo = true,
-}: SystemRoleSelectorProps) {
-    const { register, formState: { errors } } = useFormContext();
+export function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }: SystemRoleSelectorProps) {
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext();
 
     const systemRolesOptions = Object.values(MainSetup.SystemRoles);
 
@@ -1249,9 +1247,9 @@ export function SystemRoleSelector({
                 {...register(name)}
             >
                 <option value="">-- Wybierz rolę --</option>
-                {systemRolesOptions.map(role => (
+                {systemRolesOptions.map((role) => (
                     <option key={role.id} value={role.id}>
-                        {role.systemName} 
+                        {role.systemName}
                     </option>
                 ))}
             </Form.Select>
@@ -1263,7 +1261,6 @@ export function SystemRoleSelector({
 interface LetterSelectorProps {
     name: string;
     label: string;
-    repository: RepositoryReact<OurLetterContract | IncomingLetterContract>;
     _contract?: Contract;
     showValidationInfo?: boolean;
 }
@@ -1271,14 +1268,9 @@ interface LetterSelectorProps {
 /**
  * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
  * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
+ * Uwaga: Używa własnej instancji repository, aby nie kolidować z głównym repo w FilterableTable.
  */
-export function LetterSelector({
-    name,
-    label,
-    repository,
-    _contract,
-    showValidationInfo = true,
-}: LetterSelectorProps) {
+export function LetterSelector({ name, label, _contract, showValidationInfo = true }: LetterSelectorProps) {
     const {
         control,
         setValue,
@@ -1287,25 +1279,37 @@ export function LetterSelector({
     const [options, setOptions] = useState<(OurLetterContract | IncomingLetterContract)[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<OurLetterContract | IncomingLetterContract>({
+                actionRoutes: {
+                    getRoute: "contractsLetters",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "letterSelector_temp",
+            }),
+        []
+    );
+
     useEffect(() => {
         const fetchData = async () => {
             if (_contract?.id) {
-                await repository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
-                setOptions(repository.items);
+                await localRepository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
+                setOptions(localRepository.items);
             } else {
                 setOptions([]);
             }
         };
         fetchData();
-    }, [_contract, repository]);
+    }, [_contract, localRepository]);
 
-    function handleOnChange(
-        selectedOptions: unknown[],
-        field: ControllerRenderProps<FieldValues, string>
-    ) {
+    function handleOnChange(selectedOptions: unknown[], field: ControllerRenderProps<FieldValues, string>) {
         const selectedLetter = selectedOptions[0] as OurLetterContract | IncomingLetterContract | undefined;
         const valueToSet = selectedLetter?.number || "";
-        
+
         setValue(name, valueToSet);
         field.onChange(valueToSet);
     }
@@ -1317,16 +1321,17 @@ export function LetterSelector({
                 name={name}
                 control={control}
                 render={({ field }) => {
-                    const currentSelection = options.find(
-                        (option) => option.number === field.value
-                    );
-                    
+                    const currentSelection = options.find((option) => option.number === field.value);
+
                     return (
                         <Typeahead
                             id={`${name}-typeahead`}
                             labelKey="number"
                             options={options}
-                            onChange={(selected) => { handleOnChange(selected, field); setIsOpen(false); }}
+                            onChange={(selected) => {
+                                handleOnChange(selected, field);
+                                setIsOpen(false);
+                            }}
                             selected={currentSelection ? [currentSelection] : []}
                             placeholder="-- Wybierz pismo z listy --"
                             isValid={showValidationInfo ? !errors?.[name] : undefined}

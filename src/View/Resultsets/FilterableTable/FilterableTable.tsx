@@ -85,23 +85,23 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     }, [externalUpdate]);
 
     function handleAddObject(object: LeafDataItemType) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
 
     function handleEditObject(object: LeafDataItemType) {
         if (!sections.length) {
-            setObjects(objects.map((o) => (o.id === object.id ? { ...o, ...object } : o)));
+            setObjects([...repository.items]);
             updateSnapshot();
         } else setSections(editNode(sections, activeSectionId, object as RepositoryDataItem));
     }
     function handleCopyObject(object: LeafDataItemType) {
-        setObjects([...objects, object]);
+        setObjects([...repository.items]);
         updateSnapshot();
     }
 
     function handleDeleteObject(objectId: number) {
-        if (!sections.length) setObjects(objects.filter((o) => o.id !== objectId));
+        if (!sections.length) setObjects([...repository.items]);
         else setSections(removeLeafFromSections(sections, objectId));
         updateSnapshot();
     }
