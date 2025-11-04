@@ -63,6 +63,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
                 <Form.Label>Nadawca</Form.Label>
                 <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
             </Form.Group>
+            <input type="hidden" {...register("isOur")} value="false" />
         </>
     );
 }
