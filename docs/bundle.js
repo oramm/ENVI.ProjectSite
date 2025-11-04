@@ -92233,7 +92233,8 @@ function IncomingLetterModalBody(props) {
         react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nadawca"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", repository: LettersController_1.entitiesRepository, multiple: true })),
+        react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "false" })));
 }
 exports.IncomingLetterModalBody = IncomingLetterModalBody;
 
