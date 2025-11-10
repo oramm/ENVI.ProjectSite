@@ -17,9 +17,8 @@ import {
     OurLetterContract,
     ProjectData,
 } from "../../../../Typings/bussinesTypes";
-import { casesRepository, contractsRepository, lettersRepository, projectsRepository } from "../LettersController";
+import { casesRepository, projectsRepository } from "../LettersController";
 import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponents/GenericComponents";
-import { Collapse } from "bootstrap";
 
 export function LetterModalBody({
     isEditing,
@@ -195,7 +194,7 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
             {_project ? (
                 <SpecificLetterModalBody isEditing={isEditing} additionalProps={additionalProps} />
             ) : (
-                <ProjectSelector repository={projectsRepository} name="_project" />
+                <ProjectSelector name="_project" />
             )}
         </>
     );

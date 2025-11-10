@@ -59,7 +59,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                 <Row>
                     <Form.Group as={Col} controlId="_city">
                         <Form.Label>Miasto</Form.Label>
-                        <CitySelector repository={citiesRepository} showValidationInfo={true} allowNew={true} />
+                        <CitySelector showValidationInfo={true} allowNew={true} />
                         <Form.Text muted>{renderCityText()}</Form.Text>
                     </Form.Group>
 
@@ -70,7 +70,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
             )}
             <Form.Group>
                 <Form.Label>Zamawiający</Form.Label>
-                <EntitySelector name="_employer" repository={entitiesRepository} multiple={false} allowNew={true} />
+                <EntitySelector name="_employer" multiple={false} allowNew={true} />
             </Form.Group>
             <Form.Group controlId="alias">
                 <Form.Label>Alias</Form.Label>

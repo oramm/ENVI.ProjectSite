@@ -56,7 +56,7 @@ export function CommonRoleFieldsModalBody({ isEditing, initialData }: ModalBodyP
             </Form.Group>
             <Form.Group controlId="_person" className="mb-4">
                 <Form.Label>Osoba</Form.Label>
-                <PersonSelector name="_person" repository={personsRepository} />
+                <PersonSelector name="_person" />
             </Form.Group>
         </>
     );

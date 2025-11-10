@@ -37,22 +37,15 @@ export function NeedsFilterBody() {
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
-                <FinancialAidProgrammeSelector
-                    repository={financialAidProgrammesRepository}
-                    showValidationInfo={false}
-                />
+                <FinancialAidProgrammeSelector showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_focusArea">
                 <Form.Label>Działanie</Form.Label>
-                <FocusAreaSelector repository={focusAreasRepository} showValidationInfo={false} />
+                <FocusAreaSelector showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_applicationCall">
                 <Form.Label>Nabór</Form.Label>
-                <ApplicationCallSelector
-                    repository={applicationCallsRepository}
-                    showValidationInfo={false}
-                    _focusArea={_focusAreas}
-                />
+                <ApplicationCallSelector showValidationInfo={false} _focusArea={_focusAreas} />
             </Form.Group>
         </Row>
     );

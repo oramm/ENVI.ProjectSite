@@ -38,7 +38,7 @@ export function LettersFilterBody() {
             <Row>
                 <Form.Group as={Col} md={12}>
                     <Form.Label>Oferta</Form.Label>
-                    <OfferSelector repository={offersRepository} name="_offer" showValidationInfo={false} />
+                    <OfferSelector name="_offer" showValidationInfo={false} />
                 </Form.Group>
             </Row>
 

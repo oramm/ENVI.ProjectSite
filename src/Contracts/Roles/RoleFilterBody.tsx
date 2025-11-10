@@ -31,7 +31,7 @@ export function RolesFilterBody() {
                     <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
                 </Form.Group>
                 <Form.Group as={Col} md={6} xl={2}>
-                    <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
+                    <ProjectSelector showValidationInfo={false} />
                 </Form.Group>
                 <Form.Group as={Col} md={12} xl={5}>
                     <Form.Label>Kontrakt</Form.Label>
@@ -68,7 +68,7 @@ export function RolesFilterBody() {
                 />
                 <Form.Group as={Col} xs={12} md={8} lg={4} xl={4} controlId="_person">
                     <Form.Label>Osoba</Form.Label>
-                    <PersonSelector name="_person" repository={personsRepository} showValidationInfo={false} />
+                    <PersonSelector name="_person" showValidationInfo={false} />
                 </Form.Group>
             </Row>
             <Row>

@@ -38,7 +38,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
         <>
             <Form.Group>
                 <Form.Label>Podmiot</Form.Label>
-                <EntitySelector name="_entity" repository={entitiesRepository} multiple={false} />
+                <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Imię</Form.Label>
@@ -119,7 +119,7 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
                 <ErrorMessage name="systemEmail" errors={errors} />
             </Form.Group>
 
-            <SystemRoleSelector name="systemRoleId"/>
+            <SystemRoleSelector name="systemRoleId" />
         </>
     );
 }

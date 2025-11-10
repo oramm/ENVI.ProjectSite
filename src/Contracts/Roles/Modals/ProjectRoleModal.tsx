@@ -16,7 +16,7 @@ export function ProjectRoleModalBody(props: ModalBodyProps<ProjectRoleData>) {
 
     return (
         <>
-            <ProjectSelector repository={projectsRepository} name="_project" />
+            <ProjectSelector name="_project" />
             <CommonRoleFieldsModalBody {...props} />
         </>
     );

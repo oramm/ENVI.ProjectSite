@@ -52,7 +52,7 @@ export function LettersFilterBody() {
                     <LetterStatusMultipleSelector />
                 </Form.Group>
                 <Form.Group as={Col} xs={12} sm={6} md={4} lg={3} xl={2}>
-                    <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
+                    <ProjectSelector showValidationInfo={false} />
                 </Form.Group>
             </Row>
             <Row>

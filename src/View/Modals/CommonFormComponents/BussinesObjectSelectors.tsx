@@ -39,7 +39,6 @@ import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
 
 type ProjectSelectorProps = {
-    repository: RepositoryReact;
     showValidationInfo?: boolean;
     name?: string;
     disabled?: boolean;
@@ -47,19 +46,32 @@ type ProjectSelectorProps = {
 
 /**
  * Komponent formularza wyboru projektu
- * @param repository Repozytorium projektów
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
 export function ProjectSelector({
     name = "_project",
-    repository,
     showValidationInfo = true,
     disabled = false,
 }: ProjectSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<ProjectData>({
+                actionRoutes: {
+                    getRoute: "projects",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "projectSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: unknown) {
         const optionTyped = option as ProjectData;
@@ -80,7 +92,7 @@ export function ProjectSelector({
             <MyAsyncTypeahead
                 name={name}
                 labelKey="ourId"
-                repository={repository}
+                repository={localRepository}
                 //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
                 showValidationInfo={showValidationInfo}
                 renderMenuItemChildren={renderOption}
@@ -94,7 +106,6 @@ export type CitySelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
 };
 
@@ -102,9 +113,23 @@ export function CitySelector({
     name = "_city",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
 }: CitySelectorProps) {
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<CityData>({
+                actionRoutes: {
+                    getRoute: "cities",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "citySelector_temp",
+            }),
+        []
+    );
+
     function renderOption(option: any) {
         const typedOption = option as CityData;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -124,7 +149,7 @@ export function CitySelector({
                 name={name}
                 labelKey="name"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -138,7 +163,6 @@ export type EntitySelectorProps = {
     name: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
 };
 
@@ -146,12 +170,26 @@ export function EntitySelector({
     name,
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
 }: EntitySelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<EntityData>({
+                actionRoutes: {
+                    getRoute: "entities",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "entitySelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: any, props: any) {
         const typedOption = option as EntityData;
@@ -172,7 +210,7 @@ export function EntitySelector({
                 name={name}
                 labelKey="name"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -186,7 +224,6 @@ export type OfferSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     readOnly?: boolean;
 };
 
@@ -194,12 +231,26 @@ export function OfferSelector({
     name = "_offer",
     showValidationInfo = true,
     multiple = false,
-    repository,
     readOnly = false,
 }: OfferSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<OurOffer | ExternalOffer>({
+                actionRoutes: {
+                    getRoute: "offers",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "offerSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: any) {
         const typedOption = option as OurOffer | ExternalOffer;
@@ -228,7 +279,7 @@ export function OfferSelector({
                 name={name}
                 labelKey="alias"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 showValidationInfo={showValidationInfo}
@@ -242,7 +293,6 @@ export type FinancialAidProgrammeSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
 };
 
@@ -250,12 +300,26 @@ export function FinancialAidProgrammeSelector({
     name = "_financialAidProgramme",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
 }: FinancialAidProgrammeSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<FinancialAidProgrammeData>({
+                actionRoutes: {
+                    getRoute: "financialAidProgrammes",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "financialAidProgrammeSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: any) {
         const optionTyped = option as FinancialAidProgrammeData;
@@ -272,7 +336,7 @@ export function FinancialAidProgrammeSelector({
                 name={name}
                 labelKey="name"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -286,7 +350,6 @@ export type FocusAreaSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
     _financialAidProgramme?: FinancialAidProgrammeData;
 };
@@ -295,13 +358,27 @@ export function FocusAreaSelector({
     name = "_focusArea",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
     _financialAidProgramme,
 }: FocusAreaSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<FocusAreaData>({
+                actionRoutes: {
+                    getRoute: "focusAreas",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "focusAreaSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: any) {
         const optionTyped = option as FocusAreaData;
@@ -321,7 +398,7 @@ export function FocusAreaSelector({
                 contextSearchParams={{
                     _financialAidProgramme,
                 }}
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -421,7 +498,6 @@ export type ApplicationCallSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
     _financialAidProgramme?: FinancialAidProgrammeData;
     _focusArea?: FocusAreaData | FocusAreaData[];
@@ -431,7 +507,6 @@ export function ApplicationCallSelector({
     name = "_applicationCall",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
     _financialAidProgramme,
     _focusArea,
@@ -439,6 +514,21 @@ export function ApplicationCallSelector({
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<ApplicationCallData>({
+                actionRoutes: {
+                    getRoute: "applicationCalls",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "applicationCallSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: unknown) {
         const optionTyped = option as ApplicationCallData;
@@ -466,7 +556,7 @@ export function ApplicationCallSelector({
                     _financialAidProgramme,
                     _focusArea,
                 }}
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -480,7 +570,6 @@ export type ClientNeedSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
 };
 
@@ -488,12 +577,26 @@ export function ClientNeedSelector({
     name = "_need",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
 }: ClientNeedSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
+
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<NeedData>({
+                actionRoutes: {
+                    getRoute: "needs",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "clientNeedSelector_temp",
+            }),
+        []
+    );
 
     function renderOption(option: any) {
         const optionTyped = option as NeedData;
@@ -517,7 +620,7 @@ export function ClientNeedSelector({
                 name={name}
                 labelKey="name"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}
@@ -1025,7 +1128,6 @@ export type PersonSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
-    repository: RepositoryReact;
     allowNew?: boolean;
 };
 
@@ -1033,9 +1135,23 @@ export function PersonSelector({
     name = "_person",
     showValidationInfo = true,
     multiple = false,
-    repository,
     allowNew = false,
 }: PersonSelectorProps) {
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<PersonData>({
+                actionRoutes: {
+                    getRoute: "persons",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "personSelector_temp",
+            }),
+        []
+    );
+
     function renderOption(option: any) {
         const typedOption = option as PersonData;
         // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -1055,7 +1171,7 @@ export function PersonSelector({
                 name={name}
                 labelKey="_nameSurnameEmail"
                 searchKey="searchText"
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 allowNew={allowNew}

@@ -57,7 +57,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
         <>
             <Form.Group controlId="_offer">
                 <Form.Label>Wybierz ofertę</Form.Label>
-                <OfferSelector name="_offer" repository={offersRepository} readOnly={!isEditing} />
+                <OfferSelector name="_offer" readOnly={!isEditing} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Dotyczy spraw</Form.Label>

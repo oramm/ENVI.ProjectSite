@@ -93,7 +93,7 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
             {project ? (
                 <SpecificModalBody isEditing={isEditing} additionalProps={additionalProps} />
             ) : (
-                <ProjectSelector repository={projectsRepository} name="_project" />
+                <ProjectSelector name="_project" />
             )}
         </>
     );

@@ -37,7 +37,7 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
             <ContractModalBody {...props} />
             <Form.Group>
                 <Form.Label>Wykonawcy</Form.Label>
-                <EntitySelector name="_contractors" repository={entitiesRepository} multiple={true} />
+                <EntitySelector name="_contractors" multiple={true} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Powiązana usługa IK lub PT</Form.Label>

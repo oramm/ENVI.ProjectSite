@@ -97,7 +97,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
             </Form.Group>
             <Form.Group>
                 <Form.Label>Odbiorca</Form.Label>
-                <EntitySelector name="_entity" repository={entitiesRepository} multiple={false} />
+                <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
             <Form.Group controlId="_owner">
                 <PersonSelectorPreloaded

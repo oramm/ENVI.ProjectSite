@@ -37,11 +37,11 @@ export function OurLetterModalBody(props: ModalBodyProps<OurLetterContract | Inc
             {!isEditing && <OurLetterTemplateSelector _cases={_cases || []} />}
             <Form.Group>
                 <Form.Label>Odbiorcy</Form.Label>
-                <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
+                <EntitySelector name="_entitiesMain" multiple={true} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Do wiadomości</Form.Label>
-                <EntitySelector name="_entitiesCc" repository={entitiesRepository} multiple={true} />
+                <EntitySelector name="_entitiesCc" multiple={true} />
             </Form.Group>
             <input type="hidden" {...register("isOur")} value="true" />
         </>

@@ -21,7 +21,7 @@ export function SecuritiesFilterBody() {
                 <Form.Control type="text" placeholder="Wpisz tekst" {...register("searchText")} />
             </Form.Group>
             <Form.Group as={Col} xl={5}>
-                <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
+                <ProjectSelector showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} xl={5}>
                 <ContractTypeSelector name="_contractType" showValidationInfo={false} />

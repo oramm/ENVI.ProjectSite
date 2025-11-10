@@ -40,7 +40,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterOffer | I
             <LetterModalBody {...props} />
             <Form.Group>
                 <Form.Label>Nadawca</Form.Label>
-                <EntitySelector name="_entitiesMain" repository={entitiesRepository} multiple={true} />
+                <EntitySelector name="_entitiesMain" multiple={true} />
             </Form.Group>
             <input type="hidden" {...register("isOur")} value="false" />
         </>

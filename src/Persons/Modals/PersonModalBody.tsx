@@ -38,7 +38,7 @@ export function PersonModalBody({ isEditing, initialData }: ModalBodyProps<Perso
         <>
             <Form.Group>
                 <Form.Label>Podmiot</Form.Label>
-                <EntitySelector name="_entity" repository={entitiesRepository} multiple={false} />
+                <EntitySelector name="_entity" multiple={false} />
             </Form.Group>
             <Form.Group controlId="name">
                 <Form.Label>Imię</Form.Label>

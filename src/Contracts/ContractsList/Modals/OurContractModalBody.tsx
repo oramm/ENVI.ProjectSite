@@ -40,7 +40,7 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
             <Row>
                 <Form.Group as={Col} controlId="_city">
                     <Form.Label>Miasto</Form.Label>
-                    <CitySelector repository={citiesRepository} showValidationInfo={true} />
+                    <CitySelector showValidationInfo={true} />
                 </Form.Group>
                 {!isEditing && (
                     <Form.Group as={Col} controlId="_type">
@@ -66,7 +66,7 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Zamawiający</Form.Label>
-                    <EntitySelector name="_employers" repository={entitiesRepository} multiple={true} />
+                    <EntitySelector name="_employers" multiple={true} />
                 </Form.Group>
             </Row>
         </>
