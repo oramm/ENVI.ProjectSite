@@ -52,7 +52,7 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
                 react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
             !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "our" })))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "our" })))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },

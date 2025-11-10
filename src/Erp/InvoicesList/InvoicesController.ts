@@ -34,16 +34,6 @@ export const projectsRepository = new RepositoryReact<ProjectData>({
     name: "projects",
 });
 
-export const contractsRepository = new RepositoryReact<OurContract>({
-    actionRoutes: {
-        getRoute: "contracts",
-        addNewRoute: "",
-        editRoute: "",
-        deleteRoute: "",
-    },
-    name: "contracts",
-});
-
 export const entitiesRepository = new RepositoryReact<EntityData>({
     actionRoutes: {
         getRoute: "entities",

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import MainSetup from "../../../React/MainSetupReact";
 import {
     CitySelector,
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     EntitySelector,
     PersonSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -44,7 +44,7 @@ export function OurContractModalBody(props: ModalBodyProps<OurContract>) {
                 </Form.Group>
                 {!isEditing && (
                     <Form.Group as={Col} controlId="_type">
-                        <ContractTypeSelectFormElement typesToInclude="our" />
+                        <ContractTypeSelector typesToInclude="our" />
                     </Form.Group>
                 )}
             </Row>

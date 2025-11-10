@@ -1,7 +1,7 @@
 import React from "react";
 import {
     ContractRangeSelector,
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     ProjectSelector,
 } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
@@ -24,7 +24,7 @@ export function ContractsFilterBody() {
                 <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} xl={5}>
-                <ContractTypeSelectFormElement name="_contractType" showValidationInfo={false} />
+                <ContractTypeSelector name="_contractType" showValidationInfo={false} />
             </Form.Group>
 
             <DateRangeInput

@@ -81,12 +81,7 @@ export function LetterModalBody({
         <>
             <Form.Group controlId="_contract">
                 <Form.Label>Wybierz kontrakt</Form.Label>
-                <ContractSelector
-                    name="_contract"
-                    repository={contractsRepository}
-                    _project={_project}
-                    readOnly={!isEditing}
-                />
+                <ContractSelector name="_contract" _project={_project} readOnly={!isEditing} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Dotyczy spraw</Form.Label>

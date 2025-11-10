@@ -21,7 +21,7 @@ function ContractsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
             react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_FROM, defaultToValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_TO }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.ContractsFilterInitState.END_DATE_FROM }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },

@@ -1,8 +1,5 @@
 import React, { useEffect } from "react";
-import {
-    CaseSelectMenuElement,
-    OfferSelectFormElement,
-} from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { CaseSelectMenuElement, OfferSelector } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
@@ -41,7 +38,7 @@ export function LettersFilterBody() {
             <Row>
                 <Form.Group as={Col} md={12}>
                     <Form.Label>Oferta</Form.Label>
-                    <OfferSelectFormElement repository={offersRepository} name="_offer" showValidationInfo={false} />
+                    <OfferSelector repository={offersRepository} name="_offer" showValidationInfo={false} />
                 </Form.Group>
             </Row>
 

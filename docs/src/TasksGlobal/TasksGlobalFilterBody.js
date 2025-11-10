@@ -10,7 +10,6 @@ const FormContext_1 = require("../View/Modals/FormContext");
 const TasksFilterBodyCommonFields_1 = require("../Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
 const BussinesObjectSelectors_1 = require("../View/Modals/CommonFormComponents/BussinesObjectSelectors");
-const TasksGlobalController_1 = require("./TasksGlobalController");
 function TasksGlobalFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     const { project } = (0, ContractContext_1.useContract)();
@@ -19,6 +18,6 @@ function TasksGlobalFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project && (react_1.default.createElement(react_bootstrap_1.Col, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: TasksGlobalController_1.contractsWithChildrenRepository, showValidationInfo: false, _project: project })))))));
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { showValidationInfo: false, _project: project })))))));
 }
 exports.TasksGlobalFilterBody = TasksGlobalFilterBody;

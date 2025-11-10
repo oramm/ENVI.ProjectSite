@@ -34,6 +34,7 @@ const react_hook_form_1 = require("react-hook-form");
 const react_number_format_1 = require("react-number-format");
 const Yup = __importStar(require("yup"));
 const CommonComponentsController_1 = require("../../Resultsets/CommonComponentsController");
+const ToolsForms_1 = require("../../../React/Tools/ToolsForms");
 function ErrorMessage({ errors, name }) {
     // Function to access nested properties
     const getNestedError = (errors, path) => {
@@ -66,19 +67,31 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     const { register, control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
-    function handleSearch(query) {
-        //console.log("handleSearch - Query: ", query); // Log the search query
+    async function handleSearch(query) {
+        console.log(`🔍 [${name}] handleSearch rozpoczęty dla query:`, query);
         setIsLoading(true);
         const params = {
             [searchKey]: query,
             ...contextSearchParams,
         };
-        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, { skipCache: true }).then((items) => {
-            setOptions(items);
+        try {
+            const items = await repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, {
+                skipCache: true,
+            });
+            console.log(`📦 [${name}] Otrzymano ${items.length} obiektów z API`, items);
+            // ✅ WALIDACJA: Upewnij się że każdy obiekt ma labelKey
+            const validatedData = items.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`));
+            console.log(`✅ [${name}] Po walidacji:`, validatedData);
+            console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
+            setOptions(validatedData);
             setIsLoading(false);
-            if (items.length > 0 && !(labelKey in items[0]))
-                throw new Error(`Nie znaleziono pola ${labelKey} w obiekcie zwróconym przez serwer`);
-        });
+        }
+        catch (error) {
+            setIsLoading(false);
+            console.error(`❌ MyAsyncTypeahead [${name}] - Błąd wyszukiwania:`, error);
+            setOptions([]);
+            // Opcjonalnie można pokazać toast lub alert użytkownikowi
+        }
     }
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
@@ -103,8 +116,20 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
-                //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? (multiple ? field.value : [field.value]) : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
+                // Waliduj field.value przed przekazaniem do selected
+                // Obiekty z formularza (domyślne wartości przy edycji) też muszą mieć labelKey
+                const getValidatedSelected = () => {
+                    if (!field.value)
+                        return [];
+                    const values = multiple ? field.value : [field.value];
+                    const validated = values.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name));
+                    console.log(`🏷️ [${name}] Walidacja selected values:`, {
+                        original: field.value,
+                        validated: validated,
+                    });
+                    return validated;
+                };
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: getValidatedSelected(), multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
             } }),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && react_1.default.createElement("input", { type: "hidden", ...register(name) })));

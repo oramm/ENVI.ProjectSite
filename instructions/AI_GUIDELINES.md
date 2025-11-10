@@ -1,33 +1,74 @@
 # Wytyczne dla AI - ENVI.ProjectSite
 
+> **Status projektu:** W trakcie refactoringu i modernizacji architektury
+
+## Spis Treści
+
+1. [Architektura projektu](#architektura-projektu)
+2. [FilterableTable - zarządzanie listami](#filterabletable---zarządzanie-listami)
+3. [RepositoryReact - komunikacja z API](#repositoryreact---komunikacja-z-api)
+4. [Modalne i formularze](#modalne-i-formularze)
+5. [Business Object Selectors](./business-object-selectors.md) ⭐ **Szczegółowa dokumentacja**
+6. [Typowe błędy i rozwiązania](#typowe-błędy-i-rozwiązania)
+7. [Checklist dla deweloperów](#checklist-dla-deweloperów)
+
 ## Architektura projektu
 
-### Zasady podstawowe
+### Zasady Podstawowe
 
-1. **`repository.items` jest jedynym źródłem prawdy**
+#### 1. `repository.items` jest Jedynym Źródłem Prawdy
 
-    - Wszystkie dane pochodzą z serwera i są przechowywane w `RepositoryReact.items`
-    - Komponenty React synchronizują swój lokalny stan z `repository.items`
-    - Synchronizacja jest **jedokierunkowa**: `repository.items` → `objects` (stan komponentu)
+-   Wszystkie dane pochodzą z serwera i są przechowywane w `RepositoryReact.items`
+-   Komponenty React synchronizują swój lokalny stan z `repository.items`
+-   Synchronizacja jest **jedokierunkowa**: `repository.items` → `objects` (stan komponentu)
 
-2. **Przepływ danych w operacjach CRUD:**
+#### 2. Przepływ Danych w Operacjach CRUD
 
-    ```
-    Modal → repository.addNewItem/editItem/deleteItem (komunikacja z serwerem)
-    ↓
-    repository.items zostaje zaktualizowane
-    ↓
-    Callback (onAddNew/onEdit/onDelete) → handleAddObject/handleEditObject/handleDeleteObject
-    ↓
-    setObjects([...repository.items]) → synchronizacja lokalnego stanu
-    ```
+```
+Modal → repository.addNewItem/editItem/deleteItem (komunikacja z serwerem)
+↓
+repository.items zostaje zaktualizowane
+↓
+Callback (onAddNew/onEdit/onDelete) → handleAddObject/handleEditObject/handleDeleteObject
+↓
+setObjects([...repository.items]) → synchronizacja lokalnego stanu
+```
 
-3. **NIE modyfikuj danych ręcznie**
-    - ❌ `setObjects([...objects, newObject])` - tworzy duplikaty
-    - ❌ `setObjects(objects.map(...))` - desynchronizuje z repository
-    - ✅ `setObjects([...repository.items])` - zawsze synchronizowane
+#### 3. NIE Modyfikuj Danych Ręcznie
 
-## FilterableTable - kluczowe zasady
+-   ❌ `setObjects([...objects, newObject])` - tworzy duplikaty
+-   ❌ `setObjects(objects.map(...))` - desynchronizuje z repository
+-   ✅ `setObjects([...repository.items])` - zawsze synchronizowane
+
+#### 4. Izolacja Komponentów
+
+**Komponenty pomocnicze (selektory, autocomplete) używają lokalnych repozytoriów:**
+
+```typescript
+// ✅ DOBRE - każdy komponent ma własne, izolowane dane
+const localRepository = useMemo(
+    () => new RepositoryReact({
+        actionRoutes: { getRoute: "api/endpoint", ... },
+        name: "componentName_temp" // Unikalna nazwa!
+    }),
+    []
+);
+```
+
+**Szczegółowo:** Zobacz [Business Object Selectors](./business-object-selectors.md)
+
+## FilterableTable - Zarządzanie Listami
+
+### Rola i Odpowiedzialności
+
+`FilterableTable` to główny komponent do wyświetlania i zarządzania listami danych. Odpowiada za:
+
+-   Renderowanie tabel z danymi z `repository.items`
+-   Filtrowanie i sortowanie
+-   Integrację z operacjami CRUD (dodawanie, edycja, usuwanie)
+-   Zarządzanie snapshotami (stan filtrów i danych w sessionStorage)
+
+**Kluczowa zasada:** `FilterableTable` używa **globalnego, współdzielonego** repository, podczas gdy komponenty pomocnicze (selektory) używają **lokalnych** repozytoriów.
 
 ### Operacje CRUD
 
@@ -71,73 +112,7 @@ Modalne wykonują operacje w następującej kolejności:
 
 Jeśli dodasz obiekt ponownie (`setObjects([...objects, object])`), stworzysz **duplikat**.
 
-## Konflikty między komponentami - izolacja repository
-
-### Problem: Współdzielone repository
-
-**NIE rób tego:**
-
-```typescript
-// ❌ ZŁE: Jeden repository używany w wielu miejscach
-export const lettersRepository = new RepositoryReact(...);
-
-// W FilterableTable:
-<FilterableTable repository={lettersRepository} />
-
-// W Modal > LetterSelector:
-<LetterSelector repository={lettersRepository} />
-// ☠️ LetterSelector ładuje tylko pisma z konkretnego kontraktu
-// ☠️ Nadpisuje lettersRepository.items
-// ☠️ FilterableTable traci wszystkie dane!
-```
-
-### Rozwiązanie: Lokalne repository w komponentach pomocniczych
-
-**Zrób to:**
-
-```typescript
-export function LetterSelector({ name, label, _contract }: Props) {
-    // ✅ Lokalna instancja - nie koliduje z głównym repository
-    const localRepository = useMemo(
-        () =>
-            new RepositoryReact({
-                actionRoutes: {
-                    getRoute: "contractsLetters",
-                    addNewRoute: "",
-                    editRoute: "",
-                    deleteRoute: "",
-                },
-                name: "letterSelector_temp", // Unikalna nazwa
-            }),
-        []
-    );
-
-    useEffect(() => {
-        if (_contract?.id) {
-            // ✅ Ładuje do lokalnego repo, nie wpływa na główne
-            await localRepository.loadItemsFromServerPOST([{ contractId: _contract.id }]);
-            setOptions(localRepository.items);
-        }
-    }, [_contract, localRepository]);
-}
-```
-
-### Kiedy używać lokalnego repository?
-
-**TAK - utwórz lokalne repository gdy:**
-
--   Komponent jest używany w modalach/dialogach
--   Komponent ładuje **podzbiór** danych (filtrowanie po parametrach)
--   Komponent jest "pomocniczy" (selector, lookup, autocomplete)
--   Dane są potrzebne tylko tymczasowo (do wyboru opcji)
-
-**NIE - użyj globalnego repository gdy:**
-
--   Komponent jest głównym widokiem listy (FilterableTable)
--   Dane są współdzielone między wieloma komponentami na tym samym poziomie
--   Repository zarządza stanem całej sekcji aplikacji
-
-## RepositoryReact - komunikacja z serwerem
+## RepositoryReact - Komunikacja z API
 
 ### Metody CRUD automatycznie aktualizują `items`
 
@@ -184,7 +159,7 @@ class RepositoryReact {
 
 **Wniosek:** NIE musisz ręcznie aktualizować `repository.items` - metody CRUD robią to automatycznie.
 
-## Modalne (GeneralModal)
+## Modalne i Formularze
 
 ### Przepływ danych w modalach
 
@@ -207,6 +182,43 @@ function handleAddObject(object: LeafDataItemType) {
 ```
 
 **Kluczowe:** Nie dodawaj obiektu ręcznie - on już jest w `repository.items`!
+
+## Business Object Selectors
+
+> **📖 Pełna dokumentacja:** [Business Object Selectors](./business-object-selectors.md)
+
+### Szybkie Wprowadzenie
+
+Business Object Selectors to komponenty do wyboru obiektów biznesowych (kontrakty, projekty, osoby) w formularzach.
+
+**Kluczowa zasada:** Każdy selektor ma **własne, lokalne repository** - nie dzieli go z innymi komponentami.
+
+```typescript
+// ✅ DOBRE - Selektor z lokalnym repository
+export function ContractSelector({ name, typesToInclude, _project }: Props) {
+    const localRepository = useMemo(
+        () => new RepositoryReact({
+            actionRoutes: { getRoute: "contracts", ... },
+            name: "contractSelector_temp", // Unikalna nazwa
+        }),
+        []
+    );
+
+    return <MyAsyncTypeahead repository={localRepository} {...props} />;
+}
+
+// Użycie - prosty interfejs bez przekazywania repository
+<ContractSelector typesToInclude="our" _project={project} />
+```
+
+**Dlaczego?**
+
+-   ✅ Brak konfliktów z `FilterableTable`
+-   ✅ Izolacja danych - każdy selektor ma swoje
+-   ✅ Prosty interfejs - nie trzeba przekazywać repository
+-   ✅ Reużywalność - można używać wszędzie
+
+**Więcej:** Pełna dokumentacja wzorca, przykłady i FAQ w [business-object-selectors.md](./business-object-selectors.md)
 
 ## Immutability i React
 
@@ -248,7 +260,7 @@ function updateSnapshot() {
 
 **Dlatego ważne jest, żeby `repository.items` było zawsze aktualne!**
 
-## Typowe błędy i ich rozwiązania
+## Typowe Błędy i Rozwiązania
 
 ### 1. Duplikaty po dodaniu obiektu
 
@@ -296,16 +308,46 @@ function handleAddObject(object: LeafDataItemType) {
 
 **Rozwiązanie:** Zawsze synchronizuj `objects` z `repository.items` przed `updateSnapshot()`.
 
-## Checklist przed commitowaniem zmian
+**Rozwiązanie:** Zawsze synchronizuj `objects` z `repository.items` przed `updateSnapshot()`.
+
+## Checklist dla Deweloperów
+
+### Przed Commitowaniem Zmian
+
+**Operacje CRUD:**
 
 -   [ ] Operacje CRUD synchronizują `objects` z `repository.items`
 -   [ ] Nie ma ręcznych modyfikacji `objects` (dodawanie/edycja/usuwanie)
--   [ ] Komponenty pomocnicze (selectory) mają własne lokalne repository
--   [ ] Nie ma mutacji obiektów/tablic - zawsze nowe referencje
 -   [ ] `updateSnapshot()` jest wywoływane po synchronizacji stanu
+
+**Komponenty:**
+
+-   [ ] Komponenty pomocnicze (selektory) mają własne lokalne repository
+-   [ ] Nie ma mutacji obiektów/tablic - zawsze nowe referencje
 -   [ ] `handleRowClick` zawsze znajdzie obiekt w `repository.items`
 
-## Przykłady kodu
+**Business Object Selectors:**
+
+-   [ ] Props NIE zawierają `repository`
+-   [ ] Lokalne repository utworzone z `useMemo(() => new RepositoryReact(...), [])`
+-   [ ] Nazwa repository jest unikalna i kończy się `_temp`
+-   [ ] Zobacz pełny checklist w [business-object-selectors.md](./business-object-selectors.md)
+
+### Przed Refactoringiem
+
+-   [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
+-   [ ] Sprawdź czy istnieje wzorzec do naśladowania
+-   [ ] Upewnij się że rozumiesz przepływ danych
+
+## Checklist przed commitowaniem zmian
+
+### Przed Refactoringiem
+
+-   [ ] Przeczytaj aktualne wytyczne dla modyfikowanego obszaru
+-   [ ] Sprawdź czy istnieje wzorzec do naśladowania
+-   [ ] Upewnij się że rozumiesz przepływ danych
+
+## Przykłady Kodu
 
 ### Poprawny komponent z FilterableTable
 
@@ -339,29 +381,42 @@ export function MyList() {
 }
 ```
 
-### Poprawny selector z lokalnym repository
+### Selektor z Lokalnym Repository
+
+> **📖 Więcej przykładów:** [business-object-selectors.md](./business-object-selectors.md)
 
 ```typescript
-export function MySelector({ _parentObject }: Props) {
-    const [options, setOptions] = useState([]);
+export function ContractSelector({ name, typesToInclude, _project }: Props) {
+    // ✅ Lokalne repository - nie koliduje z innymi komponentami
+    const localRepository = useMemo(
+        () => new RepositoryReact({
+            actionRoutes: { getRoute: "contracts", ... },
+            name: "contractSelector_temp",
+        }),
+        []
+    );
 
-    const localRepository = useMemo(() => new RepositoryReact({
-        actionRoutes: { getRoute: "myData", ... },
-        name: "mySelector_temp",
-    }), []);
-
-    useEffect(() => {
-        if (_parentObject?.id) {
-            await localRepository.loadItemsFromServerPOST([{ parentId: _parentObject.id }]);
-            setOptions(localRepository.items);
-        }
-    }, [_parentObject, localRepository]);
-
-    return <Typeahead options={options} ... />;
+    return (
+        <MyAsyncTypeahead
+            name={name}
+            repository={localRepository}
+            contextSearchParams={{ typesToInclude, _project }}
+        />
+    );
 }
+
+// Użycie
+<ContractSelector typesToInclude="our" _project={project} />
 ```
 
-## Pytania i odpowiedzi
+## Dokumentacja Modułowa
+
+Projekt jest w trakcie refactoringu. Szczegółowe wytyczne są rozdzielone na moduły:
+
+-   **[Business Object Selectors](./business-object-selectors.md)** - Wzorce dla komponentów wyboru obiektów
+-   _(Więcej modułów w przyszłości)_
+
+## Pytania i Odpowiedzi
 
 **Q: Czy mogę używać `repository.items` bezpośrednio w renderze?**  
 A: Tak, ale lepiej używać lokalnego stanu `objects` zsynchronizowanego z `repository.items`. Daje to lepszą kontrolę nad re-renderami.
@@ -373,9 +428,9 @@ A: Po każdej operacji CRUD (dodanie/edycja/usunięcie) i po synchronizacji `obj
 A: Tak, ale tylko w metodach `RepositoryReact` (addNewItem, editItem, deleteItem). W komponentach React zawsze używaj `setObjects([...repository.items])`.
 
 **Q: Co zrobić gdy mam komponent używany w wielu miejscach?**  
-A: Jeśli komponent ładuje dane z serwera (selector, autocomplete), daj mu własne lokalne repository. Jeśli tylko wyświetla dane, przekaż `repository` jako props.
+A: Jeśli komponent ładuje dane z serwera (selector, autocomplete), daj mu własne lokalne repository. Jeśli tylko wyświetla dane, przekaż `repository` jako props. Zobacz [business-object-selectors.md](./business-object-selectors.md)
 
-## Kontakt i wsparcie
+## Wsparcie i Kontakt
 
 Przy wprowadzaniu zmian w projekcie, zawsze sprawdź:
 

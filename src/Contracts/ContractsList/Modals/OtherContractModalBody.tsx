@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import RepositoryReact from "../../../React/RepositoryReact";
 import {
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     EntitySelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { ContractModalBody } from "./ContractModalBody";
@@ -33,7 +33,7 @@ export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
     return (
         <>
             {" "}
-            {!props.isEditing ? <ContractTypeSelectFormElement typesToInclude="other" /> : null}
+            {!props.isEditing ? <ContractTypeSelector typesToInclude="other" /> : null}
             <ContractModalBody {...props} />
             <Form.Group>
                 <Form.Label>Wykonawcy</Form.Label>

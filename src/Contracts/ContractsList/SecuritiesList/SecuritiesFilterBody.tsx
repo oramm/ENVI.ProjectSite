@@ -3,7 +3,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import {
     ProjectSelector,
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { projectsRepository } from "../ContractsController";
@@ -24,7 +24,7 @@ export function SecuritiesFilterBody() {
                 <ProjectSelector repository={projectsRepository} showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} xl={5}>
-                <ContractTypeSelectFormElement name="_contractType" showValidationInfo={false} />
+                <ContractTypeSelector name="_contractType" showValidationInfo={false} />
             </Form.Group>
             <DateRangeInput
                 as={Col}

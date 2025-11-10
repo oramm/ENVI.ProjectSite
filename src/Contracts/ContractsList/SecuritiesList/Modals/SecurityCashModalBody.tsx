@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     PersonSelectorPreloaded,
 } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { SecurityModalBody } from "./SecurityModalBody";

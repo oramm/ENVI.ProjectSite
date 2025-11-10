@@ -4,7 +4,7 @@ import { useFormContext } from "../../View/Modals/FormContext";
 import {
     ContractRangeSelector,
     ContractSelector,
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     PersonSelector,
     ProjectSelector,
 } from "../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -46,7 +46,6 @@ export function MilestoneDatesFilterBody() {
                 <Form.Group as={Col} md={12} xl={5}>
                     <Form.Label>Kontrakt</Form.Label>
                     <ContractSelector
-                        repository={contractsRepository}
                         name="_contract"
                         typesToInclude="all"
                         showValidationInfo={false}
@@ -89,7 +88,7 @@ export function MilestoneDatesFilterBody() {
             </Row>
             <Row>
                 <Form.Group as={Col} xl={4}>
-                    <ContractTypeSelectFormElement name="_contractType" showValidationInfo={false} />
+                    <ContractTypeSelector name="_contractType" showValidationInfo={false} />
                 </Form.Group>
                 <Form.Group as={Col} xl={4}>
                     <ContractRangeSelector repository={MainSetup.contractRangesRepository} showValidationInfo={false} />

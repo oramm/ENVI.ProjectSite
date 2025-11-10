@@ -13,6 +13,7 @@ import { TypeaheadManagerChildProps } from "react-bootstrap-typeahead/types/type
 import { RenderMenuItemChildren } from "react-bootstrap-typeahead/types/components/TypeaheadMenu";
 import { hasError } from "../../Resultsets/CommonComponentsController";
 import { ColProps } from "react-bootstrap";
+import { ensureLabelKey } from "../../../React/Tools/ToolsForms";
 
 export type ErrorMessageProps = { errors: FieldErrors<any>; name: string };
 
@@ -82,19 +83,35 @@ export function MyAsyncTypeahead({
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<any[]>([]);
 
-    function handleSearch(query: string) {
-        //console.log("handleSearch - Query: ", query); // Log the search query
+    async function handleSearch(query: string) {
+        console.log(`🔍 [${name}] handleSearch rozpoczęty dla query:`, query);
         setIsLoading(true);
         const params = {
             [searchKey]: query,
             ...contextSearchParams,
         };
-        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, { skipCache: true }).then((items) => {
-            setOptions(items);
+
+        try {
+            const items = await repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, {
+                skipCache: true,
+            });
+
+            console.log(`📦 [${name}] Otrzymano ${items.length} obiektów z API`, items);
+
+            // ✅ WALIDACJA: Upewnij się że każdy obiekt ma labelKey
+            const validatedData = items.map((item: any) => ensureLabelKey(item, labelKey, `MyAsyncTypeahead[${name}]`));
+
+            console.log(`✅ [${name}] Po walidacji:`, validatedData);
+            console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
+
+            setOptions(validatedData);
             setIsLoading(false);
-            if (items.length > 0 && !(labelKey in items[0]))
-                throw new Error(`Nie znaleziono pola ${labelKey} w obiekcie zwróconym przez serwer`);
-        });
+        } catch (error) {
+            setIsLoading(false);
+            console.error(`❌ MyAsyncTypeahead [${name}] - Błąd wyszukiwania:`, error);
+            setOptions([]);
+            // Opcjonalnie można pokazać toast lub alert użytkownikowi
+        }
     }
 
     // Bypass client-side filtering by returning `true`. Results are already
@@ -124,7 +141,21 @@ export function MyAsyncTypeahead({
                 name={name}
                 control={control}
                 render={({ field }) => {
-                    //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
+                    // Waliduj field.value przed przekazaniem do selected
+                    // Obiekty z formularza (domyślne wartości przy edycji) też muszą mieć labelKey
+                    const getValidatedSelected = () => {
+                        if (!field.value) return [];
+
+                        const values = multiple ? field.value : [field.value];
+                        const validated = values.map((item: any) => ensureLabelKey(item, labelKey, name));
+
+                        console.log(`🏷️ [${name}] Walidacja selected values:`, {
+                            original: field.value,
+                            validated: validated,
+                        });
+
+                        return validated;
+                    };
                     return (
                         <AsyncTypeahead
                             renderMenu={renderMenu ? renderMenu : undefined}
@@ -138,7 +169,7 @@ export function MyAsyncTypeahead({
                             options={options}
                             onChange={(items) => handleOnChange(items, field)}
                             onBlur={field.onBlur}
-                            selected={field.value ? (multiple ? field.value : [field.value]) : []}
+                            selected={getValidatedSelected()}
                             multiple={multiple}
                             newSelectionPrefix="Dodaj nowy: "
                             placeholder="-- Wybierz opcję --"

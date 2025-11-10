@@ -17,11 +17,7 @@ export function TasksGlobalFilterBody() {
                     <Col>
                         <Form.Group as={Col} controlId="_contract">
                             <Form.Label>Kontrakt</Form.Label>
-                            <ContractSelector
-                                repository={contractsWithChildrenRepository}
-                                showValidationInfo={false}
-                                _project={project}
-                            />
+                            <ContractSelector showValidationInfo={false} _project={project} />
                         </Form.Group>
                     </Col>
                 )}

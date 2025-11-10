@@ -9,8 +9,8 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import MainSetup from "../../../React/MainSetupReact";
 import { Invoice, OurContract } from "../../../../Typings/bussinesTypes";
-import { contractsRepository, entitiesRepository } from "../InvoicesController";
-import { ErrorMessage, MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { entitiesRepository } from "../InvoicesController";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 
 export function InvoiceModalBody({ isEditing, initialData, contextData: contextData }: ModalBodyProps<Invoice>) {
     const {
@@ -57,12 +57,7 @@ export function InvoiceModalBody({ isEditing, initialData, contextData: contextD
         <>
             <Form.Group controlId="_contract">
                 <Form.Label>Wybierz kontrakt</Form.Label>
-                <ContractSelector
-                    name="_contract"
-                    repository={contractsRepository}
-                    typesToInclude="our"
-                    readOnly={!isEditing}
-                />
+                <ContractSelector name="_contract" typesToInclude="our" readOnly={!isEditing} />
             </Form.Group>
             <Row>
                 <Form.Group as={Col} controlId="issueDate">

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     CitySelector,
-    ContractTypeSelectFormElement,
+    ContractTypeSelector,
     EntitySelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Placeholder, Row } from "react-bootstrap";
@@ -64,7 +64,7 @@ export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOff
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="_type">
-                        <ContractTypeSelectFormElement typesToInclude="our" />
+                        <ContractTypeSelector typesToInclude="our" />
                     </Form.Group>
                 </Row>
             )}

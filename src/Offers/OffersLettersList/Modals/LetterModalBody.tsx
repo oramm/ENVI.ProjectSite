@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     CaseSelectMenuElement,
-    OfferSelectFormElement,
+    OfferSelector,
     PersonSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Alert, Col, Form, Placeholder, Row } from "react-bootstrap";
@@ -57,7 +57,7 @@ export function LetterModalBody({ isEditing, initialData }: ModalBodyProps<OurLe
         <>
             <Form.Group controlId="_offer">
                 <Form.Label>Wybierz ofertę</Form.Label>
-                <OfferSelectFormElement name="_offer" repository={offersRepository} readOnly={!isEditing} />
+                <OfferSelector name="_offer" repository={offersRepository} readOnly={!isEditing} />
             </Form.Group>
             <Form.Group>
                 <Form.Label>Dotyczy spraw</Form.Label>

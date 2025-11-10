@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { ContractSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
-import { contractsRepository } from "../RolesController";
 import { ContractRoleData } from "../../../../Typings/bussinesTypes";
 import { CommonRoleFieldsModalBody } from "./CommonRoleFieldsModalBody";
 
@@ -22,7 +21,7 @@ export function ContractRoleModalBody(props: ModalBodyProps<ContractRoleData>) {
 
     return (
         <>
-            <ContractSelector repository={contractsRepository} name="_contract" />
+            <ContractSelector name="_contract" />
             <CommonRoleFieldsModalBody {...props} />
         </>
     );

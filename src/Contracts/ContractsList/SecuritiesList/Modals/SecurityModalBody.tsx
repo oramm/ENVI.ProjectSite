@@ -7,7 +7,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../../View/Modals/ModalsTypes";
 import { ProjectData, Security } from "../../../../../Typings/bussinesTypes";
-import { contractsRepository, projectsRepository } from "../../ContractsController";
+import { projectsRepository } from "../../ContractsController";
 import { ErrorMessage, ValueInPLNInput } from "../../../../View/Modals/CommonFormComponents/GenericComponents";
 import { SecurityStatusSelector } from "../../../../View/Modals/CommonFormComponents/StatusSelectors";
 
@@ -40,13 +40,7 @@ export function SecurityModalBody({ isEditing, initialData }: ModalBodyProps<Sec
             {!isEditing && (
                 <Form.Group controlId="_contract">
                     <Form.Label>Wybierz kontrakt</Form.Label>
-                    <ContractSelector
-                        name="_contract"
-                        typesToInclude="our"
-                        repository={contractsRepository}
-                        _project={_project}
-                        readOnly={!isEditing}
-                    />
+                    <ContractSelector name="_contract" typesToInclude="our" _project={_project} readOnly={!isEditing} />
                 </Form.Group>
             )}
             <Form.Group controlId="description">

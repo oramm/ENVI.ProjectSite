@@ -36,6 +36,7 @@ import {
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
+import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
 
 type ProjectSelectorProps = {
     repository: RepositoryReact;
@@ -62,10 +63,13 @@ export function ProjectSelector({
 
     function renderOption(option: unknown) {
         const optionTyped = option as ProjectData;
+        // ourId jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const alias = safeGetFirstField<string>(optionTyped, ["alias"], "[Brak aliasu]");
+
         return (
             <div>
                 <span>{optionTyped.ourId}</span>
-                <div className="text-muted small text-wrap">{optionTyped.alias}</div>
+                <div className="text-muted small text-wrap">{alias}</div>
             </div>
         );
     }
@@ -103,10 +107,13 @@ export function CitySelector({
 }: CitySelectorProps) {
     function renderOption(option: any) {
         const typedOption = option as CityData;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const code = safeGetFirstField<string>(typedOption, ["code"], "");
+
         return (
             <div>
                 <span>{typedOption.name}</span>
-                <span className="text-muted small"> {typedOption.code}</span>
+                <span className="text-muted small"> {code}</span>
             </div>
         );
     }
@@ -148,11 +155,13 @@ export function EntitySelector({
 
     function renderOption(option: any, props: any) {
         const typedOption = option as EntityData;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const address = safeGetFirstField<string>(typedOption, ["address"], "[Brak adresu]");
 
         return (
             <div>
                 <span>{typedOption.name}</span>
-                <div className="text-muted small text-wrap">{typedOption.address}</div>
+                <div className="text-muted small text-wrap">{address}</div>
             </div>
         );
     }
@@ -173,7 +182,7 @@ export function EntitySelector({
     );
 }
 
-export type OfferSelectFormElementProps = {
+export type OfferSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
@@ -181,28 +190,34 @@ export type OfferSelectFormElementProps = {
     readOnly?: boolean;
 };
 
-export function OfferSelectFormElement({
+export function OfferSelector({
     name = "_offer",
     showValidationInfo = true,
     multiple = false,
     repository,
     readOnly = false,
-}: OfferSelectFormElementProps) {
+}: OfferSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
 
     function renderOption(option: any) {
         const typedOption = option as OurOffer | ExternalOffer;
+        // alias jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const typeName = safeGetFirstField<string>(typedOption, ["_type.name"], "[Brak typu]");
+        const cityName = safeGetFirstField<string>(typedOption, ["_city.name"], "");
+        const deadline = safeGetFirstField<string>(typedOption, ["submissionDeadline"], "");
+        const employerName = safeGetFirstField<string>(typedOption, ["employerName"], "[Brak pracodawcy]");
+
         return (
             <div>
                 <span>
-                    {typedOption._type.name} {` `}
-                    {typedOption._city.name} {` | `}
+                    {typeName} {` `}
+                    {cityName} {` | `}
                     {typedOption.alias} {` | `}
-                    {typedOption.submissionDeadline}
+                    {deadline}
                 </span>
-                <div className="text-muted small text-wrap">{typedOption.employerName}</div>
+                <div className="text-muted small text-wrap">{employerName}</div>
             </div>
         );
     }
@@ -427,12 +442,15 @@ export function ApplicationCallSelector({
 
     function renderOption(option: unknown) {
         const optionTyped = option as ApplicationCallData;
-        console.log("renderOption - Option: ", option); // Log the option being rendered
+        // description jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const endDate = safeGetFirstField<string>(optionTyped, ["endDate"], "");
+        const status = safeGetFirstField<string>(optionTyped, ["status"], "");
+
         return (
             <div>
                 <span>{optionTyped.description}</span>
                 <div className="text-muted small text-wrap">
-                    {optionTyped.endDate} {optionTyped.status}
+                    {endDate} {status}
                 </div>
             </div>
         );
@@ -479,11 +497,15 @@ export function ClientNeedSelector({
 
     function renderOption(option: any) {
         const optionTyped = option as NeedData;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const clientName = safeGetFirstField<string>(optionTyped, ["_client.name"], "[Brak klienta]");
+        const status = safeGetFirstField<string>(optionTyped, ["status"], "");
+
         return (
             <div>
                 <span>{optionTyped.name}</span>
                 <div className="text-muted small text-wrap">
-                    {optionTyped._client?.name} | {optionTyped.status}
+                    {clientName} | {status}
                 </div>
             </div>
         );
@@ -505,36 +527,56 @@ export function ClientNeedSelector({
     );
 }
 
-export type ContractSelectFormElementProps = {
+export type ContractSelectorProps = {
     name?: string;
     showValidationInfo?: boolean;
     multiple?: boolean;
     typesToInclude?: "our" | "other" | "all";
-    repository: RepositoryReact;
     _project?: ProjectData;
     readOnly?: boolean;
 };
 
+/**
+ * Komponent formularza wyboru kontraktu z wyszukiwaniem asynchronicznym
+ * Używa lokalnego repository aby nie kolidować z innymi komponentami
+ */
 export function ContractSelector({
     name = "_contract",
     showValidationInfo = true,
     multiple = false,
-    repository,
     typesToInclude = "all",
     _project,
     readOnly = false,
-}: ContractSelectFormElementProps) {
+}: ContractSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
 
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = useMemo(
+        () =>
+            new RepositoryReact<OurContract | OtherContract>({
+                actionRoutes: {
+                    getRoute: "contracts",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "contractSelector_temp",
+            }),
+        []
+    );
+
     function renderOption(option: unknown) {
         const optionTyped = option as OurContract | OtherContract;
-        const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
+        // _ourIdOrNumber_Name powinno być zwrócone przez backend
+        const mainLabel = safeGetFirstField<string>(optionTyped, ["ourId", "number"], "[Brak numeru]");
+        const subLabel = safeGetFirstField<string>(optionTyped, ["alias", "name"], "[Brak nazwy]");
+
         return (
             <div>
                 <span>{mainLabel}</span>
-                <div className="text-muted small text-wrap">{optionTyped.alias || optionTyped.name}</div>
+                <div className="text-muted small text-wrap">{subLabel}</div>
             </div>
         );
     }
@@ -549,7 +591,7 @@ export function ContractSelector({
                     typesToInclude: typesToInclude,
                     _project: _project,
                 }}
-                repository={repository}
+                repository={localRepository}
                 renderMenuItemChildren={renderOption}
                 multiple={multiple}
                 showValidationInfo={showValidationInfo}
@@ -641,7 +683,7 @@ export function ContractRangeSelector({
     );
 }
 
-type ContractTypeSelectFormElementProps = {
+type ContractTypeSelectorProps = {
     typesToInclude?: "our" | "other" | "all";
     showValidationInfo?: boolean;
     required?: boolean;
@@ -656,13 +698,13 @@ type ContractTypeSelectFormElementProps = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-export function ContractTypeSelectFormElement({
+export function ContractTypeSelector({
     typesToInclude = "all",
     required = false,
     showValidationInfo = true,
     multiple = false,
     name = "_type",
-}: ContractTypeSelectFormElementProps) {
+}: ContractTypeSelectorProps) {
     const {
         control,
         watch,
@@ -996,10 +1038,13 @@ export function PersonSelector({
 }: PersonSelectorProps) {
     function renderOption(option: any) {
         const typedOption = option as PersonData;
+        // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const entityName = safeGetFirstField<string>(typedOption, ["_entity.name"], "[Brak encji]");
+
         return (
             <>
                 <div>{typedOption._nameSurnameEmail}</div>
-                <div className="text-muted small text-wrap"> {typedOption._entity.name}</div>
+                <div className="text-muted small text-wrap"> {entityName}</div>
             </>
         );
     }

@@ -3,7 +3,6 @@ import { ContractSelector } from "../../View/Modals/CommonFormComponents/Bussine
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../View/Modals/FormContext";
 import MainSetup from "../../React/MainSetupReact";
-import { contractsRepository } from "./InvoicesController";
 import { InvoiceStatusSelector } from "../../View/Modals/CommonFormComponents/StatusSelectors";
 import { DateRangeInput } from "../../View/Modals/CommonFormComponents/GenericComponents";
 
@@ -29,12 +28,7 @@ export function InvoicesFilterBody() {
             />
             <Form.Group as={Col} sm={12} md={8}>
                 <Form.Label>Kontrakt</Form.Label>
-                <ContractSelector
-                    repository={contractsRepository}
-                    name="_contract"
-                    typesToInclude="our"
-                    showValidationInfo={false}
-                />
+                <ContractSelector name="_contract" typesToInclude="our" showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} sm={12} md={4}>
                 <InvoiceStatusSelector multiple={true} showValidationInfo={false} />

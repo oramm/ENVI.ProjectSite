@@ -87196,7 +87196,7 @@ function ContractsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
             react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_FROM, defaultToValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_TO }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.ContractsFilterInitState.END_DATE_FROM }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
@@ -87840,7 +87840,7 @@ function OtherContractModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
-        !props.isEditing ? react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "other" }) : null,
+        !props.isEditing ? react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "other" }) : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
@@ -87921,7 +87921,7 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
                 react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
             !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "our" })))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "our" })))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_manager" },
@@ -88201,7 +88201,7 @@ function SecurityModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", repository: ContractsController_1.contractsRepository, _project: _project, readOnly: !isEditing }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", _project: _project, readOnly: !isEditing }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
@@ -88468,7 +88468,7 @@ function SecuritiesFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
             react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.START_DATE_FROM, defaultToValue: MainSetupReact_1.default.SecuritiesFilterInitState.START_DATE_TO }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "70% wygasa", fromName: "firstPartExpiryDateFrom", toName: "firstPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.FIRST_PART_EXPIRY_DATE_FROM }),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "30% wygasa", fromName: "secondPartExpiryDateFrom", toName: "secondPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM }),
@@ -88778,7 +88778,7 @@ function MilestoneDatesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: MilestoneDatesController_1.projectsRepository, showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12, xl: 5 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: MilestoneDatesController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 3 },
                 react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, name: "contractStatuses", label: "Statusy kontratu" }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -88789,7 +88789,7 @@ function MilestoneDatesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: MilestoneDatesController_1.personsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
@@ -89283,7 +89283,6 @@ exports.ContractRoleModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
 const CommonRoleFieldsModalBody_1 = __webpack_require__(/*! ./CommonRoleFieldsModalBody */ "./src/Contracts/Roles/Modals/CommonRoleFieldsModalBody.tsx");
 function ContractRoleModalBody(props) {
     const { isEditing, initialData } = props;
@@ -89293,7 +89292,7 @@ function ContractRoleModalBody(props) {
         trigger();
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_contract" }),
+        react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract" }),
         react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
 exports.ContractRoleModalBody = ContractRoleModalBody;
@@ -89578,7 +89577,7 @@ function RolesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12, xl: 5 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: RolesController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 3 },
                 react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -89589,7 +89588,7 @@ function RolesFilterBody() {
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository, showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { name: "_contractType", showValidationInfo: false })),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: MainSetupReact_1.default.contractRangesRepository, showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4 },
@@ -90276,7 +90275,6 @@ const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/Comm
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const InvoicesController_1 = __webpack_require__(/*! ./InvoicesController */ "./src/Erp/InvoicesList/InvoicesController.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function InvoicesFilterBody() {
@@ -90288,7 +90286,7 @@ function InvoicesFilterBody() {
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 7, label: "Data utworzenia", fromName: "issueDateFrom", toName: "issueDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_FROM, defaultToValue: MainSetupReact_1.default.InvoicesFilterInitState.ISSUE_DATE_TO }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 8 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: InvoicesController_1.contractsRepository, name: "_contract", typesToInclude: "our", showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 4 },
             react_1.default.createElement(StatusSelectors_1.InvoiceStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
@@ -90309,7 +90307,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.entitiesRepository = exports.contractsRepository = exports.projectsRepository = exports.invoiceItemsRepository = exports.invoicesRepository = exports.statusNames = void 0;
+exports.entitiesRepository = exports.projectsRepository = exports.invoiceItemsRepository = exports.invoicesRepository = exports.statusNames = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.statusNames = ["Roboczy", "Do wysłania", "Wysłany"];
 exports.invoicesRepository = new RepositoryReact_1.default({
@@ -90339,15 +90337,6 @@ exports.projectsRepository = new RepositoryReact_1.default({
         deleteRoute: "",
     },
     name: "projects",
-});
-exports.contractsRepository = new RepositoryReact_1.default({
-    actionRoutes: {
-        getRoute: "contracts",
-        addNewRoute: "",
-        editRoute: "",
-        deleteRoute: "",
-    },
-    name: "contracts",
 });
 exports.entitiesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -90767,7 +90756,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: InvoicesController_1.contractsRepository, typesToInclude: "our", readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "issueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
@@ -91162,7 +91151,7 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { repository: LettersController_1.contractsRepository, name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project }))),
         _contract && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
@@ -91617,7 +91606,7 @@ function LetterModalBody({ isEditing, initialData, }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz kontrakt"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", repository: LettersController_1.contractsRepository, _project: _project, readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", _project: _project, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_cases", repository: LettersController_1.casesRepository, _project: _project, _contract: _contract, readonly: !_contract })) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Wybierz kontrakt, by przypisa\u0107 do spraw"))),
@@ -92018,7 +92007,7 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oferta"),
-                react_1.default.createElement(BussinesObjectSelectors_1.OfferSelectFormElement, { repository: LettersController_1.offersRepository, name: "_offer", showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { repository: LettersController_1.offersRepository, name: "_offer", showValidationInfo: false }))),
         _offer && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
@@ -92315,7 +92304,7 @@ function LetterModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_offer" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz ofert\u0119"),
-            react_1.default.createElement(BussinesObjectSelectors_1.OfferSelectFormElement, { name: "_offer", repository: LettersController_1.offersRepository, readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { name: "_offer", repository: LettersController_1.offersRepository, readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _offer ? (react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_cases", repository: LettersController_1.casesRepository, _offer: _offer, readonly: !_offer })) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Wybierz ofert\u0119, by przypisa\u0107 do spraw"))),
@@ -93271,7 +93260,7 @@ function OfferModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { repository: CitiesController_1.citiesRepository, showValidationInfo: true, allowNew: true }),
                 react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true }, renderCityText())),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "our" })))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "our" })))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employer", repository: OffersController_1.entitiesRepository, multiple: false, allowNew: true })),
@@ -97322,17 +97311,170 @@ exports["default"] = ToolsFetch;
 /*!***************************************!*\
   !*** ./src/React/Tools/ToolsForms.ts ***!
   \***************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+/**
+ * Utilities for Forms and Business Object Selectors
+ * Centralizuje logikę walidacji i bezpiecznego dostępu do pól
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.logSelector = exports.safeGetFirstField = exports.ensureLabelKey = void 0;
+const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ./ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
+// ===== LOGGING CONFIGURATION =====
+const LOG_CONFIG = {
+    enabled: true,
+    minLevel: "warn", // Minimalny poziom logowania
+};
+const LOG_LEVELS = {
+    error: 0,
+    warn: 1,
+    info: 2,
+    debug: 3,
+};
+function shouldLog(level) {
+    return LOG_CONFIG.enabled && LOG_LEVELS[level] <= LOG_LEVELS[LOG_CONFIG.minLevel];
+}
+/**
+ * Loguje komunikaty związane z selektorami z odpowiednim formatowaniem
+ */
+function logSelector(level, selectorName, message, data) {
+    if (!shouldLog(level))
+        return;
+    const emoji = { error: "❌", warn: "⚠️", info: "ℹ️", debug: "🔍" };
+    const prefix = `${emoji[level]} [${selectorName}]`;
+    if (level === "error") {
+        console.error(prefix, message, data);
+    }
+    else if (level === "warn") {
+        console.warn(prefix, message, data);
+    }
+    else {
+        console.log(prefix, message, data);
+    }
+}
+exports.logSelector = logSelector;
+// ===== VALIDATION FUNCTIONS =====
+/**
+ * Zapewnia że obiekt ma wymagane pole labelKey.
+ * Jeśli pole nie istnieje lub jest puste, tworzy je z wartością fallback.
+ *
+ * @param item - Obiekt do walidacji
+ * @param labelKey - Nazwa wymaganego pola
+ * @param selectorName - Nazwa selektora (do logowania)
+ * @returns Obiekt z zagwarantowanym polem labelKey
+ */
+function ensureLabelKey(item, labelKey, selectorName) {
+    if (!item || typeof item !== "object") {
+        logSelector("error", selectorName, "Otrzymano nieprawidłowy obiekt (null lub nie-obiekt)", item);
+        return { [labelKey]: "[Błąd danych]" };
+    }
+    const value = item[labelKey];
+    // Sprawdź czy wartość istnieje i jest stringiem
+    if (value === undefined || value === null || value === "" || typeof value !== "string") {
+        const errorDetails = {
+            receivedKeys: Object.keys(item),
+            labelKeyValue: value,
+            labelKeyType: typeof value,
+            object: item,
+        };
+        logSelector("warn", selectorName, `Brak wymaganego pola "${labelKey}" lub nie jest stringiem. Struktura obiektu:`, errorDetails);
+        // 📧 Wyślij raport błędu na serwer (automatyczne zgłoszenie niespójności backendu)
+        ToolsFetch_1.default.sendClientErrorReport(new Error(`Backend Data Validation Failed: Missing or invalid labelKey "${labelKey}"`), {
+            action: "ensureLabelKey_validation_failed",
+            selectorName,
+            labelKey,
+            ...errorDetails,
+        }).catch((err) => {
+            // Nie blokuj działania aplikacji jeśli wysłanie raportu się nie powiodło
+            console.error("Nie udało się wysłać raportu walidacji:", err);
+        });
+        return { ...item, [labelKey]: "[Brak danych]" };
+    }
+    return item;
+}
+exports.ensureLabelKey = ensureLabelKey;
+/**
+ * Uniwersalna funkcja do bezpiecznego odczytywania wartości z obiektu.
+ * Obsługuje zarówno ścieżki zagnieżdżone jak i alternatywne pola.
+ *
+ * @example
+ * // Pojedyncze pole
+ * safeGetFirstField(obj, ["name"], "Brak")
+ *
+ * // Alternatywne pola (pierwsze znalezione)
+ * safeGetFirstField(contract, ["ourId", "number"], "Brak")
+ *
+ * // Ścieżka zagnieżdżona (notacja kropkowa)
+ * safeGetFirstField(person, ["_entity.name"], "Brak")
+ *
+ * // Mix - alternatywy + ścieżki
+ * safeGetFirstField(offer, ["alias", "_city.name"], "Brak")
+ *
+ * @param obj - Obiekt źródłowy
+ * @param fieldPaths - Lista pól/ścieżek (sprawdzane po kolei). Ścieżki zagnieżdżone oddzielaj kropką.
+ * @param fallback - Wartość zwracana gdy żadne pole nie istnieje
+ * @param selectorName - Opcjonalna nazwa selektora (do logowania)
+ * @returns Wartość pierwszego znalezionego pola lub fallback
+ */
+function safeGetFirstField(obj, fieldPaths, fallback, selectorName) {
+    if (!obj || typeof obj !== "object") {
+        return fallback;
+    }
+    // Sprawdź każdą ścieżkę/pole po kolei
+    for (const fieldPath of fieldPaths) {
+        // Czy to ścieżka zagnieżdżona? (zawiera kropkę)
+        const pathParts = fieldPath.split(".");
+        // Nawiguj przez ścieżkę
+        let current = obj;
+        let pathValid = true;
+        for (const part of pathParts) {
+            if (!current || typeof current !== "object" || !(part in current)) {
+                pathValid = false;
+                break;
+            }
+            current = current[part];
+        }
+        // Ścieżka nieprawidłowa - sprawdź następną
+        if (!pathValid) {
+            continue;
+        }
+        // Sprawdź czy wartość końcowa jest poprawna
+        if (current === undefined || current === null || current === "") {
+            continue;
+        }
+        // Obiekt/array → pomiń i szukaj dalej
+        if (typeof current === "object") {
+            if (selectorName && shouldLog("debug")) {
+                logSelector("debug", selectorName, `Ścieżka "${fieldPath}" wskazuje na obiekt, szukam dalej`);
+            }
+            continue;
+        }
+        // ✅ Znaleziono poprawną wartość
+        return current;
+    }
+    // Nie znaleziono żadnego pola
+    if (selectorName && shouldLog("debug")) {
+        logSelector("debug", selectorName, `Brak wartości dla ścieżek [${fieldPaths.join(", ")}]`);
+    }
+    return fallback;
+}
+exports.safeGetFirstField = safeGetFirstField;
+// ===== LEGACY CLASS (zachowane dla kompatybilności) =====
 class ToolsForms {
     static getSuggestedClass(field, watchAllFields, initValue) {
-        return watchAllFields[field] === initValue ? 'text-primary' : '';
+        return watchAllFields[field] === initValue ? "text-primary" : "";
     }
 }
 exports["default"] = ToolsForms;
+// Statyczne metody dla łatwego dostępu
+ToolsForms.ensureLabelKey = ensureLabelKey;
+ToolsForms.safeGetFirstField = safeGetFirstField;
+ToolsForms.logSelector = logSelector;
 
 
 /***/ }),
@@ -98447,7 +98589,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelectFormElement = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelectFormElement = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -98459,6 +98601,7 @@ const FormContext_1 = __webpack_require__(/*! ../FormContext */ "./src/View/Moda
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
 const ContractsController_1 = __webpack_require__(/*! ../../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ./GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const ToolsForms_1 = __webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts");
 /**
  * Komponent formularza wyboru projektu
  * @param repository Repozytorium projektów
@@ -98469,9 +98612,11 @@ function ProjectSelector({ name = "_project", repository, showValidationInfo = t
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
+        // ourId jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const alias = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["alias"], "[Brak aliasu]");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.ourId),
-            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, alias)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
@@ -98483,11 +98628,13 @@ exports.ProjectSelector = ProjectSelector;
 function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     function renderOption(option) {
         const typedOption = option;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const code = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["code"], "");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, typedOption.name),
             react_1.default.createElement("span", { className: "text-muted small" },
                 " ",
-                typedOption.code)));
+                code)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
@@ -98497,36 +98644,43 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, rep
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option, props) {
         const typedOption = option;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const address = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["address"], "[Brak adresu]");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, typedOption.name),
-            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.address)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, address)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.EntitySelector = EntitySelector;
-function OfferSelectFormElement({ name = "_offer", showValidationInfo = true, multiple = false, repository, readOnly = false, }) {
+function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = false, repository, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const typedOption = option;
+        // alias jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const typeName = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["_type.name"], "[Brak typu]");
+        const cityName = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["_city.name"], "");
+        const deadline = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["submissionDeadline"], "");
+        const employerName = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["employerName"], "[Brak pracodawcy]");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null,
-                typedOption._type.name,
+                typeName,
                 " ",
                 ` `,
-                typedOption._city.name,
+                cityName,
                 " ",
                 ` | `,
                 typedOption.alias,
                 " ",
                 ` | `,
-                typedOption.submissionDeadline),
-            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, typedOption.employerName)));
+                deadline),
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, employerName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-exports.OfferSelectFormElement = OfferSelectFormElement;
+exports.OfferSelector = OfferSelector;
 function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
@@ -98593,13 +98747,15 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
-        console.log("renderOption - Option: ", option); // Log the option being rendered
+        // description jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const endDate = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["endDate"], "");
+        const status = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["status"], "");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.description),
             react_1.default.createElement("div", { className: "text-muted small text-wrap" },
-                optionTyped.endDate,
+                endDate,
                 " ",
-                optionTyped.status)));
+                status)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "description", searchKey: "searchText", contextSearchParams: {
@@ -98612,31 +98768,50 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function renderOption(option) {
         const optionTyped = option;
+        // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const clientName = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["_client.name"], "[Brak klienta]");
+        const status = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["status"], "");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.name),
             react_1.default.createElement("div", { className: "text-muted small text-wrap" },
-                optionTyped._client?.name,
+                clientName,
                 " | ",
-                optionTyped.status)));
+                status)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.ClientNeedSelector = ClientNeedSelector;
-function ContractSelector({ name = "_contract", showValidationInfo = true, multiple = false, repository, typesToInclude = "all", _project, readOnly = false, }) {
+/**
+ * Komponent formularza wyboru kontraktu z wyszukiwaniem asynchronicznym
+ * Używa lokalnego repository aby nie kolidować z innymi komponentami
+ */
+function ContractSelector({ name = "_contract", showValidationInfo = true, multiple = false, typesToInclude = "all", _project, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "contracts",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "contractSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
-        const mainLabel = "ourId" in optionTyped ? optionTyped.ourId : optionTyped.number;
+        // _ourIdOrNumber_Name powinno być zwrócone przez backend
+        const mainLabel = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["ourId", "number"], "[Brak numeru]");
+        const subLabel = (0, ToolsForms_1.safeGetFirstField)(optionTyped, ["alias", "name"], "[Brak nazwy]");
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, mainLabel),
-            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, optionTyped.alias || optionTyped.name)));
+            react_1.default.createElement("div", { className: "text-muted small text-wrap" }, subLabel)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_ourIdOrNumber_Name", searchKey: "searchText", contextSearchParams: {
                 typesToInclude: typesToInclude,
                 _project: _project,
-            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
+            }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.ContractSelector = ContractSelector;
 function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
@@ -98683,7 +98858,7 @@ exports.ContractRangeSelector = ContractRangeSelector;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function ContractTypeSelectFormElement({ typesToInclude = "all", required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
+function ContractTypeSelector({ typesToInclude = "all", required = false, showValidationInfo = true, multiple = false, name = "_type", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const label = "Typ Kontraktu";
     const repository = MainSetupReact_1.default.contractTypesRepository;
@@ -98721,7 +98896,7 @@ function ContractTypeSelectFormElement({ typesToInclude = "all", required = fals
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.ContractTypeSelectFormElement = ContractTypeSelectFormElement;
+exports.ContractTypeSelector = ContractTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -98837,11 +99012,13 @@ exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
 function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
     function renderOption(option) {
         const typedOption = option;
+        // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
+        const entityName = (0, ToolsForms_1.safeGetFirstField)(typedOption, ["_entity.name"], "[Brak encji]");
         return (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement("div", null, typedOption._nameSurnameEmail),
             react_1.default.createElement("div", { className: "text-muted small text-wrap" },
                 " ",
-                typedOption._entity.name)));
+                entityName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
@@ -99056,6 +99233,7 @@ const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_mod
 const react_number_format_1 = __webpack_require__(/*! react-number-format */ "./node_modules/react-number-format/dist/react-number-format.es.js");
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const CommonComponentsController_1 = __webpack_require__(/*! ../../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
+const ToolsForms_1 = __webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts");
 function ErrorMessage({ errors, name }) {
     // Function to access nested properties
     const getNestedError = (errors, path) => {
@@ -99088,19 +99266,31 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     const { register, control, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
     const [options, setOptions] = (0, react_1.useState)([]);
-    function handleSearch(query) {
-        //console.log("handleSearch - Query: ", query); // Log the search query
+    async function handleSearch(query) {
+        console.log(`🔍 [${name}] handleSearch rozpoczęty dla query:`, query);
         setIsLoading(true);
         const params = {
             [searchKey]: query,
             ...contextSearchParams,
         };
-        repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, { skipCache: true }).then((items) => {
-            setOptions(items);
+        try {
+            const items = await repository.loadItemsFromServerPOST([params], specialSerwerSearchActionRoute, {
+                skipCache: true,
+            });
+            console.log(`📦 [${name}] Otrzymano ${items.length} obiektów z API`, items);
+            // ✅ WALIDACJA: Upewnij się że każdy obiekt ma labelKey
+            const validatedData = items.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`));
+            console.log(`✅ [${name}] Po walidacji:`, validatedData);
+            console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
+            setOptions(validatedData);
             setIsLoading(false);
-            if (items.length > 0 && !(labelKey in items[0]))
-                throw new Error(`Nie znaleziono pola ${labelKey} w obiekcie zwróconym przez serwer`);
-        });
+        }
+        catch (error) {
+            setIsLoading(false);
+            console.error(`❌ MyAsyncTypeahead [${name}] - Błąd wyszukiwania:`, error);
+            setOptions([]);
+            // Opcjonalnie można pokazać toast lub alert użytkownikowi
+        }
     }
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
@@ -99125,8 +99315,20 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => {
-                //console.log("Rendering AsyncTypeahead - Field Value: ", field.value);
-                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: field.value ? (multiple ? field.value : [field.value]) : [], multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
+                // Waliduj field.value przed przekazaniem do selected
+                // Obiekty z formularza (domyślne wartości przy edycji) też muszą mieć labelKey
+                const getValidatedSelected = () => {
+                    if (!field.value)
+                        return [];
+                    const values = multiple ? field.value : [field.value];
+                    const validated = values.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name));
+                    console.log(`🏷️ [${name}] Walidacja selected values:`, {
+                        original: field.value,
+                        validated: validated,
+                    });
+                    return validated;
+                };
+                return (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { renderMenu: renderMenu ? renderMenu : undefined, filterBy: filterBy, id: `${name}-asyncTypeahead`, allowNew: allowNew, isLoading: isLoading, labelKey: labelKey, minLength: 2, onSearch: handleSearch, options: options, onChange: (items) => handleOnChange(items, field), onBlur: field.onBlur, selected: getValidatedSelected(), multiple: multiple, newSelectionPrefix: "Dodaj nowy: ", placeholder: "-- Wybierz opcj\u0119 --", renderMenuItemChildren: renderMenuItemChildren, isValid: showValidationInfo ? !(0, CommonComponentsController_1.hasError)(errors, name) : undefined, isInvalid: showValidationInfo ? (0, CommonComponentsController_1.hasError)(errors, name) : undefined }));
             } }),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && react_1.default.createElement("input", { type: "hidden", ...register(name) })));

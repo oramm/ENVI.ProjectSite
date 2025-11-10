@@ -51,7 +51,7 @@ function OtherContractModalBody(props) {
     }, [initialData, setValue]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         " ",
-        !props.isEditing ? react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelectFormElement, { typesToInclude: "other" }) : null,
+        !props.isEditing ? react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "other" }) : null,
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wykonawcy"),
