@@ -33,7 +33,6 @@ const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormCompon
 const ContractModalBody_1 = require("./ContractModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
-const ContractsController_1 = require("../ContractsController");
 function OurContractModalBody(props) {
     const { initialData, isEditing } = props;
     const { register, trigger, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
@@ -50,7 +49,7 @@ function OurContractModalBody(props) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_city" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
-                react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { repository: ContractsController_1.citiesRepository, showValidationInfo: true })),
+                react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { showValidationInfo: true })),
             !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "our" })))),
         react_1.default.createElement(ContractModalBody_1.ContractModalBody, { ...props }),
@@ -61,6 +60,6 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Administrator", name: "_admin", repository: MainSetupReact_1.default.personsEnviRepository })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
-                react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employers", repository: ContractsController_1.entitiesRepository, multiple: true })))));
+                react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employers", multiple: true })))));
 }
 exports.OurContractModalBody = OurContractModalBody;

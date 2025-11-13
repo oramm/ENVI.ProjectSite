@@ -7,7 +7,6 @@ exports.PersonsFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
-const SystemUserController_1 = require("./SystemUserController");
 const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 function PersonsFilterBody() {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
@@ -17,6 +16,6 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", repository: SystemUserController_1.entitiesRepository, multiple: true, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false }))));
 }
 exports.PersonsFilterBody = PersonsFilterBody;

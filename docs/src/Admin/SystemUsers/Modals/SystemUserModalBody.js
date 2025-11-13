@@ -27,7 +27,6 @@ exports.SystemUserModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
-const SystemUserController_1 = require("../SystemUserController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 function SystemUserModalBody({ isEditing, initialData }) {
@@ -53,7 +52,7 @@ function SystemUserModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", repository: SystemUserController_1.entitiesRepository, multiple: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Imi\u0119"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj imi\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),

@@ -60,7 +60,7 @@ function LettersFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4 },
                 react_1.default.createElement(StatusSelectors_1.LetterStatusMultipleSelector, null)),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, sm: 6, md: 4, lg: 3, xl: 2 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),

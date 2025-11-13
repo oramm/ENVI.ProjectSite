@@ -28,7 +28,6 @@ const react_1 = __importStar(require("react"));
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
-const FinancialAidProgrammesController_1 = require("../../FinancialAidProgrammesController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function FocusAreaModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
@@ -45,7 +44,7 @@ function FocusAreaModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isValid: !errors?.name, isInvalid: !!errors?.name, ...register("name") }),

@@ -16,7 +16,6 @@ export function FocusAreasFilterBody() {
             <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
                 <FinancialAidProgrammeSelector
-                    repository={financialAidProgrammesRepository}
                     showValidationInfo={false}
                 />
             </Form.Group>

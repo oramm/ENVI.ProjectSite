@@ -50,7 +50,7 @@ function LettersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Oferta"),
-                react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { repository: LettersController_1.offersRepository, name: "_offer", showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { name: "_offer", showValidationInfo: false }))),
         _offer && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),

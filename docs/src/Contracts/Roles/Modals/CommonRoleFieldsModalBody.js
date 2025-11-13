@@ -29,7 +29,6 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
-const RolesController_1 = require("../RolesController");
 const OtherAttributesSelectors_1 = require("../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
 function CommonRoleFieldsModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
@@ -55,6 +54,6 @@ function CommonRoleFieldsModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_person", className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person" }))));
 }
 exports.CommonRoleFieldsModalBody = CommonRoleFieldsModalBody;

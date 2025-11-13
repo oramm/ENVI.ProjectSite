@@ -123,6 +123,6 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     const { SpecificLetterModalBody } = additionalProps;
     if (!SpecificLetterModalBody)
         throw new Error("SpecificContractModalBody is not defined");
-    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: LettersController_1.projectsRepository, name: "_project" }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { name: "_project" }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;

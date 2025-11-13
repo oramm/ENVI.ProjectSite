@@ -65,7 +65,7 @@ function LetterModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_offer" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz ofert\u0119"),
-            react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { name: "_offer", repository: LettersController_1.offersRepository, readOnly: !isEditing })),
+            react_1.default.createElement(BussinesObjectSelectors_1.OfferSelector, { name: "_offer", readOnly: !isEditing })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Dotyczy spraw"),
             _offer ? (react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_cases", repository: LettersController_1.casesRepository, _offer: _offer, readonly: !_offer })) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Wybierz ofert\u0119, by przypisa\u0107 do spraw"))),

@@ -43,7 +43,6 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
                 <Form.Group controlId="_financialAidProgramme">
                     <Form.Label>Program wsparcia</Form.Label>
                     <FinancialAidProgrammeSelector
-                        repository={financialAidProgrammesRepository}
                         showValidationInfo={true}
                     />
                 </Form.Group>

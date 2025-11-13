@@ -9,7 +9,6 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const FocusAreasController_1 = require("../FocusAreasController");
-const FinancialAidProgrammesController_1 = require("../../FinancialAidProgrammesController");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 function ApplicationCallsFilterBody() {
     const { register, watch } = (0, FormContext_1.useFormContext)();
@@ -20,7 +19,7 @@ function ApplicationCallsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_focusArea" },
             react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
