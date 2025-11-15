@@ -176,9 +176,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEditWithFiles(data: FormData) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append("id", currentDataItem.id.toString());
-
         appendContextData(currentDataItem, data);
+
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));
         const editedObject = await repository.editItem(data as FormData, specialActionRoute, fieldsToUpdate);

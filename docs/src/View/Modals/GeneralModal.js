@@ -156,7 +156,6 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
     }
     async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append("id", currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));
