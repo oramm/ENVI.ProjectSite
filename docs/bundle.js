@@ -86405,6 +86405,7 @@ function ContractMainViewTabs() {
         fetchData();
     }, []);
     function createContractRepository() {
+        // ✅ Lokalne repository dla szczegółów - nie koliduje z głównym "contracts"
         const repository = new RepositoryReact_1.default({
             actionRoutes: {
                 getRoute: "contracts",
@@ -86412,7 +86413,7 @@ function ContractMainViewTabs() {
                 editRoute: "contract",
                 deleteRoute: "contract",
             },
-            name: "contracts",
+            name: "contractDetails_temp",
         });
         let repositoryDataFromRoute = location?.state?.repository;
         if (repositoryDataFromRoute) {
@@ -87824,10 +87825,11 @@ const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonF
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
-    const ourRelatedContractsRepository = new RepositoryReact_1.default({
-        name: "OurRelatedContractsRepository",
+    // ✅ Lokalne repository w useMemo - nie będzie kolizji z głównym contractsRepository
+    const ourRelatedContractsRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        name: "ourRelatedContracts_temp",
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
-    });
+    }), []);
     const { setValue, watch } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {
@@ -98581,7 +98583,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPreloaded = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -98762,7 +98764,7 @@ exports.FocusAreaSelector = FocusAreaSelector;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, required = false, showValidationInfo = true, multiple = false, name = "_focusArea", }) {
+function FocusAreaSelectorPreloaded({ repository, _financialAidProgramme, required = false, showValidationInfo = true, multiple = false, name = "_focusArea", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
     const label = "Działanie";
@@ -98793,7 +98795,7 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.FocusAreaSelectorPrefilled = FocusAreaSelectorPrefilled;
+exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
 function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, _focusArea, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -100088,6 +100090,7 @@ exports.GeneralModal = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/Modals/FormContext.ts");
 const CommonComponentsController_1 = __webpack_require__(/*! ../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
@@ -100145,8 +100148,21 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         setIsLoadingData(true);
         try {
-            const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
+            // ✅ Tworzymy tymczasowe repository tylko do pobrania szczegółów
+            // NIE nadpisuje głównego repository.items!
+            const tempRepository = new RepositoryReact_1.default({
+                name: `${repository.name}_modalDetails_temp`,
+                actionRoutes: {
+                    getRoute: repository.actionRoutes.getRoute,
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+            });
+            const dataObjectFromServer = (await tempRepository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
             if (dataObjectFromServer) {
+                // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
+                // (dla spójności danych, nie nadpisuj całej listy)
                 repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
                 repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
             }
@@ -102364,7 +102380,7 @@ function ApplicationCallsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
             react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_focusArea" },
-            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPreloaded, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
             react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
@@ -102609,7 +102625,7 @@ function ApplicationCallModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
             react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: true }))),
         _financialAidProgramme && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusArea" },
-            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: true }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPreloaded, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: true }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),

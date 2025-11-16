@@ -423,7 +423,7 @@ type FocusAreaSelector1Props = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-export function FocusAreaSelectorPrefilled({
+export function FocusAreaSelectorPreloaded({
     repository,
     _financialAidProgramme,
     required = false,

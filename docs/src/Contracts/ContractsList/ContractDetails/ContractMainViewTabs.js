@@ -59,6 +59,7 @@ function ContractMainViewTabs() {
         fetchData();
     }, []);
     function createContractRepository() {
+        // ✅ Lokalne repository dla szczegółów - nie koliduje z głównym "contracts"
         const repository = new RepositoryReact_1.default({
             actionRoutes: {
                 getRoute: "contracts",
@@ -66,7 +67,7 @@ function ContractMainViewTabs() {
                 editRoute: "contract",
                 deleteRoute: "contract",
             },
-            name: "contracts",
+            name: "contractDetails_temp",
         });
         let repositoryDataFromRoute = location?.state?.repository;
         if (repositoryDataFromRoute) {

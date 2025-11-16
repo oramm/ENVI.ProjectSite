@@ -4,7 +4,7 @@ import { useFormContext } from "../../../View/Modals/FormContext";
 import {
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
-    FocusAreaSelectorPrefilled,
+    FocusAreaSelectorPreloaded,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { focusAreasRepository } from "../FocusAreasController";
 import { financialAidProgrammesRepository } from "../../FinancialAidProgrammesController";
@@ -21,12 +21,10 @@ export function ApplicationCallsFilterBody() {
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
-                <FinancialAidProgrammeSelector
-                    showValidationInfo={false}
-                />
+                <FinancialAidProgrammeSelector showValidationInfo={false} />
             </Form.Group>
             <Form.Group as={Col} md={6} controlId="_focusArea">
-                <FocusAreaSelectorPrefilled
+                <FocusAreaSelectorPreloaded
                     repository={focusAreasRepository}
                     _financialAidProgramme={_financialAidProgramme}
                     showValidationInfo={false}

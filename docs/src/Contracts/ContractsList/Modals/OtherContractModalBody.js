@@ -37,10 +37,11 @@ const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/G
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
-    const ourRelatedContractsRepository = new RepositoryReact_1.default({
-        name: "OurRelatedContractsRepository",
+    // ✅ Lokalne repository w useMemo - nie będzie kolizji z głównym contractsRepository
+    const ourRelatedContractsRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        name: "ourRelatedContracts_temp",
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
-    });
+    }), []);
     const { setValue, watch } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {

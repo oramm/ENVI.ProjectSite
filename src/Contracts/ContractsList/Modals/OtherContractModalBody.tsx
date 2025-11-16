@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import RepositoryReact from "../../../React/RepositoryReact";
 import {
@@ -16,10 +16,15 @@ import { MyAsyncTypeahead } from "../../../View/Modals/CommonFormComponents/Gene
 export function OtherContractModalBody(props: ModalBodyProps<OtherContract>) {
     const initialData = props.initialData as OtherContract;
 
-    const ourRelatedContractsRepository = new RepositoryReact<OurContract>({
-        name: "OurRelatedContractsRepository",
-        actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
-    });
+    // ✅ Lokalne repository w useMemo - nie będzie kolizji z głównym contractsRepository
+    const ourRelatedContractsRepository = useMemo(
+        () =>
+            new RepositoryReact<OurContract>({
+                name: "ourRelatedContracts_temp",
+                actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
+            }),
+        []
+    );
 
     const { setValue, watch } = useFormContext();
     const _project = watch("_project");
