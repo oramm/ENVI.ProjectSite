@@ -24,12 +24,13 @@
 ## Spis Treści
 
 1. [Przegląd Architektury](#1-przegląd-architektury)
-2. [Warstwa Walidacji Danych](#2-warstwa-walidacji-danych)
-3. [Komponenty Selektorów](#3-komponenty-selektorów)
-4. [Helper Functions (ToolsForms)](#4-helper-functions-toolsforms)
-5. [Przepływ Danych](#5-przepływ-danych)
-6. [Wzorce i Best Practices](#6-wzorce-i-best-practices)
-7. [Tworzenie Nowego Selektora](#7-tworzenie-nowego-selektora)
+2. [Repository i SessionStorage](#2-repository-i-sessionstorage)
+3. [Warstwa Walidacji Danych](#3-warstwa-walidacji-danych)
+4. [Komponenty Selektorów](#4-komponenty-selektorów)
+5. [Helper Functions (ToolsForms)](#5-helper-functions-toolsforms)
+6. [Przepływ Danych](#6-przepływ-danych)
+7. [Wzorce i Best Practices](#7-wzorce-i-best-practices)
+8. [Tworzenie Nowego Selektora](#8-tworzenie-nowego-selektora)
 
 ---
 
@@ -73,7 +74,194 @@
 
 ---
 
-## 2. Warstwa Walidacji Danych
+## 2. Repository i SessionStorage
+
+### ⚠️ Problem: Kolizje Nazw w SessionStorage
+
+**Repository zapisuje dane do sessionStorage używając `name` jako klucza:**
+
+```typescript
+// RepositoryReact.ts
+saveToSessionStorage() {
+    sessionStorage.setItem(this.name, JSON.stringify(this));
+}
+```
+
+**PUŁAPKA:** Jeśli dwa komponenty używają tego samego `name`, **nadpiszą swoje dane wzajemnie!**
+
+#### ❌ Przykład Kolizji
+
+```typescript
+// ContractsController.ts - główne repository dla listy
+export const contractsRepository = new RepositoryReact<Contract>({
+    name: "contracts", // ← klucz w sessionStorage
+    actionRoutes: { getRoute: "contracts", ... }
+});
+
+// GeneralModal.tsx - ładowanie szczegółów do edycji
+async function loadDataObject() {
+    // ❌ ZŁE: używa tego samego repository co lista
+    const details = await repository.loadItemsFromServerPOST([{ id }]);
+    // 💥 Nadpisuje repository.items = [tylko jeden obiekt]
+    // 💥 Zapisuje do sessionStorage["contracts"] = [tylko jeden obiekt]
+}
+```
+
+**Rezultat:**
+
+-   Lista w `FilterableTable` miała 100 kontraktów
+-   Po otwarciu modalu edycji ma **tylko 1** (ten edytowany)
+-   SessionStorage został nadpisany
+-   Po odświeżeniu strony lista ma tylko 1 element
+
+---
+
+### ✅ Rozwiązanie: Lokalne Repository z Unikalną Nazwą
+
+#### Wzorzec dla Selektorów (MyAsyncTypeahead)
+
+```typescript
+export function ContractSelector({ name = "_contract", ... }) {
+    // ✅ Lokalne repository z unikalną nazwą
+    const localRepository = useMemo(
+        () => new RepositoryReact<Contract>({
+            actionRoutes: {
+                getRoute: "contracts", // ← ten sam endpoint
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "contractSelector_temp", // ← UNIKALNA nazwa
+        }),
+        []
+    );
+
+    return (
+        <MyAsyncTypeahead
+            repository={localRepository}
+            // ...
+        />
+    );
+}
+```
+
+**Dlaczego działa:**
+
+-   ✅ `getRoute: "contracts"` - pobiera z tego samego API
+-   ✅ `name: "contractSelector_temp"` - zapisuje do **innego klucza** w sessionStorage
+-   ✅ Główne `contractsRepository.items` pozostaje nietknięte
+-   ✅ `skipCache: true` w `MyAsyncTypeahead` - nie zapisuje do sessionStorage (opcjonalne)
+
+---
+
+#### Wzorzec dla Modali (GeneralModal)
+
+```typescript
+// GeneralModal.tsx
+async function loadDataObject() {
+    // ✅ Tworzymy tymczasowe repository
+    const tempRepository = new RepositoryReact<DataItemType>({
+        name: `${repository.name}_modalDetails_temp`, // ← UNIKALNA nazwa
+        actionRoutes: {
+            getRoute: repository.actionRoutes.getRoute, // ← ten sam endpoint
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+    });
+
+    // Pobierz szczegóły używając temp repository
+    const details = await tempRepository.loadItemsFromServerPOST([{ id }]);
+
+    // Zaktualizuj tylko jeden element w głównym repository
+    repository.replaceItemById(details.id, details);
+}
+```
+
+**Dlaczego działa:**
+
+-   ✅ Temp repository ma nazwę `"contracts_modalDetails_temp"` - nie koliduje
+-   ✅ Główne `contractsRepository.items` (100 elementów) pozostaje nietknięte
+-   ✅ `replaceItemById` aktualizuje tylko jeden element w głównej liście
+-   ✅ SessionStorage dla głównej listy nie jest nadpisywany
+
+---
+
+### 📋 Konwencje Nazewnictwa Repository
+
+| Kontekst               | Nazwa Repository       | SessionStorage Key               | Przykład                              |
+| ---------------------- | ---------------------- | -------------------------------- | ------------------------------------- |
+| **Główne listy**       | `{resource}Repository` | `"{resource}"`                   | `contractsRepository` → `"contracts"` |
+| **Selektory**          | Lokalne w `useMemo`    | `"{resource}Selector_temp"`      | `"contractSelector_temp"`             |
+| **Modale (szczegóły)** | Tymczasowe             | `"{resource}_modalDetails_temp"` | `"contracts_modalDetails_temp"`       |
+| **Widoki szczegółów**  | Lokalne                | `"{resource}Details_temp"`       | `"contractDetails_temp"`              |
+
+**Zasada:** Każdy komponent, który **nie jest główną listą**, używa **lokalnego repository z sufiksem `_temp`**.
+
+---
+
+### 🔄 Kiedy Używać `skipCache: true`
+
+`loadItemsFromServerPOST` ma parametr `skipCache`:
+
+```typescript
+await repository.loadItemsFromServerPOST(
+    [params],
+    specialRoute,
+    { skipCache: true } // ← nie zapisuj do sessionStorage
+);
+```
+
+**Używaj gdy:**
+
+-   ✅ Repository jest tymczasowe (i tak ma unikalną nazwę)
+-   ✅ Dane są jednorazowe (np. wyszukiwanie w selektorze)
+-   ✅ Nie chcesz zaśmiecać sessionStorage
+
+**NIE używaj gdy:**
+
+-   ❌ To główne repository dla listy (cache jest potrzebny)
+-   ❌ Chcesz zachować dane po odświeżeniu strony
+
+**Uwaga:** Jeśli repository ma unikalną nazwę, `skipCache` jest **opcjonalny** (nie zaszkodzi, ale nie jest konieczny).
+
+---
+
+### 🛠️ TODO: Lekka Wersja Repository
+
+**Propozycja:** Stworzyć `RepositoryReactLight` bez sessionStorage dla lokalnych komponentów:
+
+```typescript
+// Przyszła implementacja
+class RepositoryReactLight<T> extends RepositoryReact<T> {
+    saveToSessionStorage() {
+        // ✅ Pusta implementacja - nie zapisuje do sessionStorage
+    }
+
+    loadFromSessionStorage() {
+        // ✅ Pusta implementacja - nie czyta z sessionStorage
+    }
+}
+
+// Użycie w selektorach
+const localRepository = useMemo(
+    () => new RepositoryReactLight<Contract>({
+        actionRoutes: { getRoute: "contracts", ... },
+        name: "contractSelector", // nazwa nieważna, bo nie używa sessionStorage
+    }),
+    []
+);
+```
+
+**Korzyści:**
+
+-   Lżejsza wersja dla komponentów lokalnych
+-   Brak zaśmiecania sessionStorage
+-   Wyraźna intencja w kodzie (light = lokalne, pełne = globalne)
+
+---
+
+## 3. Warstwa Walidacji Danych
 
 ### Dlaczego jest potrzebna?
 
@@ -160,7 +348,7 @@ function renderOption(option: unknown) {
 
 ---
 
-## 3. Komponenty Selektorów
+## 4. Komponenty Selektorów
 
 ### Anatomia Selektora
 
@@ -239,7 +427,7 @@ export function ContractSelector({
 
 ---
 
-## 4. Helper Functions (ToolsForms)
+## 5. Helper Functions (ToolsForms)
 
 ### `ensureLabelKey<T>`
 
@@ -343,7 +531,7 @@ const LOG_CONFIG = {
 
 ---
 
-## 5. Przepływ Danych
+## 6. Przepływ Danych
 
 ### Szczegółowy Flow
 
@@ -462,14 +650,17 @@ setOptions([]) ← Pusty dropdown, NIE crash
 
 ---
 
-## 6. Wzorce i Best Practices
+## 7. Wzorce i Best Practices
 
 ### ✅ DO
 
 ```typescript
-// 1. Zawsze używaj useMemo dla lokalnego repository
+// 1. Zawsze używaj useMemo dla lokalnego repository z UNIKALNĄ nazwą
 const localRepository = useMemo(
-    () => new RepositoryReact<DataType>({ ... }),
+    () => new RepositoryReact<DataType>({
+        actionRoutes: { getRoute: "myResource", ... },
+        name: "myResourceSelector_temp", // ← UNIKALNA nazwa (_temp suffix)
+    }),
     [] // Pusta deps array - tworzone raz
 );
 
@@ -520,11 +711,24 @@ export function ContractSelector(props: Props) {
     return <MyAsyncTypeahead repository={localRepository} />;
 }
 
-// 3. NIE zakładaj że pole zawsze istnieje
+// 3. NIE używaj tej samej nazwy repository co główna lista
+// ❌ ZŁE - koliduje z contractsRepository:
+const repo = new RepositoryReact({
+    name: "contracts", // ← nadpisze sessionStorage głównej listy!
+    actionRoutes: { getRoute: "contracts", ... }
+});
+
+// ✅ DOBRE - unikalna nazwa:
+const repo = useMemo(() => new RepositoryReact({
+    name: "contractSelector_temp", // ← własny klucz w sessionStorage
+    actionRoutes: { getRoute: "contracts", ... }
+}), []);
+
+// 4. NIE zakładaj że pole zawsze istnieje
 const name = option.name;  // ❌ Może być undefined
 const name = safeGetField(option, ["name"], "[Brak]");  // ✅
 
-// 4. NIE używaj safeGetField dla labelKey w renderOption
+// 5. NIE używaj safeGetField dla labelKey w renderOption
 // labelKey jest już zagwarantowane przez MyAsyncTypeahead
 function renderOption(option: unknown) {
     const typed = option as ProjectData;
@@ -538,7 +742,7 @@ function renderOption(option: unknown) {
 
 ---
 
-## 7. Tworzenie Nowego Selektora
+## 8. Tworzenie Nowego Selektora
 
 ### 🤖 Checklist dla AI
 
