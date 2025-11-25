@@ -164,6 +164,7 @@ export type EntitySelectorProps = {
     showValidationInfo?: boolean;
     multiple?: boolean;
     allowNew?: boolean;
+    repository?: RepositoryReact<EntityData>;
 };
 
 export function EntitySelector({
@@ -171,25 +172,25 @@ export function EntitySelector({
     showValidationInfo = true,
     multiple = false,
     allowNew = false,
+    repository,
 }: EntitySelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
 
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = useMemo(
-        () =>
-            new RepositoryReact<EntityData>({
-                actionRoutes: {
-                    getRoute: "entities",
-                    addNewRoute: "",
-                    editRoute: "",
-                    deleteRoute: "",
-                },
-                name: "entitySelector_temp",
-            }),
-        []
-    );
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = useMemo(() => {
+        if (repository) return repository;
+        return new RepositoryReact<EntityData>({
+            actionRoutes: {
+                getRoute: "entities",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "entitySelector_temp",
+        });
+    }, [repository]);
 
     function renderOption(option: any, props: any) {
         const typedOption = option as EntityData;
@@ -294,6 +295,7 @@ export type FinancialAidProgrammeSelectorProps = {
     showValidationInfo?: boolean;
     multiple?: boolean;
     allowNew?: boolean;
+    repository?: RepositoryReact<FinancialAidProgrammeData>;
 };
 
 export function FinancialAidProgrammeSelector({
@@ -301,25 +303,25 @@ export function FinancialAidProgrammeSelector({
     showValidationInfo = true,
     multiple = false,
     allowNew = false,
+    repository,
 }: FinancialAidProgrammeSelectorProps) {
     const {
         formState: { errors },
     } = useFormContext();
 
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = useMemo(
-        () =>
-            new RepositoryReact<FinancialAidProgrammeData>({
-                actionRoutes: {
-                    getRoute: "financialAidProgrammes",
-                    addNewRoute: "",
-                    editRoute: "",
-                    deleteRoute: "",
-                },
-                name: "financialAidProgrammeSelector_temp",
-            }),
-        []
-    );
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = useMemo(() => {
+        if (repository) return repository;
+        return new RepositoryReact<FinancialAidProgrammeData>({
+            actionRoutes: {
+                getRoute: "financialAidProgrammes",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "financialAidProgrammeSelector_temp",
+        });
+    }, [repository]);
 
     function renderOption(option: any) {
         const optionTyped = option as FinancialAidProgrammeData;
@@ -1129,6 +1131,7 @@ export type PersonSelectorProps = {
     showValidationInfo?: boolean;
     multiple?: boolean;
     allowNew?: boolean;
+    repository?: RepositoryReact<PersonData>;
 };
 
 export function PersonSelector({
@@ -1136,20 +1139,23 @@ export function PersonSelector({
     showValidationInfo = true,
     multiple = false,
     allowNew = false,
+    repository,
 }: PersonSelectorProps) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = useMemo(
         () =>
-            new RepositoryReact<PersonData>({
-                actionRoutes: {
-                    getRoute: "persons",
-                    addNewRoute: "",
-                    editRoute: "",
-                    deleteRoute: "",
-                },
-                name: "personSelector_temp",
-            }),
-        []
+            repository
+                ? repository
+                : new RepositoryReact<PersonData>({
+                      actionRoutes: {
+                          getRoute: "persons",
+                          addNewRoute: "",
+                          editRoute: "",
+                          deleteRoute: "",
+                      },
+                      name: "personSelector_temp",
+                  }),
+        [repository]
     );
 
     function renderOption(option: any) {

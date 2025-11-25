@@ -32,7 +32,6 @@ const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormCompon
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
-const InvoicesController_1 = require("../InvoicesController");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
@@ -84,7 +83,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "status" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odbiorca"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", repository: InvoicesController_1.entitiesRepository, multiple: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },

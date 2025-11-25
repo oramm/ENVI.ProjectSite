@@ -28,7 +28,6 @@ const react_1 = __importStar(require("react"));
 const BussinesObjectSelectors_1 = require("../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
-const ContractsController_1 = require("../../ContractsController");
 const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../../../View/Modals/CommonFormComponents/StatusSelectors");
 function SecurityModalBody({ isEditing, initialData }) {
@@ -81,6 +80,6 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
         reset({ _project: undefined });
         trigger();
     }, [reset]);
-    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, name: "_project" }))));
+    return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { name: "_project" }))));
 }
 exports.ProjectSelectorModalBody = ProjectSelectorModalBody;

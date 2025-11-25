@@ -29,8 +29,6 @@ const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormCompon
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const FinancialAidProgrammesController_1 = require("../../FinancialAidProgrammesController");
-const FocusAreasController_1 = require("../../FocusAreas/FocusAreasController");
-const ApplicationCallsController_1 = require("../../FocusAreas/ApplicationCalls/ApplicationCallsController");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 function NeedModalBody({ isEditing, initialData }) {
@@ -67,9 +65,9 @@ function NeedModalBody({ isEditing, initialData }) {
         react_1.default.createElement(StatusSelectors_1.ClientNeedStatusSelector, null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusAreas" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Przypisz dzia\u0142ania"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelector, { name: "_focusAreas", repository: FocusAreasController_1.focusAreasRepository, multiple: true })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelector, { name: "_focusAreas", multiple: true })),
         _focusAreas && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_applicationCall" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz nabor"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { name: "_applicationCall", repository: ApplicationCallsController_1.applicationCallsRepository, multiple: false, _focusArea: _focusAreas })))));
+            react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { name: "_applicationCall", multiple: false, _focusArea: _focusAreas })))));
 }
 exports.NeedModalBody = NeedModalBody;

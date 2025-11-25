@@ -28,8 +28,6 @@ const react_1 = __importStar(require("react"));
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
-const OffersController_1 = require("../OffersController");
-const CitiesController_1 = require("../../../Admin/Cities/CitiesController");
 const OtherAttributesSelectors_1 = require("../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
@@ -62,13 +60,13 @@ function OfferModalBody({ isEditing, initialData }) {
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_city" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miasto"),
-                react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { repository: CitiesController_1.citiesRepository, showValidationInfo: true, allowNew: true }),
+                react_1.default.createElement(BussinesObjectSelectors_1.CitySelector, { showValidationInfo: true, allowNew: true }),
                 react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true }, renderCityText())),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_type" },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { typesToInclude: "our" })))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employer", repository: OffersController_1.entitiesRepository, multiple: false, allowNew: true })),
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employer", multiple: false, allowNew: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "alias" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Alias"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj alias", isValid: !errors?.alias, isInvalid: !!errors?.alias, ...register("alias") }),

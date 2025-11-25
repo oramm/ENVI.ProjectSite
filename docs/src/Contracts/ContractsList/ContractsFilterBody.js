@@ -19,7 +19,7 @@ function ContractsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
-            react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: ContractsController_1.projectsRepository, showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 5 },
             react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Rozpocz\u0119cie", fromName: "startDateFrom", toName: "startDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_FROM, defaultToValue: MainSetupReact_1.default.ContractsFilterInitState.START_DATE_TO }),

@@ -31,7 +31,6 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
-const RolesController_1 = require("./RolesController");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
 const StatusSelectors_1 = require("../../View/Modals/CommonFormComponents/StatusSelectors");
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
@@ -48,7 +47,7 @@ function RolesFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, xl: 2 },
-                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { repository: RolesController_1.projectsRepository, showValidationInfo: false })),
+                react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { showValidationInfo: false })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 12, xl: 5 },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "all", showValidationInfo: false, _project: _project })),
@@ -59,7 +58,7 @@ function RolesFilterBody() {
             react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, md: 6, lg: 4, label: "Zako\u0144czenie", fromName: "endDateFrom", toName: "endDateTo", showValidationInfo: false }),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 8, lg: 4, xl: 4, controlId: "_person" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
-                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", repository: RolesController_1.personsRepository, showValidationInfo: false }))),
+                react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person", showValidationInfo: false }))),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(BussinesObjectSelectors_1.ContractTypeSelector, { name: "_contractType", showValidationInfo: false })),

@@ -241,12 +241,15 @@ exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, f
         react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
         react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));
 });
-function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, }) {
+function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, inputRef, }) {
     const { control, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, defaultValue: [], 
             //render={({ field: { onChange } }) => (
-            render: ({ field: { value, onChange, ...field } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", value: value?.fileName, required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple, onChange: (event) => {
+            render: ({ field: { value, onChange, ...field } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, ref: inputRef, type: "file", 
+                // file inputs cannot be programmatically set via value for security reasons
+                // we keep value handling minimal
+                required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple, onChange: (event) => {
                     const files = event.target.files;
                     onChange(files);
                 } })) }),

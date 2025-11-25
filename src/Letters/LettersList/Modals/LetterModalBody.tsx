@@ -23,7 +23,9 @@ import { ErrorMessage, FileInput } from "../../../View/Modals/CommonFormComponen
 export function LetterModalBody({
     isEditing,
     initialData,
-}: ModalBodyProps<OurLetterContract | IncomingLetterContract>) {
+    getConfidenceClass = () => '',
+    fileInputRef,
+}: LetterModalBodyProps & { fileInputRef?: React.RefObject<HTMLInputElement> }) {
     const {
         register,
         reset,
@@ -46,6 +48,16 @@ export function LetterModalBody({
 
     useEffect(() => {
         const nowUTC = new Date().toISOString().split("T")[0];
+        let defaultEditor;
+        if (!isEditing) {
+            const currentUser = MainSetup.currentUser;
+            if (currentUser && MainSetup.personsEnviRepository.items.length > 0) {
+                // Znajdź obiekt PersonData na podstawie emaila zalogowanego użytkownika
+                defaultEditor = MainSetup.personsEnviRepository.items.find(
+                    (person) => person.email === currentUser.systemEmail
+                );
+            }
+        }
         const resetData: any = {
             id: initialData?.id,
             _contract: getContractFromCases(initialData?._cases),
@@ -53,7 +65,7 @@ export function LetterModalBody({
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
-            _editor: initialData?._editor,
+            _editor: initialData?._editor || defaultEditor,
             relatedLetterNumber: initialData?.relatedLetterNumber || "",
             responseDueDate: initialData?.responseDueDate || "",
         };
@@ -117,6 +129,7 @@ export function LetterModalBody({
                         isValid={!errors.creationDate}
                         isInvalid={!!errors.creationDate}
                         {...register("creationDate")}
+                        className={getConfidenceClass("creationDate")}
                     />
                     <ErrorMessage name="creationDate" errors={errors} />
                 </Form.Group>
@@ -140,7 +153,7 @@ export function LetterModalBody({
             </Form.Group>
             <Form.Group controlId="file">
                 <Form.Label>Plik</Form.Label>
-                <FileInput {...register("file")} />
+                <FileInput {...register("file")} inputRef={fileInputRef} />
             </Form.Group>
             <Row>
                 <Form.Group as={Col} controlId="relatedLetterNumber">
@@ -164,6 +177,7 @@ export function LetterModalBody({
                         isValid={!errors.responseDueDate}
                         isInvalid={!!errors.responseDueDate}
                         {...register("responseDueDate")}
+                        className={getConfidenceClass("responseDueDate")}
                     />
                     <ErrorMessage name="responseDueDate" errors={errors} />
                 </Form.Group>
@@ -199,3 +213,7 @@ export function ProjectSelectorModalBody({ isEditing, additionalProps }: Project
         </>
     );
 }
+
+type LetterModalBodyProps = ModalBodyProps<OurLetterContract | IncomingLetterContract> & {
+    getConfidenceClass?: (fieldName: string) => string;
+};

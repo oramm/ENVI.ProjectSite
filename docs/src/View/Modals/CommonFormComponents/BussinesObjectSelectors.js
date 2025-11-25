@@ -41,12 +41,21 @@ const GenericComponents_1 = require("./GenericComponents");
 const ToolsForms_1 = require("../../../React/Tools/ToolsForms");
 /**
  * Komponent formularza wyboru projektu
- * @param repository Repozytorium projektów
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  */
-function ProjectSelector({ name = "_project", repository, showValidationInfo = true, disabled = false, }) {
+function ProjectSelector({ name = "_project", showValidationInfo = true, disabled = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "projects",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "projectSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
         // ourId jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -57,12 +66,22 @@ function ProjectSelector({ name = "_project", repository, showValidationInfo = t
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Projekt"),
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: repository, 
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "ourId", repository: localRepository, 
             //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
             showValidationInfo: showValidationInfo, renderMenuItemChildren: renderOption, multiple: false })));
 }
 exports.ProjectSelector = ProjectSelector;
-function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, allowNew = false, }) {
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "cities",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "citySelector_temp",
+    }), []);
     function renderOption(option) {
         const typedOption = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -74,11 +93,25 @@ function CitySelector({ name = "_city", showValidationInfo = true, multiple = fa
                 code)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.CitySelector = CitySelector;
-function EntitySelector({ name, showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "entities",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "entitySelector_temp",
+        });
+    }, [repository]);
     function renderOption(option, props) {
         const typedOption = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -88,11 +121,21 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, rep
             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, address)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.EntitySelector = EntitySelector;
-function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = false, repository, readOnly = false, }) {
+function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = false, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "offers",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "offerSelector_temp",
+    }), []);
     function renderOption(option) {
         const typedOption = option;
         // alias jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -115,22 +158,46 @@ function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = 
             react_1.default.createElement("div", { className: "text-muted small text-wrap" }, employerName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
 exports.OfferSelector = OfferSelector;
-function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "financialAidProgrammes",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "financialAidProgrammeSelector_temp",
+        });
+    }, [repository]);
     function renderOption(option) {
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
             react_1.default.createElement("span", null, optionTyped.name)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
-function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, repository, allowNew = false, _financialAidProgramme, }) {
+function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "focusAreas",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "focusAreaSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
@@ -139,7 +206,7 @@ function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, mul
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", contextSearchParams: {
                 _financialAidProgramme,
-            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+            }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.FocusAreaSelector = FocusAreaSelector;
 /**
@@ -180,8 +247,18 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.FocusAreaSelectorPrefilled = FocusAreaSelectorPrefilled;
-function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, repository, allowNew = false, _financialAidProgramme, _focusArea, }) {
+function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, _focusArea, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "applicationCalls",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "applicationCallSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
         // description jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -198,11 +275,21 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "description", searchKey: "searchText", contextSearchParams: {
                 _financialAidProgramme,
                 _focusArea,
-            }, repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+            }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.ApplicationCallSelector = ApplicationCallSelector;
-function ClientNeedSelector({ name = "_need", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function ClientNeedSelector({ name = "_need", showValidationInfo = true, multiple = false, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "needs",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "clientNeedSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -216,7 +303,7 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
                 status)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.ClientNeedSelector = ClientNeedSelector;
 /**
@@ -446,7 +533,19 @@ function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) 
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
 exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
-function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, repository, allowNew = false, }) {
+function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => repository
+        ? repository
+        : new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "persons",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "personSelector_temp",
+        }), [repository]);
     function renderOption(option) {
         const typedOption = option;
         // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -458,7 +557,7 @@ function PersonSelector({ name = "_person", showValidationInfo = true, multiple 
                 entityName)));
     }
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: repository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
+        react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
 exports.PersonSelector = PersonSelector;
 /**
