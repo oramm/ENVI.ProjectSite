@@ -65,10 +65,20 @@ function App() {
         fetchData();
     }, []);
     // Handle the server's response
-    function handleServerResponse(response: any) {
+    async function handleServerResponse(response: any) {
         if (response.userData) {
+            // set current user and ensure repositories are initialized before marking logged in
             MainSetup.currentUser = response.userData;
-            setIsLoggedIn(true);
+            try {
+                setIsReady(false);
+                await MainController.main();
+                setIsLoggedIn(true);
+            } catch (err) {
+                console.error(err);
+                setErrorMessage(err instanceof Error ? err.message : String(err));
+            } finally {
+                setIsReady(true);
+            }
         } else {
             console.error("Authentication failed:", response.error);
             setErrorMessage(response.errorMessage);
@@ -109,16 +119,12 @@ function AppRoutes() {
     return (
         <HashRouter basename={rootPath}>
             <MainMenu />
-            <GoodTipToast/>
+            <GoodTipToast />
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
-                    <Route 
-                        element={
-                            <ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />
-                        }
-                    >
+                    <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />}>
                         <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
                         <Route path="/contracts/roles" element={<RolesSearch title={"Role kontrakowe"} />} />
                         <Route
@@ -133,7 +139,10 @@ function AppRoutes() {
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
-                        <Route path="/admin/contractRanges" element={<ContractRangesSearch title="Zakresy kontratków" />} />
+                        <Route
+                            path="/admin/contractRanges"
+                            element={<ContractRangesSearch title="Zakresy kontratków" />}
+                        />
                         <Route path="/offers" element={<OffersMainView title="Oferty" />} />
                         <Route path="/offers/list" element={<OffersMainView title="Oferty" />} />
                         <Route path="/offers/letters" element={<OffersLettersSearch title="Oferty - pisma" />} />
@@ -141,13 +150,19 @@ function AppRoutes() {
                             path="/financialAidProgrammes"
                             element={<FinancialAidProgrammesSearch title="Programy wsparcia" />}
                         />
-                        <Route path="/financialAidProgrammes/focusAreas" element={<FocusAreasSearch title="Działania" />} />
+                        <Route
+                            path="/financialAidProgrammes/focusAreas"
+                            element={<FocusAreasSearch title="Działania" />}
+                        />
                         <Route
                             path="/financialAidProgrammes/applicationCalls"
                             element={<ApplicationCallsSearch title="Nabory" />}
                         />
                         <Route path="/financialAidProgrammes/needs" element={<NeedsSearch title="Potrzeby" />} />
-                        <Route path="/admin/systemUsers" element={<SystemUsersSearch title="Dodawanie użytkowników" />} />
+                        <Route
+                            path="/admin/systemUsers"
+                            element={<SystemUsersSearch title="Dodawanie użytkowników" />}
+                        />
                     </Route>
                     {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
                 </Routes>
