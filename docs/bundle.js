@@ -96339,10 +96339,22 @@ function App() {
         fetchData();
     }, []);
     // Handle the server's response
-    function handleServerResponse(response) {
+    async function handleServerResponse(response) {
         if (response.userData) {
+            // set current user and ensure repositories are initialized before marking logged in
             MainSetupReact_1.default.currentUser = response.userData;
-            setIsLoggedIn(true);
+            try {
+                setIsReady(false);
+                await MainControllerReact_1.default.main();
+                setIsLoggedIn(true);
+            }
+            catch (err) {
+                console.error(err);
+                setErrorMessage(err instanceof Error ? err.message : String(err));
+            }
+            finally {
+                setIsReady(true);
+            }
         }
         else {
             console.error("Authentication failed:", response.error);
