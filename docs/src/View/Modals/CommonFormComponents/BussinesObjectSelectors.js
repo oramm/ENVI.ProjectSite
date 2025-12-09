@@ -578,7 +578,7 @@ function PersonSelectorPreloaded({ label, name, repository, multiple = false, sh
 exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
-        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
         if (!groups[key]) {
             groups[key] = [];
         }
@@ -592,12 +592,15 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
         index !== 0 && react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Divider, null),
         react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Header, null, milestoneName),
         groupedResults[milestoneName].map((item) => {
+            const folderNumber = item._type?.folderNumber ?? "";
+            const typeName = item._type?.name ?? "";
+            const folderName = item._folderName ?? "";
             const menuItem = (react_1.default.createElement(react_bootstrap_typeahead_1.MenuItem, { key: index, option: item, position: index },
-                item._type.folderNumber,
+                folderNumber,
                 " ",
-                item._type.name,
+                typeName,
                 " ",
-                item._folderName));
+                folderName));
             index += 1;
             return menuItem;
         }))));
