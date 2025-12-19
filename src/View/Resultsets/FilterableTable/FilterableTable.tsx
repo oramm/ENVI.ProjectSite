@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Accordion, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDoubleUp, faAngleDoubleDown } from "@fortawesome/free-solid-svg-icons";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
 import { FilterPanel } from "./FilterPanel";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import { Section, SectionNode } from "./Section";
 import { FilterableTableProps, FilterableTableSnapShot } from "./FilterableTableTypes";
+import { ToggleExpandButton, ExpandTrigger } from "./ToggleExpandButton";
 
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
@@ -46,10 +45,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState("");
     const [objects, setObjects] = useState(initObjects());
-    const [globalExpandTrigger, setGlobalExpandTrigger] = useState<{
-        action: "COLLAPSE" | "EXPAND";
-        id: number;
-    } | null>(null);
+    const [globalExpandTrigger, setGlobalExpandTrigger] = useState<ExpandTrigger>(null);
 
     function initObjects() {
         if (initialObjects) return initialObjects;
@@ -155,28 +151,6 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         }
     };
 
-    function renderToggleExpandButton() {
-        if (sections.length === 0) return null;
-        return (
-            <Button
-                variant="outline-secondary"
-                size="sm"
-                className="d-flex align-items-center justify-content-center me-3"
-                onClick={() =>
-                    setGlobalExpandTrigger({
-                        action: globalExpandTrigger?.action === "COLLAPSE" ? "EXPAND" : "COLLAPSE",
-                        id: Date.now(),
-                    })
-                }
-                title={globalExpandTrigger?.action === "COLLAPSE" ? "Rozwiń wszystko" : "Zwiń wszystko"}
-            >
-                <FontAwesomeIcon
-                    icon={globalExpandTrigger?.action === "COLLAPSE" ? faAngleDoubleDown : faAngleDoubleUp}
-                />
-            </Button>
-        );
-    }
-
     return (
         <FilterableTableProvider<LeafDataItemType>
             id={id}
@@ -217,7 +191,15 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                             ))}
                         </Col>
                     )}
-                    {initialSections.length > 0 && <Col md="auto">{renderToggleExpandButton()}</Col>}
+                    {initialSections.length > 0 && (
+                        <Col md="auto">
+                            <ToggleExpandButton
+                                expandTrigger={globalExpandTrigger}
+                                setExpandTrigger={setGlobalExpandTrigger}
+                                className="d-flex align-items-center justify-content-center me-3"
+                            />
+                        </Col>
+                    )}
                 </Row>
                 {FilterBodyComponent && (
                     <Row className="bg-light p-3 rounded-3 mb-3">

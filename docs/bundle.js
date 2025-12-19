@@ -101612,12 +101612,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TableTitle = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterPanel_1 = __webpack_require__(/*! ./FilterPanel */ "./src/View/Resultsets/FilterableTable/FilterPanel.tsx");
 const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
 const Section_1 = __webpack_require__(/*! ./Section */ "./src/View/Resultsets/FilterableTable/Section.tsx");
+const ToggleExpandButton_1 = __webpack_require__(/*! ./ToggleExpandButton */ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -101730,15 +101729,6 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    function renderToggleExpandButton() {
-        if (sections.length === 0)
-            return null;
-        return (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", className: "d-flex align-items-center justify-content-center me-3", onClick: () => setGlobalExpandTrigger({
-                action: globalExpandTrigger?.action === "COLLAPSE" ? "EXPAND" : "COLLAPSE",
-                id: Date.now(),
-            }), title: globalExpandTrigger?.action === "COLLAPSE" ? "Rozwiń wszystko" : "Zwiń wszystko" },
-            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: globalExpandTrigger?.action === "COLLAPSE" ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
-    }
     return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
@@ -101746,7 +101736,8 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
                     index < AddNewButtonComponents.length - 1 && " "))))),
-                initialSections.length > 0 && react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderToggleExpandButton())),
+                initialSections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                    react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: globalExpandTrigger, setExpandTrigger: setGlobalExpandTrigger, className: "d-flex align-items-center justify-content-center me-3" })))),
             FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
@@ -102245,12 +102236,14 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ./FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
 const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
+const ToggleExpandButton_1 = __webpack_require__(/*! ./ToggleExpandButton */ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx");
 __webpack_require__(/*! ./FilterableTable.css */ "./src/View/Resultsets/FilterableTable/FilterableTable.css");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-function Section({ sectionNode, resulsetTableProps, onClick, }) {
+function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigger, }) {
     const { activeSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
     const [activeKey, setActiveKey] = (0, react_1.useState)(["0"]);
+    const [localExpandTrigger, setLocalExpandTrigger] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         setIsActive(activeSectionId === sectionNode.id);
     }, [activeSectionId, sectionNode.id, sections]);
@@ -102262,17 +102255,31 @@ function Section({ sectionNode, resulsetTableProps, onClick, }) {
             setActiveKey(["0"]);
         }
     }, [globalExpandTrigger]);
+    (0, react_1.useEffect)(() => {
+        if (childrenExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        }
+        else if (childrenExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [childrenExpandTrigger]);
+    (0, react_1.useEffect)(() => {
+        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
+        if (localExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [localExpandTrigger]);
     return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
-                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),
+                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
             react_1.default.createElement(react_bootstrap_1.Accordion.Body, null,
-                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick }))))) : (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick }),
-        react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick })));
+                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger }))))) : (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger }),
+        react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger })));
 }
 exports.Section = Section;
-function SectionHeader({ sectionNode, onClick, isActive, }) {
+function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, setLocalExpandTrigger, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { selectedObjectRoute, dataItem } = sectionNode;
@@ -102299,17 +102306,52 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
         isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
+            sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,
                 } }))))));
 }
-function SectionBody({ sectionNode, resulsetTableProps, onClick, }) {
+function SectionBody({ sectionNode, resulsetTableProps, onClick, localExpandTrigger, }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick }))),
+        sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))),
         sectionNode.leaves && (react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves }))));
 }
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx":
+/*!********************************************************************!*\
+  !*** ./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ToggleExpandButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+function ToggleExpandButton({ expandTrigger, setExpandTrigger, collapseTitle = "Zwiń wszystko", expandTitle = "Rozwiń wszystko", className = "d-flex align-items-center justify-content-center me-2", stopPropagation = false, }) {
+    const isCollapsed = expandTrigger?.action === "COLLAPSE";
+    return (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", className: className, onClick: (e) => {
+            if (stopPropagation)
+                e.stopPropagation();
+            setExpandTrigger({
+                action: isCollapsed ? "EXPAND" : "COLLAPSE",
+                id: Date.now(),
+            });
+        }, title: isCollapsed ? expandTitle : collapseTitle },
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: isCollapsed ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
+}
+exports.ToggleExpandButton = ToggleExpandButton;
 
 
 /***/ }),

@@ -6,6 +6,7 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowActionMenu } from "./FilterableTableRow";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
+import { ToggleExpandButton, ExpandTrigger } from "./ToggleExpandButton";
 import "./FilterableTable.css";
 import { useNavigate } from "react-router-dom";
 
@@ -38,16 +39,19 @@ export type SectionProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>;
     resulsetTableProps: ResultSetTableProps<DataItemType>;
     onClick: (sectionNode: SectionNode<DataItemType>) => void;
+    childrenExpandTrigger?: ExpandTrigger;
 };
 
 export function Section<DataItemType extends RepositoryDataItem>({
     sectionNode,
     resulsetTableProps,
     onClick,
+    childrenExpandTrigger,
 }: SectionProps<DataItemType>) {
     const { activeSectionId, sections, globalExpandTrigger } = useFilterableTableContext<DataItemType>();
     const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
     const [activeKey, setActiveKey] = useState<string[]>(["0"]);
+    const [localExpandTrigger, setLocalExpandTrigger] = useState<ExpandTrigger>(null);
 
     useEffect(() => {
         setIsActive(activeSectionId === sectionNode.id);
@@ -61,6 +65,21 @@ export function Section<DataItemType extends RepositoryDataItem>({
         }
     }, [globalExpandTrigger]);
 
+    useEffect(() => {
+        if (childrenExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        } else if (childrenExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [childrenExpandTrigger]);
+
+    useEffect(() => {
+        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
+        if (localExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [localExpandTrigger]);
+
     return sectionNode.isInAccordion ? (
         <Accordion
             className="mb-2"
@@ -71,17 +90,39 @@ export function Section<DataItemType extends RepositoryDataItem>({
         >
             <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                    <SectionHeader sectionNode={sectionNode} isActive={isActive} onClick={onClick} />
+                    <SectionHeader
+                        sectionNode={sectionNode}
+                        isActive={isActive}
+                        onClick={onClick}
+                        localExpandTrigger={localExpandTrigger}
+                        setLocalExpandTrigger={setLocalExpandTrigger}
+                    />
                 </Accordion.Header>
                 <Accordion.Body>
-                    <SectionBody resulsetTableProps={resulsetTableProps} sectionNode={sectionNode} onClick={onClick} />
+                    <SectionBody
+                        resulsetTableProps={resulsetTableProps}
+                        sectionNode={sectionNode}
+                        onClick={onClick}
+                        localExpandTrigger={localExpandTrigger}
+                    />
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>
     ) : (
         <>
-            <SectionHeader sectionNode={sectionNode} isActive={isActive} onClick={onClick} />
-            <SectionBody resulsetTableProps={resulsetTableProps} sectionNode={sectionNode} onClick={onClick} />
+            <SectionHeader
+                sectionNode={sectionNode}
+                isActive={isActive}
+                onClick={onClick}
+                localExpandTrigger={localExpandTrigger}
+                setLocalExpandTrigger={setLocalExpandTrigger}
+            />
+            <SectionBody
+                resulsetTableProps={resulsetTableProps}
+                sectionNode={sectionNode}
+                onClick={onClick}
+                localExpandTrigger={localExpandTrigger}
+            />
         </>
     );
 }
@@ -89,12 +130,16 @@ type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>;
     onClick: (sectionNode: SectionNode<DataItemType>) => void;
     isActive: boolean;
+    localExpandTrigger: ExpandTrigger;
+    setLocalExpandTrigger: React.Dispatch<React.SetStateAction<ExpandTrigger>>;
 };
 
 function SectionHeader<DataItemType extends RepositoryDataItem>({
     sectionNode,
     onClick,
     isActive,
+    localExpandTrigger,
+    setLocalExpandTrigger,
 }: SectionHeaderProps<DataItemType>) {
     const navigate = useNavigate();
     const { handleDeleteSection, handleEditSection, handleAddSection } = useFilterableTableContext<DataItemType>();
@@ -132,6 +177,15 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
 
             {isActive && (
                 <div className="d-flex align-items-center gap-2 section-action-menu">
+                    {sectionNode.children.length > 0 && (
+                        <ToggleExpandButton
+                            expandTrigger={localExpandTrigger}
+                            setExpandTrigger={setLocalExpandTrigger}
+                            collapseTitle="Zwiń dzieci"
+                            expandTitle="Rozwiń dzieci"
+                            stopPropagation
+                        />
+                    )}
                     <RowActionMenu
                         dataObject={sectionNode.dataItem}
                         isDeletable={!!sectionNode.isDeletable}
@@ -157,11 +211,16 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     );
 }
 
+type SectionBodyProps<DataItemType extends RepositoryDataItem> = SectionProps<DataItemType> & {
+    localExpandTrigger: ExpandTrigger;
+};
+
 function SectionBody<DataItemType extends RepositoryDataItem>({
     sectionNode,
     resulsetTableProps,
     onClick,
-}: SectionProps<DataItemType>) {
+    localExpandTrigger,
+}: SectionBodyProps<DataItemType>) {
     return (
         <>
             {sectionNode.children.map((childNode, index) => (
@@ -170,6 +229,7 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
                     sectionNode={childNode}
                     resulsetTableProps={resulsetTableProps}
                     onClick={onClick}
+                    childrenExpandTrigger={localExpandTrigger}
                 />
             ))}
 
