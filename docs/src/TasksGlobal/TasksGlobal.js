@@ -28,26 +28,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable/FilterableTable"));
-const TasksGlobalController_1 = require("./TasksGlobalController");
-const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
-const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
-const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
-const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
-const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const Symbols_1 = require("../View/Symbols");
 const CaseModalButtons_1 = require("./Modals/Case/CaseModalButtons");
 const ContractModalButtons_1 = require("./Modals/ContractModalButtons");
-const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const MilestoneModalButtons_1 = require("./Modals/Milestone/MilestoneModalButtons");
-const Symbols_1 = require("../View/Symbols");
+const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
+const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
+const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
+const TasksGlobalController_1 = require("./TasksGlobalController");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(true);
     const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
-    const [showProjects, setShowProjects] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
         if (!selectedProject)
             return;
@@ -69,11 +66,6 @@ function TasksGlobal() {
         }
         fetchData();
     }, [selectedProject]);
-    function handleShowProjects() {
-        setShowProjects(!showProjects);
-        setContractsWithCildren([]);
-        setExternalUpdate((prevState) => prevState + 1);
-    }
     function makeTaskParentsLabel(task) {
         const _contract = task._parent._parent._contract;
         const _milestone = task._parent._parent;
@@ -97,10 +89,7 @@ function TasksGlobal() {
             react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
     return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement("div", { className: "d-flex justify-content-end" },
-            react_1.default.createElement("div", { onClick: handleShowProjects },
-                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
-        showProjects && (react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
                 react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
                         {
@@ -111,7 +100,7 @@ function TasksGlobal() {
                     ], onRowClick: setSelectedProject })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
                     { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))))));
+                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
 }
 exports.default = TasksGlobal;
 function LoadingMessage({ selectedProject }) {

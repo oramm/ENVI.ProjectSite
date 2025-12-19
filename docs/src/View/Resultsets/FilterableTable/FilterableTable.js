@@ -26,6 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TableTitle = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterPanel_1 = require("./FilterPanel");
 const ResultSetTable_1 = require("./ResultSetTable");
@@ -48,6 +50,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
+    const [globalExpandTrigger, setGlobalExpandTrigger] = (0, react_1.useState)(null);
     function initObjects() {
         if (initialObjects)
             return initialObjects;
@@ -141,13 +144,23 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    function renderToggleExpandButton() {
+        if (sections.length === 0)
+            return null;
+        return (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", className: "d-flex align-items-center justify-content-center me-3", onClick: () => setGlobalExpandTrigger({
+                action: globalExpandTrigger?.action === "COLLAPSE" ? "EXPAND" : "COLLAPSE",
+                id: Date.now(),
+            }), title: globalExpandTrigger?.action === "COLLAPSE" ? "Rozwiń wszystko" : "Zwiń wszystko" },
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: globalExpandTrigger?.action === "COLLAPSE" ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
+    }
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger },
         react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
-                    index < AddNewButtonComponents.length - 1 && " ")))))),
+                    index < AddNewButtonComponents.length - 1 && " "))))),
+                initialSections.length > 0 && react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, renderToggleExpandButton())),
             FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,

@@ -29,6 +29,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     externalUpdate: number;
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
+    globalExpandTrigger?: { action: "COLLAPSE" | "EXPAND"; id: number } | null;
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
@@ -55,6 +56,7 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
+    globalExpandTrigger: null,
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -81,6 +83,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     externalUpdate,
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
+    globalExpandTrigger,
     children,
 }: React.PropsWithChildren<FilterableTableContextProps<Item>>) {
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<
@@ -113,6 +116,7 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 externalUpdate,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                globalExpandTrigger,
             }}
         >
             {children}

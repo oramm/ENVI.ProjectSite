@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Accordion } from "react-bootstrap";
+import { Container, Row, Col, Card, Accordion, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDoubleUp, faAngleDoubleDown } from "@fortawesome/free-solid-svg-icons";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
 import { FilterPanel } from "./FilterPanel";
@@ -44,6 +46,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState("");
     const [objects, setObjects] = useState(initObjects());
+    const [globalExpandTrigger, setGlobalExpandTrigger] = useState<{
+        action: "COLLAPSE" | "EXPAND";
+        id: number;
+    } | null>(null);
 
     function initObjects() {
         if (initialObjects) return initialObjects;
@@ -149,6 +155,28 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         }
     };
 
+    function renderToggleExpandButton() {
+        if (sections.length === 0) return null;
+        return (
+            <Button
+                variant="outline-secondary"
+                size="sm"
+                className="d-flex align-items-center justify-content-center me-3"
+                onClick={() =>
+                    setGlobalExpandTrigger({
+                        action: globalExpandTrigger?.action === "COLLAPSE" ? "EXPAND" : "COLLAPSE",
+                        id: Date.now(),
+                    })
+                }
+                title={globalExpandTrigger?.action === "COLLAPSE" ? "Rozwiń wszystko" : "Zwiń wszystko"}
+            >
+                <FontAwesomeIcon
+                    icon={globalExpandTrigger?.action === "COLLAPSE" ? faAngleDoubleDown : faAngleDoubleUp}
+                />
+            </Button>
+        );
+    }
+
     return (
         <FilterableTableProvider<LeafDataItemType>
             id={id}
@@ -174,9 +202,10 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             externalUpdate={externalUpdate}
             shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
             specialRetrieveActionRoute={specialRetrieveActionRoute}
+            globalExpandTrigger={globalExpandTrigger}
         >
             <Container>
-                <Row>
+                <Row className="align-items-center">
                     <Col>{title && <TableTitle title={title} />}</Col>
                     {AddNewButtonComponents && (
                         <Col md="auto">
@@ -188,6 +217,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                             ))}
                         </Col>
                     )}
+                    {initialSections.length > 0 && <Col md="auto">{renderToggleExpandButton()}</Col>}
                 </Row>
                 {FilterBodyComponent && (
                     <Row className="bg-light p-3 rounded-3 mb-3">

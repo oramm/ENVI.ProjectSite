@@ -1,5 +1,7 @@
-import React, { ComponentType, createContext, useContext, useEffect, useState } from "react";
-import { Button, Card as Container, Col, Row } from "react-bootstrap";
+import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { ComponentType, useEffect, useState } from "react";
+import { Col, Card as Container, Row } from "react-bootstrap";
 import {
     Case,
     MilestoneData,
@@ -10,8 +12,18 @@ import {
     RepositoryDataItem,
     Task,
 } from "../../Typings/bussinesTypes";
+import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
+import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
 import { SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
+import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
+import { getSymbolByUniqueness } from "../View/Symbols";
+import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
+import { ContractEditModalButton } from "./Modals/ContractModalButtons";
+import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
+import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
+import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
+import { ProjectsFilterBody } from "./ProjectsFilterBody";
 import {
     casesRepository,
     contractsRepository,
@@ -20,19 +32,7 @@ import {
     projectsRepository,
     tasksGlobalRepository,
 } from "./TasksGlobalController";
-import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
-import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
-import { ProjectsFilterBody } from "./ProjectsFilterBody";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
-import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
-import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import { ContractEditModalButton } from "./Modals/ContractModalButtons";
-import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
-import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/Milestone/MilestoneModalButtons";
-import { getSymbolByUniqueness } from "../View/Symbols";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -40,7 +40,6 @@ export default function TasksGlobal() {
     const [externalUpdate, setExternalUpdate] = useState(0);
     const [dataLoaded, setDataLoaded] = useState(true);
     const [selectedProject, setSelectedProject] = useState<ProjectData | undefined>(undefined);
-    const [showProjects, setShowProjects] = useState(true);
 
     useEffect(() => {
         if (!selectedProject) return;
@@ -64,12 +63,6 @@ export default function TasksGlobal() {
 
         fetchData();
     }, [selectedProject]);
-
-    function handleShowProjects() {
-        setShowProjects(!showProjects);
-        setContractsWithCildren([]);
-        setExternalUpdate((prevState) => prevState + 1);
-    }
 
     function makeTaskParentsLabel(task: Task) {
         const _contract = task._parent._parent._contract as OurContract | OtherContract;
@@ -102,53 +95,46 @@ export default function TasksGlobal() {
 
     return (
         <Container>
-            <div className="d-flex justify-content-end">
-                <div onClick={handleShowProjects}>
-                    <FontAwesomeIcon icon={showProjects ? faTimes : faBars} />
-                </div>
-            </div>
-            {showProjects && (
-                <Row>
-                    <Col md="3">
-                        <FilterableTable<ProjectData>
-                            id="projects"
-                            title="Projekty"
-                            repository={projectsRepository}
+            <Row>
+                <Col md="3">
+                    <FilterableTable<ProjectData>
+                        id="projects"
+                        title="Projekty"
+                        repository={projectsRepository}
+                        showTableHeader={false}
+                        AddNewButtonComponents={[ProjectAddNewModalButton]}
+                        FilterBodyComponent={ProjectsFilterBody}
+                        EditButtonComponent={ProjectEditModalButton}
+                        tableStructure={[
+                            {
+                                header: "Nazwa",
+                                renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
+                                colLg: 11,
+                            },
+                        ]}
+                        onRowClick={setSelectedProject}
+                    />
+                </Col>
+                <Col md="9">
+                    {dataLoaded ? (
+                        <FilterableTable<Task>
+                            id="tasks"
+                            title="Zadania"
                             showTableHeader={false}
-                            AddNewButtonComponents={[ProjectAddNewModalButton]}
-                            FilterBodyComponent={ProjectsFilterBody}
-                            EditButtonComponent={ProjectEditModalButton}
+                            repository={tasksGlobalRepository}
+                            FilterBodyComponent={undefined}
+                            EditButtonComponent={TaskEditModalButton}
+                            initialSections={buildTree(contractsWithChildren)}
                             tableStructure={[
-                                {
-                                    header: "Nazwa",
-                                    renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
-                                    colLg: 11,
-                                },
+                                { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
                             ]}
-                            onRowClick={setSelectedProject}
+                            externalUpdate={externalUpdate}
                         />
-                    </Col>
-                    <Col md="9">
-                        {dataLoaded ? (
-                            <FilterableTable<Task>
-                                id="tasks"
-                                title="Zadania"
-                                showTableHeader={false}
-                                repository={tasksGlobalRepository}
-                                FilterBodyComponent={undefined}
-                                EditButtonComponent={TaskEditModalButton}
-                                initialSections={buildTree(contractsWithChildren)}
-                                tableStructure={[
-                                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                                ]}
-                                externalUpdate={externalUpdate}
-                            />
-                        ) : (
-                            <LoadingMessage selectedProject={selectedProject} />
-                        )}
-                    </Col>
-                </Row>
-            )}
+                    ) : (
+                        <LoadingMessage selectedProject={selectedProject} />
+                    )}
+                </Col>
+            </Row>
         </Container>
     );
 }

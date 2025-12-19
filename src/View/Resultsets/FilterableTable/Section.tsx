@@ -45,15 +45,30 @@ export function Section<DataItemType extends RepositoryDataItem>({
     resulsetTableProps,
     onClick,
 }: SectionProps<DataItemType>) {
-    const { activeSectionId } = useFilterableTableContext<DataItemType>();
+    const { activeSectionId, sections, globalExpandTrigger } = useFilterableTableContext<DataItemType>();
     const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
-    const { sections } = useFilterableTableContext<DataItemType>();
+    const [activeKey, setActiveKey] = useState<string[]>(["0"]);
+
     useEffect(() => {
         setIsActive(activeSectionId === sectionNode.id);
     }, [activeSectionId, sectionNode.id, sections]);
 
+    useEffect(() => {
+        if (globalExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        } else if (globalExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [globalExpandTrigger]);
+
     return sectionNode.isInAccordion ? (
-        <Accordion className="mb-2" key={sectionNode.id} alwaysOpen defaultActiveKey={["0"]}>
+        <Accordion
+            className="mb-2"
+            key={sectionNode.id}
+            alwaysOpen
+            activeKey={activeKey}
+            onSelect={(e) => setActiveKey(e as string[])}
+        >
             <Accordion.Item eventKey="0">
                 <Accordion.Header>
                     <SectionHeader sectionNode={sectionNode} isActive={isActive} onClick={onClick} />

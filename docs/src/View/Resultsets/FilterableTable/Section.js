@@ -32,13 +32,21 @@ const ResultSetTable_1 = require("./ResultSetTable");
 require("./FilterableTable.css");
 const react_router_dom_1 = require("react-router-dom");
 function Section({ sectionNode, resulsetTableProps, onClick, }) {
-    const { activeSectionId } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { activeSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
-    const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const [activeKey, setActiveKey] = (0, react_1.useState)(["0"]);
     (0, react_1.useEffect)(() => {
         setIsActive(activeSectionId === sectionNode.id);
     }, [activeSectionId, sectionNode.id, sections]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
+    (0, react_1.useEffect)(() => {
+        if (globalExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        }
+        else if (globalExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [globalExpandTrigger]);
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                 react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),
