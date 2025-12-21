@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Accordion, Button } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
+import { FilterableTableProps, FilterableTableSnapShot } from "./FilterableTableTypes";
 import { FilterPanel } from "./FilterPanel";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
 import { Section, SectionNode } from "./Section";
-import { FilterableTableProps, FilterableTableSnapShot } from "./FilterableTableTypes";
-import { ToggleExpandButton, ExpandTrigger } from "./ToggleExpandButton";
+import { ExpandTrigger, ToggleExpandButton } from "./ToggleExpandButton";
 
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
@@ -37,6 +37,8 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     externalUpdate = 0,
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
+    snapshotMode = "criteria+objects",
+    sectionsFilterHandlers,
 }: FilterableTableProps<LeafDataItemType>) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
 
@@ -70,8 +72,11 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         const currentSnapshot = sessionStorage.getItem(snapshotName);
         if (!currentSnapshot) return;
 
+        if (snapshotMode === "criteria-only") return;
+
+        const parsedSnapshot = JSON.parse(currentSnapshot) as FilterableTableSnapShot<LeafDataItemType>;
         const updatedFilterableTableSnapshot: FilterableTableSnapShot<LeafDataItemType> = {
-            criteria: JSON.parse(currentSnapshot) as FilterableTableSnapShot<LeafDataItemType>,
+            ...parsedSnapshot,
             storedObjects: repository.items,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
@@ -85,6 +90,12 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             setSections(initialSections);
         }
     }, [externalUpdate]);
+
+    useEffect(() => {
+        if (sections.length === 0 && initialSections.length > 0) {
+            setSections(initialSections as SectionNode<LeafDataItemType>[]);
+        }
+    }, [initialSections]);
 
     function handleAddObject(object: LeafDataItemType) {
         setObjects([...repository.items]);
@@ -141,6 +152,14 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         console.log("handleHeaderClick", repository.currentItems);
     }
 
+    function showFilter() {
+        if (!FilterBodyComponent) return false;
+        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
+        if (sections.length > 0) return sections.length >= 5 && isReady;
+        // Tryb płaski: zawsze pokazuj
+        return true;
+    }
+
     const handleRowClick = (id: number) => {
         setActiveRowId(id);
         console.log("clickedRow:", id);
@@ -177,6 +196,8 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
             specialRetrieveActionRoute={specialRetrieveActionRoute}
             globalExpandTrigger={globalExpandTrigger}
+            snapshotMode={snapshotMode}
+            sectionsFilterHandlers={sectionsFilterHandlers}
         >
             <Container>
                 <Row className="align-items-center">
@@ -191,7 +212,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                             ))}
                         </Col>
                     )}
-                    {initialSections.length > 0 && (
+                    {sections.length > 0 && (
                         <Col md="auto">
                             <ToggleExpandButton
                                 expandTrigger={globalExpandTrigger}
@@ -201,7 +222,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                         </Col>
                     )}
                 </Row>
-                {FilterBodyComponent && (
+                {FilterBodyComponent && showFilter() && (
                     <Row className="bg-light p-3 rounded-3 mb-3">
                         <FilterPanel FilterBodyComponent={FilterBodyComponent} repository={repository} />
                     </Row>
@@ -213,7 +234,7 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
                 )}
                 <Row>
                     <Col>
-                        {initialSections?.length > 0 ? (
+                        {sections.length > 0 ? (
                             <Sections
                                 onClick={handleHeaderClick}
                                 resulsetTableProps={{

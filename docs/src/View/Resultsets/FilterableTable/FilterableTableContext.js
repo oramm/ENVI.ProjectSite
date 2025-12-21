@@ -50,8 +50,10 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
     globalExpandTrigger: null,
+    snapshotMode: "criteria+objects",
+    sectionsFilterHandlers: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, globalExpandTrigger, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, globalExpandTrigger, snapshotMode, sectionsFilterHandlers, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -78,6 +80,8 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             shouldRetrieveDataBeforeEdit,
             specialRetrieveActionRoute,
             globalExpandTrigger,
+            snapshotMode,
+            sectionsFilterHandlers,
         } }, children));
 }
 exports.FilterableTableProvider = FilterableTableProvider;

@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
+const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable/FilterableTable"));
 const Symbols_1 = require("../View/Symbols");
@@ -39,6 +40,7 @@ const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
 const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
 const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
 const TasksGlobalController_1 = require("./TasksGlobalController");
+const TasksGlobalFilterBody_1 = require("./TasksGlobalFilterBody");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -88,21 +90,47 @@ function TasksGlobal() {
                 react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
-                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                        {
-                            header: "Nazwa",
-                            renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
-                            colLg: 11,
-                        },
-                    ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
-                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
+    async function handleSubmitTasksSections(criteria) {
+        if (!selectedProject)
+            return buildTree(contractsWithChildren);
+        const [filteredContractsWithChildren] = await Promise.all([
+            TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerPOST([
+                {
+                    ...criteria,
+                    _project: selectedProject,
+                    statusType: criteria.statuses?.length ? undefined : "active",
+                },
+            ]),
+        ]);
+        return buildTree(filteredContractsWithChildren);
+    }
+    function handleResetTasksSections() {
+        return buildTree(contractsWithChildren);
+    }
+    return (react_1.default.createElement(ContractContext_1.ContractProvider, { project: selectedProject },
+        react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
+                    react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                            {
+                                header: "Nazwa",
+                                renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                                colLg: 11,
+                            },
+                        ], onRowClick: setSelectedProject })),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, !selectedProject ? (react_1.default.createElement(NoProjectSelectedMessage, null)) : !dataLoaded ? (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })) : (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: TasksGlobalFilterBody_1.TasksGlobalFilterBody, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), snapshotMode: "criteria-only", sectionsFilterHandlers: {
+                        onSubmitSections: handleSubmitTasksSections,
+                        onResetSections: handleResetTasksSections,
+                    }, tableStructure: [
+                        { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                    ], externalUpdate: externalUpdate })))))));
 }
 exports.default = TasksGlobal;
+function NoProjectSelectedMessage() {
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("h3", null, "Wybierz projekt"),
+        react_1.default.createElement("p", { className: "text-muted" }, "Kliknij na projekt z listy po lewej stronie, aby zobaczy\u0107 zadania.")));
+}
 function LoadingMessage({ selectedProject }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("p", null, " \u0141aduj\u0119 zadania dla projektu:"),
@@ -152,6 +180,7 @@ function makeCaseTitleLabel(caseItem) {
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
+    const allTasks = [];
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
         const contractNode = {
             id: "contract" + contract.id,
@@ -211,10 +240,11 @@ function buildTree(contractsWithChildrenInput) {
                         caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                TasksGlobalController_1.tasksGlobalRepository.items = [...TasksGlobalController_1.tasksGlobalRepository.items, ...caseNode.leaves];
+                allTasks.push(...(caseNode.leaves || []));
             }
         }
     }
+    TasksGlobalController_1.tasksGlobalRepository.items = allTasks;
     console.log("contractNodes", contractNodes);
     return contractNodes;
 }

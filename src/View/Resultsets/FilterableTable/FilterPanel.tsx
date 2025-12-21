@@ -14,7 +14,8 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 }: FilterPanelProps) {
     const [error, setError] = useState<string | null>(null);
     const [isReady, setIsReady] = useState(true);
-    const { setObjects, objects, id } = useFilterableTableContext<DataItemType>();
+    const { setObjects, id, sections, setSections, snapshotMode, sectionsFilterHandlers } =
+        useFilterableTableContext<DataItemType>();
 
     const formMethods = useForm({
         resolver: validationSchema ? yupResolver(validationSchema) : undefined,
@@ -32,12 +33,21 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         if (!storedSnapshot) return;
 
         const { criteria } = JSON.parse(storedSnapshot) as FilterableTableSnapShot<DataItemType>;
+        if (!criteria) return;
         for (let key in criteria) {
             (formMethods.setValue as (name: string, value: any) => void)(key, criteria[key]);
         }
     }, []);
 
-    async function handleSubmitSearch(data: FieldValues) {
+    function saveSnapshotToStorage(result?: DataItemType[]) {
+        const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
+            criteria: formMethods.getValues(),
+            ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+    }
+
+    async function handleSubmitSearchFlat(data: FieldValues) {
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
@@ -52,13 +62,25 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
         }
     }
 
-    function saveSnapshotToStorage(result: DataItemType[]) {
-        const filterableTableSnapshot: FilterableTableSnapShot<DataItemType> = {
-            criteria: formMethods.getValues(),
-            storedObjects: result,
-        };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
-        console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
+    async function handleSubmitSearchSections(data: FieldValues) {
+        if (!sectionsFilterHandlers) return;
+        setIsReady(false);
+        setError(null);
+        try {
+            const newSections = await sectionsFilterHandlers.onSubmitSections(data);
+            setSections(newSections);
+            saveSnapshotToStorage();
+        } catch (err) {
+            if (err instanceof Error)
+                setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
+        } finally {
+            setIsReady(true);
+        }
+    }
+
+    async function handleSubmitSearch(data: FieldValues) {
+        if (sectionsFilterHandlers) return handleSubmitSearchSections(data);
+        return handleSubmitSearchFlat(data);
     }
 
     const handleReset = () => {
@@ -70,6 +92,12 @@ export function FilterPanel<DataItemType extends RepositoryDataItem>({
 
         console.log("Wartości po resecie:", resetValues);
         reset(resetValues);
+
+        if (sectionsFilterHandlers) {
+            const newSections = sectionsFilterHandlers.onResetSections();
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
     };
 
     return (

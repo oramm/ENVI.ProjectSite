@@ -3,6 +3,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { RowStructure } from "./FilterableTableTypes";
+import { SectionsFilterHandlers, SnapshotMode } from "./FilterableTableTypes";
 import { SectionNode } from "./Section";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
@@ -30,6 +31,9 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     globalExpandTrigger?: { action: "COLLAPSE" | "EXPAND"; id: number } | null;
+
+    snapshotMode?: SnapshotMode;
+    sectionsFilterHandlers?: SectionsFilterHandlers<DataItemType>;
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
@@ -57,6 +61,9 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
     globalExpandTrigger: null,
+
+    snapshotMode: "criteria+objects",
+    sectionsFilterHandlers: undefined,
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -84,6 +91,8 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
     globalExpandTrigger,
+    snapshotMode,
+    sectionsFilterHandlers,
     children,
 }: React.PropsWithChildren<FilterableTableContextProps<Item>>) {
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<
@@ -117,6 +126,8 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
                 globalExpandTrigger,
+                snapshotMode,
+                sectionsFilterHandlers,
             }}
         >
             {children}

@@ -5,6 +5,13 @@ import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "..
 import { SectionNode } from "./Section";
 import * as yup from "yup";
 
+export type SnapshotMode = "criteria+objects" | "criteria-only";
+
+export type SectionsFilterHandlers<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
+    onSubmitSections: (criteria: FieldValues) => Promise<SectionNode<DataItemType>[]>;
+    onResetSections: () => SectionNode<DataItemType>[];
+};
+
 export type FilterableTableProps<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     id: string;
     title?: string;
@@ -23,11 +30,14 @@ export type FilterableTableProps<DataItemType extends RepositoryDataItem = Repos
     externalUpdate?: number;
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
+
+    snapshotMode?: SnapshotMode;
+    sectionsFilterHandlers?: SectionsFilterHandlers<DataItemType>;
 };
 
 export type FilterableTableSnapShot<DataItemType extends RepositoryDataItem = RepositoryDataItem> = {
     criteria: FieldValues;
-    storedObjects: DataItemType[];
+    storedObjects?: DataItemType[];
 };
 
 export type FilterPanelProps = {

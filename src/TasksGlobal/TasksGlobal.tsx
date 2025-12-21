@@ -2,6 +2,7 @@ import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
+import { FieldValues } from "react-hook-form";
 import {
     Case,
     MilestoneData,
@@ -13,6 +14,7 @@ import {
     Task,
 } from "../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
+import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
 import { SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
@@ -33,6 +35,7 @@ import {
     tasksGlobalRepository,
 } from "./TasksGlobalController";
 import { ContractsWithChildren } from "./TasksGlobalTypes";
+import { TasksGlobalFilterBody } from "./TasksGlobalFilterBody";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -93,49 +96,86 @@ export default function TasksGlobal() {
         );
     }
 
+    async function handleSubmitTasksSections(criteria: FieldValues): Promise<SectionNode<Task>[]> {
+        if (!selectedProject) return buildTree(contractsWithChildren);
+        const [filteredContractsWithChildren] = await Promise.all([
+            contractsWithChildrenRepository.loadItemsFromServerPOST([
+                {
+                    ...criteria,
+                    _project: selectedProject,
+                    statusType: criteria.statuses?.length ? undefined : "active",
+                },
+            ]),
+        ]);
+
+        return buildTree(filteredContractsWithChildren as ContractsWithChildren[]);
+    }
+
+    function handleResetTasksSections(): SectionNode<Task>[] {
+        return buildTree(contractsWithChildren);
+    }
+
     return (
-        <Container>
-            <Row>
-                <Col md="3">
-                    <FilterableTable<ProjectData>
-                        id="projects"
-                        title="Projekty"
-                        repository={projectsRepository}
-                        showTableHeader={false}
-                        AddNewButtonComponents={[ProjectAddNewModalButton]}
-                        FilterBodyComponent={ProjectsFilterBody}
-                        EditButtonComponent={ProjectEditModalButton}
-                        tableStructure={[
-                            {
-                                header: "Nazwa",
-                                renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
-                                colLg: 11,
-                            },
-                        ]}
-                        onRowClick={setSelectedProject}
-                    />
-                </Col>
-                <Col md="9">
-                    {dataLoaded ? (
-                        <FilterableTable<Task>
-                            id="tasks"
-                            title="Zadania"
+        <ContractProvider project={selectedProject}>
+            <Container>
+                <Row>
+                    <Col md="3">
+                        <FilterableTable<ProjectData>
+                            id="projects"
+                            title="Projekty"
+                            repository={projectsRepository}
                             showTableHeader={false}
-                            repository={tasksGlobalRepository}
-                            FilterBodyComponent={undefined}
-                            EditButtonComponent={TaskEditModalButton}
-                            initialSections={buildTree(contractsWithChildren)}
+                            AddNewButtonComponents={[ProjectAddNewModalButton]}
+                            FilterBodyComponent={ProjectsFilterBody}
+                            EditButtonComponent={ProjectEditModalButton}
                             tableStructure={[
-                                { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                                {
+                                    header: "Nazwa",
+                                    renderTdBody: (project: ProjectData) => <>{project._ourId_Alias}</>,
+                                    colLg: 11,
+                                },
                             ]}
-                            externalUpdate={externalUpdate}
+                            onRowClick={setSelectedProject}
                         />
-                    ) : (
-                        <LoadingMessage selectedProject={selectedProject} />
-                    )}
-                </Col>
-            </Row>
-        </Container>
+                    </Col>
+                    <Col md="9">
+                        {!selectedProject ? (
+                            <NoProjectSelectedMessage />
+                        ) : !dataLoaded ? (
+                            <LoadingMessage selectedProject={selectedProject} />
+                        ) : (
+                            <FilterableTable<Task>
+                                id="tasks"
+                                title="Zadania"
+                                showTableHeader={false}
+                                repository={tasksGlobalRepository}
+                                FilterBodyComponent={TasksGlobalFilterBody}
+                                EditButtonComponent={TaskEditModalButton}
+                                initialSections={buildTree(contractsWithChildren)}
+                                snapshotMode="criteria-only"
+                                sectionsFilterHandlers={{
+                                    onSubmitSections: handleSubmitTasksSections,
+                                    onResetSections: handleResetTasksSections,
+                                }}
+                                tableStructure={[
+                                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                                ]}
+                                externalUpdate={externalUpdate}
+                            />
+                        )}
+                    </Col>
+                </Row>
+            </Container>
+        </ContractProvider>
+    );
+}
+
+function NoProjectSelectedMessage() {
+    return (
+        <>
+            <h3>Wybierz projekt</h3>
+            <p className="text-muted">Kliknij na projekt z listy po lewej stronie, aby zobaczyć zadania.</p>
+        </>
     );
 }
 
@@ -198,6 +238,7 @@ function makeCaseTitleLabel(caseItem: Case) {
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
     const contractNodes: SectionNode<Task>[] = [];
+    const allTasks: Task[] = [];
 
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
         const contractNode: SectionNode<Task> = {
@@ -272,10 +313,11 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     if (!caseNode.leaves) caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                tasksGlobalRepository.items = [...tasksGlobalRepository.items, ...caseNode.leaves];
+                allTasks.push(...(caseNode.leaves || []));
             }
         }
     }
+    tasksGlobalRepository.items = allTasks;
     console.log("contractNodes", contractNodes);
     return contractNodes;
 }

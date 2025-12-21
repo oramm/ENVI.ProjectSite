@@ -98262,6 +98262,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
 const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const Symbols_1 = __webpack_require__(/*! ../View/Symbols */ "./src/View/Symbols.ts");
@@ -98272,6 +98273,7 @@ const ProjectModalButtons_1 = __webpack_require__(/*! ./Modals/ProjectModalButto
 const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalModalButtons */ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx");
 const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
+const TasksGlobalFilterBody_1 = __webpack_require__(/*! ./TasksGlobalFilterBody */ "./src/TasksGlobal/TasksGlobalFilterBody.tsx");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -98321,21 +98323,47 @@ function TasksGlobal() {
                 react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
-                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                        {
-                            header: "Nazwa",
-                            renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
-                            colLg: 11,
-                        },
-                    ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
-                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject }))))));
+    async function handleSubmitTasksSections(criteria) {
+        if (!selectedProject)
+            return buildTree(contractsWithChildren);
+        const [filteredContractsWithChildren] = await Promise.all([
+            TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerPOST([
+                {
+                    ...criteria,
+                    _project: selectedProject,
+                    statusType: criteria.statuses?.length ? undefined : "active",
+                },
+            ]),
+        ]);
+        return buildTree(filteredContractsWithChildren);
+    }
+    function handleResetTasksSections() {
+        return buildTree(contractsWithChildren);
+    }
+    return (react_1.default.createElement(ContractContext_1.ContractProvider, { project: selectedProject },
+        react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
+                    react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                            {
+                                header: "Nazwa",
+                                renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                                colLg: 11,
+                            },
+                        ], onRowClick: setSelectedProject })),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, !selectedProject ? (react_1.default.createElement(NoProjectSelectedMessage, null)) : !dataLoaded ? (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })) : (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: TasksGlobalFilterBody_1.TasksGlobalFilterBody, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), snapshotMode: "criteria-only", sectionsFilterHandlers: {
+                        onSubmitSections: handleSubmitTasksSections,
+                        onResetSections: handleResetTasksSections,
+                    }, tableStructure: [
+                        { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                    ], externalUpdate: externalUpdate })))))));
 }
 exports["default"] = TasksGlobal;
+function NoProjectSelectedMessage() {
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("h3", null, "Wybierz projekt"),
+        react_1.default.createElement("p", { className: "text-muted" }, "Kliknij na projekt z listy po lewej stronie, aby zobaczy\u0107 zadania.")));
+}
 function LoadingMessage({ selectedProject }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("p", null, " \u0141aduj\u0119 zadania dla projektu:"),
@@ -98385,6 +98413,7 @@ function makeCaseTitleLabel(caseItem) {
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
+    const allTasks = [];
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
         const contractNode = {
             id: "contract" + contract.id,
@@ -98444,10 +98473,11 @@ function buildTree(contractsWithChildrenInput) {
                         caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                TasksGlobalController_1.tasksGlobalRepository.items = [...TasksGlobalController_1.tasksGlobalRepository.items, ...caseNode.leaves];
+                allTasks.push(...(caseNode.leaves || []));
             }
         }
     }
+    TasksGlobalController_1.tasksGlobalRepository.items = allTasks;
     console.log("contractNodes", contractNodes);
     return contractNodes;
 }
@@ -98545,6 +98575,41 @@ exports.projectsRepository = new RepositoryReact_1.default({
     },
     name: "projects",
 });
+
+
+/***/ }),
+
+/***/ "./src/TasksGlobal/TasksGlobalFilterBody.tsx":
+/*!***************************************************!*\
+  !*** ./src/TasksGlobal/TasksGlobalFilterBody.tsx ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TasksGlobalFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+function TasksGlobalFilterBody() {
+    const { project } = (0, ContractContext_1.useContract)();
+    return (react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_contract" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { showValidationInfo: false, _project: project })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3, controlId: "_owner" },
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
+            react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
+}
+exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
 
 
 /***/ }),
@@ -101510,7 +101575,7 @@ const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules
 function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
     const [error, setError] = (0, react_1.useState)(null);
     const [isReady, setIsReady] = (0, react_1.useState)(true);
-    const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { setObjects, id, sections, setSections, snapshotMode, sectionsFilterHandlers } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const formMethods = (0, react_hook_form_1.useForm)({
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined,
         defaultValues: {},
@@ -101524,11 +101589,20 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         if (!storedSnapshot)
             return;
         const { criteria } = JSON.parse(storedSnapshot);
+        if (!criteria)
+            return;
         for (let key in criteria) {
             formMethods.setValue(key, criteria[key]);
         }
     }, []);
-    async function handleSubmitSearch(data) {
+    function saveSnapshotToStorage(result) {
+        const filterableTableSnapshot = {
+            criteria: formMethods.getValues(),
+            ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+    }
+    async function handleSubmitSearchFlat(data) {
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
@@ -101544,13 +101618,28 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
             setIsReady(true);
         }
     }
-    function saveSnapshotToStorage(result) {
-        const filterableTableSnapshot = {
-            criteria: formMethods.getValues(),
-            storedObjects: result,
-        };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
-        console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
+    async function handleSubmitSearchSections(data) {
+        if (!sectionsFilterHandlers)
+            return;
+        setIsReady(false);
+        setError(null);
+        try {
+            const newSections = await sectionsFilterHandlers.onSubmitSections(data);
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
+        catch (err) {
+            if (err instanceof Error)
+                setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
+        }
+        finally {
+            setIsReady(true);
+        }
+    }
+    async function handleSubmitSearch(data) {
+        if (sectionsFilterHandlers)
+            return handleSubmitSearchSections(data);
+        return handleSubmitSearchFlat(data);
     }
     const handleReset = () => {
         const allFields = formMethods.getValues();
@@ -101560,6 +101649,11 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         }, {});
         console.log("Wartości po resecie:", resetValues);
         reset(resetValues);
+        if (sectionsFilterHandlers) {
+            const newSections = sectionsFilterHandlers.onResetSections();
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
     };
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
@@ -101628,7 +101722,7 @@ const ToggleExpandButton_1 = __webpack_require__(/*! ./ToggleExpandButton */ "./
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, snapshotMode = "criteria+objects", sectionsFilterHandlers, }) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
@@ -101658,8 +101752,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         const currentSnapshot = sessionStorage.getItem(snapshotName);
         if (!currentSnapshot)
             return;
+        if (snapshotMode === "criteria-only")
+            return;
+        const parsedSnapshot = JSON.parse(currentSnapshot);
         const updatedFilterableTableSnapshot = {
-            criteria: JSON.parse(currentSnapshot),
+            ...parsedSnapshot,
             storedObjects: repository.items,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
@@ -101672,6 +101769,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             setSections(initialSections);
         }
     }, [externalUpdate]);
+    (0, react_1.useEffect)(() => {
+        if (sections.length === 0 && initialSections.length > 0) {
+            setSections(initialSections);
+        }
+    }, [initialSections]);
     function handleAddObject(object) {
         setObjects([...repository.items]);
         updateSnapshot();
@@ -101720,6 +101822,15 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         repository.addToCurrentItems(sectionNode.dataItem.id);
         console.log("handleHeaderClick", repository.currentItems);
     }
+    function showFilter() {
+        if (!FilterBodyComponent)
+            return false;
+        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
+        if (sections.length > 0)
+            return sections.length >= 5 && isReady;
+        // Tryb płaski: zawsze pokazuj
+        return true;
+    }
     const handleRowClick = (id) => {
         setActiveRowId(id);
         console.log("clickedRow:", id);
@@ -101729,21 +101840,21 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
                     index < AddNewButtonComponents.length - 1 && " "))))),
-                initialSections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                sections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
                     react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: globalExpandTrigger, setExpandTrigger: setGlobalExpandTrigger, className: "d-flex align-items-center justify-content-center me-3" })))),
-            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
+            FilterBodyComponent && showFilter() && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                react_1.default.createElement(react_bootstrap_1.Col, null, sections.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                         showTableHeader: showTableHeader,
                         onRowClick: handleRowClick,
                     } })) : (react_1.default.createElement(react_1.default.Fragment, null,
@@ -101932,8 +102043,10 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
     globalExpandTrigger: null,
+    snapshotMode: "criteria+objects",
+    sectionsFilterHandlers: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, globalExpandTrigger, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, globalExpandTrigger, snapshotMode, sectionsFilterHandlers, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -101960,6 +102073,8 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             shouldRetrieveDataBeforeEdit,
             specialRetrieveActionRoute,
             globalExpandTrigger,
+            snapshotMode,
+            sectionsFilterHandlers,
         } }, children));
 }
 exports.FilterableTableProvider = FilterableTableProvider;

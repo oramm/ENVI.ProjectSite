@@ -42,7 +42,7 @@ const ToggleExpandButton_1 = require("./ToggleExpandButton");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, snapshotMode = "criteria+objects", sectionsFilterHandlers, }) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
@@ -72,8 +72,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         const currentSnapshot = sessionStorage.getItem(snapshotName);
         if (!currentSnapshot)
             return;
+        if (snapshotMode === "criteria-only")
+            return;
+        const parsedSnapshot = JSON.parse(currentSnapshot);
         const updatedFilterableTableSnapshot = {
-            criteria: JSON.parse(currentSnapshot),
+            ...parsedSnapshot,
             storedObjects: repository.items,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
@@ -86,6 +89,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             setSections(initialSections);
         }
     }, [externalUpdate]);
+    (0, react_1.useEffect)(() => {
+        if (sections.length === 0 && initialSections.length > 0) {
+            setSections(initialSections);
+        }
+    }, [initialSections]);
     function handleAddObject(object) {
         setObjects([...repository.items]);
         updateSnapshot();
@@ -134,6 +142,15 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         repository.addToCurrentItems(sectionNode.dataItem.id);
         console.log("handleHeaderClick", repository.currentItems);
     }
+    function showFilter() {
+        if (!FilterBodyComponent)
+            return false;
+        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
+        if (sections.length > 0)
+            return sections.length >= 5 && isReady;
+        // Tryb płaski: zawsze pokazuj
+        return true;
+    }
     const handleRowClick = (id) => {
         setActiveRowId(id);
         console.log("clickedRow:", id);
@@ -143,21 +160,21 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
                     index < AddNewButtonComponents.length - 1 && " "))))),
-                initialSections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                sections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
                     react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: globalExpandTrigger, setExpandTrigger: setGlobalExpandTrigger, className: "d-flex align-items-center justify-content-center me-3" })))),
-            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
+            FilterBodyComponent && showFilter() && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                react_1.default.createElement(react_bootstrap_1.Col, null, sections.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                         showTableHeader: showTableHeader,
                         onRowClick: handleRowClick,
                     } })) : (react_1.default.createElement(react_1.default.Fragment, null,

@@ -1,9 +1,7 @@
 import {
     Case,
-    CaseType,
     EntityData,
     MilestoneData,
-    MilestoneType,
     OtherContract,
     OurContract,
     ProjectData,
