@@ -117,10 +117,16 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
                 },
             });
 
+            const retrieveRoute =
+                specialRetrieveActionRoute ??
+                (repository.name === "contracts" && repository.actionRoutes.getRoute !== "contracts"
+                    ? "contracts"
+                    : repository.actionRoutes.getRoute);
+            console.log("GeneralModal.loadDataObject: using retrieveRoute=", retrieveRoute);
             const dataObjectFromServer = (
                 await tempRepository.loadItemsFromServerPOST(
                     [{ id: modalBodyProps.initialData?.id }],
-                    specialRetrieveActionRoute
+                    retrieveRoute
                 )
             )[0];
             if (dataObjectFromServer) {
