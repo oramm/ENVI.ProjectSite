@@ -31,6 +31,7 @@ const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const react_bootstrap_1 = require("react-bootstrap");
 const ResultSetTable_1 = require("./ResultSetTable");
+const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -45,8 +46,11 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         return "";
     }
     return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
+            if (target)
+                navigate(target, { state: { repository } });
         }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);

@@ -13,6 +13,7 @@ import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 import { Col, Row } from "react-bootstrap";
 import { getColSize } from "./ResultSetTable";
+import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType;
@@ -55,7 +56,9 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         <Row
             onClick={(e) => onRowClick(dataObject.id)}
             onDoubleClick={() => {
-                if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
+                if (!selectedObjectRoute) return;
+                const target = buildDetailsPath(selectedObjectRoute, dataObject.id);
+                if (target) navigate(target, { state: { repository } });
             }}
             className={`${getRowClass({ isActive, isStriped })} p-3 mb-2`}
         >

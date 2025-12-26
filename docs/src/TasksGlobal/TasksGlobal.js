@@ -28,8 +28,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
+const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable/FilterableTable"));
 const Symbols_1 = require("../View/Symbols");
@@ -188,6 +188,7 @@ function buildTree(contractsWithChildrenInput) {
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
+            selectedObjectRoute: "/contract/",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),

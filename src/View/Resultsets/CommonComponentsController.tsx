@@ -1,5 +1,4 @@
 import { FieldErrors, FieldValues } from "react-hook-form";
-import { RepositoryDataItem } from "../../../Typings/bussinesTypes";
 import ToolsDate from "../../React/Tools/ToolsDate";
 
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */

@@ -31,6 +31,7 @@ const react_router_dom_1 = require("react-router-dom");
 const react_bootstrap_1 = require("react-bootstrap");
 const DashboardCardContext_1 = require("./DashboardCardContext");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
+const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 const RowActionMenu_1 = __importDefault(require("./RowActionMenu"));
 const CommonComponents_1 = require("../CommonComponents");
 function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, onEditComplete, processEditedObject, }) {
@@ -70,8 +71,11 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     }
     function handleRowDoubleClick(object) {
         const detailsId = getDetailsId ? getDetailsId(object) : object.id;
-        if (detailsRoute)
-            navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
+        if (!detailsRoute)
+            return;
+        const target = (0, ToolsRouting_1.buildDetailsPath)(detailsRoute, detailsId);
+        if (target)
+            navigate(target, { state: { repository } });
     }
     function handleHeaderClick() {
         if (headerRoute)

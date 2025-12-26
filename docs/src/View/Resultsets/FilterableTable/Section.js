@@ -26,12 +26,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Section = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_router_dom_1 = require("react-router-dom");
+require("./FilterableTable.css");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterableTableRow_1 = require("./FilterableTableRow");
 const ResultSetTable_1 = require("./ResultSetTable");
 const ToggleExpandButton_1 = require("./ToggleExpandButton");
-require("./FilterableTable.css");
-const react_router_dom_1 = require("react-router-dom");
+const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigger, }) {
     const { activeSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
@@ -89,8 +90,11 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
         borderRadius: "0.25rem",
     };
     return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataItem.id);
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
+            if (target)
+                navigate(target);
         } },
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2", style: { cursor: "pointer" } },
             react_1.default.createElement("span", { style: makeTitleStyle() }, sectionNode.titleLabel),

@@ -1,5 +1,3 @@
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
@@ -13,8 +11,8 @@ import {
     RepositoryDataItem,
     Task,
 } from "../../Typings/bussinesTypes";
-import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
+import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
 import { SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
@@ -34,8 +32,8 @@ import {
     projectsRepository,
     tasksGlobalRepository,
 } from "./TasksGlobalController";
-import { ContractsWithChildren } from "./TasksGlobalTypes";
 import { TasksGlobalFilterBody } from "./TasksGlobalFilterBody";
+import { ContractsWithChildren } from "./TasksGlobalTypes";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -247,6 +245,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
+            selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
             titleLabel: makeContractTitleLabel(contract),

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Col, Row } from "react-bootstrap";
+import { Accordion } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
+import "./FilterableTable.css";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowActionMenu } from "./FilterableTableRow";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
-import { ToggleExpandButton, ExpandTrigger } from "./ToggleExpandButton";
-import "./FilterableTable.css";
-import { useNavigate } from "react-router-dom";
+import { ExpandTrigger, ToggleExpandButton } from "./ToggleExpandButton";
+import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
  * @param SectionNode.repository - repozytorium z danymi
@@ -163,7 +164,9 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
             style={!sectionNode.isInAccordion ? headerStyle : undefined}
             onClick={() => onClick(sectionNode)}
             onDoubleClick={() => {
-                if (selectedObjectRoute) navigate(selectedObjectRoute + dataItem.id);
+                if (!selectedObjectRoute) return;
+                const target = buildDetailsPath(selectedObjectRoute, dataItem.id);
+                if (target) navigate(target);
             }}
         >
             <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
