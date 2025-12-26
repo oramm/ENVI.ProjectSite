@@ -266,7 +266,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: react_1.default.createElement(react_1.default.Fragment, null, "nowy tytu\u0142"),
                 children: [],
                 leaves: [],
             };

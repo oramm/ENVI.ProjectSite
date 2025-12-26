@@ -28,6 +28,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
 const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
@@ -141,27 +143,45 @@ function LoadingMessage({ selectedProject }) {
 function makeContractTitleLabel(contract) {
     const manager = "ourId" in contract ? contract._manager : undefined;
     const ourId = "ourId" in contract ? contract.ourId : undefined;
-    let label = "Umowa: ";
-    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    if (contract.alias)
-        label += ` [${contract.alias || ""}] `;
-    if (manager)
-        label += ` ${manager.name} ${manager.surname}`;
-    return label;
+    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2 py-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-3 flex-wrap" },
+            react_1.default.createElement("span", { className: "mb-0 text-success" },
+                "Umowa: ",
+                identifier),
+            contract.alias && react_1.default.createElement("span", { className: "text-muted" }, contract.alias),
+            react_1.default.createElement("span", { className: "small", style: { fontSize: "0.9rem" } },
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))),
+        react_1.default.createElement("div", { className: "d-flex gap-4 align-items-center text-secondary", style: { fontSize: "0.9rem" } },
+            contract.endDate && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                react_1.default.createElement("span", null,
+                    "Termin do: ",
+                    react_1.default.createElement("strong", { className: "text-dark" }, contract.endDate)))),
+            contract.endDate && manager && (react_1.default.createElement("div", { className: "border-start border-secondary", style: { height: "1.2em" } })),
+            manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "text-muted" }),
+                react_1.default.createElement("span", null,
+                    "Koordynator:",
+                    " ",
+                    react_1.default.createElement("strong", { className: "text-dark" },
+                        manager.name,
+                        " ",
+                        manager.surname)))))));
 }
 function contractNodeEditHandler(node) {
     console.log("contractNodeEditHandler", node);
     const contract = {
         ...node.dataItem,
     };
-    node.titleLabel = makeContractTitleLabel(contract);
+    node.title = makeContractTitleLabel(contract);
 }
 function milestoneNodeEditHandler(node) {
     console.log("milestoneNodeEditHandler", node);
     const milestone = {
         ...node.dataItem,
     };
-    node.titleLabel = makeMilestoneTitleLabel(milestone);
+    node.title = react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone));
 }
 function makeMilestoneTitleLabel(milestone) {
     const dates = milestone._dates
@@ -191,7 +211,7 @@ function buildTree(contractsWithChildrenInput) {
             selectedObjectRoute: "/contract/",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract),
+            title: makeContractTitleLabel(contract),
             children: [],
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
@@ -210,7 +230,7 @@ function buildTree(contractsWithChildrenInput) {
                 childrenNodesType: "case",
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone),
+                title: react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone)),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
                 EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
@@ -225,14 +245,14 @@ function buildTree(contractsWithChildrenInput) {
                     type: "case",
                     repository: TasksGlobalController_1.casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem),
+                    title: react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(caseItem)),
                     children: [],
                     leaves: [],
                     isDeletable: true,
                     AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
                     EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
                     editHandler: (node) => {
-                        node.titleLabel = makeCaseTitleLabel(node.dataItem);
+                        node.title = react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(node.dataItem));
                     }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);

@@ -91260,21 +91260,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts");
-const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/Letters/LettersList/LetterFilterBody.tsx");
-const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
-const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
+const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/Letters/LettersList/LetterFilterBody.tsx");
+const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts");
 const LetterModalBodiesPartial_1 = __webpack_require__(/*! ./Modals/LetterModalBodiesPartial */ "./src/Letters/LettersList/Modals/LetterModalBodiesPartial.tsx");
+const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -91337,7 +91337,9 @@ function LettersSearch({ title }) {
                 modalSubtitle: `Dotyczy: ${letter.description}`,
                 repository: LettersController_1.lettersRepository,
                 ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
-                onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
+                onEdit: (editedFields) => {
+                    handleEditObject({ ...letter, ...editedFields });
+                },
                 fieldsToUpdate: ["status"],
             } },
             react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
@@ -91358,7 +91360,8 @@ function LettersSearch({ title }) {
                     letter.relatedLetterNumber)),
                 letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
-                    "Wymagana odpowiedzi do dnia: ",
+                    "Wymagana odpowiedzi do dnia:",
+                    " ",
                     ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
                 letter.responseIKNumber && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
@@ -98286,6 +98289,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
 const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -98399,27 +98404,45 @@ function LoadingMessage({ selectedProject }) {
 function makeContractTitleLabel(contract) {
     const manager = "ourId" in contract ? contract._manager : undefined;
     const ourId = "ourId" in contract ? contract.ourId : undefined;
-    let label = "Umowa: ";
-    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    if (contract.alias)
-        label += ` [${contract.alias || ""}] `;
-    if (manager)
-        label += ` ${manager.name} ${manager.surname}`;
-    return label;
+    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2 py-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-3 flex-wrap" },
+            react_1.default.createElement("span", { className: "mb-0 text-success" },
+                "Umowa: ",
+                identifier),
+            contract.alias && react_1.default.createElement("span", { className: "text-muted" }, contract.alias),
+            react_1.default.createElement("span", { className: "small", style: { fontSize: "0.9rem" } },
+                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))),
+        react_1.default.createElement("div", { className: "d-flex gap-4 align-items-center text-secondary", style: { fontSize: "0.9rem" } },
+            contract.endDate && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                react_1.default.createElement("span", null,
+                    "Termin do: ",
+                    react_1.default.createElement("strong", { className: "text-dark" }, contract.endDate)))),
+            contract.endDate && manager && (react_1.default.createElement("div", { className: "border-start border-secondary", style: { height: "1.2em" } })),
+            manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "text-muted" }),
+                react_1.default.createElement("span", null,
+                    "Koordynator:",
+                    " ",
+                    react_1.default.createElement("strong", { className: "text-dark" },
+                        manager.name,
+                        " ",
+                        manager.surname)))))));
 }
 function contractNodeEditHandler(node) {
     console.log("contractNodeEditHandler", node);
     const contract = {
         ...node.dataItem,
     };
-    node.titleLabel = makeContractTitleLabel(contract);
+    node.title = makeContractTitleLabel(contract);
 }
 function milestoneNodeEditHandler(node) {
     console.log("milestoneNodeEditHandler", node);
     const milestone = {
         ...node.dataItem,
     };
-    node.titleLabel = makeMilestoneTitleLabel(milestone);
+    node.title = react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone));
 }
 function makeMilestoneTitleLabel(milestone) {
     const dates = milestone._dates
@@ -98449,7 +98472,7 @@ function buildTree(contractsWithChildrenInput) {
             selectedObjectRoute: "/contract/",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract),
+            title: makeContractTitleLabel(contract),
             children: [],
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
@@ -98468,7 +98491,7 @@ function buildTree(contractsWithChildrenInput) {
                 childrenNodesType: "case",
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone),
+                title: react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone)),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
                 EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
@@ -98483,14 +98506,14 @@ function buildTree(contractsWithChildrenInput) {
                     type: "case",
                     repository: TasksGlobalController_1.casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem),
+                    title: react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(caseItem)),
                     children: [],
                     leaves: [],
                     isDeletable: true,
                     AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
                     EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
                     editHandler: (node) => {
-                        node.titleLabel = makeCaseTitleLabel(node.dataItem);
+                        node.title = react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(node.dataItem));
                     }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);
@@ -100779,7 +100802,7 @@ function InvoiceStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.InvoiceStatusBadge = InvoiceStatusBadge;
-function ContractStatusBadge({ status }) {
+function ContractStatusBadge({ status, className, style, }) {
     let variant;
     let textMode = "light";
     switch (status) {
@@ -100799,7 +100822,7 @@ function ContractStatusBadge({ status }) {
         default:
             variant = "secondary";
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode, className: className, style: style }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
 function MilestoneStatusBadge({ status }) {
@@ -101981,7 +102004,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: react_1.default.createElement(react_1.default.Fragment, null, "nowy tytu\u0142"),
                 children: [],
                 leaves: [],
             };
@@ -102444,6 +102467,7 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
             color: `rgb(50, 130, 50)`,
+            textTransform: "none",
         };
     }
     const headerStyle = {
@@ -102458,7 +102482,7 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
                 navigate(target);
         } },
         react_1.default.createElement("div", { className: "d-flex align-items-center gap-2", style: { cursor: "pointer" } },
-            react_1.default.createElement("span", { style: makeTitleStyle() }, sectionNode.titleLabel),
+            react_1.default.createElement("div", { style: makeTitleStyle() }, sectionNode.title),
             (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,

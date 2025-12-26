@@ -384,7 +384,7 @@ function addNode<LeafDataItemType extends RepositoryDataItem>(
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: <>nowy tytuł</>,
                 children: [],
                 leaves: [],
             };

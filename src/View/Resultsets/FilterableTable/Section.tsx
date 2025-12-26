@@ -14,7 +14,7 @@ import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
  * @param SectionNode.repository - repozytorium z danymi
  * @param SectionNode.dataItem - obiekt z danymi sekcji
- * @param SectionNode.titleLabel - tytuł sekcji
+ * @param SectionNode.title - tytuł sekcji (JSX)
  */
 export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     id: string;
@@ -23,7 +23,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     childrenNodesType?: string;
     repository: RepositoryReact;
     dataItem: RepositoryDataItem;
-    titleLabel: string;
+    title: JSX.Element;
     children: SectionNode<LeafDataItemType>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>;
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
@@ -152,6 +152,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
             color: `rgb(50, 130, 50)`,
+            textTransform: "none" as const,
         };
     }
     const headerStyle = {
@@ -170,7 +171,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
             }}
         >
             <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
-                <span style={makeTitleStyle()}>{sectionNode.titleLabel}</span>
+                <div style={makeTitleStyle()}>{sectionNode.title}</div>
                 {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
                     <span className="tekst-muted small">
                         [{sectionNode.leaves?.length || sectionNode.children.length} pozycji]

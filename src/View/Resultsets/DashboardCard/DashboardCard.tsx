@@ -72,7 +72,6 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
     const [objects, setObjects] = useState(initialObjects);
 
     const navigate = useNavigate();
-    
 
     useEffect(() => {
         setObjects(initialObjects);

@@ -1,6 +1,8 @@
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import {
     Case,
     MilestoneData,
@@ -14,7 +16,7 @@ import {
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import { SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
+import { ContractStatusBadge, SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { getSymbolByUniqueness } from "../View/Symbols";
@@ -192,11 +194,43 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
     const manager = "ourId" in contract ? (contract._manager as PersonData) : undefined;
     const ourId = "ourId" in contract ? contract.ourId : undefined;
 
-    let label = "Umowa: ";
-    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    if (contract.alias) label += ` [${contract.alias || ""}] `;
-    if (manager) label += ` ${manager.name} ${manager.surname}`;
-    return label;
+    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+
+    return (
+        <div className="d-flex flex-column gap-2 py-1">
+            <div className="d-flex align-items-center gap-3 flex-wrap">
+                <span className="mb-0 text-success">Umowa: {identifier}</span>
+                {contract.alias && <span className="text-muted">{contract.alias}</span>}
+                <span className="small" style={{ fontSize: "0.9rem" }}>
+                    <ContractStatusBadge status={contract.status} />
+                </span>
+            </div>
+            <div className="d-flex gap-4 align-items-center text-secondary" style={{ fontSize: "0.9rem" }}>
+                {contract.endDate && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+                        <span>
+                            Termin do: <strong className="text-dark">{contract.endDate}</strong>
+                        </span>
+                    </div>
+                )}
+                {contract.endDate && manager && (
+                    <div className="border-start border-secondary" style={{ height: "1.2em" }}></div>
+                )}
+                {manager && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faUser} className="text-muted" />
+                        <span>
+                            Koordynator:{" "}
+                            <strong className="text-dark">
+                                {manager.name} {manager.surname}
+                            </strong>
+                        </span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
 
 function contractNodeEditHandler(node: SectionNode<Task>) {
@@ -204,7 +238,7 @@ function contractNodeEditHandler(node: SectionNode<Task>) {
     const contract = {
         ...(node.dataItem as OurContract | OtherContract),
     };
-    node.titleLabel = makeContractTitleLabel(contract);
+    node.title = makeContractTitleLabel(contract);
 }
 
 function milestoneNodeEditHandler(node: SectionNode<Task>) {
@@ -212,7 +246,7 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
     const milestone = {
         ...(node.dataItem as MilestoneData),
     };
-    node.titleLabel = makeMilestoneTitleLabel(milestone);
+    node.title = <>{makeMilestoneTitleLabel(milestone)}</>;
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
@@ -248,7 +282,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract),
+            title: makeContractTitleLabel(contract),
             children: [] as SectionNode<Task>[],
             AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
                 SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -272,7 +306,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 childrenNodesType: "case",
                 repository: milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone), // Dostosuj do Twojej metody
+                title: <>{makeMilestoneTitleLabel(milestone)}</>, // Dostosuj do Twojej metody
                 children: [] as SectionNode<Task>[],
                 AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<
                     SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -292,7 +326,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     type: "case",
                     repository: casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem),
+                    title: <>{makeCaseTitleLabel(caseItem)}</>,
                     children: [],
                     leaves: [] as Task[],
                     isDeletable: true,
@@ -303,7 +337,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                         SpecificEditModalButtonProps<RepositoryDataItem>
                     >, // Dostosuj do Twojego komponentu
                     editHandler: (node: SectionNode<Task>) => {
-                        node.titleLabel = makeCaseTitleLabel(node.dataItem as Case);
+                        node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
                     }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);
