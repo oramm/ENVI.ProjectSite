@@ -99,12 +99,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
                     deleteRoute: "",
                 },
             });
-            const retrieveRoute = specialRetrieveActionRoute ??
-                (repository.name === "contracts" && repository.actionRoutes.getRoute !== "contracts"
-                    ? "contracts"
-                    : repository.actionRoutes.getRoute);
-            console.log("GeneralModal.loadDataObject: using retrieveRoute=", retrieveRoute);
-            const dataObjectFromServer = (await tempRepository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], retrieveRoute))[0];
+            const dataObjectFromServer = (await tempRepository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
             if (dataObjectFromServer) {
                 // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
                 // (dla spójności danych, nie nadpisuj całej listy)
