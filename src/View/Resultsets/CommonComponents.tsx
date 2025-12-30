@@ -210,6 +210,31 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
     );
 }
 
+export function KsefStatusBadge({ ksefNumber, ksefStatus }: { ksefNumber?: string | null; ksefStatus?: string | null }) {
+    if (ksefNumber) {
+        return (
+            <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip id="ksef-tooltip">{ksefNumber}</Tooltip>}
+            >
+                <Badge bg="success" text="light">
+                    ✅ Przyjęta
+                </Badge>
+            </OverlayTrigger>
+        );
+    }
+    
+    if (ksefStatus === "PENDING") {
+        return (
+            <Badge bg="warning" text="dark">
+                🟡 Wysłana
+            </Badge>
+        );
+    }
+    
+    return null;
+}
+
 export function ContractStatusBadge({ status }: { status: string }) {
     let variant;
     let textMode: Color = "light";

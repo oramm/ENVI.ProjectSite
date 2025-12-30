@@ -10,6 +10,7 @@ import { InvoiceItemAddNewModalButton, InvoiceItemEditModalButton } from "../Mod
 import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/InvoiceModalButtons";
 import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
 import Tools from "../../../React/Tools/Tools";
+import KsefSection from "./KsefSection";
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
@@ -191,6 +192,9 @@ export default function InvoiceDetails() {
                             "Ładowanie pozycji faktury..." <SpinnerBootstrap />
                         </>
                     )}
+
+                    {/* Sekcja KSeF */}
+                    <KsefSection invoice={invoice} onInvoiceUpdate={setInvoice} />
 
                     <p className="tekst-muted small">
                         Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}

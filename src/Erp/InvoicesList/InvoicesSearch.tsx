@@ -3,7 +3,7 @@ import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTab
 import { InvoicesFilterBody } from "./InvoiceFilterBody";
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from "./Modals/InvoiceModalButtons";
 import { Invoice } from "../../../Typings/bussinesTypes";
-import { InvoiceStatusBadge } from "../../View/Resultsets/CommonComponents";
+import { InvoiceStatusBadge, KsefStatusBadge } from "../../View/Resultsets/CommonComponents";
 import { invoicesRepository } from "./InvoicesController";
 import Tools from "../../React/Tools/Tools";
 
@@ -38,7 +38,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             FilterBodyComponent={InvoicesFilterBody}
             tableStructure={[
                 { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-                { header: "Dane faktury", renderTdBody: renderRow, colMd: 5 },
+                { header: "Dane faktury", renderTdBody: renderRow, colMd: 4 },
                 { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
                 { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
                 { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
@@ -46,6 +46,13 @@ export default function InvoicesSearch({ title }: { title: string }) {
                 {
                     header: "Status",
                     renderTdBody: (invoice: Invoice) => <InvoiceStatusBadge status={invoice.status} />,
+                    colMd: 1,
+                },
+                {
+                    header: "KSeF",
+                    renderTdBody: (invoice: Invoice) => (
+                        <KsefStatusBadge ksefNumber={invoice.ksefNumber} ksefStatus={invoice.ksefStatus} />
+                    ),
                     colMd: 1,
                 },
             ]}

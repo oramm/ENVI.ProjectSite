@@ -334,6 +334,11 @@ export interface Invoice extends RepositoryDataItem {
     _documentOpenUrl?: string;
     _totalGrossValue?: number;
     _totalNetValue?: number;
+    // Pola KSeF
+    ksefNumber?: string | null;
+    ksefStatus?: string | null;
+    ksefSessionId?: string | null;
+    ksefUpo?: string | null;
 }
 
 export interface InvoiceItem extends RepositoryDataItem {

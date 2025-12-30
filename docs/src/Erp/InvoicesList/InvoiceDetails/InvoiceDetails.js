@@ -38,6 +38,7 @@ const InvoiceItemModalButtons_1 = require("../Modals/InvoiceItemModalButtons");
 const InvoiceModalButtons_1 = require("../Modals/InvoiceModalButtons");
 const InvoiceValidationSchema_1 = require("../Modals/InvoiceValidationSchema");
 const Tools_1 = __importDefault(require("../../../React/Tools/Tools"));
+const KsefSection_1 = __importDefault(require("./KsefSection"));
 function InvoiceDetails() {
     const [invoice, setInvoice] = (0, react_1.useState)(InvoicesController_1.invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = (0, react_1.useState)(undefined);
@@ -154,6 +155,7 @@ function InvoiceDetails() {
                     ] })) : (react_1.default.createElement(react_1.default.Fragment, null,
                     "\"\u0141adowanie pozycji faktury...\" ",
                     react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
+                react_1.default.createElement(KsefSection_1.default, { invoice: invoice, onInvoiceUpdate: setInvoice }),
                 react_1.default.createElement("p", { className: "tekst-muted small" },
                     "Przygotowa\u0142(a): ",
                     `${invoice._owner.name} ${invoice._owner.surname}`,

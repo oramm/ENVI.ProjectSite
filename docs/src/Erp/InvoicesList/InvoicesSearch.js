@@ -53,7 +53,7 @@ function InvoicesSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "invoices", title: title, FilterBodyComponent: InvoiceFilterBody_1.InvoicesFilterBody, tableStructure: [
             { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-            { header: "Dane faktury", renderTdBody: renderRow, colMd: 5 },
+            { header: "Dane faktury", renderTdBody: renderRow, colMd: 4 },
             { header: "Sprzedaż", objectAttributeToShow: "issueDate", colMd: 1 },
             { header: "Wysłano", objectAttributeToShow: "sentDate", colMd: 1 },
             { header: "Netto, zł", renderTdBody: renderInvoiceTotaValue, colMd: 1 },
@@ -61,6 +61,11 @@ function InvoicesSearch({ title }) {
             {
                 header: "Status",
                 renderTdBody: (invoice) => react_1.default.createElement(CommonComponents_1.InvoiceStatusBadge, { status: invoice.status }),
+                colMd: 1,
+            },
+            {
+                header: "KSeF",
+                renderTdBody: (invoice) => (react_1.default.createElement(CommonComponents_1.KsefStatusBadge, { ksefNumber: invoice.ksefNumber, ksefStatus: invoice.ksefStatus })),
                 colMd: 1,
             },
         ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: true, isCopyable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: "/invoice/" }));
