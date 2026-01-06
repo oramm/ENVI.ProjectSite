@@ -94422,7 +94422,7 @@ function OffersSearch({ title }) {
                     offer._city.name,
                     react_1.default.createElement("small", null,
                         react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }))),
-                react_1.default.createElement(react_bootstrap_1.Card.Text, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Text, { as: "div" },
                     offer._offerBond.form,
                     " ",
                     offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
