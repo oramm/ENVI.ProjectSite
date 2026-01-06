@@ -1,21 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import { CityData, ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
 import {
     CitySelector,
     ContractTypeSelector,
     EntitySelector,
 } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
-import { Col, Form, Placeholder, Row } from "react-bootstrap";
-import { useFormContext } from "../../../View/Modals/FormContext";
-import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { CityData, ExternalOffer, OurOffer } from "../../../../Typings/bussinesTypes";
-import { entitiesRepository } from "../OffersController";
-import { citiesRepository } from "../../../Admin/Cities/CitiesController";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import {
     OfferBidProcedureSelectFormElement,
     OfferFormSelectFormElement,
 } from "../../../View/Modals/CommonFormComponents/OtherAttributesSelectors";
 import { OfferStatusSelector } from "../../../View/Modals/CommonFormComponents/StatusSelectors";
-import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
+import { useFormContext } from "../../../View/Modals/FormContext";
+import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 
 export function OfferModalBody({ isEditing, initialData }: ModalBodyProps<OurOffer | ExternalOffer>) {
     const {

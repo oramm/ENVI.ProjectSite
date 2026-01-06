@@ -80,7 +80,12 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
             });
             console.log(`📦 [${name}] Otrzymano ${items.length} obiektów z API`, items);
             // ✅ WALIDACJA: Upewnij się że każdy obiekt ma labelKey
-            const validatedData = items.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`));
+            const validatedData = items.map((item) => {
+                if (typeof item === "string") {
+                    return { [labelKey]: item };
+                }
+                return (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`);
+            });
             console.log(`✅ [${name}] Po walidacji:`, validatedData);
             console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
             setOptions(validatedData);
@@ -122,7 +127,13 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
                     if (!field.value)
                         return [];
                     const values = multiple ? field.value : [field.value];
-                    const validated = values.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name));
+                    const validated = values.map((item) => {
+                        // ✅ Jeśli wartość jest stringiem (np. allowNew lub initData jako string), opakuj go dla UI
+                        if (typeof item === "string") {
+                            return { [labelKey]: item, customOption: true };
+                        }
+                        return (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name);
+                    });
                     console.log(`🏷️ [${name}] Walidacja selected values:`, {
                         original: field.value,
                         validated: validated,
