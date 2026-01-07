@@ -184,15 +184,25 @@ function milestoneNodeEditHandler(node) {
     node.title = react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone));
 }
 function makeMilestoneTitleLabel(milestone) {
-    const dates = milestone._dates
-        .map((d) => {
-        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-        return `[${startDate} - ${endDate}]`;
-    })
-        .join(", ");
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
-    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
+    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 flex-wrap" },
+            react_1.default.createElement("span", null,
+                titleText,
+                " ",
+                uniqueicon),
+            milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status })),
+        milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+            milestone._dates.map((d, index) => {
+                const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                return (react_1.default.createElement("span", { key: index },
+                    startDate,
+                    " - ",
+                    endDate));
+            })))));
 }
 function makeCaseTitleLabel(caseItem) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);

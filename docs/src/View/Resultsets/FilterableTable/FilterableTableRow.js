@@ -51,7 +51,7 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
             if (target)
                 navigate(target, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+        }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
@@ -122,7 +122,7 @@ exports.CopyModalButton = CopyModalButton;
  */
 function getRowClass({ isActive, isStriped }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",

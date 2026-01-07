@@ -98446,15 +98446,25 @@ function milestoneNodeEditHandler(node) {
     node.title = react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone));
 }
 function makeMilestoneTitleLabel(milestone) {
-    const dates = milestone._dates
-        .map((d) => {
-        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-        return `[${startDate} - ${endDate}]`;
-    })
-        .join(", ");
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
-    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
+    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 flex-wrap" },
+            react_1.default.createElement("span", null,
+                titleText,
+                " ",
+                uniqueicon),
+            milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status })),
+        milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
+            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+            milestone._dates.map((d, index) => {
+                const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                return (react_1.default.createElement("span", { key: index },
+                    startDate,
+                    " - ",
+                    endDate));
+            })))));
 }
 function makeCaseTitleLabel(caseItem) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
@@ -102215,7 +102225,7 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
             if (target)
                 navigate(target, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+        }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
@@ -102286,7 +102296,7 @@ exports.CopyModalButton = CopyModalButton;
  */
 function getRowClass({ isActive, isStriped }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",

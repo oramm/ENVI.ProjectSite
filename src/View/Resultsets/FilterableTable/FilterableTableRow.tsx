@@ -60,7 +60,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                 const target = buildDetailsPath(selectedObjectRoute, dataObject.id);
                 if (target) navigate(target, { state: { repository } });
             }}
-            className={`${getRowClass({ isActive, isStriped })} p-3 mb-2`}
+            className={`${getRowClass({ isActive, isStriped })}`}
         >
             {tableStructure.map((column, index) => {
                 const key = String(column.objectAttributeToShow || index);
@@ -234,7 +234,7 @@ export function CopyModalButton<DataItemType extends RepositoryDataItem>({
  */
 export function getRowClass({ isActive, isStriped }: { isActive: boolean; isStriped: boolean }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",

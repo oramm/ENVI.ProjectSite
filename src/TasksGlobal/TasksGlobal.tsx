@@ -16,7 +16,12 @@ import {
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import { ContractStatusBadge, SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
+import {
+    ContractStatusBadge,
+    MilestoneStatusBadge,
+    SpinnerBootstrap,
+    TaskStatusBadge,
+} from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { getSymbolByUniqueness } from "../View/Symbols";
@@ -250,17 +255,33 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
-    const dates: string = milestone._dates
-        .map((d) => {
-            const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-            const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-            return `[${startDate} - ${endDate}]`;
-        })
-        .join(", ");
     const uniqueicon = getSymbolByUniqueness(milestone._type.isUniquePerContract);
-    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${
-        milestone.name || ""
-    } ${dates} ${uniqueicon}`;
+    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+
+    return (
+        <div className="d-flex flex-column gap-1">
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+                <span>
+                    {titleText} {uniqueicon}
+                </span>
+                {milestone.status && <MilestoneStatusBadge status={milestone.status} />}
+            </div>
+            {milestone._dates && milestone._dates.length > 0 && (
+                <div className="d-flex align-items-center gap-2 text-secondary small" style={{ lineHeight: "1" }}>
+                    <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+                    {milestone._dates.map((d, index) => {
+                        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                        return (
+                            <span key={index}>
+                                {startDate} - {endDate}
+                            </span>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
