@@ -97,7 +97,7 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
             if (target)
                 navigate(target);
         } },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2", style: { cursor: "pointer" } },
+        react_1.default.createElement("div", { className: "d-flex align-items-start gap-2", style: { cursor: "pointer" } },
             react_1.default.createElement("div", { style: makeTitleStyle() }, sectionNode.title),
             (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
                 "[",

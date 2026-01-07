@@ -170,7 +170,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                 if (target) navigate(target);
             }}
         >
-            <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+            <div className="d-flex align-items-start gap-2" style={{ cursor: "pointer" }}>
                 <div style={makeTitleStyle()}>{sectionNode.title}</div>
                 {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
                     <span className="tekst-muted small">
