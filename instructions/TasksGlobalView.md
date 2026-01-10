@@ -39,20 +39,35 @@ Budowana w funkcji `buildTree`:
 
 1.  **Poziom 1: Kontrakt (Contract)**
     -   To główna sekcja (Accordion).
-    -   Nagłówek zawiera: Numer umowy, Alias, Status, Daty, Koordynatora.
-    -   Można go edytować (`ContractEditModalButton`).
+    -   **Nagłówek zawiera:**
+        -   Linia 1: Identyfikator (ourId lub typ + numer) + Status Badge
+        -   Linia 2: Nazwa kontraktu (tytuł główny, pogrubiony)
+        -   Linia 3 (opcjonalnie): Alias + Wykonawcy (jeśli istnieją)
+        -   Linia 4: Ikona kalendarza + Daty (startDate - endDate) + Ikona użytkownika + Koordynator
+    -   **Layout:** Flex column z gap-1, responsywny rozkład ikon i dat
+    -   **CRUD:** Edycja (`ContractEditModalButton`), Dodawanie Kamienia (`MilestoneAddNewModalButton`)
 2.  **Poziom 2: Kamień Milowy (Milestone)**
-    -   Zagnieżdżony w Kontrakcie.
-    -   Nagłówek zawiera: Numer folderu, Nazwę typu, Daty realizacji.
-    -   Można dodać nowy Kamień (`MilestoneAddNewModalButton`).
+    -   Zagnieżdżony w Kontrakcie (Accordion).
+    -   **Nagłówek zawiera:**
+        -   Tekst: "Kamień: [ikona unikalności] [numer folderu] [typ] [nazwa]"
+        -   Ikona kalendarza + Daty realizacji (z powiązanych dat)
+        -   Status Badge (po prawej stronie)
+    -   **Layout:** Flex z justify-content-between (tytuł po lewej, status po prawej)
+    -   **CRUD:** Edycja (`MilestoneEditModalButton`), Dodawanie Sprawy (`CaseAddNewModalButton`)
 3.  **Poziom 3: Sprawa (Case)**
-    -   Zagnieżdżona w Kamieniu Milowym.
-    -   Nagłówek zawiera: Numer sprawy, Typ sprawy.
-    -   Można dodać nową Sprawę (`CaseAddNewModalButton`).
+    -   Zagnieżdżona w Kamieniu Milowym (bez Accordion).
+    -   **Nagłówek zawiera:**
+        -   Tekst: "Sprawa: [ikona unikalności] [numer folderu typu] [typ] [numer] [nazwa]"
+    -   **CRUD:** Edycja (`CaseEditModalButton`), Dodawanie Zadania (`TaskAddNewModalButton`)
 4.  **Poziom 4 (Liście): Zadania (Tasks)**
     -   To są właściwe wiersze tabeli wyświetlane wewnątrz Sprawy.
-    -   Kolumny: Nazwa/Opis, Termin, Status (Badge), Właściciel.
-    -   Zadania można dodawać (`TaskAddNewModalButton`) i edytować (`TaskEditModalButton`).
+    -   **Kolumny (Row layout):**
+        -   Col 1 (md=5): Nazwa zadania + Opis (mniejszy, szary tekst)
+        -   Col 2 (md=2): Termin (deadline)
+        -   Col 3 (md=2): Status Badge
+        -   Col 4 (md=3): Właściciel (imię + nazwisko)
+    -   **CRUD:** Edycja (`TaskEditModalButton`)
+    -   **Uwaga:** Szerokość kolumn kontrolowana przez `xs={isActive ? 11 : 12}` - rezerwacja miejsca na menu akcji
 
 ---
 
@@ -87,6 +102,20 @@ Filtr w komponencie `FilterableTable` (używanym w prawym panelu) posiada specyf
     -   Prawy panel pobiera dane zbiorcze przez `contractsWithChildrenRepository` (jeden strzał do API pobiera całą strukturę: Kontrakty -> Kamienie -> Sprawy -> Zadania), a następnie "rozpakowuje" je do struktury drzewa w pamięci przeglądarki.
 -   **Modalne przyciski (CRUD):** Każdy poziom drzewa ma wstrzyknięte odpowiednie komponenty przycisków (np. `AddNewButtonComponent`), co pozwala na edycję struktury bezpośrednio z poziomu drzewa, bez przechodzenia do innych widoków.
 
+### Architektura Layout (Grid vs Flex)
+
+Komponenty tabeli stosują czystą separację odpowiedzialności między Bootstrap Grid a Flexbox:
+
+-   **Bootstrap Grid (`<Row>` / `<Col>`):** Odpowiada wyłącznie za strukturę kolumn i responsywność breakpointów.
+-   **Flexbox (`d-flex`, `justify-content-*`):** Używany wewnętrznie w komponentach do centrowania, rozkładu i wyrównywania elementów.
+-   **Zasada:** Nie mieszamy klas `d-flex` z komponentami `<Row>` na tym samym poziomie - każdy system działa niezależnie.
+
+**Przykłady implementacji:**
+
+-   **Nagłówek tabeli (`ResultSetTable`):** `<Row>` bez `d-flex`, responsywność przez `d-none d-md-block` na kontenerze rodzica.
+-   **Wiersz tabeli (`FilterableTableRow`):** `<Row>` dla struktury, `d-flex justify-content-center` w osobnym `<div>` wewnątrz `<Col>` dla menu akcji.
+-   **Nagłówek sekcji (`SectionHeader`):** Flex na poziomie kontenera z `justify-content-md-between`, `flex-grow-1` na lewym bloku (tytuł), `flex-shrink-0` na prawym (menu).
+
 ### Uwagi dla Designera
 
 Projektując zmiany w tym widoku, należy pamiętać, że:
@@ -94,3 +123,4 @@ Projektując zmiany w tym widoku, należy pamiętać, że:
 1.  **Prawa strona jest zależna od lewej.**
 2.  **Struktura jest sztywna hierarchicznie:** Projekt -> Kontrakt -> Kamień -> Sprawa -> Zadanie.
 3.  **Interfejs jest "gęsty":** Mamy dużo zagnieżdżeń, więc kluczowe jest czytelne oddzielenie poziomów (wciecia, kolory tła nagłówków sekcji), aby użytkownik nie zgubił się w strukturze.
+4.  **Layout jest semantycznie rozdzielony:** Grid = kolumny, Flex = układ wewnętrzny. Nie łączymy tych systemów na tym samym elemencie.

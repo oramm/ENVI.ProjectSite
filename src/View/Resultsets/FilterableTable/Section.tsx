@@ -161,7 +161,14 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     };
     return (
         <div
-            className="d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2"
+            className="
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-md-between
+                        align-items-start align-items-md-center
+                        w-100
+                        px-2 py-1
+                    "
             style={!sectionNode.isInAccordion ? headerStyle : undefined}
             onClick={() => onClick(sectionNode)}
             onDoubleClick={() => {
@@ -170,17 +177,40 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                 if (target) navigate(target);
             }}
         >
-            <div className="d-flex align-items-start gap-2" style={{ cursor: "pointer" }}>
-                <div style={makeTitleStyle()}>{sectionNode.title}</div>
+            {/* LEWA STRONA – TITLE */}
+            <div
+                className="
+                            d-flex
+                            align-items-center
+                            gap-2
+                            flex-grow-1
+                            min-w-0
+                        "
+                style={{ cursor: "pointer" }}
+            >
+                <div style={makeTitleStyle()} className="flex-grow-1 text-break">
+                    {sectionNode.title}
+                </div>
+
                 {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
-                    <span className="tekst-muted small">
+                    <span className="text-muted small flex-shrink-0">
                         [{sectionNode.leaves?.length || sectionNode.children.length} pozycji]
                     </span>
                 )}
             </div>
 
+            {/* PRAWA STRONA – MENU */}
             {isActive && (
-                <div className="d-flex align-items-center gap-2 section-action-menu">
+                <div
+                    className="
+                                d-flex
+                                align-items-center
+                                gap-2
+                                
+                                flex-shrink-0
+                                mt-2 mt-md-0
+                            "
+                >
                     {sectionNode.children.length > 0 && (
                         <ToggleExpandButton
                             expandTrigger={localExpandTrigger}
@@ -190,6 +220,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                             stopPropagation
                         />
                     )}
+
                     <RowActionMenu
                         dataObject={sectionNode.dataItem}
                         isDeletable={!!sectionNode.isDeletable}
@@ -201,6 +232,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         layout="horizontal"
                         sectionRepository={sectionNode.repository}
                     />
+
                     {sectionNode.AddNewButtonComponent && (
                         <sectionNode.AddNewButtonComponent
                             modalProps={{

@@ -31,13 +31,15 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
         <>
             <div>
                 {showTableHeader && (
-                    <Row className="fw-bold text-secondary d-none d-md-flex">
-                        {tableStructure.map((column, index) => (
-                            <Col key={column.header || index} {...getColSize(column)} className="text-center">
-                                {renderHeaderBody(column)}
-                            </Col>
-                        ))}
-                    </Row>
+                    <div className="d-none d-md-block">
+                        <Row className="fw-bold text-secondary">
+                            {tableStructure.map((column, index) => (
+                                <Col key={column.header || index} {...getColSize(column)} className="text-center">
+                                    {renderHeaderBody(column)}
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
                 )}
                 <div className="d-flex flex-column gap-2">
                     {objectsToShow.map((dataObject, index) => {

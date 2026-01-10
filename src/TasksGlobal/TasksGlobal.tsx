@@ -195,32 +195,55 @@ function LoadingMessage({ selectedProject }: { selectedProject: ProjectData | un
     );
 }
 
-function makeContractTitleLabel(contract: OurContract | OtherContract) {
-    const manager = "ourId" in contract ? (contract._manager as PersonData) : undefined;
-    const ourId = "ourId" in contract ? contract.ourId : undefined;
+function truncateText(text: string | undefined, maxLength: number): string {
+    if (!text) return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+}
 
-    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
+function makeContractTitleLabel(contract: OurContract | OtherContract) {
+    const isOurContract = "ourId" in contract;
+    const manager = isOurContract ? (contract._manager as PersonData) : undefined;
+    const ourId = isOurContract ? contract.ourId : undefined;
+    const contractors = !isOurContract ? contract._contractors : undefined;
+
+    const identifier = ourId ? ourId : `${contract._type.name} ${contract.number}`;
+    const contractName = truncateText(contract.name, 200);
+
+    const hasAlias = !!contract.alias;
+    const hasContractors = contractors && contractors.length > 0;
+    const showAliasLine = hasAlias || hasContractors;
+
+    const hasDates = contract.startDate || contract.endDate;
 
     return (
-        <div className="d-flex flex-column gap-2 py-1">
-            <div className="d-flex align-items-center gap-3 flex-wrap">
-                <span className="mb-0 text-success">Umowa: {identifier}</span>
-                {contract.alias && <span className="text-muted">{contract.alias}</span>}
-                <span className="small" style={{ fontSize: "0.9rem" }}>
-                    <ContractStatusBadge status={contract.status} />
-                </span>
+        <div className="d-flex flex-column gap-1 py-1">
+            {/* Linia #1: ID + Status Badge */}
+            <div className="d-flex align-items-center gap-2">
+                <span className="text-muted text-uppercase fw-bold small">{identifier}</span>
+                <ContractStatusBadge status={contract.status} />
             </div>
-            <div className="d-flex gap-4 align-items-center text-secondary" style={{ fontSize: "0.9rem" }}>
-                {contract.endDate && (
+
+            {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
+            <h6 className="mb-0 fw-bold text-dark">{contractName}</h6>
+
+            {/* Linia #3: Alias + Wykonawcy (opcjonalnie) */}
+            {showAliasLine && (
+                <div className="d-flex align-items-center gap-2 small">
+                    {hasAlias && <span className="fw-semibold text-secondary">{contract.alias}</span>}
+                    {hasAlias && hasContractors && <span className="text-muted opacity-50">|</span>}
+                    {hasContractors && <span className="text-muted">{contractors.map((c) => c.name).join(", ")}</span>}
+                </div>
+            )}
+
+            {/* Linia #4: Daty + Koordynator */}
+            <div className="d-flex flex-wrap gap-4 align-items-center text-secondary small">
+                {hasDates && (
                     <div className="d-flex align-items-center gap-2">
                         <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
                         <span>
-                            Termin do: <strong className="text-dark">{contract.endDate}</strong>
+                            {contract.startDate || "?"} — {contract.endDate || "?"}
                         </span>
                     </div>
-                )}
-                {contract.endDate && manager && (
-                    <div className="border-start border-secondary" style={{ height: "1.2em" }}></div>
                 )}
                 {manager && (
                     <div className="d-flex align-items-center gap-2">
@@ -256,37 +279,37 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
     const uniqueicon = getSymbolByUniqueness(milestone._type.isUniquePerContract);
-    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${
+        milestone.name || ""
+    }`;
 
     return (
-        <div className="d-flex flex-column gap-1">
-            <div className="d-flex align-items-center gap-2 flex-wrap">
-                <span>
-                    {titleText} {uniqueicon}
-                </span>
-                {milestone.status && <MilestoneStatusBadge status={milestone.status} />}
+        <div className="d-flex gap-3 align-items-center justify-content-between">
+            <div className="d-flex flex-column gap-1">
+                <span>{titleText}</span>
+                {milestone._dates && milestone._dates.length > 0 && (
+                    <div className="d-flex align-items-center gap-2 text-secondary small" style={{ lineHeight: "1" }}>
+                        <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+                        {milestone._dates.map((d, index) => {
+                            const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                            const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                            return (
+                                <span key={index}>
+                                    {startDate} - {endDate}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
-            {milestone._dates && milestone._dates.length > 0 && (
-                <div className="d-flex align-items-center gap-2 text-secondary small" style={{ lineHeight: "1" }}>
-                    <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
-                    {milestone._dates.map((d, index) => {
-                        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-                        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-                        return (
-                            <span key={index}>
-                                {startDate} - {endDate}
-                            </span>
-                        );
-                    })}
-                </div>
-            )}
+            <div>{milestone.status && <MilestoneStatusBadge status={milestone.status} />}</div>
         </div>
     );
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
     const uniqueicon = getSymbolByUniqueness(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
+    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {

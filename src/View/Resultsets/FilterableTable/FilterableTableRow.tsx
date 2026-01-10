@@ -64,6 +64,7 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         >
             {tableStructure.map((column, index) => {
                 const key = String(column.objectAttributeToShow || index);
+                // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
                 return (
                     <Col key={key} {...getColSize(column)} xs={isActive ? 11 : 12}>
                         {tdBodyRender(column, dataObject)}
@@ -71,19 +72,21 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                 );
             })}
             {isActive && (
-                <Col align="center" xs="1" className="d-flex justify-content-center">
-                    {" "}
-                    <RowActionMenu
-                        dataObject={dataObject}
-                        handleEditObject={handleEditObject}
-                        handleCopyObject={handleCopyObject}
-                        EditButtonComponent={EditButtonComponent}
-                        handleDeleteObject={handleDeleteObject}
-                        isDeletable={isDeletable}
-                        isCopyable={isCopyable}
-                        shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
-                        specialRetrieveActionRoute={specialRetrieveActionRoute}
-                    />
+                <Col xs="1">
+                    <div className="d-flex justify-content-center">
+                        {" "}
+                        <RowActionMenu
+                            dataObject={dataObject}
+                            handleEditObject={handleEditObject}
+                            handleCopyObject={handleCopyObject}
+                            EditButtonComponent={EditButtonComponent}
+                            handleDeleteObject={handleDeleteObject}
+                            isDeletable={isDeletable}
+                            isCopyable={isCopyable}
+                            shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+                            specialRetrieveActionRoute={specialRetrieveActionRoute}
+                        />
+                    </div>
                 </Col>
             )}
         </Row>

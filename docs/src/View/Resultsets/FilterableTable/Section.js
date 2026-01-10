@@ -90,20 +90,20 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
         backgroundColor: "aliceblue",
         borderRadius: "0.25rem",
     };
-    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
+    return (react_1.default.createElement("div", { className: "\r\n                        d-flex\r\n                        flex-column flex-md-row\r\n                        justify-content-md-between\r\n                        align-items-start align-items-md-center\r\n                        w-100\r\n                        px-2 py-1\r\n                    ", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (!selectedObjectRoute)
                 return;
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
             if (target)
                 navigate(target);
         } },
-        react_1.default.createElement("div", { className: "d-flex align-items-start gap-2", style: { cursor: "pointer" } },
-            react_1.default.createElement("div", { style: makeTitleStyle() }, sectionNode.title),
-            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
+        react_1.default.createElement("div", { className: "\r\n                            d-flex\r\n                            align-items-center\r\n                            gap-2\r\n                            flex-grow-1\r\n                            min-w-0\r\n                        ", style: { cursor: "pointer" } },
+            react_1.default.createElement("div", { style: makeTitleStyle(), className: "flex-grow-1 text-break" }, sectionNode.title),
+            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "text-muted small flex-shrink-0" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
+        isActive && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
             sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {

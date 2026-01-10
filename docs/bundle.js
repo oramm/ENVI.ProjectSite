@@ -98402,25 +98402,38 @@ function LoadingMessage({ selectedProject }) {
         react_1.default.createElement("p", null, selectedProject?.name),
         react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
 }
+function truncateText(text, maxLength) {
+    if (!text)
+        return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+}
 function makeContractTitleLabel(contract) {
-    const manager = "ourId" in contract ? contract._manager : undefined;
-    const ourId = "ourId" in contract ? contract.ourId : undefined;
-    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2 py-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-3 flex-wrap" },
-            react_1.default.createElement("span", { className: "mb-0 text-success" },
-                "Umowa: ",
-                identifier),
-            contract.alias && react_1.default.createElement("span", { className: "text-muted" }, contract.alias),
-            react_1.default.createElement("span", { className: "small", style: { fontSize: "0.9rem" } },
-                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))),
-        react_1.default.createElement("div", { className: "d-flex gap-4 align-items-center text-secondary", style: { fontSize: "0.9rem" } },
-            contract.endDate && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+    const isOurContract = "ourId" in contract;
+    const manager = isOurContract ? contract._manager : undefined;
+    const ourId = isOurContract ? contract.ourId : undefined;
+    const contractors = !isOurContract ? contract._contractors : undefined;
+    const identifier = ourId ? ourId : `${contract._type.name} ${contract.number}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const hasContractors = contractors && contractors.length > 0;
+    const showAliasLine = hasAlias || hasContractors;
+    const hasDates = contract.startDate || contract.endDate;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1 py-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+            react_1.default.createElement("span", { className: "text-muted text-uppercase fw-bold small" }, identifier),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })),
+        react_1.default.createElement("h6", { className: "mb-0 fw-bold text-dark" }, contractName),
+        showAliasLine && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 small" },
+            hasAlias && react_1.default.createElement("span", { className: "fw-semibold text-secondary" }, contract.alias),
+            hasAlias && hasContractors && react_1.default.createElement("span", { className: "text-muted opacity-50" }, "|"),
+            hasContractors && react_1.default.createElement("span", { className: "text-muted" }, contractors.map((c) => c.name).join(", ")))),
+        react_1.default.createElement("div", { className: "d-flex flex-wrap gap-4 align-items-center text-secondary small" },
+            hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
                 react_1.default.createElement("span", null,
-                    "Termin do: ",
-                    react_1.default.createElement("strong", { className: "text-dark" }, contract.endDate)))),
-            contract.endDate && manager && (react_1.default.createElement("div", { className: "border-start border-secondary", style: { height: "1.2em" } })),
+                    contract.startDate || "?",
+                    " \u2014 ",
+                    contract.endDate || "?"))),
             manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "text-muted" }),
                 react_1.default.createElement("span", null,
@@ -98447,28 +98460,25 @@ function milestoneNodeEditHandler(node) {
 }
 function makeMilestoneTitleLabel(milestone) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
-    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 flex-wrap" },
-            react_1.default.createElement("span", null,
-                titleText,
-                " ",
-                uniqueicon),
-            milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status })),
-        milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
-            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
-            milestone._dates.map((d, index) => {
-                const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-                const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-                return (react_1.default.createElement("span", { key: index },
-                    startDate,
-                    " - ",
-                    endDate));
-            })))));
+    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    return (react_1.default.createElement("div", { className: "d-flex gap-3 align-items-center justify-content-between" },
+        react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+            react_1.default.createElement("span", null, titleText),
+            milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                milestone._dates.map((d, index) => {
+                    const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                    const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                    return (react_1.default.createElement("span", { key: index },
+                        startDate,
+                        " - ",
+                        endDate));
+                })))),
+        react_1.default.createElement("div", null, milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status }))));
 }
 function makeCaseTitleLabel(caseItem) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
+    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
@@ -102228,11 +102238,13 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
+            // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { xs: "1" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-center" },
+                " ",
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
 exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
@@ -102359,7 +102371,8 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null,
-            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
+            showTableHeader && (react_1.default.createElement("div", { className: "d-none d-md-block" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column))))))),
             react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
                 const isActive = dataObject.id === activeRowId;
                 const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
@@ -102491,20 +102504,20 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
         backgroundColor: "aliceblue",
         borderRadius: "0.25rem",
     };
-    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
+    return (react_1.default.createElement("div", { className: "\r\n                        d-flex\r\n                        flex-column flex-md-row\r\n                        justify-content-md-between\r\n                        align-items-start align-items-md-center\r\n                        w-100\r\n                        px-2 py-1\r\n                    ", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (!selectedObjectRoute)
                 return;
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
             if (target)
                 navigate(target);
         } },
-        react_1.default.createElement("div", { className: "d-flex align-items-start gap-2", style: { cursor: "pointer" } },
-            react_1.default.createElement("div", { style: makeTitleStyle() }, sectionNode.title),
-            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
+        react_1.default.createElement("div", { className: "\r\n                            d-flex\r\n                            align-items-center\r\n                            gap-2\r\n                            flex-grow-1\r\n                            min-w-0\r\n                        ", style: { cursor: "pointer" } },
+            react_1.default.createElement("div", { style: makeTitleStyle(), className: "flex-grow-1 text-break" }, sectionNode.title),
+            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "text-muted small flex-shrink-0" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
+        isActive && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
             sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {

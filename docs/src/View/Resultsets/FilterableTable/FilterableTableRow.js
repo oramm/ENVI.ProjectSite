@@ -54,11 +54,13 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
+            // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { xs: "1" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-center" },
+                " ",
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
 exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {

@@ -41,7 +41,8 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null,
-            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
+            showTableHeader && (react_1.default.createElement("div", { className: "d-none d-md-block" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column))))))),
             react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
                 const isActive = dataObject.id === activeRowId;
                 const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;

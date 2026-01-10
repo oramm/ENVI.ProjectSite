@@ -140,25 +140,38 @@ function LoadingMessage({ selectedProject }) {
         react_1.default.createElement("p", null, selectedProject?.name),
         react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
 }
+function truncateText(text, maxLength) {
+    if (!text)
+        return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+}
 function makeContractTitleLabel(contract) {
-    const manager = "ourId" in contract ? contract._manager : undefined;
-    const ourId = "ourId" in contract ? contract.ourId : undefined;
-    const identifier = ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2 py-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-3 flex-wrap" },
-            react_1.default.createElement("span", { className: "mb-0 text-success" },
-                "Umowa: ",
-                identifier),
-            contract.alias && react_1.default.createElement("span", { className: "text-muted" }, contract.alias),
-            react_1.default.createElement("span", { className: "small", style: { fontSize: "0.9rem" } },
-                react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status }))),
-        react_1.default.createElement("div", { className: "d-flex gap-4 align-items-center text-secondary", style: { fontSize: "0.9rem" } },
-            contract.endDate && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+    const isOurContract = "ourId" in contract;
+    const manager = isOurContract ? contract._manager : undefined;
+    const ourId = isOurContract ? contract.ourId : undefined;
+    const contractors = !isOurContract ? contract._contractors : undefined;
+    const identifier = ourId ? ourId : `${contract._type.name} ${contract.number}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const hasContractors = contractors && contractors.length > 0;
+    const showAliasLine = hasAlias || hasContractors;
+    const hasDates = contract.startDate || contract.endDate;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1 py-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+            react_1.default.createElement("span", { className: "text-muted text-uppercase fw-bold small" }, identifier),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })),
+        react_1.default.createElement("h6", { className: "mb-0 fw-bold text-dark" }, contractName),
+        showAliasLine && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 small" },
+            hasAlias && react_1.default.createElement("span", { className: "fw-semibold text-secondary" }, contract.alias),
+            hasAlias && hasContractors && react_1.default.createElement("span", { className: "text-muted opacity-50" }, "|"),
+            hasContractors && react_1.default.createElement("span", { className: "text-muted" }, contractors.map((c) => c.name).join(", ")))),
+        react_1.default.createElement("div", { className: "d-flex flex-wrap gap-4 align-items-center text-secondary small" },
+            hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
                 react_1.default.createElement("span", null,
-                    "Termin do: ",
-                    react_1.default.createElement("strong", { className: "text-dark" }, contract.endDate)))),
-            contract.endDate && manager && (react_1.default.createElement("div", { className: "border-start border-secondary", style: { height: "1.2em" } })),
+                    contract.startDate || "?",
+                    " \u2014 ",
+                    contract.endDate || "?"))),
             manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "text-muted" }),
                 react_1.default.createElement("span", null,
@@ -185,28 +198,25 @@ function milestoneNodeEditHandler(node) {
 }
 function makeMilestoneTitleLabel(milestone) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
-    const titleText = `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 flex-wrap" },
-            react_1.default.createElement("span", null,
-                titleText,
-                " ",
-                uniqueicon),
-            milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status })),
-        milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
-            react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
-            milestone._dates.map((d, index) => {
-                const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-                const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-                return (react_1.default.createElement("span", { key: index },
-                    startDate,
-                    " - ",
-                    endDate));
-            })))));
+    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    return (react_1.default.createElement("div", { className: "d-flex gap-3 align-items-center justify-content-between" },
+        react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+            react_1.default.createElement("span", null, titleText),
+            milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                milestone._dates.map((d, index) => {
+                    const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                    const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                    return (react_1.default.createElement("span", { key: index },
+                        startDate,
+                        " - ",
+                        endDate));
+                })))),
+        react_1.default.createElement("div", null, milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status }))));
 }
 function makeCaseTitleLabel(caseItem) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
+    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
