@@ -24,7 +24,6 @@ import {
 } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
-import { ContractHeader } from "../View/Resultsets/FilterableTable/ContractHeader";
 import { getSymbolByUniqueness } from "../View/Symbols";
 import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
@@ -216,31 +215,34 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
 
     const hasDates = contract.startDate || contract.endDate;
 
+    // Klasa CSS dla border-left (niebieski dla OUR, pomarańczowy dla OTHER)
+    const borderClass = isOurContract ? "contract-header-our" : "contract-header-other";
+
     return (
-        <div className="d-flex flex-column gap-1 py-1">
+        <div className={`contract-header ${borderClass} d-flex flex-column gap-1 p-3`}>
             {/* Linia #1: ID + Status Badge */}
-            <div className="d-flex align-items-center gap-2">
-                <span className="text-muted text-uppercase fw-bold small">{identifier}</span>
+            <div className="d-flex align-items-center gap-2 mb-1">
+                <span className="contract-id">{identifier}</span>
                 <ContractStatusBadge status={contract.status} />
             </div>
 
             {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
-            <h6 className="mb-0 fw-bold text-dark">{contractName}</h6>
+            <h6 className="contract-title mb-1">{contractName}</h6>
 
             {/* Linia #3: Alias + Wykonawcy (opcjonalnie) */}
             {showAliasLine && (
-                <div className="d-flex align-items-center gap-2 small">
-                    {hasAlias && <span className="fw-semibold text-secondary">{contract.alias}</span>}
+                <div className="d-flex align-items-center gap-2 mb-2">
+                    {hasAlias && <span className="contract-alias">{contract.alias}</span>}
                     {hasAlias && hasContractors && <span className="text-muted opacity-50">|</span>}
-                    {hasContractors && <span className="text-muted">{contractors.map((c) => c.name).join(", ")}</span>}
+                    {hasContractors && <span className="text-muted small">{contractors.map((c) => c.name).join(", ")}</span>}
                 </div>
             )}
 
             {/* Linia #4: Daty + Koordynator */}
-            <div className="d-flex flex-wrap gap-4 align-items-center text-secondary small">
+            <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
                 {hasDates && (
                     <div className="d-flex align-items-center gap-2">
-                        <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+                        <FontAwesomeIcon icon={faCalendarAlt} className="contract-metadata-icon" />
                         <span>
                             {contract.startDate || "?"} — {contract.endDate || "?"}
                         </span>
@@ -248,10 +250,10 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
                 )}
                 {manager && (
                     <div className="d-flex align-items-center gap-2">
-                        <FontAwesomeIcon icon={faUser} className="text-muted" />
+                        <FontAwesomeIcon icon={faUser} className="contract-metadata-icon" />
                         <span>
                             Koordynator:{" "}
-                            <strong className="text-dark">
+                            <strong>
                                 {manager.name} {manager.surname}
                             </strong>
                         </span>
@@ -327,8 +329,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
-            title: makeContractTitleLabel(contract), // Zachowujemy dla kompatybilności
-            HeaderComponent: ContractHeader, // Dedykowany header z lepszą typografią i border-left
+            title: makeContractTitleLabel(contract),
             children: [] as SectionNode<Task>[],
             AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
                 SpecificAddNewModalButtonProps<RepositoryDataItem>
