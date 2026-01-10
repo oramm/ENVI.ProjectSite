@@ -15,6 +15,7 @@ import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
  * @param SectionNode.repository - repozytorium z danymi
  * @param SectionNode.dataItem - obiekt z danymi sekcji
  * @param SectionNode.title - tytuł sekcji (JSX)
+ * @param SectionNode.HeaderComponent - opcjonalny dedykowany komponent nagłówka (np. ContractHeader)
  */
 export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     id: string;
@@ -27,6 +28,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     children: SectionNode<LeafDataItemType>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>;
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
+    HeaderComponent?: React.ComponentType<SectionHeaderProps<LeafDataItemType>>;
     leaves?: LeafDataItemType[];
     isInAccordion?: boolean;
     isDeletable?: boolean;
@@ -81,9 +83,12 @@ export function Section<DataItemType extends RepositoryDataItem>({
         }
     }, [localExpandTrigger]);
 
+    // Używaj HeaderComponent jeśli jest zdefiniowany, w przeciwnym razie domyślny SectionHeader
+    const HeaderComponentToRender = sectionNode.HeaderComponent || SectionHeader;
+
     return sectionNode.isInAccordion ? (
         <Accordion
-            className="mb-2"
+            className="mb-2 section-accordion"
             key={sectionNode.id}
             alwaysOpen
             activeKey={activeKey}
@@ -91,7 +96,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
         >
             <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                    <SectionHeader
+                    <HeaderComponentToRender
                         sectionNode={sectionNode}
                         isActive={isActive}
                         onClick={onClick}
@@ -111,7 +116,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
         </Accordion>
     ) : (
         <>
-            <SectionHeader
+            <HeaderComponentToRender
                 sectionNode={sectionNode}
                 isActive={isActive}
                 onClick={onClick}
@@ -127,7 +132,7 @@ export function Section<DataItemType extends RepositoryDataItem>({
         </>
     );
 }
-type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
+export type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>;
     onClick: (sectionNode: SectionNode<DataItemType>) => void;
     isActive: boolean;

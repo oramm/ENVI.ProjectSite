@@ -24,6 +24,7 @@ import {
 } from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
+import { ContractHeader } from "../View/Resultsets/FilterableTable/ContractHeader";
 import { getSymbolByUniqueness } from "../View/Symbols";
 import { CaseAddNewModalButton, CaseEditModalButton } from "./Modals/Case/CaseModalButtons";
 import { ContractEditModalButton } from "./Modals/ContractModalButtons";
@@ -326,7 +327,8 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
             selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
-            title: makeContractTitleLabel(contract),
+            title: makeContractTitleLabel(contract), // Zachowujemy dla kompatybilności
+            HeaderComponent: ContractHeader, // Dedykowany header z lepszą typografią i border-left
             children: [] as SectionNode<Task>[],
             AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
                 SpecificAddNewModalButtonProps<RepositoryDataItem>
