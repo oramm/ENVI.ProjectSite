@@ -23493,6 +23493,33 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".good-tip-toast-wrapper {\r\n    posit
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css":
+/*!*******************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css ***!
+  \*******************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "/* ===== TasksGlobal Specific Styles ===== */\r\n:root {\r\n    /* Colors specific to Contracts logic */\r\n    --section-border-our: #2196F3;   /* niebieski - OUR contracts */\r\n    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */\r\n    --section-border-width: 4px;\r\n}\r\n\r\n/* Contract Typography */\r\n.contract-id {\r\n    font-size: var(--section-text-xs);\r\n    font-weight: 700;\r\n    color: var(--section-text-secondary);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.05em;\r\n}\r\n\r\n.contract-title {\r\n    font-size: var(--section-text-lg);\r\n    color: var(--section-text-primary);\r\n    margin-bottom: 0;\r\n}\r\n\r\n.contract-status-badge {\r\n    font-size: var(--section-text-10) !important;\r\n}\r\n\r\n.contract-contractors {\r\n    font-size: var(--section-text-sm) !important;\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata {\r\n    font-size: var(--section-text-sm);\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata-icon {\r\n    font-size: 1.125rem;\r\n    color: var(--section-text-muted);\r\n}\r\n\r\n.contract-metadata strong {\r\n    color: var(--section-text-primary);\r\n}\r\n", "",{"version":3,"sources":["webpack://./src/TasksGlobal/TasksGlobal.css"],"names":[],"mappings":"AAAA,4CAA4C;AAC5C;IACI,uCAAuC;IACvC,6BAA6B,IAAI,8BAA8B;IAC/D,+BAA+B,EAAE,mCAAmC;IACpE,2BAA2B;AAC/B;;AAEA,wBAAwB;AACxB;IACI,iCAAiC;IACjC,gBAAgB;IAChB,oCAAoC;IACpC,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,iCAAiC;IACjC,kCAAkC;IAClC,gBAAgB;AACpB;;AAEA;IACI,4CAA4C;AAChD;;AAEA;IACI,4CAA4C;IAC5C,oCAAoC;AACxC;;AAEA;IACI,iCAAiC;IACjC,oCAAoC;AACxC;;AAEA;IACI,mBAAmB;IACnB,gCAAgC;AACpC;;AAEA;IACI,kCAAkC;AACtC","sourcesContent":["/* ===== TasksGlobal Specific Styles ===== */\r\n:root {\r\n    /* Colors specific to Contracts logic */\r\n    --section-border-our: #2196F3;   /* niebieski - OUR contracts */\r\n    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */\r\n    --section-border-width: 4px;\r\n}\r\n\r\n/* Contract Typography */\r\n.contract-id {\r\n    font-size: var(--section-text-xs);\r\n    font-weight: 700;\r\n    color: var(--section-text-secondary);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.05em;\r\n}\r\n\r\n.contract-title {\r\n    font-size: var(--section-text-lg);\r\n    color: var(--section-text-primary);\r\n    margin-bottom: 0;\r\n}\r\n\r\n.contract-status-badge {\r\n    font-size: var(--section-text-10) !important;\r\n}\r\n\r\n.contract-contractors {\r\n    font-size: var(--section-text-sm) !important;\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata {\r\n    font-size: var(--section-text-sm);\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata-icon {\r\n    font-size: 1.125rem;\r\n    color: var(--section-text-muted);\r\n}\r\n\r\n.contract-metadata strong {\r\n    color: var(--section-text-primary);\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css":
 /*!*******************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css ***!
@@ -23513,7 +23540,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".section-action-menu {\r\n    margin-left: 10px;\r\n}", "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA;IACI,iBAAiB;AACrB","sourcesContent":[".section-action-menu {\r\n    margin-left: 10px;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */\r\n:root {\r\n    /* Typography - rozmiary odpowiadające Tailwind */\r\n    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */\r\n    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */\r\n    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */\r\n    --section-text-base: 1rem;       /* 16px - domyślny */\r\n    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */\r\n    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */\r\n\r\n    /* Spacing */\r\n    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */\r\n    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */\r\n    --section-gap-sm: 0.5rem;        /* 8px */\r\n    --section-gap-md: 0.75rem;       /* 12px */\r\n    --section-gap-lg: 1rem;          /* 16px */\r\n\r\n    /* Colors */\r\n    --section-bg-default: aliceblue;\r\n    --section-bg-hover: #e3f2fd;\r\n    --section-bg-active: #e3f2fd;\r\n\r\n    --section-text-primary: #212529;\r\n    --section-text-secondary: #6c757d;\r\n    --section-text-success: rgb(50, 130, 50);\r\n    --section-text-muted: #6c757d;\r\n}\r\n\r\n/* ===== Section Action Menu ===== */\r\n.section-action-menu {\r\n    margin-left: 10px;\r\n}\r\n\r\n/* ===== Accordion Override (scopowane) ===== */\r\n.section-accordion .accordion-button {\r\n    padding: 0;\r\n    background: transparent !important;\r\n    box-shadow: none !important;\r\n    border: none;\r\n}\r\n\r\n/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */\r\n.section-accordion .accordion-button::after {\r\n    display: none !important;\r\n    content: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:focus {\r\n    box-shadow: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:not(.collapsed) {\r\n    background: transparent !important;\r\n}\r\n\r\n.section-accordion .accordion-item {\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n\r\n.section-accordion .accordion-body {\r\n    padding: 0.5rem 0;\r\n}\r\n\r\n/* ===== Accordion Border for Nested Items ===== */\r\n/* Add border to items that are NOT cards (nested sections) */\r\n.section-accordion:not(.section-card) {\r\n    border-bottom: 1px solid #dee2e6; /* Subtle separator */\r\n}\r\n.section-accordion:not(.section-card):last-child {\r\n    border-bottom: none;\r\n}\r\n\r\n.section-card {\r\n    background-color: white;\r\n    border-radius: 0.5rem;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n    /* Border left color is injected via inline style */\r\n    border-left-width: 4px;\r\n    border-left-style: solid;\r\n    overflow: hidden; /* Ensures child border-radius doesn't break card shape */\r\n}\r\n\r\n/* Ensure accordion button inside card is clean */\r\n.section-card .accordion-button {\r\n    padding: 0 !important;\r\n}\r\n\r\n/* ===== Section Header Styles ===== */\r\n/* ===== State Colors (Tailwind Palette Match) ===== */\r\n.state-active {\r\n    background-color: #eff6ff !important; /* blue-50 */\r\n    color: var(--section-text-primary);\r\n}\r\n\r\n.state-hover:hover {\r\n    background-color: #f9fafb; /* gray-50 */\r\n}\r\n\r\n/* Base override to ensure hover doesn't conflict with transparent backgrounds */\r\n.section-header {\r\n    /* Base styles mainly for layout */\r\n    cursor: pointer;\r\n    transition: background-color 0.2s ease;\r\n}\r\n\r\n/* Domyślny styl (np. dla nagłówków podrzędnych) */\r\n.section-header-default {\r\n    background-color: var(--section-bg-default);\r\n    border-radius: 0.25rem;\r\n    padding: 0.25rem 0.5rem; /* px-2 py-1 */\r\n}\r\n\r\n.section-header-default:hover {\r\n    background-color: var(--section-bg-hover);\r\n}\r\n\r\n.section-header-active {\r\n    background-color: var(--section-bg-active);\r\n}\r\n\r\n/* Typography classes - łatwe przenoszenie z mockupów */\r\n.text-xs {\r\n    font-size: var(--section-text-xs);\r\n}\r\n\r\n.text-10 {\r\n    font-size: var(--section-text-10);\r\n}\r\n\r\n.text-sm {\r\n    font-size: var(--section-text-sm);\r\n}\r\n\r\n.text-lg {\r\n    font-size: var(--section-text-lg);\r\n}\r\n\r\n.text-xl {\r\n    font-size: var(--section-text-xl);\r\n}\r\n\r\n\r\n/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */\r\n", "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA,iEAAiE;AACjE;IACI,iDAAiD;IACjD,0BAA0B,OAAO,4BAA4B;IAC7D,2BAA2B,MAAM,6BAA6B;IAC9D,2BAA2B,MAAM,mCAAmC;IACpE,yBAAyB,QAAQ,oBAAoB;IACrD,2BAA2B,MAAM,yBAAyB;IAC1D,yBAAyB,QAAQ,kCAAkC;;IAEnE,YAAY;IACZ,yCAAyC,GAAG,cAAc;IAC1D,mCAAmC,SAAS,uBAAuB;IACnE,wBAAwB,SAAS,QAAQ;IACzC,yBAAyB,QAAQ,SAAS;IAC1C,sBAAsB,WAAW,SAAS;;IAE1C,WAAW;IACX,+BAA+B;IAC/B,2BAA2B;IAC3B,4BAA4B;;IAE5B,+BAA+B;IAC/B,iCAAiC;IACjC,wCAAwC;IACxC,6BAA6B;AACjC;;AAEA,oCAAoC;AACpC;IACI,iBAAiB;AACrB;;AAEA,+CAA+C;AAC/C;IACI,UAAU;IACV,kCAAkC;IAClC,2BAA2B;IAC3B,YAAY;AAChB;;AAEA,0DAA0D;AAC1D;IACI,wBAAwB;IACxB,wBAAwB;AAC5B;;AAEA;IACI,2BAA2B;AAC/B;;AAEA;IACI,kCAAkC;AACtC;;AAEA;IACI,SAAS;IACT,uBAAuB;AAC3B;;AAEA;IACI,iBAAiB;AACrB;;AAEA,kDAAkD;AAClD,6DAA6D;AAC7D;IACI,gCAAgC,EAAE,qBAAqB;AAC3D;AACA;IACI,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,qBAAqB;IACrB,wCAAwC;IACxC,mDAAmD;IACnD,sBAAsB;IACtB,wBAAwB;IACxB,gBAAgB,EAAE,yDAAyD;AAC/E;;AAEA,iDAAiD;AACjD;IACI,qBAAqB;AACzB;;AAEA,sCAAsC;AACtC,sDAAsD;AACtD;IACI,oCAAoC,EAAE,YAAY;IAClD,kCAAkC;AACtC;;AAEA;IACI,yBAAyB,EAAE,YAAY;AAC3C;;AAEA,gFAAgF;AAChF;IACI,kCAAkC;IAClC,eAAe;IACf,sCAAsC;AAC1C;;AAEA,kDAAkD;AAClD;IACI,2CAA2C;IAC3C,sBAAsB;IACtB,uBAAuB,EAAE,cAAc;AAC3C;;AAEA;IACI,yCAAyC;AAC7C;;AAEA;IACI,0CAA0C;AAC9C;;AAEA,uDAAuD;AACvD;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;;AAGA,oEAAoE","sourcesContent":["/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */\r\n:root {\r\n    /* Typography - rozmiary odpowiadające Tailwind */\r\n    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */\r\n    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */\r\n    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */\r\n    --section-text-base: 1rem;       /* 16px - domyślny */\r\n    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */\r\n    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */\r\n\r\n    /* Spacing */\r\n    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */\r\n    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */\r\n    --section-gap-sm: 0.5rem;        /* 8px */\r\n    --section-gap-md: 0.75rem;       /* 12px */\r\n    --section-gap-lg: 1rem;          /* 16px */\r\n\r\n    /* Colors */\r\n    --section-bg-default: aliceblue;\r\n    --section-bg-hover: #e3f2fd;\r\n    --section-bg-active: #e3f2fd;\r\n\r\n    --section-text-primary: #212529;\r\n    --section-text-secondary: #6c757d;\r\n    --section-text-success: rgb(50, 130, 50);\r\n    --section-text-muted: #6c757d;\r\n}\r\n\r\n/* ===== Section Action Menu ===== */\r\n.section-action-menu {\r\n    margin-left: 10px;\r\n}\r\n\r\n/* ===== Accordion Override (scopowane) ===== */\r\n.section-accordion .accordion-button {\r\n    padding: 0;\r\n    background: transparent !important;\r\n    box-shadow: none !important;\r\n    border: none;\r\n}\r\n\r\n/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */\r\n.section-accordion .accordion-button::after {\r\n    display: none !important;\r\n    content: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:focus {\r\n    box-shadow: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:not(.collapsed) {\r\n    background: transparent !important;\r\n}\r\n\r\n.section-accordion .accordion-item {\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n\r\n.section-accordion .accordion-body {\r\n    padding: 0.5rem 0;\r\n}\r\n\r\n/* ===== Accordion Border for Nested Items ===== */\r\n/* Add border to items that are NOT cards (nested sections) */\r\n.section-accordion:not(.section-card) {\r\n    border-bottom: 1px solid #dee2e6; /* Subtle separator */\r\n}\r\n.section-accordion:not(.section-card):last-child {\r\n    border-bottom: none;\r\n}\r\n\r\n.section-card {\r\n    background-color: white;\r\n    border-radius: 0.5rem;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n    /* Border left color is injected via inline style */\r\n    border-left-width: 4px;\r\n    border-left-style: solid;\r\n    overflow: hidden; /* Ensures child border-radius doesn't break card shape */\r\n}\r\n\r\n/* Ensure accordion button inside card is clean */\r\n.section-card .accordion-button {\r\n    padding: 0 !important;\r\n}\r\n\r\n/* ===== Section Header Styles ===== */\r\n/* ===== State Colors (Tailwind Palette Match) ===== */\r\n.state-active {\r\n    background-color: #eff6ff !important; /* blue-50 */\r\n    color: var(--section-text-primary);\r\n}\r\n\r\n.state-hover:hover {\r\n    background-color: #f9fafb; /* gray-50 */\r\n}\r\n\r\n/* Base override to ensure hover doesn't conflict with transparent backgrounds */\r\n.section-header {\r\n    /* Base styles mainly for layout */\r\n    cursor: pointer;\r\n    transition: background-color 0.2s ease;\r\n}\r\n\r\n/* Domyślny styl (np. dla nagłówków podrzędnych) */\r\n.section-header-default {\r\n    background-color: var(--section-bg-default);\r\n    border-radius: 0.25rem;\r\n    padding: 0.25rem 0.5rem; /* px-2 py-1 */\r\n}\r\n\r\n.section-header-default:hover {\r\n    background-color: var(--section-bg-hover);\r\n}\r\n\r\n.section-header-active {\r\n    background-color: var(--section-bg-active);\r\n}\r\n\r\n/* Typography classes - łatwe przenoszenie z mockupów */\r\n.text-xs {\r\n    font-size: var(--section-text-xs);\r\n}\r\n\r\n.text-10 {\r\n    font-size: var(--section-text-10);\r\n}\r\n\r\n.text-sm {\r\n    font-size: var(--section-text-sm);\r\n}\r\n\r\n.text-lg {\r\n    font-size: var(--section-text-lg);\r\n}\r\n\r\n.text-xl {\r\n    font-size: var(--section-text-xl);\r\n}\r\n\r\n\r\n/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -84627,6 +84654,61 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./src/TasksGlobal/TasksGlobal.css":
+/*!*****************************************!*\
+  !*** ./src/TasksGlobal/TasksGlobal.css ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./TasksGlobal.css */ "./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
 /***/ "./src/View/Resultsets/FilterableTable/FilterableTable.css":
 /*!*****************************************************************!*\
   !*** ./src/View/Resultsets/FilterableTable/FilterableTable.css ***!
@@ -98305,6 +98387,8 @@ const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalMo
 const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
 const TasksGlobalFilterBody_1 = __webpack_require__(/*! ./TasksGlobalFilterBody */ "./src/TasksGlobal/TasksGlobalFilterBody.tsx");
+__webpack_require__(/*! ./TasksGlobal.css */ "./src/TasksGlobal/TasksGlobal.css");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -98407,49 +98491,81 @@ function truncateText(text, maxLength) {
         return "";
     return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 }
-function makeContractTitleLabel(contract) {
-    const isOurContract = "ourId" in contract;
-    const manager = isOurContract ? contract._manager : undefined;
-    const ourId = isOurContract ? contract.ourId : undefined;
-    const contractors = !isOurContract ? contract._contractors : undefined;
-    const identifier = ourId ? ourId : `${contract._type.name} ${contract.number}`;
+function makeOurContractTitleHeader(contract) {
     const contractName = truncateText(contract.name, 200);
     const hasAlias = !!contract.alias;
-    const hasContractors = contractors && contractors.length > 0;
-    const showAliasLine = hasAlias || hasContractors;
     const hasDates = contract.startDate || contract.endDate;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1 py-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
-            react_1.default.createElement("span", { className: "text-muted text-uppercase fw-bold small" }, identifier),
-            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status })),
-        react_1.default.createElement("h6", { className: "mb-0 fw-bold text-dark" }, contractName),
-        showAliasLine && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 small" },
-            hasAlias && react_1.default.createElement("span", { className: "fw-semibold text-secondary" }, contract.alias),
-            hasAlias && hasContractors && react_1.default.createElement("span", { className: "text-muted opacity-50" }, "|"),
-            hasContractors && react_1.default.createElement("span", { className: "text-muted" }, contractors.map((c) => c.name).join(", ")))),
-        react_1.default.createElement("div", { className: "d-flex flex-wrap gap-4 align-items-center text-secondary small" },
+    const manager = contract._manager;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-1" },
+            react_1.default.createElement("span", { className: "contract-id" },
+                contract.ourId,
+                hasAlias && ` | ${contract.alias}`),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
+        react_1.default.createElement("h6", { className: "contract-title mb-1" }, contractName),
+        react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
             hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
-                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "contract-metadata-icon" }),
                 react_1.default.createElement("span", null,
-                    contract.startDate || "?",
-                    " \u2014 ",
-                    contract.endDate || "?"))),
+                    contract.startDate ? ToolsDate_1.default.dateYMDtoDMY(contract.startDate) : "?",
+                    " \u2014",
+                    " ",
+                    contract.endDate ? ToolsDate_1.default.dateYMDtoDMY(contract.endDate) : "?"))),
             manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
-                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "text-muted" }),
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    manager.name,
+                    " ",
+                    manager.surname))))));
+}
+function makeOtherContractTitleHeader(contract) {
+    const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
+    const identifier = `${contract._type.name} ${contract.number} => ${ourRelatedId}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const contractors = contract._contractors;
+    const hasContractors = contractors && contractors.length > 0;
+    const hasDates = contract.startDate || contract.endDate;
+    const manager = contract._ourContract?._manager;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-1" },
+            react_1.default.createElement("span", { className: "contract-id" },
+                identifier,
+                hasAlias && ` | ${contract.alias}`),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
+        react_1.default.createElement("h6", { className: "contract-title mb-1" }, contractName),
+        hasContractors && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
+            react_1.default.createElement("span", { className: "contract-contractors" }, contractors.map((c) => c.name).join(", ")))),
+        react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
+            hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    contract.startDate ? ToolsDate_1.default.dateYMDtoDMY(contract.startDate) : "?",
+                    " \u2014",
+                    " ",
+                    contract.endDate ? ToolsDate_1.default.dateYMDtoDMY(contract.endDate) : "?"))),
+            manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "contract-metadata-icon" }),
                 react_1.default.createElement("span", null,
                     "Koordynator:",
                     " ",
-                    react_1.default.createElement("strong", { className: "text-dark" },
+                    react_1.default.createElement("strong", null,
                         manager.name,
                         " ",
                         manager.surname)))))));
+}
+function makeContractTitleHeader(contract) {
+    const isOurContract = "ourId" in contract;
+    return isOurContract
+        ? makeOurContractTitleHeader(contract)
+        : makeOtherContractTitleHeader(contract);
 }
 function contractNodeEditHandler(node) {
     console.log("contractNodeEditHandler", node);
     const contract = {
         ...node.dataItem,
     };
-    node.title = makeContractTitleLabel(contract);
+    node.title = makeContractTitleHeader(contract);
 }
 function milestoneNodeEditHandler(node) {
     console.log("milestoneNodeEditHandler", node);
@@ -98484,16 +98600,19 @@ function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
     const allTasks = [];
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
+        const isOurContract = "ourId" in contract;
+        const borderColor = isOurContract ? "var(--section-border-our)" : "var(--section-border-other)";
         const contractNode = {
             id: "contract" + contract.id,
             isInAccordion: true,
+            borderColor: borderColor,
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
             selectedObjectRoute: "/contract/",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
-            title: makeContractTitleLabel(contract),
+            title: makeContractTitleHeader(contract),
             children: [],
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
@@ -101950,6 +102069,14 @@ exports["default"] = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
+        // Determine if this is a "Card Section" (like Contract) or regular list
+        // If it has a border color, Section.tsx will render its own Card style wrapper.
+        // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+        const isSelfContainedCard = !!section.borderColor;
+        if (isSelfContainedCard) {
+            return (react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick }));
+        }
+        // Initial behavior for standard sections
         return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light" },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
@@ -102471,13 +102598,10 @@ function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigg
             setActiveKey(["0"]);
         }
     }, [childrenExpandTrigger]);
-    (0, react_1.useEffect)(() => {
-        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
-        if (localExpandTrigger?.action === "EXPAND") {
-            setActiveKey(["0"]);
-        }
-    }, [localExpandTrigger]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
+    // Obliczanie klas dla kontenera Accordion (karta vs zwykły)
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const accordionClassName = hasCustomBorder ? "mb-4 section-accordion section-card" : "mb-2 section-accordion";
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: accordionClassName, style: hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined, key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                 react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
@@ -102500,11 +102624,38 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
             textTransform: "none",
         };
     }
-    const headerStyle = {
-        backgroundColor: "aliceblue",
-        borderRadius: "0.25rem",
-    };
-    return (react_1.default.createElement("div", { className: "\r\n                        d-flex\r\n                        flex-column flex-md-row\r\n                        justify-content-md-between\r\n                        align-items-start align-items-md-center\r\n                        w-100\r\n                        px-2 py-1\r\n                    ", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const isAccordionChild = !!sectionNode.isInAccordion;
+    // Base classes
+    let computedClassName = `
+        d-flex
+        flex-column flex-md-row
+        justify-content-md-between
+        align-items-start align-items-md-center
+        w-100
+        transition-base
+        section-header
+    `;
+    // Apply specific variants
+    if (hasCustomBorder) {
+        // "Card Header" style - clean, large padding, transparent base
+        computedClassName += " p-3";
+    }
+    else {
+        // "Default Header" style - smaller padding
+        computedClassName += " px-2 py-1 rounded";
+    }
+    // Active & Hover states (Colors)
+    if (isActive) {
+        computedClassName += " state-active";
+    }
+    else {
+        computedClassName += " state-hover";
+        // If not active and not custom border, maybe we want a subtle background or just transparent?
+        // User requested clean look similar to mockup: hover gray, active blue.
+        // So default static background (aliceblue) is removed in favor of transparent/white base + states.
+    }
+    return (react_1.default.createElement("div", { className: computedClassName, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (!selectedObjectRoute)
                 return;
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
@@ -102525,10 +102676,17 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
                     contextData: sectionNode.dataItem,
                 } }))))));
 }
+// Jeśli karta (border), padding w body musi być dopasowany do stylistyki
 function SectionBody({ sectionNode, resulsetTableProps, onClick, localExpandTrigger, }) {
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))),
-        sectionNode.leaves && (react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves }))));
+    const hasCustomBorder = !!sectionNode.borderColor;
+    // KONTRAKTY (Karty): Padding ramki dla całej zawartości
+    const cardContentStyle = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
+    // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
+    const indentationStyle = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+    return (react_1.default.createElement("div", { style: cardContentStyle },
+        sectionNode.children.length > 0 && (react_1.default.createElement("div", { style: indentationStyle }, sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))))),
+        sectionNode.leaves && (react_1.default.createElement("div", { className: "mt-2" },
+            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves })))));
 }
 
 

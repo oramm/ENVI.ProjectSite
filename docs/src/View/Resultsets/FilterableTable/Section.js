@@ -57,13 +57,10 @@ function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigg
             setActiveKey(["0"]);
         }
     }, [childrenExpandTrigger]);
-    (0, react_1.useEffect)(() => {
-        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
-        if (localExpandTrigger?.action === "EXPAND") {
-            setActiveKey(["0"]);
-        }
-    }, [localExpandTrigger]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
+    // Obliczanie klas dla kontenera Accordion (karta vs zwykły)
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const accordionClassName = hasCustomBorder ? "mb-4 section-accordion section-card" : "mb-2 section-accordion";
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: accordionClassName, style: hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined, key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
                 react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
@@ -86,11 +83,38 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
             textTransform: "none",
         };
     }
-    const headerStyle = {
-        backgroundColor: "aliceblue",
-        borderRadius: "0.25rem",
-    };
-    return (react_1.default.createElement("div", { className: "\r\n                        d-flex\r\n                        flex-column flex-md-row\r\n                        justify-content-md-between\r\n                        align-items-start align-items-md-center\r\n                        w-100\r\n                        px-2 py-1\r\n                    ", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const isAccordionChild = !!sectionNode.isInAccordion;
+    // Base classes
+    let computedClassName = `
+        d-flex
+        flex-column flex-md-row
+        justify-content-md-between
+        align-items-start align-items-md-center
+        w-100
+        transition-base
+        section-header
+    `;
+    // Apply specific variants
+    if (hasCustomBorder) {
+        // "Card Header" style - clean, large padding, transparent base
+        computedClassName += " p-3";
+    }
+    else {
+        // "Default Header" style - smaller padding
+        computedClassName += " px-2 py-1 rounded";
+    }
+    // Active & Hover states (Colors)
+    if (isActive) {
+        computedClassName += " state-active";
+    }
+    else {
+        computedClassName += " state-hover";
+        // If not active and not custom border, maybe we want a subtle background or just transparent?
+        // User requested clean look similar to mockup: hover gray, active blue.
+        // So default static background (aliceblue) is removed in favor of transparent/white base + states.
+    }
+    return (react_1.default.createElement("div", { className: computedClassName, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (!selectedObjectRoute)
                 return;
             const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
@@ -111,8 +135,15 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
                     contextData: sectionNode.dataItem,
                 } }))))));
 }
+// Jeśli karta (border), padding w body musi być dopasowany do stylistyki
 function SectionBody({ sectionNode, resulsetTableProps, onClick, localExpandTrigger, }) {
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))),
-        sectionNode.leaves && (react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves }))));
+    const hasCustomBorder = !!sectionNode.borderColor;
+    // KONTRAKTY (Karty): Padding ramki dla całej zawartości
+    const cardContentStyle = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
+    // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
+    const indentationStyle = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+    return (react_1.default.createElement("div", { style: cardContentStyle },
+        sectionNode.children.length > 0 && (react_1.default.createElement("div", { style: indentationStyle }, sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))))),
+        sectionNode.leaves && (react_1.default.createElement("div", { className: "mt-2" },
+            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves })))));
 }

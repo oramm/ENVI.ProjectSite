@@ -1,20 +1,20 @@
+import { faCalendarAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
 import { FieldValues } from "react-hook-form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import {
     Case,
     MilestoneData,
     OtherContract,
     OurContract,
-    PersonData,
     ProjectData,
     RepositoryDataItem,
     Task,
 } from "../../Typings/bussinesTypes";
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
 import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
+import ToolsDate from "../React/Tools/ToolsDate";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
 import {
     ContractStatusBadge,
@@ -31,6 +31,7 @@ import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/M
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
+import "./TasksGlobal.css";
 import {
     casesRepository,
     contractsRepository,
@@ -200,41 +201,79 @@ function truncateText(text: string | undefined, maxLength: number): string {
     return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 }
 
-function makeContractTitleLabel(contract: OurContract | OtherContract) {
-    const isOurContract = "ourId" in contract;
-    const manager = isOurContract ? (contract._manager as PersonData) : undefined;
-    const ourId = isOurContract ? contract.ourId : undefined;
-    const contractors = !isOurContract ? contract._contractors : undefined;
-
-    const identifier = ourId ? ourId : `${contract._type.name} ${contract.number}`;
+function makeOurContractTitleHeader(contract: OurContract) {
     const contractName = truncateText(contract.name, 200);
-
     const hasAlias = !!contract.alias;
-    const hasContractors = contractors && contractors.length > 0;
-    const showAliasLine = hasAlias || hasContractors;
-
     const hasDates = contract.startDate || contract.endDate;
-
-    // Klasa CSS dla border-left (niebieski dla OUR, pomarańczowy dla OTHER)
-    const borderClass = isOurContract ? "contract-header-our" : "contract-header-other";
+    const manager = contract._manager;
 
     return (
-        <div className={`contract-header ${borderClass} d-flex flex-column gap-1 p-3`}>
+        <div className="d-flex flex-column gap-1">
             {/* Linia #1: ID + Status Badge */}
             <div className="d-flex align-items-center gap-2 mb-1">
-                <span className="contract-id">{identifier}</span>
-                <ContractStatusBadge status={contract.status} />
+                <span className="contract-id">
+                    {contract.ourId}
+                    {hasAlias && ` | ${contract.alias}`}
+                </span>
+                <ContractStatusBadge status={contract.status} className="contract-status-badge" />
             </div>
 
             {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
             <h6 className="contract-title mb-1">{contractName}</h6>
 
-            {/* Linia #3: Alias + Wykonawcy (opcjonalnie) */}
-            {showAliasLine && (
+            {/* Linia #3: Daty + Koordynator */}
+            <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
+                {hasDates && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="contract-metadata-icon" />
+                        <span>
+                            {contract.startDate ? ToolsDate.dateYMDtoDMY(contract.startDate) : "?"} —{" "}
+                            {contract.endDate ? ToolsDate.dateYMDtoDMY(contract.endDate) : "?"}
+                        </span>
+                    </div>
+                )}
+                {manager && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faUser} className="contract-metadata-icon" />
+                        <span>
+                            {manager.name} {manager.surname}
+                        </span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function makeOtherContractTitleHeader(contract: OtherContract) {
+    const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
+    const identifier = `${contract._type.name} ${contract.number} => ${ourRelatedId}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const contractors = contract._contractors;
+    const hasContractors = contractors && contractors.length > 0;
+    const hasDates = contract.startDate || contract.endDate;
+
+    const manager = contract._ourContract?._manager;
+
+    return (
+        <div className="d-flex flex-column gap-1">
+            {/* Linia #1: Type + Number + Alias + Status Badge */}
+            <div className="d-flex align-items-center gap-2 mb-1">
+                <span className="contract-id">
+                    {identifier}
+                    {hasAlias && ` | ${contract.alias}`}
+                </span>
+                <ContractStatusBadge status={contract.status} className="contract-status-badge" />
+            </div>
+
+            {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
+            <h6 className="contract-title mb-1">{contractName}</h6>
+
+            {/* Linia #3: Wykonawcy */}
+            {hasContractors && (
                 <div className="d-flex align-items-center gap-2 mb-2">
-                    {hasAlias && <span className="contract-alias">{contract.alias}</span>}
-                    {hasAlias && hasContractors && <span className="text-muted opacity-50">|</span>}
-                    {hasContractors && <span className="text-muted small">{contractors.map((c) => c.name).join(", ")}</span>}
+                    <span className="contract-contractors">{contractors.map((c) => c.name).join(", ")}</span>
                 </div>
             )}
 
@@ -244,7 +283,8 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
                     <div className="d-flex align-items-center gap-2">
                         <FontAwesomeIcon icon={faCalendarAlt} className="contract-metadata-icon" />
                         <span>
-                            {contract.startDate || "?"} — {contract.endDate || "?"}
+                            {contract.startDate ? ToolsDate.dateYMDtoDMY(contract.startDate) : "?"} —{" "}
+                            {contract.endDate ? ToolsDate.dateYMDtoDMY(contract.endDate) : "?"}
                         </span>
                     </div>
                 )}
@@ -252,10 +292,7 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
                     <div className="d-flex align-items-center gap-2">
                         <FontAwesomeIcon icon={faUser} className="contract-metadata-icon" />
                         <span>
-                            Koordynator:{" "}
-                            <strong>
-                                {manager.name} {manager.surname}
-                            </strong>
+                            {manager.name} {manager.surname}
                         </span>
                     </div>
                 )}
@@ -264,12 +301,19 @@ function makeContractTitleLabel(contract: OurContract | OtherContract) {
     );
 }
 
+function makeContractTitleHeader(contract: OurContract | OtherContract) {
+    const isOurContract = "ourId" in contract;
+    return isOurContract
+        ? makeOurContractTitleHeader(contract as OurContract)
+        : makeOtherContractTitleHeader(contract as OtherContract);
+}
+
 function contractNodeEditHandler(node: SectionNode<Task>) {
     console.log("contractNodeEditHandler", node);
     const contract = {
         ...(node.dataItem as OurContract | OtherContract),
     };
-    node.title = makeContractTitleLabel(contract);
+    node.title = makeContractTitleHeader(contract);
 }
 
 function milestoneNodeEditHandler(node: SectionNode<Task>) {
@@ -320,16 +364,20 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
     const allTasks: Task[] = [];
 
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
+        const isOurContract = "ourId" in contract;
+        const borderColor = isOurContract ? "var(--section-border-our)" : "var(--section-border-other)";
+
         const contractNode: SectionNode<Task> = {
             id: "contract" + contract.id,
             isInAccordion: true,
+            borderColor: borderColor,
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
             selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
-            title: makeContractTitleLabel(contract),
+            title: makeContractTitleHeader(contract),
             children: [] as SectionNode<Task>[],
             AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
                 SpecificAddNewModalButtonProps<RepositoryDataItem>

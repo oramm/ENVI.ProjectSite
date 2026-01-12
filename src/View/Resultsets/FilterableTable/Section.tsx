@@ -34,6 +34,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     selectedObjectRoute?: string;
+    borderColor?: string;
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
@@ -74,16 +75,14 @@ export function Section<DataItemType extends RepositoryDataItem>({
         }
     }, [childrenExpandTrigger]);
 
-    useEffect(() => {
-        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
-        if (localExpandTrigger?.action === "EXPAND") {
-            setActiveKey(["0"]);
-        }
-    }, [localExpandTrigger]);
+    // Obliczanie klas dla kontenera Accordion (karta vs zwykły)
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const accordionClassName = hasCustomBorder ? "mb-4 section-accordion section-card" : "mb-2 section-accordion";
 
     return sectionNode.isInAccordion ? (
         <Accordion
-            className="mb-2 section-accordion"
+            className={accordionClassName}
+            style={hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined}
             key={sectionNode.id}
             alwaysOpen
             activeKey={activeKey}
@@ -155,21 +154,43 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
             textTransform: "none" as const,
         };
     }
-    const headerStyle = {
-        backgroundColor: "aliceblue",
-        borderRadius: "0.25rem",
-    };
+
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const isAccordionChild = !!sectionNode.isInAccordion;
+
+    // Base classes
+    let computedClassName = `
+        d-flex
+        flex-column flex-md-row
+        justify-content-md-between
+        align-items-start align-items-md-center
+        w-100
+        transition-base
+        section-header
+    `;
+
+    // Apply specific variants
+    if (hasCustomBorder) {
+        // "Card Header" style - clean, large padding, transparent base
+        computedClassName += " p-3";
+    } else {
+        // "Default Header" style - smaller padding
+        computedClassName += " px-2 py-1 rounded";
+    }
+
+    // Active & Hover states (Colors)
+    if (isActive) {
+        computedClassName += " state-active";
+    } else {
+        computedClassName += " state-hover";
+        // If not active and not custom border, maybe we want a subtle background or just transparent?
+        // User requested clean look similar to mockup: hover gray, active blue.
+        // So default static background (aliceblue) is removed in favor of transparent/white base + states.
+    }
+
     return (
         <div
-            className="
-                        d-flex
-                        flex-column flex-md-row
-                        justify-content-md-between
-                        align-items-start align-items-md-center
-                        w-100
-                        px-2 py-1
-                    "
-            style={!sectionNode.isInAccordion ? headerStyle : undefined}
+            className={computedClassName}
             onClick={() => onClick(sectionNode)}
             onDoubleClick={() => {
                 if (!selectedObjectRoute) return;
@@ -251,27 +272,44 @@ type SectionBodyProps<DataItemType extends RepositoryDataItem> = SectionProps<Da
     localExpandTrigger: ExpandTrigger;
 };
 
+// Jeśli karta (border), padding w body musi być dopasowany do stylistyki
 function SectionBody<DataItemType extends RepositoryDataItem>({
     sectionNode,
     resulsetTableProps,
     onClick,
     localExpandTrigger,
 }: SectionBodyProps<DataItemType>) {
-    return (
-        <>
-            {sectionNode.children.map((childNode, index) => (
-                <Section<DataItemType>
-                    key={childNode.dataItem.id + childNode.type}
-                    sectionNode={childNode}
-                    resulsetTableProps={resulsetTableProps}
-                    onClick={onClick}
-                    childrenExpandTrigger={localExpandTrigger}
-                />
-            ))}
+    const hasCustomBorder = !!sectionNode.borderColor;
 
-            {sectionNode.leaves && (
-                <ResultSetTable<DataItemType> {...resulsetTableProps} filteredObjects={sectionNode.leaves} />
+    // KONTRAKTY (Karty): Padding ramki dla całej zawartości
+    const cardContentStyle: React.CSSProperties = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
+
+    // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
+    const indentationStyle: React.CSSProperties = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+
+    return (
+        <div style={cardContentStyle}>
+            {/* Zagnieżdżone sekcje - z wcięciem */}
+            {sectionNode.children.length > 0 && (
+                <div style={indentationStyle}>
+                    {sectionNode.children.map((childNode, index) => (
+                        <Section<DataItemType>
+                            key={childNode.dataItem.id + childNode.type}
+                            sectionNode={childNode}
+                            resulsetTableProps={resulsetTableProps}
+                            onClick={onClick}
+                            childrenExpandTrigger={localExpandTrigger}
+                        />
+                    ))}
+                </div>
             )}
-        </>
+
+            {/* Liście (Tabela) - BEZ wcięcia (indentation), ale ewentualnie z paddingiem karty */}
+            {sectionNode.leaves && (
+                <div className="mt-2">
+                    <ResultSetTable<DataItemType> {...resulsetTableProps} filteredObjects={sectionNode.leaves} />
+                </div>
+            )}
+        </div>
     );
 }

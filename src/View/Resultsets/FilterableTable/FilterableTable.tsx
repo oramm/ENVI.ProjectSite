@@ -274,6 +274,23 @@ function Sections<DataItemType extends RepositoryDataItem>({
     return (
         <>
             {sections.map((section, index) => {
+                // Determine if this is a "Card Section" (like Contract) or regular list
+                // If it has a border color, Section.tsx will render its own Card style wrapper.
+                // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+                const isSelfContainedCard = !!section.borderColor;
+
+                if (isSelfContainedCard) {
+                    return (
+                        <Section<DataItemType>
+                            key={section.dataItem.id + section.type}
+                            sectionNode={section}
+                            resulsetTableProps={resulsetTableProps}
+                            onClick={onClick}
+                        />
+                    );
+                }
+
+                // Initial behavior for standard sections
                 return (
                     <Card key={section.dataItem.id + section.type} bg="light" border="light">
                         <Section<DataItemType>
