@@ -26,12 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
-const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
 const ContractsController_1 = require("../Contracts/ContractsList/ContractsController");
+const ToolsDate_1 = __importDefault(require("../React/Tools/ToolsDate"));
 const CommonComponents_1 = require("../View/Resultsets/CommonComponents");
 const FilterableTable_1 = __importDefault(require("../View/Resultsets/FilterableTable/FilterableTable"));
 const Symbols_1 = require("../View/Symbols");
@@ -41,10 +42,9 @@ const MilestoneModalButtons_1 = require("./Modals/Milestone/MilestoneModalButton
 const ProjectModalButtons_1 = require("./Modals/ProjectModalButtons");
 const TasksGlobalModalButtons_1 = require("./Modals/TasksGlobalModalButtons");
 const ProjectsFilterBody_1 = require("./ProjectsFilterBody");
+require("./TasksGlobal.css");
 const TasksGlobalController_1 = require("./TasksGlobalController");
 const TasksGlobalFilterBody_1 = require("./TasksGlobalFilterBody");
-require("./TasksGlobal.css");
-const ToolsDate_1 = __importDefault(require("../React/Tools/ToolsDate"));
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
@@ -152,13 +152,13 @@ function makeOurContractTitleHeader(contract) {
     const hasAlias = !!contract.alias;
     const hasDates = contract.startDate || contract.endDate;
     const manager = contract._manager;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-1" },
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
             react_1.default.createElement("span", { className: "contract-id" },
                 contract.ourId,
                 hasAlias && ` | ${contract.alias}`),
             react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
-        react_1.default.createElement("h6", { className: "contract-title mb-1" }, contractName),
+        react_1.default.createElement("h6", { className: "contract-title" }, contractName),
         react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
             hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "contract-metadata-icon" }),
@@ -183,14 +183,14 @@ function makeOtherContractTitleHeader(contract) {
     const hasContractors = contractors && contractors.length > 0;
     const hasDates = contract.startDate || contract.endDate;
     const manager = contract._ourContract?._manager;
-    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-1" },
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
             react_1.default.createElement("span", { className: "contract-id" },
                 identifier,
                 hasAlias && ` | ${contract.alias}`),
             react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
-        react_1.default.createElement("h6", { className: "contract-title mb-1" }, contractName),
-        hasContractors && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
+        react_1.default.createElement("h6", { className: "contract-title" }, contractName),
+        hasContractors && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
             react_1.default.createElement("span", { className: "contract-contractors" }, contractors.map((c) => c.name).join(", ")))),
         react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
             hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
@@ -203,12 +203,9 @@ function makeOtherContractTitleHeader(contract) {
             manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "contract-metadata-icon" }),
                 react_1.default.createElement("span", null,
-                    "Koordynator:",
+                    manager.name,
                     " ",
-                    react_1.default.createElement("strong", null,
-                        manager.name,
-                        " ",
-                        manager.surname)))))));
+                    manager.surname))))));
 }
 function makeContractTitleHeader(contract) {
     const isOurContract = "ourId" in contract;
