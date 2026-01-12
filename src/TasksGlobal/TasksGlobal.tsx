@@ -247,7 +247,7 @@ function makeOurContractTitleHeader(contract: OurContract) {
 
 function makeOtherContractTitleHeader(contract: OtherContract) {
     const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
-    const identifier = `${contract._type.name} ${contract.number} => ${ourRelatedId}`;
+    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`;
     const contractName = truncateText(contract.name, 200);
     const hasAlias = !!contract.alias;
     const contractors = contract._contractors;
