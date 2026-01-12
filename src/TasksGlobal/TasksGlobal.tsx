@@ -208,9 +208,9 @@ function makeOurContractTitleHeader(contract: OurContract) {
     const manager = contract._manager;
 
     return (
-        <div className="d-flex flex-column gap-1">
+        <div className="d-flex flex-column gap-2">
             {/* Linia #1: ID + Status Badge */}
-            <div className="d-flex align-items-center gap-2 mb-1">
+            <div className="d-flex align-items-center gap-2">
                 <span className="contract-id">
                     {contract.ourId}
                     {hasAlias && ` | ${contract.alias}`}
@@ -219,7 +219,7 @@ function makeOurContractTitleHeader(contract: OurContract) {
             </div>
 
             {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
-            <h6 className="contract-title mb-1">{contractName}</h6>
+            <h6 className="contract-title">{contractName}</h6>
 
             {/* Linia #3: Daty + Koordynator */}
             <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
@@ -257,9 +257,9 @@ function makeOtherContractTitleHeader(contract: OtherContract) {
     const manager = contract._ourContract?._manager;
 
     return (
-        <div className="d-flex flex-column gap-1">
+        <div className="d-flex flex-column gap-2">
             {/* Linia #1: Type + Number + Alias + Status Badge */}
-            <div className="d-flex align-items-center gap-2 mb-1">
+            <div className="d-flex align-items-center gap-2">
                 <span className="contract-id">
                     {identifier}
                     {hasAlias && ` | ${contract.alias}`}
@@ -268,11 +268,11 @@ function makeOtherContractTitleHeader(contract: OtherContract) {
             </div>
 
             {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
-            <h6 className="contract-title mb-1">{contractName}</h6>
+            <h6 className="contract-title">{contractName}</h6>
 
             {/* Linia #3: Wykonawcy */}
             {hasContractors && (
-                <div className="d-flex align-items-center gap-2 mb-2">
+                <div className="d-flex align-items-center gap-2">
                     <span className="contract-contractors">{contractors.map((c) => c.name).join(", ")}</span>
                 </div>
             )}
