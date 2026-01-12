@@ -48,8 +48,31 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
+    const [editingSectionId, setEditingSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
     const [globalExpandTrigger, setGlobalExpandTrigger] = (0, react_1.useState)(null);
+    /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
+    function findPathToNode(nodes, targetId, currentPath = []) {
+        for (const node of nodes) {
+            const newPath = [...currentPath, node.id];
+            if (node.id === targetId) {
+                return newPath;
+            }
+            if (node.children.length > 0) {
+                const result = findPathToNode(node.children, targetId, newPath);
+                if (result)
+                    return result;
+            }
+        }
+        return null;
+    }
+    /** Oblicza zbiór ID sekcji na ścieżce od korzenia do aktywnej sekcji */
+    const activePathSet = (0, react_1.useMemo)(() => {
+        if (!activeSectionId || sections.length === 0)
+            return new Set();
+        const path = findPathToNode(sections, activeSectionId);
+        return new Set(path || []);
+    }, [activeSectionId, sections]);
     function initObjects() {
         if (initialObjects)
             return initialObjects;
@@ -135,7 +158,12 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
+        // Ustaw kontekst (tło propaguje się w górę przez activePathSet)
         setActiveSectionId(sectionNode.id);
+        // Ustaw fokus edycji (menu widoczne tylko tutaj)
+        setEditingSectionId(sectionNode.id);
+        // Odznacz wiersz tabeli (liść)
+        setActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
@@ -151,8 +179,18 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         // Tryb płaski: zawsze pokazuj
         return true;
     }
-    const handleRowClick = (id) => {
+    const handleRowClick = (id, parentSectionId) => {
         setActiveRowId(id);
+        // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
+        setEditingSectionId("");
+        // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
+        if (parentSectionId) {
+            setActiveSectionId(parentSectionId);
+        }
+        else {
+            // W trybie bez sekcji (czysta tabela) wyczyść activeSectionId
+            setActiveSectionId("");
+        }
         console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
         console.log("currentItems:", repository.currentItems);
@@ -160,7 +198,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, editingSectionId: editingSectionId, activePathSet: activePathSet, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),

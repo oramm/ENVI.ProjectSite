@@ -89,7 +89,7 @@
 /* ===== Section Header Styles ===== */
 /* ===== State Colors (Tailwind Palette Match) ===== */
 .state-active {
-    background-color: #eff6ff !important; /* blue-50 */
+    background-color: #f2faff !important; /* blue-50 */
     color: var(--section-text-primary);
 }
 
@@ -102,7 +102,7 @@
     /* Base styles mainly for layout */
     cursor: pointer;
     transition: background-color 0.2s ease;
-    background-color: #f2faff;
+    background-color: #f6f6f6;
 }
 
 /* Domyślny styl (np. dla nagłówków podrzędnych) */

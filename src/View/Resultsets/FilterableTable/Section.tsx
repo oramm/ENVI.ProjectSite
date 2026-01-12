@@ -50,14 +50,14 @@ export function Section<DataItemType extends RepositoryDataItem>({
     onClick,
     childrenExpandTrigger,
 }: SectionProps<DataItemType>) {
-    const { activeSectionId, sections, globalExpandTrigger } = useFilterableTableContext<DataItemType>();
-    const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
+    const { activePathSet, editingSectionId, sections, globalExpandTrigger } =
+        useFilterableTableContext<DataItemType>();
+    // Tło: czy sekcja jest na ścieżce od korzenia do aktywnej
+    const isOnActivePath = activePathSet.has(sectionNode.id);
+    // Menu: czy to jest aktualnie edytowana sekcja
+    const isEditing = editingSectionId === sectionNode.id;
     const [activeKey, setActiveKey] = useState<string[]>(["0"]);
     const [localExpandTrigger, setLocalExpandTrigger] = useState<ExpandTrigger>(null);
-
-    useEffect(() => {
-        setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id, sections]);
 
     useEffect(() => {
         if (globalExpandTrigger?.action === "COLLAPSE") {
@@ -92,7 +92,8 @@ export function Section<DataItemType extends RepositoryDataItem>({
                 <Accordion.Header>
                     <SectionHeader
                         sectionNode={sectionNode}
-                        isActive={isActive}
+                        isOnActivePath={isOnActivePath}
+                        isEditing={isEditing}
                         onClick={onClick}
                         localExpandTrigger={localExpandTrigger}
                         setLocalExpandTrigger={setLocalExpandTrigger}
@@ -112,7 +113,8 @@ export function Section<DataItemType extends RepositoryDataItem>({
         <>
             <SectionHeader
                 sectionNode={sectionNode}
-                isActive={isActive}
+                isOnActivePath={isOnActivePath}
+                isEditing={isEditing}
                 onClick={onClick}
                 localExpandTrigger={localExpandTrigger}
                 setLocalExpandTrigger={setLocalExpandTrigger}
@@ -129,7 +131,10 @@ export function Section<DataItemType extends RepositoryDataItem>({
 type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>;
     onClick: (sectionNode: SectionNode<DataItemType>) => void;
-    isActive: boolean;
+    /** Czy sekcja jest na ścieżce od korzenia do aktywnej (dla tła) */
+    isOnActivePath: boolean;
+    /** Czy to jest aktualnie edytowana sekcja (dla menu) */
+    isEditing: boolean;
     localExpandTrigger: ExpandTrigger;
     setLocalExpandTrigger: React.Dispatch<React.SetStateAction<ExpandTrigger>>;
 };
@@ -137,7 +142,8 @@ type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
 function SectionHeader<DataItemType extends RepositoryDataItem>({
     sectionNode,
     onClick,
-    isActive,
+    isOnActivePath,
+    isEditing,
     localExpandTrigger,
     setLocalExpandTrigger,
 }: SectionHeaderProps<DataItemType>) {
@@ -179,13 +185,11 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
     }
 
     // Active & Hover states (Colors)
-    if (isActive) {
+    // Tło: podświetlone dla wszystkich sekcji na ścieżce od korzenia
+    if (isOnActivePath) {
         computedClassName += " state-active";
     } else {
         computedClassName += " state-hover";
-        // If not active and not custom border, maybe we want a subtle background or just transparent?
-        // User requested clean look similar to mockup: hover gray, active blue.
-        // So default static background (aliceblue) is removed in favor of transparent/white base + states.
     }
 
     return (
@@ -220,8 +224,8 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                 )}
             </div>
 
-            {/* PRAWA STRONA – MENU */}
-            {isActive && (
+            {/* PRAWA STRONA – MENU (tylko dla aktualnie edytowanej sekcji) */}
+            {isEditing && (
                 <div
                     className="
                                 d-flex
@@ -307,7 +311,11 @@ function SectionBody<DataItemType extends RepositoryDataItem>({
             {/* Liście (Tabela) - BEZ wcięcia (indentation), ale ewentualnie z paddingiem karty */}
             {sectionNode.leaves && (
                 <div className="mt-2">
-                    <ResultSetTable<DataItemType> {...resulsetTableProps} filteredObjects={sectionNode.leaves} />
+                    <ResultSetTable<DataItemType>
+                        {...resulsetTableProps}
+                        filteredObjects={sectionNode.leaves}
+                        parentSectionId={sectionNode.id}
+                    />
                 </div>
             )}
         </div>

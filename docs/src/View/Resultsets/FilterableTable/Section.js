@@ -34,13 +34,13 @@ const ResultSetTable_1 = require("./ResultSetTable");
 const ToggleExpandButton_1 = require("./ToggleExpandButton");
 const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigger, }) {
-    const { activeSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
+    const { activePathSet, editingSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    // Tło: czy sekcja jest na ścieżce od korzenia do aktywnej
+    const isOnActivePath = activePathSet.has(sectionNode.id);
+    // Menu: czy to jest aktualnie edytowana sekcja
+    const isEditing = editingSectionId === sectionNode.id;
     const [activeKey, setActiveKey] = (0, react_1.useState)(["0"]);
     const [localExpandTrigger, setLocalExpandTrigger] = (0, react_1.useState)(null);
-    (0, react_1.useEffect)(() => {
-        setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id, sections]);
     (0, react_1.useEffect)(() => {
         if (globalExpandTrigger?.action === "COLLAPSE") {
             setActiveKey([]);
@@ -63,14 +63,14 @@ function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigg
     return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: accordionClassName, style: hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined, key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
-                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
+                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isOnActivePath: isOnActivePath, isEditing: isEditing, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
             react_1.default.createElement(react_bootstrap_1.Accordion.Body, null,
                 react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger }))))) : (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger }),
+        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isOnActivePath: isOnActivePath, isEditing: isEditing, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger }),
         react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger })));
 }
 exports.Section = Section;
-function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, setLocalExpandTrigger, }) {
+function SectionHeader({ sectionNode, onClick, isOnActivePath, isEditing, localExpandTrigger, setLocalExpandTrigger, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { selectedObjectRoute, dataItem } = sectionNode;
@@ -105,14 +105,12 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
         computedClassName += " px-2 py-1 rounded";
     }
     // Active & Hover states (Colors)
-    if (isActive) {
+    // Tło: podświetlone dla wszystkich sekcji na ścieżce od korzenia
+    if (isOnActivePath) {
         computedClassName += " state-active";
     }
     else {
         computedClassName += " state-hover";
-        // If not active and not custom border, maybe we want a subtle background or just transparent?
-        // User requested clean look similar to mockup: hover gray, active blue.
-        // So default static background (aliceblue) is removed in favor of transparent/white base + states.
     }
     return (react_1.default.createElement("div", { className: computedClassName, onClick: () => onClick(sectionNode), onDoubleClick: () => {
             if (!selectedObjectRoute)
@@ -127,7 +125,7 @@ function SectionHeader({ sectionNode, onClick, isActive, localExpandTrigger, set
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isActive && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
+        isEditing && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
             sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
@@ -145,5 +143,5 @@ function SectionBody({ sectionNode, resulsetTableProps, onClick, localExpandTrig
     return (react_1.default.createElement("div", { style: cardContentStyle },
         sectionNode.children.length > 0 && (react_1.default.createElement("div", { style: indentationStyle }, sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))))),
         sectionNode.leaves && (react_1.default.createElement("div", { className: "mt-2" },
-            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves })))));
+            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves, parentSectionId: sectionNode.id })))));
 }
