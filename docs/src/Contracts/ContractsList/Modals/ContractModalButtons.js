@@ -35,6 +35,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema,
             shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
         }, buttonProps: { ...buttonProps } }));
 }
 exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;

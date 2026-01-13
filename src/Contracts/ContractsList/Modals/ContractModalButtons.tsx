@@ -42,6 +42,7 @@ export function ContractEditModalButtonGeneric({
                 initialData: initialData,
                 makeValidationSchema: otherContractValidationSchema,
                 shouldRetrieveDataBeforeEdit,
+                specialRetrieveActionRoute,
             }}
             buttonProps={{ ...buttonProps }}
         />

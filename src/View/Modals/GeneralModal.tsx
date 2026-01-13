@@ -105,13 +105,27 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
         setIsLoadingData(true);
         try {
+            // ✅ Tworzymy tymczasowe repository tylko do pobrania szczegółów
+            // NIE nadpisuje głównego repository.items!
+            const tempRepository = new RepositoryReact<DataItemType>({
+                name: `${repository.name}_modalDetails_temp`,
+                actionRoutes: {
+                    getRoute: repository.actionRoutes.getRoute,
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+            });
+
             const dataObjectFromServer = (
-                await repository.loadItemsFromServerPOST(
+                await tempRepository.loadItemsFromServerPOST(
                     [{ id: modalBodyProps.initialData?.id }],
                     specialRetrieveActionRoute
                 )
             )[0];
             if (dataObjectFromServer) {
+                // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
+                // (dla spójności danych, nie nadpisuj całej listy)
                 repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
                 repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
             } else {
@@ -176,9 +190,8 @@ export function GeneralModal<DataItemType extends RepositoryDataItem = Repositor
 
     async function handleEditWithFiles(data: FormData) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append("id", currentDataItem.id.toString());
-
         appendContextData(currentDataItem, data);
+
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));
         const editedObject = await repository.editItem(data as FormData, specialActionRoute, fieldsToUpdate);

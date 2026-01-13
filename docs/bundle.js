@@ -32135,6 +32135,78 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.good-tip-toast-wrapper {
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css":
+/*!*******************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css ***!
+  \*******************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, `/* ===== TasksGlobal Specific Styles ===== */
+:root {
+    /* Colors specific to Contracts logic */
+    --section-border-our: #2196F3;   /* niebieski - OUR contracts */
+    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */
+    --section-border-width: 4px;
+}
+
+/* Contract Typography */
+.contract-id {
+    font-size: var(--section-text-xs);
+    font-weight: 700;
+    color: var(--section-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.contract-title {
+    font-size: var(--section-text-lg);
+    color: var(--section-text-primary);
+    margin-bottom: 0;
+}
+
+.contract-status-badge {
+    font-size: var(--section-text-10) !important;
+}
+
+.contract-contractors {
+    font-size: var(--section-text-sm) !important;
+    color: var(--section-text-secondary);
+}
+
+.contract-metadata {
+    font-size: var(--section-text-sm);
+    color: var(--section-text-secondary);
+}
+
+.contract-metadata-icon {
+    font-size: 1.125rem;
+    color: var(--section-text-muted);
+}
+
+.contract-metadata strong {
+    color: var(--section-text-primary);
+}
+`, "",{"version":3,"sources":["webpack://./src/TasksGlobal/TasksGlobal.css"],"names":[],"mappings":"AAAA,4CAA4C;AAC5C;IACI,uCAAuC;IACvC,6BAA6B,IAAI,8BAA8B;IAC/D,+BAA+B,EAAE,mCAAmC;IACpE,2BAA2B;AAC/B;;AAEA,wBAAwB;AACxB;IACI,iCAAiC;IACjC,gBAAgB;IAChB,oCAAoC;IACpC,yBAAyB;IACzB,sBAAsB;AAC1B;;AAEA;IACI,iCAAiC;IACjC,kCAAkC;IAClC,gBAAgB;AACpB;;AAEA;IACI,4CAA4C;AAChD;;AAEA;IACI,4CAA4C;IAC5C,oCAAoC;AACxC;;AAEA;IACI,iCAAiC;IACjC,oCAAoC;AACxC;;AAEA;IACI,mBAAmB;IACnB,gCAAgC;AACpC;;AAEA;IACI,kCAAkC;AACtC","sourcesContent":["/* ===== TasksGlobal Specific Styles ===== */\r\n:root {\r\n    /* Colors specific to Contracts logic */\r\n    --section-border-our: #2196F3;   /* niebieski - OUR contracts */\r\n    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */\r\n    --section-border-width: 4px;\r\n}\r\n\r\n/* Contract Typography */\r\n.contract-id {\r\n    font-size: var(--section-text-xs);\r\n    font-weight: 700;\r\n    color: var(--section-text-secondary);\r\n    text-transform: uppercase;\r\n    letter-spacing: 0.05em;\r\n}\r\n\r\n.contract-title {\r\n    font-size: var(--section-text-lg);\r\n    color: var(--section-text-primary);\r\n    margin-bottom: 0;\r\n}\r\n\r\n.contract-status-badge {\r\n    font-size: var(--section-text-10) !important;\r\n}\r\n\r\n.contract-contractors {\r\n    font-size: var(--section-text-sm) !important;\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata {\r\n    font-size: var(--section-text-sm);\r\n    color: var(--section-text-secondary);\r\n}\r\n\r\n.contract-metadata-icon {\r\n    font-size: 1.125rem;\r\n    color: var(--section-text-muted);\r\n}\r\n\r\n.contract-metadata strong {\r\n    color: var(--section-text-primary);\r\n}\r\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css":
 /*!*******************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/View/Resultsets/FilterableTable/FilterableTable.css ***!
@@ -32155,9 +32227,152 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `.section-action-menu {
+___CSS_LOADER_EXPORT___.push([module.id, `/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */
+:root {
+    /* Typography - rozmiary odpowiadające Tailwind */
+    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */
+    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */
+    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */
+    --section-text-base: 1rem;       /* 16px - domyślny */
+    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */
+    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */
+
+    /* Spacing */
+    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */
+    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */
+    --section-gap-sm: 0.5rem;        /* 8px */
+    --section-gap-md: 0.75rem;       /* 12px */
+    --section-gap-lg: 1rem;          /* 16px */
+
+    /* Colors */
+    --section-bg-default: aliceblue;
+    --section-bg-hover: #e3f2fd;
+    --section-bg-active: #e3f2fd;
+
+    --section-text-primary: #212529;
+    --section-text-secondary: #6c757d;
+    --section-text-success: rgb(50, 130, 50);
+    --section-text-muted: #6c757d;
+}
+
+/* ===== Section Action Menu ===== */
+.section-action-menu {
     margin-left: 10px;
-}`, "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA;IACI,iBAAiB;AACrB","sourcesContent":[".section-action-menu {\r\n    margin-left: 10px;\r\n}"],"sourceRoot":""}]);
+}
+
+/* ===== Accordion Override (scopowane) ===== */
+.section-accordion .accordion-button {
+    padding: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none;
+}
+
+/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */
+.section-accordion .accordion-button::after {
+    display: none !important;
+    content: none !important;
+}
+
+.section-accordion .accordion-button:focus {
+    box-shadow: none !important;
+}
+
+.section-accordion .accordion-button:not(.collapsed) {
+    background: transparent !important;
+}
+
+.section-accordion .accordion-item {
+    border: 0;
+    background: transparent;
+}
+
+.section-accordion .accordion-body {
+    padding: 0.5rem 0;
+}
+
+/* ===== Accordion Border for Nested Items ===== */
+/* Add border to items that are NOT cards (nested sections) */
+.section-accordion:not(.section-card) {
+    border-bottom: 1px solid #dee2e6; /* Subtle separator */
+}
+.section-accordion:not(.section-card):last-child {
+    border-bottom: none;
+}
+
+.section-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Border left color is injected via inline style */
+    border-left-width: 4px;
+    border-left-style: solid;
+    overflow: hidden; /* Ensures child border-radius doesn't break card shape */
+}
+
+/* Ensure accordion button inside card is clean */
+.section-card .accordion-button {
+    padding: 0 !important;
+}
+
+/* ===== Section Header Styles ===== */
+/* ===== State Colors (Tailwind Palette Match) ===== */
+.state-active {
+    background-color: #f2faff !important; /* blue-50 */
+    color: var(--section-text-primary);
+}
+
+.state-hover:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+/* Base override to ensure hover doesn't conflict with transparent backgrounds */
+.section-header {
+    /* Base styles mainly for layout */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: #f6f6f6;
+}
+
+/* Domyślny styl (np. dla nagłówków podrzędnych) */
+.section-header-default {
+    background-color: var(--section-bg-default);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem; /* px-2 py-1 */
+}
+
+.section-header-default:hover {
+    background-color: var(--section-bg-hover);
+}
+
+.section-header-active {
+    background-color: var(--section-bg-active);
+}
+
+/* Typography classes - łatwe przenoszenie z mockupów */
+.text-xs {
+    font-size: var(--section-text-xs);
+}
+
+.text-10 {
+    font-size: var(--section-text-10);
+}
+
+.text-sm {
+    font-size: var(--section-text-sm);
+}
+
+.text-lg {
+    font-size: var(--section-text-lg);
+}
+
+.text-xl {
+    font-size: var(--section-text-xl);
+}
+
+
+/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */
+`, "",{"version":3,"sources":["webpack://./src/View/Resultsets/FilterableTable/FilterableTable.css"],"names":[],"mappings":"AAAA,iEAAiE;AACjE;IACI,iDAAiD;IACjD,0BAA0B,OAAO,4BAA4B;IAC7D,2BAA2B,MAAM,6BAA6B;IAC9D,2BAA2B,MAAM,mCAAmC;IACpE,yBAAyB,QAAQ,oBAAoB;IACrD,2BAA2B,MAAM,yBAAyB;IAC1D,yBAAyB,QAAQ,kCAAkC;;IAEnE,YAAY;IACZ,yCAAyC,GAAG,cAAc;IAC1D,mCAAmC,SAAS,uBAAuB;IACnE,wBAAwB,SAAS,QAAQ;IACzC,yBAAyB,QAAQ,SAAS;IAC1C,sBAAsB,WAAW,SAAS;;IAE1C,WAAW;IACX,+BAA+B;IAC/B,2BAA2B;IAC3B,4BAA4B;;IAE5B,+BAA+B;IAC/B,iCAAiC;IACjC,wCAAwC;IACxC,6BAA6B;AACjC;;AAEA,oCAAoC;AACpC;IACI,iBAAiB;AACrB;;AAEA,+CAA+C;AAC/C;IACI,UAAU;IACV,kCAAkC;IAClC,2BAA2B;IAC3B,YAAY;AAChB;;AAEA,0DAA0D;AAC1D;IACI,wBAAwB;IACxB,wBAAwB;AAC5B;;AAEA;IACI,2BAA2B;AAC/B;;AAEA;IACI,kCAAkC;AACtC;;AAEA;IACI,SAAS;IACT,uBAAuB;AAC3B;;AAEA;IACI,iBAAiB;AACrB;;AAEA,kDAAkD;AAClD,6DAA6D;AAC7D;IACI,gCAAgC,EAAE,qBAAqB;AAC3D;AACA;IACI,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,qBAAqB;IACrB,wCAAwC;IACxC,mDAAmD;IACnD,sBAAsB;IACtB,wBAAwB;IACxB,gBAAgB,EAAE,yDAAyD;AAC/E;;AAEA,iDAAiD;AACjD;IACI,qBAAqB;AACzB;;AAEA,sCAAsC;AACtC,sDAAsD;AACtD;IACI,oCAAoC,EAAE,YAAY;IAClD,kCAAkC;AACtC;;AAEA;IACI,yBAAyB,EAAE,YAAY;AAC3C;;AAEA,gFAAgF;AAChF;IACI,kCAAkC;IAClC,eAAe;IACf,sCAAsC;IACtC,yBAAyB;AAC7B;;AAEA,kDAAkD;AAClD;IACI,2CAA2C;IAC3C,sBAAsB;IACtB,uBAAuB,EAAE,cAAc;AAC3C;;AAEA;IACI,yCAAyC;AAC7C;;AAEA;IACI,0CAA0C;AAC9C;;AAEA,uDAAuD;AACvD;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;AAEA;IACI,iCAAiC;AACrC;;;AAGA,oEAAoE","sourcesContent":["/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */\r\n:root {\r\n    /* Typography - rozmiary odpowiadające Tailwind */\r\n    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */\r\n    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */\r\n    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */\r\n    --section-text-base: 1rem;       /* 16px - domyślny */\r\n    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */\r\n    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */\r\n\r\n    /* Spacing */\r\n    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */\r\n    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */\r\n    --section-gap-sm: 0.5rem;        /* 8px */\r\n    --section-gap-md: 0.75rem;       /* 12px */\r\n    --section-gap-lg: 1rem;          /* 16px */\r\n\r\n    /* Colors */\r\n    --section-bg-default: aliceblue;\r\n    --section-bg-hover: #e3f2fd;\r\n    --section-bg-active: #e3f2fd;\r\n\r\n    --section-text-primary: #212529;\r\n    --section-text-secondary: #6c757d;\r\n    --section-text-success: rgb(50, 130, 50);\r\n    --section-text-muted: #6c757d;\r\n}\r\n\r\n/* ===== Section Action Menu ===== */\r\n.section-action-menu {\r\n    margin-left: 10px;\r\n}\r\n\r\n/* ===== Accordion Override (scopowane) ===== */\r\n.section-accordion .accordion-button {\r\n    padding: 0;\r\n    background: transparent !important;\r\n    box-shadow: none !important;\r\n    border: none;\r\n}\r\n\r\n/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */\r\n.section-accordion .accordion-button::after {\r\n    display: none !important;\r\n    content: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:focus {\r\n    box-shadow: none !important;\r\n}\r\n\r\n.section-accordion .accordion-button:not(.collapsed) {\r\n    background: transparent !important;\r\n}\r\n\r\n.section-accordion .accordion-item {\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n\r\n.section-accordion .accordion-body {\r\n    padding: 0.5rem 0;\r\n}\r\n\r\n/* ===== Accordion Border for Nested Items ===== */\r\n/* Add border to items that are NOT cards (nested sections) */\r\n.section-accordion:not(.section-card) {\r\n    border-bottom: 1px solid #dee2e6; /* Subtle separator */\r\n}\r\n.section-accordion:not(.section-card):last-child {\r\n    border-bottom: none;\r\n}\r\n\r\n.section-card {\r\n    background-color: white;\r\n    border-radius: 0.5rem;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n    /* Border left color is injected via inline style */\r\n    border-left-width: 4px;\r\n    border-left-style: solid;\r\n    overflow: hidden; /* Ensures child border-radius doesn't break card shape */\r\n}\r\n\r\n/* Ensure accordion button inside card is clean */\r\n.section-card .accordion-button {\r\n    padding: 0 !important;\r\n}\r\n\r\n/* ===== Section Header Styles ===== */\r\n/* ===== State Colors (Tailwind Palette Match) ===== */\r\n.state-active {\r\n    background-color: #f2faff !important; /* blue-50 */\r\n    color: var(--section-text-primary);\r\n}\r\n\r\n.state-hover:hover {\r\n    background-color: #f9fafb; /* gray-50 */\r\n}\r\n\r\n/* Base override to ensure hover doesn't conflict with transparent backgrounds */\r\n.section-header {\r\n    /* Base styles mainly for layout */\r\n    cursor: pointer;\r\n    transition: background-color 0.2s ease;\r\n    background-color: #f6f6f6;\r\n}\r\n\r\n/* Domyślny styl (np. dla nagłówków podrzędnych) */\r\n.section-header-default {\r\n    background-color: var(--section-bg-default);\r\n    border-radius: 0.25rem;\r\n    padding: 0.25rem 0.5rem; /* px-2 py-1 */\r\n}\r\n\r\n.section-header-default:hover {\r\n    background-color: var(--section-bg-hover);\r\n}\r\n\r\n.section-header-active {\r\n    background-color: var(--section-bg-active);\r\n}\r\n\r\n/* Typography classes - łatwe przenoszenie z mockupów */\r\n.text-xs {\r\n    font-size: var(--section-text-xs);\r\n}\r\n\r\n.text-10 {\r\n    font-size: var(--section-text-10);\r\n}\r\n\r\n.text-sm {\r\n    font-size: var(--section-text-sm);\r\n}\r\n\r\n.text-lg {\r\n    font-size: var(--section-text-lg);\r\n}\r\n\r\n.text-xl {\r\n    font-size: var(--section-text-xl);\r\n}\r\n\r\n\r\n/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -94897,7 +95112,6 @@ exports.PersonsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const SystemUserController_1 = __webpack_require__(/*! ./SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 function PersonsFilterBody() {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
@@ -94907,7 +95121,7 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", repository: SystemUserController_1.entitiesRepository, multiple: true, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false }))));
 }
 exports.PersonsFilterBody = PersonsFilterBody;
 
@@ -95303,6 +95517,7 @@ function ContractMainViewTabs() {
         fetchData();
     }, []);
     function createContractRepository() {
+        // ✅ Lokalne repository dla szczegółów - nie koliduje z głównym "contracts"
         const repository = new RepositoryReact_1.default({
             actionRoutes: {
                 getRoute: "contracts",
@@ -95310,7 +95525,7 @@ function ContractMainViewTabs() {
                 editRoute: "contract",
                 deleteRoute: "contract",
             },
-            name: "contracts",
+            name: "contractDetails_temp",
         });
         let repositoryDataFromRoute = location?.state?.repository;
         if (repositoryDataFromRoute) {
@@ -96503,6 +96718,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             initialData: initialData,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema,
             shouldRetrieveDataBeforeEdit,
+            specialRetrieveActionRoute,
         }, buttonProps: { ...buttonProps } }));
 }
 exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
@@ -96722,10 +96938,11 @@ const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonF
 /**Wywoływana w ProjectsSelector jako props  */
 function OtherContractModalBody(props) {
     const initialData = props.initialData;
-    const ourRelatedContractsRepository = new RepositoryReact_1.default({
-        name: "OurRelatedContractsRepository",
+    // ✅ Lokalne repository w useMemo - nie będzie kolizji z głównym contractsRepository
+    const ourRelatedContractsRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        name: "ourRelatedContracts_temp",
         actionRoutes: { addNewRoute: "", editRoute: "", deleteRoute: "", getRoute: "contracts" },
-    });
+    }), []);
     const { setValue, watch } = (0, FormContext_1.useFormContext)();
     const _project = watch("_project");
     (0, react_1.useEffect)(() => {
@@ -100211,21 +100428,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts");
-const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/Letters/LettersList/LetterFilterBody.tsx");
-const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
-const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
-const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
+const LetterFilterBody_1 = __webpack_require__(/*! ./LetterFilterBody */ "./src/Letters/LettersList/LetterFilterBody.tsx");
+const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Letters/LettersList/LettersController.ts");
 const LetterModalBodiesPartial_1 = __webpack_require__(/*! ./Modals/LetterModalBodiesPartial */ "./src/Letters/LettersList/Modals/LetterModalBodiesPartial.tsx");
+const LetterModalButtons_1 = __webpack_require__(/*! ./Modals/LetterModalButtons */ "./src/Letters/LettersList/Modals/LetterModalButtons.tsx");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -100288,7 +100505,9 @@ function LettersSearch({ title }) {
                 modalSubtitle: `Dotyczy: ${letter.description}`,
                 repository: LettersController_1.lettersRepository,
                 ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
-                onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
+                onEdit: (editedFields) => {
+                    handleEditObject({ ...letter, ...editedFields });
+                },
                 fieldsToUpdate: ["status"],
             } },
             react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
@@ -100309,7 +100528,8 @@ function LettersSearch({ title }) {
                     letter.relatedLetterNumber)),
                 letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
-                    "Wymagana odpowiedzi do dnia: ",
+                    "Wymagana odpowiedzi do dnia:",
+                    " ",
                     ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
                 letter.responseIKNumber && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
@@ -100483,14 +100703,8 @@ function IncomingLetterModalBody(props) {
             //console.log('AI analysis raw result:', result);
             // set returned fields
             const newScores = {};
-            // Only allow these fields to be set by AI analysis
-            const allowedFields = ['number', 'description', 'creationDate', 'registrationDate', 'responseDueDate', 'senderName', '_entitiesMain'];
             for (const key in result) {
                 const field = result[key];
-                // Skip fields not in whitelist to prevent overwriting internal form state like _contract
-                if (!allowedFields.includes(key)) {
-                    continue;
-                }
                 if (field && field.value !== undefined) {
                     let valueToSet = field.value;
                     if (key.toLowerCase().includes('date')) {
@@ -101254,12 +101468,24 @@ function OffersLettersSearch({ title }) {
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
+    function renderRowContent(letter) {
+        const cellStyle = {
+            wordBreak: "break-word",
+            whiteSpace: 'pre-wrap',
+        };
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            letter.number && (react_1.default.createElement("div", { style: cellStyle },
+                "Numer: ",
+                react_1.default.createElement("strong", null, letter.number))),
+            react_1.default.createElement("div", { className: "mt-2", style: cellStyle },
+                "Dotyczy: ",
+                letter.description)));
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "offersLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colMd: 1 },
             { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
             { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
-            { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-            { header: "Dotyczy", objectAttributeToShow: "description", colMd: 5 },
+            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
@@ -102320,12 +102546,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OfferModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
-const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 function OfferModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _city = watch("_city");
@@ -102722,7 +102948,6 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const GenericComponents_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const OtherAttributesSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/OtherAttributesSelectors */ "./src/View/Modals/CommonFormComponents/OtherAttributesSelectors.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const OffersController_1 = __webpack_require__(/*! ../../OffersController */ "./src/Offers/OffersList/OffersController.ts");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const CommonComponentsController_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 function SendOfferModalBody({ initialData }) {
@@ -102752,7 +102977,7 @@ function SendOfferModalBody({ initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_recipients", className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Adresaci maila"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_newEvent._recipients", multiple: true, repository: OffersController_1.personsRepository, allowNew: false }),
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_newEvent._recipients", multiple: true, allowNew: false }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true },
                 react_1.default.createElement("div", null, "Mo\u017Cesz wybra\u0107 osoby z listy, albo wpisa\u0107 adresy mailowe r\u0119cznie (jako osobne niebieskie bloczki)"))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "additionalMessage", className: "mb-4" },
@@ -103520,7 +103745,7 @@ function OffersSearch({ title }) {
                     offer._city.name,
                     react_1.default.createElement("small", null,
                         react_1.default.createElement(CommonComponents_1.OfferBondStatusBadge, { status: offer._offerBond.status }))),
-                react_1.default.createElement(react_bootstrap_1.Card.Text, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Text, { as: "div" },
                     offer._offerBond.form,
                     " ",
                     offer._offerBond.form === "Gwarancja" && react_1.default.createElement(react_1.default.Fragment, null,
@@ -103766,7 +103991,6 @@ exports.PersonsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const PersonsController_1 = __webpack_require__(/*! ./PersonsController */ "./src/Persons/PersonsController.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 function PersonsFilterBody() {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
@@ -103776,7 +104000,7 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", repository: PersonsController_1.entitiesRepository, multiple: true, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false }))));
 }
 exports.PersonsFilterBody = PersonsFilterBody;
 
@@ -105497,10 +105721,22 @@ function App() {
         fetchData();
     }, []);
     // Handle the server's response
-    function handleServerResponse(response) {
+    async function handleServerResponse(response) {
         if (response.userData) {
+            // set current user and ensure repositories are initialized before marking logged in
             MainSetupReact_1.default.currentUser = response.userData;
-            setIsLoggedIn(true);
+            try {
+                setIsReady(false);
+                await MainControllerReact_1.default.main();
+                setIsLoggedIn(true);
+            }
+            catch (err) {
+                console.error(err);
+                setErrorMessage(err instanceof Error ? err.message : String(err));
+            }
+            finally {
+                setIsReady(true);
+            }
         }
         else {
             console.error("Authentication failed:", response.error);
@@ -106631,6 +106867,31 @@ ToolsForms.logSelector = logSelector;
 
 /***/ }),
 
+/***/ "./src/React/Tools/ToolsRouting.ts":
+/*!*****************************************!*\
+  !*** ./src/React/Tools/ToolsRouting.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.buildDetailsPath = void 0;
+function buildDetailsPath(routeBase, id) {
+    let normalized = routeBase.trim();
+    if (!normalized)
+        return "";
+    if (!normalized.startsWith("/"))
+        normalized = "/" + normalized;
+    if (!normalized.endsWith("/"))
+        normalized = normalized + "/";
+    return `${normalized}${id}`;
+}
+exports.buildDetailsPath = buildDetailsPath;
+
+
+/***/ }),
+
 /***/ "./src/Resources/View/Google-Docs-icon.png":
 /*!*************************************************!*\
   !*** ./src/Resources/View/Google-Docs-icon.png ***!
@@ -107400,6 +107661,61 @@ exports.ProjectsFilterBody = ProjectsFilterBody;
 
 /***/ }),
 
+/***/ "./src/TasksGlobal/TasksGlobal.css":
+/*!*****************************************!*\
+  !*** ./src/TasksGlobal/TasksGlobal.css ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../node_modules/css-loader/dist/cjs.js!./TasksGlobal.css */ "./node_modules/css-loader/dist/cjs.js!./src/TasksGlobal/TasksGlobal.css");
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
+
+      options.insert = _node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+
+
+
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_TasksGlobal_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
+
+/***/ }),
+
 /***/ "./src/TasksGlobal/TasksGlobal.tsx":
 /*!*****************************************!*\
   !*** ./src/TasksGlobal/TasksGlobal.tsx ***!
@@ -107435,28 +107751,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
+const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const CommonComponents_1 = __webpack_require__(/*! ../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
-const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
-const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalModalButtons */ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx");
-const ProjectModalButtons_1 = __webpack_require__(/*! ./Modals/ProjectModalButtons */ "./src/TasksGlobal/Modals/ProjectModalButtons.tsx");
-const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
-const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
-const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+const Symbols_1 = __webpack_require__(/*! ../View/Symbols */ "./src/View/Symbols.ts");
 const CaseModalButtons_1 = __webpack_require__(/*! ./Modals/Case/CaseModalButtons */ "./src/TasksGlobal/Modals/Case/CaseModalButtons.tsx");
 const ContractModalButtons_1 = __webpack_require__(/*! ./Modals/ContractModalButtons */ "./src/TasksGlobal/Modals/ContractModalButtons.tsx");
-const ContractsController_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const MilestoneModalButtons_1 = __webpack_require__(/*! ./Modals/Milestone/MilestoneModalButtons */ "./src/TasksGlobal/Modals/Milestone/MilestoneModalButtons.tsx");
-const Symbols_1 = __webpack_require__(/*! ../View/Symbols */ "./src/View/Symbols.ts");
+const ProjectModalButtons_1 = __webpack_require__(/*! ./Modals/ProjectModalButtons */ "./src/TasksGlobal/Modals/ProjectModalButtons.tsx");
+const TasksGlobalModalButtons_1 = __webpack_require__(/*! ./Modals/TasksGlobalModalButtons */ "./src/TasksGlobal/Modals/TasksGlobalModalButtons.tsx");
+const ProjectsFilterBody_1 = __webpack_require__(/*! ./ProjectsFilterBody */ "./src/TasksGlobal/ProjectsFilterBody.tsx");
+__webpack_require__(/*! ./TasksGlobal.css */ "./src/TasksGlobal/TasksGlobal.css");
+const TasksGlobalController_1 = __webpack_require__(/*! ./TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
+const TasksGlobalFilterBody_1 = __webpack_require__(/*! ./TasksGlobalFilterBody */ "./src/TasksGlobal/TasksGlobalFilterBody.tsx");
 function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
     const [contractsWithChildren, setContractsWithCildren] = (0, react_1.useState)([]);
     const [externalUpdate, setExternalUpdate] = (0, react_1.useState)(0);
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(true);
     const [selectedProject, setSelectedProject] = (0, react_1.useState)(undefined);
-    const [showProjects, setShowProjects] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
         if (!selectedProject)
             return;
@@ -107478,11 +107797,6 @@ function TasksGlobal() {
         }
         fetchData();
     }, [selectedProject]);
-    function handleShowProjects() {
-        setShowProjects(!showProjects);
-        setContractsWithCildren([]);
-        setExternalUpdate((prevState) => prevState + 1);
-    }
     function makeTaskParentsLabel(task) {
         const _contract = task._parent._parent._contract;
         const _milestone = task._parent._parent;
@@ -107505,24 +107819,47 @@ function TasksGlobal() {
                 react_1.default.createElement(CommonComponents_1.TaskStatusBadge, { status: task.status })),
             react_1.default.createElement(react_bootstrap_1.Col, { md: 3 }, task._owner && `${task._owner.name} ${task._owner.surname}`)));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Card, null,
-        react_1.default.createElement("div", { className: "d-flex justify-content-end" },
-            react_1.default.createElement("div", { onClick: handleShowProjects },
-                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: showProjects ? free_solid_svg_icons_1.faTimes : free_solid_svg_icons_1.faBars }))),
-        showProjects && (react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
-                react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
-                        {
-                            header: "Nazwa",
-                            renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
-                            colLg: 11,
-                        },
-                    ], onRowClick: setSelectedProject })),
-            react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, dataLoaded ? (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: undefined, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), tableStructure: [
-                    { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
-                ], externalUpdate: externalUpdate })) : (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })))))));
+    async function handleSubmitTasksSections(criteria) {
+        if (!selectedProject)
+            return buildTree(contractsWithChildren);
+        const [filteredContractsWithChildren] = await Promise.all([
+            TasksGlobalController_1.contractsWithChildrenRepository.loadItemsFromServerPOST([
+                {
+                    ...criteria,
+                    _project: selectedProject,
+                    statusType: criteria.statuses?.length ? undefined : "active",
+                },
+            ]),
+        ]);
+        return buildTree(filteredContractsWithChildren);
+    }
+    function handleResetTasksSections() {
+        return buildTree(contractsWithChildren);
+    }
+    return (react_1.default.createElement(ContractContext_1.ContractProvider, { project: selectedProject },
+        react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Row, null,
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "3" },
+                    react_1.default.createElement(FilterableTable_1.default, { id: "projects", title: "Projekty", repository: TasksGlobalController_1.projectsRepository, showTableHeader: false, AddNewButtonComponents: [ProjectModalButtons_1.ProjectAddNewModalButton], FilterBodyComponent: ProjectsFilterBody_1.ProjectsFilterBody, EditButtonComponent: ProjectModalButtons_1.ProjectEditModalButton, tableStructure: [
+                            {
+                                header: "Nazwa",
+                                renderTdBody: (project) => react_1.default.createElement(react_1.default.Fragment, null, project._ourId_Alias),
+                                colLg: 11,
+                            },
+                        ], onRowClick: setSelectedProject })),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: "9" }, !selectedProject ? (react_1.default.createElement(NoProjectSelectedMessage, null)) : !dataLoaded ? (react_1.default.createElement(LoadingMessage, { selectedProject: selectedProject })) : (react_1.default.createElement(FilterableTable_1.default, { id: "tasks", title: "Zadania", showTableHeader: false, repository: TasksGlobalController_1.tasksGlobalRepository, FilterBodyComponent: TasksGlobalFilterBody_1.TasksGlobalFilterBody, EditButtonComponent: TasksGlobalModalButtons_1.TaskEditModalButton, initialSections: buildTree(contractsWithChildren), snapshotMode: "criteria-only", sectionsFilterHandlers: {
+                        onSubmitSections: handleSubmitTasksSections,
+                        onResetSections: handleResetTasksSections,
+                    }, tableStructure: [
+                        { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
+                    ], externalUpdate: externalUpdate })))))));
 }
 exports["default"] = TasksGlobal;
+function NoProjectSelectedMessage() {
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("h3", null, "Wybierz projekt"),
+        react_1.default.createElement("p", { className: "text-muted" }, "Kliknij na projekt z listy po lewej stronie, aby zobaczy\u0107 zadania.")));
+}
 function LoadingMessage({ selectedProject }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("p", null, " \u0141aduj\u0119 zadania dla projektu:"),
@@ -107530,58 +107867,130 @@ function LoadingMessage({ selectedProject }) {
         react_1.default.createElement("p", null, selectedProject?.name),
         react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
 }
-function makeContractTitleLabel(contract) {
-    const manager = "ourId" in contract ? contract._manager : undefined;
-    const ourId = "ourId" in contract ? contract.ourId : undefined;
-    let label = "Umowa: ";
-    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    if (contract.alias)
-        label += ` [${contract.alias || ""}] `;
-    if (manager)
-        label += ` ${manager.name} ${manager.surname}`;
-    return label;
+function truncateText(text, maxLength) {
+    if (!text)
+        return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+}
+function makeOurContractTitleHeader(contract) {
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const hasDates = contract.startDate || contract.endDate;
+    const manager = contract._manager;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+            react_1.default.createElement("span", { className: "contract-id" },
+                contract.ourId,
+                hasAlias && ` | ${contract.alias}`),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
+        react_1.default.createElement("h6", { className: "contract-title" }, contractName),
+        react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
+            hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    contract.startDate ? ToolsDate_1.default.dateYMDtoDMY(contract.startDate) : "?",
+                    " \u2014",
+                    " ",
+                    contract.endDate ? ToolsDate_1.default.dateYMDtoDMY(contract.endDate) : "?"))),
+            manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    manager.name,
+                    " ",
+                    manager.surname))))));
+}
+function makeOtherContractTitleHeader(contract) {
+    const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
+    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const contractors = contract._contractors;
+    const hasContractors = contractors && contractors.length > 0;
+    const hasDates = contract.startDate || contract.endDate;
+    const manager = contract._ourContract?._manager;
+    return (react_1.default.createElement("div", { className: "d-flex flex-column gap-2" },
+        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+            react_1.default.createElement("span", { className: "contract-id" },
+                identifier,
+                hasAlias && ` | ${contract.alias}`),
+            react_1.default.createElement(CommonComponents_1.ContractStatusBadge, { status: contract.status, className: "contract-status-badge" })),
+        react_1.default.createElement("h6", { className: "contract-title" }, contractName),
+        hasContractors && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+            react_1.default.createElement("span", { className: "contract-contractors" }, contractors.map((c) => c.name).join(", ")))),
+        react_1.default.createElement("div", { className: "contract-metadata d-flex flex-wrap gap-4 align-items-center" },
+            hasDates && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    contract.startDate ? ToolsDate_1.default.dateYMDtoDMY(contract.startDate) : "?",
+                    " \u2014",
+                    " ",
+                    contract.endDate ? ToolsDate_1.default.dateYMDtoDMY(contract.endDate) : "?"))),
+            manager && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2" },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faUser, className: "contract-metadata-icon" }),
+                react_1.default.createElement("span", null,
+                    manager.name,
+                    " ",
+                    manager.surname))))));
+}
+function makeContractTitleHeader(contract) {
+    const isOurContract = "ourId" in contract;
+    return isOurContract
+        ? makeOurContractTitleHeader(contract)
+        : makeOtherContractTitleHeader(contract);
 }
 function contractNodeEditHandler(node) {
     console.log("contractNodeEditHandler", node);
     const contract = {
         ...node.dataItem,
     };
-    node.titleLabel = makeContractTitleLabel(contract);
+    node.title = makeContractTitleHeader(contract);
 }
 function milestoneNodeEditHandler(node) {
     console.log("milestoneNodeEditHandler", node);
     const milestone = {
         ...node.dataItem,
     };
-    node.titleLabel = makeMilestoneTitleLabel(milestone);
+    node.title = react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone));
 }
 function makeMilestoneTitleLabel(milestone) {
-    const dates = milestone._dates
-        .map((d) => {
-        const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-        const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-        return `[${startDate} - ${endDate}]`;
-    })
-        .join(", ");
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(milestone._type.isUniquePerContract);
-    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""} ${dates} ${uniqueicon}`;
+    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${milestone.name || ""}`;
+    return (react_1.default.createElement("div", { className: "d-flex gap-3 align-items-center justify-content-between" },
+        react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
+            react_1.default.createElement("span", null, titleText),
+            milestone._dates && milestone._dates.length > 0 && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 text-secondary small", style: { lineHeight: "1" } },
+                react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCalendarAlt, className: "text-muted" }),
+                milestone._dates.map((d, index) => {
+                    const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                    const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                    return (react_1.default.createElement("span", { key: index },
+                        startDate,
+                        " - ",
+                        endDate));
+                })))),
+        react_1.default.createElement("div", null, milestone.status && react_1.default.createElement(CommonComponents_1.MilestoneStatusBadge, { status: milestone.status }))));
 }
 function makeCaseTitleLabel(caseItem) {
     const uniqueicon = (0, Symbols_1.getSymbolByUniqueness)(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
+    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 function buildTree(contractsWithChildrenInput) {
     const contractNodes = [];
+    const allTasks = [];
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
+        const isOurContract = "ourId" in contract;
+        const borderColor = isOurContract ? "var(--section-border-our)" : "var(--section-border-other)";
         const contractNode = {
             id: "contract" + contract.id,
             isInAccordion: true,
+            borderColor: borderColor,
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
+            selectedObjectRoute: "/contract/",
             repository: TasksGlobalController_1.contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract),
+            title: makeContractTitleHeader(contract),
             children: [],
             AddNewButtonComponent: MilestoneModalButtons_1.MilestoneAddNewModalButton,
             EditButtonComponent: ContractModalButtons_1.ContractEditModalButton,
@@ -107600,7 +108009,7 @@ function buildTree(contractsWithChildrenInput) {
                 childrenNodesType: "case",
                 repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone),
+                title: react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone)),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
                 EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
@@ -107615,14 +108024,14 @@ function buildTree(contractsWithChildrenInput) {
                     type: "case",
                     repository: TasksGlobalController_1.casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem),
+                    title: react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(caseItem)),
                     children: [],
                     leaves: [],
                     isDeletable: true,
                     AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
                     EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
                     editHandler: (node) => {
-                        node.titleLabel = makeCaseTitleLabel(node.dataItem);
+                        node.title = react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(node.dataItem));
                     }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);
@@ -107631,10 +108040,11 @@ function buildTree(contractsWithChildrenInput) {
                         caseNode.leaves = [];
                     caseNode.leaves.push(task);
                 }
-                TasksGlobalController_1.tasksGlobalRepository.items = [...TasksGlobalController_1.tasksGlobalRepository.items, ...caseNode.leaves];
+                allTasks.push(...(caseNode.leaves || []));
             }
         }
     }
+    TasksGlobalController_1.tasksGlobalRepository.items = allTasks;
     console.log("contractNodes", contractNodes);
     return contractNodes;
 }
@@ -107667,7 +108077,7 @@ exports.contractsWithChildrenRepository = new RepositoryReact_1.default({
 });
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: "contractsWitchChildren",
+        getRoute: "contractsWithChildren",
         addNewRoute: "contractReact",
         editRoute: "contract",
         deleteRoute: "contract",
@@ -107736,6 +108146,41 @@ exports.projectsRepository = new RepositoryReact_1.default({
 
 /***/ }),
 
+/***/ "./src/TasksGlobal/TasksGlobalFilterBody.tsx":
+/*!***************************************************!*\
+  !*** ./src/TasksGlobal/TasksGlobalFilterBody.tsx ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TasksGlobalFilterBody = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const StatusSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
+function TasksGlobalFilterBody() {
+    const { project } = (0, ContractContext_1.useContract)();
+    return (react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_contract" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { showValidationInfo: false, _project: project })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3, controlId: "_owner" },
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
+            react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
+}
+exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
+
+
+/***/ }),
+
 /***/ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx":
 /*!**************************************************************************!*\
   !*** ./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx ***!
@@ -107771,7 +108216,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPrefilled = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
+exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPreloaded = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -107960,7 +108405,7 @@ exports.FocusAreaSelector = FocusAreaSelector;
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, required = false, showValidationInfo = true, multiple = false, name = "_focusArea", }) {
+function FocusAreaSelectorPreloaded({ repository, _financialAidProgramme, required = false, showValidationInfo = true, multiple = false, name = "_focusArea", }) {
     const { control, watch, setValue, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
     const label = "Działanie";
@@ -107991,7 +108436,7 @@ function FocusAreaSelectorPrefilled({ repository, _financialAidProgramme, requir
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-exports.FocusAreaSelectorPrefilled = FocusAreaSelectorPrefilled;
+exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
 function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, _focusArea, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -108333,7 +108778,7 @@ function PersonSelectorPreloaded({ label, name, repository, multiple = false, sh
 exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
-        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
         if (!groups[key]) {
             groups[key] = [];
         }
@@ -108347,12 +108792,15 @@ function renderCaseMenu(results, menuProps, state, groupedResults, milestoneName
         index !== 0 && react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Divider, null),
         react_1.default.createElement(react_bootstrap_typeahead_1.Menu.Header, null, milestoneName),
         groupedResults[milestoneName].map((item) => {
+            const folderNumber = item._type?.folderNumber ?? "";
+            const typeName = item._type?.name ?? "";
+            const folderName = item._folderName ?? "";
             const menuItem = (react_1.default.createElement(react_bootstrap_typeahead_1.MenuItem, { key: index, option: item, position: index },
-                item._type.folderNumber,
+                folderNumber,
                 " ",
-                item._type.name,
+                typeName,
                 " ",
-                item._folderName));
+                folderName));
             index += 1;
             return menuItem;
         }))));
@@ -108560,7 +109008,12 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
             });
             console.log(`📦 [${name}] Otrzymano ${items.length} obiektów z API`, items);
             // ✅ WALIDACJA: Upewnij się że każdy obiekt ma labelKey
-            const validatedData = items.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`));
+            const validatedData = items.map((item) => {
+                if (typeof item === "string") {
+                    return { [labelKey]: item };
+                }
+                return (0, ToolsForms_1.ensureLabelKey)(item, labelKey, `MyAsyncTypeahead[${name}]`);
+            });
             console.log(`✅ [${name}] Po walidacji:`, validatedData);
             console.log(`🏷️ [${name}] labelKey="${labelKey}", pierwszy obiekt:`, validatedData[0]);
             setOptions(validatedData);
@@ -108602,7 +109055,13 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
                     if (!field.value)
                         return [];
                     const values = multiple ? field.value : [field.value];
-                    const validated = values.map((item) => (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name));
+                    const validated = values.map((item) => {
+                        // ✅ Jeśli wartość jest stringiem (np. allowNew lub initData jako string), opakuj go dla UI
+                        if (typeof item === "string") {
+                            return { [labelKey]: item, customOption: true };
+                        }
+                        return (0, ToolsForms_1.ensureLabelKey)(item, labelKey, name);
+                    });
                     console.log(`🏷️ [${name}] Walidacja selected values:`, {
                         original: field.value,
                         validated: validated,
@@ -109291,6 +109750,7 @@ exports.GeneralModal = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
+const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 const FormContext_1 = __webpack_require__(/*! ./FormContext */ "./src/View/Modals/FormContext.ts");
 const CommonComponentsController_1 = __webpack_require__(/*! ../Resultsets/CommonComponentsController */ "./src/View/Resultsets/CommonComponentsController.tsx");
 const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules/@hookform/resolvers/yup/dist/yup.js");
@@ -109348,8 +109808,21 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         setIsLoadingData(true);
         try {
-            const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
+            // ✅ Tworzymy tymczasowe repository tylko do pobrania szczegółów
+            // NIE nadpisuje głównego repository.items!
+            const tempRepository = new RepositoryReact_1.default({
+                name: `${repository.name}_modalDetails_temp`,
+                actionRoutes: {
+                    getRoute: repository.actionRoutes.getRoute,
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+            });
+            const dataObjectFromServer = (await tempRepository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
             if (dataObjectFromServer) {
+                // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
+                // (dla spójności danych, nie nadpisuj całej listy)
                 repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
                 repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
             }
@@ -109417,7 +109890,6 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
     }
     async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append("id", currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));
@@ -109867,7 +110339,7 @@ function InvoiceStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.InvoiceStatusBadge = InvoiceStatusBadge;
-function ContractStatusBadge({ status }) {
+function ContractStatusBadge({ status, className, style, }) {
     let variant;
     let textMode = "light";
     switch (status) {
@@ -109887,7 +110359,7 @@ function ContractStatusBadge({ status }) {
         default:
             variant = "secondary";
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode, className: className, style: style }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
 function MilestoneStatusBadge({ status }) {
@@ -110338,6 +110810,7 @@ const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_m
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const DashboardCardContext_1 = __webpack_require__(/*! ./DashboardCardContext */ "./src/View/Resultsets/DashboardCard/DashboardCardContext.tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const ToolsRouting_1 = __webpack_require__(/*! ../../../React/Tools/ToolsRouting */ "./src/React/Tools/ToolsRouting.ts");
 const RowActionMenu_1 = __importDefault(__webpack_require__(/*! ./RowActionMenu */ "./src/View/Resultsets/DashboardCard/RowActionMenu.tsx"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, ListItem, EditButtonComponent, isDeletable = true, detailsRoute = "", getDetailsId, initialObjects, onRowClick, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, className, headerRoute, onEditComplete, processEditedObject, }) {
@@ -110377,8 +110850,11 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
     }
     function handleRowDoubleClick(object) {
         const detailsId = getDetailsId ? getDetailsId(object) : object.id;
-        if (detailsRoute)
-            navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
+        if (!detailsRoute)
+            return;
+        const target = (0, ToolsRouting_1.buildDetailsPath)(detailsRoute, detailsId);
+        if (target)
+            navigate(target, { state: { repository } });
     }
     function handleHeaderClick() {
         if (headerRoute)
@@ -110694,7 +111170,7 @@ const yup_1 = __webpack_require__(/*! @hookform/resolvers/yup */ "./node_modules
 function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
     const [error, setError] = (0, react_1.useState)(null);
     const [isReady, setIsReady] = (0, react_1.useState)(true);
-    const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { setObjects, id, sections, setSections, snapshotMode, sectionsFilterHandlers } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const formMethods = (0, react_hook_form_1.useForm)({
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined,
         defaultValues: {},
@@ -110708,11 +111184,20 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         if (!storedSnapshot)
             return;
         const { criteria } = JSON.parse(storedSnapshot);
+        if (!criteria)
+            return;
         for (let key in criteria) {
             formMethods.setValue(key, criteria[key]);
         }
     }, []);
-    async function handleSubmitSearch(data) {
+    function saveSnapshotToStorage(result) {
+        const filterableTableSnapshot = {
+            criteria: formMethods.getValues(),
+            ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+    }
+    async function handleSubmitSearchFlat(data) {
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
@@ -110728,13 +111213,28 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
             setIsReady(true);
         }
     }
-    function saveSnapshotToStorage(result) {
-        const filterableTableSnapshot = {
-            criteria: formMethods.getValues(),
-            storedObjects: result,
-        };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
-        console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
+    async function handleSubmitSearchSections(data) {
+        if (!sectionsFilterHandlers)
+            return;
+        setIsReady(false);
+        setError(null);
+        try {
+            const newSections = await sectionsFilterHandlers.onSubmitSections(data);
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
+        catch (err) {
+            if (err instanceof Error)
+                setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
+        }
+        finally {
+            setIsReady(true);
+        }
+    }
+    async function handleSubmitSearch(data) {
+        if (sectionsFilterHandlers)
+            return handleSubmitSearchSections(data);
+        return handleSubmitSearchFlat(data);
     }
     const handleReset = () => {
         const allFields = formMethods.getValues();
@@ -110744,6 +111244,11 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         }, {});
         console.log("Wartości po resecie:", resetValues);
         reset(resetValues);
+        if (sectionsFilterHandlers) {
+            const newSections = sectionsFilterHandlers.onResetSections();
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
     };
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
@@ -110855,6 +111360,7 @@ const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContex
 const FilterPanel_1 = __webpack_require__(/*! ./FilterPanel */ "./src/View/Resultsets/FilterableTable/FilterPanel.tsx");
 const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
 const Section_1 = __webpack_require__(/*! ./Section */ "./src/View/Resultsets/FilterableTable/Section.tsx");
+const ToggleExpandButton_1 = __webpack_require__(/*! ./ToggleExpandButton */ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -110866,13 +111372,37 @@ const Section_1 = __webpack_require__(/*! ./Section */ "./src/View/Resultsets/Fi
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, snapshotMode = "criteria+objects", sectionsFilterHandlers, }) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
+    const [editingSectionId, setEditingSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
+    const [globalExpandTrigger, setGlobalExpandTrigger] = (0, react_1.useState)(null);
+    /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
+    function findPathToNode(nodes, targetId, currentPath = []) {
+        for (const node of nodes) {
+            const newPath = [...currentPath, node.id];
+            if (node.id === targetId) {
+                return newPath;
+            }
+            if (node.children.length > 0) {
+                const result = findPathToNode(node.children, targetId, newPath);
+                if (result)
+                    return result;
+            }
+        }
+        return null;
+    }
+    /** Oblicza zbiór ID sekcji na ścieżce od korzenia do aktywnej sekcji */
+    const activePathSet = (0, react_1.useMemo)(() => {
+        if (!activeSectionId || sections.length === 0)
+            return new Set();
+        const path = findPathToNode(sections, activeSectionId);
+        return new Set(path || []);
+    }, [activeSectionId, sections]);
     function initObjects() {
         if (initialObjects)
             return initialObjects;
@@ -110895,8 +111425,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         const currentSnapshot = sessionStorage.getItem(snapshotName);
         if (!currentSnapshot)
             return;
+        if (snapshotMode === "criteria-only")
+            return;
+        const parsedSnapshot = JSON.parse(currentSnapshot);
         const updatedFilterableTableSnapshot = {
-            criteria: JSON.parse(currentSnapshot),
+            ...parsedSnapshot,
             storedObjects: repository.items,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
@@ -110909,6 +111442,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             setSections(initialSections);
         }
     }, [externalUpdate]);
+    (0, react_1.useEffect)(() => {
+        if (sections.length === 0 && initialSections.length > 0) {
+            setSections(initialSections);
+        }
+    }, [initialSections]);
     function handleAddObject(object) {
         setObjects([...repository.items]);
         updateSnapshot();
@@ -110950,15 +111488,39 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
+        // Ustaw kontekst (tło propaguje się w górę przez activePathSet)
         setActiveSectionId(sectionNode.id);
+        // Ustaw fokus edycji (menu widoczne tylko tutaj)
+        setEditingSectionId(sectionNode.id);
+        // Odznacz wiersz tabeli (liść)
+        setActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
         repository.addToCurrentItems(sectionNode.dataItem.id);
         console.log("handleHeaderClick", repository.currentItems);
     }
-    const handleRowClick = (id) => {
+    function showFilter() {
+        if (!FilterBodyComponent)
+            return false;
+        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
+        if (sections.length > 0)
+            return sections.length >= 5 && isReady;
+        // Tryb płaski: zawsze pokazuj
+        return true;
+    }
+    const handleRowClick = (id, parentSectionId) => {
         setActiveRowId(id);
+        // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
+        setEditingSectionId("");
+        // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
+        if (parentSectionId) {
+            setActiveSectionId(parentSectionId);
+        }
+        else {
+            // W trybie bez sekcji (czysta tabela) wyczyść activeSectionId
+            setActiveSectionId("");
+        }
         console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
         console.log("currentItems:", repository.currentItems);
@@ -110966,19 +111528,21 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, editingSectionId: editingSectionId, activePathSet: activePathSet, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
-                    index < AddNewButtonComponents.length - 1 && " ")))))),
-            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
+                    index < AddNewButtonComponents.length - 1 && " "))))),
+                sections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                    react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: globalExpandTrigger, setExpandTrigger: setGlobalExpandTrigger, className: "d-flex align-items-center justify-content-center me-3" })))),
+            FilterBodyComponent && showFilter() && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                react_1.default.createElement(react_bootstrap_1.Col, null, sections.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                         showTableHeader: showTableHeader,
                         onRowClick: handleRowClick,
                     } })) : (react_1.default.createElement(react_1.default.Fragment, null,
@@ -110989,6 +111553,14 @@ exports["default"] = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
+        // Determine if this is a "Card Section" (like Contract) or regular list
+        // If it has a border color, Section.tsx will render its own Card style wrapper.
+        // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+        const isSelfContainedCard = !!section.borderColor;
+        if (isSelfContainedCard) {
+            return (react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick }));
+        }
+        // Initial behavior for standard sections
         return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light" },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
@@ -111070,7 +111642,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: react_1.default.createElement(react_1.default.Fragment, null, "nowy tytu\u0142"),
                 children: [],
                 leaves: [],
             };
@@ -111160,14 +111732,19 @@ exports.FilterableTableContext = (0, react_1.createContext)({
     selectedObjectRoute: "",
     activeRowId: 0,
     activeSectionId: "",
+    editingSectionId: "",
+    activePathSet: new Set(),
     EditButtonComponent: undefined,
     isDeletable: true,
     isCopyable: false,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
+    globalExpandTrigger: null,
+    snapshotMode: "criteria+objects",
+    sectionsFilterHandlers: undefined,
 });
-function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, children, }) {
+function FilterableTableProvider({ id, objects, setObjects, repository, handleAddObject, handleEditObject, handleDeleteObject, sections, setSections, handleAddSection, handleEditSection, handleCopyObject, handleDeleteSection, tableStructure, selectedObjectRoute, activeRowId, activeSectionId, editingSectionId, activePathSet, EditButtonComponent, isDeletable = true, isCopyable = false, externalUpdate, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, globalExpandTrigger, snapshotMode, sectionsFilterHandlers, children, }) {
     const FilterableTableContextGeneric = exports.FilterableTableContext;
     return (react_1.default.createElement(FilterableTableContextGeneric.Provider, { value: {
             id,
@@ -111187,12 +111764,17 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             selectedObjectRoute,
             activeRowId,
             activeSectionId,
+            editingSectionId,
+            activePathSet,
             EditButtonComponent,
             isDeletable,
             isCopyable,
             externalUpdate,
             shouldRetrieveDataBeforeEdit,
             specialRetrieveActionRoute,
+            globalExpandTrigger,
+            snapshotMode,
+            sectionsFilterHandlers,
         } }, children));
 }
 exports.FilterableTableProvider = FilterableTableProvider;
@@ -111248,6 +111830,7 @@ const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
+const ToolsRouting_1 = __webpack_require__(/*! ../../../React/Tools/ToolsRouting */ "./src/React/Tools/ToolsRouting.ts");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -111262,16 +111845,21 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         return "";
     }
     return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
+            if (target)
+                navigate(target, { state: { repository } });
+        }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
+            // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { xs: "1" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-center" },
+                " ",
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
 exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
@@ -111335,7 +111923,7 @@ exports.CopyModalButton = CopyModalButton;
  */
 function getRowClass({ isActive, isStriped }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",
@@ -111389,7 +111977,7 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ./FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
 const ErrorBoundary_1 = __importDefault(__webpack_require__(/*! ../../Modals/ErrorBoundary */ "./src/View/Modals/ErrorBoundary.tsx"));
-function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStriped = true, }) {
+function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStriped = true, parentSectionId, }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
@@ -111398,7 +111986,8 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null,
-            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
+            showTableHeader && (react_1.default.createElement("div", { className: "d-none d-md-block" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column))))))),
             react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
                 const isActive = dataObject.id === activeRowId;
                 const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
@@ -111406,7 +111995,7 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
                     react_1.default.createElement("div", null,
                         react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
                             //key={dataObject.id}
-                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: onRowClick }))));
+                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: (id) => onRowClick(id, parentSectionId) }))));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;
@@ -111466,29 +112055,51 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Section = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+__webpack_require__(/*! ./FilterableTable.css */ "./src/View/Resultsets/FilterableTable/FilterableTable.css");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ./FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
 const ResultSetTable_1 = __webpack_require__(/*! ./ResultSetTable */ "./src/View/Resultsets/FilterableTable/ResultSetTable.tsx");
-__webpack_require__(/*! ./FilterableTable.css */ "./src/View/Resultsets/FilterableTable/FilterableTable.css");
-const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
-function Section({ sectionNode, resulsetTableProps, onClick, }) {
-    const { activeSectionId } = (0, FilterableTableContext_1.useFilterableTableContext)();
-    const [isActive, setIsActive] = (0, react_1.useState)(activeSectionId === sectionNode.id);
-    const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
+const ToggleExpandButton_1 = __webpack_require__(/*! ./ToggleExpandButton */ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx");
+const ToolsRouting_1 = __webpack_require__(/*! ../../../React/Tools/ToolsRouting */ "./src/React/Tools/ToolsRouting.ts");
+function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigger, }) {
+    const { activePathSet, editingSectionId, sections, globalExpandTrigger } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    // Tło: czy sekcja jest na ścieżce od korzenia do aktywnej
+    const isOnActivePath = activePathSet.has(sectionNode.id);
+    // Menu: czy to jest aktualnie edytowana sekcja
+    const isEditing = editingSectionId === sectionNode.id;
+    const [activeKey, setActiveKey] = (0, react_1.useState)(["0"]);
+    const [localExpandTrigger, setLocalExpandTrigger] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
-        setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id, sections]);
-    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: "mb-2", key: sectionNode.id, alwaysOpen: true, defaultActiveKey: ["0"] },
+        if (globalExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        }
+        else if (globalExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [globalExpandTrigger]);
+    (0, react_1.useEffect)(() => {
+        if (childrenExpandTrigger?.action === "COLLAPSE") {
+            setActiveKey([]);
+        }
+        else if (childrenExpandTrigger?.action === "EXPAND") {
+            setActiveKey(["0"]);
+        }
+    }, [childrenExpandTrigger]);
+    // Obliczanie klas dla kontenera Accordion (karta vs zwykły)
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const accordionClassName = hasCustomBorder ? "mb-4 section-accordion section-card" : "mb-2 section-accordion";
+    return sectionNode.isInAccordion ? (react_1.default.createElement(react_bootstrap_1.Accordion, { className: accordionClassName, style: hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined, key: sectionNode.id, alwaysOpen: true, activeKey: activeKey, onSelect: (e) => setActiveKey(e) },
         react_1.default.createElement(react_bootstrap_1.Accordion.Item, { eventKey: "0" },
             react_1.default.createElement(react_bootstrap_1.Accordion.Header, null,
-                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick })),
+                react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isOnActivePath: isOnActivePath, isEditing: isEditing, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger })),
             react_1.default.createElement(react_bootstrap_1.Accordion.Body, null,
-                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick }))))) : (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isActive: isActive, onClick: onClick }),
-        react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick })));
+                react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger }))))) : (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isOnActivePath: isOnActivePath, isEditing: isEditing, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger }),
+        react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger })));
 }
 exports.Section = Section;
-function SectionHeader({ sectionNode, onClick, isActive, }) {
+function SectionHeader({ sectionNode, onClick, isOnActivePath, isEditing, localExpandTrigger, setLocalExpandTrigger, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const { selectedObjectRoute, dataItem } = sectionNode;
@@ -111498,34 +112109,105 @@ function SectionHeader({ sectionNode, onClick, isActive, }) {
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
             color: `rgb(50, 130, 50)`,
+            textTransform: "none",
         };
     }
-    const headerStyle = {
-        backgroundColor: "aliceblue",
-        borderRadius: "0.25rem",
-    };
-    return (react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2", style: !sectionNode.isInAccordion ? headerStyle : undefined, onClick: () => onClick(sectionNode), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataItem.id);
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const isAccordionChild = !!sectionNode.isInAccordion;
+    // Base classes
+    let computedClassName = `
+        d-flex
+        flex-column flex-md-row
+        justify-content-md-between
+        align-items-start align-items-md-center
+        w-100
+        transition-base
+        section-header
+    `;
+    // Apply specific variants
+    if (hasCustomBorder) {
+        // "Card Header" style - clean, large padding, transparent base
+        computedClassName += " p-3";
+    }
+    else {
+        // "Default Header" style - smaller padding
+        computedClassName += " px-2 py-1 rounded";
+    }
+    // Active & Hover states (Colors)
+    // Tło: podświetlone dla wszystkich sekcji na ścieżce od korzenia
+    if (isOnActivePath) {
+        computedClassName += " state-active";
+    }
+    else {
+        computedClassName += " state-hover";
+    }
+    return (react_1.default.createElement("div", { className: computedClassName, onClick: () => onClick(sectionNode), onDoubleClick: () => {
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataItem.id);
+            if (target)
+                navigate(target);
         } },
-        react_1.default.createElement("div", { className: "d-flex align-items-center gap-2", style: { cursor: "pointer" } },
-            react_1.default.createElement("span", { style: makeTitleStyle() }, sectionNode.titleLabel),
-            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "tekst-muted small" },
+        react_1.default.createElement("div", { className: "\r\n                            d-flex\r\n                            align-items-center\r\n                            gap-2\r\n                            flex-grow-1\r\n                            min-w-0\r\n                        ", style: { cursor: "pointer" } },
+            react_1.default.createElement("div", { style: makeTitleStyle(), className: "flex-grow-1 text-break" }, sectionNode.title),
+            (sectionNode.leaves?.length || sectionNode.children.length) > 5 && (react_1.default.createElement("span", { className: "text-muted small flex-shrink-0" },
                 "[",
                 sectionNode.leaves?.length || sectionNode.children.length,
                 " pozycji]"))),
-        isActive && (react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 section-action-menu" },
+        isEditing && (react_1.default.createElement("div", { className: "\r\n                                d-flex\r\n                                align-items-center\r\n                                gap-2\r\n                                \r\n                                flex-shrink-0\r\n                                mt-2 mt-md-0\r\n                            " },
+            sectionNode.children.length > 0 && (react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: localExpandTrigger, setExpandTrigger: setLocalExpandTrigger, collapseTitle: "Zwi\u0144 dzieci", expandTitle: "Rozwi\u0144 dzieci", stopPropagation: true })),
             react_1.default.createElement(FilterableTableRow_1.RowActionMenu, { dataObject: sectionNode.dataItem, isDeletable: !!sectionNode.isDeletable, EditButtonComponent: sectionNode.EditButtonComponent, handleEditObject: handleEditSection, handleDeleteObject: handleDeleteSection, shouldRetrieveDataBeforeEdit: sectionNode.shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: sectionNode.specialRetrieveActionRoute, layout: "horizontal", sectionRepository: sectionNode.repository }),
             sectionNode.AddNewButtonComponent && (react_1.default.createElement(sectionNode.AddNewButtonComponent, { modalProps: {
                     onAddNew: handleAddSection,
                     contextData: sectionNode.dataItem,
                 } }))))));
 }
-function SectionBody({ sectionNode, resulsetTableProps, onClick, }) {
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick }))),
-        sectionNode.leaves && (react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves }))));
+// Jeśli karta (border), padding w body musi być dopasowany do stylistyki
+function SectionBody({ sectionNode, resulsetTableProps, onClick, localExpandTrigger, }) {
+    const hasCustomBorder = !!sectionNode.borderColor;
+    // KONTRAKTY (Karty): Padding ramki dla całej zawartości
+    const cardContentStyle = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
+    // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
+    const indentationStyle = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+    return (react_1.default.createElement("div", { style: cardContentStyle },
+        sectionNode.children.length > 0 && (react_1.default.createElement("div", { style: indentationStyle }, sectionNode.children.map((childNode, index) => (react_1.default.createElement(Section, { key: childNode.dataItem.id + childNode.type, sectionNode: childNode, resulsetTableProps: resulsetTableProps, onClick: onClick, childrenExpandTrigger: localExpandTrigger }))))),
+        sectionNode.leaves && (react_1.default.createElement("div", { className: "mt-2" },
+            react_1.default.createElement(ResultSetTable_1.ResultSetTable, { ...resulsetTableProps, filteredObjects: sectionNode.leaves, parentSectionId: sectionNode.id })))));
 }
+
+
+/***/ }),
+
+/***/ "./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx":
+/*!********************************************************************!*\
+  !*** ./src/View/Resultsets/FilterableTable/ToggleExpandButton.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ToggleExpandButton = void 0;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
+const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
+function ToggleExpandButton({ expandTrigger, setExpandTrigger, collapseTitle = "Zwiń wszystko", expandTitle = "Rozwiń wszystko", className = "d-flex align-items-center justify-content-center me-2", stopPropagation = false, }) {
+    const isCollapsed = expandTrigger?.action === "COLLAPSE";
+    return (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", className: className, onClick: (e) => {
+            if (stopPropagation)
+                e.stopPropagation();
+            setExpandTrigger({
+                action: isCollapsed ? "EXPAND" : "COLLAPSE",
+                id: Date.now(),
+            });
+        }, title: isCollapsed ? expandTitle : collapseTitle },
+        react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: isCollapsed ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
+}
+exports.ToggleExpandButton = ToggleExpandButton;
 
 
 /***/ }),
@@ -111611,7 +112293,6 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const FocusAreasController_1 = __webpack_require__(/*! ../FocusAreasController */ "./src/financialAidProgrammes/FocusAreas/FocusAreasController.ts");
-const FinancialAidProgrammesController_1 = __webpack_require__(/*! ../../FinancialAidProgrammesController */ "./src/financialAidProgrammes/FinancialAidProgrammesController.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 function ApplicationCallsFilterBody() {
     const { register, watch } = (0, FormContext_1.useFormContext)();
@@ -111622,9 +112303,9 @@ function ApplicationCallsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_focusArea" },
-            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPreloaded, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: false })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
             react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
@@ -111847,7 +112528,6 @@ const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modal
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const FocusAreasController_1 = __webpack_require__(/*! ../../FocusAreasController */ "./src/financialAidProgrammes/FocusAreas/FocusAreasController.ts");
-const FinancialAidProgrammesController_1 = __webpack_require__(/*! ../../../FinancialAidProgrammesController */ "./src/financialAidProgrammes/FinancialAidProgrammesController.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
 const GenericComponents_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function ApplicationCallModalBody({ isEditing, initialData }) {
@@ -111868,9 +112548,9 @@ function ApplicationCallModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !isEditing && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: true }))),
         _financialAidProgramme && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_focusArea" },
-            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPrefilled, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: true }))),
+            react_1.default.createElement(BussinesObjectSelectors_1.FocusAreaSelectorPreloaded, { repository: FocusAreasController_1.focusAreasRepository, _financialAidProgramme: _financialAidProgramme, showValidationInfo: true }))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "description" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Opis"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
@@ -112046,7 +112726,6 @@ const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-const FinancialAidProgrammesController_1 = __webpack_require__(/*! ../FinancialAidProgrammesController */ "./src/financialAidProgrammes/FinancialAidProgrammesController.ts");
 function FocusAreasFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 6, xs: 12 },
@@ -112055,7 +112734,7 @@ function FocusAreasFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: false }))));
 }
 exports.FocusAreasFilterBody = FocusAreasFilterBody;
 
@@ -112167,7 +112846,6 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const FinancialAidProgrammesController_1 = __webpack_require__(/*! ../../FinancialAidProgrammesController */ "./src/financialAidProgrammes/FinancialAidProgrammesController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 function FocusAreaModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
@@ -112184,7 +112862,7 @@ function FocusAreaModalBody({ isEditing, initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_financialAidProgramme" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
-            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, showValidationInfo: true })),
+            react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: true })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "name" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nazwa"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119", isValid: !errors?.name, isInvalid: !!errors?.name, ...register("name") }),

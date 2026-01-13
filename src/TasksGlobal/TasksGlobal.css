@@ -1,0 +1,45 @@
+/* ===== TasksGlobal Specific Styles ===== */
+:root {
+    /* Colors specific to Contracts logic */
+    --section-border-our: #2196F3;   /* niebieski - OUR contracts */
+    --section-border-other: #FF9800; /* pomarańczowy - OTHER contracts */
+    --section-border-width: 4px;
+}
+
+/* Contract Typography */
+.contract-id {
+    font-size: var(--section-text-xs);
+    font-weight: 700;
+    color: var(--section-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.contract-title {
+    font-size: var(--section-text-lg);
+    color: var(--section-text-primary);
+    margin-bottom: 0;
+}
+
+.contract-status-badge {
+    font-size: var(--section-text-10) !important;
+}
+
+.contract-contractors {
+    font-size: var(--section-text-sm) !important;
+    color: var(--section-text-secondary);
+}
+
+.contract-metadata {
+    font-size: var(--section-text-sm);
+    color: var(--section-text-secondary);
+}
+
+.contract-metadata-icon {
+    font-size: 1.125rem;
+    color: var(--section-text-muted);
+}
+
+.contract-metadata strong {
+    color: var(--section-text-primary);
+}

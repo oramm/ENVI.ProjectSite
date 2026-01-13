@@ -33,7 +33,6 @@ const react_bootstrap_1 = require("react-bootstrap");
 const GenericComponents_1 = require("../../../../View/Modals/CommonFormComponents/GenericComponents");
 const OtherAttributesSelectors_1 = require("../../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
 const BussinesObjectSelectors_1 = require("../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
-const OffersController_1 = require("../../OffersController");
 const MainSetupReact_1 = __importDefault(require("../../../../React/MainSetupReact"));
 const CommonComponentsController_1 = require("../../../../View/Resultsets/CommonComponentsController");
 function SendOfferModalBody({ initialData }) {
@@ -63,7 +62,7 @@ function SendOfferModalBody({ initialData }) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_recipients", className: "mb-4" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Adresaci maila"),
-            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_newEvent._recipients", multiple: true, repository: OffersController_1.personsRepository, allowNew: false }),
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_newEvent._recipients", multiple: true, allowNew: false }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true },
                 react_1.default.createElement("div", null, "Mo\u017Cesz wybra\u0107 osoby z listy, albo wpisa\u0107 adresy mailowe r\u0119cznie (jako osobne niebieskie bloczki)"))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "additionalMessage", className: "mb-4" },

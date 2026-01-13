@@ -3,6 +3,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import { RowStructure } from "./FilterableTableTypes";
+import { SectionsFilterHandlers, SnapshotMode } from "./FilterableTableTypes";
 import { SectionNode } from "./Section";
 
 type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
@@ -23,12 +24,20 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     selectedObjectRoute: string;
     activeRowId: number;
     activeSectionId: string;
+    /** ID sekcji z widocznym Action Menu (tylko jedna naraz) */
+    editingSectionId: string;
+    /** Zbiór ID sekcji na ścieżce od korzenia do aktywnej (dla podświetlenia tła) */
+    activePathSet: Set<string>;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable: boolean;
     isCopyable: boolean;
     externalUpdate: number;
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
+    globalExpandTrigger?: { action: "COLLAPSE" | "EXPAND"; id: number } | null;
+
+    snapshotMode?: SnapshotMode;
+    sectionsFilterHandlers?: SectionsFilterHandlers<DataItemType>;
 };
 
 export const FilterableTableContext = createContext<FilterableTableContextProps<RepositoryDataItem>>({
@@ -49,12 +58,18 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     selectedObjectRoute: "",
     activeRowId: 0,
     activeSectionId: "",
+    editingSectionId: "",
+    activePathSet: new Set<string>(),
     EditButtonComponent: undefined,
     isDeletable: true,
     isCopyable: false,
     externalUpdate: 0,
     shouldRetrieveDataBeforeEdit: false,
     specialRetrieveActionRoute: undefined,
+    globalExpandTrigger: null,
+
+    snapshotMode: "criteria+objects",
+    sectionsFilterHandlers: undefined,
 });
 
 export function FilterableTableProvider<Item extends RepositoryDataItem>({
@@ -75,12 +90,17 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     selectedObjectRoute,
     activeRowId,
     activeSectionId,
+    editingSectionId,
+    activePathSet,
     EditButtonComponent,
     isDeletable = true,
     isCopyable = false,
     externalUpdate,
     shouldRetrieveDataBeforeEdit = false,
     specialRetrieveActionRoute,
+    globalExpandTrigger,
+    snapshotMode,
+    sectionsFilterHandlers,
     children,
 }: React.PropsWithChildren<FilterableTableContextProps<Item>>) {
     const FilterableTableContextGeneric = FilterableTableContext as unknown as React.Context<
@@ -107,12 +127,17 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 selectedObjectRoute,
                 activeRowId,
                 activeSectionId,
+                editingSectionId,
+                activePathSet,
                 EditButtonComponent,
                 isDeletable,
                 isCopyable,
                 externalUpdate,
                 shouldRetrieveDataBeforeEdit,
                 specialRetrieveActionRoute,
+                globalExpandTrigger,
+                snapshotMode,
+                sectionsFilterHandlers,
             }}
         >
             {children}

@@ -21,7 +21,6 @@ export function PersonsFilterBody() {
                 <Form.Label>Podmiot</Form.Label>
                 <EntitySelector
                     name="_entities"
-                    repository={entitiesRepository}
                     multiple={true}
                     showValidationInfo={false}
                 />

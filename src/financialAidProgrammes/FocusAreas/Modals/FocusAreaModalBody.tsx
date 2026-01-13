@@ -31,7 +31,6 @@ export function FocusAreaModalBody({ isEditing, initialData }: ModalBodyProps<Fo
             <Form.Group controlId="_financialAidProgramme">
                 <Form.Label>Program wsparcia</Form.Label>
                 <FinancialAidProgrammeSelector
-                    repository={financialAidProgrammesRepository}
                     showValidationInfo={true}
                 />
             </Form.Group>

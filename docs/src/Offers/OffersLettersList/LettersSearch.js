@@ -62,12 +62,24 @@ function OffersLettersSearch({ title }) {
         const icon = letter.isOur ? free_solid_svg_icons_1.faPaperPlane : free_solid_svg_icons_1.faEnvelope;
         return react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: icon, size: "lg" });
     }
+    function renderRowContent(letter) {
+        const cellStyle = {
+            wordBreak: "break-word",
+            whiteSpace: 'pre-wrap',
+        };
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            letter.number && (react_1.default.createElement("div", { style: cellStyle },
+                "Numer: ",
+                react_1.default.createElement("strong", null, letter.number))),
+            react_1.default.createElement("div", { className: "mt-2", style: cellStyle },
+                "Dotyczy: ",
+                letter.description)));
+    }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "offersLetters", title: title, FilterBodyComponent: LetterFilterBody_1.LettersFilterBody, tableStructure: [
             { renderThBody: () => react_1.default.createElement("i", { className: "fa fa-inbox fa-lg" }), renderTdBody: renderIconTdBody, colMd: 1 },
             { header: "Utworzono", objectAttributeToShow: "creationDate", colMd: 1 },
             { header: "Wysłano", objectAttributeToShow: "registrationDate", colMd: 1 },
-            { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-            { header: "Dotyczy", objectAttributeToShow: "description", colMd: 5 },
+            { header: "Dane Pisma", renderTdBody: renderRowContent, colLg: 4 },
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }

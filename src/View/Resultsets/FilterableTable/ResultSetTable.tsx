@@ -8,9 +8,11 @@ import ErrorBoundary from "../../Modals/ErrorBoundary";
 
 export type ResultSetTableProps<DataItemType extends RepositoryDataItem> = {
     showTableHeader: boolean;
-    onRowClick: (id: number) => void;
+    onRowClick: (id: number, parentSectionId?: string) => void;
     filteredObjects?: DataItemType[];
     isStriped?: boolean;
+    /** ID sekcji rodzica dla liści (używane do podświetlenia ścieżki przy kliknięciu) */
+    parentSectionId?: string;
 };
 
 export function ResultSetTable<DataItemType extends RepositoryDataItem>({
@@ -18,6 +20,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
     onRowClick,
     filteredObjects,
     isStriped = true,
+    parentSectionId,
 }: ResultSetTableProps<DataItemType>) {
     const { objects, activeRowId, tableStructure } = useFilterableTableContext<DataItemType>();
     const [objectsToShow, setObjectsToShow] = useState<DataItemType[]>([]);
@@ -31,13 +34,15 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
         <>
             <div>
                 {showTableHeader && (
-                    <Row className="fw-bold text-secondary d-none d-md-flex">
-                        {tableStructure.map((column, index) => (
-                            <Col key={column.header || index} {...getColSize(column)} className="text-center">
-                                {renderHeaderBody(column)}
-                            </Col>
-                        ))}
-                    </Row>
+                    <div className="d-none d-md-block">
+                        <Row className="fw-bold text-secondary">
+                            {tableStructure.map((column, index) => (
+                                <Col key={column.header || index} {...getColSize(column)} className="text-center">
+                                    {renderHeaderBody(column)}
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
                 )}
                 <div className="d-flex flex-column gap-2">
                     {objectsToShow.map((dataObject, index) => {
@@ -52,7 +57,7 @@ export function ResultSetTable<DataItemType extends RepositoryDataItem>({
                                         dataObject={dataObject}
                                         isActive={isActive}
                                         isStriped={isStripedRow}
-                                        onRowClick={onRowClick}
+                                        onRowClick={(id) => onRowClick(id, parentSectionId)}
                                     />
                                 </div>
                             </ErrorBoundary>

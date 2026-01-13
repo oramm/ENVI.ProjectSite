@@ -30,6 +30,7 @@ const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterPanel_1 = require("./FilterPanel");
 const ResultSetTable_1 = require("./ResultSetTable");
 const Section_1 = require("./Section");
+const ToggleExpandButton_1 = require("./ToggleExpandButton");
 /** Wyświetla tablicę z filtrem i modalami CRUD
  * @param title tytuł tabeli (domyślnie pusty)
  * @initialObjects obiekty do wyświetlenia na starcie (domyślnie pusta tablica)
@@ -41,13 +42,37 @@ const Section_1 = require("./Section");
  * @param FilterBodyComponent komponent zawartości filtra
  * @param selectedObjectRoute ścieżka do wyświetlenia szczegółów obiektu
  */
-function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, }) {
+function FilterableTable({ id, title, showTableHeader = true, repository, initialSections = [], tableStructure, AddNewButtonComponents = [], EditButtonComponent, isDeletable = true, isCopyable = false, FilterBodyComponent, selectedObjectRoute = "", initialObjects = undefined, onRowClick, externalUpdate = 0, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, snapshotMode = "criteria+objects", sectionsFilterHandlers, }) {
     const snapshotName = `filtersableTableSnapshot_${id}`;
     const [isReady, setIsReady] = (0, react_1.useState)(true);
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
+    const [editingSectionId, setEditingSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
+    const [globalExpandTrigger, setGlobalExpandTrigger] = (0, react_1.useState)(null);
+    /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
+    function findPathToNode(nodes, targetId, currentPath = []) {
+        for (const node of nodes) {
+            const newPath = [...currentPath, node.id];
+            if (node.id === targetId) {
+                return newPath;
+            }
+            if (node.children.length > 0) {
+                const result = findPathToNode(node.children, targetId, newPath);
+                if (result)
+                    return result;
+            }
+        }
+        return null;
+    }
+    /** Oblicza zbiór ID sekcji na ścieżce od korzenia do aktywnej sekcji */
+    const activePathSet = (0, react_1.useMemo)(() => {
+        if (!activeSectionId || sections.length === 0)
+            return new Set();
+        const path = findPathToNode(sections, activeSectionId);
+        return new Set(path || []);
+    }, [activeSectionId, sections]);
     function initObjects() {
         if (initialObjects)
             return initialObjects;
@@ -70,8 +95,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         const currentSnapshot = sessionStorage.getItem(snapshotName);
         if (!currentSnapshot)
             return;
+        if (snapshotMode === "criteria-only")
+            return;
+        const parsedSnapshot = JSON.parse(currentSnapshot);
         const updatedFilterableTableSnapshot = {
-            criteria: JSON.parse(currentSnapshot),
+            ...parsedSnapshot,
             storedObjects: repository.items,
         };
         sessionStorage.setItem(snapshotName, JSON.stringify(updatedFilterableTableSnapshot));
@@ -84,6 +112,11 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             setSections(initialSections);
         }
     }, [externalUpdate]);
+    (0, react_1.useEffect)(() => {
+        if (sections.length === 0 && initialSections.length > 0) {
+            setSections(initialSections);
+        }
+    }, [initialSections]);
     function handleAddObject(object) {
         setObjects([...repository.items]);
         updateSnapshot();
@@ -125,15 +158,39 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
+        // Ustaw kontekst (tło propaguje się w górę przez activePathSet)
         setActiveSectionId(sectionNode.id);
+        // Ustaw fokus edycji (menu widoczne tylko tutaj)
+        setEditingSectionId(sectionNode.id);
+        // Odznacz wiersz tabeli (liść)
+        setActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
         repository.addToCurrentItems(sectionNode.dataItem.id);
         console.log("handleHeaderClick", repository.currentItems);
     }
-    const handleRowClick = (id) => {
+    function showFilter() {
+        if (!FilterBodyComponent)
+            return false;
+        // Tryb sekcji: wymaga min. 5 sekcji i gotowości komponentu
+        if (sections.length > 0)
+            return sections.length >= 5 && isReady;
+        // Tryb płaski: zawsze pokazuj
+        return true;
+    }
+    const handleRowClick = (id, parentSectionId) => {
         setActiveRowId(id);
+        // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
+        setEditingSectionId("");
+        // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
+        if (parentSectionId) {
+            setActiveSectionId(parentSectionId);
+        }
+        else {
+            // W trybie bez sekcji (czysta tabela) wyczyść activeSectionId
+            setActiveSectionId("");
+        }
         console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
         console.log("currentItems:", repository.currentItems);
@@ -141,19 +198,21 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, editingSectionId: editingSectionId, activePathSet: activePathSet, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
-            react_1.default.createElement(react_bootstrap_1.Row, null,
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
                 AddNewButtonComponents && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" }, AddNewButtonComponents.map((ButtonComponent, index) => (react_1.default.createElement(react_1.default.Fragment, { key: index },
                     react_1.default.createElement(ButtonComponent, { modalProps: { onAddNew: handleAddObject, repository } }),
-                    index < AddNewButtonComponents.length - 1 && " ")))))),
-            FilterBodyComponent && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
+                    index < AddNewButtonComponents.length - 1 && " "))))),
+                sections.length > 0 && (react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                    react_1.default.createElement(ToggleExpandButton_1.ToggleExpandButton, { expandTrigger: globalExpandTrigger, setExpandTrigger: setGlobalExpandTrigger, className: "d-flex align-items-center justify-content-center me-3" })))),
+            FilterBodyComponent && showFilter() && (react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3 mb-3" },
                 react_1.default.createElement(FilterPanel_1.FilterPanel, { FilterBodyComponent: FilterBodyComponent, repository: repository }))),
             !isReady && (react_1.default.createElement(react_bootstrap_1.Row, null,
                 react_1.default.createElement("progress", { className: "mt-1 mb-1", style: { height: "5px" } }))),
             react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, null, initialSections?.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
+                react_1.default.createElement(react_bootstrap_1.Col, null, sections.length > 0 ? (react_1.default.createElement(Sections, { onClick: handleHeaderClick, resulsetTableProps: {
                         showTableHeader: showTableHeader,
                         onRowClick: handleRowClick,
                     } })) : (react_1.default.createElement(react_1.default.Fragment, null,
@@ -164,6 +223,14 @@ exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
+        // Determine if this is a "Card Section" (like Contract) or regular list
+        // If it has a border color, Section.tsx will render its own Card style wrapper.
+        // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+        const isSelfContainedCard = !!section.borderColor;
+        if (isSelfContainedCard) {
+            return (react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick }));
+        }
+        // Initial behavior for standard sections
         return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light" },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
@@ -245,7 +312,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: react_1.default.createElement(react_1.default.Fragment, null, "nowy tytu\u0142"),
                 children: [],
                 leaves: [],
             };

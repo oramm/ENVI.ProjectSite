@@ -425,7 +425,7 @@ type FocusAreaSelector1Props = {
  * @param showValidationInfo czy pokazywać informacje o walidacji (domyślnie true)
  * @param required czy pole jest wymagane (walidacja) - domyślnie false
  */
-export function FocusAreaSelectorPrefilled({
+export function FocusAreaSelectorPreloaded({
     repository,
     _financialAidProgramme,
     required = false,
@@ -1257,7 +1257,7 @@ export function PersonSelectorPreloaded({
 
 function groupByMilestone(cases: Case[]) {
     return cases.reduce<Record<string, Case[]>>((groups, item) => {
-        const key = item._parent._FolderNumber_TypeName_Name ?? "Brak danych";
+        const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
         if (!groups[key]) {
             groups[key] = [];
         }
@@ -1280,9 +1280,13 @@ function renderCaseMenu(
             {index !== 0 && <Menu.Divider />}
             <Menu.Header>{milestoneName}</Menu.Header>
             {groupedResults[milestoneName].map((item) => {
+                const folderNumber = item._type?.folderNumber ?? "";
+                const typeName = item._type?.name ?? "";
+                const folderName = item._folderName ?? "";
+
                 const menuItem = (
                     <MenuItem key={index} option={item} position={index}>
-                        {item._type.folderNumber} {item._type.name} {item._folderName}
+                        {folderNumber} {typeName} {folderName}
                     </MenuItem>
                 );
 

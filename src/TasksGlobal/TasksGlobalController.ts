@@ -1,9 +1,7 @@
 import {
     Case,
-    CaseType,
     EntityData,
     MilestoneData,
-    MilestoneType,
     OtherContract,
     OurContract,
     ProjectData,
@@ -24,7 +22,7 @@ export const contractsWithChildrenRepository = new RepositoryReact<ContractsWith
 
 export const contractsRepository = new RepositoryReact<OurContract | OtherContract>({
     actionRoutes: {
-        getRoute: "contractsWitchChildren",
+        getRoute: "contractsWithChildren",
         addNewRoute: "contractReact",
         editRoute: "contract",
         deleteRoute: "contract",

@@ -16,7 +16,7 @@ exports.contractsWithChildrenRepository = new RepositoryReact_1.default({
 });
 exports.contractsRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: "contractsWitchChildren",
+        getRoute: "contractsWithChildren",
         addNewRoute: "contractReact",
         editRoute: "contract",
         deleteRoute: "contract",

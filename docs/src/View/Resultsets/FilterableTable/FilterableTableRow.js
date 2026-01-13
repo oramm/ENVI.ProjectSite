@@ -31,6 +31,7 @@ const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const react_bootstrap_1 = require("react-bootstrap");
 const ResultSetTable_1 = require("./ResultSetTable");
+const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -45,16 +46,21 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         return "";
     }
     return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
+            if (target)
+                navigate(target, { state: { repository } });
+        }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
+            // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { xs: "1" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-center" },
+                " ",
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
 exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
@@ -118,7 +124,7 @@ exports.CopyModalButton = CopyModalButton;
  */
 function getRowClass({ isActive, isStriped }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",

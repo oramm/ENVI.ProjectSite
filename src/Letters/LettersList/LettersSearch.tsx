@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
-import { lettersRepository } from "./LettersController";
-import { LettersFilterBody } from "./LetterFilterBody";
-import {
-    LetterEditModalButton,
-    IncomingLetterAddNewModalButton,
-    OurLetterAddNewModalButton,
-    ExportOurLetterContractToPDFButton,
-} from "./Modals/LetterModalButtons";
-import { EntityData, IncomingLetterContract, Letter, OurLetterContract } from "../../../Typings/bussinesTypes";
+import { faEnvelope, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import ToolsDate from "../../React/Tools/ToolsDate";
+import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
-import Tools from "../../React/Tools/Tools";
+import { EntityData, IncomingLetterContract, OurLetterContract } from "../../../Typings/bussinesTypes";
 import MainSetup from "../../React/MainSetupReact";
-import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
+import Tools from "../../React/Tools/Tools";
+import ToolsDate from "../../React/Tools/ToolsDate";
 import { PartialEditTrigger } from "../../View/Modals/GeneralModalButtons";
+import { LetterStatusBadge } from "../../View/Resultsets/CommonComponents";
+import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
+import { LettersFilterBody } from "./LetterFilterBody";
+import { lettersRepository } from "./LettersController";
 import { LetterModalBodyStatus } from "./Modals/LetterModalBodiesPartial";
+import {
+    ExportOurLetterContractToPDFButton,
+    IncomingLetterAddNewModalButton,
+    LetterEditModalButton,
+    OurLetterAddNewModalButton,
+} from "./Modals/LetterModalButtons";
 
 export default function LettersSearch({ title }: { title: string }) {
     useEffect(() => {
@@ -111,7 +111,9 @@ export default function LettersSearch({ title }: { title: string }) {
                     modalSubtitle: `Dotyczy: ${letter.description}`,
                     repository: lettersRepository,
                     ModalBodyComponent: LetterModalBodyStatus,
-                    onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
+                    onEdit: (editedFields) => {
+                        handleEditObject({ ...letter, ...editedFields });
+                    },
                     fieldsToUpdate: ["status"],
                 }}
             >
@@ -132,19 +134,22 @@ export default function LettersSearch({ title }: { title: string }) {
                     Dotyczy: {letter.description}
                     {letter.relatedLetterNumber && (
                         <>
-                            <br/>W odpowiedzi na pismo nr: {letter.relatedLetterNumber}
+                            <br />W odpowiedzi na pismo nr: {letter.relatedLetterNumber}
                         </>
                     )}
                     {letter.responseDueDate && (
                         <>
-                            <br/>Wymagana odpowiedzi do dnia: {ToolsDate.dateDMYtoYMD(ToolsDate.dateISOToDMY(letter.responseDueDate))}
+                            <br />
+                            Wymagana odpowiedzi do dnia:{" "}
+                            {ToolsDate.dateDMYtoYMD(ToolsDate.dateISOToDMY(letter.responseDueDate))}
                         </>
-                    )} 
+                    )}
                     {letter.responseIKNumber && (
                         <>
-                            <br/>Odpowiedź IK: {letter.responseIKNumber}
+                            <br />
+                            Odpowiedź IK: {letter.responseIKNumber}
                         </>
-                    )}                
+                    )}
                 </div>
                 {letter.isOur && <ExportToPDFButtonWithError ourLetterContract={letter} isActive={isActive} />}
                 {renderLastEvent(letter)}

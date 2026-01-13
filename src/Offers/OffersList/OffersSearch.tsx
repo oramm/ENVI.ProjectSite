@@ -199,7 +199,7 @@ export default function OffersSearch({ title }: { title?: string }) {
                             <OfferBondStatusBadge status={offer._offerBond.status} />
                         </small>
                     </div>
-                    <Card.Text>
+                    <Card.Text as="div">
                         {offer._offerBond.form}{" "}
                         {offer._offerBond.form === "Gwarancja" && <>ważna do: {offer._offerBond.expiryDate}</>}
                         <div>{offer._offerBond.paymentData}</div>

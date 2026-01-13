@@ -154,7 +154,7 @@ function InvoiceStatusBadge({ status }) {
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
 exports.InvoiceStatusBadge = InvoiceStatusBadge;
-function ContractStatusBadge({ status }) {
+function ContractStatusBadge({ status, className, style, }) {
     let variant;
     let textMode = "light";
     switch (status) {
@@ -174,7 +174,7 @@ function ContractStatusBadge({ status }) {
         default:
             variant = "secondary";
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode, className: className, style: style }, status));
 }
 exports.ContractStatusBadge = ContractStatusBadge;
 function MilestoneStatusBadge({ status }) {

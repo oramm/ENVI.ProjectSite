@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import {
     FinancialAidProgrammeSelector,
     FocusAreaSelector,
-    FocusAreaSelectorPrefilled,
+    FocusAreaSelectorPreloaded,
 } from "../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 import { Col, Form, Row } from "react-bootstrap";
 import { useFormContext } from "../../../../View/Modals/FormContext";
@@ -42,15 +42,12 @@ export function ApplicationCallModalBody({ isEditing, initialData }: ModalBodyPr
             {!isEditing && (
                 <Form.Group controlId="_financialAidProgramme">
                     <Form.Label>Program wsparcia</Form.Label>
-                    <FinancialAidProgrammeSelector
-                        repository={financialAidProgrammesRepository}
-                        showValidationInfo={true}
-                    />
+                    <FinancialAidProgrammeSelector showValidationInfo={true} />
                 </Form.Group>
             )}
             {_financialAidProgramme && (
                 <Form.Group controlId="_focusArea">
-                    <FocusAreaSelectorPrefilled
+                    <FocusAreaSelectorPreloaded
                         repository={focusAreasRepository}
                         _financialAidProgramme={_financialAidProgramme}
                         showValidationInfo={true}

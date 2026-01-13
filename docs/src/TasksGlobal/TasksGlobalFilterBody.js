@@ -6,18 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksGlobalFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const FormContext_1 = require("../View/Modals/FormContext");
-const TasksFilterBodyCommonFields_1 = require("../Contracts/ContractsList/ContractDetails/Tasks/TasksFilterBodyCommonFields");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
+const MainSetupReact_1 = __importDefault(require("../React/MainSetupReact"));
 const BussinesObjectSelectors_1 = require("../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const StatusSelectors_1 = require("../View/Modals/CommonFormComponents/StatusSelectors");
 function TasksGlobalFilterBody() {
-    const { register } = (0, FormContext_1.useFormContext)();
     const { project } = (0, ContractContext_1.useContract)();
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(TasksFilterBodyCommonFields_1.TasksFilterBodyCommonFields, null),
-        react_1.default.createElement(react_bootstrap_1.Row, { xl: 5, md: 3, xs: 1 }, !project && (react_1.default.createElement(react_bootstrap_1.Col, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_contract" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
-                react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { showValidationInfo: false, _project: project })))))));
+    return (react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "_contract" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kontrakt"),
+            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { showValidationInfo: false, _project: project })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3, controlId: "_owner" },
+            react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
+            react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
 }
 exports.TasksGlobalFilterBody = TasksGlobalFilterBody;

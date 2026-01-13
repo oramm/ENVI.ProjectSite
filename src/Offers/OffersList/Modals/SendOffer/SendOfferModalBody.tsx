@@ -59,7 +59,6 @@ export function SendOfferModalBody({ initialData }: ModalBodyProps<OurOffer>) {
                 <PersonSelector
                     name="_newEvent._recipients"
                     multiple={true}
-                    repository={personsRepository}
                     allowNew={false}
                 />
                 <Form.Text muted>

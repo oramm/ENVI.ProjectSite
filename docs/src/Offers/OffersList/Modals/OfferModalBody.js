@@ -25,12 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OfferModalBody = void 0;
 const react_1 = __importStar(require("react"));
-const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
-const FormContext_1 = require("../../../View/Modals/FormContext");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const OtherAttributesSelectors_1 = require("../../../View/Modals/CommonFormComponents/OtherAttributesSelectors");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
-const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
+const FormContext_1 = require("../../../View/Modals/FormContext");
 function OfferModalBody({ isEditing, initialData }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _city = watch("_city");

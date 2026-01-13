@@ -32,7 +32,7 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const FilterableTableRow_1 = require("./FilterableTableRow");
 const ErrorBoundary_1 = __importDefault(require("../../Modals/ErrorBoundary"));
-function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStriped = true, }) {
+function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStriped = true, parentSectionId, }) {
     const { objects, activeRowId, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const [objectsToShow, setObjectsToShow] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
@@ -41,7 +41,8 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
     }, [objects, filteredObjects]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null,
-            showTableHeader && (react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary d-none d-md-flex" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column)))))),
+            showTableHeader && (react_1.default.createElement("div", { className: "d-none d-md-block" },
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "fw-bold text-secondary" }, tableStructure.map((column, index) => (react_1.default.createElement(react_bootstrap_1.Col, { key: column.header || index, ...getColSize(column), className: "text-center" }, renderHeaderBody(column))))))),
             react_1.default.createElement("div", { className: "d-flex flex-column gap-2" }, objectsToShow.map((dataObject, index) => {
                 const isActive = dataObject.id === activeRowId;
                 const isStripedRow = isStriped && objectsToShow.length > 5 && index % 2 === 1;
@@ -49,7 +50,7 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
                     react_1.default.createElement("div", null,
                         react_1.default.createElement(FilterableTableRow_1.FilterableTableRow, { 
                             //key={dataObject.id}
-                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: onRowClick }))));
+                            dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: (id) => onRowClick(id, parentSectionId) }))));
             })))));
 }
 exports.ResultSetTable = ResultSetTable;

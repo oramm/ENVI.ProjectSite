@@ -30,6 +30,7 @@ exports.GeneralModal = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_hook_form_1 = require("react-hook-form");
+const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 const FormContext_1 = require("./FormContext");
 const CommonComponentsController_1 = require("../Resultsets/CommonComponentsController");
 const yup_1 = require("@hookform/resolvers/yup");
@@ -87,8 +88,21 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         setIsLoadingData(true);
         try {
-            const dataObjectFromServer = (await repository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
+            // ✅ Tworzymy tymczasowe repository tylko do pobrania szczegółów
+            // NIE nadpisuje głównego repository.items!
+            const tempRepository = new RepositoryReact_1.default({
+                name: `${repository.name}_modalDetails_temp`,
+                actionRoutes: {
+                    getRoute: repository.actionRoutes.getRoute,
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+            });
+            const dataObjectFromServer = (await tempRepository.loadItemsFromServerPOST([{ id: modalBodyProps.initialData?.id }], specialRetrieveActionRoute))[0];
             if (dataObjectFromServer) {
+                // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
+                // (dla spójności danych, nie nadpisuj całej listy)
                 repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
                 repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
             }
@@ -156,7 +170,6 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
     }
     async function handleEditWithFiles(data) {
         const currentDataItem = { ...repository.currentItems[0] };
-        data.append("id", currentDataItem.id.toString());
         appendContextData(currentDataItem, data);
         // dołącz oryginalne dane jako JSON-string
         data.append("_originalData", JSON.stringify(currentDataItem));

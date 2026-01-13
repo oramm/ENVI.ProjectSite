@@ -33,7 +33,7 @@ const yup_1 = require("@hookform/resolvers/yup");
 function FilterPanel({ FilterBodyComponent, repository, validationSchema = undefined, }) {
     const [error, setError] = (0, react_1.useState)(null);
     const [isReady, setIsReady] = (0, react_1.useState)(true);
-    const { setObjects, objects, id } = (0, FilterableTableContext_1.useFilterableTableContext)();
+    const { setObjects, id, sections, setSections, snapshotMode, sectionsFilterHandlers } = (0, FilterableTableContext_1.useFilterableTableContext)();
     const formMethods = (0, react_hook_form_1.useForm)({
         resolver: validationSchema ? (0, yup_1.yupResolver)(validationSchema) : undefined,
         defaultValues: {},
@@ -47,11 +47,20 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         if (!storedSnapshot)
             return;
         const { criteria } = JSON.parse(storedSnapshot);
+        if (!criteria)
+            return;
         for (let key in criteria) {
             formMethods.setValue(key, criteria[key]);
         }
     }, []);
-    async function handleSubmitSearch(data) {
+    function saveSnapshotToStorage(result) {
+        const filterableTableSnapshot = {
+            criteria: formMethods.getValues(),
+            ...(snapshotMode !== "criteria-only" ? { storedObjects: result || [] } : {}),
+        };
+        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
+    }
+    async function handleSubmitSearchFlat(data) {
         setIsReady(false);
         setError(null); // Resetowanie stanu błędu przed nowym żądaniem
         try {
@@ -67,13 +76,28 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
             setIsReady(true);
         }
     }
-    function saveSnapshotToStorage(result) {
-        const filterableTableSnapshot = {
-            criteria: formMethods.getValues(),
-            storedObjects: result,
-        };
-        sessionStorage.setItem(snapshotName, JSON.stringify(filterableTableSnapshot));
-        console.log("Saved snapshot: ", filterableTableSnapshot.storedObjects);
+    async function handleSubmitSearchSections(data) {
+        if (!sectionsFilterHandlers)
+            return;
+        setIsReady(false);
+        setError(null);
+        try {
+            const newSections = await sectionsFilterHandlers.onSubmitSections(data);
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
+        catch (err) {
+            if (err instanceof Error)
+                setError(err.message || "Wystąpił błąd podczas ładowania danych. Spróbuj ponownie.");
+        }
+        finally {
+            setIsReady(true);
+        }
+    }
+    async function handleSubmitSearch(data) {
+        if (sectionsFilterHandlers)
+            return handleSubmitSearchSections(data);
+        return handleSubmitSearchFlat(data);
     }
     const handleReset = () => {
         const allFields = formMethods.getValues();
@@ -83,6 +107,11 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
         }, {});
         console.log("Wartości po resecie:", resetValues);
         reset(resetValues);
+        if (sectionsFilterHandlers) {
+            const newSections = sectionsFilterHandlers.onResetSections();
+            setSections(newSections);
+            saveSnapshotToStorage();
+        }
     };
     return (react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
         react_1.default.createElement(react_bootstrap_1.Form, { onSubmit: formMethods.handleSubmit(handleSubmitSearch) },
