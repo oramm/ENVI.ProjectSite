@@ -99262,8 +99262,8 @@ function KsefSection({ invoice, onInvoiceUpdate }) {
         ];
         return allowedStatuses.includes(invoice.status);
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
-    // Sprawdź czy można pobrać UPO
-    const canDownloadUpo = invoice.ksefNumber != null;
+    // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
+    const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
     // Funkcja do wysyłania faktury do KSeF
     const sendToKsef = async () => {
         setLoading(true);
@@ -99463,10 +99463,8 @@ function KsefSection({ invoice, onInvoiceUpdate }) {
             setLoadingMessage("");
         }
     };
-    // Pobieranie UPO
+    // Pobieranie/Otwieranie UPO – bezpośredni GET do endpointu backendu
     const downloadUpo = async () => {
-        setLoading(true);
-        setLoadingMessage("Pobieranie UPO...");
         setAlert(null);
         try {
             const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/ksef/upo`, {
@@ -99474,22 +99472,27 @@ function KsefSection({ invoice, onInvoiceUpdate }) {
                 credentials: "include",
             });
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Błąd pobierania UPO");
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.error
+                    || errorData.errorMessage
+                    || errorData.message
+                    || `Błąd pobierania UPO (${response.status})`;
+                throw new Error(errorMessage);
             }
-            // Pobierz plik PDF
+            // Otwórz/ściągnij plik
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = `UPO_faktura_${invoice.id}.pdf`;
+            link.download = `UPO_faktura_${invoice.id}.xml`;
+            link.target = "_blank";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
             setAlert({
                 type: "success",
-                message: "UPO zostało pobrane",
+                message: "UPO zostało pobrane/otwarte",
             });
         }
         catch (error) {
@@ -99497,10 +99500,6 @@ function KsefSection({ invoice, onInvoiceUpdate }) {
                 type: "danger",
                 message: error instanceof Error ? error.message : "Błąd pobierania UPO",
             });
-        }
-        finally {
-            setLoading(false);
-            setLoadingMessage("");
         }
     };
     // Funkcja do renderowania statusu
@@ -99520,39 +99519,42 @@ function KsefSection({ invoice, onInvoiceUpdate }) {
         const date = new Date(dateString);
         return ToolsDate_1.default.dateToDDmmmYYYYHHMM(date.toISOString());
     };
-    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
-        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
-            react_1.default.createElement("strong", null, "KSeF - Krajowy System e-Faktur")),
-        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
-            alert && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: alert.type, onClose: () => setAlert(null), dismissible: true, style: { whiteSpace: "pre-wrap" } }, alert.message)),
-            loading && (react_1.default.createElement("div", { className: "mb-3" },
-                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
-                loadingMessage)),
-            react_1.default.createElement("div", { className: "mb-3" },
-                react_1.default.createElement("div", { className: "row" },
-                    react_1.default.createElement("div", { className: "col-md-3" },
-                        react_1.default.createElement("strong", null, "Status:")),
-                    react_1.default.createElement("div", { className: "col-md-9" }, renderStatus())),
-                invoice.ksefNumber && (react_1.default.createElement("div", { className: "row mt-2" },
-                    react_1.default.createElement("div", { className: "col-md-3" },
-                        react_1.default.createElement("strong", null, "Numer KSeF:")),
-                    react_1.default.createElement("div", { className: "col-md-9" },
-                        react_1.default.createElement("code", null, invoice.ksefNumber)))),
-                invoice.ksefSessionId && !invoice.ksefNumber && (react_1.default.createElement("div", { className: "row mt-2" },
-                    react_1.default.createElement("div", { className: "col-md-3" },
-                        react_1.default.createElement("strong", null, "Nr referencyjny:")),
-                    react_1.default.createElement("div", { className: "col-md-9" },
-                        react_1.default.createElement("code", { className: "small" }, invoice.ksefSessionId)))),
-                statusDetails?.acquisitionDate && (react_1.default.createElement("div", { className: "row mt-2" },
-                    react_1.default.createElement("div", { className: "col-md-3" },
-                        react_1.default.createElement("strong", null, "Data przyj\u0119cia:")),
-                    react_1.default.createElement("div", { className: "col-md-9" }, formatDate(statusDetails.acquisitionDate))))),
-            react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
-                canSendToKsef() && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: sendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement(react_bootstrap_1.Container, { className: "mt-3 p-0" },
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center mb-2" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                react_1.default.createElement("h6", { className: "mb-0" },
+                    react_1.default.createElement("strong", null, "KSeF - Krajowy System e-Faktur")))),
+        react_1.default.createElement(react_bootstrap_1.Row, { className: "bg-light p-3 rounded-3" },
+            react_1.default.createElement(react_bootstrap_1.Col, null,
+                alert && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: alert.type, onClose: () => setAlert(null), dismissible: true, style: { whiteSpace: "pre-wrap" } }, alert.message)),
+                loading && (react_1.default.createElement("div", { className: "mb-3" },
                     react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
-                    "Wysy\u0142anie...")) : ("Wyślij do KSeF"))),
-                (invoice.ksefStatus || invoice.ksefSessionId) && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: refreshStatus, disabled: loading }, "Od\u015Bwie\u017C status")),
-                canDownloadUpo && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-success", onClick: downloadUpo, disabled: loading }, "\uD83D\uDCC4 Pobierz UPO"))))));
+                    loadingMessage)),
+                react_1.default.createElement("div", { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Row, null,
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                            react_1.default.createElement("strong", null, "Status:")),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 9 }, renderStatus())),
+                    invoice.ksefNumber && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                            react_1.default.createElement("strong", null, "Numer KSeF:")),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 9 },
+                            react_1.default.createElement("code", null, invoice.ksefNumber)))),
+                    invoice.ksefSessionId && !invoice.ksefNumber && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                            react_1.default.createElement("strong", null, "Nr referencyjny:")),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 9 },
+                            react_1.default.createElement("code", { className: "small" }, invoice.ksefSessionId)))),
+                    statusDetails?.acquisitionDate && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                            react_1.default.createElement("strong", null, "Data przyj\u0119cia:")),
+                        react_1.default.createElement(react_bootstrap_1.Col, { md: 9 }, formatDate(statusDetails.acquisitionDate))))),
+                react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
+                    canSendToKsef() && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: sendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                        "Wysy\u0142anie...")) : ("Wyślij do KSeF"))),
+                    (invoice.ksefStatus || invoice.ksefSessionId) && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: refreshStatus, disabled: loading }, "Od\u015Bwie\u017C status")),
+                    canDownloadUpo && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-success", onClick: downloadUpo, disabled: loading }, "\uD83D\uDCC4 Pobierz UPO")))))));
 }
 exports["default"] = KsefSection;
 

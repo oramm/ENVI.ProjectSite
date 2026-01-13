@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Alert, Button, Card, Spinner } from "react-bootstrap";
+import { Alert, Button, Card, Container, Row, Col, Spinner } from "react-bootstrap";
 import { Invoice } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import MainSetup from "../../../React/MainSetupReact";
@@ -65,8 +65,8 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
         return allowedStatuses.includes(invoice.status);
     }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
 
-    // Sprawdź czy można pobrać UPO
-    const canDownloadUpo = invoice.ksefNumber != null;
+    // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
+    const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
 
     // Funkcja do wysyłania faktury do KSeF
     const sendToKsef = async () => {
@@ -290,10 +290,8 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
         }
     };
 
-    // Pobieranie UPO
+    // Pobieranie/Otwieranie UPO – bezpośredni GET do endpointu backendu
     const downloadUpo = async () => {
-        setLoading(true);
-        setLoadingMessage("Pobieranie UPO...");
         setAlert(null);
 
         try {
@@ -303,16 +301,21 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Błąd pobierania UPO");
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.error
+                    || errorData.errorMessage
+                    || errorData.message
+                    || `Błąd pobierania UPO (${response.status})`;
+                throw new Error(errorMessage);
             }
 
-            // Pobierz plik PDF
+            // Otwórz/ściągnij plik
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = `UPO_faktura_${invoice.id}.pdf`;
+            link.download = `UPO_faktura_${invoice.id}.xml`;
+            link.target = "_blank";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -320,17 +323,13 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
 
             setAlert({
                 type: "success",
-                message: "UPO zostało pobrane",
+                message: "UPO zostało pobrane/otwarte",
             });
-
         } catch (error) {
             setAlert({
                 type: "danger",
                 message: error instanceof Error ? error.message : "Błąd pobierania UPO",
             });
-        } finally {
-            setLoading(false);
-            setLoadingMessage("");
         }
     };
 
@@ -353,116 +352,120 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
     };
 
     return (
-        <Card className="mt-3">
-            <Card.Header>
-                <strong>KSeF - Krajowy System e-Faktur</strong>
-            </Card.Header>
-            <Card.Body>
-                {/* Alert */}
-                {alert && (
-                    <Alert
-                        variant={alert.type}
-                        onClose={() => setAlert(null)}
-                        dismissible
-                        style={{ whiteSpace: "pre-wrap" }}
-                    >
-                        {alert.message}
-                    </Alert>
-                )}
+        <Container className="mt-3 p-0">
+            <Row className="align-items-center mb-2">
+                <Col>
+                    <h6 className="mb-0"><strong>KSeF - Krajowy System e-Faktur</strong></h6>
+                </Col>
+            </Row>
+            <Row className="bg-light p-3 rounded-3">
+                <Col>
+                    {/* Alert */}
+                    {alert && (
+                        <Alert
+                            variant={alert.type}
+                            onClose={() => setAlert(null)}
+                            dismissible
+                            style={{ whiteSpace: "pre-wrap" }}
+                        >
+                            {alert.message}
+                        </Alert>
+                    )}
 
-                {/* Loading */}
-                {loading && (
+                    {/* Loading */}
+                    {loading && (
+                        <div className="mb-3">
+                            <Spinner animation="border" size="sm" className="me-2" />
+                            {loadingMessage}
+                        </div>
+                    )}
+
+                    {/* Informacje o statusie */}
                     <div className="mb-3">
-                        <Spinner animation="border" size="sm" className="me-2" />
-                        {loadingMessage}
+                        <Row>
+                            <Col md={3}>
+                                <strong>Status:</strong>
+                            </Col>
+                            <Col md={9}>
+                                {renderStatus()}
+                            </Col>
+                        </Row>
+
+                        {invoice.ksefNumber && (
+                            <Row className="mt-2">
+                                <Col md={3}>
+                                    <strong>Numer KSeF:</strong>
+                                </Col>
+                                <Col md={9}>
+                                    <code>{invoice.ksefNumber}</code>
+                                </Col>
+                            </Row>
+                        )}
+
+                        {invoice.ksefSessionId && !invoice.ksefNumber && (
+                            <Row className="mt-2">
+                                <Col md={3}>
+                                    <strong>Nr referencyjny:</strong>
+                                </Col>
+                                <Col md={9}>
+                                    <code className="small">{invoice.ksefSessionId}</code>
+                                </Col>
+                            </Row>
+                        )}
+
+                        {statusDetails?.acquisitionDate && (
+                            <Row className="mt-2">
+                                <Col md={3}>
+                                    <strong>Data przyjęcia:</strong>
+                                </Col>
+                                <Col md={9}>
+                                    {formatDate(statusDetails.acquisitionDate)}
+                                </Col>
+                            </Row>
+                        )}
                     </div>
-                )}
 
-                {/* Informacje o statusie */}
-                <div className="mb-3">
-                    <div className="row">
-                        <div className="col-md-3">
-                            <strong>Status:</strong>
-                        </div>
-                        <div className="col-md-9">
-                            {renderStatus()}
-                        </div>
+                    {/* Przyciski akcji */}
+                    <div className="d-flex gap-2 flex-wrap">
+                        {canSendToKsef() && (
+                            <Button
+                                variant="primary"
+                                onClick={sendToKsef}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Spinner animation="border" size="sm" className="me-2" />
+                                        Wysyłanie...
+                                    </>
+                                ) : (
+                                    "Wyślij do KSeF"
+                                )}
+                            </Button>
+                        )}
+
+                        {(invoice.ksefStatus || invoice.ksefSessionId) && (
+                            <Button
+                                variant="outline-secondary"
+                                onClick={refreshStatus}
+                                disabled={loading}
+                            >
+                                Odśwież status
+                            </Button>
+                        )}
+
+                        {canDownloadUpo && (
+                            <Button
+                                variant="outline-success"
+                                onClick={downloadUpo}
+                                disabled={loading}
+                            >
+                                📄 Pobierz UPO
+                            </Button>
+                        )}
                     </div>
-
-                    {invoice.ksefNumber && (
-                        <div className="row mt-2">
-                            <div className="col-md-3">
-                                <strong>Numer KSeF:</strong>
-                            </div>
-                            <div className="col-md-9">
-                                <code>{invoice.ksefNumber}</code>
-                            </div>
-                        </div>
-                    )}
-
-                    {invoice.ksefSessionId && !invoice.ksefNumber && (
-                        <div className="row mt-2">
-                            <div className="col-md-3">
-                                <strong>Nr referencyjny:</strong>
-                            </div>
-                            <div className="col-md-9">
-                                <code className="small">{invoice.ksefSessionId}</code>
-                            </div>
-                        </div>
-                    )}
-
-                    {statusDetails?.acquisitionDate && (
-                        <div className="row mt-2">
-                            <div className="col-md-3">
-                                <strong>Data przyjęcia:</strong>
-                            </div>
-                            <div className="col-md-9">
-                                {formatDate(statusDetails.acquisitionDate)}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Przyciski akcji */}
-                <div className="d-flex gap-2 flex-wrap">
-                    {canSendToKsef() && (
-                        <Button
-                            variant="primary"
-                            onClick={sendToKsef}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <Spinner animation="border" size="sm" className="me-2" />
-                                    Wysyłanie...
-                                </>
-                            ) : (
-                                "Wyślij do KSeF"
-                            )}
-                        </Button>
-                    )}
-
-                    {(invoice.ksefStatus || invoice.ksefSessionId) && (
-                        <Button
-                            variant="outline-secondary"
-                            onClick={refreshStatus}
-                            disabled={loading}
-                        >
-                            Odśwież status
-                        </Button>
-                    )}
-
-                    {canDownloadUpo && (
-                        <Button
-                            variant="outline-success"
-                            onClick={downloadUpo}
-                            disabled={loading}
-                        >
-                            📄 Pobierz UPO
-                        </Button>
-                    )}
-                </div>
-            </Card.Body>
-        </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 }
