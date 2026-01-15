@@ -15,53 +15,63 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.renderApp = void 0;
+exports.renderApp = renderApp;
 const google_1 = require("@react-oauth/google");
+require("bootstrap/dist/css/bootstrap.min.css");
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const client_1 = __importDefault(require("react-dom/client"));
 const react_router_dom_1 = require("react-router-dom");
+require("react-toastify/dist/ReactToastify.css");
 const ContractsSearch_1 = __importDefault(require("../../Contracts/ContractsList/ContractsSearch"));
+const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
+const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
+const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
 const GoogleLoginButton_1 = __importDefault(require("../GoogleLoginButton"));
 const MainControllerReact_1 = __importDefault(require("../MainControllerReact"));
-const MainMenu_1 = __importDefault(require("./MainMenu"));
 const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
-const LettersSearch_1 = __importDefault(require("../../Letters/LettersList/LettersSearch"));
-const InvoicesSearch_1 = __importDefault(require("../../Erp/InvoicesList/InvoicesSearch"));
-const InvoiceDetails_1 = __importDefault(require("../../Erp/InvoicesList/InvoiceDetails/InvoiceDetails"));
-require("bootstrap/dist/css/bootstrap.min.css");
-require("react-toastify/dist/ReactToastify.css");
-const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
-const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
-const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch"));
-const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
-const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
+const MainMenu_1 = __importDefault(require("./MainMenu"));
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
-const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
-const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch"));
-const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
-const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
-const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
-const OffersMainView_1 = __importDefault(require("../../Offers/OffersList/OffersMainView"));
-const RolesSearch_1 = __importDefault(require("../../Contracts/Roles/RolesSearch"));
-const MilestoneDatesSearch_1 = __importDefault(require("../../Contracts/Dates/MilestoneDatesSearch"));
-const Dashboard_1 = __importDefault(require("./Content/Dashboard/Dashboard"));
 const SystemUsersSearch_1 = __importDefault(require("../../Admin/SystemUsers/SystemUsersSearch"));
+const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
+const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch"));
+const MilestoneDatesSearch_1 = __importDefault(require("../../Contracts/Dates/MilestoneDatesSearch"));
+const RolesSearch_1 = __importDefault(require("../../Contracts/Roles/RolesSearch"));
+const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"));
+const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
+const OffersMainView_1 = __importDefault(require("../../Offers/OffersList/OffersMainView"));
+const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
+const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
+const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
+const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
+const FinancialAidProgrammesSearch_1 = __importDefault(require("../../financialAidProgrammes/Programmes/FinancialAidProgrammesSearch"));
+const NeedsSearch_1 = __importDefault(require("../../financialAidProgrammes/needs/NeedsSearch"));
 const ProtectedRoute_1 = __importDefault(require("../ProtectedRoute"));
+const Dashboard_1 = __importDefault(require("./Content/Dashboard/Dashboard"));
 const GoodTipToast_1 = require("./Content/Dashboard/GoodTipToast");
 const rootPath = "/";
 console.log("rootPath", rootPath);
@@ -170,6 +180,5 @@ async function renderApp() {
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(App, null)));
 }
-exports.renderApp = renderApp;
 console.log(process.env.MODE);
 renderApp();

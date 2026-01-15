@@ -124,7 +124,7 @@ class Tools {
         return typeof value === "number" && !isNaN(value);
     }
 }
-exports.default = Tools;
 Tools.getLabelFromKey = (key, options, defaultLabel = "Nieznana wartość") => {
     return options[key] || defaultLabel;
 };
+exports.default = Tools;

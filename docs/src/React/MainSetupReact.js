@@ -25,7 +25,6 @@ class MainSetup {
         return roles.includes(this.currentUser.systemRoleName);
     }
 }
-exports.default = MainSetup;
 MainSetup.CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
 MainSetup.serverUrl = window.location.href.includes("localhost")
     ? "http://localhost:3000/"
@@ -149,8 +148,8 @@ MainSetup.OurLetterStatus = {
 };
 MainSetup.IncomingLetterStatus = {
     REGISTERED: "Zarejestrowany",
-    RESPONSE_SENT: "Odpowiedź wysłana",
-    RESPONSE_REQUIRED: "Wymaga odpowiedzi",
+    RESPONSE_SENT: "Odpowiedź wysłana", // bardziej naturalna forma
+    RESPONSE_REQUIRED: "Wymaga odpowiedzi", // krócej i konkretniej
     NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
 };
 MainSetup.LetterEventType = {
@@ -226,3 +225,4 @@ MainSetup.RoleGroups = {
     CONTRACTOR: "Wykonawca/Podwykonawcy",
     OTHERS: "Pozostali",
 };
+exports.default = MainSetup;

@@ -3,3 +3,12 @@ node_modules/
 Server/
 yarn-error.log
 .env
+
+# Puppeteer / Testing artifacts
+screenshot*.png
+test-results/
+
+# Claude AI artifacts
+.claude/
+tmpclaude-*
+nul

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContractsFilterBody = void 0;
+exports.ContractsFilterBody = ContractsFilterBody;
 const react_1 = __importDefault(require("react"));
 const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const react_bootstrap_1 = require("react-bootstrap");
@@ -29,4 +29,3 @@ function ContractsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository, showValidationInfo: false }))));
 }
-exports.ContractsFilterBody = ContractsFilterBody;

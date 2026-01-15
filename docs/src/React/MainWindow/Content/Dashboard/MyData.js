@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MyData;
 // MyDataCard.tsx
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
@@ -25,4 +26,3 @@ function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
                     react_1.default.createElement("span", { className: "text-secondary small" }, systemRoleName))),
             renderExtraContent && react_1.default.createElement("div", { className: "mt-2" }, renderExtraContent()))));
 }
-exports.default = MyData;

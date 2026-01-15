@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TasksFilterBodyCommonFields = void 0;
+exports.TasksFilterBodyCommonFields = TasksFilterBodyCommonFields;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../../View/Modals/FormContext");
@@ -34,4 +34,3 @@ function TasksFilterBodyCommonFields() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
 }
-exports.TasksFilterBodyCommonFields = TasksFilterBodyCommonFields;

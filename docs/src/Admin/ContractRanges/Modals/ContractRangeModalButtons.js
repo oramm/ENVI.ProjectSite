@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContractRangeAddNewModalButton = exports.ContractRangeEditModalButton = void 0;
+exports.ContractRangeEditModalButton = ContractRangeEditModalButton;
+exports.ContractRangeAddNewModalButton = ContractRangeAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ContractRangesController_1 = require("../ContractRangesController");
@@ -21,7 +22,6 @@ function ContractRangeEditModalButton({ modalProps: { onEdit, initialData }, }) 
             buttonVariant: "outline-success",
         } }));
 }
-exports.ContractRangeEditModalButton = ContractRangeEditModalButton;
 function ContractRangeAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,4 +34,3 @@ function ContractRangeAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.ContractRangeAddNewModalButton = ContractRangeAddNewModalButton;
