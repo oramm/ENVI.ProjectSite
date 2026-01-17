@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SendAnotherOfferModalButton = exports.SendOfferModalButton = void 0;
+exports.SendOfferModalButton = SendOfferModalButton;
+exports.SendAnotherOfferModalButton = SendAnotherOfferModalButton;
 const react_1 = __importDefault(require("react"));
 const FilterableTableContext_1 = require("../../../../View/Resultsets/FilterableTable/FilterableTableContext");
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
@@ -25,7 +26,6 @@ function SendOfferModalButton({ modalProps: { initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.SendOfferModalButton = SendOfferModalButton;
 function SendAnotherOfferModalButton({ modalProps: { initialData } }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -41,4 +41,3 @@ function SendAnotherOfferModalButton({ modalProps: { initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.SendAnotherOfferModalButton = SendAnotherOfferModalButton;

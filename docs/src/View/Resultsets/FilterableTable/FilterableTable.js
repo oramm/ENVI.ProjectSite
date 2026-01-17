@@ -15,15 +15,26 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TableTitle = void 0;
+exports.default = FilterableTable;
+exports.TableTitle = TableTitle;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FilterableTableContext_1 = require("./FilterableTableContext");
@@ -48,8 +59,31 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     const [activeRowId, setActiveRowId] = (0, react_1.useState)(0);
     const [sections, setSections] = (0, react_1.useState)(initialSections);
     const [activeSectionId, setActiveSectionId] = (0, react_1.useState)("");
+    const [editingSectionId, setEditingSectionId] = (0, react_1.useState)("");
     const [objects, setObjects] = (0, react_1.useState)(initObjects());
     const [globalExpandTrigger, setGlobalExpandTrigger] = (0, react_1.useState)(null);
+    /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
+    function findPathToNode(nodes, targetId, currentPath = []) {
+        for (const node of nodes) {
+            const newPath = [...currentPath, node.id];
+            if (node.id === targetId) {
+                return newPath;
+            }
+            if (node.children.length > 0) {
+                const result = findPathToNode(node.children, targetId, newPath);
+                if (result)
+                    return result;
+            }
+        }
+        return null;
+    }
+    /** Oblicza zbiór ID sekcji na ścieżce od korzenia do aktywnej sekcji */
+    const activePathSet = (0, react_1.useMemo)(() => {
+        if (!activeSectionId || sections.length === 0)
+            return new Set();
+        const path = findPathToNode(sections, activeSectionId);
+        return new Set(path || []);
+    }, [activeSectionId, sections]);
     function initObjects() {
         if (initialObjects)
             return initialObjects;
@@ -135,7 +169,12 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
     }
     function handleHeaderClick(sectionNode) {
         const repository = sectionNode.repository;
+        // Ustaw kontekst (tło propaguje się w górę przez activePathSet)
         setActiveSectionId(sectionNode.id);
+        // Ustaw fokus edycji (menu widoczne tylko tutaj)
+        setEditingSectionId(sectionNode.id);
+        // Odznacz wiersz tabeli (liść)
+        setActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
@@ -151,8 +190,18 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
         // Tryb płaski: zawsze pokazuj
         return true;
     }
-    const handleRowClick = (id) => {
+    const handleRowClick = (id, parentSectionId) => {
         setActiveRowId(id);
+        // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
+        setEditingSectionId("");
+        // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
+        if (parentSectionId) {
+            setActiveSectionId(parentSectionId);
+        }
+        else {
+            // W trybie bez sekcji (czysta tabela) wyczyść activeSectionId
+            setActiveSectionId("");
+        }
         console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
         console.log("currentItems:", repository.currentItems);
@@ -160,7 +209,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
             onRowClick(repository.currentItems[0]);
         }
     };
-    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
+    return (react_1.default.createElement(FilterableTableContext_1.FilterableTableProvider, { id: id, objects: objects, activeRowId: activeRowId, activeSectionId: activeSectionId, editingSectionId: editingSectionId, activePathSet: activePathSet, repository: repository, sections: sections, tableStructure: tableStructure, handleAddObject: handleAddObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, handleDeleteObject: handleDeleteObject, setObjects: setObjects, setSections: setSections, handleAddSection: handleAddSection, handleEditSection: handleEditSection, handleDeleteSection: handleDeleteSection, selectedObjectRoute: selectedObjectRoute, EditButtonComponent: EditButtonComponent, isDeletable: isDeletable, isCopyable: isCopyable, externalUpdate: externalUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute, globalExpandTrigger: globalExpandTrigger, snapshotMode: snapshotMode, sectionsFilterHandlers: sectionsFilterHandlers },
         react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
                 react_1.default.createElement(react_bootstrap_1.Col, null, title && react_1.default.createElement(TableTitle, { title: title })),
@@ -181,10 +230,17 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
                     react_1.default.createElement("p", { className: "tekst-muted small" }, objects && `Znaleziono: ${objects.length} pozycji`),
                     react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick }))))))));
 }
-exports.default = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
+        // Determine if this is a "Card Section" (like Contract) or regular list
+        // If it has a border color, Section.tsx will render its own Card style wrapper.
+        // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+        const isSelfContainedCard = !!section.borderColor;
+        if (isSelfContainedCard) {
+            return (react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick }));
+        }
+        // Initial behavior for standard sections
         return (react_1.default.createElement(react_bootstrap_1.Card, { key: section.dataItem.id + section.type, bg: "light", border: "light" },
             react_1.default.createElement(Section_1.Section, { key: section.dataItem.id + section.type, sectionNode: section, resulsetTableProps: resulsetTableProps, onClick: onClick })));
     })));
@@ -192,7 +248,6 @@ function Sections({ resulsetTableProps, onClick, }) {
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
-exports.TableTitle = TableTitle;
 /** Funkcja do aktualizacji węzłów
  * jeśli edytujemy sekcję to zaczynamy od najwyższego poziomu drzewa i schodzimy do spodu szukając sekcji
  * jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia i go edytujemy
@@ -266,7 +321,7 @@ function addNode(nodes, parentId, newData) {
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: react_1.default.createElement(react_1.default.Fragment, null, "nowy tytu\u0142"),
                 children: [],
                 leaves: [],
             };

@@ -69,15 +69,27 @@ Każdy plik jest podzielony na sekcje, które można czytać niezależnie:
 instructions/
 ├── README.md (ten plik - nawigacja)
 ├── AI_GUIDELINES.md (ogólne wytyczne dla AI)
+├── DEVELOPMENT.md (⭐ setup środowiska, .env, dev login, testing)
 │
 ├── business-object-selectors.md (quick start, wzorce użycia)
 ├── selectors-architecture.md (pełna dokumentacja architektury)
-└── backend-computed-fields.md (⭐ jak naprawiać backend Node.js/Express)
+├── backend-computed-fields.md (jak naprawiać backend Node.js/Express)
+├── filterable-table-data-flow.md
+└── TasksGlobalView.md
 ```
 
 ---
 
 ## 🔧 Quick Links dla Typowych Scenariuszy
+
+**Nowy developer - jak zacząć?**
+→ [DEVELOPMENT.md](./DEVELOPMENT.md) - setup środowiska, .env, yarn scripts
+
+**Dev login nie działa / Playwright setup?**
+→ [DEVELOPMENT.md - Dev Login](./DEVELOPMENT.md#-dev-login--mock-authentication) - mock authentication
+
+**Jak bezpiecznie commitować kod?**
+→ [DEVELOPMENT.md - Security](./DEVELOPMENT.md#-security-guidelines) - .gitignore, .env, secrets
 
 **Widzisz warning `⚠️ Brak wymaganego pola`?**
 → [backend-computed-fields.md](./backend-computed-fields.md) - przykłady naprawy backendu
@@ -90,6 +102,9 @@ instructions/
 
 **AI implementuje funkcjonalność?**
 → [selectors-architecture.md - Sekcja 7](./selectors-architecture.md#7-tworzenie-nowego-selektora) - 🤖 Checklist dla AI
+
+**Dopracowanie UI z AI (iteracyjnie, ze screenshotami)?**
+→ [ui-browser-loop.md](./ui-browser-loop.md) - ustalony schemat pracy (UI Browser Loop)
 ├── README.md (ten plik)
 ├── AI_GUIDELINES.md
 ├── business-object-selectors.md ← Praktyczny przewodnik

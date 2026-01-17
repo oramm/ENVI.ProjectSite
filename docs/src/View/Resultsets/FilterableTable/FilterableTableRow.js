@@ -15,15 +15,29 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRowClass = exports.CopyModalButton = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
+exports.FilterableTableRow = FilterableTableRow;
+exports.RowActionMenu = RowActionMenu;
+exports.DeleteModalButton = DeleteModalButton;
+exports.CopyModalButton = CopyModalButton;
+exports.getRowClass = getRowClass;
 const react_1 = __importStar(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const GeneralModalButtons_1 = require("../../Modals/GeneralModalButtons");
@@ -31,6 +45,7 @@ const CommonComponents_1 = require("../CommonComponents");
 const FilterableTableContext_1 = require("./FilterableTableContext");
 const react_bootstrap_1 = require("react-bootstrap");
 const ResultSetTable_1 = require("./ResultSetTable");
+const ToolsRouting_1 = require("../../../React/Tools/ToolsRouting");
 function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { selectedObjectRoute, tableStructure } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -45,18 +60,22 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
         return "";
     }
     return (react_1.default.createElement(react_bootstrap_1.Row, { onClick: (e) => onRowClick(dataObject.id), onDoubleClick: () => {
-            if (selectedObjectRoute)
-                navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
-        }, className: `${getRowClass({ isActive, isStriped })} p-3 mb-2` },
+            if (!selectedObjectRoute)
+                return;
+            const target = (0, ToolsRouting_1.buildDetailsPath)(selectedObjectRoute, dataObject.id);
+            if (target)
+                navigate(target, { state: { repository } });
+        }, className: `${getRowClass({ isActive, isStriped })}` },
         tableStructure.map((column, index) => {
             const key = String(column.objectAttributeToShow || index);
+            // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
             return (react_1.default.createElement(react_bootstrap_1.Col, { key: key, ...(0, ResultSetTable_1.getColSize)(column), xs: isActive ? 11 : 12 }, tdBodyRender(column, dataObject)));
         }),
-        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { align: "center", xs: "1", className: "d-flex justify-content-center" },
-            " ",
-            react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute })))));
+        isActive && (react_1.default.createElement(react_bootstrap_1.Col, { xs: "1" },
+            react_1.default.createElement("div", { className: "d-flex justify-content-center" },
+                " ",
+                react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
-exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
@@ -90,7 +109,6 @@ function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditBut
                         repository: repository,
                     }, buttonProps: { layout, buttonCaption: "Edytuj" } })))))))));
 }
-exports.RowActionMenu = RowActionMenu;
 function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, buttonProps, }) {
     const name = "name" in initialData ? initialData.name : undefined;
     const modalTitle = "Usuwanie " + (name || "wybranego elementu");
@@ -101,7 +119,6 @@ function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, 
             initialData,
         }, buttonProps: buttonProps }));
 }
-exports.DeleteModalButton = DeleteModalButton;
 function CopyModalButton({ modalProps: { onCopy, initialData, repository }, buttonProps, }) {
     const name = "name" in initialData ? initialData.name : undefined;
     const modalTitle = "Kopiowanie " + (name || "wybranego elementu");
@@ -112,13 +129,12 @@ function CopyModalButton({ modalProps: { onCopy, initialData, repository }, butt
             initialData,
         }, buttonProps: buttonProps }));
 }
-exports.CopyModalButton = CopyModalButton;
 /**
  * Returns a string with the class names for the row based on the active state and striped row state.
  */
 function getRowClass({ isActive, isStriped }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",
@@ -126,4 +142,3 @@ function getRowClass({ isActive, isStriped }) {
         .filter(Boolean)
         .join(" ");
 }
-exports.getRowClass = getRowClass;

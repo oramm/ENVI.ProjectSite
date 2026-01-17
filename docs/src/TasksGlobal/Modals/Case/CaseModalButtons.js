@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaseAddNewModalButton = exports.CaseEditModalButton = void 0;
+exports.CaseEditModalButton = CaseEditModalButton;
+exports.CaseAddNewModalButton = CaseAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const TasksGlobalController_1 = require("../../TasksGlobalController");
@@ -22,7 +23,6 @@ function CaseEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
-exports.CaseEditModalButton = CaseEditModalButton;
 function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -38,4 +38,3 @@ function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonPr
             ...buttonProps,
         } }));
 }
-exports.CaseAddNewModalButton = CaseAddNewModalButton;

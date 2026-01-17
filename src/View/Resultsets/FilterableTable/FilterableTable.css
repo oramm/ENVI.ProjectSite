@@ -1,3 +1,145 @@
+/* ===== Design Tokens (łatwe przenoszenie z mockupów AI) ===== */
+:root {
+    /* Typography - rozmiary odpowiadające Tailwind */
+    --section-text-xs: 0.75rem;      /* 12px - dla ID kontraktu */
+    --section-text-10: 0.625rem;     /* 10px - dla badge statusu */
+    --section-text-sm: 0.875rem;     /* 14px - dla aliasu i metadanych */
+    --section-text-base: 1rem;       /* 16px - domyślny */
+    --section-text-lg: 1.125rem;     /* 18px - dla tytułu h6 */
+    --section-text-xl: 1.5rem;       /* 24px - dla głównych nagłówków */
+
+    /* Spacing */
+    --section-padding-compact: 0.5rem 0.75rem;  /* py-2 px-3 */
+    --section-padding-comfortable: 1rem;        /* p-4 dla kontraktów */
+    --section-gap-sm: 0.5rem;        /* 8px */
+    --section-gap-md: 0.75rem;       /* 12px */
+    --section-gap-lg: 1rem;          /* 16px */
+
+    /* Colors */
+    --section-bg-default: aliceblue;
+    --section-bg-hover: #e3f2fd;
+    --section-bg-active: #e3f2fd;
+
+    --section-text-primary: #212529;
+    --section-text-secondary: #6c757d;
+    --section-text-success: rgb(50, 130, 50);
+    --section-text-muted: #6c757d;
+}
+
+/* ===== Section Action Menu ===== */
 .section-action-menu {
     margin-left: 10px;
 }
+
+/* ===== Accordion Override (scopowane) ===== */
+.section-accordion .accordion-button {
+    padding: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none;
+}
+
+/* Ukrycie domyślnej strzałki Bootstrapa, bo mamy własną */
+.section-accordion .accordion-button::after {
+    display: none !important;
+    content: none !important;
+}
+
+.section-accordion .accordion-button:focus {
+    box-shadow: none !important;
+}
+
+.section-accordion .accordion-button:not(.collapsed) {
+    background: transparent !important;
+}
+
+.section-accordion .accordion-item {
+    border: 0;
+    background: transparent;
+}
+
+.section-accordion .accordion-body {
+    padding: 0.5rem 0;
+}
+
+/* ===== Accordion Border for Nested Items ===== */
+/* Add border to items that are NOT cards (nested sections) */
+.section-accordion:not(.section-card) {
+    border-bottom: 1px solid #dee2e6; /* Subtle separator */
+}
+.section-accordion:not(.section-card):last-child {
+    border-bottom: none;
+}
+
+.section-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Border left color is injected via inline style */
+    border-left-width: 4px;
+    border-left-style: solid;
+    overflow: hidden; /* Ensures child border-radius doesn't break card shape */
+}
+
+/* Ensure accordion button inside card is clean */
+.section-card .accordion-button {
+    padding: 0 !important;
+}
+
+/* ===== Section Header Styles ===== */
+/* ===== State Colors (Tailwind Palette Match) ===== */
+.state-active {
+    background-color: #f2faff !important; /* blue-50 */
+    color: var(--section-text-primary);
+}
+
+.state-hover:hover {
+    background-color: #f9fafb; /* gray-50 */
+}
+
+/* Base override to ensure hover doesn't conflict with transparent backgrounds */
+.section-header {
+    /* Base styles mainly for layout */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: #f6f6f6;
+}
+
+/* Domyślny styl (np. dla nagłówków podrzędnych) */
+.section-header-default {
+    background-color: var(--section-bg-default);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem; /* px-2 py-1 */
+}
+
+.section-header-default:hover {
+    background-color: var(--section-bg-hover);
+}
+
+.section-header-active {
+    background-color: var(--section-bg-active);
+}
+
+/* Typography classes - łatwe przenoszenie z mockupów */
+.text-xs {
+    font-size: var(--section-text-xs);
+}
+
+.text-10 {
+    font-size: var(--section-text-10);
+}
+
+.text-sm {
+    font-size: var(--section-text-sm);
+}
+
+.text-lg {
+    font-size: var(--section-text-lg);
+}
+
+.text-xl {
+    font-size: var(--section-text-xl);
+}
+
+
+/* ===== Contract Header Specific - MOVED TO TasksGlobal.css ===== */

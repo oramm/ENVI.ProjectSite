@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import { FilterableTableProvider, useFilterableTableContext } from "./FilterableTableContext";
@@ -46,8 +46,35 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
     const [activeRowId, setActiveRowId] = useState(0);
     const [sections, setSections] = useState(initialSections as SectionNode<LeafDataItemType>[]);
     const [activeSectionId, setActiveSectionId] = useState("");
+    const [editingSectionId, setEditingSectionId] = useState("");
     const [objects, setObjects] = useState(initObjects());
     const [globalExpandTrigger, setGlobalExpandTrigger] = useState<ExpandTrigger>(null);
+
+    /** Rekurencyjnie znajduje ścieżkę od korzenia do węzła o podanym ID */
+    function findPathToNode(
+        nodes: SectionNode<LeafDataItemType>[],
+        targetId: string,
+        currentPath: string[] = []
+    ): string[] | null {
+        for (const node of nodes) {
+            const newPath = [...currentPath, node.id];
+            if (node.id === targetId) {
+                return newPath;
+            }
+            if (node.children.length > 0) {
+                const result = findPathToNode(node.children, targetId, newPath);
+                if (result) return result;
+            }
+        }
+        return null;
+    }
+
+    /** Oblicza zbiór ID sekcji na ścieżce od korzenia do aktywnej sekcji */
+    const activePathSet = useMemo(() => {
+        if (!activeSectionId || sections.length === 0) return new Set<string>();
+        const path = findPathToNode(sections, activeSectionId);
+        return new Set(path || []);
+    }, [activeSectionId, sections]);
 
     function initObjects() {
         if (initialObjects) return initialObjects;
@@ -144,7 +171,12 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
 
     function handleHeaderClick(sectionNode: SectionNode<LeafDataItemType>) {
         const repository = sectionNode.repository;
+        // Ustaw kontekst (tło propaguje się w górę przez activePathSet)
         setActiveSectionId(sectionNode.id);
+        // Ustaw fokus edycji (menu widoczne tylko tutaj)
+        setEditingSectionId(sectionNode.id);
+        // Odznacz wiersz tabeli (liść)
+        setActiveRowId(0);
         //dodaj sectionNode.dataItem do items jeśłi jeszcze tablica nie zawiera tego elementu
         if (!repository.items.some((item) => item.id === sectionNode.dataItem.id))
             repository.items.push(sectionNode.dataItem);
@@ -160,8 +192,17 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
         return true;
     }
 
-    const handleRowClick = (id: number) => {
+    const handleRowClick = (id: number, parentSectionId?: string) => {
         setActiveRowId(id);
+        // Ukryj menu sekcji przy kliknięciu w liść (wiersz tabeli)
+        setEditingSectionId("");
+        // Jeśli przekazano ID sekcji rodzica, ustaw ścieżkę tła
+        if (parentSectionId) {
+            setActiveSectionId(parentSectionId);
+        } else {
+            // W trybie bez sekcji (czysta tabela) wyczyść activeSectionId
+            setActiveSectionId("");
+        }
         console.log("clickedRow:", id);
         repository.addToCurrentItems(id);
         console.log("currentItems:", repository.currentItems);
@@ -176,6 +217,8 @@ export default function FilterableTable<LeafDataItemType extends RepositoryDataI
             objects={objects}
             activeRowId={activeRowId}
             activeSectionId={activeSectionId}
+            editingSectionId={editingSectionId}
+            activePathSet={activePathSet}
             repository={repository}
             sections={sections}
             tableStructure={tableStructure}
@@ -274,6 +317,23 @@ function Sections<DataItemType extends RepositoryDataItem>({
     return (
         <>
             {sections.map((section, index) => {
+                // Determine if this is a "Card Section" (like Contract) or regular list
+                // If it has a border color, Section.tsx will render its own Card style wrapper.
+                // We should avoid wrapping it in an extra Bootstrap Card to prevent double margins/padding.
+                const isSelfContainedCard = !!section.borderColor;
+
+                if (isSelfContainedCard) {
+                    return (
+                        <Section<DataItemType>
+                            key={section.dataItem.id + section.type}
+                            sectionNode={section}
+                            resulsetTableProps={resulsetTableProps}
+                            onClick={onClick}
+                        />
+                    );
+                }
+
+                // Initial behavior for standard sections
                 return (
                     <Card key={section.dataItem.id + section.type} bg="light" border="light">
                         <Section<DataItemType>
@@ -384,7 +444,7 @@ function addNode<LeafDataItemType extends RepositoryDataItem>(
                 type: newNodeType,
                 repository: node.repository,
                 dataItem: newData,
-                titleLabel: "nowy tytuł",
+                title: <>nowy tytuł</>,
                 children: [],
                 leaves: [],
             };

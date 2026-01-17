@@ -6,6 +6,7 @@ import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
+import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 import RowActionMenu from "./RowActionMenu";
 import { SpinnerBootstrap } from "../CommonComponents";
 
@@ -112,7 +113,9 @@ export default function DashboardCard<DataItemType extends RepositoryDataItem>({
 
     function handleRowDoubleClick(object: DataItemType) {
         const detailsId = getDetailsId ? getDetailsId(object) : object.id;
-        if (detailsRoute) navigate(`${detailsRoute}${detailsId}`, { state: { repository } });
+        if (!detailsRoute) return;
+        const target = buildDetailsPath(detailsRoute, detailsId);
+        if (target) navigate(target, { state: { repository } });
     }
 
     function handleHeaderClick() {

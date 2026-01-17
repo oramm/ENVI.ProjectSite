@@ -24,6 +24,10 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     selectedObjectRoute: string;
     activeRowId: number;
     activeSectionId: string;
+    /** ID sekcji z widocznym Action Menu (tylko jedna naraz) */
+    editingSectionId: string;
+    /** Zbiór ID sekcji na ścieżce od korzenia do aktywnej (dla podświetlenia tła) */
+    activePathSet: Set<string>;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     isDeletable: boolean;
     isCopyable: boolean;
@@ -54,6 +58,8 @@ export const FilterableTableContext = createContext<FilterableTableContextProps<
     selectedObjectRoute: "",
     activeRowId: 0,
     activeSectionId: "",
+    editingSectionId: "",
+    activePathSet: new Set<string>(),
     EditButtonComponent: undefined,
     isDeletable: true,
     isCopyable: false,
@@ -84,6 +90,8 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
     selectedObjectRoute,
     activeRowId,
     activeSectionId,
+    editingSectionId,
+    activePathSet,
     EditButtonComponent,
     isDeletable = true,
     isCopyable = false,
@@ -119,6 +127,8 @@ export function FilterableTableProvider<Item extends RepositoryDataItem>({
                 selectedObjectRoute,
                 activeRowId,
                 activeSectionId,
+                editingSectionId,
+                activePathSet,
                 EditButtonComponent,
                 isDeletable,
                 isCopyable,

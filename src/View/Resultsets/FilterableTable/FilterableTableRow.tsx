@@ -13,6 +13,7 @@ import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowStructure } from "./FilterableTableTypes";
 import { Col, Row } from "react-bootstrap";
 import { getColSize } from "./ResultSetTable";
+import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 
 export type FilterTableRowProps<DataItemType extends RepositoryDataItem> = {
     dataObject: DataItemType;
@@ -55,12 +56,15 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
         <Row
             onClick={(e) => onRowClick(dataObject.id)}
             onDoubleClick={() => {
-                if (selectedObjectRoute) navigate(selectedObjectRoute + dataObject.id, { state: { repository } });
+                if (!selectedObjectRoute) return;
+                const target = buildDetailsPath(selectedObjectRoute, dataObject.id);
+                if (target) navigate(target, { state: { repository } });
             }}
-            className={`${getRowClass({ isActive, isStriped })} p-3 mb-2`}
+            className={`${getRowClass({ isActive, isStriped })}`}
         >
             {tableStructure.map((column, index) => {
                 const key = String(column.objectAttributeToShow || index);
+                // xs jest nadpisywane celowo: 11/12 dla isActive (rezerwacja dla RowActionMenu), 12/12 dla inactive
                 return (
                     <Col key={key} {...getColSize(column)} xs={isActive ? 11 : 12}>
                         {tdBodyRender(column, dataObject)}
@@ -68,19 +72,21 @@ export function FilterableTableRow<DataItemType extends RepositoryDataItem>({
                 );
             })}
             {isActive && (
-                <Col align="center" xs="1" className="d-flex justify-content-center">
-                    {" "}
-                    <RowActionMenu
-                        dataObject={dataObject}
-                        handleEditObject={handleEditObject}
-                        handleCopyObject={handleCopyObject}
-                        EditButtonComponent={EditButtonComponent}
-                        handleDeleteObject={handleDeleteObject}
-                        isDeletable={isDeletable}
-                        isCopyable={isCopyable}
-                        shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
-                        specialRetrieveActionRoute={specialRetrieveActionRoute}
-                    />
+                <Col xs="1">
+                    <div className="d-flex justify-content-center">
+                        {" "}
+                        <RowActionMenu
+                            dataObject={dataObject}
+                            handleEditObject={handleEditObject}
+                            handleCopyObject={handleCopyObject}
+                            EditButtonComponent={EditButtonComponent}
+                            handleDeleteObject={handleDeleteObject}
+                            isDeletable={isDeletable}
+                            isCopyable={isCopyable}
+                            shouldRetrieveDataBeforeEdit={shouldRetrieveDataBeforeEdit}
+                            specialRetrieveActionRoute={specialRetrieveActionRoute}
+                        />
+                    </div>
                 </Col>
             )}
         </Row>
@@ -231,7 +237,7 @@ export function CopyModalButton<DataItemType extends RepositoryDataItem>({
  */
 export function getRowClass({ isActive, isStriped }: { isActive: boolean; isStriped: boolean }) {
     return [
-        "p-3 mb-2 rounded shadow-sm",
+        "p-3 mb-2 rounded shadow-sm mx-0",
         isStriped && !isActive && "bg-light rounded shadow-sm",
         isActive && "bg-primary bg-opacity-10 border-start border-4 border-primary",
         !isActive && "row-hover",

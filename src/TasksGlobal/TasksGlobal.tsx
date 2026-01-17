@@ -1,4 +1,4 @@
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ComponentType, useEffect, useState } from "react";
 import { Col, Card as Container, Row } from "react-bootstrap";
@@ -8,15 +8,20 @@ import {
     MilestoneData,
     OtherContract,
     OurContract,
-    PersonData,
     ProjectData,
     RepositoryDataItem,
     Task,
 } from "../../Typings/bussinesTypes";
-import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
 import { ContractProvider } from "../Contracts/ContractsList/ContractContext";
+import { caseTypesRepository, milestoneTypesRepository } from "../Contracts/ContractsList/ContractsController";
+import ToolsDate from "../React/Tools/ToolsDate";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../View/Modals/ModalsTypes";
-import { SpinnerBootstrap, TaskStatusBadge } from "../View/Resultsets/CommonComponents";
+import {
+    ContractStatusBadge,
+    MilestoneStatusBadge,
+    SpinnerBootstrap,
+    TaskStatusBadge,
+} from "../View/Resultsets/CommonComponents";
 import FilterableTable from "../View/Resultsets/FilterableTable/FilterableTable";
 import { SectionNode } from "../View/Resultsets/FilterableTable/Section";
 import { getSymbolByUniqueness } from "../View/Symbols";
@@ -26,6 +31,7 @@ import { MilestoneAddNewModalButton, MilestoneEditModalButton } from "./Modals/M
 import { ProjectAddNewModalButton, ProjectEditModalButton } from "./Modals/ProjectModalButtons";
 import { TaskAddNewModalButton, TaskEditModalButton } from "./Modals/TasksGlobalModalButtons";
 import { ProjectsFilterBody } from "./ProjectsFilterBody";
+import "./TasksGlobal.css";
 import {
     casesRepository,
     contractsRepository,
@@ -34,8 +40,8 @@ import {
     projectsRepository,
     tasksGlobalRepository,
 } from "./TasksGlobalController";
-import { ContractsWithChildren } from "./TasksGlobalTypes";
 import { TasksGlobalFilterBody } from "./TasksGlobalFilterBody";
+import { ContractsWithChildren } from "./TasksGlobalTypes";
 
 export default function TasksGlobal() {
     //const [tasks, setTasks] = useState([] as Task[] | undefined); //undefined żeby pasowało do typu danych w ContractProvider
@@ -190,15 +196,116 @@ function LoadingMessage({ selectedProject }: { selectedProject: ProjectData | un
     );
 }
 
-function makeContractTitleLabel(contract: OurContract | OtherContract) {
-    const manager = "ourId" in contract ? (contract._manager as PersonData) : undefined;
-    const ourId = "ourId" in contract ? contract.ourId : undefined;
+function truncateText(text: string | undefined, maxLength: number): string {
+    if (!text) return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+}
 
-    let label = "Umowa: ";
-    label += ourId ? `${ourId || ""}` : `${contract._type.name} ${contract.number}`;
-    if (contract.alias) label += ` [${contract.alias || ""}] `;
-    if (manager) label += ` ${manager.name} ${manager.surname}`;
-    return label;
+function makeOurContractTitleHeader(contract: OurContract) {
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const hasDates = contract.startDate || contract.endDate;
+    const manager = contract._manager;
+
+    return (
+        <div className="d-flex flex-column gap-2">
+            {/* Linia #1: ID + Status Badge */}
+            <div className="d-flex align-items-center gap-2">
+                <span className="contract-id">
+                    {contract.ourId}
+                    {hasAlias && ` | ${contract.alias}`}
+                </span>
+                <ContractStatusBadge status={contract.status} className="contract-status-badge" />
+            </div>
+
+            {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
+            <h6 className="contract-title">{contractName}</h6>
+
+            {/* Linia #3: Daty + Koordynator */}
+            <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
+                {hasDates && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="contract-metadata-icon" />
+                        <span>
+                            {contract.startDate ? ToolsDate.dateYMDtoDMY(contract.startDate) : "?"} —{" "}
+                            {contract.endDate ? ToolsDate.dateYMDtoDMY(contract.endDate) : "?"}
+                        </span>
+                    </div>
+                )}
+                {manager && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faUser} className="contract-metadata-icon" />
+                        <span>
+                            {manager.name} {manager.surname}
+                        </span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function makeOtherContractTitleHeader(contract: OtherContract) {
+    const ourRelatedId = contract._ourContract ? contract._ourContract.ourId : "Brak powiązania";
+    const identifier = `${contract._type.name} ${contract.number} ➔ ${ourRelatedId}`;
+    const contractName = truncateText(contract.name, 200);
+    const hasAlias = !!contract.alias;
+    const contractors = contract._contractors;
+    const hasContractors = contractors && contractors.length > 0;
+    const hasDates = contract.startDate || contract.endDate;
+
+    const manager = contract._ourContract?._manager;
+
+    return (
+        <div className="d-flex flex-column gap-2">
+            {/* Linia #1: Type + Number + Alias + Status Badge */}
+            <div className="d-flex align-items-center gap-2">
+                <span className="contract-id">
+                    {identifier}
+                    {hasAlias && ` | ${contract.alias}`}
+                </span>
+                <ContractStatusBadge status={contract.status} className="contract-status-badge" />
+            </div>
+
+            {/* Linia #2: Nazwa kontraktu (tytuł główny) */}
+            <h6 className="contract-title">{contractName}</h6>
+
+            {/* Linia #3: Wykonawcy */}
+            {hasContractors && (
+                <div className="d-flex align-items-center gap-2">
+                    <span className="contract-contractors">{contractors.map((c) => c.name).join(", ")}</span>
+                </div>
+            )}
+
+            {/* Linia #4: Daty + Koordynator */}
+            <div className="contract-metadata d-flex flex-wrap gap-4 align-items-center">
+                {hasDates && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faCalendarAlt} className="contract-metadata-icon" />
+                        <span>
+                            {contract.startDate ? ToolsDate.dateYMDtoDMY(contract.startDate) : "?"} —{" "}
+                            {contract.endDate ? ToolsDate.dateYMDtoDMY(contract.endDate) : "?"}
+                        </span>
+                    </div>
+                )}
+                {manager && (
+                    <div className="d-flex align-items-center gap-2">
+                        <FontAwesomeIcon icon={faUser} className="contract-metadata-icon" />
+                        <span>
+                            {manager.name} {manager.surname}
+                        </span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function makeContractTitleHeader(contract: OurContract | OtherContract) {
+    const isOurContract = "ourId" in contract;
+    return isOurContract
+        ? makeOurContractTitleHeader(contract as OurContract)
+        : makeOtherContractTitleHeader(contract as OtherContract);
 }
 
 function contractNodeEditHandler(node: SectionNode<Task>) {
@@ -206,7 +313,7 @@ function contractNodeEditHandler(node: SectionNode<Task>) {
     const contract = {
         ...(node.dataItem as OurContract | OtherContract),
     };
-    node.titleLabel = makeContractTitleLabel(contract);
+    node.title = makeContractTitleHeader(contract);
 }
 
 function milestoneNodeEditHandler(node: SectionNode<Task>) {
@@ -214,26 +321,42 @@ function milestoneNodeEditHandler(node: SectionNode<Task>) {
     const milestone = {
         ...(node.dataItem as MilestoneData),
     };
-    node.titleLabel = makeMilestoneTitleLabel(milestone);
+    node.title = <>{makeMilestoneTitleLabel(milestone)}</>;
 }
 
 function makeMilestoneTitleLabel(milestone: MilestoneData) {
-    const dates: string = milestone._dates
-        .map((d) => {
-            const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
-            const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
-            return `[${startDate} - ${endDate}]`;
-        })
-        .join(", ");
     const uniqueicon = getSymbolByUniqueness(milestone._type.isUniquePerContract);
-    return `Kamień: ${milestone._type._folderNumber} ${milestone._type.name} ${
+    const titleText = `Kamień: ${uniqueicon} ${milestone._type._folderNumber} ${milestone._type.name} ${
         milestone.name || ""
-    } ${dates} ${uniqueicon}`;
+    }`;
+
+    return (
+        <div className="d-flex gap-3 align-items-center justify-content-between">
+            <div className="d-flex flex-column gap-1">
+                <span>{titleText}</span>
+                {milestone._dates && milestone._dates.length > 0 && (
+                    <div className="d-flex align-items-center gap-2 text-secondary small" style={{ lineHeight: "1" }}>
+                        <FontAwesomeIcon icon={faCalendarAlt} className="text-muted" />
+                        {milestone._dates.map((d, index) => {
+                            const startDate = d.startDate ? d.startDate.toString().split("T")[0] : "⚠️ brak daty";
+                            const endDate = d.endDate ? d.endDate.toString().split("T")[0] : "⚠️ brak daty";
+                            return (
+                                <span key={index}>
+                                    {startDate} - {endDate}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+            <div>{milestone.status && <MilestoneStatusBadge status={milestone.status} />}</div>
+        </div>
+    );
 }
 
 function makeCaseTitleLabel(caseItem: Case) {
     const uniqueicon = getSymbolByUniqueness(caseItem._type.isUniquePerMilestone);
-    return `Sprawa: ${caseItem._typeFolderNumber_TypeName_Number_Name || ""} ${uniqueicon}`;
+    return `Sprawa: ${uniqueicon} ${caseItem._typeFolderNumber_TypeName_Number_Name || ""}`;
 }
 
 function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): SectionNode<Task>[] {
@@ -241,15 +364,20 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
     const allTasks: Task[] = [];
 
     for (const { contract, milestonesWithCases } of contractsWithChildrenInput) {
+        const isOurContract = "ourId" in contract;
+        const borderColor = isOurContract ? "var(--section-border-our)" : "var(--section-border-other)";
+
         const contractNode: SectionNode<Task> = {
             id: "contract" + contract.id,
             isInAccordion: true,
+            borderColor: borderColor,
             level: 1,
             type: "contract",
             childrenNodesType: "milestone",
+            selectedObjectRoute: "/contract/",
             repository: contractsRepository,
             dataItem: contract,
-            titleLabel: makeContractTitleLabel(contract),
+            title: makeContractTitleHeader(contract),
             children: [] as SectionNode<Task>[],
             AddNewButtonComponent: MilestoneAddNewModalButton as unknown as ComponentType<
                 SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -273,7 +401,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                 childrenNodesType: "case",
                 repository: milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
                 dataItem: milestone,
-                titleLabel: makeMilestoneTitleLabel(milestone), // Dostosuj do Twojej metody
+                title: <>{makeMilestoneTitleLabel(milestone)}</>, // Dostosuj do Twojej metody
                 children: [] as SectionNode<Task>[],
                 AddNewButtonComponent: CaseAddNewModalButton as unknown as ComponentType<
                     SpecificAddNewModalButtonProps<RepositoryDataItem>
@@ -293,7 +421,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                     type: "case",
                     repository: casesRepository,
                     dataItem: caseItem,
-                    titleLabel: makeCaseTitleLabel(caseItem),
+                    title: <>{makeCaseTitleLabel(caseItem)}</>,
                     children: [],
                     leaves: [] as Task[],
                     isDeletable: true,
@@ -304,7 +432,7 @@ function buildTree(contractsWithChildrenInput: ContractsWithChildren[]): Section
                         SpecificEditModalButtonProps<RepositoryDataItem>
                     >, // Dostosuj do Twojego komponentu
                     editHandler: (node: SectionNode<Task>) => {
-                        node.titleLabel = makeCaseTitleLabel(node.dataItem as Case);
+                        node.title = <>{makeCaseTitleLabel(node.dataItem as Case)}</>;
                     }, // Dostosuj do Twojej metody
                 };
                 milestoneNode.children.push(caseNode);

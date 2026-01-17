@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Col, Row } from "react-bootstrap";
+import { Accordion } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { RepositoryDataItem } from "../../../../Typings/bussinesTypes";
 import RepositoryReact from "../../../React/RepositoryReact";
 import { SpecificAddNewModalButtonProps, SpecificEditModalButtonProps } from "../../Modals/ModalsTypes";
+import "./FilterableTable.css";
 import { useFilterableTableContext } from "./FilterableTableContext";
 import { RowActionMenu } from "./FilterableTableRow";
 import { ResultSetTable, ResultSetTableProps } from "./ResultSetTable";
-import { ToggleExpandButton, ExpandTrigger } from "./ToggleExpandButton";
-import "./FilterableTable.css";
-import { useNavigate } from "react-router-dom";
+import { ExpandTrigger, ToggleExpandButton } from "./ToggleExpandButton";
+import { buildDetailsPath } from "../../../React/Tools/ToolsRouting";
 
 /** Struktura danych sekcji (poziomu) - element Props dla komponentu Section
  * @param SectionNode.repository - repozytorium z danymi
  * @param SectionNode.dataItem - obiekt z danymi sekcji
- * @param SectionNode.titleLabel - tytuł sekcji
+ * @param SectionNode.title - tytuł sekcji (JSX) - może zawierać dedykowane style CSS
  */
 export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     id: string;
@@ -22,7 +23,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     childrenNodesType?: string;
     repository: RepositoryReact;
     dataItem: RepositoryDataItem;
-    titleLabel: string;
+    title: JSX.Element;
     children: SectionNode<LeafDataItemType>[];
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<RepositoryDataItem>>;
     AddNewButtonComponent?: React.ComponentType<SpecificAddNewModalButtonProps<RepositoryDataItem>>;
@@ -33,6 +34,7 @@ export type SectionNode<LeafDataItemType extends RepositoryDataItem> = {
     shouldRetrieveDataBeforeEdit?: boolean;
     specialRetrieveActionRoute?: string;
     selectedObjectRoute?: string;
+    borderColor?: string;
 };
 
 export type SectionProps<DataItemType extends RepositoryDataItem> = {
@@ -48,14 +50,14 @@ export function Section<DataItemType extends RepositoryDataItem>({
     onClick,
     childrenExpandTrigger,
 }: SectionProps<DataItemType>) {
-    const { activeSectionId, sections, globalExpandTrigger } = useFilterableTableContext<DataItemType>();
-    const [isActive, setIsActive] = useState(activeSectionId === sectionNode.id);
+    const { activePathSet, editingSectionId, sections, globalExpandTrigger } =
+        useFilterableTableContext<DataItemType>();
+    // Tło: czy sekcja jest na ścieżce od korzenia do aktywnej
+    const isOnActivePath = activePathSet.has(sectionNode.id);
+    // Menu: czy to jest aktualnie edytowana sekcja
+    const isEditing = editingSectionId === sectionNode.id;
     const [activeKey, setActiveKey] = useState<string[]>(["0"]);
     const [localExpandTrigger, setLocalExpandTrigger] = useState<ExpandTrigger>(null);
-
-    useEffect(() => {
-        setIsActive(activeSectionId === sectionNode.id);
-    }, [activeSectionId, sectionNode.id, sections]);
 
     useEffect(() => {
         if (globalExpandTrigger?.action === "COLLAPSE") {
@@ -73,16 +75,14 @@ export function Section<DataItemType extends RepositoryDataItem>({
         }
     }, [childrenExpandTrigger]);
 
-    useEffect(() => {
-        // Local trigger: COLLAPSE zwija tylko dzieci (bez bieżącej sekcji), EXPAND rozwija siebie i dzieci
-        if (localExpandTrigger?.action === "EXPAND") {
-            setActiveKey(["0"]);
-        }
-    }, [localExpandTrigger]);
+    // Obliczanie klas dla kontenera Accordion (karta vs zwykły)
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const accordionClassName = hasCustomBorder ? "mb-4 section-accordion section-card" : "mb-2 section-accordion";
 
     return sectionNode.isInAccordion ? (
         <Accordion
-            className="mb-2"
+            className={accordionClassName}
+            style={hasCustomBorder ? { borderLeftColor: sectionNode.borderColor } : undefined}
             key={sectionNode.id}
             alwaysOpen
             activeKey={activeKey}
@@ -92,7 +92,8 @@ export function Section<DataItemType extends RepositoryDataItem>({
                 <Accordion.Header>
                     <SectionHeader
                         sectionNode={sectionNode}
-                        isActive={isActive}
+                        isOnActivePath={isOnActivePath}
+                        isEditing={isEditing}
                         onClick={onClick}
                         localExpandTrigger={localExpandTrigger}
                         setLocalExpandTrigger={setLocalExpandTrigger}
@@ -112,7 +113,8 @@ export function Section<DataItemType extends RepositoryDataItem>({
         <>
             <SectionHeader
                 sectionNode={sectionNode}
-                isActive={isActive}
+                isOnActivePath={isOnActivePath}
+                isEditing={isEditing}
                 onClick={onClick}
                 localExpandTrigger={localExpandTrigger}
                 setLocalExpandTrigger={setLocalExpandTrigger}
@@ -129,7 +131,10 @@ export function Section<DataItemType extends RepositoryDataItem>({
 type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
     sectionNode: SectionNode<DataItemType>;
     onClick: (sectionNode: SectionNode<DataItemType>) => void;
-    isActive: boolean;
+    /** Czy sekcja jest na ścieżce od korzenia do aktywnej (dla tła) */
+    isOnActivePath: boolean;
+    /** Czy to jest aktualnie edytowana sekcja (dla menu) */
+    isEditing: boolean;
     localExpandTrigger: ExpandTrigger;
     setLocalExpandTrigger: React.Dispatch<React.SetStateAction<ExpandTrigger>>;
 };
@@ -137,7 +142,8 @@ type SectionHeaderProps<DataItemType extends RepositoryDataItem> = {
 function SectionHeader<DataItemType extends RepositoryDataItem>({
     sectionNode,
     onClick,
-    isActive,
+    isOnActivePath,
+    isEditing,
     localExpandTrigger,
     setLocalExpandTrigger,
 }: SectionHeaderProps<DataItemType>) {
@@ -151,32 +157,85 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
             fontSize: nodeLevel === 1 ? "1.5rem" : "1rem",
             fontWeight: 600 - nodeLevel * 100,
             color: `rgb(50, 130, 50)`,
+            textTransform: "none" as const,
         };
     }
-    const headerStyle = {
-        backgroundColor: "aliceblue",
-        borderRadius: "0.25rem",
-    };
+
+    const hasCustomBorder = !!sectionNode.borderColor;
+    const isAccordionChild = !!sectionNode.isInAccordion;
+
+    // Base classes
+    let computedClassName = `
+        d-flex
+        flex-column flex-md-row
+        justify-content-md-between
+        align-items-start align-items-md-center
+        w-100
+        transition-base
+        section-header
+    `;
+
+    // Apply specific variants
+    if (hasCustomBorder) {
+        // "Card Header" style - clean, large padding, transparent base
+        computedClassName += " p-3";
+    } else {
+        // "Default Header" style - smaller padding
+        computedClassName += " px-2 py-1 rounded";
+    }
+
+    // Active & Hover states (Colors)
+    // Tło: podświetlone dla wszystkich sekcji na ścieżce od korzenia
+    if (isOnActivePath) {
+        computedClassName += " state-active";
+    } else {
+        computedClassName += " state-hover";
+    }
+
     return (
         <div
-            className="d-flex justify-content-between align-items-center flex-wrap w-100 px-2 py-1 mb-2"
-            style={!sectionNode.isInAccordion ? headerStyle : undefined}
+            className={computedClassName}
             onClick={() => onClick(sectionNode)}
             onDoubleClick={() => {
-                if (selectedObjectRoute) navigate(selectedObjectRoute + dataItem.id);
+                if (!selectedObjectRoute) return;
+                const target = buildDetailsPath(selectedObjectRoute, dataItem.id);
+                if (target) navigate(target);
             }}
         >
-            <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
-                <span style={makeTitleStyle()}>{sectionNode.titleLabel}</span>
+            {/* LEWA STRONA – TITLE */}
+            <div
+                className="
+                            d-flex
+                            align-items-center
+                            gap-2
+                            flex-grow-1
+                            min-w-0
+                        "
+                style={{ cursor: "pointer" }}
+            >
+                <div style={makeTitleStyle()} className="flex-grow-1 text-break">
+                    {sectionNode.title}
+                </div>
+
                 {(sectionNode.leaves?.length || sectionNode.children.length) > 5 && (
-                    <span className="tekst-muted small">
+                    <span className="text-muted small flex-shrink-0">
                         [{sectionNode.leaves?.length || sectionNode.children.length} pozycji]
                     </span>
                 )}
             </div>
 
-            {isActive && (
-                <div className="d-flex align-items-center gap-2 section-action-menu">
+            {/* PRAWA STRONA – MENU (tylko dla aktualnie edytowanej sekcji) */}
+            {isEditing && (
+                <div
+                    className="
+                                d-flex
+                                align-items-center
+                                gap-2
+                                
+                                flex-shrink-0
+                                mt-2 mt-md-0
+                            "
+                >
                     {sectionNode.children.length > 0 && (
                         <ToggleExpandButton
                             expandTrigger={localExpandTrigger}
@@ -186,6 +245,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                             stopPropagation
                         />
                     )}
+
                     <RowActionMenu
                         dataObject={sectionNode.dataItem}
                         isDeletable={!!sectionNode.isDeletable}
@@ -197,6 +257,7 @@ function SectionHeader<DataItemType extends RepositoryDataItem>({
                         layout="horizontal"
                         sectionRepository={sectionNode.repository}
                     />
+
                     {sectionNode.AddNewButtonComponent && (
                         <sectionNode.AddNewButtonComponent
                             modalProps={{
@@ -215,27 +276,48 @@ type SectionBodyProps<DataItemType extends RepositoryDataItem> = SectionProps<Da
     localExpandTrigger: ExpandTrigger;
 };
 
+// Jeśli karta (border), padding w body musi być dopasowany do stylistyki
 function SectionBody<DataItemType extends RepositoryDataItem>({
     sectionNode,
     resulsetTableProps,
     onClick,
     localExpandTrigger,
 }: SectionBodyProps<DataItemType>) {
-    return (
-        <>
-            {sectionNode.children.map((childNode, index) => (
-                <Section<DataItemType>
-                    key={childNode.dataItem.id + childNode.type}
-                    sectionNode={childNode}
-                    resulsetTableProps={resulsetTableProps}
-                    onClick={onClick}
-                    childrenExpandTrigger={localExpandTrigger}
-                />
-            ))}
+    const hasCustomBorder = !!sectionNode.borderColor;
 
-            {sectionNode.leaves && (
-                <ResultSetTable<DataItemType> {...resulsetTableProps} filteredObjects={sectionNode.leaves} />
+    // KONTRAKTY (Karty): Padding ramki dla całej zawartości
+    const cardContentStyle: React.CSSProperties = hasCustomBorder ? { padding: "0 1rem 1rem 1rem" } : {};
+
+    // ZAGNIEŻDŻONE SEKCJE: Wcięcie (indentation) TYLKO dla dzieci (nested sections), NIE dla liści (tabeli tasków)
+    const indentationStyle: React.CSSProperties = !hasCustomBorder ? { paddingLeft: "1.5rem" } : {};
+
+    return (
+        <div style={cardContentStyle}>
+            {/* Zagnieżdżone sekcje - z wcięciem */}
+            {sectionNode.children.length > 0 && (
+                <div style={indentationStyle}>
+                    {sectionNode.children.map((childNode, index) => (
+                        <Section<DataItemType>
+                            key={childNode.dataItem.id + childNode.type}
+                            sectionNode={childNode}
+                            resulsetTableProps={resulsetTableProps}
+                            onClick={onClick}
+                            childrenExpandTrigger={localExpandTrigger}
+                        />
+                    ))}
+                </div>
             )}
-        </>
+
+            {/* Liście (Tabela) - BEZ wcięcia (indentation), ale ewentualnie z paddingiem karty */}
+            {sectionNode.leaves && (
+                <div className="mt-2">
+                    <ResultSetTable<DataItemType>
+                        {...resulsetTableProps}
+                        filteredObjects={sectionNode.leaves}
+                        parentSectionId={sectionNode.id}
+                    />
+                </div>
+            )}
+        </div>
     );
 }

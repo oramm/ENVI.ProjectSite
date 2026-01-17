@@ -235,7 +235,15 @@ export function KsefStatusBadge({ ksefNumber, ksefStatus }: { ksefNumber?: strin
     return null;
 }
 
-export function ContractStatusBadge({ status }: { status: string }) {
+export function ContractStatusBadge({
+    status,
+    className,
+    style,
+}: {
+    status: string;
+    className?: string;
+    style?: React.CSSProperties;
+}) {
     let variant;
     let textMode: Color = "light";
     switch (status) {
@@ -257,7 +265,7 @@ export function ContractStatusBadge({ status }: { status: string }) {
     }
 
     return (
-        <Badge bg={variant} text={textMode}>
+        <Badge bg={variant} text={textMode} className={className} style={style}>
             {status}
         </Badge>
     );

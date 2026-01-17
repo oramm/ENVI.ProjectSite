@@ -15,32 +15,43 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importStar(require("react"));
-const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
-const LettersController_1 = require("./LettersController");
-const LetterFilterBody_1 = require("./LetterFilterBody");
-const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
-const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+exports.default = LettersSearch;
 const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
-const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
+const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
+const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const Tools_1 = __importDefault(require("../../React/Tools/Tools"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
-const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const Tools_1 = __importDefault(require("../../React/Tools/Tools"));
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
+const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/FilterableTableContext");
+const LetterFilterBody_1 = require("./LetterFilterBody");
+const LettersController_1 = require("./LettersController");
 const LetterModalBodiesPartial_1 = require("./Modals/LetterModalBodiesPartial");
+const LetterModalButtons_1 = require("./Modals/LetterModalButtons");
 function LettersSearch({ title }) {
     (0, react_1.useEffect)(() => {
         document.title = title;
@@ -103,7 +114,9 @@ function LettersSearch({ title }) {
                 modalSubtitle: `Dotyczy: ${letter.description}`,
                 repository: LettersController_1.lettersRepository,
                 ModalBodyComponent: LetterModalBodiesPartial_1.LetterModalBodyStatus,
-                onEdit: (editedFields) => { handleEditObject({ ...letter, ...editedFields }); },
+                onEdit: (editedFields) => {
+                    handleEditObject({ ...letter, ...editedFields });
+                },
                 fieldsToUpdate: ["status"],
             } },
             react_1.default.createElement(CommonComponents_1.LetterStatusBadge, { status: letter.status || "" })));
@@ -124,7 +137,8 @@ function LettersSearch({ title }) {
                     letter.relatedLetterNumber)),
                 letter.responseDueDate && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
-                    "Wymagana odpowiedzi do dnia: ",
+                    "Wymagana odpowiedzi do dnia:",
+                    " ",
                     ToolsDate_1.default.dateDMYtoYMD(ToolsDate_1.default.dateISOToDMY(letter.responseDueDate)))),
                 letter.responseIKNumber && (react_1.default.createElement(react_1.default.Fragment, null,
                     react_1.default.createElement("br", null),
@@ -141,4 +155,3 @@ function LettersSearch({ title }) {
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
-exports.default = LettersSearch;

@@ -11,6 +11,24 @@
 5. [Business Object Selectors](./business-object-selectors.md) ⭐ **Szczegółowa dokumentacja**
 6. [Typowe błędy i rozwiązania](#typowe-błędy-i-rozwiązania)
 7. [Checklist dla deweloperów](#checklist-dla-deweloperów)
+8. [UI Browser Loop (dopracowanie UI)](#ui-browser-loop-dopracowanie-ui)
+
+## UI Browser Loop (dopracowanie UI)
+
+Jeśli chcesz dopracować UI w schemacie: **ustalamy → zmieniamy → sprawdzamy w przeglądarce → oceniamy → poprawiamy**, używaj trybu:
+
+**Tryb: UI Browser Loop**
+
+Pełny opis i szablon polecenia: [ui-browser-loop.md](./ui-browser-loop.md)
+
+Minimalny zestaw informacji, żeby agent mógł działać bez dopytywania:
+
+-   Route/ekran (`#/...`), np. `#/persons`
+-   Co jest nie tak teraz + co ma być docelowo (kryteria akceptacji)
+-   Czy zmiany mają dotyczyć tylko CSS/układu czy też komponentów
+-   Czy ekran wymaga logowania (DEV Mock Login) i jaka rola jest potrzebna
+
+Weryfikacja efektu: agent używa Puppeteer (skrypt `scripts/screenshot.js`) i zapisuje screenshoty do `test-results/screenshots`.
 
 ## Architektura projektu
 
