@@ -210,20 +210,23 @@ export function InvoiceStatusBadge({ status }: { status: string }) {
     );
 }
 
-export function KsefStatusBadge({ ksefNumber, ksefStatus }: { ksefNumber?: string | null; ksefStatus?: string | null }) {
+export function KsefStatusBadge({
+    ksefNumber,
+    ksefStatus,
+}: {
+    ksefNumber?: string | null;
+    ksefStatus?: string | null;
+}) {
     if (ksefNumber) {
         return (
-            <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="ksef-tooltip">{ksefNumber}</Tooltip>}
-            >
+            <OverlayTrigger placement="top" overlay={<Tooltip id="ksef-tooltip">{ksefNumber}</Tooltip>}>
                 <Badge bg="success" text="light">
                     ✅ Przyjęta
                 </Badge>
             </OverlayTrigger>
         );
     }
-    
+
     if (ksefStatus === "PENDING") {
         return (
             <Badge bg="warning" text="dark">
@@ -231,7 +234,7 @@ export function KsefStatusBadge({ ksefNumber, ksefStatus }: { ksefNumber?: strin
             </Badge>
         );
     }
-    
+
     return null;
 }
 
