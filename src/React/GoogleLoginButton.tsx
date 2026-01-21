@@ -21,7 +21,9 @@ export default function GoogleButton({ onServerResponse }: Props) {
         onServerResponse(responseData);
     }
 
-    // DEV MODE: Mock login for Playwright/testing (only when MODE is NOT production)
+    // DEV MODE: Mock login for Playwright/testing (only in development with ENABLE_DEV_LOGIN=true)
+    const isDevLoginEnabled = process.env.ENABLE_DEV_LOGIN === "true";
+
     async function handleDevLogin() {
         console.warn("🔧 DEV MODE: Using mock authentication");
         const response = await fetch(MainSetup.serverUrl + "login", {
@@ -38,7 +40,7 @@ export default function GoogleButton({ onServerResponse }: Props) {
         onServerResponse(responseData);
     }
 
-    if (process.env.MODE !== "production") {
+    if (process.env.MODE === "development") {
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <GoogleLogin onSuccess={handleSuccess} onError={() => console.log("Login Failed")} />

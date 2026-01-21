@@ -105423,7 +105423,8 @@ function GoogleButton({ onServerResponse }) {
         MainSetupReact_1.default.currentUser = responseData.userData;
         onServerResponse(responseData);
     }
-    // DEV MODE: Mock login for Playwright/testing (only when MODE is NOT production)
+    // DEV MODE: Mock login for Playwright/testing (only in development with ENABLE_DEV_LOGIN=true)
+    const isDevLoginEnabled = "true" === "true";
     async function handleDevLogin() {
         console.warn("🔧 DEV MODE: Using mock authentication");
         const response = await fetch(MainSetupReact_1.default.serverUrl + "login", {
