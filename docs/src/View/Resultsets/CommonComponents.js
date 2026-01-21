@@ -49,6 +49,7 @@ exports.DeleteIconButton = DeleteIconButton;
 exports.CopyIconButton = CopyIconButton;
 exports.MenuExpandIconButton = MenuExpandIconButton;
 exports.InvoiceStatusBadge = InvoiceStatusBadge;
+exports.KsefStatusBadge = KsefStatusBadge;
 exports.ContractStatusBadge = ContractStatusBadge;
 exports.MilestoneStatusBadge = MilestoneStatusBadge;
 exports.SecurityStatusBadge = SecurityStatusBadge;
@@ -175,6 +176,16 @@ function InvoiceStatusBadge({ status }) {
             variant = "secondary";
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+}
+function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
+    if (ksefNumber) {
+        return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "ksef-tooltip" }, ksefNumber) },
+            react_1.default.createElement(react_bootstrap_1.Badge, { bg: "success", text: "light" }, "\u2705 Przyj\u0119ta")));
+    }
+    if (ksefStatus === "PENDING") {
+        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "warning", text: "dark" }, "\uD83D\uDFE1 Wys\u0142ana"));
+    }
+    return null;
 }
 function ContractStatusBadge({ status, className, style, }) {
     let variant;

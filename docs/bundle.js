@@ -105413,49 +105413,47 @@ const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReac
 function GoogleButton({ onServerResponse }) {
     async function handleSuccess(credentialResponse) {
         const id_token = credentialResponse.credential;
-        const response = await fetch(MainSetupReact_1.default.serverUrl + 'login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+        const response = await fetch(MainSetupReact_1.default.serverUrl + "login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ id_token }),
         });
         const responseData = await response.json();
         MainSetupReact_1.default.currentUser = responseData.userData;
         onServerResponse(responseData);
     }
-    ;
-    // DEV MODE: Mock login for Playwright/testing (only in development with ENABLE_DEV_LOGIN=true)
-    const isDevLoginEnabled = "true" === 'true';
+    // DEV MODE: Mock login for Playwright/testing (only when MODE is NOT production)
     async function handleDevLogin() {
-        console.warn('🔧 DEV MODE: Using mock authentication');
-        const response = await fetch(MainSetupReact_1.default.serverUrl + 'login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+        console.warn("🔧 DEV MODE: Using mock authentication");
+        const response = await fetch(MainSetupReact_1.default.serverUrl + "login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
                 dev_mode: true,
-                mock_user: 'playwright_test_user'
+                mock_user: "playwright_test_user",
             }),
         });
         const responseData = await response.json();
         MainSetupReact_1.default.currentUser = responseData.userData;
         onServerResponse(responseData);
     }
-    ;
-    if (isDevLoginEnabled) {
-        return (react_1.default.createElement("div", { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
-            react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log('Login Failed') }),
+    if (true) {
+        return (react_1.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
+            react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log("Login Failed") }),
             react_1.default.createElement("button", { onClick: handleDevLogin, style: {
-                    padding: '10px',
-                    backgroundColor: '#ff9800',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
+                    padding: "10px",
+                    backgroundColor: "#ff9800",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
                 } }, "\uD83D\uDD27 DEV: Mock Login (Playwright)")));
     }
-    return (react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log('Login Failed') }));
+    // removed by dead control flow
+
 }
 
 
@@ -111653,7 +111651,7 @@ function InvoiceStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-function KsefStatusBadge({ ksefNumber, ksefStatus }) {
+function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
     if (ksefNumber) {
         return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "ksef-tooltip" }, ksefNumber) },
             react_1.default.createElement(react_bootstrap_1.Badge, { bg: "success", text: "light" }, "\u2705 Przyj\u0119ta")));
