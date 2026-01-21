@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node screenshot.js:*)",
+      "Bash(yarn screenshot)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}
