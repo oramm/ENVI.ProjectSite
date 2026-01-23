@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MailInvitationsList;
 const react_1 = __importDefault(require("react"));
 const FilterableTable_1 = __importDefault(require("../../../View/Resultsets/FilterableTable/FilterableTable"));
 const OffersController_1 = require("../OffersController");
@@ -37,7 +38,7 @@ function MailInvitationsList() {
                         padding: "10px",
                         borderLeft: "solid 2pt rgb(241 146 146)",
                         backgroundColor: "#ebf5f0",
-                        wordWrap: "break-word",
+                        wordWrap: "break-word", // Łamanie długich słów
                         whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
                     } },
                     react_1.default.createElement("p", null, "Pierwsze 500 znak\u00F3w maila:"),
@@ -65,4 +66,3 @@ function MailInvitationsList() {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(FilterableTable_1.default, { id: "mailInvitations", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailInvitationsRepository, FilterBodyComponent: MailInvitationsFilterBody_1.MailInvitationsFilterBody })));
 }
-exports.default = MailInvitationsList;

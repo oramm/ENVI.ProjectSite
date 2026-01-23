@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PersonAddNewModalButton = exports.PersonEditModalButton = void 0;
+exports.PersonEditModalButton = PersonEditModalButton;
+exports.PersonAddNewModalButton = PersonAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
 const PersonsController_1 = require("../PersonsController");
@@ -21,7 +22,6 @@ function PersonEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.PersonEditModalButton = PersonEditModalButton;
 function PersonAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,4 +34,3 @@ function PersonAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.PersonAddNewModalButton = PersonAddNewModalButton;

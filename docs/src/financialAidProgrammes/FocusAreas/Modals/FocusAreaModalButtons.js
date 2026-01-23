@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FocusAreaAddNewModalButton = exports.FocusAreaEditModalButton = void 0;
+exports.FocusAreaEditModalButton = FocusAreaEditModalButton;
+exports.FocusAreaAddNewModalButton = FocusAreaAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const FocusAreaModalBody_1 = require("./FocusAreaModalBody");
@@ -21,7 +22,6 @@ function FocusAreaEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.FocusAreaEditModalButton = FocusAreaEditModalButton;
 function FocusAreaAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,4 +34,3 @@ function FocusAreaAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.FocusAreaAddNewModalButton = FocusAreaAddNewModalButton;
