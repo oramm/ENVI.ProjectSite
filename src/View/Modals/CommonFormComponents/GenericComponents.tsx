@@ -480,6 +480,7 @@ type FileInputProps = {
     required?: boolean;
     acceptedFileTypes?: string;
     multiple?: boolean;
+    inputRef?: React.RefObject<HTMLInputElement>;
 };
 
 export function FileInput({
@@ -487,6 +488,7 @@ export function FileInput({
     required = false,
     acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif",
     multiple = true,
+    inputRef,
 }: FileInputProps) {
     const {
         control,
@@ -502,8 +504,11 @@ export function FileInput({
                 //render={({ field: { onChange } }) => (
                 render={({ field: { value, onChange, ...field } }) => (
                     <Form.Control
+                        {...field}
+                        ref={inputRef}
                         type="file"
-                        value={value?.fileName}
+                        // file inputs cannot be programmatically set via value for security reasons
+                        // we keep value handling minimal
                         required={required}
                         accept={acceptedFileTypes}
                         isInvalid={!!errors[name]}
@@ -511,7 +516,6 @@ export function FileInput({
                         multiple={multiple}
                         onChange={(event) => {
                             const files = (event.target as HTMLInputElement).files;
-
                             onChange(files);
                         }}
                     />
