@@ -1,77 +1,176 @@
 # ENVI.ProjectSite AI Developer Instructions
 
-You are an expert developer working on the "ENVI.ProjectSite" codebase, a React 18 + TypeScript application for business process management.
+You are an expert developer working on the "ENVI.ProjectSite" codebase, a React 18 + TypeScript application for business process management (projects, contracts, entities, financial aid programmes).
 
-## Project Architecture & Core Concepts
+## 🏗️ Project Architecture & Core Concepts
 
-### 1. State Management: The "Repository" Pattern
+### 1. State Management: The "Repository" Pattern ⚠️ CRITICAL
 
-The application uses a custom `RepositoryReact` class for data management. This is the **most critical** architectural pattern.
+The application uses a custom `RepositoryReact` class for data management. This is the **most important** architectural pattern to understand.
 
--   **Single Source of Truth**: All data lives in `repository.items`. Components should sync their local state from this source.
--   **Synchronization Flow**:
-    1. User performs action (e.g., Add) via Modal.
-    2. Modal calls `repository.addNewItem()`.
-    3. `repository` updates backend, then its local `.items` array, then session storage.
-    4. Callback (e.g., `onAddNew`) fires.
-    5. Component updates state: `setObjects([...repository.items])`.
--   **Global vs. Local**:
-    -   Global repositories (e.g., for main lists) are initialized in `MainControllerReact.ts` and accessed via `MainSetup`.
-    -   Helper components (Selectors, Autocomplete) **MUST** use isolated, local repositories to avoid polluting global state.
+#### Single Source of Truth
 
-### 2. File Structure
+- All data lives in `repository.items` (fetched from backend, cached in sessionStorage)
+- Components sync their local state FROM this source: `setObjects([...repository.items])`
+- State flow is **unidirectional**: `repository.items` → component state
 
--   **Source**: `src/` contains all app logic.
--   **Output**: `docs/` is the build target (served by Apache).
--   **Domains**: Code is organized by business domain:
-    -   `src/Contracts/`, `src/Persons/`, `src/Admin/`
-    -   `src/TasksGlobal/`: Cross-domain task management.
+#### CRUD Synchronization Flow
 
-### 3. Key Components
+```
+User Action (Modal)
+  → repository.addNewItem/editItem/deleteItem (updates backend + local items + sessionStorage)
+  → Callback fires (onAddNew/onEdit/onDelete)
+  → Component updates: setObjects([...repository.items])
+  → updateSnapshot() persists to sessionStorage
+```
 
--   **FilterableTable**: The standard component for displaying data lists. Handles filtering, sorting, and CRUD callback integration.
--   **MainSetup**: Static class acting as a service registry (holds `currentUser`, `serverUrl`, and global instances like `personsEnviRepository`).
--   **MainControllerReact**: Bootstraps the application, handles auth checks and repository initialization.
+#### Global vs. Local Repositories
 
-## Developer Workflow
+- **Global**: Initialized in [MainControllerReact.ts](src/React/MainControllerReact.ts), accessed via `MainSetup` static properties
+    - Examples: `MainSetup.personsEnviRepository`, `MainSetup.contractTypesRepository`
+- **Local**: Created in `useMemo` for helper components (Selectors, Autocomplete) with unique name suffix
+    ```typescript
+    const localRepo = useMemo(() => new RepositoryReact({
+      name: "contractSelector_temp",  // _temp suffix prevents sessionStorage collision
+      actionRoutes: { getRoute: "contracts", ... }
+    }), []);
+    ```
+
+#### Why Local Repositories Matter
+
+Using global repositories in selectors causes **state pollution**: components overwrite each other's data in sessionStorage. See [selectors-architecture.md](instructions/selectors-architecture.md) section 2.
+
+### 2. File Structure & Build Pipeline
+
+- **Source**: `src/` (all TypeScript/React code)
+- **Output**: `docs/` (compiled bundle served by Apache)
+- **Entry Point**: [src/React/MainWindow/index.tsx](src/React/MainWindow/index.tsx)
+- **Build**: `yarn build` runs `tsc` → `webpack` → copies static files (`copyfiles`)
+- **Domain Structure**: Code organized by business domain (`Contracts/`, `Persons/`, `Projects/`, `TasksGlobal/`, etc.)
+
+### 3. Key Components & Their Roles
+
+#### FilterableTable ([FilterableTable.tsx](src/View/Resultsets/FilterableTable/FilterableTable.tsx))
+
+Standard component for data lists. Features:
+
+- Renders `repository.items` with filtering/sorting
+- Manages active row (`activeRowId` → updates `repository.currentItems[0]`)
+- Integrates CRUD callbacks: `handleAddObject`, `handleEditObject`, `handleDeleteObject`
+- Persists state via snapshots (`snapshotMode`: `"criteria+objects"` or `"criteria-only"`)
+
+Data flow: See [filterable-table-data-flow.md](instructions/filterable-table-data-flow.md)
+
+#### Business Object Selectors ([BussinesObjectSelectors.tsx](src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx))
+
+Reusable dropdowns for entities (Projects, Contracts, Persons). Built with:
+
+- **MyAsyncTypeahead** ([GenericComponents.tsx](src/View/Modals/CommonFormComponents/GenericComponents.tsx)): Core selector logic
+- **ensureLabelKey** validation: Ensures backend provides required fields (e.g., `_ourIdOrNumber_Name`)
+- **Local repositories**: Each selector creates isolated `RepositoryReact` instance
+
+See [business-object-selectors.md](instructions/business-object-selectors.md) for usage patterns.
+
+#### MainSetup ([MainSetupReact.ts](src/React/MainSetupReact.ts))
+
+Static service registry holding:
+
+- `currentUser` (from session)
+- `serverUrl` (auto-detects localhost vs production)
+- Global repository instances (`personsEnviRepository`, `contractTypesRepository`, etc.)
+- Business status enums (`ProjectStatuses`, `TaskStatus`, `OfferStatus`, etc.)
+
+#### MainControllerReact ([MainControllerReact.ts](src/React/MainControllerReact.ts))
+
+Application bootstrap:
+
+- Checks session via `isSessionSet()`
+- Initializes global repositories in `setRepostories()`
+- Loads data with filters (e.g., `systemRoleName: "ENVI_EMPLOYEE|ENVI_MANAGER"`)
+
+## 🛠️ Developer Workflow
+
+### Environment Setup
+
+1. **Clone & Install**: `yarn install`
+2. **Configure `.env`** (in project root):
+    ```bash
+    MODE=development
+    ENABLE_DEV_LOGIN=true  # Mock authentication for local testing
+    ```
+    **⚠️ NEVER commit `.env` files** - see [DEVELOPMENT.md](instructions/DEVELOPMENT.md) security guidelines
 
 ### Build & Run
 
--   **Install**: `yarn install`
--   **Dev Server**: `yarn start` (runs Webpack Dev Server on port 9000 with HMR).
--   **Production Build**: `yarn build` (Runs `tsc`, `webpack`, and copies assets to `docs/`).
--   **Clean**: `yarn clean` (Rimrafs `docs/`).
+- **Dev Server**: `yarn start` (Webpack Dev Server on port 9000 with HMR)
+- **Production Build**: `yarn build` (TypeScript compilation + bundling + asset copying to `docs/`)
+- **Clean**: `yarn clean` (removes `docs/` directory)
 
-### Routing & Environment
+### Routing & API
 
--   **Routing**: Uses `HashRouter` (React Router).
--   **API URL**: Dynamic based on environment. `MainSetup.serverUrl` detects `localhost` vs production.
+- **Routing**: React Router with `HashRouter` (URLs like `#/persons`, `#/contracts`)
+- **API Base URL**: `MainSetup.serverUrl` (auto-detects `localhost:3000` vs production Heroku)
+- **Dev Login**: Set `ENABLE_DEV_LOGIN=true` in `.env` for mock authentication (see [DEVELOPMENT.md](instructions/DEVELOPMENT.md#-dev-login--mock-authentication))
 
-## Coding Conventions
+## 📋 Coding Conventions & Patterns
 
-### Data Flow Rules
+### Data Flow Rules ⚠️ CRITICAL
 
--   **❌ NEVER** manually modify specific items in local state (e.g., `objects.push(newItem)`).
--   **✅ ALWAYS** re-sync completely from the repository (e.g., `setObjects([...repository.items])`) after any CRUD operation.
--   **snapshots**: Call `updateSnapshot()` after syncing state to persist filters and data to sessionStorage.
--   **Immutability**: Always create new array references when updating state to ensure React re-renders.
+#### ❌ NEVER Do This
 
-### Business Object Selectors
+```typescript
+objects.push(newItem);           // Direct mutation
+setObjects([...objects, newItem]); // Creates desync with repository
+setObjects(objects.map(...));      // Bypasses repository as source of truth
+```
 
-If implementing a dropdown/selector for a business entity (e.g., ContractSelector):
+#### ✅ ALWAYS Do This
 
--   **Isolation**: Instantiate a _new, local_ `RepositoryReact` inside `useMemo` with a unique name suffix (e.g., `_temp`).
--   **Reason**: Using global repositories for selectors causes state conflicts with main table views.
+```typescript
+// After repository.addNewItem/editItem/deleteItem:
+setObjects([...repository.items]); // Re-sync from single source of truth
+updateSnapshot(); // Persist to sessionStorage
+```
 
-### Other documentation
+**Why**: Components must stay synchronized with `repository.items`. Manual mutations create stale data and bugs.
 
--   **Computed Fields**: `instructions/backend-computed-fields.md` - how to handle missing fields from the backend.
--   **Selectors Architecture**: `instructions/selectors-architecture.md` - architecture and rules for selectors.
--   **Business Object Selectors**: `instructions/business-object-selectors.md` - usage guide for selectors.
--   **Filterable Table**: `instructions/filterable-table-data-flow.md` - data flow in the main list component.
--   **Tasks Global**: `instructions/TasksGlobalView.md` - architecture of the tasks view.
+### Backend-First Principle
 
-### Types
+- Frontend **validates** data from API and **logs warnings** when fields are missing
+- When you see console warnings like `⚠️ Brak wymaganego pola "_ourIdOrNumber_Name"`:
+    - **Fix the backend** (Node.js/Express controllers) by adding computed fields
+    - **DON'T add workarounds** in frontend code
+- See [backend-computed-fields.md](instructions/backend-computed-fields.md) for examples
 
--   **Business Types**: Defined in `src/Typings/bussinesTypes.d.ts` (e.g., `PersonData`, `ContractType`).
--   **Strictness**: `tsconfig.json` is set up; ensure strict typing and avoid `any` where possible.
+### Types & Type Safety
+
+- **Business Types**: Defined in [Typings/bussinesTypes.d.ts](Typings/bussinesTypes.d.ts)
+    - Examples: `PersonData`, `ContractType`, `ProjectData`, `RepositoryDataItem`
+- **Strict TypeScript**: `tsconfig.json` has `"strict": true` - avoid `any` types
+- **Type Guards**: Available in `Typings/typeGuards.ts` for runtime checks
+
+### SessionStorage & Snapshots
+
+- Repositories persist data to sessionStorage via `saveToSessionStorage()`
+- FilterableTable creates snapshots: `filtersableTableSnapshot_${id}`
+- Snapshot modes:
+    - `"criteria+objects"`: Stores filter criteria AND data
+    - `"criteria-only"`: Stores only filter criteria (data reloaded on mount)
+
+## 📚 Extended Documentation
+
+### Architecture Deep Dives
+
+- **Selectors Architecture**: [selectors-architecture.md](instructions/selectors-architecture.md) - 3-layer architecture, validation layer, creating new selectors
+- **FilterableTable Data Flow**: [filterable-table-data-flow.md](instructions/filterable-table-data-flow.md) - Component hierarchy, state management, CRUD operations
+- **TasksGlobal View**: [instructions/TasksGlobalView.md](instructions/TasksGlobalView.md) - Cross-domain task management architecture
+
+### Developer Guides
+
+- **Development Setup**: [DEVELOPMENT.md](instructions/DEVELOPMENT.md) - .env config, scripts, dev login, Puppeteer testing
+- **AI Guidelines**: [AI_GUIDELINES.md](instructions/AI_GUIDELINES.md) - General AI developer workflows, UI Browser Loop mode
+- **Business Object Selectors Usage**: [business-object-selectors.md](instructions/business-object-selectors.md) - Quick start, examples, debugging
+
+### Navigation
+
+All documentation indexed in [instructions/README.md](instructions/README.md) with Quick Links for common scenarios.
