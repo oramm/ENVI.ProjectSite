@@ -174,20 +174,19 @@ export async function renderApp() {
     const root = document.getElementById("root");
 
     if (!root) return;
-    if (process.env.MODE === "development")
+    if (MainSetup.isDevEnvironment)
         ReactDOM.createRoot(root).render(
             <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
                 <StrictMode>
                     <App />
                 </StrictMode>
-            </GoogleOAuthProvider>
+            </GoogleOAuthProvider>,
         );
     else
         ReactDOM.createRoot(root).render(
             <GoogleOAuthProvider clientId={MainSetup.CLIENT_ID}>
                 <App />
-            </GoogleOAuthProvider>
+            </GoogleOAuthProvider>,
         );
 }
-console.log(process.env.MODE);
 renderApp();

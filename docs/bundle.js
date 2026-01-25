@@ -107074,7 +107074,7 @@ async function renderApp() {
     const root = document.getElementById("root");
     if (!root)
         return;
-    if (process.env.MODE === "development")
+    if (MainSetupReact_1.default.isDevEnvironment)
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(react_1.StrictMode, null,
                 react_1.default.createElement(App, null))));
@@ -107082,7 +107082,6 @@ async function renderApp() {
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(App, null)));
 }
-console.log(process.env.MODE);
 renderApp();
 
 
