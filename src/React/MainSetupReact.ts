@@ -24,6 +24,10 @@ export default class MainSetup {
         ? "http://localhost:3000/"
         : "https://erp-envi.herokuapp.com/";
 
+    static get isDevEnvironment() {
+        return this.serverUrl.includes('localhost') || this.serverUrl.includes('127.0.0.1');
+    }
+
     static get currentUser() {
         return JSON.parse(<string>sessionStorage.getItem("Current User")) as User;
     }

@@ -20,8 +20,6 @@ function GoogleButton({ onServerResponse }) {
         MainSetupReact_1.default.currentUser = responseData.userData;
         onServerResponse(responseData);
     }
-    // DEV MODE: Mock login for Playwright/testing (only in development with ENABLE_DEV_LOGIN=true)
-    const isDevLoginEnabled = process.env.ENABLE_DEV_LOGIN === "true";
     async function handleDevLogin() {
         console.warn("🔧 DEV MODE: Using mock authentication");
         const response = await fetch(MainSetupReact_1.default.serverUrl + "login", {
@@ -37,18 +35,18 @@ function GoogleButton({ onServerResponse }) {
         MainSetupReact_1.default.currentUser = responseData.userData;
         onServerResponse(responseData);
     }
-    if (process.env.MODE === "development") {
+    if (MainSetupReact_1.default.isDevEnvironment) {
         return (react_1.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
             react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log("Login Failed") }),
             react_1.default.createElement("button", { onClick: handleDevLogin, style: {
                     padding: "10px",
-                    backgroundColor: "#ff9800",
+                    backgroundColor: "#975a00",
                     color: "white",
                     border: "none",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontWeight: "bold",
-                } }, "\uD83D\uDD27 DEV: Mock Login (Playwright)")));
+                } }, "\uD83D\uDD27 DEV: Mock Login dla przegl\u0105darek AI")));
     }
     return react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log("Login Failed") });
 }

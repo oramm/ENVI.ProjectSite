@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ToolsDate_1 = __importDefault(require("./Tools/ToolsDate"));
 class MainSetup {
+    static get isDevEnvironment() {
+        return this.serverUrl.includes('localhost') || this.serverUrl.includes('127.0.0.1');
+    }
     static get currentUser() {
         return JSON.parse(sessionStorage.getItem("Current User"));
     }

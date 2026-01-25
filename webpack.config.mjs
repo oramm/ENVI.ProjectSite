@@ -59,10 +59,4 @@ export default {
     experiments: {
         topLevelAwait: true
     },
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env.MODE': JSON.stringify(process.env.MODE || 'production'),
-            'process.env.ENABLE_DEV_LOGIN': JSON.stringify(process.env.ENABLE_DEV_LOGIN || 'false')
-        })
-    ],
 };
