@@ -32069,7 +32069,11 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.icon {
     transition: background-color 0.15s ease-in-out;
     cursor: pointer;
 }
-`, "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D;;AAEA;IACI,+CAA+C,EAAE,oBAAoB;IACrE,8CAA8C;IAC9C,eAAe;AACnB","sourcesContent":[".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n\r\n.row-hover:hover {\r\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\r\n    transition: background-color 0.15s ease-in-out;\r\n    cursor: pointer;\r\n}\r\n"],"sourceRoot":""}]);
+
+.is-warning {
+    border-color: #ffc107 !important; /* yellow */
+}
+`, "",{"version":3,"sources":["webpack://./src/Css/styles.css"],"names":[],"mappings":"AAAA;IACI,WAAW;IACX,YAAY;IACZ,qBAAqB;AACzB;;AAEA;IACI,cAAc;IACd,mBAAmB;AACvB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,eAAe;IACf,iBAAiB;IACjB,gBAAgB,EAAE,qCAAqC;AAC3D;;AAEA;IACI,+CAA+C,EAAE,oBAAoB;IACrE,8CAA8C;IAC9C,eAAe;AACnB;;AAEA;IACI,gCAAgC,EAAE,WAAW;AACjD","sourcesContent":[".icon {\r\n    width: 24px;\r\n    height: 24px;\r\n    display: inline-block;\r\n}\r\n\r\n.icon-vertical {\r\n    display: block;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n.icon-horizontal {\r\n    margin-right: 10px;\r\n}\r\n\r\n.nav-separator {\r\n    display: flex;\r\n    align-items: center;\r\n    padding: 0 15px;\r\n    font-weight: bold;\r\n    color: #2f292959; /* Dostosuj kolor do swoich potrzeb */\r\n}\r\n\r\n.row-hover:hover {\r\n    background-color: var(--bs-secondary-bg-subtle); /* jasne szare tło */\r\n    transition: background-color 0.15s ease-in-out;\r\n    cursor: pointer;\r\n}\r\n\r\n.is-warning {\r\n    border-color: #ffc107 !important; /* yellow */\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -101463,7 +101467,11 @@ const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/
 /**Wywoływana w ProjectsSelector jako props  */
 function IncomingLetterModalBody(props) {
     const initialData = props.initialData;
-    const { register, setValue, watch, formState: { errors }, control, } = (0, FormContext_1.useFormContext)();
+    const { register, setValue, watch, formState: { errors }, trigger, control, } = (0, FormContext_1.useFormContext)();
+    const fileInputRef = (0, react_1.useRef)(null);
+    const [isAnalyzing, setIsAnalyzing] = (0, react_1.useState)(false);
+    const [analysisError, setAnalysisError] = (0, react_1.useState)(null);
+    const [confidenceScores, setConfidenceScores] = (0, react_1.useState)({});
     const currentStatus = watch("status");
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -101473,12 +101481,156 @@ function IncomingLetterModalBody(props) {
             shouldValidate: true,
         });
     }, [initialData, setValue]);
+    const getConfidenceClass = (fieldName) => {
+        // If the form has validation errors for this field, let validation classes take precedence.
+        // errors is from useFormContext above.
+        // @ts-ignore
+        if (errors && errors[fieldName])
+            return '';
+        const score = confidenceScores[fieldName];
+        if (score === 3)
+            return 'is-valid';
+        if (score === 2)
+            return 'is-warning';
+        if (score === 1)
+            return 'is-warning';
+        return '';
+    };
+    const normalizeDateToISO = (value) => {
+        if (!value && value !== 0)
+            return null;
+        if (value instanceof Date)
+            return value.toISOString().split('T')[0];
+        if (typeof value !== 'string')
+            return null;
+        const v = value.trim();
+        if (!v)
+            return null;
+        // If already ISO-like YYYY-MM-DD
+        const isoMatch = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (isoMatch)
+            return v;
+        // Match dd.mm.yyyy or d.m.yyyy
+        const dmy = v.match(/^(\d{1,2})[\.\/-](\d{1,2})[\.\/-](\d{4})$/);
+        if (dmy) {
+            const day = dmy[1].padStart(2, '0');
+            const month = dmy[2].padStart(2, '0');
+            const year = dmy[3];
+            return `${year}-${month}-${day}`;
+        }
+        const parsed = new Date(v);
+        if (!isNaN(parsed.getTime()))
+            return parsed.toISOString().split('T')[0];
+        return null;
+    };
+    const handleFileChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file)
+            return;
+        setIsAnalyzing(true);
+        setAnalysisError(null);
+        setConfidenceScores({});
+        const formData = new FormData();
+        formData.append('file', file);
+        const uploadWithXhr = (url, data) => new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.withCredentials = true;
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const json = JSON.parse(xhr.responseText);
+                        resolve(json);
+                    }
+                    catch (e) {
+                        reject(new Error('Invalid JSON response from server'));
+                    }
+                }
+                else {
+                    try {
+                        const err = JSON.parse(xhr.responseText);
+                        reject(new Error(err.errorMessage || xhr.statusText || 'Upload failed'));
+                    }
+                    catch (_e) {
+                        reject(new Error(xhr.statusText || 'Upload failed'));
+                    }
+                }
+            };
+            xhr.onerror = () => reject(new Error('Network error during file upload'));
+            const fd = new FormData();
+            for (const pair of Array.from(data.entries())) {
+                const [k, v] = pair;
+                if (v instanceof File)
+                    fd.append(k, v, v.name);
+                else
+                    fd.append(k, v);
+            }
+            xhr.send(fd);
+        });
+        try {
+            const result = await uploadWithXhr(MainSetupReact_1.default.serverUrl + 'letters/analyze', formData);
+            //console.log('AI analysis raw result:', result);
+            // set returned fields
+            const newScores = {};
+            for (const key in result) {
+                const field = result[key];
+                if (field && field.value !== undefined) {
+                    let valueToSet = field.value;
+                    if (key.toLowerCase().includes('date')) {
+                        const iso = normalizeDateToISO(valueToSet);
+                        //console.log(`AI field ${key} original:`, valueToSet, 'normalized:', iso);
+                        valueToSet = iso || "";
+                    }
+                    setValue(key, valueToSet, { shouldValidate: true, shouldDirty: true });
+                }
+                if (field && field.confidence) {
+                    newScores[key] = field.confidence;
+                }
+            }
+            setConfidenceScores(newScores);
+            // Re-run validation so errors like responseDueDate are cleared when AI provided valid/empty values
+            try {
+                await trigger();
+            }
+            catch (e) {
+                // ignore
+            }
+            // set file input to the same File
+            if (fileInputRef.current) {
+                try {
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    fileInputRef.current.files = dt.files;
+                    setValue('file', dt.files, { shouldValidate: true, shouldDirty: true });
+                }
+                catch (e) {
+                    console.warn('Could not set file input programmatically', e);
+                }
+            }
+        }
+        catch (err) {
+            if (err instanceof Error)
+                setAnalysisError(err.message);
+        }
+        finally {
+            setIsAnalyzing(false);
+        }
+    };
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "fileAnalysis", className: "mb-3 p-3 bg-light border rounded" },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "fw-bold" }, "Analiza AI dokumentu"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", onChange: handleFileChange, disabled: isAnalyzing, accept: ".pdf,.docx" }),
+            react_1.default.createElement(react_bootstrap_1.Form.Text, null, "Za\u0142\u0105cz pismo (PDF lub DOCX), a my spr\u00F3bujemy uzupe\u0142ni\u0107 formularz za Ciebie."),
+            isAnalyzing && react_1.default.createElement("div", { className: "mt-2" },
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }),
+                " Analizowanie dokumentu..."),
+            analysisError && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mt-2" }, analysisError)),
+        react_1.default.createElement("hr", null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer pisma"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register("number") }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj numer", isInvalid: !!errors?.number, isValid: !errors?.number, ...register("number"), className: getConfidenceClass("number") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "number" })),
-        react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props }),
+        react_1.default.createElement(LetterModalBody_1.LetterModalBody, { ...props, fileInputRef: fileInputRef, getConfidenceClass: getConfidenceClass }),
         react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null),
         currentStatus === MainSetupReact_1.default.IncomingLetterStatus.RESPONSE_SENT && (react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "relatedLetterNumber" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowied\u017A IK"),
@@ -101607,7 +101759,7 @@ const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext *
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const LettersController_1 = __webpack_require__(/*! ../LettersController */ "./src/Letters/LettersList/LettersController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
-function LetterModalBody({ isEditing, initialData, }) {
+function LetterModalBody({ isEditing, initialData, getConfidenceClass = () => '', fileInputRef, }) {
     const { register, reset, setValue, watch, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const _project = isEditing ? undefined : watch("_project");
     const _contract = watch("_contract");
@@ -101621,6 +101773,14 @@ function LetterModalBody({ isEditing, initialData, }) {
     }
     (0, react_1.useEffect)(() => {
         const nowUTC = new Date().toISOString().split("T")[0];
+        let defaultEditor;
+        if (!isEditing) {
+            const currentUser = MainSetupReact_1.default.currentUser;
+            if (currentUser && MainSetupReact_1.default.personsEnviRepository.items.length > 0) {
+                // Znajdź obiekt PersonData na podstawie emaila zalogowanego użytkownika
+                defaultEditor = MainSetupReact_1.default.personsEnviRepository.items.find((person) => person.email === currentUser.systemEmail);
+            }
+        }
         const resetData = {
             id: initialData?.id,
             _contract: getContractFromCases(initialData?._cases),
@@ -101628,7 +101788,7 @@ function LetterModalBody({ isEditing, initialData, }) {
             description: initialData?.description || "",
             creationDate: initialData?.creationDate || nowUTC,
             registrationDate: initialData?.registrationDate || nowUTC,
-            _editor: initialData?._editor,
+            _editor: initialData?._editor || defaultEditor,
             relatedLetterNumber: initialData?.relatedLetterNumber || "",
             responseDueDate: initialData?.responseDueDate || "",
         };
@@ -101662,7 +101822,7 @@ function LetterModalBody({ isEditing, initialData, }) {
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "creationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data utworzenia"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register("creationDate") }),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.creationDate, isInvalid: !!errors.creationDate, ...register("creationDate"), className: getConfidenceClass("creationDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "creationDate", errors: errors })),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "registrationDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data Nadania"),
@@ -101672,14 +101832,14 @@ function LetterModalBody({ isEditing, initialData, }) {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "Osoba rejestruj\u0105ca", name: "_editor", repository: MainSetupReact_1.default.personsEnviRepository })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "file" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
-            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") })),
+            react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file"), inputRef: fileInputRef })),
         react_1.default.createElement(react_bootstrap_1.Row, null,
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "relatedLetterNumber" }, _contract ? (react_1.default.createElement(BussinesObjectSelectors_1.LetterSelector, { name: "relatedLetterNumber", label: "Numer powi\u0105zanego pisma", _contract: _contract })) : (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer powi\u0105zanego pisma"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Najpierw wybierz kontrakt", disabled: true })))),
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "responseDueDate" },
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Odpowiedzie\u0107 do"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate") }),
+                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate"), className: getConfidenceClass("responseDueDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "responseDueDate", errors: errors })))));
 }
 /** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
@@ -109491,18 +109651,22 @@ function CitySelector({ name = "_city", showValidationInfo = true, multiple = fa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
-function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, }) {
+function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "entities",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "entitySelector_temp",
-    }), []);
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "entities",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "entitySelector_temp",
+        });
+    }, [repository]);
     function renderOption(option, props) {
         const typedOption = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -109550,18 +109714,22 @@ function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, }) {
+function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "financialAidProgrammes",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "financialAidProgrammeSelector_temp",
-    }), []);
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "financialAidProgrammes",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "financialAidProgrammeSelector_temp",
+        });
+    }, [repository]);
     function renderOption(option) {
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
@@ -109907,17 +110075,19 @@ function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, }) {
+function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "persons",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "personSelector_temp",
-    }), []);
+    const localRepository = (0, react_1.useMemo)(() => repository
+        ? repository
+        : new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "persons",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "personSelector_temp",
+        }), [repository]);
     function renderOption(option) {
         const typedOption = option;
         // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -110369,12 +110539,15 @@ exports.DateRangeInput = (0, react_1.forwardRef)(({ showValidationInfo = true, f
         react_1.default.createElement(ErrorMessage, { name: fromName, errors: errors }),
         react_1.default.createElement(ErrorMessage, { name: toName, errors: errors })));
 });
-function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, }) {
+function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png,.gif", multiple = true, inputRef, }) {
     const { control, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_hook_form_1.Controller, { control: control, name: name, defaultValue: [], 
             //render={({ field: { onChange } }) => (
-            render: ({ field: { value, onChange, ...field } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", value: value?.fileName, required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple, onChange: (event) => {
+            render: ({ field: { value, onChange, ...field } }) => (react_1.default.createElement(react_bootstrap_1.Form.Control, { ...field, ref: inputRef, type: "file", 
+                // file inputs cannot be programmatically set via value for security reasons
+                // we keep value handling minimal
+                required: required, accept: acceptedFileTypes, isInvalid: !!errors[name], isValid: !errors[name], multiple: multiple, onChange: (event) => {
                     const files = event.target.files;
                     onChange(files);
                 } })) }),

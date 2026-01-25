@@ -123,18 +123,22 @@ function CitySelector({ name = "_city", showValidationInfo = true, multiple = fa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
-function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, }) {
+function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "entities",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "entitySelector_temp",
-    }), []);
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "entities",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "entitySelector_temp",
+        });
+    }, [repository]);
     function renderOption(option, props) {
         const typedOption = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -182,18 +186,22 @@ function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, }) {
+function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "financialAidProgrammes",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "financialAidProgrammeSelector_temp",
-    }), []);
+    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
+    const localRepository = (0, react_1.useMemo)(() => {
+        if (repository)
+            return repository;
+        return new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "financialAidProgrammes",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "financialAidProgrammeSelector_temp",
+        });
+    }, [repository]);
     function renderOption(option) {
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
@@ -539,17 +547,19 @@ function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, }) {
+function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
-        actionRoutes: {
-            getRoute: "persons",
-            addNewRoute: "",
-            editRoute: "",
-            deleteRoute: "",
-        },
-        name: "personSelector_temp",
-    }), []);
+    const localRepository = (0, react_1.useMemo)(() => repository
+        ? repository
+        : new RepositoryReact_1.default({
+            actionRoutes: {
+                getRoute: "persons",
+                addNewRoute: "",
+                editRoute: "",
+                deleteRoute: "",
+            },
+            name: "personSelector_temp",
+        }), [repository]);
     function renderOption(option) {
         const typedOption = option;
         // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
