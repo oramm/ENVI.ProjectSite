@@ -103,7 +103,8 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
             if (dataObjectFromServer) {
                 // ✅ Aktualizuj TYLKO currentItems i items w głównym repository
                 // (dla spójności danych, nie nadpisuj całej listy)
-                repository.replaceCurrentItemById(dataObjectFromServer.id, dataObjectFromServer);
+                // Ensure currentItems contains the fetched object so edit handlers have access to its id
+                repository.currentItems = [dataObjectFromServer];
                 repository.replaceItemById(dataObjectFromServer.id, dataObjectFromServer);
             }
             else {

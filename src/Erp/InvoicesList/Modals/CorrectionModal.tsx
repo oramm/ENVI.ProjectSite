@@ -40,6 +40,7 @@ export default function CorrectionModal({
     const [customItems, setCustomItems] = useState<CustomItem[]>([
         { description: "", quantity: "1", unitPrice: "0", vatTax: 23 },
     ]);
+    const [attachment, setAttachment] = useState<File | null>(null);
     const [originalItems, setOriginalItems] = useState<InvoiceItem[]>([]);
     const [loadingItems, setLoadingItems] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -133,11 +134,10 @@ export default function CorrectionModal({
         try {
             const currentPerson = MainSetup.getCurrentUserAsPerson();
             
-            const body: any = {
-                correctionType,
-                correctionReason: correctionReason.trim(),
-                ownerId: currentPerson?.id,
-            };
+            const formData = new FormData();
+            formData.append("correctionType", correctionType);
+            formData.append("correctionReason", correctionReason.trim());
+            if (currentPerson?.id) formData.append("ownerId", String(currentPerson.id));
 
             if (correctionType === "custom") {
                 const filtered = customItems.filter((item) => item.description.trim());
@@ -155,14 +155,17 @@ export default function CorrectionModal({
                         vatTax,
                     };
                 });
-                body.customItems = converted;
+                formData.append("customItems", JSON.stringify(converted));
+            }
+
+            if (attachment) {
+                formData.append("file", attachment);
             }
 
             const response = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/correction`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(body),
+                body: formData,
             });
 
             if (!response.ok) {
@@ -171,6 +174,12 @@ export default function CorrectionModal({
             }
 
             const result = await response.json();
+            console.log("Correction create response:", result);
+            if (!result || !result.correctionInvoice || !result.correctionInvoice.id) {
+                setError("Otrzymano niepełną odpowiedź z serwera: brak id utworzonej korekty");
+                setLoading(false);
+                return;
+            }
             setCreatedCorrection(result.correctionInvoice);
 
             
@@ -439,6 +448,24 @@ export default function CorrectionModal({
                                 )}
                             </Form.Group>
                         )}
+
+                        {/* Załącznik PDF (opcjonalnie) */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>
+                                <strong>Załącznik PDF (opcjonalnie)</strong>
+                            </Form.Label>
+                            <Form.Control
+                                type="file"
+                                accept="application/pdf"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const f = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                                    setAttachment(f);
+                                }}
+                            />
+                            {attachment && (
+                                <Form.Text className="text-muted">Wybrany plik: {attachment.name}</Form.Text>
+                            )}
+                        </Form.Group>
                     </>
                 )}
 
@@ -498,21 +525,16 @@ export default function CorrectionModal({
                 )}
 
                 {step === "send" && (
-                    <>
-                        <Button variant="outline-secondary" onClick={handleSkipKsef} disabled={loading}>
-                            Pomiń wysyłkę KSeF
-                        </Button>
-                        <Button variant="primary" onClick={handleSendToKsef} disabled={loading}>
-                            {loading ? (
-                                <>
-                                    <Spinner animation="border" size="sm" className="me-2" />
-                                    Wysyłanie...
-                                </>
-                            ) : (
-                                "Wyślij do KSeF"
-                            )}
-                        </Button>
-                    </>
+                    <Button variant="primary" onClick={handleSendToKsef} disabled={loading}>
+                        {loading ? (
+                            <>
+                                <Spinner animation="border" size="sm" className="me-2" />
+                                Wysyłanie...
+                            </>
+                        ) : (
+                            "Wyślij do KSeF"
+                        )}
+                    </Button>
                 )}
             </Modal.Footer>
         </Modal>

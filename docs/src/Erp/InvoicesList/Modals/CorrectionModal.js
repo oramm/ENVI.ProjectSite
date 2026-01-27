@@ -44,6 +44,7 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
     const [customItems, setCustomItems] = (0, react_1.useState)([
         { description: "", quantity: "1", unitPrice: "0", vatTax: 23 },
     ]);
+    const [attachment, setAttachment] = (0, react_1.useState)(null);
     const [originalItems, setOriginalItems] = (0, react_1.useState)([]);
     const [loadingItems, setLoadingItems] = (0, react_1.useState)(false);
     const [loading, setLoading] = (0, react_1.useState)(false);
@@ -123,11 +124,11 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
         setError(null);
         try {
             const currentPerson = MainSetupReact_1.default.getCurrentUserAsPerson();
-            const body = {
-                correctionType,
-                correctionReason: correctionReason.trim(),
-                ownerId: currentPerson?.id,
-            };
+            const formData = new FormData();
+            formData.append("correctionType", correctionType);
+            formData.append("correctionReason", correctionReason.trim());
+            if (currentPerson?.id)
+                formData.append("ownerId", String(currentPerson.id));
             if (correctionType === "custom") {
                 const filtered = customItems.filter((item) => item.description.trim());
                 const converted = filtered.map((item) => {
@@ -144,19 +145,27 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                         vatTax,
                     };
                 });
-                body.customItems = converted;
+                formData.append("customItems", JSON.stringify(converted));
+            }
+            if (attachment) {
+                formData.append("file", attachment);
             }
             const response = await fetch(`${MainSetupReact_1.default.serverUrl}invoice/${invoice.id}/correction`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(body),
+                body: formData,
             });
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || errorData.message || "Błąd tworzenia korekty");
             }
             const result = await response.json();
+            console.log("Correction create response:", result);
+            if (!result || !result.correctionInvoice || !result.correctionInvoice.id) {
+                setError("Otrzymano niepełną odpowiedź z serwera: brak id utworzonej korekty");
+                setLoading(false);
+                return;
+            }
             setCreatedCorrection(result.correctionInvoice);
             // Jeśli oryginalna faktura ma numer KSeF, przejdź do kroku wysyłki
             if (invoice.ksefNumber) {
@@ -318,7 +327,17 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                                         react_1.default.createElement("option", { value: 0 }, "0%"))),
                                 react_1.default.createElement("td", null,
                                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-danger", size: "sm", onClick: () => removeCustomItem(index), disabled: customItems.length === 1 }, "\u00D7"))))))),
-                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: addCustomItem }, "+ Dodaj pozycj\u0119"))))))),
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: addCustomItem }, "+ Dodaj pozycj\u0119"))))),
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null,
+                        react_1.default.createElement("strong", null, "Za\u0142\u0105cznik PDF (opcjonalnie)")),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "file", accept: "application/pdf", onChange: (e) => {
+                            const f = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+                            setAttachment(f);
+                        } }),
+                    attachment && (react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" },
+                        "Wybrany plik: ",
+                        attachment.name))))),
             step === "send" && createdCorrection && (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success" },
                     "\u2705 Korekta zosta\u0142a utworzona: ",
@@ -338,10 +357,8 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
             step === "create" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleCreateCorrection, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                 "Tworzenie...")) : ("Utwórz korektę"))),
-            step === "send" && (react_1.default.createElement(react_1.default.Fragment, null,
-                react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: handleSkipKsef, disabled: loading }, "Pomi\u0144 wysy\u0142k\u0119 KSeF"),
-                react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
-                    react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
-                    "Wysy\u0142anie...")) : ("Wyślij do KSeF")))))));
+            step === "send" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSendToKsef, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                "Wysy\u0142anie...")) : ("Wyślij do KSeF"))))));
 }
 exports.default = CorrectionModal;

@@ -123,6 +123,7 @@ function InvoiceDetails() {
                     initialData: invoice,
                     makeValidationSchema: InvoiceValidationSchema_1.makeInvoiceValidationSchema,
                     repository: InvoicesController_1.invoicesRepository,
+                    shouldRetrieveDataBeforeEdit: true,
                 }, buttonProps: { buttonCaption: "Edytuj Fakturę" } }),
             !hasKsefNumber && (react_1.default.createElement(GeneralModalButtons_1.GeneralDeleteModalButton, { modalProps: {
                     onDelete: handleDelete,

@@ -116,6 +116,7 @@ export default function InvoiceDetails() {
                         initialData: invoice,
                         makeValidationSchema: makeInvoiceValidationSchema,
                         repository: invoicesRepository,
+                        shouldRetrieveDataBeforeEdit: true,
                     }}
                     buttonProps={{ buttonCaption: "Edytuj Fakturę" }}
                 />
