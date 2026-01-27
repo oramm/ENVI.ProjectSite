@@ -15,30 +15,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LetterEditModalButton = LetterEditModalButton;
-exports.OurLetterEditModalButton = OurLetterEditModalButton;
-exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
-exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
-exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
-exports.ExportOurLetterContractToPDFButton = ExportOurLetterContractToPDFButton;
+exports.ExportOurLetterContractToPDFButton = exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
 const react_1 = __importStar(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const LetterModalBody_1 = require("./LetterModalBody");
@@ -53,6 +38,7 @@ function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProp
     (0, react_1.useEffect)(() => { }, [initialData]);
     return initialData.isOur ? (react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
+exports.LetterEditModalButton = LetterEditModalButton;
 function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -65,6 +51,7 @@ function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterEditModalButton = OurLetterEditModalButton;
 function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -78,6 +65,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
 function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -88,11 +76,12 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
         }, buttonProps: {} }));
 }
+exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
 function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody }, // additional props for ProjectSelectorModalBody
+            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody },
             modalTitle: "Nowe pismo przychodzące",
             repository: LettersController_1.lettersRepository,
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
@@ -100,6 +89,7 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonCaption: "Rejestruj przychodzące",
         } }));
 }
+exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
 function ExportOurLetterContractToPDFButton({ onError, ourLetterContract, }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
@@ -124,3 +114,4 @@ function ExportOurLetterContractToPDFButton({ onError, ourLetterContract, }) {
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
+exports.ExportOurLetterContractToPDFButton = ExportOurLetterContractToPDFButton;

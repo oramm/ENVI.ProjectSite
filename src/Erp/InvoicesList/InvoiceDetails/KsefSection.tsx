@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Alert, Button, Card, Container, Row, Col, Spinner } from "react-bootstrap";
+import { Alert, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import { Invoice } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import MainSetup from "../../../React/MainSetupReact";
+import { Link } from "react-router-dom";
 
 // Typy dla odpowiedzi API KSeF
 interface KsefSendResponse {
@@ -32,6 +33,7 @@ interface KsefStatusResponse {
 interface KsefSectionProps {
     invoice: Invoice;
     onInvoiceUpdate: (updatedInvoice: Invoice) => void;
+    correctedInvoiceNumber?: string | null;
 }
 
 type AlertState = {
@@ -39,31 +41,37 @@ type AlertState = {
     message: string;
 } | null;
 
-export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionProps) {
+export default function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }: KsefSectionProps) {
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
     const [alert, setAlert] = useState<AlertState>(null);
     const [statusDetails, setStatusDetails] = useState<KsefStatusResponse | null>(null);
     const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
+    // Faktura jest korektą jeśli ma ustawione correctedInvoiceId
+    const isCorrectionInvoice = !!invoice.correctedInvoiceId;
+
     // Sprawdź czy przycisk "Wyślij do KSeF" powinien być widoczny
     const canSendToKsef = useCallback(() => {
         // Nie pokazuj jeśli faktura już ma numer KSeF
         if (invoice.ksefNumber) return false;
-        
-        // Nie pokazuj jeśli faktura została już wysłana do KSeF (status PENDING lub inny)
+
+        // Nie pokazuj jeśli faktura została już wysłana do KSeF
         if (invoice.ksefStatus) return false;
-        
+
         // Nie pokazuj jeśli faktura ma już sessionId (była wysłana)
         if (invoice.ksefSessionId) return false;
-        
+
+        // Dla korekty - nie używaj tego przycisku (wysyłka korekty jest przez CorrectionModal)
+        if (isCorrectionInvoice) return false;
+
         // Pokaż tylko dla statusów "Wystawiona" (DONE) lub "Wysłana" (SENT)
         const allowedStatuses = [
             MainSetup.InvoiceStatuses.DONE,
             MainSetup.InvoiceStatuses.SENT,
         ];
         return allowedStatuses.includes(invoice.status);
-    }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status]);
+    }, [invoice.ksefNumber, invoice.ksefStatus, invoice.ksefSessionId, invoice.status, isCorrectionInvoice]);
 
     // Sprawdź czy można pobrać UPO - tylko gdy faktycznie ma numer KSeF
     const canDownloadUpo = !!invoice.ksefNumber && invoice.ksefNumber.trim().length > 0;
@@ -76,7 +84,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
         setStatusDetails(null);
 
         try {
-            // 1. Wyślij fakturę
             const sendResponse = await fetch(`${MainSetup.serverUrl}invoice/${invoice.id}/ksef/send`, {
                 method: "POST",
                 headers: {
@@ -88,27 +95,21 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
             if (!sendResponse.ok) {
                 const errorData = await sendResponse.json();
                 if (sendResponse.status === 400 && errorData.details) {
-                    // Błąd walidacji - wyświetl szczegóły
                     const detailsList = errorData.details.join("\n• ");
                     throw new Error(`Błąd walidacji:\n• ${detailsList}`);
                 }
-                // Obsługa różnych formatów błędów
                 const errorMessage = errorData.error 
                     || errorData.errorMessage 
                     || errorData.message 
                     || `Błąd serwera (${sendResponse.status})`;
-                
-                // Dodaj szczegóły jeśli dostępne
                 const details = errorData.details 
                     ? `\n\nSzczegóły:\n• ${errorData.details.join("\n• ")}`
                     : "";
-                
                 throw new Error(errorMessage + details);
             }
 
             const sendResult: KsefSendResponse = await sendResponse.json();
             
-            // Aktualizuj fakturę z sessionId
             const updatedInvoice: Invoice = {
                 ...invoice,
                 ksefStatus: "PENDING",
@@ -121,7 +122,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
                 message: sendResult.message,
             });
 
-            // 2. Rozpocznij polling statusu
             setLoadingMessage("Sprawdzanie statusu w KSeF...");
             startStatusPolling();
 
@@ -139,7 +139,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
     const startStatusPolling = useCallback(() => {
         let attempts = 0;
         const maxAttempts = 10;
-        const pollingInterval = 3000; // 3 sekundy
+        const pollingInterval = 3000;
 
         const checkStatus = async () => {
             attempts++;
@@ -196,7 +196,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
                 if (attempts < maxAttempts) {
                     pollingRef.current = setTimeout(checkStatus, pollingInterval);
                 } else {
-                    // Timeout
                     stopPolling();
                     setLoading(false);
                     setLoadingMessage("");
@@ -217,7 +216,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
             }
         };
 
-        // Rozpocznij polling z opóźnieniem
         pollingRef.current = setTimeout(checkStatus, pollingInterval);
     }, [invoice, onInvoiceUpdate]);
 
@@ -248,7 +246,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
             const statusResult: KsefStatusResponse = await statusResponse.json();
             setStatusDetails(statusResult);
 
-            // Aktualizuj fakturę jeśli otrzymano numer KSeF
             if (statusResult.ksefNumber) {
                 const updatedInvoice: Invoice = {
                     ...invoice,
@@ -290,7 +287,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
         }
     };
 
-    // Pobieranie/Otwieranie UPO – bezpośredni GET do endpointu backendu
+    // Pobieranie UPO
     const downloadUpo = async () => {
         setAlert(null);
 
@@ -309,7 +306,6 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
                 throw new Error(errorMessage);
             }
 
-            // Otwórz/ściągnij plik
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -323,7 +319,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
 
             setAlert({
                 type: "success",
-                message: "UPO zostało pobrane/otwarte",
+                message: "UPO zostało pobrane",
             });
         } catch (error) {
             setAlert({
@@ -338,7 +334,7 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
         if (invoice.ksefNumber) {
             return <span className="text-success fw-bold">✅ Przyjęta</span>;
         }
-        if (invoice.ksefStatus === "PENDING") {
+        if (invoice.ksefStatus === "PENDING" || invoice.ksefStatus === "PENDING_CORRECTION") {
             return <span className="text-warning fw-bold">🟡 Wysłana - oczekuje na potwierdzenie</span>;
         }
         return <span className="text-muted">⚪ Nie wysłana</span>;
@@ -380,11 +376,36 @@ export default function KsefSection({ invoice, onInvoiceUpdate }: KsefSectionPro
                         </div>
                     )}
 
+                    {/* Info o korekcie */}
+                    {isCorrectionInvoice && (
+                        <Alert variant="info" className="mb-3">
+                            <strong>📋 To jest faktura korygująca</strong>
+                            <br />
+                            Koryguje fakturę:{" "}
+                            <Link to={`/invoice/${invoice.correctedInvoiceId}`}>
+                                {invoice._correctedInvoice?.number || correctedInvoiceNumber || `#${invoice.correctedInvoiceId}`}
+                            </Link>
+                            {invoice.correctionReason && (
+                                <>
+                                    <br />
+                                    <strong>Przyczyna:</strong> {invoice.correctionReason}
+                                </>
+                            )}
+                            {invoice.originalKsefNumber && (
+                                <>
+                                    <br />
+                                    <strong>Nr KSeF faktury źródłowej:</strong>{" "}
+                                    <code>{invoice.originalKsefNumber}</code>
+                                </>
+                            )}
+                        </Alert>
+                    )}
+
                     {/* Informacje o statusie */}
                     <div className="mb-3">
                         <Row>
                             <Col md={3}>
-                                <strong>Status:</strong>
+                                <strong>Status KSeF:</strong>
                             </Col>
                             <Col md={9}>
                                 {renderStatus()}

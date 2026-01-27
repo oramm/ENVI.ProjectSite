@@ -100,7 +100,7 @@ interface RowActionMenuProps<DataItemType extends RepositoryDataItem> {
     handleCopyObject?: (object: DataItemType) => void;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
     handleDeleteObject?: (objectId: number) => void;
-    isDeletable: boolean;
+    isDeletable: boolean | ((item: DataItemType) => boolean);
     isCopyable?: boolean;
     layout?: "vertical" | "horizontal";
     shouldRetrieveDataBeforeEdit?: boolean;
@@ -124,6 +124,9 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
 }: RowActionMenuProps<DataItemType>) {
     const repository = sectionRepository || useFilterableTableContext<DataItemType>().repository;
     const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+
+    // Oblicz isDeletable - może być boolean lub funkcja
+    const canDelete = typeof isDeletable === "function" ? isDeletable(dataObject) : isDeletable;
 
     function toggleMenu() {
         setIsMenuExpanded((prevState) => !prevState);
@@ -161,7 +164,7 @@ export function RowActionMenu<DataItemType extends RepositoryDataItem>({
                     buttonProps={{ layout }}
                 />
             )}
-            {isDeletable && handleDeleteObject && (
+            {canDelete && handleDeleteObject && (
                 <>
                     <MenuExpandIconButton layout={layout} onClick={toggleMenu} />
                     {isMenuExpanded && (

@@ -325,6 +325,17 @@ export interface Invoice extends RepositoryDataItem {
     paymentDeadline?: string | null;
     daysToPay: number;
     status: string;
+    // Rodzaj dokumentu (np. 'correction')
+    invoiceType?: string | null;
+    // Flaga pomocnicza dla korekt
+    isCorrection?: boolean | null;
+    // Numer KSeF faktury źródłowej dla korekty
+    originalKsefNumber?: string | null;
+    // Nowe pola korekty z backendu
+    correctedInvoiceId?: number | null;  // ID faktury korygowanej (jeśli ta jest korektą)
+    correctionReason?: string | null;     // Przyczyna korekty
+    _correctedInvoice?: Invoice | null;   // Faktura korygowana (join)
+    _corrections?: Invoice[];             // Lista korekt tej faktury
     gdId?: string | null;
     _contract: OurContract;
     _editor: PersonData;
@@ -520,4 +531,62 @@ export interface ContractRoleData extends RepositoryDataItem {
 export interface ProjectRoleData extends ContractRoleData {
     projectOurId?: string | null;
     _project?: ProjectData;
+}
+
+/**
+ * Faktura kosztowa (zakupowa) - pobierana z KSeF
+ * Faktury VAT przychodzące od kontrahentów
+ */
+export interface CostInvoice extends RepositoryDataItem {
+    // Podstawowe dane faktury
+    number: string;
+    issueDate: string;
+    acquisitionDate?: string | null;
+    description?: string | null;
+
+    // Dane finansowe
+    netValue?: number | null;
+    grossValue?: number | null;
+    vatValue?: number | null;
+    currency?: string | null;
+
+    // Dane kontrahenta (sprzedawcy)
+    sellerName?: string | null;
+    sellerNip?: string | null;
+    sellerAddress?: string | null;
+    _seller?: EntityData | null;
+
+    // Dane nabywcy (ENVI)
+    buyerName?: string | null;
+    buyerNip?: string | null;
+
+    // Status i flagi
+    status: string;
+    /** Czy faktura jest kosztem firmy */
+    isCompanyCost: boolean;
+    /** Czy faktura została zapłacona kontrahentowi */
+    isPaid: boolean;
+    paidDate?: string | null;
+    /** Termin płatności */
+    paymentDeadline?: string | null;
+
+    // Powiązania z kontraktami/projektami
+    _contract?: OurContract | null;
+    contractId?: number | null;
+    _project?: ProjectData | null;
+    projectId?: number | null;
+
+    // Dane KSeF
+    ksefNumber: string;
+    ksefReferenceNumber?: string | null;
+
+    // Kategoria kosztu
+    costCategory?: string | null;
+
+    // Komentarz/notatki
+    comment?: string | null;
+
+    // Metadane
+    _lastUpdated?: string;
+    _editor?: PersonData;
 }

@@ -3,12 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
-exports.ContractEditModalButton = ContractEditModalButton;
-exports.OurContractAddNewModalButtonGeneric = OurContractAddNewModalButtonGeneric;
-exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-exports.OtherContractAddNewModalButtonGeneric = OtherContractAddNewModalButtonGeneric;
-exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
+exports.OtherContractAddNewModalButton = exports.OtherContractAddNewModalButtonGeneric = exports.OurContractAddNewModalButton = exports.OurContractAddNewModalButtonGeneric = exports.ContractEditModalButton = exports.ContractEditModalButtonGeneric = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ContractsController_1 = require("../ContractsController");
@@ -43,6 +38,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             specialRetrieveActionRoute,
         }, buttonProps: { ...buttonProps } }));
 }
+exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
 function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     return (react_1.default.createElement(ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
@@ -51,6 +47,7 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetr
             shouldRetrieveDataBeforeEdit,
         }, buttonProps: buttonProps }));
 }
+exports.ContractEditModalButton = ContractEditModalButton;
 function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps, }) {
     if (!repository)
         throw new Error("repository is required");
@@ -67,19 +64,21 @@ function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repositor
             ...buttonProps,
         } }));
 }
+exports.OurContractAddNewModalButtonGeneric = OurContractAddNewModalButtonGeneric;
 function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(OurContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
 function OtherContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
     if (!repository)
         throw new Error("repository is required");
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody }, // additional props for ProjectSelectorModalBody
+            additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody },
             modalTitle: "Nowa umowa zewnętrzna",
             repository: repository,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema,
@@ -87,9 +86,11 @@ function OtherContractAddNewModalButtonGeneric({ modalProps: { onAddNew, reposit
             buttonCaption: "Rejestruj umowę zewnętrzną",
         } }));
 }
+exports.OtherContractAddNewModalButtonGeneric = OtherContractAddNewModalButtonGeneric;
 function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(OtherContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;

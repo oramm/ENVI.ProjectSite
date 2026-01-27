@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = GoogleButton;
 const react_1 = __importDefault(require("react"));
 const google_1 = require("@react-oauth/google");
 const MainSetupReact_1 = __importDefault(require("./MainSetupReact"));
@@ -54,3 +53,4 @@ function GoogleButton({ onServerResponse }) {
     }
     return (react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log('Login Failed') }));
 }
+exports.default = GoogleButton;

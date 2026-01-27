@@ -15,28 +15,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SendOfferModalBody = SendOfferModalBody;
+exports.SendOfferModalBody = void 0;
 const react_1 = __importStar(require("react"));
 const FormContext_1 = require("../../../../View/Modals/FormContext");
 const react_bootstrap_1 = require("react-bootstrap");
@@ -94,3 +84,4 @@ function SendOfferModalBody({ initialData }) {
         react_1.default.createElement(OtherAttributesSelectors_1.GdFilesSelector, { showValidationInfo: true, name: "_newEvent._gdFilesBasicData", contextData: initialData, attentionRequiredFileNames: initialData?._lastEvent?._gdFilesBasicData?.map((file) => file.name), multiple: true }),
         react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, isAnotherOffer ? (renderAnotherOfferFileInstrutions()) : (react_1.default.createElement("div", null, "Wybierz z folderu oferty na Dysku Google pliki, kt\u00F3re chcesz przes\u0142a\u0107 wraz z ofert\u0105. Mo\u017Cesz wybra\u0107 wi\u0119cej ni\u017C jeden.")))));
 }
+exports.SendOfferModalBody = SendOfferModalBody;

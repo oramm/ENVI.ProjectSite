@@ -88,7 +88,18 @@ export function CopyButton({
     async function handleClick() {
         try {
             setRequestPending(true);
-            await invoicesRepository.copyItem(invoice);
+            // Usuń pola KSeF przed kopiowaniem
+            const invoiceToCopy = {
+                ...invoice,
+                ksefNumber: null,
+                ksefStatus: null,
+                ksefSessionId: null,
+                ksefUpo: null,
+                originalKsefNumber: null,
+                correctedInvoiceId: null,
+                correctionReason: null,
+            };
+            await invoicesRepository.copyItem(invoiceToCopy);
             setRequestPending(false);
         } catch (error) {
             if (error instanceof Error) {

@@ -3,22 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectStatusSelector = ProjectStatusSelector;
-exports.ContractStatusSelector = ContractStatusSelector;
-exports.SecurityStatusSelector = SecurityStatusSelector;
-exports.OfferStatusSelector = OfferStatusSelector;
-exports.OfferBondStatusSelector = OfferBondStatusSelector;
-exports.OfferBondFormSelector = OfferBondFormSelector;
-exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
-exports.MilestoneStatusSelector = MilestoneStatusSelector;
-exports.TaksStatusSelector = TaksStatusSelector;
-exports.InvoiceStatusSelector = InvoiceStatusSelector;
-exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
-exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
-exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
-exports.LetterStatusSelector = LetterStatusSelector;
-exports.OurLetterStatusSelector = OurLetterStatusSelector;
-exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.LetterStatusMultipleSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(require("react"));
 require("react-bootstrap-typeahead/css/Typeahead.css");
 require("../../../Css/styles.css");
@@ -34,6 +19,7 @@ function ProjectStatusSelector({ showValidationInfo = true, name, label = name, 
         as,
     });
 }
+exports.ProjectStatusSelector = ProjectStatusSelector;
 function ContractStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ContractStatuses),
@@ -44,6 +30,7 @@ function ContractStatusSelector({ showValidationInfo = true, multiple = false, n
         as,
     });
 }
+exports.ContractStatusSelector = ContractStatusSelector;
 function SecurityStatusSelector({ showValidationInfo = true, name = "status", label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.SecurityStatus),
@@ -54,6 +41,7 @@ function SecurityStatusSelector({ showValidationInfo = true, name = "status", la
         as,
     });
 }
+exports.SecurityStatusSelector = SecurityStatusSelector;
 function OfferStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferStatus),
@@ -64,6 +52,7 @@ function OfferStatusSelector({ showValidationInfo = true, name, label, multiple 
         as,
     });
 }
+exports.OfferStatusSelector = OfferStatusSelector;
 function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferBondStatus),
@@ -74,6 +63,7 @@ function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, 
         as,
     });
 }
+exports.OfferBondStatusSelector = OfferBondStatusSelector;
 function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, label = name, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferBondForm),
@@ -84,6 +74,7 @@ function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, l
         as,
     });
 }
+exports.OfferBondFormSelector = OfferBondFormSelector;
 function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferInvitationMailStatus),
@@ -94,6 +85,7 @@ function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, la
         as,
     });
 }
+exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
 function MilestoneStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.MilestoneStatus),
@@ -104,6 +96,7 @@ function MilestoneStatusSelector({ showValidationInfo = true, name, label, multi
         as,
     });
 }
+exports.MilestoneStatusSelector = MilestoneStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.TaskStatus),
@@ -114,6 +107,7 @@ function TaksStatusSelector({ showValidationInfo = true, name, label, multiple =
         as,
     });
 }
+exports.TaksStatusSelector = TaksStatusSelector;
 function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
@@ -124,6 +118,7 @@ function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, na
         as,
     });
 }
+exports.InvoiceStatusSelector = InvoiceStatusSelector;
 function LetterStatusMultipleSelector({ showValidationInfo = false, multiple = true, name, label, as, }) {
     return statusSelector({
         statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
@@ -134,6 +129,7 @@ function LetterStatusMultipleSelector({ showValidationInfo = false, multiple = t
         as,
     });
 }
+exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
 function ApplicationCallStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
@@ -144,6 +140,7 @@ function ApplicationCallStatusSelector({ showValidationInfo = true, name, label,
         as,
     });
 }
+exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
 function ClientNeedStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ClientNeedStatus),
@@ -154,6 +151,7 @@ function ClientNeedStatusSelector({ showValidationInfo = true, name, label, mult
         as,
     });
 }
+exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
 function LetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
@@ -164,6 +162,7 @@ function LetterStatusSelector({ showValidationInfo = true, name, label, multiple
         as,
     });
 }
+exports.LetterStatusSelector = LetterStatusSelector;
 function OurLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OurLetterStatus),
@@ -174,6 +173,7 @@ function OurLetterStatusSelector({ showValidationInfo = true, name, label, multi
         as,
     });
 }
+exports.OurLetterStatusSelector = OurLetterStatusSelector;
 function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.IncomingLetterStatus),
@@ -184,6 +184,7 @@ function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, 
         as,
     });
 }
+exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
 function statusSelector({ statuses, showValidationInfo = true, name, label, multiple = false, as, }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
     const resolvedLabel = label ?? resolvedName;

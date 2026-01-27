@@ -15,30 +15,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
-exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;
-exports.ShowMailsToCheckButton = ShowMailsToCheckButton;
+exports.ShowMailsToCheckButton = exports.AddOurOfferFromMailButton = exports.SetAsGoodToOfferButton = void 0;
 const react_1 = __importStar(require("react"));
 const OffersController_1 = require("../../OffersController");
 const react_bootstrap_1 = require("react-bootstrap");
@@ -71,6 +59,7 @@ function SetAsGoodToOfferButton({ onError }) {
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Mail przypisany do ofertowania", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
+exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
 function AddOurOfferFromMailButton({ onError }) {
     const mailData = OffersController_1.mailInvitationsRepository.currentItems[0];
     if (!mailData) {
@@ -96,6 +85,7 @@ function AddOurOfferFromMailButton({ onError }) {
             repository: OffersController_1.offersRepository,
         }, buttonProps: { buttonCaption: "Rejestruj ofertę" } }));
 }
+exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;
 function ShowMailsToCheckButton() {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -108,3 +98,4 @@ function ShowMailsToCheckButton() {
         react_1.default.createElement(react_bootstrap_1.Button, { key: "Sprawd\u017A poczt\u0119", variant: "outline-secondary", size: "sm", onClick: handleOpen }, "Sprawd\u017A poczt\u0119"),
         react_1.default.createElement(MailsToCheckList_1.default, { show: showForm, handleClose: handleClose })));
 }
+exports.ShowMailsToCheckButton = ShowMailsToCheckButton;

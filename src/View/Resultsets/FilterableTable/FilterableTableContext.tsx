@@ -29,7 +29,7 @@ type FilterableTableContextProps<DataItemType extends RepositoryDataItem> = {
     /** Zbiór ID sekcji na ścieżce od korzenia do aktywnej (dla podświetlenia tła) */
     activePathSet: Set<string>;
     EditButtonComponent?: React.ComponentType<SpecificEditModalButtonProps<DataItemType>>;
-    isDeletable: boolean;
+    isDeletable: boolean | ((item: DataItemType) => boolean);
     isCopyable: boolean;
     externalUpdate: number;
     shouldRetrieveDataBeforeEdit?: boolean;

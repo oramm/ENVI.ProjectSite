@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationCallsFilterBody = ApplicationCallsFilterBody;
+exports.ApplicationCallsFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
@@ -25,3 +25,4 @@ function ApplicationCallsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
             react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
+exports.ApplicationCallsFilterBody = ApplicationCallsFilterBody;

@@ -8,4 +8,4 @@ var SystemRoleName;
     SystemRoleName["ENVI_EMPLOYEE"] = "ENVI_EMPLOYEE";
     SystemRoleName["ENVI_COOPERATOR"] = "ENVI_COOPERATOR";
     SystemRoleName["EXTERNAL_USER"] = "EXTERNAL_USER";
-})(SystemRoleName || (exports.SystemRoleName = SystemRoleName = {}));
+})(SystemRoleName = exports.SystemRoleName || (exports.SystemRoleName = {}));

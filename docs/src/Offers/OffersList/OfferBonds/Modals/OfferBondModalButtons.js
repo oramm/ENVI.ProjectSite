@@ -3,9 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OfferBondEditModalButton = OfferBondEditModalButton;
-exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
-exports.OfferBondDeleteModalButton = OfferBondDeleteModalButton;
+exports.OfferBondDeleteModalButton = exports.OfferBondAddNewModalButton = exports.OfferBondEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
 const OfferBondModalBody_1 = require("./OfferBondModalBody");
@@ -26,6 +24,7 @@ function OfferBondEditModalButton({ modalProps: { initialData, repository }, }) 
             buttonVariant: "outline-success",
         } }));
 }
+exports.OfferBondEditModalButton = OfferBondEditModalButton;
 function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -41,6 +40,7 @@ function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }
             buttonCaption: "Dodaj wadium",
         } }));
 }
+exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
 function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -56,3 +56,4 @@ function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }
             buttonCaption: "Usuń wadium",
         } }));
 }
+exports.OfferBondDeleteModalButton = OfferBondDeleteModalButton;

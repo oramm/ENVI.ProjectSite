@@ -72,13 +72,37 @@ export default function MainMenu() {
                             <Nav.Link as={Link} to="/letters" className={isActive("/letters")}>
                                 Pisma
                             </Nav.Link>
-                            {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
-                                MainSetup.currentUser.systemRoleName
-                            ) && (
-                                <Nav.Link as={Link} to="/invoices" className={isActive("/invoices")}>
-                                    Faktury
-                                </Nav.Link>
-                            )}
+                            {(() => {
+                                const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
+                                    MainSetup.currentUser.systemRoleName
+                                );
+                                const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(
+                                    MainSetup.currentUser.systemRoleName
+                                );
+
+                                if (!canViewInvoices) return null;
+
+                                // If user can view cost invoices, show expandable menu like other sections
+                                if (canViewCostInvoices) {
+                                    return (
+                                        <NavDropdown title="Faktury" id="invoices-nav-dropdown" className={isActive("/invoices")}>
+                                            <NavDropdown.Item as={Link} to="/invoices" className={isActive("/invoices")}>
+                                                Faktury
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/costInvoices" className={isActive("/costInvoices")}>
+                                                Faktury kosztowe
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
+                                    );
+                                }
+
+                                // Otherwise show plain link to invoices (no expand arrow)
+                                return (
+                                    <Nav.Link as={Link} to="/invoices" className={isActive("/invoices")}>
+                                        Faktury
+                                    </Nav.Link>
+                                );
+                            })()}
                             {["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(
                                 MainSetup.currentUser.systemRoleName
                             ) && (
