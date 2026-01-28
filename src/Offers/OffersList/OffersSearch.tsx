@@ -26,6 +26,7 @@ import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable
 import ToolsDate from "../../React/Tools/ToolsDate";
 import MainSetup from "../../React/MainSetupReact";
 import { SendAnotherOfferModalButton, SendOfferModalButton } from "./Modals/SendOffer/SendOfferModalButtons";
+import { OfferTenderLink } from "./OfferCommonComponents";
 
 export default function OffersSearch({ title }: { title?: string }) {
     function renderEntityData(offer: OurOffer | ExternalOffer) {
@@ -56,7 +57,7 @@ export default function OffersSearch({ title }: { title?: string }) {
                 <div className="d-flex align-items-center gap-1 mb-2">
                     {renderIcons(offer)}
                     <h5 className="mb-0">
-                        {offer._type.name} {offer._city.name} | {renderTenderLink(offer) ?? offer.alias}{" "}
+                        {offer._type.name} {offer._city.name} | <OfferTenderLink offer={offer} />{" "}
                         <small>{renderStatus(offer)}</small>
                     </h5>
                 </div>
@@ -138,20 +139,6 @@ export default function OffersSearch({ title }: { title?: string }) {
         if (![MainSetup.OfferStatus.DECISION_PENDING, MainSetup.OfferStatus.TO_DO].includes(offer.status)) return null;
         const daysLeft = ToolsDate.countDaysLeftTo(offer.submissionDeadline);
         return <DaysLeftBadge daysLeft={daysLeft} />;
-    }
-
-    function renderTenderLink(offer: OurOffer | ExternalOffer) {
-        if (!("tenderUrl" in offer) || !offer.tenderUrl) return null;
-        return (
-            <a
-                href={(offer as ExternalOffer).tenderUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary text-decoration-none"
-            >
-                {offer.alias}
-            </a>
-        );
     }
 
     function renderStatus(offer: OurOffer | ExternalOffer) {

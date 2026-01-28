@@ -55,6 +55,7 @@ const FilterableTableContext_1 = require("../../View/Resultsets/FilterableTable/
 const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const SendOfferModalButtons_1 = require("./Modals/SendOffer/SendOfferModalButtons");
+const OfferCommonComponents_1 = require("./OfferCommonComponents");
 function OffersSearch({ title }) {
     function renderEntityData(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -80,7 +81,7 @@ function OffersSearch({ title }) {
                     " ",
                     offer._city.name,
                     " | ",
-                    renderTenderLink(offer) ?? offer.alias,
+                    react_1.default.createElement(OfferCommonComponents_1.OfferTenderLink, { offer: offer }),
                     " ",
                     react_1.default.createElement("small", null, renderStatus(offer)))),
             renderEntityData(offer),
@@ -159,11 +160,6 @@ function OffersSearch({ title }) {
             return null;
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(offer.submissionDeadline);
         return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
-    }
-    function renderTenderLink(offer) {
-        if (!("tenderUrl" in offer) || !offer.tenderUrl)
-            return null;
-        return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
     }
     function renderStatus(offer) {
         if (!offer.status)

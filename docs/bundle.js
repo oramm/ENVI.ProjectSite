@@ -104455,6 +104455,29 @@ exports["default"] = makeOfferBondValidationSchema;
 
 /***/ }),
 
+/***/ "./src/Offers/OffersList/OfferCommonComponents.tsx":
+/*!*********************************************************!*\
+  !*** ./src/Offers/OffersList/OfferCommonComponents.tsx ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OfferTenderLink = OfferTenderLink;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+function OfferTenderLink({ offer }) {
+    if (!("tenderUrl" in offer) || !offer.tenderUrl)
+        return react_1.default.createElement(react_1.default.Fragment, null, offer.alias);
+    return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
+}
+
+
+/***/ }),
+
 /***/ "./src/Offers/OffersList/OfferFilterBody.tsx":
 /*!***************************************************!*\
   !*** ./src/Offers/OffersList/OfferFilterBody.tsx ***!
@@ -104752,6 +104775,7 @@ const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/F
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const SendOfferModalButtons_1 = __webpack_require__(/*! ./Modals/SendOffer/SendOfferModalButtons */ "./src/Offers/OffersList/Modals/SendOffer/SendOfferModalButtons.tsx");
+const OfferCommonComponents_1 = __webpack_require__(/*! ./OfferCommonComponents */ "./src/Offers/OffersList/OfferCommonComponents.tsx");
 function OffersSearch({ title }) {
     function renderEntityData(offer) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -104777,7 +104801,7 @@ function OffersSearch({ title }) {
                     " ",
                     offer._city.name,
                     " | ",
-                    renderTenderLink(offer) ?? offer.alias,
+                    react_1.default.createElement(OfferCommonComponents_1.OfferTenderLink, { offer: offer }),
                     " ",
                     react_1.default.createElement("small", null, renderStatus(offer)))),
             renderEntityData(offer),
@@ -104856,11 +104880,6 @@ function OffersSearch({ title }) {
             return null;
         const daysLeft = ToolsDate_1.default.countDaysLeftTo(offer.submissionDeadline);
         return react_1.default.createElement(CommonComponents_1.DaysLeftBadge, { daysLeft: daysLeft });
-    }
-    function renderTenderLink(offer) {
-        if (!("tenderUrl" in offer) || !offer.tenderUrl)
-            return null;
-        return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
     }
     function renderStatus(offer) {
         if (!offer.status)
@@ -106608,6 +106627,7 @@ const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/Tools
 const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
 const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
 const OfferModalButtons_1 = __webpack_require__(/*! ../../../../Offers/OffersList/Modals/OfferModalButtons */ "./src/Offers/OffersList/Modals/OfferModalButtons.tsx");
+const OfferCommonComponents_1 = __webpack_require__(/*! ../../../../Offers/OffersList/OfferCommonComponents */ "./src/Offers/OffersList/OfferCommonComponents.tsx");
 const sectionsIcons = {
     "Składamy czy nie?": "❓",
     "Do złożenia": "📝",
@@ -106654,7 +106674,8 @@ function OffersCard({ className }) {
                 object._type.name,
                 ",",
                 " ",
-                react_1.default.createElement("span", { className: "fw-light" }, object.alias),
+                react_1.default.createElement("span", { className: "fw-light" },
+                    react_1.default.createElement(OfferCommonComponents_1.OfferTenderLink, { offer: object })),
                 showDeadline && react_1.default.createElement("span", null,
                     " | ",
                     ToolsDate_1.default.dateToDdMmm(object.submissionDeadline)))));

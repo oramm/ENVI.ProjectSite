@@ -6,6 +6,7 @@ import { ExternalOffer, OurOffer } from "../../../../../Typings/bussinesTypes";
 import DashboardCard, { DashboardCardData } from "../../../../View/Resultsets/DashboardCard/DashboardCard";
 import { useDashboardCardData } from "../../../../View/Resultsets/DashboardCard/useDashboardCardData";
 import { OfferEditModalButton } from "../../../../Offers/OffersList/Modals/OfferModalButtons";
+import { OfferTenderLink } from "../../../../Offers/OffersList/OfferCommonComponents";
 
 const sectionsIcons: Record<string, string> = {
     "Składamy czy nie?": "❓",
@@ -49,7 +50,7 @@ export default function OffersCard({ className }: { className: string }) {
     const { dataLoaded, data, cardData } = useDashboardCardData<OurOffer | ExternalOffer>(
         initCardData,
         sectionsIcons,
-        fetchData
+        fetchData,
     );
 
     function renderOfferListItem({ object }: { object: OurOffer | ExternalOffer }) {
@@ -60,7 +61,9 @@ export default function OffersCard({ className }: { className: string }) {
             <>
                 <span className="text-secondary small">
                     <span className="fw-semibold">{object._city.name}</span>, {object._type.name},{" "}
-                    <span className="fw-light">{object.alias}</span>
+                    <span className="fw-light">
+                        <OfferTenderLink offer={object} />
+                    </span>
                     {showDeadline && <span> | {ToolsDate.dateToDdMmm(object.submissionDeadline!)}</span>}
                 </span>
             </>

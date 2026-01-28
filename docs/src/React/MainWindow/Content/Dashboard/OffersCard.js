@@ -44,6 +44,7 @@ const ToolsDate_1 = __importDefault(require("../../../Tools/ToolsDate"));
 const DashboardCard_1 = __importDefault(require("../../../../View/Resultsets/DashboardCard/DashboardCard"));
 const useDashboardCardData_1 = require("../../../../View/Resultsets/DashboardCard/useDashboardCardData");
 const OfferModalButtons_1 = require("../../../../Offers/OffersList/Modals/OfferModalButtons");
+const OfferCommonComponents_1 = require("../../../../Offers/OffersList/OfferCommonComponents");
 const sectionsIcons = {
     "Składamy czy nie?": "❓",
     "Do złożenia": "📝",
@@ -90,7 +91,8 @@ function OffersCard({ className }) {
                 object._type.name,
                 ",",
                 " ",
-                react_1.default.createElement("span", { className: "fw-light" }, object.alias),
+                react_1.default.createElement("span", { className: "fw-light" },
+                    react_1.default.createElement(OfferCommonComponents_1.OfferTenderLink, { offer: object })),
                 showDeadline && react_1.default.createElement("span", null,
                     " | ",
                     ToolsDate_1.default.dateToDdMmm(object.submissionDeadline)))));
