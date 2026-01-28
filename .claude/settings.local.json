@@ -1,9 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node screenshot.js:*)",
-      "Bash(yarn screenshot)",
-      "Bash(git checkout:*)"
+      "Bash(if [ -f .claude/CLAUDE.md ])",
+      "Bash(then cp .claude/CLAUDE.md CLAUDE.md)",
+      "Bash(else echo \"Brak pliku .claude/CLAUDE.md\")",
+      "Bash(fi)"
     ]
   }
 }

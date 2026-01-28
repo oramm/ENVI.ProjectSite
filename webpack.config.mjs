@@ -49,7 +49,9 @@ export default {
         port: 9000,
         hot: true,
         historyApiFallback: true,
-
+        headers: {
+                'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+        },  
         static: {
             directory: path.join(__dirname, '/')
         }
