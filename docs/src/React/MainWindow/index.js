@@ -48,6 +48,8 @@ const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
 const SystemUsersSearch_1 = __importDefault(require("../../Admin/SystemUsers/SystemUsersSearch"));
 const CostInvoicesSearch_1 = __importDefault(require("../../Erp/CostInvoicesList/CostInvoicesSearch"));
+const CostInvoiceDetails_1 = __importDefault(require("../../Erp/CostInvoicesList/CostInvoiceDetails"));
+const CostInvoicesReport_1 = __importDefault(require("../../Erp/CostInvoicesList/CostInvoicesReport"));
 const ContractMainViewTabs_1 = require("../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs");
 const SecuritiesSearch_1 = __importDefault(require("../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch"));
 const MilestoneDatesSearch_1 = __importDefault(require("../../Contracts/Dates/MilestoneDatesSearch"));
@@ -159,7 +161,9 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/systemUsers", element: react_1.default.createElement(SystemUsersSearch_1.default, { title: "Dodawanie u\u017Cytkownik\u00F3w" }) })),
                 react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER"] }) },
-                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }))))));
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/cost-invoice/:id", element: react_1.default.createElement(CostInvoiceDetails_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices/report", element: react_1.default.createElement(CostInvoicesReport_1.default, null) }))))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

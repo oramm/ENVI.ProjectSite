@@ -92,6 +92,9 @@ export default function MainMenu() {
                                             <NavDropdown.Item as={Link} to="/costInvoices" className={isActive("/costInvoices")}>
                                                 Faktury kosztowe
                                             </NavDropdown.Item>
+                                            <NavDropdown.Item as={Link} to="/costInvoices/report" className={isActive("/costInvoices/report")}>
+                                                Raport miesięczny
+                                            </NavDropdown.Item>
                                         </NavDropdown>
                                     );
                                 }

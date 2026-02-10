@@ -47,7 +47,8 @@ function MainMenu() {
                             if (canViewCostInvoices) {
                                 return (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Faktury", id: "invoices-nav-dropdown", className: isActive("/invoices") },
                                     react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"),
-                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices", className: isActive("/costInvoices") }, "Faktury kosztowe")));
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices", className: isActive("/costInvoices") }, "Faktury kosztowe"),
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices/report", className: isActive("/costInvoices/report") }, "Raport miesi\u0119czny")));
                             }
                             // Otherwise show plain link to invoices (no expand arrow)
                             return (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"));

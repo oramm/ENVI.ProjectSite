@@ -539,54 +539,121 @@ export interface ProjectRoleData extends ContractRoleData {
  */
 export interface CostInvoice extends RepositoryDataItem {
     // Podstawowe dane faktury
-    number: string;
+    ksefNumber: string;
+    invoiceNumber: string;
     issueDate: string;
-    acquisitionDate?: string | null;
-    description?: string | null;
+    saleDate?: string | null;
+    dueDate?: string | null;
+
+    // Dane kontrahenta (dostawcy)
+    supplierNip: string;
+    supplierName: string;
+    supplierAddress?: string | null;
 
     // Dane finansowe
-    netValue?: number | null;
-    grossValue?: number | null;
-    vatValue?: number | null;
-    currency?: string | null;
+    netAmount: number;
+    vatAmount: number;
+    grossAmount: number;
+    currency: string;
 
-    // Dane kontrahenta (sprzedawcy)
-    sellerName?: string | null;
-    sellerNip?: string | null;
-    sellerAddress?: string | null;
-    _seller?: EntityData | null;
+    // Status faktury: "NEW" | "EXCLUDED" | "BOOKED"
+    status: "NEW" | "EXCLUDED" | "BOOKED";
 
-    // Dane nabywcy (ENVI)
-    buyerName?: string | null;
-    buyerNip?: string | null;
-
-    // Status i flagi
-    status: string;
-    /** Czy faktura jest kosztem firmy */
-    isCompanyCost: boolean;
-    /** Czy faktura została zapłacona kontrahentowi */
-    isPaid: boolean;
-    paidDate?: string | null;
-    /** Termin płatności */
-    paymentDeadline?: string | null;
-
-    // Powiązania z kontraktami/projektami
-    _contract?: OurContract | null;
-    contractId?: number | null;
-    _project?: ProjectData | null;
-    projectId?: number | null;
-
-    // Dane KSeF
-    ksefNumber: string;
-    ksefReferenceNumber?: string | null;
+    // Ustawienia księgowania
+    /** Procent kwoty netto do zaksięgowania (0-100) */
+    bookingPercentage: number;
+    /** Procent VAT do odliczenia (0-100) */
+    vatDeductionPercentage: number;
+    /** Wyliczona kwota netto do zaksięgowania */
+    bookableNetAmount?: number;
+    /** Wyliczona kwota VAT do odliczenia */
+    deductibleVatAmount?: number;
 
     // Kategoria kosztu
-    costCategory?: string | null;
+    categoryId?: number | null;
+    category?: CostInvoiceCategory | null;
 
-    // Komentarz/notatki
-    comment?: string | null;
+    // Pozycje faktury
+    items?: CostInvoiceItem[];
+
+    // Notatki
+    notes?: string | null;
+
+    // Info o zaksięgowaniu
+    bookedBy?: number | null;
+    bookedAt?: string | null;
+    _bookedByPerson?: PersonData | null;
 
     // Metadane
+    createdAt?: string;
     _lastUpdated?: string;
     _editor?: PersonData;
+}
+
+/**
+ * Kategoria kosztu
+ */
+export interface CostInvoiceCategory {
+    id: number;
+    name: string;
+    color: string;
+    /** Domyślny % odliczenia VAT dla tej kategorii */
+    vatDeductionDefault: number;
+}
+
+/**
+ * Pozycja faktury kosztowej
+ */
+export interface CostInvoiceItem {
+    id: number;
+    lineNumber: number;
+    description: string;
+    quantity: number;
+    unit?: string | null;
+    unitPrice: number;
+    netValue: number;
+    vatRate: number;
+    vatValue: number;
+    grossValue: number;
+    /** Czy pozycja wybrana do księgowania */
+    isSelectedForBooking: boolean;
+    /** Procent kwoty netto do zaksięgowania (0-100) */
+    bookingPercentage: number;
+    /** Procent VAT do odliczenia (0-100) */
+    vatDeductionPercentage: number;
+    /** Kategoria pozycji (opcjonalna, nadpisuje kategorię faktury) */
+    categoryId?: number | null;
+    category?: CostInvoiceCategory | null;
+}
+
+/**
+ * Odpowiedź synchronizacji z KSeF
+ */
+export interface CostInvoiceSyncResponse {
+    success: boolean;
+    message: string;
+    data: {
+        imported: number;
+        skipped: number;
+        errors: string[];
+    };
+}
+
+/**
+ * Raport miesięczny faktur kosztowych
+ */
+export interface CostInvoiceMonthlyReport {
+    summary: {
+        year: number;
+        month: number;
+        totalInvoices: number;
+        totalNet: number;
+        totalVat: number;
+        totalGross: number;
+        bookableNet: number;
+        deductibleVat: number;
+        byCategory: Record<string, { count: number; net: number; vat: number }>;
+        byStatus: Record<string, number>;
+    };
+    invoices: CostInvoice[];
 }

@@ -99221,6 +99221,366 @@ exports.makeEntityValidationSchema = makeEntityValidationSchema;
 
 /***/ }),
 
+/***/ "./src/Erp/CostInvoicesList/CostInvoiceDetails.tsx":
+/*!*********************************************************!*\
+  !*** ./src/Erp/CostInvoicesList/CostInvoiceDetails.tsx ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
+const CostInvoicesBadges_1 = __webpack_require__(/*! ./CostInvoicesBadges */ "./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx");
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+function CostInvoiceDetails() {
+    const { id } = (0, react_router_dom_1.useParams)();
+    const navigate = (0, react_router_dom_1.useNavigate)();
+    const [invoice, setInvoice] = (0, react_1.useState)(null);
+    const [categories, setCategories] = (0, react_1.useState)([]);
+    const [loading, setLoading] = (0, react_1.useState)(true);
+    const [saving, setSaving] = (0, react_1.useState)(false);
+    const [error, setError] = (0, react_1.useState)(null);
+    const [success, setSuccess] = (0, react_1.useState)(null);
+    // Edytowalne pola faktury
+    const [categoryId, setCategoryId] = (0, react_1.useState)(null);
+    const [bookingPercentage, setBookingPercentage] = (0, react_1.useState)(100);
+    const [vatDeductionPercentage, setVatDeductionPercentage] = (0, react_1.useState)(100);
+    const [notes, setNotes] = (0, react_1.useState)("");
+    const [status, setStatus] = (0, react_1.useState)(CostInvoicesController_1.CostInvoiceStatuses.NEW);
+    // Edytowalne pozycje
+    const [editedItems, setEditedItems] = (0, react_1.useState)(new Map());
+    (0, react_1.useEffect)(() => {
+        if (!id)
+            return;
+        loadData();
+    }, [id]);
+    const loadData = (0, react_1.useCallback)(async () => {
+        if (!id)
+            return;
+        setLoading(true);
+        setError(null);
+        try {
+            const [invoiceData, categoriesData] = await Promise.all([
+                (0, CostInvoicesController_1.fetchCostInvoiceDetails)(Number(id)),
+                (0, CostInvoicesController_1.fetchCategories)(),
+            ]);
+            const items = invoiceData.items || invoiceData._items || [];
+            const invoiceWithItems = { ...invoiceData, items };
+            setInvoice(invoiceWithItems);
+            setCategories(categoriesData);
+            // Ustaw wartości edytowalnych pól
+            setCategoryId(invoiceWithItems.categoryId || null);
+            setBookingPercentage(invoiceWithItems.bookingPercentage);
+            setVatDeductionPercentage(invoiceWithItems.vatDeductionPercentage);
+            setNotes(invoiceWithItems.notes || "");
+            setStatus(invoiceWithItems.status);
+            document.title = `Faktura ${invoiceWithItems.invoiceNumber} | ${invoiceWithItems.supplierName}`;
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "Błąd ładowania danych");
+        }
+        finally {
+            setLoading(false);
+        }
+    }, [id]);
+    const handleCategoryChange = (newCategoryId) => {
+        setCategoryId(newCategoryId);
+        // Ustaw domyślny % odliczenia VAT dla kategorii
+        if (newCategoryId) {
+            const category = categories.find((c) => c.id === newCategoryId);
+            if (category) {
+                setVatDeductionPercentage(category.vatDeductionDefault);
+            }
+        }
+    };
+    const handleItemChange = (itemId, field, value) => {
+        setEditedItems((prev) => {
+            const newMap = new Map(prev);
+            const existing = newMap.get(itemId) || {};
+            newMap.set(itemId, { ...existing, [field]: value });
+            return newMap;
+        });
+    };
+    const handleSave = async () => {
+        if (!invoice)
+            return;
+        setSaving(true);
+        setError(null);
+        setSuccess(null);
+        try {
+            // Zapisz zmiany faktury
+            await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, {
+                categoryId,
+                bookingPercentage,
+                vatDeductionPercentage,
+                notes: notes || null,
+                status,
+            });
+            // Zapisz zmiany pozycji
+            for (const [itemId, changes] of editedItems) {
+                if (Object.keys(changes).length > 0) {
+                    await (0, CostInvoicesController_1.updateCostInvoiceItem)(invoice.id, itemId, changes);
+                }
+            }
+            setSuccess("Zmiany zostały zapisane");
+            setEditedItems(new Map());
+            // Odśwież dane
+            await loadData();
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "Błąd zapisywania");
+        }
+        finally {
+            setSaving(false);
+        }
+    };
+    const handleBook = async () => {
+        if (!invoice)
+            return;
+        setSaving(true);
+        setError(null);
+        try {
+            const updated = await (0, CostInvoicesController_1.bookCostInvoice)(invoice.id);
+            setInvoice((prev) => (prev ? { ...updated, items: prev.items || updated.items } : updated));
+            setStatus(updated.status);
+            setSuccess("Faktura została zaksięgowana");
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "Błąd księgowania");
+        }
+        finally {
+            setSaving(false);
+        }
+    };
+    if (loading) {
+        return (react_1.default.createElement("div", { className: "text-center m-5" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
+            react_1.default.createElement("div", { className: "mt-3" }, "\u0141adowanie danych faktury...")));
+    }
+    if (!invoice) {
+        return (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "m-3" }, "Nie znaleziono faktury"));
+    }
+    const isBooked = invoice.status === CostInvoicesController_1.CostInvoiceStatuses.BOOKED;
+    const getItemSelection = (item) => {
+        const edited = editedItems.get(item.id) || {};
+        return {
+            isSelected: edited.isSelectedForBooking ?? item.isSelectedForBooking,
+            bookingPercentage: edited.bookingPercentage ?? item.bookingPercentage,
+            vatDeductionPercentage: edited.vatDeductionPercentage ?? item.vatDeductionPercentage,
+        };
+    };
+    const costItems = (invoice.items || []).filter((item) => getItemSelection(item).isSelected);
+    const nonCostItems = (invoice.items || []).filter((item) => !getItemSelection(item).isSelected);
+    const renderItemsTable = (items, title) => (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("div", { className: "px-3 pt-3 fw-semibold" },
+            title,
+            " (",
+            items.length,
+            ")"),
+        items.length === 0 ? (react_1.default.createElement("div", { className: "px-3 pb-3 text-muted small" }, "Brak pozycji")) : (react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, responsive: true, className: "mb-0" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", { style: { width: "40px" } },
+                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", disabled: isBooked, checked: items.every((i) => getItemSelection(i).isSelected), onChange: (e) => {
+                                items.forEach((item) => {
+                                    handleItemChange(item.id, "isSelectedForBooking", e.target.checked);
+                                });
+                            } })),
+                    react_1.default.createElement("th", null, "Lp."),
+                    react_1.default.createElement("th", null, "Opis"),
+                    react_1.default.createElement("th", { className: "text-end" }, "Ilo\u015B\u0107"),
+                    react_1.default.createElement("th", { className: "text-end" }, "Cena jedn."),
+                    react_1.default.createElement("th", { className: "text-end" }, "Netto"),
+                    react_1.default.createElement("th", { className: "text-center" }, "VAT"),
+                    react_1.default.createElement("th", { className: "text-end" }, "Brutto"),
+                    react_1.default.createElement("th", { style: { width: "100px" } }, "Ksi\u0119g. %"),
+                    react_1.default.createElement("th", { style: { width: "100px" } }, "VAT odl. %"))),
+            react_1.default.createElement("tbody", null, items.map((item) => {
+                const { isSelected, bookingPercentage, vatDeductionPercentage } = getItemSelection(item);
+                return (react_1.default.createElement("tr", { key: item.id, className: !isSelected ? "text-muted" : "" },
+                    react_1.default.createElement("td", null,
+                        react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", checked: isSelected, disabled: isBooked, onChange: (e) => handleItemChange(item.id, "isSelectedForBooking", e.target.checked) })),
+                    react_1.default.createElement("td", null, item.lineNumber),
+                    react_1.default.createElement("td", null, item.description),
+                    react_1.default.createElement("td", { className: "text-end" },
+                        item.quantity,
+                        " ",
+                        item.unit),
+                    react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(item.unitPrice)),
+                    react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(item.netValue)),
+                    react_1.default.createElement("td", { className: "text-center" },
+                        item.vatRate,
+                        "%"),
+                    react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(item.grossValue)),
+                    react_1.default.createElement("td", null,
+                        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: 100, value: bookingPercentage, disabled: isBooked || !isSelected, onChange: (e) => handleItemChange(item.id, "bookingPercentage", Number(e.target.value)) })),
+                    react_1.default.createElement("td", null,
+                        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: 100, value: vatDeductionPercentage, disabled: isBooked || !isSelected, onChange: (e) => handleItemChange(item.id, "vatDeductionPercentage", Number(e.target.value)) }))));
+            }))))));
+    return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "py-3" },
+        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setError(null), dismissible: true }, error)),
+        success && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", onClose: () => setSuccess(null), dismissible: true }, success)),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-center" },
+                    react_1.default.createElement(react_bootstrap_1.Col, null,
+                        react_1.default.createElement("h4", { className: "mb-0" },
+                            "Faktura ",
+                            invoice.invoiceNumber,
+                            react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto", className: "d-flex align-items-center gap-2" },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "mb-0 small text-muted" }, "Status"),
+                        react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: status, onChange: (e) => setStatus(e.target.value), disabled: isBooked || saving, "aria-label": "Status faktury" },
+                            react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.NEW }, "Nowa"),
+                            react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED }, "Poza kosztami"))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { xs: "auto" },
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: () => navigate("/costInvoices") }, "\u2190 Powr\u00F3t do listy")))),
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                        react_1.default.createElement("h6", null, "Dostawca"),
+                        react_1.default.createElement("p", { className: "mb-1" },
+                            react_1.default.createElement("strong", null, invoice.supplierName)),
+                        react_1.default.createElement("p", { className: "mb-1 text-muted" },
+                            "NIP: ",
+                            invoice.supplierNip),
+                        invoice.supplierAddress && (react_1.default.createElement("p", { className: "mb-0 text-muted small" }, invoice.supplierAddress))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement("h6", null, "Daty"),
+                        react_1.default.createElement("p", { className: "mb-1" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Wystawienia:"),
+                            " ",
+                            ToolsDate_1.default.dateYMDtoDMY(invoice.issueDate)),
+                        invoice.saleDate && (react_1.default.createElement("p", { className: "mb-1" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Sprzeda\u017Cy:"),
+                            " ",
+                            ToolsDate_1.default.dateYMDtoDMY(invoice.saleDate))),
+                        invoice.dueDate && (react_1.default.createElement("p", { className: "mb-0" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "P\u0142atno\u015Bci:"),
+                            " ",
+                            ToolsDate_1.default.dateYMDtoDMY(invoice.dueDate)))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement("h6", null, "Warto\u015Bci"),
+                        react_1.default.createElement("p", { className: "mb-1" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Netto:"),
+                            " ",
+                            react_1.default.createElement("strong", null,
+                                Tools_1.default.formatNumber(invoice.netAmount),
+                                " ",
+                                invoice.currency)),
+                        react_1.default.createElement("p", { className: "mb-1" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "VAT:"),
+                            " ",
+                            Tools_1.default.formatNumber(invoice.vatAmount),
+                            " ",
+                            invoice.currency),
+                        react_1.default.createElement("p", { className: "mb-0" },
+                            react_1.default.createElement("small", { className: "text-muted" }, "Brutto:"),
+                            " ",
+                            react_1.default.createElement("strong", null,
+                                Tools_1.default.formatNumber(invoice.grossAmount),
+                                " ",
+                                invoice.currency)))),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
+                    react_1.default.createElement(react_bootstrap_1.Col, null,
+                        react_1.default.createElement("small", { className: "text-muted" }, "Nr KSeF: "),
+                        react_1.default.createElement("code", { className: "small" }, invoice.ksefNumber))))),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                react_1.default.createElement("h5", { className: "mb-0" }, "Ustawienia ksi\u0119gowania")),
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kategoria kosztu"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Select, { value: categoryId || "", onChange: (e) => handleCategoryChange(e.target.value ? Number(e.target.value) : null), disabled: isBooked },
+                                react_1.default.createElement("option", { value: "" }, "-- Wybierz kategori\u0119 --"),
+                                categories.map((cat) => (react_1.default.createElement("option", { key: cat.id, value: cat.id },
+                                    cat.name,
+                                    " (VAT: ",
+                                    cat.vatDeductionDefault,
+                                    "%)")))))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "% do ksi\u0119gowania"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: 0, max: 100, value: bookingPercentage, onChange: (e) => setBookingPercentage(Number(e.target.value)), disabled: isBooked }),
+                            react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" },
+                                "Do zaksi\u0119gowania: ",
+                                Tools_1.default.formatNumber((invoice.netAmount * bookingPercentage) / 100),
+                                " z\u0142"))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "% odliczenia VAT"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: 0, max: 100, value: vatDeductionPercentage, onChange: (e) => setVatDeductionPercentage(Number(e.target.value)), disabled: isBooked }),
+                            react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" },
+                                "VAT do odliczenia: ",
+                                Tools_1.default.formatNumber((invoice.vatAmount * vatDeductionPercentage) / 100),
+                                " z\u0142")))),
+                react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Notatki"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, value: notes, onChange: (e) => setNotes(e.target.value), disabled: isBooked, placeholder: "Dodatkowe informacje..." })))),
+                isBooked && invoice.bookedAt && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" },
+                    react_1.default.createElement("strong", null, "Zaksi\u0119gowano:"),
+                    " ",
+                    ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice.bookedAt),
+                    invoice._bookedByPerson && (react_1.default.createElement(react_1.default.Fragment, null,
+                        " przez ",
+                        invoice._bookedByPerson.name,
+                        " ",
+                        invoice._bookedByPerson.surname)))))),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                react_1.default.createElement("h5", { className: "mb-0" }, "Pozycje faktury")),
+            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-0" },
+                renderItemsTable(costItems, "Pozycje kosztowe"),
+                renderItemsTable(nonCostItems, "Pozycje poza kosztami"))),
+        !isBooked && (react_1.default.createElement("div", { className: "d-flex gap-2" },
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSave, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
+                "Zapisywanie...")) : ("💾 Zapisz zmiany")),
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "success", onClick: handleBook, disabled: saving }, saving ? (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
+                "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę"))))));
+}
+exports["default"] = CostInvoiceDetails;
+
+
+/***/ }),
+
 /***/ "./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx":
 /*!*********************************************************!*\
   !*** ./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx ***!
@@ -99233,7 +99593,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CompanyCostBadge = exports.PaidStatusBadge = exports.CostInvoiceStatusBadge = void 0;
+exports.BookingPercentageBadge = exports.VatDeductionBadge = exports.CategoryBadge = exports.CostInvoiceStatusBadge = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
@@ -99242,47 +99602,95 @@ const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesControlle
  */
 function CostInvoiceStatusBadge({ status }) {
     let variant;
-    let textMode = "light";
+    let label;
     switch (status) {
         case CostInvoicesController_1.CostInvoiceStatuses.NEW:
             variant = "secondary";
+            label = "Nowa";
             break;
-        case CostInvoicesController_1.CostInvoiceStatuses.VERIFIED:
-            variant = "info";
+        case CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED:
+            variant = "warning";
+            label = "Poza kosztami";
             break;
-        case CostInvoicesController_1.CostInvoiceStatuses.APPROVED:
+        case CostInvoicesController_1.CostInvoiceStatuses.BOOKED:
             variant = "success";
-            break;
-        case CostInvoicesController_1.CostInvoiceStatuses.REJECTED:
-            variant = "danger";
+            label = "Zaksięgowana";
             break;
         default:
             variant = "secondary";
+            label = status;
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
+    const textColor = variant === "warning" ? "dark" : "light";
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textColor }, label));
 }
 exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
 /**
- * Badge statusu płatności
+ * Badge kategorii kosztu z kolorem
  */
-function PaidStatusBadge({ isPaid }) {
-    if (isPaid) {
-        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "success", text: "light" }, "\u2705 Zap\u0142acona"));
+function CategoryBadge({ category }) {
+    if (!category) {
+        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark", className: "border" }, "Brak kategorii"));
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "warning", text: "dark" }, "\uD83D\uDCB3 Do zap\u0142aty"));
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { style: {
+            backgroundColor: category.color,
+            color: getContrastColor(category.color),
+        } }, category.name));
 }
-exports.PaidStatusBadge = PaidStatusBadge;
+exports.CategoryBadge = CategoryBadge;
 /**
- * Badge czy faktura jest kosztem firmy
+ * Badge procentu odliczenia VAT
  */
-function CompanyCostBadge({ isCompanyCost }) {
-    if (isCompanyCost) {
-        return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "cost-tooltip" }, "Faktura uwzgl\u0119dniana w kosztach firmy") },
-            react_1.default.createElement(react_bootstrap_1.Badge, { bg: "primary", text: "light" }, "\uD83D\uDCCA Koszt")));
+function VatDeductionBadge({ percentage }) {
+    let variant;
+    if (percentage === 100) {
+        variant = "success";
     }
-    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark" }, "\u2298 Nie koszt"));
+    else if (percentage === 0) {
+        variant = "danger";
+    }
+    else {
+        variant = "warning";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "vat-tooltip" },
+            "Odliczenie VAT: ",
+            percentage,
+            "%") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: percentage === 0 || percentage === 100 ? "light" : "dark" },
+            "VAT ",
+            percentage,
+            "%")));
 }
-exports.CompanyCostBadge = CompanyCostBadge;
+exports.VatDeductionBadge = VatDeductionBadge;
+/**
+ * Badge procentu księgowania
+ */
+function BookingPercentageBadge({ percentage }) {
+    if (percentage === 100) {
+        return null; // Nie pokazuj badge dla 100%
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "booking-tooltip" },
+            "Ksi\u0119gowane: ",
+            percentage,
+            "%") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" },
+            percentage,
+            "%")));
+}
+exports.BookingPercentageBadge = BookingPercentageBadge;
+/**
+ * Oblicza kontrastowy kolor tekstu dla danego tła
+ */
+function getContrastColor(hexColor) {
+    // Usuń # jeśli jest
+    const hex = hexColor.replace("#", "");
+    // Konwertuj do RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // Oblicz luminancję
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? "#000000" : "#FFFFFF";
+}
 
 
 /***/ }),
@@ -99299,27 +99707,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.costInvoicesRepository = exports.CostCategories = exports.CostInvoiceStatuses = void 0;
+exports.downloadMonthlyReport = exports.fetchMonthlyReport = exports.bookCostInvoice = exports.updateCostInvoiceItem = exports.updateCostInvoice = exports.fetchCostInvoiceDetails = exports.syncFromKsef = exports.fetchCategories = exports.costInvoicesRepository = exports.CostInvoiceStatuses = void 0;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 /**
  * Statusy faktur kosztowych
  */
 exports.CostInvoiceStatuses = {
-    NEW: "Nowa",
-    VERIFIED: "Zweryfikowana",
-    APPROVED: "Zatwierdzona",
-    REJECTED: "Odrzucona",
-};
-/**
- * Kategorie kosztów
- */
-exports.CostCategories = {
-    MATERIALS: "Materiały",
-    SERVICES: "Usługi",
-    EQUIPMENT: "Sprzęt",
-    TRAVEL: "Podróże",
-    OFFICE: "Biuro",
-    OTHER: "Inne",
+    NEW: "NEW",
+    EXCLUDED: "EXCLUDED",
+    BOOKED: "BOOKED",
 };
 /**
  * Repozytorium faktur kosztowych
@@ -99327,13 +99724,159 @@ exports.CostCategories = {
  */
 exports.costInvoicesRepository = new RepositoryReact_1.default({
     actionRoutes: {
-        getRoute: "costInvoices",
-        addNewRoute: "costInvoice",
-        editRoute: "costInvoice",
-        deleteRoute: "costInvoice",
+        getRoute: "cost-invoices",
+        addNewRoute: "cost-invoices",
+        editRoute: "cost-invoices",
+        deleteRoute: "cost-invoices",
     },
     name: "costInvoices",
 });
+/**
+ * Cache kategorii kosztów
+ */
+let categoriesCache = null;
+/**
+ * Pobiera listę kategorii kosztów
+ */
+async function fetchCategories() {
+    if (categoriesCache)
+        return categoriesCache;
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/categories`, {
+        method: "GET",
+        credentials: "include",
+    });
+    if (!response.ok) {
+        throw new Error("Błąd pobierania kategorii");
+    }
+    const result = await response.json();
+    categoriesCache = result.data;
+    return categoriesCache;
+}
+exports.fetchCategories = fetchCategories;
+/**
+ * Synchronizacja faktur z KSeF
+ */
+async function syncFromKsef(params) {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/sync`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || `Błąd synchronizacji (${response.status})`);
+    }
+    return response.json();
+}
+exports.syncFromKsef = syncFromKsef;
+/**
+ * Pobiera szczegóły pojedynczej faktury
+ */
+async function fetchCostInvoiceDetails(id) {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${id}`, {
+        method: "GET",
+        credentials: "include",
+    });
+    if (!response.ok) {
+        throw new Error("Błąd pobierania szczegółów faktury");
+    }
+    const result = await response.json();
+    return result.data || result;
+}
+exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
+/**
+ * Aktualizuje ustawienia księgowania faktury
+ */
+async function updateCostInvoice(id, data) {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji faktury");
+    }
+    const result = await response.json();
+    return result.data || result;
+}
+exports.updateCostInvoice = updateCostInvoice;
+/**
+ * Aktualizuje pozycję faktury
+ */
+async function updateCostInvoiceItem(invoiceId, itemId, data) {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${invoiceId}/items/${itemId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji pozycji");
+    }
+}
+exports.updateCostInvoiceItem = updateCostInvoiceItem;
+/**
+ * Księguje fakturę
+ */
+async function bookCostInvoice(id) {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/${id}/book`, {
+        method: "POST",
+        credentials: "include",
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Błąd księgowania faktury");
+    }
+    const result = await response.json();
+    return result.data || result;
+}
+exports.bookCostInvoice = bookCostInvoice;
+/**
+ * Pobiera raport miesięczny
+ */
+async function fetchMonthlyReport(year, month, format = "json") {
+    const response = await fetch(`${MainSetupReact_1.default.serverUrl}cost-invoices/report/monthly?year=${year}&month=${month}&format=${format}`, {
+        method: "GET",
+        credentials: "include",
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || errorData.message || "Błąd pobierania raportu");
+    }
+    if (format === "json") {
+        const result = await response.json();
+        return result.data;
+    }
+    else {
+        return response.blob();
+    }
+}
+exports.fetchMonthlyReport = fetchMonthlyReport;
+/**
+ * Eksportuje raport miesięczny jako plik
+ */
+async function downloadMonthlyReport(year, month, format) {
+    const blob = await fetchMonthlyReport(year, month, format);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `koszty_${year}_${String(month).padStart(2, "0")}.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+exports.downloadMonthlyReport = downloadMonthlyReport;
 
 
 /***/ }),
@@ -99346,39 +99889,317 @@ exports.costInvoicesRepository = new RepositoryReact_1.default({
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CostInvoicesFilterBody = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
 function CostInvoicesFilterBody() {
     const { register } = (0, FormContext_1.useFormContext)();
+    const [categories, setCategories] = (0, react_1.useState)([]);
+    (0, react_1.useEffect)(() => {
+        (0, CostInvoicesController_1.fetchCategories)().then(setCategories).catch(console.error);
+    }, []);
     return (react_1.default.createElement(react_bootstrap_1.Row, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 4 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
-        react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 4, label: "Data faktury", fromName: "issueDateFrom", toName: "issueDateTo", showValidationInfo: false }),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Nr faktury, dostawca", ...register("searchText") })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3 },
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "NIP dostawcy"),
+            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "NIP", ...register("supplierNip") })),
+        react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 3, label: "Data faktury", fromName: "dateFrom", toName: "dateTo", showValidationInfo: false }),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 2 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status"),
             react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("status") },
                 react_1.default.createElement("option", { value: "" }, "Wszystkie"),
-                Object.entries(CostInvoicesController_1.CostInvoiceStatuses).map(([key, value]) => (react_1.default.createElement("option", { key: key, value: value }, value))))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 2 },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kategoria kosztu"),
-            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("costCategory") },
-                react_1.default.createElement("option", { value: "" }, "Wszystkie"),
-                Object.entries(CostInvoicesController_1.CostCategories).map(([key, value]) => (react_1.default.createElement("option", { key: key, value: value }, value))))),
+                Object.entries(CostInvoicesController_1.CostInvoiceStatuses).map(([key, value]) => (react_1.default.createElement("option", { key: key, value: value }, value === "NEW"
+                    ? "Nowa"
+                    : value === "EXCLUDED"
+                        ? "Poza kosztami"
+                        : value === "BOOKED"
+                            ? "Zaksięgowana"
+                            : value))))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3, className: "mt-2" },
-            react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", label: "Tylko do koszt\u00F3w", ...register("onlyCompanyCosts") })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 3, className: "mt-2" },
-            react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", label: "Tylko niezap\u0142acone", ...register("onlyUnpaid") }))));
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kategoria"),
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("categoryId") },
+                react_1.default.createElement("option", { value: "" }, "Wszystkie kategorie"),
+                categories.map((cat) => (react_1.default.createElement("option", { key: cat.id, value: cat.id }, cat.name)))))));
 }
 exports.CostInvoicesFilterBody = CostInvoicesFilterBody;
+
+
+/***/ }),
+
+/***/ "./src/Erp/CostInvoicesList/CostInvoicesReport.tsx":
+/*!*********************************************************!*\
+  !*** ./src/Erp/CostInvoicesList/CostInvoicesReport.tsx ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
+const CostInvoicesBadges_1 = __webpack_require__(/*! ./CostInvoicesBadges */ "./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx");
+const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
+const MONTHS = [
+    "Styczeń",
+    "Luty",
+    "Marzec",
+    "Kwiecień",
+    "Maj",
+    "Czerwiec",
+    "Lipiec",
+    "Sierpień",
+    "Wrzesień",
+    "Październik",
+    "Listopad",
+    "Grudzień",
+];
+function CostInvoicesReport() {
+    const currentDate = new Date();
+    const [year, setYear] = (0, react_1.useState)(currentDate.getFullYear());
+    const [month, setMonth] = (0, react_1.useState)(currentDate.getMonth() + 1);
+    const [report, setReport] = (0, react_1.useState)(null);
+    const [loading, setLoading] = (0, react_1.useState)(false);
+    const [exporting, setExporting] = (0, react_1.useState)(false);
+    const [error, setError] = (0, react_1.useState)(null);
+    const toNumber = (value) => {
+        if (typeof value === "number")
+            return value;
+        if (typeof value === "string") {
+            const parsed = Number(value.replace(",", "."));
+            return Number.isNaN(parsed) ? 0 : parsed;
+        }
+        return 0;
+    };
+    const getInvoiceCategory = (invoice) => {
+        const invoiceWithCategory = invoice;
+        return invoice.category || invoiceWithCategory._category || null;
+    };
+    (0, react_1.useEffect)(() => {
+        document.title = "Raport miesięczny faktur kosztowych";
+    }, []);
+    const loadReport = (0, react_1.useCallback)(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = (await (0, CostInvoicesController_1.fetchMonthlyReport)(year, month, "json"));
+            setReport(data);
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "Błąd ładowania raportu");
+        }
+        finally {
+            setLoading(false);
+        }
+    }, [year, month]);
+    (0, react_1.useEffect)(() => {
+        loadReport();
+    }, [loadReport]);
+    const handleExport = async (format) => {
+        setExporting(true);
+        try {
+            await (0, CostInvoicesController_1.downloadMonthlyReport)(year, month, format);
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : `Błąd eksportu ${format.toUpperCase()}`);
+        }
+        finally {
+            setExporting(false);
+        }
+    };
+    // Generuj listę lat (od 2024 do bieżącego + 1)
+    const years = [];
+    for (let y = 2024; y <= currentDate.getFullYear() + 1; y++) {
+        years.push(y);
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "py-3" },
+        react_1.default.createElement("h3", { className: "mb-4" }, "\uD83D\uDCCA Raport miesi\u0119czny faktur kosztowych"),
+        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setError(null), dismissible: true }, error)),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-4" },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "align-items-end" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Rok"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Select, { value: year, onChange: (e) => setYear(Number(e.target.value)) }, years.map((y) => (react_1.default.createElement("option", { key: y, value: y }, y)))))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: 3 },
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, null,
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Miesi\u0105c"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Select, { value: month, onChange: (e) => setMonth(Number(e.target.value)) }, MONTHS.map((name, idx) => (react_1.default.createElement("option", { key: idx + 1, value: idx + 1 }, name)))))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: loadReport, disabled: loading }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
+                            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
+                            "\u0141adowanie...")) : ("Wygeneruj raport"))),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-success", onClick: () => handleExport("csv"), disabled: exporting || !report }, "\u2B07 Eksport CSV")),
+                    react_1.default.createElement(react_bootstrap_1.Col, { md: "auto" },
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-info", onClick: () => handleExport("xml"), disabled: exporting || !report }, "\u2B07 Eksport XML"))))),
+        loading ? (react_1.default.createElement("div", { className: "text-center m-5" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null),
+            react_1.default.createElement("div", { className: "mt-3" }, "Generowanie raportu..."))) : report ? (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-4" },
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "Liczba faktur"),
+                            react_1.default.createElement("h3", { className: "mb-0" }, report.summary.totalInvoices)))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100 border-primary" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "Suma netto"),
+                            react_1.default.createElement("h4", { className: "mb-0 text-primary" },
+                                Tools_1.default.formatNumber(toNumber(report.summary.totalNet)),
+                                " z\u0142")))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "Suma VAT"),
+                            react_1.default.createElement("h4", { className: "mb-0" },
+                                Tools_1.default.formatNumber(toNumber(report.summary.totalVat)),
+                                " z\u0142")))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "Suma brutto"),
+                            react_1.default.createElement("h4", { className: "mb-0" },
+                                Tools_1.default.formatNumber(toNumber(report.summary.totalGross)),
+                                " z\u0142")))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100 border-success" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "Do zaksi\u0119gowania"),
+                            react_1.default.createElement("h4", { className: "mb-0 text-success" },
+                                Tools_1.default.formatNumber(toNumber(report.summary.bookableNet)),
+                                " z\u0142")))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 2 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "text-center h-100 border-info" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("div", { className: "text-muted small" }, "VAT do odliczenia"),
+                            react_1.default.createElement("h4", { className: "mb-0 text-info" },
+                                Tools_1.default.formatNumber(toNumber(report.summary.deductibleVat)),
+                                " z\u0142"))))),
+            react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-4" },
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "h-100" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                            react_1.default.createElement("h6", { className: "mb-0" }, "Podzia\u0142 wg kategorii")),
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-0" },
+                            react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, size: "sm", className: "mb-0" },
+                                react_1.default.createElement("thead", null,
+                                    react_1.default.createElement("tr", null,
+                                        react_1.default.createElement("th", null, "Kategoria"),
+                                        react_1.default.createElement("th", { className: "text-center" }, "Liczba"),
+                                        react_1.default.createElement("th", { className: "text-end" }, "Netto"),
+                                        react_1.default.createElement("th", { className: "text-end" }, "VAT"))),
+                                react_1.default.createElement("tbody", null, Object.entries(report.summary.byCategory || {}).map(([categoryName, data]) => (react_1.default.createElement("tr", { key: categoryName },
+                                    react_1.default.createElement("td", null, categoryName),
+                                    react_1.default.createElement("td", { className: "text-center" }, data.count),
+                                    react_1.default.createElement("td", { className: "text-end" },
+                                        Tools_1.default.formatNumber(toNumber(data.net)),
+                                        " z\u0142"),
+                                    react_1.default.createElement("td", { className: "text-end" },
+                                        Tools_1.default.formatNumber(toNumber(data.vat)),
+                                        " z\u0142"))))))))),
+                react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
+                    react_1.default.createElement(react_bootstrap_1.Card, { className: "h-100" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                            react_1.default.createElement("h6", { className: "mb-0" }, "Podzia\u0142 wg statusu")),
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement(react_bootstrap_1.Row, null, Object.entries(report.summary.byStatus || {}).map(([status, count]) => (react_1.default.createElement(react_bootstrap_1.Col, { key: status, className: "text-center" },
+                                react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: status }),
+                                react_1.default.createElement("h4", { className: "mt-2 mb-0" }, count))))))))),
+            react_1.default.createElement(react_bootstrap_1.Card, null,
+                react_1.default.createElement(react_bootstrap_1.Card.Header, null,
+                    react_1.default.createElement("h6", { className: "mb-0" },
+                        "Faktury (",
+                        report.summary.totalInvoices,
+                        ")")),
+                react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "p-0" },
+                    react_1.default.createElement(react_bootstrap_1.Table, { striped: true, hover: true, responsive: true, className: "mb-0" },
+                        react_1.default.createElement("thead", null,
+                            react_1.default.createElement("tr", null,
+                                react_1.default.createElement("th", null, "Nr faktury"),
+                                react_1.default.createElement("th", null, "Dostawca"),
+                                react_1.default.createElement("th", null, "Data"),
+                                react_1.default.createElement("th", { className: "text-end" }, "Netto"),
+                                react_1.default.createElement("th", { className: "text-end" }, "VAT"),
+                                react_1.default.createElement("th", { className: "text-end" }, "Brutto"),
+                                react_1.default.createElement("th", null, "Kategoria"),
+                                react_1.default.createElement("th", null, "Status"))),
+                        react_1.default.createElement("tbody", null, report.invoices.map((invoice) => (react_1.default.createElement("tr", { key: invoice.id },
+                            react_1.default.createElement("td", null,
+                                react_1.default.createElement("a", { href: `#/cost-invoice/${invoice.id}` }, invoice.invoiceNumber)),
+                            react_1.default.createElement("td", null,
+                                react_1.default.createElement("div", null, invoice.supplierName),
+                                react_1.default.createElement("div", { className: "text-muted small" },
+                                    "NIP: ",
+                                    invoice.supplierNip)),
+                            react_1.default.createElement("td", null, invoice.issueDate),
+                            react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(toNumber(invoice.netAmount))),
+                            react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(toNumber(invoice.vatAmount))),
+                            react_1.default.createElement("td", { className: "text-end" }, Tools_1.default.formatNumber(toNumber(invoice.grossAmount))),
+                            react_1.default.createElement("td", null,
+                                react_1.default.createElement(CostInvoicesBadges_1.CategoryBadge, { category: getInvoiceCategory(invoice) })),
+                            react_1.default.createElement("td", null,
+                                react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status }))))))))))) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info" }, "Wybierz okres i kliknij \"Wygeneruj raport\" aby zobaczy\u0107 dane."))));
+}
+exports["default"] = CostInvoicesReport;
 
 
 /***/ }),
@@ -99424,38 +100245,50 @@ const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Res
 const CostInvoicesFilterBody_1 = __webpack_require__(/*! ./CostInvoicesFilterBody */ "./src/Erp/CostInvoicesList/CostInvoicesFilterBody.tsx");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
-const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
-const CostInvoiceModalButtons_1 = __webpack_require__(/*! ./Modals/CostInvoiceModalButtons */ "./src/Erp/CostInvoicesList/Modals/CostInvoiceModalButtons.tsx");
 const CostInvoicesBadges_1 = __webpack_require__(/*! ./CostInvoicesBadges */ "./src/Erp/CostInvoicesList/CostInvoicesBadges.tsx");
+const FilterableTableContext_1 = __webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 function CostInvoicesSearch({ title }) {
     const [isSyncing, setIsSyncing] = (0, react_1.useState)(false);
     const [syncError, setSyncError] = (0, react_1.useState)(null);
     const [syncSuccess, setSyncSuccess] = (0, react_1.useState)(null);
+    const [statusError, setStatusError] = (0, react_1.useState)(null);
+    const [showSyncModal, setShowSyncModal] = (0, react_1.useState)(false);
+    const [syncType, setSyncType] = (0, react_1.useState)("INCREMENTAL");
+    const [dateFrom, setDateFrom] = (0, react_1.useState)("");
+    const [dateTo, setDateTo] = (0, react_1.useState)("");
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
+    const toNumber = (value) => {
+        if (typeof value === "number")
+            return value;
+        if (typeof value === "string") {
+            const parsed = Number(value.replace(",", "."));
+            return Number.isNaN(parsed) ? 0 : parsed;
+        }
+        return 0;
+    };
     /**
      * Synchronizacja faktur z KSeF
-     * Pobiera nowe faktury zakupowe z KSeF i zapisuje je w bazie danych
      */
-    const syncFromKsef = (0, react_1.useCallback)(async () => {
+    const handleSync = (0, react_1.useCallback)(async () => {
         setIsSyncing(true);
         setSyncError(null);
         setSyncSuccess(null);
+        setShowSyncModal(false);
         try {
-            const response = await fetch(`${MainSetupReact_1.default.serverUrl}costInvoices/ksef/sync`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || errorData.message || `Błąd synchronizacji (${response.status})`);
+            const params = {
+                syncType,
+            };
+            if (syncType === "VERIFICATION") {
+                if (!dateFrom || !dateTo) {
+                    throw new Error("Dla weryfikacji wymagane są daty od i do");
+                }
+                params.dateFrom = dateFrom;
+                params.dateTo = dateTo;
             }
-            const result = await response.json();
-            setSyncSuccess(`Zsynchronizowano ${result.newInvoicesCount || 0} nowych faktur z KSeF`);
+            const result = await (0, CostInvoicesController_1.syncFromKsef)(params);
+            setSyncSuccess(result.message || `Zaimportowano ${result.data.imported} faktur, pominięto ${result.data.skipped}`);
             // Odśwież listę faktur
             await CostInvoicesController_1.costInvoicesRepository.loadItemsFromServerPOST([]);
         }
@@ -99465,290 +100298,123 @@ function CostInvoicesSearch({ title }) {
         finally {
             setIsSyncing(false);
         }
-    }, []);
-    function renderSellerInfo(invoice) {
+    }, [syncType, dateFrom, dateTo]);
+    function renderSupplierInfo(invoice) {
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("div", { className: "fw-bold" }, invoice.sellerName),
+            react_1.default.createElement("div", { className: "fw-bold" }, invoice.supplierName),
             react_1.default.createElement("div", { className: "text-muted small" },
                 "NIP: ",
-                invoice.sellerNip),
-            invoice.description && react_1.default.createElement("div", { className: "text-muted small" }, invoice.description)));
+                invoice.supplierNip)));
     }
     function renderValues(invoice) {
+        const grossAmount = toNumber(invoice.grossAmount);
+        const netAmount = toNumber(invoice.netAmount);
+        const bookableNetAmount = invoice.bookableNetAmount !== undefined
+            ? toNumber(invoice.bookableNetAmount)
+            : undefined;
         return (react_1.default.createElement(react_1.default.Fragment, null,
-            invoice.grossValue && (react_1.default.createElement("div", { className: "text-end fw-bold" },
-                Tools_1.default.formatNumber(invoice.grossValue),
-                " z\u0142")),
-            invoice.netValue && (react_1.default.createElement("div", { className: "text-end text-muted small" },
+            react_1.default.createElement("div", { className: "text-end fw-bold" },
+                Tools_1.default.formatNumber(grossAmount),
+                " z\u0142"),
+            react_1.default.createElement("div", { className: "text-end text-muted small" },
                 "netto: ",
-                Tools_1.default.formatNumber(invoice.netValue),
+                Tools_1.default.formatNumber(netAmount),
+                " z\u0142"),
+            bookableNetAmount !== undefined && bookableNetAmount !== netAmount && (react_1.default.createElement("div", { className: "text-end text-info small" },
+                "do ksi\u0119g.: ",
+                Tools_1.default.formatNumber(bookableNetAmount),
                 " z\u0142"))));
     }
-    function renderFlags(invoice) {
+    function renderBookingInfo(invoice) {
+        const invoiceWithCategory = invoice;
+        const category = invoice.category || invoiceWithCategory._category || null;
+        const vatDeductionPercentage = toNumber(invoice.vatDeductionPercentage);
         return (react_1.default.createElement("div", { className: "d-flex flex-column gap-1" },
-            react_1.default.createElement(CostInvoicesBadges_1.CompanyCostBadge, { isCompanyCost: invoice.isCompanyCost }),
-            react_1.default.createElement(CostInvoicesBadges_1.PaidStatusBadge, { isPaid: invoice.isPaid })));
+            react_1.default.createElement(CostInvoicesBadges_1.CategoryBadge, { category: category }),
+            react_1.default.createElement(CostInvoicesBadges_1.VatDeductionBadge, { percentage: vatDeductionPercentage })));
     }
     function renderKsefNumber(invoice) {
         return (react_1.default.createElement("div", { className: "small" },
             react_1.default.createElement("code", { className: "text-break", style: { fontSize: "0.75em" } }, invoice.ksefNumber)));
     }
+    function CostInvoiceStatusCell({ invoice }) {
+        const { repository, setObjects } = (0, FilterableTableContext_1.useFilterableTableContext)();
+        const [isUpdating, setIsUpdating] = (0, react_1.useState)(false);
+        const handleStatusChange = async (status) => {
+            if (status === invoice.status)
+                return;
+            setIsUpdating(true);
+            setStatusError(null);
+            try {
+                const updated = await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, { status });
+                repository.replaceItemById(invoice.id, updated);
+                repository.saveToSessionStorage();
+                setObjects([...repository.items]);
+            }
+            catch (error) {
+                setStatusError(error instanceof Error ? error.message : "Błąd zmiany statusu");
+            }
+            finally {
+                setIsUpdating(false);
+            }
+        };
+        if (invoice.status !== CostInvoicesController_1.CostInvoiceStatuses.NEW) {
+            return react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status });
+        }
+        return (react_1.default.createElement("div", { onClick: (e) => e.stopPropagation() },
+            react_1.default.createElement(react_bootstrap_1.Form.Select, { size: "sm", value: invoice.status, disabled: isUpdating, onChange: (e) => handleStatusChange(e.target.value), onClick: (e) => e.stopPropagation() },
+                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.NEW }, "Nowa"),
+                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED }, "Poza kosztami"),
+                react_1.default.createElement("option", { value: CostInvoicesController_1.CostInvoiceStatuses.BOOKED }, "Zaksi\u0119gowana"))));
+    }
     // Przycisk synchronizacji KSeF jako dodatkowy przycisk w nagłówku
-    const SyncKsefButton = () => (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", size: "sm", onClick: syncFromKsef, disabled: isSyncing, className: "me-2" }, isSyncing ? (react_1.default.createElement(react_1.default.Fragment, null,
+    const SyncKsefButton = () => (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-primary", size: "sm", onClick: () => setShowSyncModal(true), disabled: isSyncing, className: "me-2" }, isSyncing ? (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
         "Synchronizacja...")) : ("🔄 Pobierz z KSeF")));
     return (react_1.default.createElement(react_1.default.Fragment, null,
         syncError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setSyncError(null), dismissible: true, className: "mx-3 mt-3" }, syncError)),
         syncSuccess && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", onClose: () => setSyncSuccess(null), dismissible: true, className: "mx-3 mt-3" }, syncSuccess)),
+        statusError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setStatusError(null), dismissible: true, className: "mx-3 mt-3" }, statusError)),
         react_1.default.createElement(FilterableTable_1.default, { id: "costInvoices", title: title, FilterBodyComponent: CostInvoicesFilterBody_1.CostInvoicesFilterBody, tableStructure: [
-                { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-                { header: "Kontrahent", renderTdBody: renderSellerInfo, colMd: 3 },
-                { header: "Data", objectAttributeToShow: "issueDate", colMd: 1 },
-                { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
-                { header: "Wartość brutto", renderTdBody: renderValues, colMd: 1 },
-                { header: "Kategoria", objectAttributeToShow: "costCategory", colMd: 1 },
+                { header: "Nr faktury", objectAttributeToShow: "invoiceNumber", colMd: 1 },
+                { header: "Dostawca", renderTdBody: renderSupplierInfo, colMd: 3 },
+                { header: "Data wyst.", objectAttributeToShow: "issueDate", colMd: 1 },
+                { header: "Termin płat.", objectAttributeToShow: "dueDate", colMd: 1 },
+                { header: "Wartość", renderTdBody: renderValues, colMd: 1 },
+                { header: "Księgowanie", renderTdBody: renderBookingInfo, colMd: 2 },
                 {
                     header: "Status",
-                    renderTdBody: (invoice) => (react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status })),
+                    renderTdBody: (invoice) => react_1.default.createElement(CostInvoiceStatusCell, { invoice: invoice }),
                     colMd: 1,
                 },
-                { header: "Flagi", renderTdBody: renderFlags, colMd: 1 },
                 { header: "Nr KSeF", renderTdBody: renderKsefNumber, colMd: 1 },
-            ], AddNewButtonComponents: [SyncKsefButton], EditButtonComponent: CostInvoiceModalButtons_1.CostInvoiceEditModalButton, isDeletable: false, isCopyable: false, repository: CostInvoicesController_1.costInvoicesRepository })));
+            ], AddNewButtonComponents: [SyncKsefButton], isDeletable: false, isCopyable: false, repository: CostInvoicesController_1.costInvoicesRepository, selectedObjectRoute: "/cost-invoice/" }),
+        react_1.default.createElement(react_bootstrap_1.Modal, { show: showSyncModal, onHide: () => setShowSyncModal(false) },
+            react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+                react_1.default.createElement(react_bootstrap_1.Modal.Title, null, "Synchronizacja z KSeF")),
+            react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Typ synchronizacji"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Select, { value: syncType, onChange: (e) => setSyncType(e.target.value) },
+                        react_1.default.createElement("option", { value: "INCREMENTAL" }, "Przyrostowa (od ostatniej synchronizacji)"),
+                        react_1.default.createElement("option", { value: "VERIFICATION" }, "Weryfikacyjna (zakres dat)")),
+                    react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, syncType === "INCREMENTAL"
+                        ? "Pobiera nowe faktury od ostatniej synchronizacji"
+                        : "Pobiera faktury z podanego zakresu dat (do weryfikacji kompletności)")),
+                syncType === "VERIFICATION" && (react_1.default.createElement(react_bootstrap_1.Row, null,
+                    react_1.default.createElement(react_bootstrap_1.Col, null,
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data od"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", value: dateFrom, onChange: (e) => setDateFrom(e.target.value), required: true }))),
+                    react_1.default.createElement(react_bootstrap_1.Col, null,
+                        react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data do"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", value: dateTo, onChange: (e) => setDateTo(e.target.value), required: true })))))),
+            react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: () => setShowSyncModal(false) }, "Anuluj"),
+                react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSync, disabled: syncType === "VERIFICATION" && (!dateFrom || !dateTo) }, "Synchronizuj")))));
 }
 exports["default"] = CostInvoicesSearch;
-
-
-/***/ }),
-
-/***/ "./src/Erp/CostInvoicesList/Modals/CostInvoiceModalBody.tsx":
-/*!******************************************************************!*\
-  !*** ./src/Erp/CostInvoicesList/Modals/CostInvoiceModalBody.tsx ***!
-  \******************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CostInvoiceModalBody = void 0;
-const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const CostInvoicesController_1 = __webpack_require__(/*! ../CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
-const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
-function CostInvoiceModalBody({ isEditing, initialData }) {
-    const { register, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
-    (0, react_1.useEffect)(() => {
-        const resetData = {
-            status: initialData?.status || CostInvoicesController_1.CostInvoiceStatuses.NEW,
-            isCompanyCost: initialData?.isCompanyCost ?? true,
-            isPaid: initialData?.isPaid ?? false,
-            paidDate: initialData?.paidDate || null,
-            paymentDeadline: initialData?.paymentDeadline || null,
-            costCategory: initialData?.costCategory || "",
-            comment: initialData?.comment || "",
-            _contract: initialData?._contract || null,
-        };
-        reset(resetData);
-        trigger();
-    }, [initialData, reset, trigger]);
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", { className: "bg-light p-3 rounded mb-3" },
-            react_1.default.createElement("h6", null, "Dane faktury z KSeF"),
-            react_1.default.createElement(react_bootstrap_1.Row, null,
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
-                    react_1.default.createElement("strong", null, "Numer:"),
-                    " ",
-                    initialData?.number),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 6 },
-                    react_1.default.createElement("strong", null, "Data:"),
-                    " ",
-                    initialData?.issueDate)),
-            react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
-                    react_1.default.createElement("strong", null, "Kontrahent:"),
-                    " ",
-                    initialData?.sellerName,
-                    " (NIP: ",
-                    initialData?.sellerNip,
-                    ")")),
-            react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
-                    react_1.default.createElement("strong", null, "Netto:"),
-                    " ",
-                    initialData?.netValue,
-                    " z\u0142"),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
-                    react_1.default.createElement("strong", null, "VAT:"),
-                    " ",
-                    initialData?.vatValue,
-                    " z\u0142"),
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
-                    react_1.default.createElement("strong", null, "Brutto:"),
-                    " ",
-                    initialData?.grossValue,
-                    " z\u0142")),
-            react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-2" },
-                react_1.default.createElement(react_bootstrap_1.Col, { md: 12 },
-                    react_1.default.createElement("strong", null, "Nr KSeF:"),
-                    " ",
-                    react_1.default.createElement("code", { className: "small" }, initialData?.ksefNumber)))),
-        react_1.default.createElement(react_bootstrap_1.Row, null,
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "status" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Status weryfikacji"),
-                react_1.default.createElement(react_bootstrap_1.Form.Select, { isValid: !errors.status, isInvalid: !!errors.status, ...register("status") }, Object.entries(CostInvoicesController_1.CostInvoiceStatuses).map(([key, value]) => (react_1.default.createElement("option", { key: key, value: value }, value)))),
-                react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "status" })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "costCategory" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kategoria kosztu"),
-                react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("costCategory") },
-                    react_1.default.createElement("option", { value: "" }, "-- Wybierz kategori\u0119 --"),
-                    Object.entries(CostInvoicesController_1.CostCategories).map(([key, value]) => (react_1.default.createElement("option", { key: key, value: value }, value)))))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "isCompanyCost" },
-                react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "switch", id: "isCompanyCost", label: "Faktura jest kosztem firmy", ...register("isCompanyCost") }),
-                react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, "Zaznacz, je\u015Bli faktura ma by\u0107 uwzgl\u0119dniona w kosztach firmy")),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "isPaid" },
-                react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "switch", id: "isPaid", label: "Faktura zosta\u0142a zap\u0142acona", ...register("isPaid") }))),
-        react_1.default.createElement(react_bootstrap_1.Row, { className: "mt-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "paymentDeadline" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Termin p\u0142atno\u015Bci"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", ...register("paymentDeadline") })),
-            react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 6, controlId: "paidDate" },
-                react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data zap\u0142aty"),
-                react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", ...register("paidDate") }))),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_contract", className: "mt-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Powi\u0105zany kontrakt (opcjonalnie)"),
-            react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract", typesToInclude: "our", showValidationInfo: false }),
-            react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, "Mo\u017Cesz powi\u0105za\u0107 faktur\u0119 z kontraktem")),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "comment", className: "mt-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Komentarz / Notatka"),
-            react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz do faktury...", ...register("comment") }))));
-}
-exports.CostInvoiceModalBody = CostInvoiceModalBody;
-
-
-/***/ }),
-
-/***/ "./src/Erp/CostInvoicesList/Modals/CostInvoiceModalButtons.tsx":
-/*!*********************************************************************!*\
-  !*** ./src/Erp/CostInvoicesList/Modals/CostInvoiceModalButtons.tsx ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CostInvoiceEditModalButton = void 0;
-const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
-const CostInvoiceModalBody_1 = __webpack_require__(/*! ./CostInvoiceModalBody */ "./src/Erp/CostInvoicesList/Modals/CostInvoiceModalBody.tsx");
-const CostInvoiceValidationSchema_1 = __webpack_require__(/*! ./CostInvoiceValidationSchema */ "./src/Erp/CostInvoicesList/Modals/CostInvoiceValidationSchema.ts");
-/**
- * Przycisk i modal edycji faktury kosztowej
- */
-function CostInvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit, repository }, buttonProps, }) {
-    return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
-            ModalBodyComponent: CostInvoiceModalBody_1.CostInvoiceModalBody,
-            modalTitle: "Edycja faktury kosztowej",
-            repository: repository,
-            initialData: initialData,
-            makeValidationSchema: CostInvoiceValidationSchema_1.makeCostInvoiceValidationSchema,
-            shouldRetrieveDataBeforeEdit,
-        }, buttonProps: {
-            ...buttonProps,
-            buttonVariant: "outline-success",
-        } }));
-}
-exports.CostInvoiceEditModalButton = CostInvoiceEditModalButton;
-
-
-/***/ }),
-
-/***/ "./src/Erp/CostInvoicesList/Modals/CostInvoiceValidationSchema.ts":
-/*!************************************************************************!*\
-  !*** ./src/Erp/CostInvoicesList/Modals/CostInvoiceValidationSchema.ts ***!
-  \************************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeCostInvoiceValidationSchema = void 0;
-const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
-const CostInvoicesController_1 = __webpack_require__(/*! ../CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
-/**
- * Schema walidacji dla edycji faktury kosztowej
- * Większość pól jest tylko do odczytu (pobrane z KSeF)
- * Edytowalne są tylko pola zarządzania wewnętrznego
- */
-function makeCostInvoiceValidationSchema(isEditing) {
-    return Yup.object().shape({
-        status: Yup.string()
-            .required("Status jest wymagany")
-            .oneOf(Object.values(CostInvoicesController_1.CostInvoiceStatuses), "Nieprawidłowy status"),
-        isCompanyCost: Yup.boolean().required(),
-        isPaid: Yup.boolean().required(),
-        paidDate: Yup.date().nullable(),
-        paymentDeadline: Yup.date().nullable(),
-        costCategory: Yup.string().nullable(),
-        comment: Yup.string()
-            .max(1000, "Komentarz może mieć maksymalnie 1000 znaków")
-            .nullable(),
-        _contract: Yup.object().nullable(),
-    });
-}
-exports.makeCostInvoiceValidationSchema = makeCostInvoiceValidationSchema;
 
 
 /***/ }),
@@ -106717,7 +107383,8 @@ function MainMenu() {
                             if (canViewCostInvoices) {
                                 return (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Faktury", id: "invoices-nav-dropdown", className: isActive("/invoices") },
                                     react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"),
-                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices", className: isActive("/costInvoices") }, "Faktury kosztowe")));
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices", className: isActive("/costInvoices") }, "Faktury kosztowe"),
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices/report", className: isActive("/costInvoices/report") }, "Raport miesi\u0119czny")));
                             }
                             // Otherwise show plain link to invoices (no expand arrow)
                             return (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"));
@@ -106927,6 +107594,8 @@ const CitiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/Citie
 const ContractRangesSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/ContractRanges/ContractRangesSearch */ "./src/Admin/ContractRanges/ContractRangesSearch.tsx"));
 const SystemUsersSearch_1 = __importDefault(__webpack_require__(/*! ../../Admin/SystemUsers/SystemUsersSearch */ "./src/Admin/SystemUsers/SystemUsersSearch.tsx"));
 const CostInvoicesSearch_1 = __importDefault(__webpack_require__(/*! ../../Erp/CostInvoicesList/CostInvoicesSearch */ "./src/Erp/CostInvoicesList/CostInvoicesSearch.tsx"));
+const CostInvoiceDetails_1 = __importDefault(__webpack_require__(/*! ../../Erp/CostInvoicesList/CostInvoiceDetails */ "./src/Erp/CostInvoicesList/CostInvoiceDetails.tsx"));
+const CostInvoicesReport_1 = __importDefault(__webpack_require__(/*! ../../Erp/CostInvoicesList/CostInvoicesReport */ "./src/Erp/CostInvoicesList/CostInvoicesReport.tsx"));
 const ContractMainViewTabs_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs */ "./src/Contracts/ContractsList/ContractDetails/ContractMainViewTabs.tsx");
 const SecuritiesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch */ "./src/Contracts/ContractsList/SecuritiesList/SecuritiesSearch.tsx"));
 const MilestoneDatesSearch_1 = __importDefault(__webpack_require__(/*! ../../Contracts/Dates/MilestoneDatesSearch */ "./src/Contracts/Dates/MilestoneDatesSearch.tsx"));
@@ -107038,7 +107707,9 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/financialAidProgrammes/needs", element: react_1.default.createElement(NeedsSearch_1.default, { title: "Potrzeby" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/systemUsers", element: react_1.default.createElement(SystemUsersSearch_1.default, { title: "Dodawanie u\u017Cytkownik\u00F3w" }) })),
                 react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER"] }) },
-                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }))))));
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/cost-invoice/:id", element: react_1.default.createElement(CostInvoiceDetails_1.default, null) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices/report", element: react_1.default.createElement(CostInvoicesReport_1.default, null) }))))));
 }
 async function renderApp() {
     const root = document.getElementById("root");

@@ -1,48 +1,66 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Alert, Button, Spinner } from "react-bootstrap";
+import { Alert, Button, Spinner, Modal, Form, Row, Col } from "react-bootstrap";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { CostInvoicesFilterBody } from "./CostInvoicesFilterBody";
 import { CostInvoice } from "../../../Typings/bussinesTypes";
-import { costInvoicesRepository, CostInvoiceStatuses } from "./CostInvoicesController";
+import {
+    costInvoicesRepository,
+    CostInvoiceStatus,
+    CostInvoiceStatuses,
+    syncFromKsef,
+    updateCostInvoice,
+} from "./CostInvoicesController";
 import Tools from "../../React/Tools/Tools";
-import MainSetup from "../../React/MainSetupReact";
-import { CostInvoiceEditModalButton } from "./Modals/CostInvoiceModalButtons";
-import { CostInvoiceStatusBadge, PaidStatusBadge, CompanyCostBadge } from "./CostInvoicesBadges";
+import { CostInvoiceStatusBadge, CategoryBadge, VatDeductionBadge } from "./CostInvoicesBadges";
+import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
 
 export default function CostInvoicesSearch({ title }: { title: string }) {
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncError, setSyncError] = useState<string | null>(null);
     const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
+    const [statusError, setStatusError] = useState<string | null>(null);
+    const [showSyncModal, setShowSyncModal] = useState(false);
+    const [syncType, setSyncType] = useState<"INCREMENTAL" | "VERIFICATION">("INCREMENTAL");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
 
     useEffect(() => {
         document.title = title;
     }, [title]);
 
+    const toNumber = (value: unknown): number => {
+        if (typeof value === "number") return value;
+        if (typeof value === "string") {
+            const parsed = Number(value.replace(",", "."));
+            return Number.isNaN(parsed) ? 0 : parsed;
+        }
+        return 0;
+    };
+
     /**
      * Synchronizacja faktur z KSeF
-     * Pobiera nowe faktury zakupowe z KSeF i zapisuje je w bazie danych
      */
-    const syncFromKsef = useCallback(async () => {
+    const handleSync = useCallback(async () => {
         setIsSyncing(true);
         setSyncError(null);
         setSyncSuccess(null);
+        setShowSyncModal(false);
 
         try {
-            const response = await fetch(`${MainSetup.serverUrl}costInvoices/ksef/sync`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const params: { syncType: "INCREMENTAL" | "VERIFICATION"; dateFrom?: string; dateTo?: string } = {
+                syncType,
+            };
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || errorData.message || `Błąd synchronizacji (${response.status})`);
+            if (syncType === "VERIFICATION") {
+                if (!dateFrom || !dateTo) {
+                    throw new Error("Dla weryfikacji wymagane są daty od i do");
+                }
+                params.dateFrom = dateFrom;
+                params.dateTo = dateTo;
             }
 
-            const result = await response.json();
-            setSyncSuccess(`Zsynchronizowano ${result.newInvoicesCount || 0} nowych faktur z KSeF`);
+            const result = await syncFromKsef(params);
+            setSyncSuccess(result.message || `Zaimportowano ${result.data.imported} faktur, pominięto ${result.data.skipped}`);
 
             // Odśwież listę faktur
             await costInvoicesRepository.loadItemsFromServerPOST([]);
@@ -51,36 +69,46 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         } finally {
             setIsSyncing(false);
         }
-    }, []);
+    }, [syncType, dateFrom, dateTo]);
 
-    function renderSellerInfo(invoice: CostInvoice) {
+    function renderSupplierInfo(invoice: CostInvoice) {
         return (
             <>
-                <div className="fw-bold">{invoice.sellerName}</div>
-                <div className="text-muted small">NIP: {invoice.sellerNip}</div>
-                {invoice.description && <div className="text-muted small">{invoice.description}</div>}
+                <div className="fw-bold">{invoice.supplierName}</div>
+                <div className="text-muted small">NIP: {invoice.supplierNip}</div>
             </>
         );
     }
 
     function renderValues(invoice: CostInvoice) {
+        const grossAmount = toNumber(invoice.grossAmount);
+        const netAmount = toNumber(invoice.netAmount);
+        const bookableNetAmount = invoice.bookableNetAmount !== undefined
+            ? toNumber(invoice.bookableNetAmount)
+            : undefined;
+
         return (
             <>
-                {invoice.grossValue && (
-                    <div className="text-end fw-bold">{Tools.formatNumber(invoice.grossValue)} zł</div>
-                )}
-                {invoice.netValue && (
-                    <div className="text-end text-muted small">netto: {Tools.formatNumber(invoice.netValue)} zł</div>
+                <div className="text-end fw-bold">{Tools.formatNumber(grossAmount)} zł</div>
+                <div className="text-end text-muted small">netto: {Tools.formatNumber(netAmount)} zł</div>
+                {bookableNetAmount !== undefined && bookableNetAmount !== netAmount && (
+                    <div className="text-end text-info small">
+                        do księg.: {Tools.formatNumber(bookableNetAmount)} zł
+                    </div>
                 )}
             </>
         );
     }
 
-    function renderFlags(invoice: CostInvoice) {
+    function renderBookingInfo(invoice: CostInvoice) {
+        const invoiceWithCategory = invoice as CostInvoice & { _category?: CostInvoice["category"] };
+        const category = invoice.category || invoiceWithCategory._category || null;
+        const vatDeductionPercentage = toNumber(invoice.vatDeductionPercentage);
+
         return (
             <div className="d-flex flex-column gap-1">
-                <CompanyCostBadge isCompanyCost={invoice.isCompanyCost} />
-                <PaidStatusBadge isPaid={invoice.isPaid} />
+                <CategoryBadge category={category} />
+                <VatDeductionBadge percentage={vatDeductionPercentage} />
             </div>
         );
     }
@@ -95,12 +123,54 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         );
     }
 
+    function CostInvoiceStatusCell({ invoice }: { invoice: CostInvoice }) {
+        const { repository, setObjects } = useFilterableTableContext<CostInvoice>();
+        const [isUpdating, setIsUpdating] = useState(false);
+
+        const handleStatusChange = async (status: CostInvoiceStatus) => {
+            if (status === invoice.status) return;
+            setIsUpdating(true);
+            setStatusError(null);
+
+            try {
+                const updated = await updateCostInvoice(invoice.id, { status });
+                repository.replaceItemById(invoice.id, updated);
+                repository.saveToSessionStorage();
+                setObjects([...repository.items]);
+            } catch (error) {
+                setStatusError(error instanceof Error ? error.message : "Błąd zmiany statusu");
+            } finally {
+                setIsUpdating(false);
+            }
+        };
+
+        if (invoice.status !== CostInvoiceStatuses.NEW) {
+            return <CostInvoiceStatusBadge status={invoice.status} />;
+        }
+
+        return (
+            <div onClick={(e) => e.stopPropagation()}>
+                <Form.Select
+                    size="sm"
+                    value={invoice.status}
+                    disabled={isUpdating}
+                    onChange={(e) => handleStatusChange(e.target.value as CostInvoiceStatus)}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <option value={CostInvoiceStatuses.NEW}>Nowa</option>
+                    <option value={CostInvoiceStatuses.EXCLUDED}>Poza kosztami</option>
+                    <option value={CostInvoiceStatuses.BOOKED}>Zaksięgowana</option>
+                </Form.Select>
+            </div>
+        );
+    }
+
     // Przycisk synchronizacji KSeF jako dodatkowy przycisk w nagłówku
     const SyncKsefButton = () => (
         <Button
             variant="outline-primary"
             size="sm"
-            onClick={syncFromKsef}
+            onClick={() => setShowSyncModal(true)}
             disabled={isSyncing}
             className="me-2"
         >
@@ -127,34 +197,99 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     {syncSuccess}
                 </Alert>
             )}
+            {statusError && (
+                <Alert variant="danger" onClose={() => setStatusError(null)} dismissible className="mx-3 mt-3">
+                    {statusError}
+                </Alert>
+            )}
 
             <FilterableTable<CostInvoice>
                 id="costInvoices"
                 title={title}
                 FilterBodyComponent={CostInvoicesFilterBody}
                 tableStructure={[
-                    { header: "Numer", objectAttributeToShow: "number", colMd: 1 },
-                    { header: "Kontrahent", renderTdBody: renderSellerInfo, colMd: 3 },
-                    { header: "Data", objectAttributeToShow: "issueDate", colMd: 1 },
-                    { header: "Termin płatności", objectAttributeToShow: "paymentDeadline", colMd: 1 },
-                    { header: "Wartość brutto", renderTdBody: renderValues, colMd: 1 },
-                    { header: "Kategoria", objectAttributeToShow: "costCategory", colMd: 1 },
+                    { header: "Nr faktury", objectAttributeToShow: "invoiceNumber", colMd: 1 },
+                    { header: "Dostawca", renderTdBody: renderSupplierInfo, colMd: 3 },
+                    { header: "Data wyst.", objectAttributeToShow: "issueDate", colMd: 1 },
+                    { header: "Termin płat.", objectAttributeToShow: "dueDate", colMd: 1 },
+                    { header: "Wartość", renderTdBody: renderValues, colMd: 1 },
+                    { header: "Księgowanie", renderTdBody: renderBookingInfo, colMd: 2 },
                     {
                         header: "Status",
-                        renderTdBody: (invoice: CostInvoice) => (
-                            <CostInvoiceStatusBadge status={invoice.status} />
-                        ),
+                        renderTdBody: (invoice: CostInvoice) => <CostInvoiceStatusCell invoice={invoice} />,
                         colMd: 1,
                     },
-                    { header: "Flagi", renderTdBody: renderFlags, colMd: 1 },
                     { header: "Nr KSeF", renderTdBody: renderKsefNumber, colMd: 1 },
                 ]}
                 AddNewButtonComponents={[SyncKsefButton]}
-                EditButtonComponent={CostInvoiceEditModalButton}
                 isDeletable={false}
                 isCopyable={false}
                 repository={costInvoicesRepository}
+                selectedObjectRoute="/cost-invoice/"
             />
+
+            {/* Modal synchronizacji */}
+            <Modal show={showSyncModal} onHide={() => setShowSyncModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Synchronizacja z KSeF</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Typ synchronizacji</Form.Label>
+                        <Form.Select
+                            value={syncType}
+                            onChange={(e) => setSyncType(e.target.value as "INCREMENTAL" | "VERIFICATION")}
+                        >
+                            <option value="INCREMENTAL">Przyrostowa (od ostatniej synchronizacji)</option>
+                            <option value="VERIFICATION">Weryfikacyjna (zakres dat)</option>
+                        </Form.Select>
+                        <Form.Text className="text-muted">
+                            {syncType === "INCREMENTAL"
+                                ? "Pobiera nowe faktury od ostatniej synchronizacji"
+                                : "Pobiera faktury z podanego zakresu dat (do weryfikacji kompletności)"}
+                        </Form.Text>
+                    </Form.Group>
+
+                    {syncType === "VERIFICATION" && (
+                        <Row>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Data od</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        value={dateFrom}
+                                        onChange={(e) => setDateFrom(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Data do</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        value={dateTo}
+                                        onChange={(e) => setDateTo(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+                        Anuluj
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={handleSync}
+                        disabled={syncType === "VERIFICATION" && (!dateFrom || !dateTo)}
+                    >
+                        Synchronizuj
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }
