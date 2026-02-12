@@ -4,7 +4,9 @@
       "Bash(if [ -f .claude/CLAUDE.md ])",
       "Bash(then cp .claude/CLAUDE.md CLAUDE.md)",
       "Bash(else echo \"Brak pliku .claude/CLAUDE.md\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(npx tsc:*)",
+      "Bash(npx webpack:*)"
     ]
   }
 }

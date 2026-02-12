@@ -10,9 +10,22 @@ const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons"
 const SystemUserController_1 = require("../SystemUserController");
 const SystemUserModalBody_1 = require("./SystemUserModalBody");
 const SystemUserValidationSchema_1 = require("./SystemUserValidationSchema");
+const personsV2Helpers_1 = require("../../../Persons/personsV2Helpers");
 function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    async function handleEdit(editedObject) {
+        // Po zapisie legacy, wyslij PUT v2 account + profile
+        if (editedObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(editedObject.id, {
+                systemRoleId: editedObject.systemRoleId
+                    ? Number(editedObject.systemRoleId)
+                    : undefined,
+                systemEmail: editedObject.systemEmail || undefined,
+            }, {}, "SystemUsers");
+        }
+        onEdit(editedObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
+            onEdit: handleEdit,
             ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
             modalTitle: "Edycja danych osoby",
             repository: SystemUserController_1.systemUserRepository,
@@ -23,8 +36,20 @@ function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
         } }));
 }
 function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
+    async function handleAddNew(newObject) {
+        // Po POST /person, wyslij PUT v2 account z danymi systemowymi
+        if (newObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(newObject.id, {
+                systemRoleId: newObject.systemRoleId
+                    ? Number(newObject.systemRoleId)
+                    : undefined,
+                systemEmail: newObject.systemEmail || undefined,
+            }, {}, "SystemUsers");
+        }
+        onAddNew(newObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
+            onAddNew: handleAddNew,
             ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
             modalTitle: "Dodaj użytkownika systemu",
             repository: SystemUserController_1.systemUserRepository,

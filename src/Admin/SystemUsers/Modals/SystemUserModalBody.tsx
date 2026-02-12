@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
-import { Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Form, Spinner } from "react-bootstrap";
+import { PersonProfileV2Payload, SystemUserData } from "../../../../Typings/bussinesTypes";
+import { fetchPersonAccountV2, fetchPersonProfileV2 } from "../../../Persons/personsV2Helpers";
+import { EntitySelector, SystemRoleSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { SystemUserData } from "../../../../Typings/bussinesTypes";
-import { entitiesRepository } from "../SystemUserController";
-import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
-import { EntitySelector, SystemRoleSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
 
 export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<SystemUserData>) {
     const {
@@ -14,6 +14,9 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
         formState: { dirtyFields, errors, isValid },
         trigger,
     } = useFormContext();
+
+    const [v2Loading, setV2Loading] = useState(false);
+    const [profileV2, setProfileV2] = useState<PersonProfileV2Payload | null>(null);
 
     useEffect(() => {
         const resetData: any = {
@@ -32,10 +35,52 @@ export function SystemUserModalBody({ isEditing, initialData }: ModalBodyProps<S
         };
         reset(resetData);
         trigger();
+
+        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        if (isEditing && initialData?.id) {
+            let cancelled = false;
+            setV2Loading(true);
+
+            Promise.all([fetchPersonAccountV2(initialData.id), fetchPersonProfileV2(initialData.id)])
+                .then(([accountData, profileData]) => {
+                    if (cancelled) return;
+
+                    // Zapisz profile do lokalnego stanu (na potrzeby przyszlego write path)
+                    setProfileV2(profileData);
+
+                    // Nadpisz pola account w formularzu danymi z v2
+                    if (accountData) {
+                        reset({
+                            ...resetData,
+                            systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
+                            systemEmail: accountData.systemEmail ?? resetData.systemEmail,
+                        });
+                        trigger();
+                    }
+                })
+                .catch((error) => {
+                    if (!cancelled) {
+                        console.error("SystemUserModalBody: blad ladowania danych v2:", error);
+                    }
+                })
+                .finally(() => {
+                    if (!cancelled) setV2Loading(false);
+                });
+
+            return () => {
+                cancelled = true;
+            };
+        }
     }, [initialData, reset]);
 
     return (
         <>
+            {v2Loading && (
+                <div className="text-muted small mb-2 d-flex align-items-center">
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Ladowanie danych konta...
+                </div>
+            )}
             <Form.Group>
                 <Form.Label>Podmiot</Form.Label>
                 <EntitySelector name="_entity" multiple={false} />

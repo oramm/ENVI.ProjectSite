@@ -39,8 +39,12 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const personsV2Helpers_1 = require("../personsV2Helpers");
 function PersonModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
+    const [accountV2, setAccountV2] = (0, react_1.useState)(null);
+    const [profileV2, setProfileV2] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         const resetData = {
             _entity: initialData?._entity || null,
@@ -58,8 +62,40 @@ function PersonModalBody({ isEditing, initialData }) {
         };
         reset(resetData);
         trigger();
+        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        if (isEditing && initialData?.id) {
+            let cancelled = false;
+            setV2Loading(true);
+            Promise.all([
+                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
+                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
+            ])
+                .then(([accountData, profileData]) => {
+                if (cancelled)
+                    return;
+                // Zapisz account i profile do lokalnego stanu
+                // (pola account sa zakomentowane w formularzu -- dane na potrzeby przyszlego write path FE-PV2-06)
+                setAccountV2(accountData);
+                setProfileV2(profileData);
+            })
+                .catch((error) => {
+                if (!cancelled) {
+                    console.error("PersonModalBody: blad ladowania danych v2:", error);
+                }
+            })
+                .finally(() => {
+                if (!cancelled)
+                    setV2Loading(false);
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        v2Loading && (react_1.default.createElement("div", { className: "text-muted small mb-2 d-flex align-items-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+            "Ladowanie danych konta...")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),

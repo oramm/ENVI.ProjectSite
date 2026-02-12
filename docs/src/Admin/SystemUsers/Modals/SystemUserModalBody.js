@@ -39,8 +39,11 @@ const react_bootstrap_1 = require("react-bootstrap");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const personsV2Helpers_1 = require("../../../Persons/personsV2Helpers");
 function SystemUserModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
+    const [profileV2, setProfileV2] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         const resetData = {
             _entity: initialData?._entity || null,
@@ -58,8 +61,47 @@ function SystemUserModalBody({ isEditing, initialData }) {
         };
         reset(resetData);
         trigger();
+        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        if (isEditing && initialData?.id) {
+            let cancelled = false;
+            setV2Loading(true);
+            Promise.all([
+                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
+                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
+            ])
+                .then(([accountData, profileData]) => {
+                if (cancelled)
+                    return;
+                // Zapisz profile do lokalnego stanu (na potrzeby przyszlego write path)
+                setProfileV2(profileData);
+                // Nadpisz pola account w formularzu danymi z v2
+                if (accountData) {
+                    reset({
+                        ...resetData,
+                        systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
+                        systemEmail: accountData.systemEmail ?? resetData.systemEmail,
+                    });
+                    trigger();
+                }
+            })
+                .catch((error) => {
+                if (!cancelled) {
+                    console.error("SystemUserModalBody: blad ladowania danych v2:", error);
+                }
+            })
+                .finally(() => {
+                if (!cancelled)
+                    setV2Loading(false);
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        v2Loading && (react_1.default.createElement("div", { className: "text-muted small mb-2 d-flex align-items-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+            "Ladowanie danych konta...")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),

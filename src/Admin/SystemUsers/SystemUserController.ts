@@ -4,8 +4,8 @@ import RepositoryReact from "../../React/RepositoryReact";
 export const systemUserRepository = new RepositoryReact<SystemUserData>({
     actionRoutes: {
         getRoute: "persons",
-        addNewRoute: "systemUser",
-        editRoute: "user",
+        addNewRoute: "person",
+        editRoute: "person",
         deleteRoute: "person",
     },
     name: "persons",

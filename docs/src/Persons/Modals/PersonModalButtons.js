@@ -10,9 +10,19 @@ const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
 const PersonsController_1 = require("../PersonsController");
 const PersonModalBody_1 = require("./PersonModalBody");
 const PersonValidationSchema_1 = require("./PersonValidationSchema");
+const personsV2Helpers_1 = require("../personsV2Helpers");
 function PersonEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    async function handleEdit(editedObject) {
+        // Po zapisie legacy, wyslij PUT v2 account + profile
+        // Pola account (systemRoleId, systemEmail) sa zakomentowane w formularzu Persons
+        // Wysylamy puste payloady -- endpointy v2 tworza/aktualizuja rekordy
+        if (editedObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(editedObject.id, {}, {}, "Persons");
+        }
+        onEdit(editedObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
+            onEdit: handleEdit,
             ModalBodyComponent: PersonModalBody_1.PersonModalBody,
             modalTitle: "Edycja danych osoby",
             repository: PersonsController_1.personsRepository,

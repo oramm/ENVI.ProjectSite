@@ -8,8 +8,8 @@ const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact")
 exports.systemUserRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "persons",
-        addNewRoute: "systemUser",
-        editRoute: "user",
+        addNewRoute: "person",
+        editRoute: "person",
         deleteRoute: "person",
     },
     name: "persons",

@@ -19,10 +19,7 @@ const commonFields = {
 
     comment: Yup.string().max(200, "Komentarz może mieć maksymalnie 200 znaków"),
 
-    systemEmail: Yup.string()
-        .default("")
-        .matches(/^[a-zA-Z0-9._-]+@gmail\.com$/, "Nieprawidłowy format email, dozwolone tylko gmail.com")
-        .max(50, "Email może mieć maksymalnie 50 znaków"),
+    systemEmail: Yup.string().default("").max(50, "Email może mieć maksymalnie 50 znaków"),
 
     systemRoleId: Yup.number().required("Wybierz rolę systemową"),
 };

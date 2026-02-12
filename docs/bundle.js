@@ -94952,8 +94952,11 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const personsV2Helpers_1 = __webpack_require__(/*! ../../../Persons/personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 function SystemUserModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
+    const [profileV2, setProfileV2] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         const resetData = {
             _entity: initialData?._entity || null,
@@ -94971,8 +94974,47 @@ function SystemUserModalBody({ isEditing, initialData }) {
         };
         reset(resetData);
         trigger();
+        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        if (isEditing && initialData?.id) {
+            let cancelled = false;
+            setV2Loading(true);
+            Promise.all([
+                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
+                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
+            ])
+                .then(([accountData, profileData]) => {
+                if (cancelled)
+                    return;
+                // Zapisz profile do lokalnego stanu (na potrzeby przyszlego write path)
+                setProfileV2(profileData);
+                // Nadpisz pola account w formularzu danymi z v2
+                if (accountData) {
+                    reset({
+                        ...resetData,
+                        systemRoleId: accountData.systemRoleId ?? resetData.systemRoleId,
+                        systemEmail: accountData.systemEmail ?? resetData.systemEmail,
+                    });
+                    trigger();
+                }
+            })
+                .catch((error) => {
+                if (!cancelled) {
+                    console.error("SystemUserModalBody: blad ladowania danych v2:", error);
+                }
+            })
+                .finally(() => {
+                if (!cancelled)
+                    setV2Loading(false);
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        v2Loading && (react_1.default.createElement("div", { className: "text-muted small mb-2 d-flex align-items-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+            "Ladowanie danych konta...")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
@@ -95029,9 +95071,22 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/Gener
 const SystemUserController_1 = __webpack_require__(/*! ../SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
 const SystemUserModalBody_1 = __webpack_require__(/*! ./SystemUserModalBody */ "./src/Admin/SystemUsers/Modals/SystemUserModalBody.tsx");
 const SystemUserValidationSchema_1 = __webpack_require__(/*! ./SystemUserValidationSchema */ "./src/Admin/SystemUsers/Modals/SystemUserValidationSchema.ts");
+const personsV2Helpers_1 = __webpack_require__(/*! ../../../Persons/personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    async function handleEdit(editedObject) {
+        // Po zapisie legacy, wyslij PUT v2 account + profile
+        if (editedObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(editedObject.id, {
+                systemRoleId: editedObject.systemRoleId
+                    ? Number(editedObject.systemRoleId)
+                    : undefined,
+                systemEmail: editedObject.systemEmail || undefined,
+            }, {}, "SystemUsers");
+        }
+        onEdit(editedObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
+            onEdit: handleEdit,
             ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
             modalTitle: "Edycja danych osoby",
             repository: SystemUserController_1.systemUserRepository,
@@ -95042,8 +95097,20 @@ function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
         } }));
 }
 function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
+    async function handleAddNew(newObject) {
+        // Po POST /person, wyslij PUT v2 account z danymi systemowymi
+        if (newObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(newObject.id, {
+                systemRoleId: newObject.systemRoleId
+                    ? Number(newObject.systemRoleId)
+                    : undefined,
+                systemEmail: newObject.systemEmail || undefined,
+            }, {}, "SystemUsers");
+        }
+        onAddNew(newObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
-            onAddNew: onAddNew,
+            onAddNew: handleAddNew,
             ModalBodyComponent: SystemUserModalBody_1.SystemUserModalBody,
             modalTitle: "Dodaj użytkownika systemu",
             repository: SystemUserController_1.systemUserRepository,
@@ -95113,10 +95180,7 @@ const commonFields = {
     cellphone: Yup.string().max(25, "Numer komórki może mieć maksymalnie 25 znaków"),
     phone: Yup.string().max(25, "Numer telefonu może mieć maksymalnie 25 znaków"),
     comment: Yup.string().max(200, "Komentarz może mieć maksymalnie 200 znaków"),
-    systemEmail: Yup.string()
-        .default("")
-        .matches(/^[a-zA-Z0-9._-]+@gmail\.com$/, "Nieprawidłowy format email, dozwolone tylko gmail.com")
-        .max(50, "Email może mieć maksymalnie 50 znaków"),
+    systemEmail: Yup.string().default("").max(50, "Email może mieć maksymalnie 50 znaków"),
     systemRoleId: Yup.number().required("Wybierz rolę systemową"),
 };
 function makeSystemUserValidationSchema(isEditing) {
@@ -95145,8 +95209,8 @@ const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/Re
 exports.systemUserRepository = new RepositoryReact_1.default({
     actionRoutes: {
         getRoute: "persons",
-        addNewRoute: "systemUser",
-        editRoute: "user",
+        addNewRoute: "person",
+        editRoute: "person",
         deleteRoute: "person",
     },
     name: "persons",
@@ -104995,8 +105059,12 @@ const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_mod
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const personsV2Helpers_1 = __webpack_require__(/*! ../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 function PersonModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
+    const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
+    const [accountV2, setAccountV2] = (0, react_1.useState)(null);
+    const [profileV2, setProfileV2] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         const resetData = {
             _entity: initialData?._entity || null,
@@ -105014,8 +105082,40 @@ function PersonModalBody({ isEditing, initialData }) {
         };
         reset(resetData);
         trigger();
+        // Przy edycji pobierz dane z endpointow v2 (account + profile)
+        if (isEditing && initialData?.id) {
+            let cancelled = false;
+            setV2Loading(true);
+            Promise.all([
+                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
+                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
+            ])
+                .then(([accountData, profileData]) => {
+                if (cancelled)
+                    return;
+                // Zapisz account i profile do lokalnego stanu
+                // (pola account sa zakomentowane w formularzu -- dane na potrzeby przyszlego write path FE-PV2-06)
+                setAccountV2(accountData);
+                setProfileV2(profileData);
+            })
+                .catch((error) => {
+                if (!cancelled) {
+                    console.error("PersonModalBody: blad ladowania danych v2:", error);
+                }
+            })
+                .finally(() => {
+                if (!cancelled)
+                    setV2Loading(false);
+            });
+            return () => {
+                cancelled = true;
+            };
+        }
     }, [initialData, reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
+        v2Loading && (react_1.default.createElement("div", { className: "text-muted small mb-2 d-flex align-items-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+            "Ladowanie danych konta...")),
         react_1.default.createElement(react_bootstrap_1.Form.Group, null,
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entity", multiple: false })),
@@ -105067,9 +105167,19 @@ const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralM
 const PersonsController_1 = __webpack_require__(/*! ../PersonsController */ "./src/Persons/PersonsController.ts");
 const PersonModalBody_1 = __webpack_require__(/*! ./PersonModalBody */ "./src/Persons/Modals/PersonModalBody.tsx");
 const PersonValidationSchema_1 = __webpack_require__(/*! ./PersonValidationSchema */ "./src/Persons/Modals/PersonValidationSchema.ts");
+const personsV2Helpers_1 = __webpack_require__(/*! ../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 function PersonEditModalButton({ modalProps: { onEdit, initialData }, }) {
+    async function handleEdit(editedObject) {
+        // Po zapisie legacy, wyslij PUT v2 account + profile
+        // Pola account (systemRoleId, systemEmail) sa zakomentowane w formularzu Persons
+        // Wysylamy puste payloady -- endpointy v2 tworza/aktualizuja rekordy
+        if (editedObject?.id) {
+            await (0, personsV2Helpers_1.savePersonV2AccountAndProfile)(editedObject.id, {}, {}, "Persons");
+        }
+        onEdit(editedObject);
+    }
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
-            onEdit: onEdit,
+            onEdit: handleEdit,
             ModalBodyComponent: PersonModalBody_1.PersonModalBody,
             modalTitle: "Edycja danych osoby",
             repository: PersonsController_1.personsRepository,
@@ -105302,6 +105412,161 @@ function PersonsSearch({ title }) {
             { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
             { header: "Opis", objectAttributeToShow: "comment", colMd: 2 },
         ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/" }));
+}
+
+
+/***/ }),
+
+/***/ "./src/Persons/personsV2Helpers.ts":
+/*!*****************************************!*\
+  !*** ./src/Persons/personsV2Helpers.ts ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.validatePersonId = validatePersonId;
+exports.fetchPersonAccountV2 = fetchPersonAccountV2;
+exports.fetchPersonProfileV2 = fetchPersonProfileV2;
+exports.putPersonAccountV2 = putPersonAccountV2;
+exports.putPersonProfileV2 = putPersonProfileV2;
+exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
+/**
+ * Waliduje personId przed wywolaniem endpointow v2.
+ * Rzuca Error jesli personId nie jest dodatnia liczba calkowita.
+ *
+ * @param personId - identyfikator osoby (z repository.currentItems[0].id)
+ * @param context - opcjonalny kontekst do komunikatu bledu (np. "GET account", "PUT profile")
+ * @returns personId (typ number) -- zwraca wartosc dla wygody chainowania
+ * @throws Error jesli personId jest undefined/null, nie jest liczba, <= 0 lub nie jest calkowita
+ */
+function validatePersonId(personId, context) {
+    if (personId == null) {
+        throw new Error(`personId jest wymagany${context ? ` (${context})` : ""}`);
+    }
+    if (typeof personId !== "number" || !Number.isFinite(personId)) {
+        throw new Error(`personId musi byc liczba, otrzymano: ${typeof personId}${context ? ` (${context})` : ""}`);
+    }
+    if (!Number.isInteger(personId) || personId <= 0) {
+        throw new Error(`personId musi byc dodatnia liczba calkowita, otrzymano: ${personId}${context ? ` (${context})` : ""}`);
+    }
+    return personId;
+}
+/**
+ * Pobiera dane account v2 dla osoby.
+ * @returns PersonAccountV2Payload lub null jesli brak account (404)
+ */
+async function fetchPersonAccountV2(personId) {
+    const validId = validatePersonId(personId, "GET account");
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/account`;
+    try {
+        const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result;
+    }
+    catch (error) {
+        // 404 lub brak danych -- zwracamy null
+        console.warn("fetchPersonAccountV2: brak account dla personId=%d: %o", validId, error);
+        return null;
+    }
+}
+/**
+ * Pobiera dane profile v2 dla osoby.
+ * @returns PersonProfileV2Payload lub null jesli brak profile (404)
+ */
+async function fetchPersonProfileV2(personId) {
+    const validId = validatePersonId(personId, "GET profile");
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile`;
+    try {
+        const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result;
+    }
+    catch (error) {
+        // 404 lub brak danych -- zwracamy null
+        console.warn("fetchPersonProfileV2: brak profile dla personId=%d: %o", validId, error);
+        return null;
+    }
+}
+/**
+ * Zapisuje dane account v2 dla osoby (PUT).
+ * @returns zaktualizowany PersonAccountV2Payload
+ * @throws Error jesli zapis sie nie powiedzie
+ */
+async function putPersonAccountV2(personId, payload) {
+    const validId = validatePersonId(personId, "PUT account");
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/account`;
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    return result;
+}
+/**
+ * Zapisuje dane profile v2 dla osoby (PUT).
+ * @returns zaktualizowany PersonProfileV2Payload
+ * @throws Error jesli zapis sie nie powiedzie
+ */
+async function putPersonProfileV2(personId, payload) {
+    const validId = validatePersonId(personId, "PUT profile");
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile`;
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    return result;
+}
+/**
+ * Wspolna funkcja zapisu account + profile v2 z ujednolicona obsluga bledow.
+ * Kolejnosc: account -> profile (sekwencyjnie).
+ * Bledy nie blokuja UI -- dane legacy zapisaly sie poprawnie.
+ * Kazdy blad jest logowany i zwracany w tablicy errors.
+ *
+ * @param personId - identyfikator osoby
+ * @param accountPayload - payload account (moze byc pusty {})
+ * @param profilePayload - payload profile (moze byc pusty {})
+ * @param callerContext - kontekst wywolania do logow (np. "SystemUsers", "Persons")
+ */
+async function savePersonV2AccountAndProfile(personId, accountPayload, profilePayload, callerContext) {
+    const result = { account: null, profile: null, errors: [] };
+    // Account pierwszy -- musi istniec przed profile
+    try {
+        result.account = await putPersonAccountV2(personId, accountPayload);
+    }
+    catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
+        result.errors.push(`PUT account: ${msg}`);
+        console.warn("[%s] savePersonV2: blad PUT account dla personId=%d: %s", callerContext, personId, msg);
+    }
+    // Profile drugi
+    try {
+        result.profile = await putPersonProfileV2(personId, profilePayload);
+    }
+    catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
+        result.errors.push(`PUT profile: ${msg}`);
+        console.warn("[%s] savePersonV2: blad PUT profile dla personId=%d: %s", callerContext, personId, msg);
+    }
+    if (result.errors.length > 0) {
+        console.warn("[%s] savePersonV2: zapis v2 zakonczony z bledami dla personId=%d: %o", callerContext, personId, result.errors);
+    }
+    return result;
 }
 
 
