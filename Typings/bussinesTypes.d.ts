@@ -304,6 +304,43 @@ export interface SystemUserData extends RepositoryDataItem {
     systemEmail: string;
 }
 
+export interface PersonAccountV2Payload {
+    personId: number;
+    systemRoleId?: number;
+    systemEmail?: string;
+    googleId?: string;
+    googleRefreshToken?: string;
+    microsoftId?: string;
+    microsoftRefreshToken?: string;
+    isActive?: boolean;
+}
+
+export interface PersonProfileV2Payload {
+    personId: number;
+    headline?: string;
+    summary?: string;
+    profileIsVisible?: boolean;
+}
+
+export interface PersonProfileV2Record extends PersonProfileV2Payload {
+    id: number;
+}
+
+export interface PersonProfileExperienceV2Payload {
+    organizationName?: string;
+    positionName?: string;
+    description?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    isCurrent?: boolean;
+    sortOrder?: number;
+}
+
+export interface PersonProfileExperienceV2Record extends PersonProfileExperienceV2Payload {
+    id: number;
+    personProfileId: number;
+}
+
 export interface DocumentTemplate extends RepositoryDataItem {
     name: string;
     description: string;
