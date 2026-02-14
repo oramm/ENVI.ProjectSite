@@ -36,10 +36,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SystemUserModalBody = SystemUserModalBody;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const FormContext_1 = require("../../../View/Modals/FormContext");
-const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
-const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const personsV2Helpers_1 = require("../../../Persons/personsV2Helpers");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
+const FormContext_1 = require("../../../View/Modals/FormContext");
 function SystemUserModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
@@ -65,10 +65,7 @@ function SystemUserModalBody({ isEditing, initialData }) {
         if (isEditing && initialData?.id) {
             let cancelled = false;
             setV2Loading(true);
-            Promise.all([
-                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
-                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
-            ])
+            Promise.all([(0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id), (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id)])
                 .then(([accountData, profileData]) => {
                 if (cancelled)
                     return;

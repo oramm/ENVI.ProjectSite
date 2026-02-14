@@ -1,4 +1,4 @@
-import { PersonAccountV2Payload, PersonProfileV2Payload } from "../../Typings/bussinesTypes";
+import { PersonAccountV2Payload, PersonProfileV2Full, PersonProfileV2Payload, SkillDictionaryRecord } from "../../Typings/bussinesTypes";
 import MainSetup from "../React/MainSetupReact";
 import ToolsFetch from "../React/Tools/ToolsFetch";
 
@@ -112,6 +112,49 @@ export async function putPersonProfileV2(
         body: JSON.stringify(payload),
     });
     return result as PersonProfileV2Payload;
+}
+
+/**
+ * Pobiera pelny profil v2 osoby (z doswiadczeniami, edukacja, skillami).
+ * @returns PersonProfileV2Full lub null jesli brak profilu (404)
+ */
+export async function fetchPersonProfileV2Full(personId: number): Promise<PersonProfileV2Full | null> {
+    const validId = validatePersonId(personId, "GET profile full");
+    const url = `${MainSetup.serverUrl}v2/persons/${validId}/profile`;
+
+    try {
+        const result = await ToolsFetch.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result as PersonProfileV2Full;
+    } catch (error) {
+        console.warn("fetchPersonProfileV2Full: brak profilu dla personId=%d: %o", validId, error);
+        return null;
+    }
+}
+
+/**
+ * Pobiera slownik skilli z wyszukiwaniem.
+ * @param searchText - opcjonalny tekst do wyszukiwania
+ * @returns tablica SkillDictionaryRecord
+ */
+export async function fetchSkillsDictionary(searchText?: string): Promise<SkillDictionaryRecord[]> {
+    const params = searchText ? `?searchText=${encodeURIComponent(searchText)}` : "";
+    const url = `${MainSetup.serverUrl}v2/skills${params}`;
+
+    try {
+        const result = await ToolsFetch.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result as SkillDictionaryRecord[];
+    } catch (error) {
+        console.warn("fetchSkillsDictionary: blad pobierania skilli: %o", error);
+        return [];
+    }
 }
 
 export type SavePersonV2Result = {

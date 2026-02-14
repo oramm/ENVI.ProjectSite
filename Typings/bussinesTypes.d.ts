@@ -287,6 +287,7 @@ export interface PersonData extends RepositoryDataItem {
     position: string;
     _entity: EntityData;
     _nameSurnameEmail: string;
+    _skillNames?: string;
 }
 
 export interface SystemUserData extends RepositoryDataItem {
@@ -339,6 +340,42 @@ export interface PersonProfileExperienceV2Payload {
 export interface PersonProfileExperienceV2Record extends PersonProfileExperienceV2Payload {
     id: number;
     personProfileId: number;
+}
+
+export interface PersonProfileEducationV2Payload {
+    schoolName?: string;
+    degreeName?: string;
+    fieldOfStudy?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    sortOrder?: number;
+}
+
+export interface PersonProfileEducationV2Record extends PersonProfileEducationV2Payload {
+    id: number;
+    personProfileId: number;
+}
+
+export interface SkillDictionaryRecord {
+    id: number;
+    name: string;
+    nameNormalized: string;
+}
+
+export interface PersonProfileSkillV2Record {
+    id: number;
+    personProfileId: number;
+    skillId: number;
+    levelCode?: string;
+    yearsOfExperience?: number;
+    sortOrder?: number;
+    _skill?: SkillDictionaryRecord;
+}
+
+export interface PersonProfileV2Full extends PersonProfileV2Record {
+    profileExperiences: PersonProfileExperienceV2Record[];
+    profileEducations: PersonProfileEducationV2Record[];
+    profileSkills: PersonProfileSkillV2Record[];
 }
 
 export interface DocumentTemplate extends RepositoryDataItem {

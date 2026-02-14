@@ -94949,10 +94949,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SystemUserModalBody = SystemUserModalBody;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
-const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const personsV2Helpers_1 = __webpack_require__(/*! ../../../Persons/personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
+const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 function SystemUserModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
     const [v2Loading, setV2Loading] = (0, react_1.useState)(false);
@@ -94978,10 +94978,7 @@ function SystemUserModalBody({ isEditing, initialData }) {
         if (isEditing && initialData?.id) {
             let cancelled = false;
             setV2Loading(true);
-            Promise.all([
-                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
-                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
-            ])
+            Promise.all([(0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id), (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id)])
                 .then(([accountData, profileData]) => {
                 if (cancelled)
                     return;
@@ -105056,9 +105053,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PersonModalBody = PersonModalBody;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
-const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
+const GenericComponents_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
+const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const personsV2Helpers_1 = __webpack_require__(/*! ../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 function PersonModalBody({ isEditing, initialData }) {
     const { register, reset, formState: { dirtyFields, errors, isValid }, trigger, } = (0, FormContext_1.useFormContext)();
@@ -105086,10 +105083,7 @@ function PersonModalBody({ isEditing, initialData }) {
         if (isEditing && initialData?.id) {
             let cancelled = false;
             setV2Loading(true);
-            Promise.all([
-                (0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id),
-                (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id),
-            ])
+            Promise.all([(0, personsV2Helpers_1.fetchPersonAccountV2)(initialData.id), (0, personsV2Helpers_1.fetchPersonProfileV2)(initialData.id)])
                 .then(([accountData, profileData]) => {
                 if (cancelled)
                     return;
@@ -105291,12 +105285,171 @@ const BussinesObjectSelectors_1 = __webpack_require__(/*! ../View/Modals/CommonF
 function PersonsFilterBody() {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_bootstrap_1.Row, { xl: 12, md: 6, xs: 12 },
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 4 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 8 },
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 4 },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
-            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false }))));
+            react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false })),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 5 },
+            react_1.default.createElement(BussinesObjectSelectors_1.SkillSelector, null))));
+}
+
+
+/***/ }),
+
+/***/ "./src/Persons/PersonProfilePanel.tsx":
+/*!********************************************!*\
+  !*** ./src/Persons/PersonProfilePanel.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = PersonProfilePanel;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const personsV2Helpers_1 = __webpack_require__(/*! ./personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
+function formatDateRange(dateFrom, dateTo, isCurrent) {
+    const fmt = (d) => {
+        try {
+            return new Date(d).toLocaleDateString("pl-PL", { year: "numeric", month: "short" });
+        }
+        catch {
+            return d;
+        }
+    };
+    const from = dateFrom ? fmt(dateFrom) : "";
+    const to = isCurrent ? "obecnie" : dateTo ? fmt(dateTo) : "";
+    if (from && to)
+        return `${from} – ${to}`;
+    if (from)
+        return `od ${from}`;
+    if (to)
+        return `do ${to}`;
+    return "";
+}
+function ProfileHeader({ profile }) {
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        profile.headline && react_1.default.createElement("h6", { className: "mb-1" }, profile.headline),
+        profile.summary && react_1.default.createElement("p", { className: "text-muted small mb-2" }, profile.summary)));
+}
+function SkillsList({ skills }) {
+    if (!skills || skills.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("strong", { className: "small" }, "Specjalizacje"),
+        react_1.default.createElement("div", { className: "mt-1" }, skills.map((s) => (react_1.default.createElement(react_bootstrap_1.Badge, { key: s.id, bg: "secondary", className: "me-1 mb-1" },
+            s._skill?.name || `Skill #${s.skillId}`,
+            s.levelCode && react_1.default.createElement("span", { className: "ms-1 opacity-75" },
+                "(",
+                s.levelCode,
+                ")")))))));
+}
+function ExperienceList({ experiences }) {
+    if (!experiences || experiences.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("strong", { className: "small" }, "Do\u015Bwiadczenie"),
+        experiences.map((exp) => (react_1.default.createElement("div", { key: exp.id, className: "mt-1 small" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("strong", null, exp.positionName),
+                exp.organizationName && react_1.default.createElement("span", { className: "text-muted" },
+                    " \u2014 ",
+                    exp.organizationName)),
+            react_1.default.createElement("div", { className: "text-muted" }, formatDateRange(exp.dateFrom, exp.dateTo, exp.isCurrent)),
+            exp.description && react_1.default.createElement("div", { className: "mt-1" }, exp.description))))));
+}
+function EducationList({ educations }) {
+    if (!educations || educations.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("strong", { className: "small" }, "Wykszta\u0142cenie"),
+        educations.map((edu) => (react_1.default.createElement("div", { key: edu.id, className: "mt-1 small" },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("strong", null, edu.schoolName),
+                edu.degreeName && react_1.default.createElement("span", { className: "text-muted" },
+                    " \u2014 ",
+                    edu.degreeName)),
+            edu.fieldOfStudy && react_1.default.createElement("div", null, edu.fieldOfStudy),
+            react_1.default.createElement("div", { className: "text-muted" }, formatDateRange(edu.dateFrom, edu.dateTo)))))));
+}
+function PersonProfilePanel({ person, onClose }) {
+    const [isLoading, setIsLoading] = (0, react_1.useState)(true);
+    const [error, setError] = (0, react_1.useState)(null);
+    const [profile, setProfile] = (0, react_1.useState)(null);
+    (0, react_1.useEffect)(() => {
+        let cancelled = false;
+        setIsLoading(true);
+        setError(null);
+        (0, personsV2Helpers_1.fetchPersonProfileV2Full)(person.id)
+            .then((result) => {
+            if (!cancelled) {
+                setProfile(result);
+                setIsLoading(false);
+            }
+        })
+            .catch((err) => {
+            if (!cancelled) {
+                setError(err instanceof Error ? err.message : String(err));
+                setIsLoading(false);
+            }
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [person.id]);
+    return (react_1.default.createElement(react_bootstrap_1.Card, { className: "h-100" },
+        react_1.default.createElement(react_bootstrap_1.Card.Header, { className: "d-flex justify-content-between align-items-center" },
+            react_1.default.createElement("strong", null,
+                person.name,
+                " ",
+                person.surname),
+            react_1.default.createElement(react_bootstrap_1.CloseButton, { onClick: onClose })),
+        react_1.default.createElement(react_bootstrap_1.Card.Body, { style: { overflowY: "auto" } },
+            isLoading && (react_1.default.createElement("div", { className: "text-center py-3" },
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }))),
+            error && react_1.default.createElement("div", { className: "text-danger small" }, error),
+            !isLoading && !error && !profile && (react_1.default.createElement("p", { className: "text-muted small" }, "Brak profilu")),
+            !isLoading && !error && profile && (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(ProfileHeader, { profile: profile }),
+                react_1.default.createElement(SkillsList, { skills: profile.profileSkills }),
+                react_1.default.createElement(ExperienceList, { experiences: profile.profileExperiences }),
+                react_1.default.createElement(EducationList, { educations: profile.profileEducations }))))));
 }
 
 
@@ -105386,32 +105539,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports["default"] = PersonsSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const PersonFilterBody_1 = __webpack_require__(/*! ./PersonFilterBody */ "./src/Persons/PersonFilterBody.tsx");
 const PersonModalButtons_1 = __webpack_require__(/*! ./Modals/PersonModalButtons */ "./src/Persons/Modals/PersonModalButtons.tsx");
 const PersonsController_1 = __webpack_require__(/*! ./PersonsController */ "./src/Persons/PersonsController.ts");
+const PersonProfilePanel_1 = __importDefault(__webpack_require__(/*! ./PersonProfilePanel */ "./src/Persons/PersonProfilePanel.tsx"));
 function PersonsSearch({ title }) {
+    const [selectedPerson, setSelectedPerson] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
         document.title = title;
     }, [title]);
     function renderEntityName(person) {
-        return react_1.default.createElement(react_1.default.Fragment, null, person._entity.name);
+        return person._entity?.name || "-";
     }
-    return (react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [
-            {
-                header: "Imię i nazwisko",
-                renderTdBody: (person) => (react_1.default.createElement(react_1.default.Fragment, null,
+    function renderContact(person) {
+        const phone = person.phone || person.cellPhone || "-";
+        const email = person.email || "-";
+        return (react_1.default.createElement("div", { className: "mb-2" },
+            react_1.default.createElement("span", { className: "text-muted" }, "Kontakt:"),
+            " ",
+            react_1.default.createElement("span", { className: "fw-bold" }, phone),
+            react_1.default.createElement("span", { className: "text-muted" }, " | "),
+            react_1.default.createElement("span", null, email)));
+    }
+    function renderSkills(person) {
+        if (!person._skillNames)
+            return null;
+        return (react_1.default.createElement("div", { className: "text-muted small", style: { whiteSpace: "pre-line" } },
+            react_1.default.createElement("span", { className: "fw-bold" }, "Specjalizacje:"),
+            " ",
+            person._skillNames));
+    }
+    function renderRowContent(person) {
+        return (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "d-flex align-items-center gap-2 mb-2" },
+                react_1.default.createElement("h5", { className: "mb-0" },
                     person.name,
                     " ",
-                    person.surname)),
-                colMd: 2,
-            },
-            { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
-            { header: "Email", objectAttributeToShow: "email", colMd: 2 },
-            { header: "Firma", renderTdBody: (person) => renderEntityName(person), colMd: 2 },
-            { header: "Stanowisko", objectAttributeToShow: "position", colMd: 1 },
-            { header: "Opis", objectAttributeToShow: "comment", colMd: 2 },
-        ], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/" }));
+                    person.surname),
+                person.position && react_1.default.createElement("small", { className: "text-muted" }, person.position)),
+            react_1.default.createElement("div", { className: "mb-2" },
+                react_1.default.createElement("span", { className: "text-muted" }, "Firma:"),
+                " ",
+                react_1.default.createElement("span", { className: "fw-bold" }, renderEntityName(person))),
+            renderContact(person),
+            renderSkills(person)));
+    }
+    const handleRowClick = (0, react_1.useCallback)((person) => {
+        setSelectedPerson(person);
+    }, []);
+    const handleClosePanel = (0, react_1.useCallback)(() => {
+        setSelectedPerson(null);
+    }, []);
+    return (react_1.default.createElement(react_bootstrap_1.Row, null,
+        react_1.default.createElement(react_bootstrap_1.Col, { md: selectedPerson ? 8 : 12 },
+            react_1.default.createElement(FilterableTable_1.default, { id: "persons", title: title, FilterBodyComponent: PersonFilterBody_1.PersonsFilterBody, tableStructure: [{ header: undefined, renderTdBody: (person) => renderRowContent(person) }], AddNewButtonComponents: [PersonModalButtons_1.PersonAddNewModalButton], EditButtonComponent: PersonModalButtons_1.PersonEditModalButton, isDeletable: true, repository: PersonsController_1.personsRepository, selectedObjectRoute: "/person/", onRowClick: handleRowClick })),
+        selectedPerson && (react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
+            react_1.default.createElement(PersonProfilePanel_1.default, { person: selectedPerson, onClose: handleClosePanel })))));
 }
 
 
@@ -105434,6 +105619,8 @@ exports.fetchPersonAccountV2 = fetchPersonAccountV2;
 exports.fetchPersonProfileV2 = fetchPersonProfileV2;
 exports.putPersonAccountV2 = putPersonAccountV2;
 exports.putPersonProfileV2 = putPersonProfileV2;
+exports.fetchPersonProfileV2Full = fetchPersonProfileV2Full;
+exports.fetchSkillsDictionary = fetchSkillsDictionary;
 exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
@@ -105531,6 +105718,47 @@ async function putPersonProfileV2(personId, payload) {
         body: JSON.stringify(payload),
     });
     return result;
+}
+/**
+ * Pobiera pelny profil v2 osoby (z doswiadczeniami, edukacja, skillami).
+ * @returns PersonProfileV2Full lub null jesli brak profilu (404)
+ */
+async function fetchPersonProfileV2Full(personId) {
+    const validId = validatePersonId(personId, "GET profile full");
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile`;
+    try {
+        const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result;
+    }
+    catch (error) {
+        console.warn("fetchPersonProfileV2Full: brak profilu dla personId=%d: %o", validId, error);
+        return null;
+    }
+}
+/**
+ * Pobiera slownik skilli z wyszukiwaniem.
+ * @param searchText - opcjonalny tekst do wyszukiwania
+ * @returns tablica SkillDictionaryRecord
+ */
+async function fetchSkillsDictionary(searchText) {
+    const params = searchText ? `?searchText=${encodeURIComponent(searchText)}` : "";
+    const url = `${MainSetupReact_1.default.serverUrl}v2/skills${params}`;
+    try {
+        const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        });
+        return result;
+    }
+    catch (error) {
+        console.warn("fetchSkillsDictionary: blad pobierania skilli: %o", error);
+        return [];
+    }
 }
 /**
  * Wspolna funkcja zapisu account + profile v2 z ujednolicona obsluga bledow.
@@ -109869,6 +110097,7 @@ exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 exports.SystemRoleSelector = SystemRoleSelector;
 exports.LetterSelector = LetterSelector;
+exports.SkillSelector = SkillSelector;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -109881,6 +110110,7 @@ const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_mod
 const ContractsController_1 = __webpack_require__(/*! ../../../Contracts/ContractsList/ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
 const GenericComponents_1 = __webpack_require__(/*! ./GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const ToolsForms_1 = __webpack_require__(/*! ../../../React/Tools/ToolsForms */ "./src/React/Tools/ToolsForms.ts");
+const personsV2Helpers_1 = __webpack_require__(/*! ../../../Persons/personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 /**
  * Komponent formularza wyboru projektu
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
@@ -110546,6 +110776,31 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
                         react_1.default.createElement("div", { className: "text-muted small text-wrap" }, option.description))) }));
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
+}
+function SkillSelector({ name = "_skills", multiple = true, showValidationInfo = false, }) {
+    const { setValue, control } = (0, FormContext_1.useFormContext)();
+    const [isLoading, setIsLoading] = (0, react_1.useState)(false);
+    const [options, setOptions] = (0, react_1.useState)([]);
+    const handleSearch = (0, react_1.useCallback)(async (query) => {
+        setIsLoading(true);
+        try {
+            const results = await (0, personsV2Helpers_1.fetchSkillsDictionary)(query);
+            setOptions(results);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+    function handleOnChange(selected) {
+        setValue(name, selected);
+        setValue("skillIds", selected.map((s) => s.id));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Specjalizacje"),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { id: `${name}-asyncTypeahead`, labelKey: "name", multiple: multiple, isLoading: isLoading, onSearch: handleSearch, options: options, onChange: (selected) => handleOnChange(selected), selected: field.value || [], placeholder: "Wpisz nazw\u0119 specjalizacji...", minLength: 1, renderMenuItemChildren: (option) => {
+                    const skill = option;
+                    return react_1.default.createElement("span", null, skill.name);
+                } })) })));
 }
 
 

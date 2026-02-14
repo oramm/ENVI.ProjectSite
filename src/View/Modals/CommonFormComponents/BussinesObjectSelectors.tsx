@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
-import { Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
+import { AsyncTypeahead, Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form/dist/types";
 import "../../../Css/styles.css";
@@ -33,10 +33,12 @@ import {
     OurOffer,
     PersonData,
     ProjectData,
+    SkillDictionaryRecord,
 } from "../../../../Typings/bussinesTypes";
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
+import { fetchSkillsDictionary } from "../../../Persons/personsV2Helpers";
 
 type ProjectSelectorProps = {
     showValidationInfo?: boolean;
@@ -1522,5 +1524,64 @@ export function LetterSelector({ name, label, _contract, showValidationInfo = tr
             />
             <ErrorMessage errors={errors} name={name} />
         </Form.Group>
+    );
+}
+
+export type SkillSelectorProps = {
+    name?: string;
+    multiple?: boolean;
+    showValidationInfo?: boolean;
+};
+
+export function SkillSelector({
+    name = "_skills",
+    multiple = true,
+    showValidationInfo = false,
+}: SkillSelectorProps) {
+    const { setValue, control } = useFormContext();
+    const [isLoading, setIsLoading] = useState(false);
+    const [options, setOptions] = useState<SkillDictionaryRecord[]>([]);
+
+    const handleSearch = useCallback(async (query: string) => {
+        setIsLoading(true);
+        try {
+            const results = await fetchSkillsDictionary(query);
+            setOptions(results);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    function handleOnChange(selected: SkillDictionaryRecord[]) {
+        setValue(name, selected);
+        setValue("skillIds", selected.map((s) => s.id));
+    }
+
+    return (
+        <>
+            <Form.Label>Specjalizacje</Form.Label>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => (
+                    <AsyncTypeahead
+                        id={`${name}-asyncTypeahead`}
+                        labelKey="name"
+                        multiple={multiple}
+                        isLoading={isLoading}
+                        onSearch={handleSearch}
+                        options={options}
+                        onChange={(selected) => handleOnChange(selected as SkillDictionaryRecord[])}
+                        selected={field.value || []}
+                        placeholder="Wpisz nazwę specjalizacji..."
+                        minLength={1}
+                        renderMenuItemChildren={(option) => {
+                            const skill = option as SkillDictionaryRecord;
+                            return <span>{skill.name}</span>;
+                        }}
+                    />
+                )}
+            />
+        </>
     );
 }

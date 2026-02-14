@@ -56,6 +56,7 @@ exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 exports.CaseSelectMenuElement = CaseSelectMenuElement;
 exports.SystemRoleSelector = SystemRoleSelector;
 exports.LetterSelector = LetterSelector;
+exports.SkillSelector = SkillSelector;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -68,6 +69,7 @@ const react_hook_form_1 = require("react-hook-form");
 const ContractsController_1 = require("../../../Contracts/ContractsList/ContractsController");
 const GenericComponents_1 = require("./GenericComponents");
 const ToolsForms_1 = require("../../../React/Tools/ToolsForms");
+const personsV2Helpers_1 = require("../../../Persons/personsV2Helpers");
 /**
  * Komponent formularza wyboru projektu
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
@@ -733,4 +735,29 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
                         react_1.default.createElement("div", { className: "text-muted small text-wrap" }, option.description))) }));
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
+}
+function SkillSelector({ name = "_skills", multiple = true, showValidationInfo = false, }) {
+    const { setValue, control } = (0, FormContext_1.useFormContext)();
+    const [isLoading, setIsLoading] = (0, react_1.useState)(false);
+    const [options, setOptions] = (0, react_1.useState)([]);
+    const handleSearch = (0, react_1.useCallback)(async (query) => {
+        setIsLoading(true);
+        try {
+            const results = await (0, personsV2Helpers_1.fetchSkillsDictionary)(query);
+            setOptions(results);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+    function handleOnChange(selected) {
+        setValue(name, selected);
+        setValue("skillIds", selected.map((s) => s.id));
+    }
+    return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Specjalizacje"),
+        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { id: `${name}-asyncTypeahead`, labelKey: "name", multiple: multiple, isLoading: isLoading, onSearch: handleSearch, options: options, onChange: (selected) => handleOnChange(selected), selected: field.value || [], placeholder: "Wpisz nazw\u0119 specjalizacji...", minLength: 1, renderMenuItemChildren: (option) => {
+                    const skill = option;
+                    return react_1.default.createElement("span", null, skill.name);
+                } })) })));
 }
