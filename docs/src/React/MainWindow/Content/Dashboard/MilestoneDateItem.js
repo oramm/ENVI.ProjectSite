@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = MilestoneDateItem;
 const react_1 = __importDefault(require("react"));
 const CommonComponents_1 = require("../../../../View/Resultsets/CommonComponents");
 const ToolsDate_1 = __importDefault(require("../../../Tools/ToolsDate"));
@@ -80,3 +79,4 @@ function MilestoneDateItem({ object: item, onClick }) {
                 react_1.default.createElement("span", { className: "badge bg-light text-dark" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
             renderDaysLeft())));
 }
+exports.default = MilestoneDateItem;

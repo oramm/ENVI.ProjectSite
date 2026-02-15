@@ -1,0 +1,103 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookingPercentageBadge = exports.VatDeductionBadge = exports.CategoryBadge = exports.CostInvoiceStatusBadge = void 0;
+const react_1 = __importDefault(require("react"));
+const react_bootstrap_1 = require("react-bootstrap");
+const CostInvoicesController_1 = require("./CostInvoicesController");
+/**
+ * Badge statusu faktury kosztowej
+ */
+function CostInvoiceStatusBadge({ status }) {
+    let variant;
+    let label;
+    switch (status) {
+        case CostInvoicesController_1.CostInvoiceStatuses.NEW:
+            variant = "secondary";
+            label = "Nowa";
+            break;
+        case CostInvoicesController_1.CostInvoiceStatuses.EXCLUDED:
+            variant = "warning";
+            label = "Poza kosztami";
+            break;
+        case CostInvoicesController_1.CostInvoiceStatuses.BOOKED:
+            variant = "success";
+            label = "Zaksięgowana";
+            break;
+        default:
+            variant = "secondary";
+            label = status;
+    }
+    const textColor = variant === "warning" ? "dark" : "light";
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textColor }, label));
+}
+exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
+/**
+ * Badge kategorii kosztu z kolorem
+ */
+function CategoryBadge({ category }) {
+    if (!category) {
+        return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: "light", text: "dark", className: "border" }, "Brak kategorii"));
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Badge, { style: {
+            backgroundColor: category.color,
+            color: getContrastColor(category.color),
+        } }, category.name));
+}
+exports.CategoryBadge = CategoryBadge;
+/**
+ * Badge procentu odliczenia VAT
+ */
+function VatDeductionBadge({ percentage }) {
+    let variant;
+    if (percentage === 100) {
+        variant = "success";
+    }
+    else if (percentage === 0) {
+        variant = "danger";
+    }
+    else {
+        variant = "warning";
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "vat-tooltip" },
+            "Odliczenie VAT: ",
+            percentage,
+            "%") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: percentage === 0 || percentage === 100 ? "light" : "dark" },
+            "VAT ",
+            percentage,
+            "%")));
+}
+exports.VatDeductionBadge = VatDeductionBadge;
+/**
+ * Badge procentu księgowania
+ */
+function BookingPercentageBadge({ percentage }) {
+    if (percentage === 100) {
+        return null; // Nie pokazuj badge dla 100%
+    }
+    return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "booking-tooltip" },
+            "Ksi\u0119gowane: ",
+            percentage,
+            "%") },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" },
+            percentage,
+            "%")));
+}
+exports.BookingPercentageBadge = BookingPercentageBadge;
+/**
+ * Oblicza kontrastowy kolor tekstu dla danego tła
+ */
+function getContrastColor(hexColor) {
+    // Usuń # jeśli jest
+    const hex = hexColor.replace("#", "");
+    // Konwertuj do RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // Oblicz luminancję
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? "#000000" : "#FFFFFF";
+}

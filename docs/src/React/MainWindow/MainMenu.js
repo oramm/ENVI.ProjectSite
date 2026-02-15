@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = MainMenu;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
@@ -39,7 +38,21 @@ function MainMenu() {
                                 " ",
                                 react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", text: "light" }, "nowe")))),
                         react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/letters", className: isActive("/letters") }, "Pisma"),
-                        ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury")),
+                        (() => {
+                            const canViewInvoices = ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
+                            const canViewCostInvoices = ["ADMIN", "ENVI_MANAGER"].includes(MainSetupReact_1.default.currentUser.systemRoleName);
+                            if (!canViewInvoices)
+                                return null;
+                            // If user can view cost invoices, show expandable menu like other sections
+                            if (canViewCostInvoices) {
+                                return (react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: "Faktury", id: "invoices-nav-dropdown", className: isActive("/invoices") },
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"),
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices", className: isActive("/costInvoices") }, "Faktury kosztowe"),
+                                    react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/costInvoices/report", className: isActive("/costInvoices/report") }, "Raport miesi\u0119czny")));
+                            }
+                            // Otherwise show plain link to invoices (no expand arrow)
+                            return (react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/invoices", className: isActive("/invoices") }, "Faktury"));
+                        })(),
                         ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/entities", className: isActive("/entities") }, "Podmioty"),
                             react_1.default.createElement(react_bootstrap_1.Nav.Link, { as: react_router_dom_1.Link, to: "/persons", className: isActive("/persons") }, "Osoby"),
@@ -68,3 +81,4 @@ function MainMenu() {
                             ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
+exports.default = MainMenu;

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Container, Card, Col, Row, Button, Alert } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { Container, Card, Col, Row, Button, Alert, Badge } from "react-bootstrap";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Invoice, InvoiceItem } from "../../../../Typings/bussinesTypes";
 import ToolsDate from "../../../React/Tools/ToolsDate";
 import { GDDocFileIconLink, InvoiceStatusBadge, SpinnerBootstrap } from "../../../View/Resultsets/CommonComponents";
@@ -11,11 +11,16 @@ import { ActionButton, CopyButton, InvoiceEditModalButton } from "../Modals/Invo
 import { makeInvoiceValidationSchema } from "../Modals/InvoiceValidationSchema";
 import Tools from "../../../React/Tools/Tools";
 import KsefSection from "./KsefSection";
+import CorrectionModal from "../Modals/CorrectionModal";
+import { GeneralDeleteModalButton } from "../../../View/Modals/GeneralModalButtons";
 
 export default function InvoiceDetails() {
     const [invoice, setInvoice] = useState(invoicesRepository.currentItems[0]);
     const [invoiceItems, setInvoiceItems] = useState(undefined as InvoiceItem[] | undefined);
     const [errorMessage, setErrorMessage] = useState("");
+    const [showCorrectionModal, setShowCorrectionModal] = useState(false);
+    const [correctedInvoiceNumber, setCorrectedInvoiceNumber] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -24,28 +29,70 @@ export default function InvoiceDetails() {
         const idNumber = Number(id);
 
         async function fetchData() {
-            const fetchInvoice = invoicesRepository.loadItemFromRouter(idNumber);
+            // Zawsze pobieraj świeże dane z serwera (żeby mieć aktualne _corrections)
+            const fetchInvoice = invoicesRepository.loadItemsFromServerPOST([{ id: idNumber }]);
             const fetchItems = invoiceItemsRepository.loadItemsFromServerPOST([{ invoiceId: id }]);
             try {
-                const [invoiceData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
+                const [invoicesData, itemsData] = await Promise.all([fetchInvoice, fetchItems]);
+                const invoiceData = invoicesData?.find((inv: Invoice) => inv.id === idNumber);
                 if (invoiceData) {
                     setInvoice(invoiceData);
                     invoicesRepository.addToCurrentItems(invoiceData.id);
+                    
+                    // Jeśli to korekta, pobierz numer faktury źródłowej
+                    if (invoiceData.correctedInvoiceId && !invoiceData._correctedInvoice?.number) {
+                        const correctedInvoices = await invoicesRepository.loadItemsFromServerPOST([{ id: invoiceData.correctedInvoiceId }]);
+                        const correctedInvoice = correctedInvoices?.[0];
+                        if (correctedInvoice?.number) {
+                            setCorrectedInvoiceNumber(correctedInvoice.number);
+                        }
+                    }
+                    document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
                 }
                 setInvoiceItems(itemsData);
-                document.title = `Faktura ${invoiceData._contract.ourId} | ${invoiceData.number || ""}`;
             } catch (error) {
                 console.error("Error fetching data", error);
                 if (error instanceof Error) setErrorMessage(error.message);
             }
         }
 
+        // Reset state przed załadowaniem nowej faktury
+        setInvoice(undefined as unknown as Invoice);
+        setInvoiceItems(undefined);
+        setCorrectedInvoiceNumber(null);
+        setErrorMessage("");
+        
         fetchData();
-    }, []);
+    }, [id]);
+
+    // Callback po utworzeniu korekty
+    const handleCorrectionCreated = (correctionInvoice: Invoice) => {
+        // Przekieruj do widoku korekty
+        window.location.hash = `/invoice/${correctionInvoice.id}`;
+    };
 
     function handleError(error: Error) {
         setErrorMessage(error.message || "An error occurred while copying the invoice.");
     }
+
+    // Callback po usunięciu faktury
+    const handleDelete = () => {
+        navigate("/invoices");
+    };
+
+    if (!invoice) {
+        return (
+            <div>
+                Ładuję dane... <SpinnerBootstrap />{" "}
+            </div>
+        );
+    }
+
+    // Czy można utworzyć korektę - tylko dla faktur z numerem KSeF i nie będących korektami
+    const canCreateCorrection = invoice.ksefNumber && !invoice.correctedInvoiceId;
+
+    // Czy faktura ma numer KSeF (nie można usunąć bezpośrednio)
+    const hasKsefNumber = !!invoice.ksefNumber;
 
     function renderActionsMenu() {
         if (errorMessage)
@@ -69,18 +116,22 @@ export default function InvoiceDetails() {
                         initialData: invoice,
                         makeValidationSchema: makeInvoiceValidationSchema,
                         repository: invoicesRepository,
+                        shouldRetrieveDataBeforeEdit: true,
                     }}
                     buttonProps={{ buttonCaption: "Edytuj Fakturę" }}
                 />
+                {!hasKsefNumber && (
+                    <GeneralDeleteModalButton<Invoice>
+                        modalProps={{
+                            onDelete: handleDelete,
+                            initialData: invoice,
+                            repository: invoicesRepository,
+                            modalTitle: "Usuwanie faktury",
+                        }}
+                        buttonProps={{ layout: "horizontal" }}
+                    />
+                )}
             </>
-        );
-    }
-
-    if (!invoice) {
-        return (
-            <div>
-                Ładuję dane... <SpinnerBootstrap />{" "}
-            </div>
         );
     }
 
@@ -100,6 +151,11 @@ export default function InvoiceDetails() {
                             </Col>
                             <Col sm={2}>
                                 <InvoiceStatusBadge status={invoice.status} />
+                                {invoice.correctedInvoiceId && (
+                                    <Badge bg="warning" text="dark" className="ms-2">
+                                        Korekta
+                                    </Badge>
+                                )}
                             </Col>
                             <Col md="auto">{renderActionsMenu()}</Col>
                             <Col sm={1} lg="auto">
@@ -159,6 +215,53 @@ export default function InvoiceDetails() {
                                 )}
                             </Col>
                         </Row>
+
+                        {/* Info o korekcie - jeśli ta faktura jest korektą */}
+                        {invoice.correctedInvoiceId && (
+                            <Alert variant="info" className="mt-3">
+                                <strong>📋 Faktura korygująca</strong>
+                                <br />
+                                Ta faktura koryguje fakturę:{" "}
+                                <Link to={`/invoice/${invoice.correctedInvoiceId}`}>
+                                    {invoice._correctedInvoice?.number || correctedInvoiceNumber || `#${invoice.correctedInvoiceId}`}
+                                </Link>
+                                {invoice.correctionReason && (
+                                    <>
+                                        <br />
+                                        <strong>Przyczyna:</strong> {invoice.correctionReason}
+                                    </>
+                                )}
+                            </Alert>
+                        )}
+
+                        {/* Lista korekt tej faktury */}
+                        {invoice._corrections && invoice._corrections.length > 0 && (
+                            <Alert variant="warning" className="mt-3">
+                                <strong>⚠️ Ta faktura ma korekty:</strong>
+                                <ul className="mb-0 mt-2">
+                                    {invoice._corrections.map((correction) => (
+                                        <li key={correction.id}>
+                                            <Link to={`/invoice/${correction.id}`}>
+                                                {correction.number || `#${correction.id}`}
+                                            </Link>
+                                            {correction.correctionReason && ` - ${correction.correctionReason}`}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Alert>
+                        )}
+
+                        {/* Przycisk tworzenia korekty */}
+                        {canCreateCorrection && (
+                            <div className="mt-3">
+                                <Button
+                                    variant="outline-warning"
+                                    onClick={() => setShowCorrectionModal(true)}
+                                >
+                                    ✏️ Utwórz korektę
+                                </Button>
+                            </div>
+                        )}
                     </Container>
 
                     {invoiceItems ? (
@@ -194,7 +297,11 @@ export default function InvoiceDetails() {
                     )}
 
                     {/* Sekcja KSeF */}
-                    <KsefSection invoice={invoice} onInvoiceUpdate={setInvoice} />
+                    <KsefSection 
+                        invoice={invoice} 
+                        onInvoiceUpdate={setInvoice} 
+                        correctedInvoiceNumber={correctedInvoiceNumber}
+                    />
 
                     <p className="tekst-muted small">
                         Przygotował(a): {`${invoice._owner.name} ${invoice._owner.surname}`}
@@ -203,6 +310,14 @@ export default function InvoiceDetails() {
                     </p>
                 </Card.Body>
             </Card>
+
+            {/* Modal tworzenia korekty */}
+            <CorrectionModal
+                show={showCorrectionModal}
+                onHide={() => setShowCorrectionModal(false)}
+                invoice={invoice}
+                onCorrectionCreated={handleCorrectionCreated}
+            />
         </InvoiceProvider>
     );
 }

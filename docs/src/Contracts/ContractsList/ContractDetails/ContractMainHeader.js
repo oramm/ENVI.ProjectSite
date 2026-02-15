@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContractMainHeader = ContractMainHeader;
+exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ToolsDate_1 = __importDefault(require("../../../React/Tools/ToolsDate"));
@@ -98,6 +98,7 @@ function ContractMainHeader() {
                 react_1.default.createElement("div", null, "Gwarancja:"),
                 react_1.default.createElement(DateEditTrigger, { date: contract.guaranteeEndDate })))));
 }
+exports.ContractMainHeader = ContractMainHeader;
 function DateEditTrigger({ date }) {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)

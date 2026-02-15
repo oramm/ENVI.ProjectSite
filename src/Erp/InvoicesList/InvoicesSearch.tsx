@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Badge } from "react-bootstrap";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { InvoicesFilterBody } from "./InvoiceFilterBody";
 import { InvoiceEditModalButton, InvoiceAddNewModalButton } from "./Modals/InvoiceModalButtons";
@@ -15,7 +16,19 @@ export default function InvoicesSearch({ title }: { title: string }) {
     function renderRow(invoice: Invoice, isActive?: boolean) {
         return (
             <>
-                <div className="fw-bold">{invoice._contract?.ourId}</div>
+                <div className="fw-bold">
+                    {invoice._contract?.ourId}
+                    {invoice.correctedInvoiceId && (
+                        <Badge bg="warning" text="dark" className="ms-2" style={{ fontSize: "0.7em" }}>
+                            Korekta
+                        </Badge>
+                    )}
+                    {invoice._corrections && invoice._corrections.length > 0 && (
+                        <Badge bg="info" text="light" className="ms-2" style={{ fontSize: "0.7em" }}>
+                            Ma korekty ({invoice._corrections.length})
+                        </Badge>
+                    )}
+                </div>
                 <div>{invoice._entity.name} </div>
                 {invoice.description && <div className="text-muted small"> {invoice.description}</div>}
                 {isActive && <div className="mt-2"></div>}
@@ -58,7 +71,7 @@ export default function InvoicesSearch({ title }: { title: string }) {
             ]}
             AddNewButtonComponents={[InvoiceAddNewModalButton]}
             EditButtonComponent={InvoiceEditModalButton}
-            isDeletable={true}
+            isDeletable={(invoice: Invoice) => !invoice.ksefNumber}
             isCopyable={true}
             repository={invoicesRepository}
             selectedObjectRoute={"/invoice/"}

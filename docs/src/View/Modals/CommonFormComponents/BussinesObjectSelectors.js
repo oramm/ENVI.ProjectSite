@@ -15,48 +15,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectSelector = ProjectSelector;
-exports.CitySelector = CitySelector;
-exports.EntitySelector = EntitySelector;
-exports.OfferSelector = OfferSelector;
-exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
-exports.FocusAreaSelector = FocusAreaSelector;
-exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
-exports.ApplicationCallSelector = ApplicationCallSelector;
-exports.ClientNeedSelector = ClientNeedSelector;
-exports.ContractSelector = ContractSelector;
-exports.ContractRangeSelector = ContractRangeSelector;
-exports.ContractTypeSelector = ContractTypeSelector;
-exports.CaseTypeSelector = CaseTypeSelector;
-exports.MilestoneTypeSelector = MilestoneTypeSelector;
-exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
-exports.PersonSelector = PersonSelector;
-exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
-exports.CaseSelectMenuElement = CaseSelectMenuElement;
-exports.SystemRoleSelector = SystemRoleSelector;
-exports.LetterSelector = LetterSelector;
-exports.SkillSelector = SkillSelector;
+exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPreloaded = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
@@ -69,7 +39,6 @@ const react_hook_form_1 = require("react-hook-form");
 const ContractsController_1 = require("../../../Contracts/ContractsList/ContractsController");
 const GenericComponents_1 = require("./GenericComponents");
 const ToolsForms_1 = require("../../../React/Tools/ToolsForms");
-const personsV2Helpers_1 = require("../../../Persons/personsV2Helpers");
 /**
  * Komponent formularza wyboru projektu
  * @param showValidationInfo Czy wyświetlać informacje o walidacji - domyślnie true
@@ -101,6 +70,7 @@ function ProjectSelector({ name = "_project", showValidationInfo = true, disable
             //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
             showValidationInfo: showValidationInfo, renderMenuItemChildren: renderOption, multiple: false })));
 }
+exports.ProjectSelector = ProjectSelector;
 function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, allowNew = false, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
@@ -125,22 +95,19 @@ function CitySelector({ name = "_city", showValidationInfo = true, multiple = fa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
-function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
+exports.CitySelector = CitySelector;
+function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
-    const localRepository = (0, react_1.useMemo)(() => {
-        if (repository)
-            return repository;
-        return new RepositoryReact_1.default({
-            actionRoutes: {
-                getRoute: "entities",
-                addNewRoute: "",
-                editRoute: "",
-                deleteRoute: "",
-            },
-            name: "entitySelector_temp",
-        });
-    }, [repository]);
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "entities",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "entitySelector_temp",
+    }), []);
     function renderOption(option, props) {
         const typedOption = option;
         // name jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -152,6 +119,7 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, all
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.EntitySelector = EntitySelector;
 function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = false, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -188,22 +156,19 @@ function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
-function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
+exports.OfferSelector = OfferSelector;
+function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
-    // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
-    const localRepository = (0, react_1.useMemo)(() => {
-        if (repository)
-            return repository;
-        return new RepositoryReact_1.default({
-            actionRoutes: {
-                getRoute: "financialAidProgrammes",
-                addNewRoute: "",
-                editRoute: "",
-                deleteRoute: "",
-            },
-            name: "financialAidProgrammeSelector_temp",
-        });
-    }, [repository]);
+    // ✅ Lokalna instancja repository tylko dla tego selectora
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "financialAidProgrammes",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "financialAidProgrammeSelector_temp",
+    }), []);
     function renderOption(option) {
         const optionTyped = option;
         return (react_1.default.createElement("div", null,
@@ -212,6 +177,7 @@ function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showVa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
 function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -234,6 +200,7 @@ function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, mul
                 _financialAidProgramme,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.FocusAreaSelector = FocusAreaSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -271,6 +238,7 @@ function FocusAreaSelectorPreloaded({ repository, _financialAidProgramme, requir
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
 function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, _focusArea, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -301,6 +269,7 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
                 _focusArea,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.ApplicationCallSelector = ApplicationCallSelector;
 function ClientNeedSelector({ name = "_need", showValidationInfo = true, multiple = false, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -328,6 +297,7 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.ClientNeedSelector = ClientNeedSelector;
 /**
  * Komponent formularza wyboru kontraktu z wyszukiwaniem asynchronicznym
  * Używa lokalnego repository aby nie kolidować z innymi komponentami
@@ -359,6 +329,7 @@ function ContractSelector({ name = "_contract", showValidationInfo = true, multi
                 _project: _project,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
+exports.ContractSelector = ContractSelector;
 function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
     const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -395,6 +366,7 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
+exports.ContractRangeSelector = ContractRangeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -440,6 +412,7 @@ function ContractTypeSelector({ typesToInclude = "all", required = false, showVa
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.ContractTypeSelector = ContractTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -477,6 +450,7 @@ function CaseTypeSelector({ milestoneType, required = false, showValidationInfo 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.CaseTypeSelector = CaseTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -514,6 +488,7 @@ function MilestoneTypeSelector({ contractType, required = false, showValidationI
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.MilestoneTypeSelector = MilestoneTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -549,19 +524,18 @@ function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
-function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
+exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
+function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
-    const localRepository = (0, react_1.useMemo)(() => repository
-        ? repository
-        : new RepositoryReact_1.default({
-            actionRoutes: {
-                getRoute: "persons",
-                addNewRoute: "",
-                editRoute: "",
-                deleteRoute: "",
-            },
-            name: "personSelector_temp",
-        }), [repository]);
+    const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "persons",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "personSelector_temp",
+    }), []);
     function renderOption(option) {
         const typedOption = option;
         // _nameSurnameEmail jest labelKey - zagwarantowane przez MyAsyncTypeahead
@@ -575,6 +549,7 @@ function PersonSelector({ name = "_person", showValidationInfo = true, multiple 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.PersonSelector = PersonSelector;
 /**
  * Komponent formularza wyboru osoby
  * @param label oznaczenie pola formularza
@@ -600,6 +575,7 @@ function PersonSelectorPreloaded({ label, name, repository, multiple = false, sh
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined })) }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
+exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
         const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
@@ -676,6 +652,7 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
                     react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
             } })) }));
 }
+exports.CaseSelectMenuElement = CaseSelectMenuElement;
 function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }) {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const systemRolesOptions = Object.values(MainSetupReact_1.default.SystemRoles);
@@ -686,6 +663,7 @@ function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }
             systemRolesOptions.map((role) => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
 }
+exports.SystemRoleSelector = SystemRoleSelector;
 /**
  * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
  * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
@@ -736,28 +714,4 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
-function SkillSelector({ name = "_skills", multiple = true, showValidationInfo = false, }) {
-    const { setValue, control } = (0, FormContext_1.useFormContext)();
-    const [isLoading, setIsLoading] = (0, react_1.useState)(false);
-    const [options, setOptions] = (0, react_1.useState)([]);
-    const handleSearch = (0, react_1.useCallback)(async (query) => {
-        setIsLoading(true);
-        try {
-            const results = await (0, personsV2Helpers_1.fetchSkillsDictionary)(query);
-            setOptions(results);
-        }
-        finally {
-            setIsLoading(false);
-        }
-    }, []);
-    function handleOnChange(selected) {
-        setValue(name, selected);
-        setValue("skillIds", selected.map((s) => s.id));
-    }
-    return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Specjalizacje"),
-        react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { id: `${name}-asyncTypeahead`, labelKey: "name", multiple: multiple, isLoading: isLoading, onSearch: handleSearch, options: options, onChange: (selected) => handleOnChange(selected), selected: field.value || [], placeholder: "Wpisz nazw\u0119 specjalizacji...", minLength: 1, renderMenuItemChildren: (option) => {
-                    const skill = option;
-                    return react_1.default.createElement("span", null, skill.name);
-                } })) })));
-}
+exports.LetterSelector = LetterSelector;

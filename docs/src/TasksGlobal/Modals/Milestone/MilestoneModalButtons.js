@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MilestoneEditModalButton = MilestoneEditModalButton;
-exports.MilestoneAddNewModalButton = MilestoneAddNewModalButton;
+exports.MilestoneAddNewModalButton = exports.MilestoneEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const TasksGlobalController_1 = require("../../TasksGlobalController");
@@ -24,6 +23,7 @@ function MilestoneEditModalButton({ modalProps: { onEdit, initialData }, buttonP
             buttonVariant: "outline-success",
         } }));
 }
+exports.MilestoneEditModalButton = MilestoneEditModalButton;
 function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -40,3 +40,4 @@ function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, but
             ...buttonProps,
         } }));
 }
+exports.MilestoneAddNewModalButton = MilestoneAddNewModalButton;

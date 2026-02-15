@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SystemUserEditModalButton = SystemUserEditModalButton;
-exports.SystemUserAddNewModalButton = SystemUserAddNewModalButton;
+exports.SystemUserAddNewModalButton = exports.SystemUserEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const SystemUserController_1 = require("../SystemUserController");
@@ -35,6 +34,7 @@ function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SystemUserEditModalButton = SystemUserEditModalButton;
 function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
     async function handleAddNew(newObject) {
         // Po POST /person, wyslij PUT v2 account z danymi systemowymi
@@ -59,3 +59,4 @@ function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SystemUserAddNewModalButton = SystemUserAddNewModalButton;

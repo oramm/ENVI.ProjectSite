@@ -20,6 +20,9 @@ import CitiesSearch from "../../Admin/Cities/CitiesSearch";
 import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
+import CostInvoicesSearch from "../../Erp/CostInvoicesList/CostInvoicesSearch";
+import CostInvoiceDetails from "../../Erp/CostInvoicesList/CostInvoiceDetails";
+import CostInvoicesReport from "../../Erp/CostInvoicesList/CostInvoicesReport";
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
 import SecuritiesSearch from "../../Contracts/ContractsList/SecuritiesList/SecuritiesSearch";
 import MilestoneDatesSearch from "../../Contracts/Dates/MilestoneDatesSearch";
@@ -166,6 +169,12 @@ function AppRoutes() {
                             path="/admin/systemUsers"
                             element={<SystemUsersSearch title="Dodawanie użytkowników" />}
                         />
+                    </Route>
+                    {/* Faktury kosztowe - tylko dla ENVI_MANAGER i ADMIN */}
+                    <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER"]} />}>
+                        <Route path="/costInvoices" element={<CostInvoicesSearch title="Faktury kosztowe" />} />
+                        <Route path="/cost-invoice/:id" element={<CostInvoiceDetails />} />
+                        <Route path="/costInvoices/report" element={<CostInvoicesReport />} />
                     </Route>
                     {/* Dodaj tutaj inne ścieżki, jeśli są potrzebne */}
                 </Routes>

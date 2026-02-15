@@ -399,6 +399,17 @@ export interface Invoice extends RepositoryDataItem {
     paymentDeadline?: string | null;
     daysToPay: number;
     status: string;
+    // Rodzaj dokumentu (np. 'correction')
+    invoiceType?: string | null;
+    // Flaga pomocnicza dla korekt
+    isCorrection?: boolean | null;
+    // Numer KSeF faktury źródłowej dla korekty
+    originalKsefNumber?: string | null;
+    // Nowe pola korekty z backendu
+    correctedInvoiceId?: number | null;  // ID faktury korygowanej (jeśli ta jest korektą)
+    correctionReason?: string | null;     // Przyczyna korekty
+    _correctedInvoice?: Invoice | null;   // Faktura korygowana (join)
+    _corrections?: Invoice[];             // Lista korekt tej faktury
     gdId?: string | null;
     _contract: OurContract;
     _editor: PersonData;
@@ -606,4 +617,129 @@ export interface ContractMeetingNoteData extends RepositoryDataItem {
     createdAt?: string;
     createdByPersonId?: number;
     meetingId?: number | null;
+}
+
+/**
+ * Faktura kosztowa (zakupowa) - pobierana z KSeF
+ * Faktury VAT przychodzące od kontrahentów
+ */
+export interface CostInvoice extends RepositoryDataItem {
+    // Podstawowe dane faktury
+    ksefNumber: string;
+    invoiceNumber: string;
+    issueDate: string;
+    saleDate?: string | null;
+    dueDate?: string | null;
+
+    // Dane kontrahenta (dostawcy)
+    supplierNip: string;
+    supplierName: string;
+    supplierAddress?: string | null;
+
+    // Dane finansowe
+    netAmount: number;
+    vatAmount: number;
+    grossAmount: number;
+    currency: string;
+
+    // Status faktury: "NEW" | "EXCLUDED" | "BOOKED"
+    status: "NEW" | "EXCLUDED" | "BOOKED";
+
+    // Ustawienia księgowania
+    /** Procent kwoty netto do zaksięgowania (0-100) */
+    bookingPercentage: number;
+    /** Procent VAT do odliczenia (0-100) */
+    vatDeductionPercentage: number;
+    /** Wyliczona kwota netto do zaksięgowania */
+    bookableNetAmount?: number;
+    /** Wyliczona kwota VAT do odliczenia */
+    deductibleVatAmount?: number;
+
+    // Kategoria kosztu
+    categoryId?: number | null;
+    category?: CostInvoiceCategory | null;
+
+    // Pozycje faktury
+    items?: CostInvoiceItem[];
+
+    // Notatki
+    notes?: string | null;
+
+    // Info o zaksięgowaniu
+    bookedBy?: number | null;
+    bookedAt?: string | null;
+    _bookedByPerson?: PersonData | null;
+
+    // Metadane
+    createdAt?: string;
+    _lastUpdated?: string;
+    _editor?: PersonData;
+}
+
+/**
+ * Kategoria kosztu
+ */
+export interface CostInvoiceCategory {
+    id: number;
+    name: string;
+    color: string;
+    /** Domyślny % odliczenia VAT dla tej kategorii */
+    vatDeductionDefault: number;
+}
+
+/**
+ * Pozycja faktury kosztowej
+ */
+export interface CostInvoiceItem {
+    id: number;
+    lineNumber: number;
+    description: string;
+    quantity: number;
+    unit?: string | null;
+    unitPrice: number;
+    netValue: number;
+    vatRate: number;
+    vatValue: number;
+    grossValue: number;
+    /** Czy pozycja wybrana do księgowania */
+    isSelectedForBooking: boolean;
+    /** Procent kwoty netto do zaksięgowania (0-100) */
+    bookingPercentage: number;
+    /** Procent VAT do odliczenia (0-100) */
+    vatDeductionPercentage: number;
+    /** Kategoria pozycji (opcjonalna, nadpisuje kategorię faktury) */
+    categoryId?: number | null;
+    category?: CostInvoiceCategory | null;
+}
+
+/**
+ * Odpowiedź synchronizacji z KSeF
+ */
+export interface CostInvoiceSyncResponse {
+    success: boolean;
+    message: string;
+    data: {
+        imported: number;
+        skipped: number;
+        errors: string[];
+    };
+}
+
+/**
+ * Raport miesięczny faktur kosztowych
+ */
+export interface CostInvoiceMonthlyReport {
+    summary: {
+        year: number;
+        month: number;
+        totalInvoices: number;
+        totalNet: number;
+        totalVat: number;
+        totalGross: number;
+        bookableNet: number;
+        deductibleVat: number;
+        byCategory: Record<string, { count: number; net: number; vat: number }>;
+        byStatus: Record<string, number>;
+    };
+    invoices: CostInvoice[];
 }
