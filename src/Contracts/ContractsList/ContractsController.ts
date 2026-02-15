@@ -2,6 +2,7 @@ import {
     Case,
     CaseType,
     CityData,
+    ContractMeetingNoteData,
     ContractRangeData,
     ContractsSettlementData,
     EntityData,
@@ -146,4 +147,14 @@ export const citiesRepository = new RepositoryReact<CityData>({
         deleteRoute: "city",
     },
     name: "cities",
+});
+
+export const meetingNotesRepository = new RepositoryReact<ContractMeetingNoteData>({
+    actionRoutes: {
+        getRoute: "contractMeetingNotes",
+        addNewRoute: "contractMeetingNote",
+        editRoute: "contractMeetingNote",
+        deleteRoute: "contractMeetingNote",
+    },
+    name: "contractMeetingNotes",
 });

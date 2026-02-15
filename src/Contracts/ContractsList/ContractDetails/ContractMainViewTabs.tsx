@@ -8,6 +8,7 @@ import { ContractDetailsProvider } from "./ContractDetailsContext";
 import { ContractMainHeader } from "./ContractMainHeader";
 import ContractOtherDetails from "./ContractOtherDetails";
 import ContractOurDetails from "./ContractOurDetails";
+import MeetingNotes from "./MeetingNotes/MeetingNotes";
 import Tasks from "./Tasks/Tasks";
 
 export function ContractMainViewTabs() {
@@ -81,6 +82,9 @@ export function ContractMainViewTabs() {
                         </Tab>
                         <Tab eventKey="tasks" title="Zadania">
                             <Tasks />
+                        </Tab>
+                        <Tab eventKey="meetingNotes" title="Notatki ze spotkań">
+                            <MeetingNotes />
                         </Tab>
                     </Tabs>
                 </>

@@ -6,7 +6,8 @@
       "Bash(else echo \"Brak pliku .claude/CLAUDE.md\")",
       "Bash(fi)",
       "Bash(npx tsc:*)",
-      "Bash(npx webpack:*)"
+      "Bash(npx webpack:*)",
+      "Bash(yarn tsc:*)"
     ]
   }
 }

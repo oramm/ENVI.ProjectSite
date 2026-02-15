@@ -595,3 +595,15 @@ export interface ProjectRoleData extends ContractRoleData {
     projectOurId?: string | null;
     _project?: ProjectData;
 }
+
+export interface ContractMeetingNoteData extends RepositoryDataItem {
+    contractId: number;
+    sequenceNumber: number;
+    title: string;
+    gdDocumentId?: string;
+    gdDocumentUrl?: string;
+    meetingDate?: string;
+    createdAt?: string;
+    createdByPersonId?: number;
+    meetingId?: number | null;
+}
