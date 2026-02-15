@@ -7,7 +7,10 @@
       "Bash(fi)",
       "Bash(npx tsc:*)",
       "Bash(npx webpack:*)",
-      "Bash(yarn tsc:*)"
+      "Bash(yarn tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(yarn build:*)"
     ]
   }
 }
