@@ -15,18 +15,53 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.KsefStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.CopyIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
+exports.AlertComponent = void 0;
+exports.ProgressBar = ProgressBar;
+exports.SpinnerBootstrap = SpinnerBootstrap;
+exports.SuccessToast = SuccessToast;
+exports.GDFolderIconLink = GDFolderIconLink;
+exports.CopyIconLink = CopyIconLink;
+exports.MenuIconLink = MenuIconLink;
+exports.GDDocFileIconLink = GDDocFileIconLink;
+exports.EditIconButton = EditIconButton;
+exports.DeleteIconButton = DeleteIconButton;
+exports.CopyIconButton = CopyIconButton;
+exports.MenuExpandIconButton = MenuExpandIconButton;
+exports.InvoiceStatusBadge = InvoiceStatusBadge;
+exports.KsefStatusBadge = KsefStatusBadge;
+exports.ContractStatusBadge = ContractStatusBadge;
+exports.MilestoneStatusBadge = MilestoneStatusBadge;
+exports.SecurityStatusBadge = SecurityStatusBadge;
+exports.OfferStatusBadge = OfferStatusBadge;
+exports.OfferBondStatusBadge = OfferBondStatusBadge;
+exports.OfferInvitationMailStatusBadge = OfferInvitationMailStatusBadge;
+exports.TaskStatusBadge = TaskStatusBadge;
+exports.ApplicationCallStatusBadge = ApplicationCallStatusBadge;
+exports.ClientNeedStatusBadge = ClientNeedStatusBadge;
+exports.MyTooltip = MyTooltip;
+exports.DaysLeftBadge = DaysLeftBadge;
+exports.LetterStatusBadge = LetterStatusBadge;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 require("react-bootstrap-typeahead/css/Typeahead.css");
@@ -39,11 +74,9 @@ const free_solid_svg_icons_1 = require("@fortawesome/free-solid-svg-icons");
 function ProgressBar() {
     return react_1.default.createElement("progress", { style: { height: "5px" } });
 }
-exports.ProgressBar = ProgressBar;
 function SpinnerBootstrap() {
     return react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "success" });
 }
-exports.SpinnerBootstrap = SpinnerBootstrap;
 const AlertComponent = ({ message, type, timeout = 3000 }) => {
     const [show, setShow] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
@@ -71,31 +104,26 @@ function SuccessToast({ header = "Sukces", message, show, onClose }) {
             react_1.default.createElement("strong", { className: "me-auto" }, header)),
         react_1.default.createElement(react_bootstrap_1.Toast.Body, null, message)));
 }
-exports.SuccessToast = SuccessToast;
 function GDFolderIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
         react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
-exports.GDFolderIconLink = GDFolderIconLink;
 function CopyIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCopy, className: className })));
 }
-exports.CopyIconLink = CopyIconLink;
 function MenuIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faBars, className: className })));
 }
-exports.MenuIconLink = MenuIconLink;
 function GDDocFileIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
         react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
-exports.GDDocFileIconLink = GDDocFileIconLink;
 function IconButton({ icon, layout, onClick, className }) {
     className += layout === "vertical" ? " icon icon-vertical" : " icon icon-horizontal";
     return (react_1.default.createElement("span", { onClick: (e) => {
@@ -107,20 +135,16 @@ function IconButton({ icon, layout, onClick, className }) {
 function EditIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faPencil, layout: layout, onClick: onClick, className: "text-primary" });
 }
-exports.EditIconButton = EditIconButton;
 function DeleteIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faTrash, layout: layout, onClick: onClick, className: "text-danger" });
 }
-exports.DeleteIconButton = DeleteIconButton;
 function CopyIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faCopy, layout: layout, onClick: onClick, className: "text-info" });
 }
-exports.CopyIconButton = CopyIconButton;
 function MenuExpandIconButton({ layout, onClick }) {
     const icon = layout === "vertical" ? free_solid_svg_icons_1.faEllipsisV : free_solid_svg_icons_1.faEllipsisH;
     return react_1.default.createElement(IconButton, { icon: icon, layout: layout, onClick: onClick, className: "text-secondary" });
 }
-exports.MenuExpandIconButton = MenuExpandIconButton;
 function InvoiceStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -153,7 +177,6 @@ function InvoiceStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.InvoiceStatusBadge = InvoiceStatusBadge;
 function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
     if (ksefNumber) {
         return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "ksef-tooltip" }, ksefNumber) },
@@ -164,7 +187,6 @@ function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
     }
     return null;
 }
-exports.KsefStatusBadge = KsefStatusBadge;
 function ContractStatusBadge({ status, className, style, }) {
     let variant;
     let textMode = "light";
@@ -187,7 +209,6 @@ function ContractStatusBadge({ status, className, style, }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode, className: className, style: style }, status));
 }
-exports.ContractStatusBadge = ContractStatusBadge;
 function MilestoneStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -210,7 +231,6 @@ function MilestoneStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.MilestoneStatusBadge = MilestoneStatusBadge;
 function SecurityStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -239,7 +259,6 @@ function SecurityStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.SecurityStatusBadge = SecurityStatusBadge;
 function OfferStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -277,7 +296,6 @@ function OfferStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.OfferStatusBadge = OfferStatusBadge;
 function OfferBondStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -307,7 +325,6 @@ function OfferBondStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.OfferBondStatusBadge = OfferBondStatusBadge;
 function OfferInvitationMailStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -331,7 +348,6 @@ function OfferInvitationMailStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.OfferInvitationMailStatusBadge = OfferInvitationMailStatusBadge;
 function TaskStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -361,7 +377,6 @@ function TaskStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.TaskStatusBadge = TaskStatusBadge;
 function ApplicationCallStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -385,7 +400,6 @@ function ApplicationCallStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.ApplicationCallStatusBadge = ApplicationCallStatusBadge;
 function ClientNeedStatusBadge({ status }) {
     let variant;
     let textMode = "light"; // Default text mode to light for better contrast on darker badges
@@ -416,11 +430,9 @@ function ClientNeedStatusBadge({ status }) {
     // Return the Badge component with the appropriate styling
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.ClientNeedStatusBadge = ClientNeedStatusBadge;
 function MyTooltip({ children, content: tooltipContent, placement = "right", ...rest }) {
     return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: placement, delay: { show: 250, hide: 400 }, overlay: (props) => (react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "button-tooltip", ...props }, tooltipContent)), ...rest }, children));
 }
-exports.MyTooltip = MyTooltip;
 function DaysLeftBadge({ daysLeft }) {
     let variant;
     let textMode = "light";
@@ -438,7 +450,6 @@ function DaysLeftBadge({ daysLeft }) {
         daysLeft,
         " dni"));
 }
-exports.DaysLeftBadge = DaysLeftBadge;
 function LetterStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -478,4 +489,3 @@ function LetterStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
-exports.LetterStatusBadge = LetterStatusBadge;

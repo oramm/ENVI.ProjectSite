@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PersonProfilePanel;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
+const react_router_dom_1 = require("react-router-dom");
 const personsV2Helpers_1 = require("./personsV2Helpers");
 function formatDateRange(dateFrom, dateTo, isCurrent) {
     const fmt = (d) => {
@@ -142,5 +143,7 @@ function PersonProfilePanel({ person, onClose }) {
                 react_1.default.createElement(ProfileHeader, { profile: profile }),
                 react_1.default.createElement(SkillsList, { skills: profile.profileSkills }),
                 react_1.default.createElement(ExperienceList, { experiences: profile.profileExperiences }),
-                react_1.default.createElement(EducationList, { educations: profile.profileEducations }))))));
+                react_1.default.createElement(EducationList, { educations: profile.profileEducations }),
+                react_1.default.createElement("div", { className: "mt-3 text-end" },
+                    react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pe\u0142ny profil \u2192")))))));
 }

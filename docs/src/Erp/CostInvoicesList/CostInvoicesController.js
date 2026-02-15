@@ -3,7 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downloadMonthlyReport = exports.fetchMonthlyReport = exports.bookCostInvoice = exports.updateCostInvoiceItem = exports.updateCostInvoice = exports.fetchCostInvoiceDetails = exports.syncFromKsef = exports.fetchCategories = exports.costInvoicesRepository = exports.CostInvoiceStatuses = void 0;
+exports.costInvoicesRepository = exports.CostInvoiceStatuses = void 0;
+exports.fetchCategories = fetchCategories;
+exports.syncFromKsef = syncFromKsef;
+exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
+exports.updateCostInvoice = updateCostInvoice;
+exports.updateCostInvoiceItem = updateCostInvoiceItem;
+exports.bookCostInvoice = bookCostInvoice;
+exports.fetchMonthlyReport = fetchMonthlyReport;
+exports.downloadMonthlyReport = downloadMonthlyReport;
 const MainSetupReact_1 = __importDefault(require("../../React/MainSetupReact"));
 const RepositoryReact_1 = __importDefault(require("../../React/RepositoryReact"));
 /**
@@ -48,7 +56,6 @@ async function fetchCategories() {
     categoriesCache = result.data;
     return categoriesCache;
 }
-exports.fetchCategories = fetchCategories;
 /**
  * Synchronizacja faktur z KSeF
  */
@@ -67,7 +74,6 @@ async function syncFromKsef(params) {
     }
     return response.json();
 }
-exports.syncFromKsef = syncFromKsef;
 /**
  * Pobiera szczegóły pojedynczej faktury
  */
@@ -82,7 +88,6 @@ async function fetchCostInvoiceDetails(id) {
     const result = await response.json();
     return result.data || result;
 }
-exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
 /**
  * Aktualizuje ustawienia księgowania faktury
  */
@@ -102,7 +107,6 @@ async function updateCostInvoice(id, data) {
     const result = await response.json();
     return result.data || result;
 }
-exports.updateCostInvoice = updateCostInvoice;
 /**
  * Aktualizuje pozycję faktury
  */
@@ -120,7 +124,6 @@ async function updateCostInvoiceItem(invoiceId, itemId, data) {
         throw new Error(errorData.error || errorData.message || "Błąd aktualizacji pozycji");
     }
 }
-exports.updateCostInvoiceItem = updateCostInvoiceItem;
 /**
  * Księguje fakturę
  */
@@ -136,7 +139,6 @@ async function bookCostInvoice(id) {
     const result = await response.json();
     return result.data || result;
 }
-exports.bookCostInvoice = bookCostInvoice;
 /**
  * Pobiera raport miesięczny
  */
@@ -157,7 +159,6 @@ async function fetchMonthlyReport(year, month, format = "json") {
         return response.blob();
     }
 }
-exports.fetchMonthlyReport = fetchMonthlyReport;
 /**
  * Eksportuje raport miesięczny jako plik
  */
@@ -172,4 +173,3 @@ async function downloadMonthlyReport(year, month, format) {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
 }
-exports.downloadMonthlyReport = downloadMonthlyReport;

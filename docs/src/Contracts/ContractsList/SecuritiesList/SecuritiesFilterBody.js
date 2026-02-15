@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecuritiesFilterBody = void 0;
+exports.SecuritiesFilterBody = SecuritiesFilterBody;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
@@ -26,4 +26,3 @@ function SecuritiesFilterBody() {
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "30% wygasa", fromName: "secondPartExpiryDateFrom", toName: "secondPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM }),
         react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, { name: "status", showValidationInfo: false })));
 }
-exports.SecuritiesFilterBody = SecuritiesFilterBody;

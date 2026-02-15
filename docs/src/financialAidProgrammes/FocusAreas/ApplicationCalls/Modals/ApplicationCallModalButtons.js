@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationCallAddNewModalButton = exports.ApplicationCallEditModalButton = void 0;
+exports.ApplicationCallEditModalButton = ApplicationCallEditModalButton;
+exports.ApplicationCallAddNewModalButton = ApplicationCallAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../../View/Modals/GeneralModalButtons");
 const ApplicationCallModalBody_1 = require("./ApplicationCallModalBody");
@@ -21,7 +22,6 @@ function ApplicationCallEditModalButton({ modalProps: { onEdit, initialData }, }
             buttonVariant: "outline-success",
         } }));
 }
-exports.ApplicationCallEditModalButton = ApplicationCallEditModalButton;
 function ApplicationCallAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,4 +34,3 @@ function ApplicationCallAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.ApplicationCallAddNewModalButton = ApplicationCallAddNewModalButton;

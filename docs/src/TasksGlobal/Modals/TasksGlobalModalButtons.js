@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
+exports.TaskEditModalButton = TaskEditModalButton;
+exports.TaskAddNewModalButton = TaskAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const TaskGlobalModalBody_1 = require("./TaskGlobalModalBody");
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
@@ -23,7 +24,6 @@ function TaskEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
-exports.TaskEditModalButton = TaskEditModalButton;
 function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -37,4 +37,3 @@ function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.TaskAddNewModalButton = TaskAddNewModalButton;

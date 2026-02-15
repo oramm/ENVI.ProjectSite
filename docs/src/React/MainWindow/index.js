@@ -15,18 +15,28 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.renderApp = void 0;
+exports.renderApp = renderApp;
 const google_1 = require("@react-oauth/google");
 require("bootstrap/dist/css/bootstrap.min.css");
 const react_1 = __importStar(require("react"));
@@ -45,6 +55,7 @@ const MainSetupReact_1 = __importDefault(require("../MainSetupReact"));
 const Footer_1 = __importDefault(require("./Footer"));
 const MainMenu_1 = __importDefault(require("./MainMenu"));
 const CitiesSearch_1 = __importDefault(require("../../Admin/Cities/CitiesSearch"));
+const SkillsDictionarySearch_1 = __importDefault(require("../../Admin/SkillsDictionary/SkillsDictionarySearch"));
 const ContractRangesSearch_1 = __importDefault(require("../../Admin/ContractRanges/ContractRangesSearch"));
 const SystemUsersSearch_1 = __importDefault(require("../../Admin/SystemUsers/SystemUsersSearch"));
 const CostInvoicesSearch_1 = __importDefault(require("../../Erp/CostInvoicesList/CostInvoicesSearch"));
@@ -58,6 +69,7 @@ const EntitiesSearch_1 = __importDefault(require("../../Entities/EntitiesSearch"
 const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/LettersSearch"));
 const OffersMainView_1 = __importDefault(require("../../Offers/OffersList/OffersMainView"));
 const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
+const PersonProfilePage_1 = __importDefault(require("../../Persons/PersonProfile/PersonProfilePage"));
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
@@ -150,7 +162,9 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/tasksGlobal", element: react_1.default.createElement(TasksGlobal_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/entities", element: react_1.default.createElement(EntitiesSearch_1.default, { title: "Podmioty" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/persons", element: react_1.default.createElement(PersonsSearch_1.default, { title: "Osoby" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/person/:id", element: react_1.default.createElement(PersonProfilePage_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/cities", element: react_1.default.createElement(CitiesSearch_1.default, { title: "Miasta" }) }),
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/skills", element: react_1.default.createElement(SkillsDictionarySearch_1.default, { title: "S\u0142ownik specjalizacji" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/admin/contractRanges", element: react_1.default.createElement(ContractRangesSearch_1.default, { title: "Zakresy kontratk\u00F3w" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/offers", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/offers/list", element: react_1.default.createElement(OffersMainView_1.default, { title: "Oferty" }) }),
@@ -169,7 +183,7 @@ async function renderApp() {
     const root = document.getElementById("root");
     if (!root)
         return;
-    if (process.env.MODE === "development")
+    if (MainSetupReact_1.default.isDevEnvironment)
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(react_1.StrictMode, null,
                 react_1.default.createElement(App, null))));
@@ -177,6 +191,4 @@ async function renderApp() {
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(App, null)));
 }
-exports.renderApp = renderApp;
-console.log(process.env.MODE);
 renderApp();

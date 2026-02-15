@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MainMenu;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
@@ -69,7 +70,8 @@ function MainMenu() {
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/cities" }, "Miasta"),
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/contractRanges" },
                                     "Zakresy kontrakt\u00F3w",
-                                    " "))))),
+                                    " "),
+                                react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/skills" }, "Specjalizacje"))))),
                     react_1.default.createElement(react_bootstrap_1.Nav, { className: "ms-auto" },
                         react_1.default.createElement(react_bootstrap_1.NavDropdown, { title: react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCircleUser, className: "me-2" }),
@@ -81,4 +83,3 @@ function MainMenu() {
                             ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
-exports.default = MainMenu;
