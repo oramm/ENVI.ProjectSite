@@ -128,6 +128,9 @@ export default function MainMenu() {
                                         <NavDropdown.Item as={Link} to="/admin/contractRanges">
                                             Zakresy kontraktów{" "}
                                         </NavDropdown.Item>
+                                        <NavDropdown.Item as={Link} to="/admin/skills">
+                                            Specjalizacje
+                                        </NavDropdown.Item>
                                     </NavDropdown>
                                 </>
                             )}

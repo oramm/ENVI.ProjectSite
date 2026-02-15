@@ -17,6 +17,7 @@ import Footer from "./Footer";
 import MainMenu from "./MainMenu";
 
 import CitiesSearch from "../../Admin/Cities/CitiesSearch";
+import SkillsDictionarySearch from "../../Admin/SkillsDictionary/SkillsDictionarySearch";
 import ContractRangesSearch from "../../Admin/ContractRanges/ContractRangesSearch";
 import SystemUsersSearch from "../../Admin/SystemUsers/SystemUsersSearch";
 import { ContractMainViewTabs } from "../../Contracts/ContractsList/ContractDetails/ContractMainViewTabs";
@@ -27,6 +28,7 @@ import EntitiesSearch from "../../Entities/EntitiesSearch";
 import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
 import OffersMainView from "../../Offers/OffersList/OffersMainView";
 import PersonsSearch from "../../Persons/PersonsSearch";
+import PersonProfilePage from "../../Persons/PersonProfile/PersonProfilePage";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
@@ -137,7 +139,9 @@ function AppRoutes() {
                         <Route path="/tasksGlobal" element={<TasksGlobal />} />
                         <Route path="/entities" element={<EntitiesSearch title="Podmioty" />} />
                         <Route path="/persons" element={<PersonsSearch title="Osoby" />} />
+                        <Route path="/person/:id" element={<PersonProfilePage />} />
                         <Route path="/admin/cities" element={<CitiesSearch title="Miasta" />} />
+                        <Route path="/admin/skills" element={<SkillsDictionarySearch title="Słownik specjalizacji" />} />
                         <Route
                             path="/admin/contractRanges"
                             element={<ContractRangesSearch title="Zakresy kontratków" />}

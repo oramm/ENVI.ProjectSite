@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Card, CloseButton, Spinner } from "react-bootstrap";
+import { Badge, Button, Card, CloseButton, Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import {
     PersonData,
     PersonProfileV2Full,
@@ -147,6 +148,11 @@ export default function PersonProfilePanel({ person, onClose }: PersonProfilePan
                         <SkillsList skills={profile.profileSkills} />
                         <ExperienceList experiences={profile.profileExperiences} />
                         <EducationList educations={profile.profileEducations} />
+                        <div className="mt-3 text-end">
+                            <Button as={Link as any} to={`/person/${person.id}`} variant="outline-primary" size="sm">
+                                Pełny profil &rarr;
+                            </Button>
+                        </div>
                     </>
                 )}
             </Card.Body>

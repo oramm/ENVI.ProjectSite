@@ -25,8 +25,16 @@ export function PersonsFilterBody() {
                     showValidationInfo={false}
                 />
             </Form.Group>
-            <Form.Group as={Col} md={5}>
+            <Form.Group as={Col} md={3}>
                 <SkillSelector />
+            </Form.Group>
+            <Form.Group as={Col} md={3}>
+                <Form.Label>Doświadczenie</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Stanowisko, firma..."
+                    {...register("experienceText")}
+                />
             </Form.Group>
         </Row>
     );
