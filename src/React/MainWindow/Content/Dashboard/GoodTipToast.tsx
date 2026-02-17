@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
+import { createPortal } from 'react-dom';
 import './GoodTipToast.css';
 
 const tips = [
@@ -74,8 +75,14 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
     }, [isPaused, isVisible, delay]);
 
 
-    return (
-        <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 1050, overflowX: 'hidden' }}>
+    if (typeof document === 'undefined') return null;
+
+    return createPortal(
+        <ToastContainer
+            position="bottom-end"
+            className="p-3"
+            style={{ zIndex: 1050, overflowX: 'hidden', position: 'fixed', right: 0, bottom: 0 }}
+        >
             <div 
                 ref={toastWrapperRef} 
                 className={`good-tip-toast-wrapper ${isVisible ? 'show' : 'hide'}`}
@@ -93,6 +100,7 @@ export function GoodTipToast({ delay = 5000 }: GoodTipToastProps) {
                     <Toast.Body className="good-tip-toast-body">{tip}</Toast.Body>
                 </Toast>
             </div>
-        </ToastContainer>
+        </ToastContainer>,
+        document.body,
     );
 }
