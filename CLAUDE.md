@@ -196,12 +196,20 @@ All docs indexed in `instructions/README.md`.
 
 ### Adding a New Domain Module
 
-1. Create domain folder: `src/NewDomain/`
-2. Add `NewDomainList/` with FilterableTable component
-3. Define types in `Typings/bussinesTypes.d.ts`
-4. Create repository in MainController (if global) or locally (if scoped)
-5. Add route in MainWindow router
-6. Create modal components in `NewDomain/Modals/`
+**Pełny przewodnik z szablonami kodu:** [`instructions/crud-module-guide.md`](instructions/crud-module-guide.md)
+
+**Skill generatywny:** `/new-crud-module NazwaEncji` — generuje kompletny moduł CRUD krok po kroku.
+Przy realizacji planów, gdy checkpoint wymaga nowego modułu CRUD — użyj skilla `/new-crud-module` z pełnymi argumentami.
+
+Skrócona checklist:
+1. Typ w `Typings/bussinesTypes.d.ts`
+2. Controller — repozytorium (factory lub globalne)
+3. ValidationSchema — `makeXxxValidationSchema(isEditing)`
+4. ModalBody — formularz z `useFormContext()`
+5. ModalButtons — AddNew + Edit
+6. Search/Page — FilterableTable z auto-load
+7. Route w MainWindow (jeśli nowa strona)
+8. Weryfikacja: `npx tsc --noEmit`
 
 ### Creating a Form Modal
 

@@ -11,6 +11,7 @@
         "build": "yarn clean && tsc && webpack && yarn copy-files",
         "start": "webpack-dev-server --config webpack.config.mjs",
         "dev": "webpack serve",
+        "kill:webpack": "powershell -Command \"$pids = Get-NetTCPConnection -LocalPort 9000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess; if ($pids) { $pids | ForEach-Object { Stop-Process -Id $_ -Force } }\"",
         "screenshot": "node scripts/screenshot.js"
     },
     "devDependencies": {

@@ -1,4 +1,15 @@
-import { PersonAccountV2Payload, PersonProfileV2Full, PersonProfileV2Payload, SkillDictionaryRecord } from "../../Typings/bussinesTypes";
+import {
+    EducationSearchParams,
+    ExperienceSearchParams,
+    PersonAccountV2Payload,
+    PersonProfileEducationV2Record,
+    PersonProfileExperienceV2Record,
+    PersonProfileSkillV2Record,
+    PersonProfileV2Record,
+    PersonProfileV2Payload,
+    ProfileSkillSearchParams,
+    SkillDictionaryRecord,
+} from "../../Typings/bussinesTypes";
 import MainSetup from "../React/MainSetupReact";
 import ToolsFetch from "../React/Tools/ToolsFetch";
 
@@ -16,13 +27,11 @@ export function validatePersonId(personId: unknown, context?: string): number {
         throw new Error(`personId jest wymagany${context ? ` (${context})` : ""}`);
     }
     if (typeof personId !== "number" || !Number.isFinite(personId)) {
-        throw new Error(
-            `personId musi byc liczba, otrzymano: ${typeof personId}${context ? ` (${context})` : ""}`
-        );
+        throw new Error(`personId musi byc liczba, otrzymano: ${typeof personId}${context ? ` (${context})` : ""}`);
     }
     if (!Number.isInteger(personId) || personId <= 0) {
         throw new Error(
-            `personId musi byc dodatnia liczba calkowita, otrzymano: ${personId}${context ? ` (${context})` : ""}`
+            `personId musi byc dodatnia liczba calkowita, otrzymano: ${personId}${context ? ` (${context})` : ""}`,
         );
     }
     return personId;
@@ -52,9 +61,9 @@ export async function fetchPersonAccountV2(personId: number): Promise<PersonAcco
 
 /**
  * Pobiera dane profile v2 dla osoby.
- * @returns PersonProfileV2Payload lub null jesli brak profile (404)
+ * @returns PersonProfileV2Record lub null jesli brak profile (404)
  */
-export async function fetchPersonProfileV2(personId: number): Promise<PersonProfileV2Payload | null> {
+export async function fetchPersonProfileV2(personId: number): Promise<PersonProfileV2Record | null> {
     const validId = validatePersonId(personId, "GET profile");
     const url = `${MainSetup.serverUrl}v2/persons/${validId}/profile`;
 
@@ -64,7 +73,7 @@ export async function fetchPersonProfileV2(personId: number): Promise<PersonProf
             credentials: "include",
             headers: { "Content-Type": "application/json" },
         });
-        return result as PersonProfileV2Payload;
+        return result as PersonProfileV2Record;
     } catch (error) {
         // 404 lub brak danych -- zwracamy null
         console.warn("fetchPersonProfileV2: brak profile dla personId=%d: %o", validId, error);
@@ -79,7 +88,7 @@ export async function fetchPersonProfileV2(personId: number): Promise<PersonProf
  */
 export async function putPersonAccountV2(
     personId: number,
-    payload: Partial<PersonAccountV2Payload>
+    payload: Partial<PersonAccountV2Payload>,
 ): Promise<PersonAccountV2Payload> {
     const validId = validatePersonId(personId, "PUT account");
     const url = `${MainSetup.serverUrl}v2/persons/${validId}/account`;
@@ -100,7 +109,7 @@ export async function putPersonAccountV2(
  */
 export async function putPersonProfileV2(
     personId: number,
-    payload: Partial<PersonProfileV2Payload>
+    payload: Partial<PersonProfileV2Payload>,
 ): Promise<PersonProfileV2Payload> {
     const validId = validatePersonId(personId, "PUT profile");
     const url = `${MainSetup.serverUrl}v2/persons/${validId}/profile`;
@@ -114,25 +123,63 @@ export async function putPersonProfileV2(
     return result as PersonProfileV2Payload;
 }
 
-/**
- * Pobiera pelny profil v2 osoby (z doswiadczeniami, edukacja, skillami).
- * @returns PersonProfileV2Full lub null jesli brak profilu (404)
- */
-export async function fetchPersonProfileV2Full(personId: number): Promise<PersonProfileV2Full | null> {
-    const validId = validatePersonId(personId, "GET profile full");
-    const url = `${MainSetup.serverUrl}v2/persons/${validId}/profile`;
+async function searchProfileModule<TRecord, TSearchParams>(
+    personId: number,
+    modulePath: "experiences" | "educations" | "skills",
+    orConditions: TSearchParams[],
+    context: string,
+): Promise<TRecord[]> {
+    const validId = validatePersonId(personId, context);
+    const url = `${MainSetup.serverUrl}v2/persons/${validId}/profile/${modulePath}/search`;
 
     try {
         const result = await ToolsFetch.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
-        return result as PersonProfileV2Full;
+        return result as TRecord[];
     } catch (error) {
-        console.warn("fetchPersonProfileV2Full: brak profilu dla personId=%d: %o", validId, error);
-        return null;
+        console.warn("searchProfileModule: blad %s dla personId=%d: %o", modulePath, validId, error);
+        return [];
     }
+}
+
+export async function fetchPersonProfileExperiences(
+    personId: number,
+    orConditions: ExperienceSearchParams[] = [],
+): Promise<PersonProfileExperienceV2Record[]> {
+    return searchProfileModule<PersonProfileExperienceV2Record, ExperienceSearchParams>(
+        personId,
+        "experiences",
+        orConditions,
+        "POST experiences/search",
+    );
+}
+
+export async function fetchPersonProfileEducations(
+    personId: number,
+    orConditions: EducationSearchParams[] = [],
+): Promise<PersonProfileEducationV2Record[]> {
+    return searchProfileModule<PersonProfileEducationV2Record, EducationSearchParams>(
+        personId,
+        "educations",
+        orConditions,
+        "POST educations/search",
+    );
+}
+
+export async function fetchPersonProfileSkills(
+    personId: number,
+    orConditions: ProfileSkillSearchParams[] = [],
+): Promise<PersonProfileSkillV2Record[]> {
+    return searchProfileModule<PersonProfileSkillV2Record, ProfileSkillSearchParams>(
+        personId,
+        "skills",
+        orConditions,
+        "POST skills/search",
+    );
 }
 
 /**
@@ -141,14 +188,16 @@ export async function fetchPersonProfileV2Full(personId: number): Promise<Person
  * @returns tablica SkillDictionaryRecord
  */
 export async function fetchSkillsDictionary(searchText?: string): Promise<SkillDictionaryRecord[]> {
-    const params = searchText ? `?searchText=${encodeURIComponent(searchText)}` : "";
-    const url = `${MainSetup.serverUrl}v2/skills${params}`;
+    const url = `${MainSetup.serverUrl}v2/skills/search`;
+    const trimmedSearchText = searchText?.trim();
+    const orConditions = trimmedSearchText ? [{ searchText: trimmedSearchText }] : [];
 
     try {
         const result = await ToolsFetch.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
         return result as SkillDictionaryRecord[];
     } catch (error) {
@@ -178,7 +227,7 @@ export async function savePersonV2AccountAndProfile(
     personId: number,
     accountPayload: Partial<PersonAccountV2Payload>,
     profilePayload: Partial<PersonProfileV2Payload>,
-    callerContext: string
+    callerContext: string,
 ): Promise<SavePersonV2Result> {
     const result: SavePersonV2Result = { account: null, profile: null, errors: [] };
 
@@ -205,7 +254,7 @@ export async function savePersonV2AccountAndProfile(
             "[%s] savePersonV2: zapis v2 zakonczony z bledami dla personId=%d: %o",
             callerContext,
             personId,
-            result.errors
+            result.errors,
         );
     }
 

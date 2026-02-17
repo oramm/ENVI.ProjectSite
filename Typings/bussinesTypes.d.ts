@@ -337,6 +337,17 @@ export interface PersonProfileExperienceV2Payload {
     sortOrder?: number;
 }
 
+export interface ExperienceSearchParams {
+    searchText?: string;
+    organizationName?: string;
+    positionName?: string;
+    isCurrent?: boolean;
+    dateFromAfter?: string;
+    dateFromBefore?: string;
+    dateToAfter?: string;
+    dateToBefore?: string;
+}
+
 export interface PersonProfileExperienceV2Record extends PersonProfileExperienceV2Payload {
     id: number;
     personProfileId: number;
@@ -349,6 +360,17 @@ export interface PersonProfileEducationV2Payload {
     dateFrom?: string;
     dateTo?: string;
     sortOrder?: number;
+}
+
+export interface EducationSearchParams {
+    searchText?: string;
+    schoolName?: string;
+    degreeName?: string;
+    fieldOfStudy?: string;
+    dateFromAfter?: string;
+    dateFromBefore?: string;
+    dateToAfter?: string;
+    dateToBefore?: string;
 }
 
 export interface PersonProfileEducationV2Record extends PersonProfileEducationV2Payload {
@@ -372,10 +394,12 @@ export interface PersonProfileSkillV2Record {
     _skill?: SkillDictionaryRecord;
 }
 
-export interface PersonProfileV2Full extends PersonProfileV2Record {
-    profileExperiences: PersonProfileExperienceV2Record[];
-    profileEducations: PersonProfileEducationV2Record[];
-    profileSkills: PersonProfileSkillV2Record[];
+export interface ProfileSkillSearchParams {
+    searchText?: string;
+    skillId?: number;
+    skillIds?: number[];
+    levelCode?: string;
+    minYearsOfExperience?: number;
 }
 
 export interface DocumentTemplate extends RepositoryDataItem {
@@ -406,10 +430,10 @@ export interface Invoice extends RepositoryDataItem {
     // Numer KSeF faktury źródłowej dla korekty
     originalKsefNumber?: string | null;
     // Nowe pola korekty z backendu
-    correctedInvoiceId?: number | null;  // ID faktury korygowanej (jeśli ta jest korektą)
-    correctionReason?: string | null;     // Przyczyna korekty
-    _correctedInvoice?: Invoice | null;   // Faktura korygowana (join)
-    _corrections?: Invoice[];             // Lista korekt tej faktury
+    correctedInvoiceId?: number | null; // ID faktury korygowanej (jeśli ta jest korektą)
+    correctionReason?: string | null; // Przyczyna korekty
+    _correctedInvoice?: Invoice | null; // Faktura korygowana (join)
+    _corrections?: Invoice[]; // Lista korekt tej faktury
     gdId?: string | null;
     _contract: OurContract;
     _editor: PersonData;

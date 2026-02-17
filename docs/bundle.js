@@ -108070,6 +108070,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
+const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const personsV2Helpers_1 = __webpack_require__(/*! ../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
 const EducationController_1 = __webpack_require__(/*! ./Education/EducationController */ "./src/Persons/PersonProfile/Education/EducationController.ts");
 const EducationModalButtons_1 = __webpack_require__(/*! ./Education/EducationModalButtons */ "./src/Persons/PersonProfile/Education/EducationModalButtons.tsx");
@@ -108077,45 +108078,63 @@ const ExperienceController_1 = __webpack_require__(/*! ./Experience/ExperienceCo
 const ExperienceModalButtons_1 = __webpack_require__(/*! ./Experience/ExperienceModalButtons */ "./src/Persons/PersonProfile/Experience/ExperienceModalButtons.tsx");
 const ProfileSkillsController_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillsController */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillsController.ts");
 const ProfileSkillModalButtons_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillModalButtons */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillModalButtons.tsx");
-function PersonProfileHeader({ personId }) {
+function PersonProfilePage() {
+    const { id } = (0, react_router_dom_1.useParams)();
+    const personId = parseInt(id);
+    // Profile header data
     const [profile, setProfile] = (0, react_1.useState)(null);
-    const [isLoading, setIsLoading] = (0, react_1.useState)(true);
+    const [profileLoading, setProfileLoading] = (0, react_1.useState)(true);
+    // Table data states (undefined = loading, array = loaded)
+    const [skills, setSkills] = (0, react_1.useState)(undefined);
+    const [educations, setEducations] = (0, react_1.useState)(undefined);
+    const [experiences, setExperiences] = (0, react_1.useState)(undefined);
+    const educationsRepo = (0, react_1.useMemo)(() => (0, EducationController_1.createEducationsRepository)(personId), [personId]);
+    const experienceRepo = (0, react_1.useMemo)(() => (0, ExperienceController_1.createExperienceRepository)(personId), [personId]);
+    const skillsRepo = (0, react_1.useMemo)(() => (0, ProfileSkillsController_1.createProfileSkillsRepository)(personId), [personId]);
+    // Load profile header
     (0, react_1.useEffect)(() => {
         let cancelled = false;
-        setIsLoading(true);
-        (0, personsV2Helpers_1.fetchPersonProfileV2Full)(personId)
+        setProfileLoading(true);
+        (0, personsV2Helpers_1.fetchPersonProfileV2)(personId)
             .then((result) => {
             if (!cancelled)
                 setProfile(result);
         })
             .finally(() => {
             if (!cancelled)
-                setIsLoading(false);
+                setProfileLoading(false);
         });
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
     }, [personId]);
-    if (isLoading) {
-        return (react_1.default.createElement("div", { className: "text-center py-3" },
-            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" })));
-    }
-    if (!profile) {
-        return react_1.default.createElement("p", { className: "text-muted" },
-            "Brak profilu dla osoby #",
-            personId);
-    }
-    return (react_1.default.createElement("div", { className: "mb-4" },
-        profile.headline && react_1.default.createElement("h4", { className: "mb-1" }, profile.headline),
-        profile.summary && react_1.default.createElement("p", { className: "text-muted" }, profile.summary)));
-}
-function PersonProfilePage() {
-    const { id } = (0, react_router_dom_1.useParams)();
-    const personId = parseInt(id);
+    // Auto-load skills
+    (0, react_1.useEffect)(() => {
+        async function fetchSkills() {
+            await skillsRepo.loadItemsFromServerPOST([]);
+            setSkills([...skillsRepo.items]);
+        }
+        fetchSkills();
+    }, [skillsRepo]);
+    // Auto-load educations
+    (0, react_1.useEffect)(() => {
+        async function fetchEducations() {
+            await educationsRepo.loadItemsFromServerPOST([]);
+            setEducations([...educationsRepo.items]);
+        }
+        fetchEducations();
+    }, [educationsRepo]);
+    // Auto-load experiences
+    (0, react_1.useEffect)(() => {
+        async function fetchExperiences() {
+            await experienceRepo.loadItemsFromServerPOST([]);
+            setExperiences([...experienceRepo.items]);
+        }
+        fetchExperiences();
+    }, [experienceRepo]);
     (0, react_1.useEffect)(() => {
         document.title = `Profil osoby #${personId}`;
     }, [personId]);
-    const educationsRepo = (0, react_1.useMemo)(() => (0, EducationController_1.createEducationsRepository)(personId), [personId]);
-    const experienceRepo = (0, react_1.useMemo)(() => (0, ExperienceController_1.createExperienceRepository)(personId), [personId]);
-    const skillsRepo = (0, react_1.useMemo)(() => (0, ProfileSkillsController_1.createProfileSkillsRepository)(personId), [personId]);
     const EducationAddButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationAddNewModalButton)(educationsRepo), [educationsRepo]);
     const EducationEditButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationEditModalButton)(educationsRepo), [educationsRepo]);
     const ExperienceAddButton = (0, react_1.useMemo)(() => (0, ExperienceModalButtons_1.createExperienceAddNewModalButton)(experienceRepo), [experienceRepo]);
@@ -108132,28 +108151,36 @@ function PersonProfilePage() {
         return react_1.default.createElement(react_1.default.Fragment, null, skill.yearsOfExperience != null ? `${skill.yearsOfExperience}` : "-");
     }
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
-        react_1.default.createElement(PersonProfileHeader, { personId: personId }),
+        profileLoading ? (react_1.default.createElement("div", { className: "text-center py-3" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : profile ? (react_1.default.createElement("div", { className: "mb-4" },
+            profile.headline && react_1.default.createElement("h4", { className: "mb-1" }, profile.headline),
+            profile.summary && react_1.default.createElement("p", { className: "text-muted" }, profile.summary))) : (react_1.default.createElement("p", { className: "text-muted" },
+            "Brak profilu dla osoby #",
+            personId)),
         react_1.default.createElement("h5", null, "Specjalizacje"),
-        react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_skills`, repository: skillsRepo, tableStructure: [
-                { header: "Specjalizacja", renderTdBody: renderSkillName },
-                { header: "Poziom", renderTdBody: renderSkillLevel },
-                { header: "Lata doświadczenia", renderTdBody: renderSkillYears },
-            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true }),
+        skills ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_skills`, repository: skillsRepo, initialObjects: skills, tableStructure: [
+                { header: "Specjalizacja", renderTdBody: renderSkillName, colMd: 6 },
+                { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
+                { header: "Lata doświadczenia", renderTdBody: renderSkillYears, colMd: 3 },
+            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Wykszta\u0142cenie"),
-        react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, tableStructure: [
-                { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName" },
-                { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName" },
-                { header: "Kierunek", objectAttributeToShow: "fieldOfStudy" },
-                { header: "Od", objectAttributeToShow: "dateFrom" },
-                { header: "Do", objectAttributeToShow: "dateTo" },
-            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true }),
+        educations ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, initialObjects: educations, tableStructure: [
+                { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
+                { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName", colMd: 3 },
+                { header: "Kierunek", objectAttributeToShow: "fieldOfStudy", colMd: 3 },
+                { header: "Od", objectAttributeToShow: "dateFrom", colMd: 1 },
+                { header: "Do", objectAttributeToShow: "dateTo", colMd: 1 },
+            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Do\u015Bwiadczenie"),
-        react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, tableStructure: [
-                { header: "Organizacja", objectAttributeToShow: "organizationName" },
-                { header: "Stanowisko", objectAttributeToShow: "positionName" },
-                { header: "Od", objectAttributeToShow: "dateFrom" },
-                { header: "Do", objectAttributeToShow: "dateTo" },
-            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })));
+        experiences ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, initialObjects: experiences, tableStructure: [
+                { header: "Organizacja", objectAttributeToShow: "organizationName", colMd: 4 },
+                { header: "Stanowisko", objectAttributeToShow: "positionName", colMd: 4 },
+                { header: "Od", objectAttributeToShow: "dateFrom", colMd: 2 },
+                { header: "Do", objectAttributeToShow: "dateTo", colMd: 2 },
+            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }
 
 
@@ -108524,14 +108551,25 @@ function PersonProfilePanel({ person, onClose }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(true);
     const [error, setError] = (0, react_1.useState)(null);
     const [profile, setProfile] = (0, react_1.useState)(null);
+    const [skills, setSkills] = (0, react_1.useState)([]);
+    const [experiences, setExperiences] = (0, react_1.useState)([]);
+    const [educations, setEducations] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
         let cancelled = false;
         setIsLoading(true);
         setError(null);
-        (0, personsV2Helpers_1.fetchPersonProfileV2Full)(person.id)
-            .then((result) => {
+        Promise.all([
+            (0, personsV2Helpers_1.fetchPersonProfileV2)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileSkills)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileExperiences)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileEducations)(person.id),
+        ])
+            .then(([profileResult, skillsResult, experiencesResult, educationsResult]) => {
             if (!cancelled) {
-                setProfile(result);
+                setProfile(profileResult);
+                setSkills(skillsResult);
+                setExperiences(experiencesResult);
+                setEducations(educationsResult);
                 setIsLoading(false);
             }
         })
@@ -108556,12 +108594,12 @@ function PersonProfilePanel({ person, onClose }) {
             isLoading && (react_1.default.createElement("div", { className: "text-center py-3" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }))),
             error && react_1.default.createElement("div", { className: "text-danger small" }, error),
-            !isLoading && !error && !profile && (react_1.default.createElement("p", { className: "text-muted small" }, "Brak profilu")),
+            !isLoading && !error && !profile && react_1.default.createElement("p", { className: "text-muted small" }, "Brak profilu"),
             !isLoading && !error && profile && (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(ProfileHeader, { profile: profile }),
-                react_1.default.createElement(SkillsList, { skills: profile.profileSkills }),
-                react_1.default.createElement(ExperienceList, { experiences: profile.profileExperiences }),
-                react_1.default.createElement(EducationList, { educations: profile.profileEducations }),
+                react_1.default.createElement(SkillsList, { skills: skills }),
+                react_1.default.createElement(ExperienceList, { experiences: experiences }),
+                react_1.default.createElement(EducationList, { educations: educations }),
                 react_1.default.createElement("div", { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pe\u0142ny profil \u2192")))))));
 }
@@ -108735,7 +108773,9 @@ exports.fetchPersonAccountV2 = fetchPersonAccountV2;
 exports.fetchPersonProfileV2 = fetchPersonProfileV2;
 exports.putPersonAccountV2 = putPersonAccountV2;
 exports.putPersonProfileV2 = putPersonProfileV2;
-exports.fetchPersonProfileV2Full = fetchPersonProfileV2Full;
+exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
+exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
+exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
 exports.fetchSkillsDictionary = fetchSkillsDictionary;
 exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -108784,7 +108824,7 @@ async function fetchPersonAccountV2(personId) {
 }
 /**
  * Pobiera dane profile v2 dla osoby.
- * @returns PersonProfileV2Payload lub null jesli brak profile (404)
+ * @returns PersonProfileV2Record lub null jesli brak profile (404)
  */
 async function fetchPersonProfileV2(personId) {
     const validId = validatePersonId(personId, "GET profile");
@@ -108835,25 +108875,31 @@ async function putPersonProfileV2(personId, payload) {
     });
     return result;
 }
-/**
- * Pobiera pelny profil v2 osoby (z doswiadczeniami, edukacja, skillami).
- * @returns PersonProfileV2Full lub null jesli brak profilu (404)
- */
-async function fetchPersonProfileV2Full(personId) {
-    const validId = validatePersonId(personId, "GET profile full");
-    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile`;
+async function searchProfileModule(personId, modulePath, orConditions, context) {
+    const validId = validatePersonId(personId, context);
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile/${modulePath}/search`;
     try {
         const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
         return result;
     }
     catch (error) {
-        console.warn("fetchPersonProfileV2Full: brak profilu dla personId=%d: %o", validId, error);
-        return null;
+        console.warn("searchProfileModule: blad %s dla personId=%d: %o", modulePath, validId, error);
+        return [];
     }
+}
+async function fetchPersonProfileExperiences(personId, orConditions = []) {
+    return searchProfileModule(personId, "experiences", orConditions, "POST experiences/search");
+}
+async function fetchPersonProfileEducations(personId, orConditions = []) {
+    return searchProfileModule(personId, "educations", orConditions, "POST educations/search");
+}
+async function fetchPersonProfileSkills(personId, orConditions = []) {
+    return searchProfileModule(personId, "skills", orConditions, "POST skills/search");
 }
 /**
  * Pobiera slownik skilli z wyszukiwaniem.
@@ -108861,13 +108907,15 @@ async function fetchPersonProfileV2Full(personId) {
  * @returns tablica SkillDictionaryRecord
  */
 async function fetchSkillsDictionary(searchText) {
-    const params = searchText ? `?searchText=${encodeURIComponent(searchText)}` : "";
-    const url = `${MainSetupReact_1.default.serverUrl}v2/skills${params}`;
+    const url = `${MainSetupReact_1.default.serverUrl}v2/skills/search`;
+    const trimmedSearchText = searchText?.trim();
+    const orConditions = trimmedSearchText ? [{ searchText: trimmedSearchText }] : [];
     try {
         const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
         return result;
     }

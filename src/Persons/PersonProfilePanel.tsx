@@ -3,12 +3,17 @@ import { Badge, Button, Card, CloseButton, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
     PersonData,
-    PersonProfileV2Full,
+    PersonProfileV2Record,
     PersonProfileExperienceV2Record,
     PersonProfileEducationV2Record,
     PersonProfileSkillV2Record,
 } from "../../Typings/bussinesTypes";
-import { fetchPersonProfileV2Full } from "./personsV2Helpers";
+import {
+    fetchPersonProfileEducations,
+    fetchPersonProfileExperiences,
+    fetchPersonProfileSkills,
+    fetchPersonProfileV2,
+} from "./personsV2Helpers";
 
 function formatDateRange(dateFrom?: string, dateTo?: string, isCurrent?: boolean): string {
     const fmt = (d: string) => {
@@ -26,7 +31,7 @@ function formatDateRange(dateFrom?: string, dateTo?: string, isCurrent?: boolean
     return "";
 }
 
-function ProfileHeader({ profile }: { profile: PersonProfileV2Full }) {
+function ProfileHeader({ profile }: { profile: PersonProfileV2Record }) {
     return (
         <>
             {profile.headline && <h6 className="mb-1">{profile.headline}</h6>}
@@ -98,17 +103,28 @@ type PersonProfilePanelProps = {
 export default function PersonProfilePanel({ person, onClose }: PersonProfilePanelProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [profile, setProfile] = useState<PersonProfileV2Full | null>(null);
+    const [profile, setProfile] = useState<PersonProfileV2Record | null>(null);
+    const [skills, setSkills] = useState<PersonProfileSkillV2Record[]>([]);
+    const [experiences, setExperiences] = useState<PersonProfileExperienceV2Record[]>([]);
+    const [educations, setEducations] = useState<PersonProfileEducationV2Record[]>([]);
 
     useEffect(() => {
         let cancelled = false;
         setIsLoading(true);
         setError(null);
 
-        fetchPersonProfileV2Full(person.id)
-            .then((result) => {
+        Promise.all([
+            fetchPersonProfileV2(person.id),
+            fetchPersonProfileSkills(person.id),
+            fetchPersonProfileExperiences(person.id),
+            fetchPersonProfileEducations(person.id),
+        ])
+            .then(([profileResult, skillsResult, experiencesResult, educationsResult]) => {
                 if (!cancelled) {
-                    setProfile(result);
+                    setProfile(profileResult);
+                    setSkills(skillsResult);
+                    setExperiences(experiencesResult);
+                    setEducations(educationsResult);
                     setIsLoading(false);
                 }
             })
@@ -139,15 +155,13 @@ export default function PersonProfilePanel({ person, onClose }: PersonProfilePan
                     </div>
                 )}
                 {error && <div className="text-danger small">{error}</div>}
-                {!isLoading && !error && !profile && (
-                    <p className="text-muted small">Brak profilu</p>
-                )}
+                {!isLoading && !error && !profile && <p className="text-muted small">Brak profilu</p>}
                 {!isLoading && !error && profile && (
                     <>
                         <ProfileHeader profile={profile} />
-                        <SkillsList skills={profile.profileSkills} />
-                        <ExperienceList experiences={profile.profileExperiences} />
-                        <EducationList educations={profile.profileEducations} />
+                        <SkillsList skills={skills} />
+                        <ExperienceList experiences={experiences} />
+                        <EducationList educations={educations} />
                         <div className="mt-3 text-end">
                             <Button as={Link as any} to={`/person/${person.id}`} variant="outline-primary" size="sm">
                                 Pełny profil &rarr;

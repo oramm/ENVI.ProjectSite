@@ -55,6 +55,42 @@ Evidence:
 
 (uzupełniać od najnowszej sesji na górze)
 
+### Sesja 009 — Migracja profile split API (experiences/educations/skills)
+
+Data: 2026-02-17
+Checkpoint: FE-PV2-10 + FE-PV2-11 (maintenance po zamknieciu planu)
+Status: DONE
+
+Evidence:
+
+- Zmieniono `Typings/bussinesTypes.d.ts`:
+    - dodano typy search params pod `orConditions`: `ExperienceSearchParams`, `EducationSearchParams`, `ProfileSkillSearchParams`
+- Zmieniono `src/Persons/personsV2Helpers.ts`:
+    - usunieto zaleznosc od agregatu `fetchPersonProfileV2Full`
+    - dodano odczyt modulow przez POST search:
+        - `fetchPersonProfileExperiences(personId, orConditions)`
+        - `fetchPersonProfileEducations(personId, orConditions)`
+        - `fetchPersonProfileSkills(personId, orConditions)`
+    - `fetchSkillsDictionary` przepiete na `POST /v2/skills/search` z body `{ orConditions }`
+    - `fetchPersonProfileV2` zwraca `PersonProfileV2Record | null`
+- Zmieniono `src/Persons/PersonProfilePanel.tsx`:
+    - panel nie korzysta juz z endpointu agregujacego
+    - laduje metadane profilu (`GET /v2/persons/:personId/profile`) oraz listy modulow niezaleznie
+- Zmieniono `src/Persons/PersonProfile/PersonProfilePage.tsx`:
+    - header strony korzysta z `fetchPersonProfileV2` (bez `fetchPersonProfileV2Full`)
+    - tabele CRUD pozostaly oparte o generyczny `FilterableTable` + `RepositoryReact`
+- Kontrola regresji:
+    - grep: brak uzyc `fetchPersonProfileV2Full` i brak `v2/skills?searchText` w `src/**`
+
+Walidacja (Yarn):
+
+- `yarn tsc --noEmit` — DONE, 0 bledow
+- `yarn build` — DONE, webpack compiled successfully
+
+Next:
+
+- Next OPEN: brak (plan FE-PV2-01..12 pozostaje zamkniety)
+
 ### Sesja 008 — Paczka D+E (legacy cleanup + QA): FE-PV2-08 → FE-PV2-12
 
 Data: 2026-02-12
@@ -64,31 +100,36 @@ Status: DONE
 Evidence:
 
 **FE-PV2-08 — Usuniecie aktywnych uzyc legacy endpointow:**
+
 - Zmieniono `src/Admin/SystemUsers/SystemUserController.ts`:
-  - `addNewRoute: "systemUser"` → `addNewRoute: "person"` (usunieto legacy POST /systemUser)
-  - `editRoute: "user"` → `editRoute: "person"` (usunieto legacy PUT /user/:id)
+    - `addNewRoute: "systemUser"` → `addNewRoute: "person"` (usunieto legacy POST /systemUser)
+    - `editRoute: "user"` → `editRoute: "person"` (usunieto legacy PUT /user/:id)
 - Dodano wrapper `handleAddNew` w `SystemUserAddNewModalButton`:
-  - Po `POST /person` wywoluje `savePersonV2AccountAndProfile` z systemRoleId + systemEmail
-  - Nowa osoba dostaje account v2 od razu po utworzeniu
+    - Po `POST /person` wywoluje `savePersonV2AccountAndProfile` z systemRoleId + systemEmail
+    - Nowa osoba dostaje account v2 od razu po utworzeniu
 - Grep potwierdza: brak aktywnych odwolan do endpointow `"systemUser"` i `"user"` w route config w src/
 - walidacja: `npx tsc --noEmit` — 0 bledow
 
 **FE-PV2-09 — Potwierdzenie repository.items jako source of truth:**
+
 - FilterableTable.tsx: handleAddObject (L128), handleEditObject (L134/139), handleDeleteObject (L144) — wszystkie synchronizuja z `setObjects([...repository.items])`
 - Grep `setObjects|objects.push|objects[` w src/Admin/SystemUsers i src/Persons — 0 wynikow
 - Brak lokalnych mutacji omijajacych repository.items
 - Wrappers handleEdit/handleAddNew w ModalButtons wywoluja oryginalny onEdit/onAddNew ktory to handleEditObject/handleAddObject z FilterableTable
 
 **FE-PV2-10 — Build i smoke test:**
+
 - `npx tsc --noEmit` — 0 bledow
 - `npx webpack --mode production` — compiled successfully (3 warnings: asset size, istniejace przed refaktorem)
 - Bundle: 3.04 MiB (bez zmian w wielkosci)
 
 **FE-PV2-11 — Uzupelnienie postepu sesyjnego:**
+
 - Wszystkie checkpointy FE-PV2-01 → FE-PV2-12 maja wpisy evidence w dzienniku sesji
 - Sesje 001-008 udokumentowane zgodnie z kontraktem statusow
 
 **FE-PV2-12 — Zamkniecie checklisty post-change (Definition of Done):**
+
 1. TS kompiluje: `npx tsc --noEmit` — 0 bledow ✓
 2. App renderuje: webpack build green ✓
 3. State sync correct: repository.items = source of truth, zweryfikowane w FE-PV2-09 ✓
@@ -97,6 +138,7 @@ Evidence:
 6. Istniejace features: wymagane reczne potwierdzenie po migracji DB ⚠️
 
 Pliki zmodyfikowane w calej sesji 008:
+
 - `src/Admin/SystemUsers/SystemUserController.ts` (zmiana route)
 - `src/Admin/SystemUsers/Modals/SystemUserModalButtons.tsx` (handleAddNew wrapper)
 
@@ -113,31 +155,34 @@ Status: DONE
 Evidence:
 
 **FE-PV2-05 — PUT account+profile w SystemUsers:**
+
 - Rozszerzono `src/Persons/personsV2Helpers.ts` o `putPersonAccountV2` i `putPersonProfileV2`
-  - PUT z walidacja personId, uzywa ToolsFetch.fetchJsonWithSafeError
-  - Bledy nie sa tlumione — rzucaja Error (obsluga w warstwie domenowej)
+    - PUT z walidacja personId, uzywa ToolsFetch.fetchJsonWithSafeError
+    - Bledy nie sa tlumione — rzucaja Error (obsluga w warstwie domenowej)
 - Zmodyfikowano `src/Admin/SystemUsers/Modals/SystemUserModalButtons.tsx`
-  - `handleEdit` wrapper na `onEdit`: po zapisie legacy wywoluje PUT v2 account (systemRoleId, systemEmail) + profile ({})
-  - Bledy logowane do console, nie blokuja UI (dane legacy zapisaly sie poprawnie)
+    - `handleEdit` wrapper na `onEdit`: po zapisie legacy wywoluje PUT v2 account (systemRoleId, systemEmail) + profile ({})
+    - Bledy logowane do console, nie blokuja UI (dane legacy zapisaly sie poprawnie)
 - Generyczne komponenty (GeneralModal, RepositoryReact) NIE zostaly zmienione
 
 **FE-PV2-06 — PUT account+profile w Persons:**
+
 - Zmodyfikowano `src/Persons/Modals/PersonModalButtons.tsx`
-  - Identyczny wzorzec jak SystemUsers: `handleEdit` wrapper
-  - Pola account (systemRoleId, systemEmail) zakomentowane w formularzu → puste payloady {}
-  - PUT v2 tworzy/aktualizuje rekordy w bazie nawet z pustym payloadem
+    - Identyczny wzorzec jak SystemUsers: `handleEdit` wrapper
+    - Pola account (systemRoleId, systemEmail) zakomentowane w formularzu → puste payloady {}
+    - PUT v2 tworzy/aktualizuje rekordy w bazie nawet z pustym payloadem
 - Nie dotyka experiences (poza zakresem)
 
 **FE-PV2-07 — Ujednolicenie obslugi bledow zapisu:**
+
 - Dodano wspolna funkcje `savePersonV2AccountAndProfile` do personsV2Helpers.ts
-  - Kolejnosc: account -> profile (sekwencyjnie, account musi istniec przed profile)
-  - Kazdy PUT w osobnym try/catch — blad jednego nie blokuje drugiego
-  - Zwraca `SavePersonV2Result` z polami: account, profile, errors[]
-  - Spójny format logow: `[callerContext] savePersonV2: blad PUT account/profile dla personId=X`
-  - Bledy logowane jako console.warn (nie blokuja UI)
+    - Kolejnosc: account -> profile (sekwencyjnie, account musi istniec przed profile)
+    - Kazdy PUT w osobnym try/catch — blad jednego nie blokuje drugiego
+    - Zwraca `SavePersonV2Result` z polami: account, profile, errors[]
+    - Spójny format logow: `[callerContext] savePersonV2: blad PUT account/profile dla personId=X`
+    - Bledy logowane jako console.warn (nie blokuja UI)
 - Oba moduly (SystemUserModalButtons, PersonModalButtons) uzywaja tej samej funkcji
-  - SystemUsers: `savePersonV2AccountAndProfile(id, {systemRoleId, systemEmail}, {}, "SystemUsers")`
-  - Persons: `savePersonV2AccountAndProfile(id, {}, {}, "Persons")`
+    - SystemUsers: `savePersonV2AccountAndProfile(id, {systemRoleId, systemEmail}, {}, "SystemUsers")`
+    - Persons: `savePersonV2AccountAndProfile(id, {}, {}, "Persons")`
 - Spójny UX bledow: obie sciezki zachowuja sie identycznie
 
 **Walidacja:** `npx tsc --noEmit` — 0 bledow po kazdym checkpoincie
@@ -146,12 +191,14 @@ Evidence:
 **Znany bloker backendowy:** tabele PersonAccounts/PersonProfiles nie istnieja → PUT zwroci 500, FE obsluzy gracefully (console.warn)
 
 Notatki dla nastepnej sesji (Paczka D — czyszczenie legacy):
+
 - Nastepny checkpoint: FE-PV2-08 (usuniecie aktywnych uzyc legacy endpointow)
 - `savePersonV2AccountAndProfile` jest gotowy do rozszerzenia o wiecej pol
 - Gdy pola account zostana odkomentowane w PersonModalBody, trzeba rozszerzyc payload w PersonModalButtons
 - `onEdit` w GeneralModal NIE jest awaited → PUT v2 jest fire-and-forget z perspektywy modala
 
 Next:
+
 - Next OPEN: FE-PV2-08
 
 ### Sesja 006 — podsumowanie orkiestracji Paczka A+B
@@ -161,6 +208,7 @@ Checkpoint: podsumowanie sesji orkiestracyjnej (FE-PV2-01 → FE-PV2-04)
 Status: DONE
 
 Evidence:
+
 - Wykonano checkpointy FE-PV2-01 → FE-PV2-04 sekwencyjnie przez Task agentów
 - Paczka A (analiza): mapa pól + projekt walidacji personId
 - Paczka B (read path): wpięcie GET v2 account/profile w obu modułach
@@ -171,6 +219,7 @@ Evidence:
 - Znany bloker backendowy: tabele `PersonAccounts` i `PersonProfiles` nie istnieją w bazie → 500 z serwera, FE obsługuje gracefully (catch → null → formularz działa z initialData)
 
 Notatki dla następnej sesji (Paczka C — write path):
+
 - Branch: `persons-v2`
 - Następny checkpoint: FE-PV2-05 (PUT account+profile w SystemUsers)
 - `personsV2Helpers.ts` wymaga rozszerzenia o `putPersonAccountV2` i `putPersonProfileV2`
@@ -180,6 +229,7 @@ Notatki dla następnej sesji (Paczka C — write path):
 - Generyczne komponenty (RepositoryReact, FilterableTable, GeneralModal) MUSZĄ pozostać generyczne — żadnych parametrów specyficznych dla Persons/SystemUsers
 
 Next:
+
 - Next OPEN: FE-PV2-05
 - Prompt startowy dla następnej sesji: użyj checkpointu FE-PV2-05 z planu
 
@@ -191,23 +241,24 @@ Status: DONE
 Evidence:
 
 - Zmodyfikowano: `src/Persons/Modals/PersonModalBody.tsx`
-  - Dodano importy: `useState` z React, `Spinner` z react-bootstrap, `PersonAccountV2Payload` i `PersonProfileV2Payload` z bussinesTypes, `fetchPersonAccountV2` i `fetchPersonProfileV2` z personsV2Helpers
-  - Dodano stany lokalne: `v2Loading` (boolean), `accountV2` (PersonAccountV2Payload | null), `profileV2` (PersonProfileV2Payload | null)
-  - W useEffect: gdy `isEditing && initialData?.id`, rownolegle pobiera account i profile z v2 przez `Promise.all`
-  - Account i profile: zapisywane do lokalnego stanu (pola account sa zakomentowane w formularzu -- dane na potrzeby przyszlego write path FE-PV2-06)
-  - NIE nadpisujemy pol formularza danymi z account (roznica wzgledem SystemUsers -- tam pola systemRoleId/systemEmail sa aktywne)
-  - Obsluga bledow: catch loguje do console.error, nie blokuje formularza
-  - Cleanup: flaga `cancelled` zapobiega aktualizacji stanu po odmontowaniu
-  - Spinner: wyswietla komunikat "Ladowanie danych konta..." podczas v2Loading
-  - Obsluga null payload: setAccountV2/setProfileV2 przyjmuja null bez bledow
+    - Dodano importy: `useState` z React, `Spinner` z react-bootstrap, `PersonAccountV2Payload` i `PersonProfileV2Payload` z bussinesTypes, `fetchPersonAccountV2` i `fetchPersonProfileV2` z personsV2Helpers
+    - Dodano stany lokalne: `v2Loading` (boolean), `accountV2` (PersonAccountV2Payload | null), `profileV2` (PersonProfileV2Payload | null)
+    - W useEffect: gdy `isEditing && initialData?.id`, rownolegle pobiera account i profile z v2 przez `Promise.all`
+    - Account i profile: zapisywane do lokalnego stanu (pola account sa zakomentowane w formularzu -- dane na potrzeby przyszlego write path FE-PV2-06)
+    - NIE nadpisujemy pol formularza danymi z account (roznica wzgledem SystemUsers -- tam pola systemRoleId/systemEmail sa aktywne)
+    - Obsluga bledow: catch loguje do console.error, nie blokuje formularza
+    - Cleanup: flaga `cancelled` zapobiega aktualizacji stanu po odmontowaniu
+    - Spinner: wyswietla komunikat "Ladowanie danych konta..." podczas v2Loading
+    - Obsluga null payload: setAccountV2/setProfileV2 przyjmuja null bez bledow
 - Zachowano zasady:
-  - Generyczne komponenty (GeneralModal, RepositoryReact) NIE zostaly zmienione
-  - Pola account (systemRoleId, systemEmail) pozostaja zakomentowane -- NIE odkomentowano
-  - Logika v2 zyje w warstwie domenowej (personsV2Helpers + PersonModalBody)
-  - repository.items pozostaje source of truth dla listy
+    - Generyczne komponenty (GeneralModal, RepositoryReact) NIE zostaly zmienione
+    - Pola account (systemRoleId, systemEmail) pozostaja zakomentowane -- NIE odkomentowano
+    - Logika v2 zyje w warstwie domenowej (personsV2Helpers + PersonModalBody)
+    - repository.items pozostaje source of truth dla listy
 - walidacja: `npx tsc --noEmit` -- 0 bledow
 
 Next:
+
 - Next OPEN: FE-PV2-05
 
 ### Sesja 004
@@ -218,27 +269,28 @@ Status: DONE
 Evidence:
 
 - Utworzono nowy plik: `src/Persons/personsV2Helpers.ts`
-  - `validatePersonId(personId: unknown, context?: string): number` -- walidacja wg projektu z FE-PV2-02
-  - `fetchPersonAccountV2(personId: number): Promise<PersonAccountV2Payload | null>` -- GET `v2/persons/:id/account`, zwraca null przy bledzie/404
-  - `fetchPersonProfileV2(personId: number): Promise<PersonProfileV2Payload | null>` -- GET `v2/persons/:id/profile`, zwraca null przy bledzie/404
-  - Uzywa `ToolsFetch.fetchJsonWithSafeError` (istniejacy wzorzec fetch w codebase)
-  - Kazda funkcja fetch wywoluje `validatePersonId` przed zapytaniem
+    - `validatePersonId(personId: unknown, context?: string): number` -- walidacja wg projektu z FE-PV2-02
+    - `fetchPersonAccountV2(personId: number): Promise<PersonAccountV2Payload | null>` -- GET `v2/persons/:id/account`, zwraca null przy bledzie/404
+    - `fetchPersonProfileV2(personId: number): Promise<PersonProfileV2Payload | null>` -- GET `v2/persons/:id/profile`, zwraca null przy bledzie/404
+    - Uzywa `ToolsFetch.fetchJsonWithSafeError` (istniejacy wzorzec fetch w codebase)
+    - Kazda funkcja fetch wywoluje `validatePersonId` przed zapytaniem
 - Zmodyfikowano: `src/Admin/SystemUsers/Modals/SystemUserModalBody.tsx`
-  - Dodano import `fetchPersonAccountV2`, `fetchPersonProfileV2` z personsV2Helpers
-  - Dodano stan `v2Loading` (boolean) i `profileV2` (PersonProfileV2Payload | null)
-  - W useEffect: gdy `isEditing && initialData?.id`, rownolegle pobiera account i profile z v2
-  - Account: nadpisuje `systemRoleId` i `systemEmail` w formularzu przez `reset()` + `trigger()`
-  - Profile: zapisuje do lokalnego stanu `profileV2` (na potrzeby przyszlego write path FE-PV2-05)
-  - Obsluga bledow: catch loguje do console.error, nie blokuje formularza
-  - Cleanup: flaga `cancelled` zapobiega aktualizacji stanu po odmontowaniu
-  - Spinner: wyswietla komunikat "Ladowanie danych konta..." podczas v2Loading
+    - Dodano import `fetchPersonAccountV2`, `fetchPersonProfileV2` z personsV2Helpers
+    - Dodano stan `v2Loading` (boolean) i `profileV2` (PersonProfileV2Payload | null)
+    - W useEffect: gdy `isEditing && initialData?.id`, rownolegle pobiera account i profile z v2
+    - Account: nadpisuje `systemRoleId` i `systemEmail` w formularzu przez `reset()` + `trigger()`
+    - Profile: zapisuje do lokalnego stanu `profileV2` (na potrzeby przyszlego write path FE-PV2-05)
+    - Obsluga bledow: catch loguje do console.error, nie blokuje formularza
+    - Cleanup: flaga `cancelled` zapobiega aktualizacji stanu po odmontowaniu
+    - Spinner: wyswietla komunikat "Ladowanie danych konta..." podczas v2Loading
 - Zachowano zasady:
-  - Generyczne komponenty (GeneralModal, RepositoryReact) NIE zostaly zmienione
-  - Logika v2 zyje w warstwie domenowej (personsV2Helpers + SystemUserModalBody)
-  - repository.items pozostaje source of truth dla listy
+    - Generyczne komponenty (GeneralModal, RepositoryReact) NIE zostaly zmienione
+    - Logika v2 zyje w warstwie domenowej (personsV2Helpers + SystemUserModalBody)
+    - repository.items pozostaje source of truth dla listy
 - walidacja: `npx tsc --noEmit` -- 0 bledow
 
 Next:
+
 - Next OPEN: FE-PV2-04
 
 ### Sesja 003
@@ -275,7 +327,9 @@ export function validatePersonId(personId: unknown, context?: string): number {
         throw new Error(`personId musi byc liczba, otrzymano: ${typeof personId}${context ? ` (${context})` : ""}`);
     }
     if (!Number.isInteger(personId) || personId <= 0) {
-        throw new Error(`personId musi byc dodatnia liczba calkowita, otrzymano: ${personId}${context ? ` (${context})` : ""}`);
+        throw new Error(
+            `personId musi byc dodatnia liczba calkowita, otrzymano: ${personId}${context ? ` (${context})` : ""}`,
+        );
     }
     return personId;
 }
@@ -283,20 +337,21 @@ export function validatePersonId(personId: unknown, context?: string): number {
 
 #### Scenariusze walidacji
 
-| Wejscie | Wynik | Komunikat |
-|---|---|---|
-| `42` | OK, zwraca `42` | -- |
-| `0` | throw Error | `personId musi byc dodatnia liczba calkowita, otrzymano: 0` |
-| `-5` | throw Error | `personId musi byc dodatnia liczba calkowita, otrzymano: -5` |
-| `3.14` | throw Error | `personId musi byc dodatnia liczba calkowita, otrzymano: 3.14` |
-| `undefined` | throw Error | `personId jest wymagany` |
-| `null` | throw Error | `personId jest wymagany` |
-| `"abc"` | throw Error | `personId musi byc liczba, otrzymano: string` |
-| `NaN` | throw Error | `personId musi byc liczba, otrzymano: number` |
+| Wejscie     | Wynik           | Komunikat                                                      |
+| ----------- | --------------- | -------------------------------------------------------------- |
+| `42`        | OK, zwraca `42` | --                                                             |
+| `0`         | throw Error     | `personId musi byc dodatnia liczba calkowita, otrzymano: 0`    |
+| `-5`        | throw Error     | `personId musi byc dodatnia liczba calkowita, otrzymano: -5`   |
+| `3.14`      | throw Error     | `personId musi byc dodatnia liczba calkowita, otrzymano: 3.14` |
+| `undefined` | throw Error     | `personId jest wymagany`                                       |
+| `null`      | throw Error     | `personId jest wymagany`                                       |
+| `"abc"`     | throw Error     | `personId musi byc liczba, otrzymano: string`                  |
+| `NaN`       | throw Error     | `personId musi byc liczba, otrzymano: number`                  |
 
 #### Typ parametru: `unknown`
 
 Parametr wejsciowy ma typ `unknown` (nie `number`), poniewaz:
+
 - `repository.currentItems[0]` moze byc `undefined` jesli lista jest pusta
 - Dane z formularza moga zawierac string zamiast number
 - Bezpieczniej walidowac runtime niz ufac typom TS
@@ -328,6 +383,7 @@ await fetch(`${serverUrl}/v2/persons/${personId}/account`, { method: "PUT", body
 - walidacja: checkpoint projektowy (design-only), brak zmian w kodzie zrodlowym
 
 Next:
+
 - Next OPEN: FE-PV2-03
 
 ### Sesja 002
@@ -340,26 +396,27 @@ Evidence:
 - Analiza: przeczytano SystemUserModalBody.tsx, PersonModalBody.tsx, bussinesTypes.d.ts, oba ValidationSchema
 - Mapa pól formularzy → payloady v2:
 
-| Pole formularza | Moduł | Cel v2 | Pole v2 payload | Uwagi |
-|---|---|---|---|---|
-| `_entity` | both | person-base | entityId (z `_entity.id`) | required |
-| `name` | both | person-base | name | required, max 50 |
-| `surname` | both | person-base | surname | required, max 50 |
-| `position` | both | person-base | position | required, max 200 |
-| `email` | both | person-base | email | opcjonalny, max 50 |
-| `cellPhone` | both | person-base | cellPhone | opcjonalny, max 25 |
-| `phone` | both | person-base | phone | opcjonalny, max 25 |
-| `comment` | both | person-base | comment | opcjonalny, max 200 |
-| `systemRoleId` | SystemUsers (aktywny), Persons (zakomentowany) | account | `PersonAccountV2Payload.systemRoleId` | required w SystemUser schema |
-| `systemEmail` | SystemUsers (aktywny), Persons (zakomentowany) | account | `PersonAccountV2Payload.systemEmail` | aktywny w SystemUser |
-| `googleId` | oba zakomentowane | account | `PersonAccountV2Payload.googleId` | zakomentowany |
-| `googleRefreshToken` | oba zakomentowane | account | `PersonAccountV2Payload.googleRefreshToken` | zakomentowany |
+| Pole formularza      | Moduł                                          | Cel v2      | Pole v2 payload                             | Uwagi                        |
+| -------------------- | ---------------------------------------------- | ----------- | ------------------------------------------- | ---------------------------- |
+| `_entity`            | both                                           | person-base | entityId (z `_entity.id`)                   | required                     |
+| `name`               | both                                           | person-base | name                                        | required, max 50             |
+| `surname`            | both                                           | person-base | surname                                     | required, max 50             |
+| `position`           | both                                           | person-base | position                                    | required, max 200            |
+| `email`              | both                                           | person-base | email                                       | opcjonalny, max 50           |
+| `cellPhone`          | both                                           | person-base | cellPhone                                   | opcjonalny, max 25           |
+| `phone`              | both                                           | person-base | phone                                       | opcjonalny, max 25           |
+| `comment`            | both                                           | person-base | comment                                     | opcjonalny, max 200          |
+| `systemRoleId`       | SystemUsers (aktywny), Persons (zakomentowany) | account     | `PersonAccountV2Payload.systemRoleId`       | required w SystemUser schema |
+| `systemEmail`        | SystemUsers (aktywny), Persons (zakomentowany) | account     | `PersonAccountV2Payload.systemEmail`        | aktywny w SystemUser         |
+| `googleId`           | oba zakomentowane                              | account     | `PersonAccountV2Payload.googleId`           | zakomentowany                |
+| `googleRefreshToken` | oba zakomentowane                              | account     | `PersonAccountV2Payload.googleRefreshToken` | zakomentowany                |
 
 - Pola v2 bez odpowiednika w UI: `microsoftId`, `microsoftRefreshToken`, `isActive` (account); `headline`, `summary`, `profileIsVisible` (profile)
 - Żadne aktywne pole formularza nie mapuje się do profile payload
 - walidacja: analiza kodu, brak zmian w kodzie
 
 Next:
+
 - Next OPEN: FE-PV2-02
 
 ### Sesja 001

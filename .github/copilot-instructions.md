@@ -157,6 +157,16 @@ updateSnapshot(); // Persist to sessionStorage
     - `"criteria+objects"`: Stores filter criteria AND data
     - `"criteria-only"`: Stores only filter criteria (data reloaded on mount)
 
+### Copilot Prompt Trigger: New CRUD Module
+
+- Use `.github/prompts/new-crud-module.prompt.md` when context indicates creating a new CRUD module, even if user does not explicitly say "CRUD".
+- Treat as context signals: new entity + list + add/edit modals, request for new `FilterableTable` page, or plan checkpoint requiring a new module from scratch.
+- Do not use this prompt for small edits/refactors in existing modules.
+- If CRUD guide rules do not fit the task or would create unnecessary complexity, ask the user to choose between:
+    - full CRUD module from guide,
+    - minimal change in existing code.
+- This clarification is allowed and required both during planning and during implementation.
+
 ## 📚 Extended Documentation
 
 ### Architecture Deep Dives
