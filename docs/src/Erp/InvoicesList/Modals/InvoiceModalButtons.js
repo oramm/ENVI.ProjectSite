@@ -3,13 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvoiceEditModalButton = InvoiceEditModalButton;
-exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
-exports.CopyButton = CopyButton;
-exports.ChangeStatusButton = ChangeStatusButton;
-exports.InvoiceIssueModalButton = InvoiceIssueModalButton;
-exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
-exports.ActionButton = ActionButton;
+exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.CopyButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const InvoiceModalBody_1 = require("./InvoiceModalBody");
@@ -35,6 +29,7 @@ function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetri
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceEditModalButton = InvoiceEditModalButton;
 function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -48,6 +43,7 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
 function CopyButton({ onError, invoice: passedInvoice, }) {
     const [requestPending, setRequestPending] = react_1.default.useState(false);
     // Spróbuj uzyskać fakturę z kontekstu, ale nie rzucaj błędem jeśli nie jest dostępna
@@ -92,6 +88,7 @@ function CopyButton({ onError, invoice: passedInvoice, }) {
             "Kopiuj",
             requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))));
 }
+exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus, }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {
@@ -100,6 +97,7 @@ function ChangeStatusButton({ specialActionRoute, newStatus, }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Ustaw jako ${newStatus}`, variant: "primary", size: "sm", onClick: handleChangeStatus }, `Ustaw jako ${newStatus}`));
 }
+exports.ChangeStatusButton = ChangeStatusButton;
 function InvoiceIssueModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -115,6 +113,7 @@ function InvoiceIssueModalButton() {
             buttonVariant: "primary",
         } }));
 }
+exports.InvoiceIssueModalButton = InvoiceIssueModalButton;
 function InvoiceSetAsSentModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -130,6 +129,7 @@ function InvoiceSetAsSentModalButton() {
             buttonVariant: "primary",
         } }));
 }
+exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
 function ActionButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     switch (invoice.status) {
@@ -148,3 +148,4 @@ function ActionButton() {
             return react_1.default.createElement(react_1.default.Fragment, null);
     }
 }
+exports.ActionButton = ActionButton;

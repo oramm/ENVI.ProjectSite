@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SkillDictionaryEditModalButton = SkillDictionaryEditModalButton;
-exports.SkillDictionaryAddNewModalButton = SkillDictionaryAddNewModalButton;
+exports.SkillDictionaryAddNewModalButton = exports.SkillDictionaryEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const SkillsDictionaryController_1 = require("../SkillsDictionaryController");
@@ -22,6 +21,7 @@ function SkillDictionaryEditModalButton({ modalProps: { onEdit, initialData } })
             buttonVariant: "outline-success",
         } }));
 }
+exports.SkillDictionaryEditModalButton = SkillDictionaryEditModalButton;
 function SkillDictionaryAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,3 +34,4 @@ function SkillDictionaryAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SkillDictionaryAddNewModalButton = SkillDictionaryAddNewModalButton;

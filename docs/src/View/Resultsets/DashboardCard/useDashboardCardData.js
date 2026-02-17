@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useDashboardCardData = useDashboardCardData;
+exports.useDashboardCardData = void 0;
 const react_1 = require("react");
 function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
@@ -36,3 +36,4 @@ function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
     }, [data, buildCustomSections, icons]);
     return { dataLoaded, data, cardData };
 }
+exports.useDashboardCardData = useDashboardCardData;

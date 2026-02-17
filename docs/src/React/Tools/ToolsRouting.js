@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildDetailsPath = buildDetailsPath;
+exports.buildDetailsPath = void 0;
 function buildDetailsPath(routeBase, id) {
     let normalized = routeBase.trim();
     if (!normalized)
@@ -11,3 +11,4 @@ function buildDetailsPath(routeBase, id) {
         normalized = normalized + "/";
     return `${normalized}${id}`;
 }
+exports.buildDetailsPath = buildDetailsPath;

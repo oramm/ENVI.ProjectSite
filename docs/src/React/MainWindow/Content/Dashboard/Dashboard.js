@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Dashboard;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const MyData_1 = __importDefault(require("./MyData"));
@@ -24,3 +23,4 @@ function Dashboard() {
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }))));
 }
+exports.default = Dashboard;

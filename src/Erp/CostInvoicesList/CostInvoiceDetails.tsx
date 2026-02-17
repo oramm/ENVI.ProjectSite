@@ -18,6 +18,7 @@ import {
     updateCostInvoice,
     updateCostInvoiceItem,
     bookCostInvoice,
+    CostInvoiceApiError,
     CostInvoiceStatus,
     CostInvoiceStatuses,
 } from "./CostInvoicesController";
@@ -35,6 +36,7 @@ export default function CostInvoiceDetails() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [validationDetails, setValidationDetails] = useState<string[]>([]);
     const [success, setSuccess] = useState<string | null>(null);
 
     // Edytowalne pola faktury
@@ -114,48 +116,67 @@ export default function CostInvoiceDetails() {
         if (!invoice) return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
         setSuccess(null);
 
         try {
-            // Zapisz zmiany faktury
-            await updateCostInvoice(invoice.id, {
-                categoryId,
-                bookingPercentage,
-                vatDeductionPercentage,
-                notes: notes || null,
-                status,
-            });
-
-            // Zapisz zmiany pozycji
-            for (const [itemId, changes] of editedItems) {
-                if (Object.keys(changes).length > 0) {
-                    await updateCostInvoiceItem(invoice.id, itemId, changes);
-                }
-            }
+            await persistChanges(invoice.id);
 
             setSuccess("Zmiany zostały zapisane");
-            setEditedItems(new Map());
 
             // Odśwież dane
             await loadData();
         } catch (err) {
+            if (err instanceof CostInvoiceApiError) {
+                setValidationDetails(err.details);
+            }
             setError(err instanceof Error ? err.message : "Błąd zapisywania");
         } finally {
             setSaving(false);
         }
     };
 
+    const persistChanges = async (invoiceId: number) => {
+        await updateCostInvoice(invoiceId, {
+            categoryId,
+            bookingPercentage,
+            vatDeductionPercentage,
+            notes: notes || null,
+            status,
+        });
+
+        for (const [itemId, changes] of editedItems) {
+            if (Object.keys(changes).length > 0) {
+                await updateCostInvoiceItem(invoiceId, itemId, changes);
+            }
+        }
+
+        setEditedItems(new Map());
+    };
+
     const handleBook = async () => {
         if (!invoice) return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
 
         try {
+            await persistChanges(invoice.id);
             const updated = await bookCostInvoice(invoice.id);
             setInvoice((prev) => (prev ? { ...updated, items: prev.items || updated.items } : updated));
             setStatus(updated.status);
             setSuccess("Faktura została zaksięgowana");
         } catch (err) {
+            if (err instanceof CostInvoiceApiError) {
+                setValidationDetails(err.details);
+
+                console.error("[CostInvoiceDetails] Błąd walidacji księgowania", {
+                    invoiceId: invoice.id,
+                    status: err.status,
+                    details: err.details,
+                    payload: err.payload,
+                });
+            }
             setError(err instanceof Error ? err.message : "Błąd księgowania");
         } finally {
             setSaving(false);
@@ -290,8 +311,22 @@ export default function CostInvoiceDetails() {
     return (
         <Container fluid className="py-3">
             {error && (
-                <Alert variant="danger" onClose={() => setError(null)} dismissible>
-                    {error}
+                <Alert
+                    variant="danger"
+                    onClose={() => {
+                        setError(null);
+                        setValidationDetails([]);
+                    }}
+                    dismissible
+                >
+                    <div>{error}</div>
+                    {validationDetails.length > 0 && (
+                        <ul className="mb-0 mt-2">
+                            {validationDetails.map((detail, index) => (
+                                <li key={`${index}_${detail}`}>{detail}</li>
+                            ))}
+                        </ul>
+                    )}
                 </Alert>
             )}
             {success && (

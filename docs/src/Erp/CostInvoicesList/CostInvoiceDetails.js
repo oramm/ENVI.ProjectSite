@@ -15,28 +15,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CostInvoiceDetails;
 const react_1 = __importStar(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const react_bootstrap_1 = require("react-bootstrap");
@@ -53,6 +42,7 @@ function CostInvoiceDetails() {
     const [loading, setLoading] = (0, react_1.useState)(true);
     const [saving, setSaving] = (0, react_1.useState)(false);
     const [error, setError] = (0, react_1.useState)(null);
+    const [validationDetails, setValidationDetails] = (0, react_1.useState)([]);
     const [success, setSuccess] = (0, react_1.useState)(null);
     // Edytowalne pola faktury
     const [categoryId, setCategoryId] = (0, react_1.useState)(null);
@@ -119,46 +109,62 @@ function CostInvoiceDetails() {
             return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
         setSuccess(null);
         try {
-            // Zapisz zmiany faktury
-            await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, {
-                categoryId,
-                bookingPercentage,
-                vatDeductionPercentage,
-                notes: notes || null,
-                status,
-            });
-            // Zapisz zmiany pozycji
-            for (const [itemId, changes] of editedItems) {
-                if (Object.keys(changes).length > 0) {
-                    await (0, CostInvoicesController_1.updateCostInvoiceItem)(invoice.id, itemId, changes);
-                }
-            }
+            await persistChanges(invoice.id);
             setSuccess("Zmiany zostały zapisane");
-            setEditedItems(new Map());
             // Odśwież dane
             await loadData();
         }
         catch (err) {
+            if (err instanceof CostInvoicesController_1.CostInvoiceApiError) {
+                setValidationDetails(err.details);
+            }
             setError(err instanceof Error ? err.message : "Błąd zapisywania");
         }
         finally {
             setSaving(false);
         }
     };
+    const persistChanges = async (invoiceId) => {
+        await (0, CostInvoicesController_1.updateCostInvoice)(invoiceId, {
+            categoryId,
+            bookingPercentage,
+            vatDeductionPercentage,
+            notes: notes || null,
+            status,
+        });
+        for (const [itemId, changes] of editedItems) {
+            if (Object.keys(changes).length > 0) {
+                await (0, CostInvoicesController_1.updateCostInvoiceItem)(invoiceId, itemId, changes);
+            }
+        }
+        setEditedItems(new Map());
+    };
     const handleBook = async () => {
         if (!invoice)
             return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
         try {
+            await persistChanges(invoice.id);
             const updated = await (0, CostInvoicesController_1.bookCostInvoice)(invoice.id);
             setInvoice((prev) => (prev ? { ...updated, items: prev.items || updated.items } : updated));
             setStatus(updated.status);
             setSuccess("Faktura została zaksięgowana");
         }
         catch (err) {
+            if (err instanceof CostInvoicesController_1.CostInvoiceApiError) {
+                setValidationDetails(err.details);
+                console.error("[CostInvoiceDetails] Błąd walidacji księgowania", {
+                    invoiceId: invoice.id,
+                    status: err.status,
+                    details: err.details,
+                    payload: err.payload,
+                });
+            }
             setError(err instanceof Error ? err.message : "Błąd księgowania");
         }
         finally {
@@ -231,7 +237,12 @@ function CostInvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: 100, value: vatDeductionPercentage, disabled: isBooked || !isSelected, onChange: (e) => handleItemChange(item.id, "vatDeductionPercentage", Number(e.target.value)) }))));
             }))))));
     return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "py-3" },
-        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setError(null), dismissible: true }, error)),
+        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => {
+                setError(null);
+                setValidationDetails([]);
+            }, dismissible: true },
+            react_1.default.createElement("div", null, error),
+            validationDetails.length > 0 && (react_1.default.createElement("ul", { className: "mb-0 mt-2" }, validationDetails.map((detail, index) => (react_1.default.createElement("li", { key: `${index}_${detail}` }, detail))))))),
         success && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", onClose: () => setSuccess(null), dismissible: true }, success)),
         react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-3" },
             react_1.default.createElement(react_bootstrap_1.Card.Header, null,
@@ -357,3 +368,4 @@ function CostInvoiceDetails() {
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
                 "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę"))))));
 }
+exports.default = CostInvoiceDetails;
