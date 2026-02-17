@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
+exports.TasksGlobalFilterBody = void 0;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const ContractContext_1 = require("../Contracts/ContractsList/ContractContext");
@@ -21,3 +21,4 @@ function TasksGlobalFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
             react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
 }
+exports.TasksGlobalFilterBody = TasksGlobalFilterBody;

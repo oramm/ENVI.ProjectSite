@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CityEditModalButton = CityEditModalButton;
-exports.CityAddNewModalButton = CityAddNewModalButton;
+exports.CityAddNewModalButton = exports.CityEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const CitiesController_1 = require("../CitiesController");
@@ -22,6 +21,7 @@ function CityEditModalButton({ modalProps: { onEdit, initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.CityEditModalButton = CityEditModalButton;
 function CityAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,3 +34,4 @@ function CityAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.CityAddNewModalButton = CityAddNewModalButton;

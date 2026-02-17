@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvoiceItemEditModalButton = InvoiceItemEditModalButton;
-exports.InvoiceItemAddNewModalButton = InvoiceItemAddNewModalButton;
+exports.InvoiceItemAddNewModalButton = exports.InvoiceItemEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const InvoiceItemModalBody_1 = require("./InvoiceItemModalBody");
@@ -23,6 +22,7 @@ function InvoiceItemEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceItemEditModalButton = InvoiceItemEditModalButton;
 function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -35,3 +35,4 @@ function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceItemAddNewModalButton = InvoiceItemAddNewModalButton;

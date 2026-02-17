@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProfileSkillEditModalButton = createProfileSkillEditModalButton;
-exports.createProfileSkillAddNewModalButton = createProfileSkillAddNewModalButton;
+exports.createProfileSkillAddNewModalButton = exports.createProfileSkillEditModalButton = void 0;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../View/Modals/GeneralModalButtons");
 const ProfileSkillModalBody_1 = require("./ProfileSkillModalBody");
@@ -23,6 +22,7 @@ function createProfileSkillEditModalButton(repository) {
             } }));
     };
 }
+exports.createProfileSkillEditModalButton = createProfileSkillEditModalButton;
 function createProfileSkillAddNewModalButton(repository) {
     return function ProfileSkillAddNewModalButton({ modalProps: { onAddNew } }) {
         return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
@@ -37,3 +37,4 @@ function createProfileSkillAddNewModalButton(repository) {
             } }));
     };
 }
+exports.createProfileSkillAddNewModalButton = createProfileSkillAddNewModalButton;

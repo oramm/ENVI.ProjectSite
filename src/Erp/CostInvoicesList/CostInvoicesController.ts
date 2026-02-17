@@ -7,6 +7,86 @@ import {
 import MainSetup from "../../React/MainSetupReact";
 import RepositoryReact from "../../React/RepositoryReact";
 
+type CostInvoiceApiErrorPayload = {
+    error?: string;
+    message?: string;
+    errorMessage?: string;
+    details?: unknown;
+    validationErrors?: unknown;
+    errors?: unknown;
+    [key: string]: unknown;
+};
+
+export class CostInvoiceApiError extends Error {
+    status?: number;
+    details: string[];
+    payload?: CostInvoiceApiErrorPayload;
+
+    constructor(message: string, options?: { status?: number; details?: string[]; payload?: CostInvoiceApiErrorPayload }) {
+        super(message);
+        this.name = "CostInvoiceApiError";
+        this.status = options?.status;
+        this.details = options?.details || [];
+        this.payload = options?.payload;
+    }
+}
+
+const toDetailList = (value: unknown): string[] => {
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+        return value
+            .map((entry) => (typeof entry === "string" ? entry : JSON.stringify(entry)))
+            .filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0);
+    }
+
+    if (typeof value === "object") {
+        return Object.entries(value as Record<string, unknown>).flatMap(([key, detailsValue]) => {
+            if (Array.isArray(detailsValue)) {
+                return detailsValue.map((entry) => `${key}: ${String(entry)}`);
+            }
+            if (detailsValue) {
+                return `${key}: ${String(detailsValue)}`;
+            }
+            return [];
+        });
+    }
+
+    if (typeof value === "string") {
+        return [value];
+    }
+
+    return [];
+};
+
+async function throwCostInvoiceApiError(response: Response, fallbackMessage: string): Promise<never> {
+    let payload: CostInvoiceApiErrorPayload | undefined;
+
+    try {
+        payload = (await response.json()) as CostInvoiceApiErrorPayload;
+    } catch {
+        payload = undefined;
+    }
+
+    const message =
+        payload?.error ||
+        payload?.message ||
+        payload?.errorMessage ||
+        `${fallbackMessage} (${response.status})`;
+
+    const details = [
+        ...toDetailList(payload?.details),
+        ...toDetailList(payload?.validationErrors),
+        ...toDetailList(payload?.errors),
+    ];
+
+    throw new CostInvoiceApiError(message, {
+        status: response.status,
+        details,
+        payload,
+    });
+}
+
 /**
  * Statusy faktur kosztowych
  */
@@ -37,6 +117,44 @@ export const costInvoicesRepository = new RepositoryReact<CostInvoice>({
  */
 let categoriesCache: CostInvoiceCategory[] | null = null;
 
+function normalizeCategoryName(name: string): string {
+    return name.trim().toLocaleLowerCase("pl-PL");
+}
+
+function getCategoryDedupKey(category: CostInvoiceCategory): string {
+    return `${normalizeCategoryName(category.name)}|${category.vatDeductionDefault}`;
+}
+
+function deduplicateCategories(categories: CostInvoiceCategory[]): CostInvoiceCategory[] {
+    const seen = new Map<string, CostInvoiceCategory>();
+    const duplicates = new Map<string, number[]>();
+
+    for (const category of categories) {
+        const key = getCategoryDedupKey(category);
+        const existing = seen.get(key);
+
+        if (!existing) {
+            seen.set(key, category);
+            continue;
+        }
+
+        const existingIds = duplicates.get(key) || [existing.id];
+        existingIds.push(category.id);
+        duplicates.set(key, existingIds);
+    }
+
+    if (duplicates.size > 0) {
+        console.warn("[CostInvoices] API zwróciło zduplikowane kategorie kosztów", {
+            duplicates: Array.from(duplicates.entries()).map(([key, ids]) => ({
+                key,
+                ids,
+            })),
+        });
+    }
+
+    return Array.from(seen.values());
+}
+
 /**
  * Pobiera listę kategorii kosztów
  */
@@ -49,11 +167,11 @@ export async function fetchCategories(): Promise<CostInvoiceCategory[]> {
     });
 
     if (!response.ok) {
-        throw new Error("Błąd pobierania kategorii");
+        await throwCostInvoiceApiError(response, "Błąd pobierania kategorii");
     }
 
     const result = await response.json();
-    categoriesCache = result.data;
+    categoriesCache = deduplicateCategories(result.data || []);
     return categoriesCache!;
 }
 
@@ -75,8 +193,7 @@ export async function syncFromKsef(params: {
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || `Błąd synchronizacji (${response.status})`);
+        await throwCostInvoiceApiError(response, "Błąd synchronizacji");
     }
 
     return response.json();
@@ -92,7 +209,7 @@ export async function fetchCostInvoiceDetails(id: number): Promise<CostInvoice> 
     });
 
     if (!response.ok) {
-        throw new Error("Błąd pobierania szczegółów faktury");
+        await throwCostInvoiceApiError(response, "Błąd pobierania szczegółów faktury");
     }
 
     const result = await response.json();
@@ -122,8 +239,7 @@ export async function updateCostInvoice(
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji faktury");
+        await throwCostInvoiceApiError(response, "Błąd aktualizacji faktury");
     }
 
     const result = await response.json();
@@ -153,8 +269,7 @@ export async function updateCostInvoiceItem(
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji pozycji");
+        await throwCostInvoiceApiError(response, "Błąd aktualizacji pozycji");
     }
 }
 
@@ -168,8 +283,7 @@ export async function bookCostInvoice(id: number): Promise<CostInvoice> {
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd księgowania faktury");
+        await throwCostInvoiceApiError(response, "Błąd księgowania faktury");
     }
 
     const result = await response.json();
@@ -193,8 +307,7 @@ export async function fetchMonthlyReport(
     );
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd pobierania raportu");
+        await throwCostInvoiceApiError(response, "Błąd pobierania raportu");
     }
 
     if (format === "json") {

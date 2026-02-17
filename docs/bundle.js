@@ -10,14 +10,15 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isOurContract = isOurContract;
-exports.isOtherContract = isOtherContract;
+exports.isOtherContract = exports.isOurContract = void 0;
 function isOurContract(x) {
     return !!x?._type?.isOur;
 }
+exports.isOurContract = isOurContract;
 function isOtherContract(x) {
     return x?._type?.isOur === false;
 }
+exports.isOtherContract = isOtherContract;
 
 
 /***/ }),
@@ -94335,28 +94336,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = CitiesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const CityModalButtons_1 = __webpack_require__(/*! ./Modals/CityModalButtons */ "./src/Admin/Cities/Modals/CityModalButtons.tsx");
@@ -94381,6 +94371,7 @@ function CitiesSearch({ title }) {
             { header: "Oznaczenie", objectAttributeToShow: "code" },
         ], AddNewButtonComponents: [CityModalButtons_1.CityAddNewModalButton], EditButtonComponent: CityModalButtons_1.CityEditModalButton, isDeletable: true, repository: CitiesController_1.citiesRepository, selectedObjectRoute: "/city/" }));
 }
+exports["default"] = CitiesSearch;
 
 
 /***/ }),
@@ -94397,7 +94388,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CitiesFilterBody = CitiesFilterBody;
+exports.CitiesFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -94408,6 +94399,7 @@ function CitiesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') }))));
 }
+exports.CitiesFilterBody = CitiesFilterBody;
 
 
 /***/ }),
@@ -94436,25 +94428,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CityModalBody = CityModalBody;
+exports.CityModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -94480,6 +94462,7 @@ function CityModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "code", errors: errors }),
             react_1.default.createElement(react_bootstrap_1.Form.Text, { muted: true }, "Je\u015Bli nie podasz, system wygeneruje automatycznie."))));
 }
+exports.CityModalBody = CityModalBody;
 
 
 /***/ }),
@@ -94496,8 +94479,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CityEditModalButton = CityEditModalButton;
-exports.CityAddNewModalButton = CityAddNewModalButton;
+exports.CityAddNewModalButton = exports.CityEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const CitiesController_1 = __webpack_require__(/*! ../CitiesController */ "./src/Admin/Cities/CitiesController.ts");
@@ -94515,6 +94497,7 @@ function CityEditModalButton({ modalProps: { onEdit, initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.CityEditModalButton = CityEditModalButton;
 function CityAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -94527,6 +94510,7 @@ function CityAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.CityAddNewModalButton = CityAddNewModalButton;
 
 
 /***/ }),
@@ -94555,25 +94539,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeCityValidationSchema = makeCityValidationSchema;
+exports.makeCityValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -94594,6 +94568,7 @@ function makeCityValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeCityValidationSchema = makeCityValidationSchema;
 
 
 /***/ }),
@@ -94610,7 +94585,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractRangeFilterBody = ContractRangeFilterBody;
+exports.ContractRangeFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -94621,6 +94596,7 @@ function ContractRangeFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") }))));
 }
+exports.ContractRangeFilterBody = ContractRangeFilterBody;
 
 
 /***/ }),
@@ -94676,28 +94652,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ContractRangesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const ContractRangeModalButtons_1 = __webpack_require__(/*! ./Modals/ContractRangeModalButtons */ "./src/Admin/ContractRanges/Modals/ContractRangeModalButtons.tsx");
@@ -94722,6 +94687,7 @@ function ContractRangesSearch({ title }) {
             { header: "Opis", objectAttributeToShow: "description" },
         ], AddNewButtonComponents: [ContractRangeModalButtons_1.ContractRangeAddNewModalButton], EditButtonComponent: ContractRangeModalButtons_1.ContractRangeEditModalButton, isDeletable: true, repository: ContractRangesController_1.contractRangesRepository, selectedObjectRoute: "/contractRange/" }));
 }
+exports["default"] = ContractRangesSearch;
 
 
 /***/ }),
@@ -94750,25 +94716,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractRangeModalBody = ContractRangeModalBody;
+exports.ContractRangeModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -94793,6 +94749,7 @@ function ContractRangeModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
+exports.ContractRangeModalBody = ContractRangeModalBody;
 
 
 /***/ }),
@@ -94809,8 +94766,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractRangeEditModalButton = ContractRangeEditModalButton;
-exports.ContractRangeAddNewModalButton = ContractRangeAddNewModalButton;
+exports.ContractRangeAddNewModalButton = exports.ContractRangeEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ContractRangesController_1 = __webpack_require__(/*! ../ContractRangesController */ "./src/Admin/ContractRanges/ContractRangesController.ts");
@@ -94828,6 +94784,7 @@ function ContractRangeEditModalButton({ modalProps: { onEdit, initialData }, }) 
             buttonVariant: "outline-success",
         } }));
 }
+exports.ContractRangeEditModalButton = ContractRangeEditModalButton;
 function ContractRangeAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -94840,6 +94797,7 @@ function ContractRangeAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ContractRangeAddNewModalButton = ContractRangeAddNewModalButton;
 
 
 /***/ }),
@@ -94868,25 +94826,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeContractRangeValidationSchema = makeContractRangeValidationSchema;
+exports.makeContractRangeValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -94900,6 +94848,7 @@ function makeContractRangeValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeContractRangeValidationSchema = makeContractRangeValidationSchema;
 
 
 /***/ }),
@@ -94928,25 +94877,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SkillDictionaryModalBody = SkillDictionaryModalBody;
+exports.SkillDictionaryModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -94966,6 +94905,7 @@ function SkillDictionaryModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj nazw\u0119 specjalizacji", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "name", errors: errors }))));
 }
+exports.SkillDictionaryModalBody = SkillDictionaryModalBody;
 
 
 /***/ }),
@@ -94982,8 +94922,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SkillDictionaryEditModalButton = SkillDictionaryEditModalButton;
-exports.SkillDictionaryAddNewModalButton = SkillDictionaryAddNewModalButton;
+exports.SkillDictionaryAddNewModalButton = exports.SkillDictionaryEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const SkillsDictionaryController_1 = __webpack_require__(/*! ../SkillsDictionaryController */ "./src/Admin/SkillsDictionary/SkillsDictionaryController.ts");
@@ -95001,6 +94940,7 @@ function SkillDictionaryEditModalButton({ modalProps: { onEdit, initialData } })
             buttonVariant: "outline-success",
         } }));
 }
+exports.SkillDictionaryEditModalButton = SkillDictionaryEditModalButton;
 function SkillDictionaryAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -95013,6 +94953,7 @@ function SkillDictionaryAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SkillDictionaryAddNewModalButton = SkillDictionaryAddNewModalButton;
 
 
 /***/ }),
@@ -95041,25 +94982,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeSkillDictionaryValidationSchema = makeSkillDictionaryValidationSchema;
+exports.makeSkillDictionaryValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -95072,6 +95003,7 @@ function makeSkillDictionaryValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeSkillDictionaryValidationSchema = makeSkillDictionaryValidationSchema;
 
 
 /***/ }),
@@ -95115,7 +95047,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SkillsDictionaryFilterBody = SkillsDictionaryFilterBody;
+exports.SkillsDictionaryFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -95126,6 +95058,7 @@ function SkillsDictionaryFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") }))));
 }
+exports.SkillsDictionaryFilterBody = SkillsDictionaryFilterBody;
 
 
 /***/ }),
@@ -95154,28 +95087,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = SkillsDictionarySearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const SkillDictionaryModalButtons_1 = __webpack_require__(/*! ./Modals/SkillDictionaryModalButtons */ "./src/Admin/SkillsDictionary/Modals/SkillDictionaryModalButtons.tsx");
@@ -95189,6 +95111,7 @@ function SkillsDictionarySearch({ title }) {
             { header: "Nazwa", objectAttributeToShow: "name" },
         ], AddNewButtonComponents: [SkillDictionaryModalButtons_1.SkillDictionaryAddNewModalButton], EditButtonComponent: SkillDictionaryModalButtons_1.SkillDictionaryEditModalButton, isDeletable: true, repository: SkillsDictionaryController_1.skillsDictionaryRepository }));
 }
+exports["default"] = SkillsDictionarySearch;
 
 
 /***/ }),
@@ -95217,25 +95140,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SystemUserModalBody = SystemUserModalBody;
+exports.SystemUserModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const personsV2Helpers_1 = __webpack_require__(/*! ../../../Persons/personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
@@ -95334,6 +95247,7 @@ function SystemUserModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "systemEmail", errors: errors })),
         react_1.default.createElement(BussinesObjectSelectors_1.SystemRoleSelector, { name: "systemRoleId" })));
 }
+exports.SystemUserModalBody = SystemUserModalBody;
 
 
 /***/ }),
@@ -95350,8 +95264,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SystemUserEditModalButton = SystemUserEditModalButton;
-exports.SystemUserAddNewModalButton = SystemUserAddNewModalButton;
+exports.SystemUserAddNewModalButton = exports.SystemUserEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const SystemUserController_1 = __webpack_require__(/*! ../SystemUserController */ "./src/Admin/SystemUsers/SystemUserController.ts");
@@ -95382,6 +95295,7 @@ function SystemUserEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SystemUserEditModalButton = SystemUserEditModalButton;
 function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
     async function handleAddNew(newObject) {
         // Po POST /person, wyslij PUT v2 account z danymi systemowymi
@@ -95406,6 +95320,7 @@ function SystemUserAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SystemUserAddNewModalButton = SystemUserAddNewModalButton;
 
 
 /***/ }),
@@ -95434,25 +95349,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeSystemUserValidationSchema = makeSystemUserValidationSchema;
+exports.makeSystemUserValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     _entity: Yup.object().required("Wybierz podmiot"),
@@ -95474,6 +95379,7 @@ function makeSystemUserValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeSystemUserValidationSchema = makeSystemUserValidationSchema;
 
 
 /***/ }),
@@ -95526,7 +95432,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PersonsFilterBody = PersonsFilterBody;
+exports.PersonsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -95541,6 +95447,7 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Podmiot"),
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entities", multiple: true, showValidationInfo: false }))));
 }
+exports.PersonsFilterBody = PersonsFilterBody;
 
 
 /***/ }),
@@ -95569,28 +95476,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = PersonsSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const SystemUserFilterBody_1 = __webpack_require__(/*! ./SystemUserFilterBody */ "./src/Admin/SystemUsers/SystemUserFilterBody.tsx");
@@ -95623,6 +95519,7 @@ function PersonsSearch({ title }) {
             { header: "Rola systemowa", renderTdBody: (person) => renderSystemRoleId(person), colMd: 1 },
         ], AddNewButtonComponents: [SystemUserModalButtons_1.SystemUserAddNewModalButton], EditButtonComponent: SystemUserModalButtons_1.SystemUserEditModalButton, isDeletable: true, repository: SystemUserController_1.systemUserRepository, selectedObjectRoute: "/user/" }));
 }
+exports["default"] = PersonsSearch;
 
 
 /***/ }),
@@ -95651,26 +95548,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractProvider = ContractProvider;
-exports.useContract = useContract;
+exports.useContract = exports.ContractProvider = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 // Utwórz kontekst
 const ContractContext = (0, react_1.createContext)({});
@@ -95693,10 +95579,12 @@ function ContractProvider({ contract, setContract, caseTypes, setCaseTypes, mile
             setProject,
         } }, children));
 }
+exports.ContractProvider = ContractProvider;
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury
 function useContract() {
     return (0, react_1.useContext)(ContractContext);
 }
+exports.useContract = useContract;
 
 
 /***/ }),
@@ -95725,26 +95613,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractDetailsProvider = ContractDetailsProvider;
-exports.useContractDetails = useContractDetails;
+exports.useContractDetails = exports.ContractDetailsProvider = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 // Utwórz kontekst
 const ContractDetailsContext = (0, react_1.createContext)({});
@@ -95756,10 +95633,12 @@ function ContractDetailsProvider({ contract, setContract, contractsRepository, c
             contractsRepository
         } }, children));
 }
+exports.ContractDetailsProvider = ContractDetailsProvider;
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury
 function useContractDetails() {
     return (0, react_1.useContext)(ContractDetailsContext);
 }
+exports.useContractDetails = useContractDetails;
 
 
 /***/ }),
@@ -95776,7 +95655,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractMainHeader = ContractMainHeader;
+exports.ContractMainHeader = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -95871,6 +95750,7 @@ function ContractMainHeader() {
                 react_1.default.createElement("div", null, "Gwarancja:"),
                 react_1.default.createElement(DateEditTrigger, { date: contract.guaranteeEndDate })))));
 }
+exports.ContractMainHeader = ContractMainHeader;
 function DateEditTrigger({ date }) {
     const { contract, setContract, contractsRepository } = (0, ContractDetailsContext_1.useContractDetails)();
     if (!contract || !setContract)
@@ -95917,28 +95797,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractMainViewTabs = ContractMainViewTabs;
+exports.ContractMainViewTabs = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -96011,6 +95881,7 @@ function ContractMainViewTabs() {
                     react_1.default.createElement(react_bootstrap_1.Tab, { eventKey: "meetingNotes", title: "Notatki ze spotka\u0144" },
                         react_1.default.createElement(MeetingNotes_1.default, null))))));
 }
+exports.ContractMainViewTabs = ContractMainViewTabs;
 
 
 /***/ }),
@@ -96039,28 +95910,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ContractOtherDetails;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -96108,6 +95968,7 @@ function ContractOtherDetails() {
                 "Aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
+exports["default"] = ContractOtherDetails;
 
 
 /***/ }),
@@ -96136,28 +95997,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ContractOurDetails;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
@@ -96283,6 +96133,7 @@ function ContractOurDetails() {
                 "Aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
+exports["default"] = ContractOurDetails;
 
 
 /***/ }),
@@ -96311,28 +96162,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MeetingNotes;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -96371,6 +96211,7 @@ function MeetingNotes() {
             "\u0141adowanie notatek... ",
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))))));
 }
+exports["default"] = MeetingNotes;
 
 
 /***/ }),
@@ -96399,25 +96240,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MeetingNoteModalBody = MeetingNoteModalBody;
+exports.MeetingNoteModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -96443,6 +96274,7 @@ function MeetingNoteModalBody({ isEditing, initialData, contextData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors?.meetingDate, isInvalid: !!errors?.meetingDate, ...register("meetingDate") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "meetingDate", errors: errors }))));
 }
+exports.MeetingNoteModalBody = MeetingNoteModalBody;
 
 
 /***/ }),
@@ -96459,7 +96291,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MeetingNoteAddNewModalButton = MeetingNoteAddNewModalButton;
+exports.MeetingNoteAddNewModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const MeetingNoteModalBody_1 = __webpack_require__(/*! ./MeetingNoteModalBody */ "./src/Contracts/ContractsList/ContractDetails/MeetingNotes/Modals/MeetingNoteModalBody.tsx");
@@ -96480,6 +96312,7 @@ function MeetingNoteAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.MeetingNoteAddNewModalButton = MeetingNoteAddNewModalButton;
 
 
 /***/ }),
@@ -96508,25 +96341,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeMeetingNoteValidationSchema = makeMeetingNoteValidationSchema;
+exports.makeMeetingNoteValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 function makeMeetingNoteValidationSchema(isEditing) {
     return Yup.object().shape({
@@ -96534,6 +96357,7 @@ function makeMeetingNoteValidationSchema(isEditing) {
         meetingDate: Yup.date().required("Data spotkania jest wymagana"),
     });
 }
+exports.makeMeetingNoteValidationSchema = makeMeetingNoteValidationSchema;
 
 
 /***/ }),
@@ -96562,28 +96386,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskModalBody = TaskModalBody;
+exports.TaskModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -96624,6 +96438,7 @@ function TaskModalBody({ isEditing, initialData, contextData: contextData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "W\u0142a\u015Bciciel", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository }))));
 }
+exports.TaskModalBody = TaskModalBody;
 
 
 /***/ }),
@@ -96640,8 +96455,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskEditModalButton = TaskEditModalButton;
-exports.TaskAddNewModalButton = TaskAddNewModalButton;
+exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const TaskValidationSchema_1 = __webpack_require__(/*! ./TaskValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskValidationSchema.ts");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -96661,6 +96475,7 @@ function TaskEditModalButton({ modalProps: { onEdit, initialData, }, buttonProps
             buttonVariant: "outline-success",
         } }));
 }
+exports.TaskEditModalButton = TaskEditModalButton;
 function TaskAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -96673,6 +96488,7 @@ function TaskAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.TaskAddNewModalButton = TaskAddNewModalButton;
 
 
 /***/ }),
@@ -96701,26 +96517,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.commonFields = void 0;
-exports.makeTaskValidationSchema = makeTaskValidationSchema;
+exports.makeTaskValidationSchema = exports.commonFields = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 exports.commonFields = {
     name: Yup.string()
@@ -96739,6 +96544,7 @@ function makeTaskValidationSchema(isEditing) {
         _contract: isEditing ? Yup.object() : Yup.object().required('Wybierz kontrakt'),
     }));
 }
+exports.makeTaskValidationSchema = makeTaskValidationSchema;
 
 
 /***/ }),
@@ -96767,28 +96573,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = Tasks;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -96843,6 +96638,7 @@ function Tasks() {
                 "Aktualizacja: ",
                 ToolsDate_1.default.dateToDDmmmYYYYHHMM(contract._lastUpdated)))));
 }
+exports["default"] = Tasks;
 
 
 /***/ }),
@@ -96859,7 +96655,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TasksFilterBody = TasksFilterBody;
+exports.TasksFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -96890,6 +96686,7 @@ function TasksFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" }))));
 }
+exports.TasksFilterBody = TasksFilterBody;
 
 
 /***/ }),
@@ -97052,7 +96849,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractsFilterBody = ContractsFilterBody;
+exports.ContractsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -97078,6 +96875,7 @@ function ContractsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 2 },
             react_1.default.createElement(BussinesObjectSelectors_1.ContractRangeSelector, { repository: ContractsController_1.contractRangesRepository, showValidationInfo: false }))));
 }
+exports.ContractsFilterBody = ContractsFilterBody;
 
 
 /***/ }),
@@ -97106,28 +96904,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ContractsSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const CommonComponents_1 = __webpack_require__(/*! ../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -97181,6 +96968,7 @@ function ContractsSearch({ title }) {
             { header: "Gwarancja do", objectAttributeToShow: "guaranteeEndDate", colLg: 1 },
         ], AddNewButtonComponents: [ContractModalButtons_1.OurContractAddNewModalButton, ContractModalButtons_1.OtherContractAddNewModalButton], EditButtonComponent: ContractModalButtons_1.ContractEditModalButton, isDeletable: true, repository: ContractsController_1.contractsRepository, selectedObjectRoute: "/contract/", shouldRetrieveDataBeforeEdit: true }));
 }
+exports["default"] = ContractsSearch;
 
 
 /***/ }),
@@ -97209,30 +96997,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractModalBodyStatus = ContractModalBodyStatus;
-exports.ContractModalBodyName = ContractModalBodyName;
-exports.ContractModalBodyDates = ContractModalBodyDates;
+exports.ContractModalBodyDates = exports.ContractModalBodyName = exports.ContractModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -97247,6 +97023,7 @@ function ContractModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, null);
 }
+exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function ContractModalBodyName({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -97257,6 +97034,7 @@ function ContractModalBodyName({ initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 2, placeholder: "Podaj nazw\u0119", isInvalid: !!errors?.name, isValid: !errors?.name, ...register("name") }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "name" })));
 }
+exports.ContractModalBodyName = ContractModalBodyName;
 function ContractModalBodyDates({ initialData, isEditing, additionalProps = {}, }) {
     const { setValue, register, formState: { errors }, trigger, watch, } = (0, FormContext_1.useFormContext)();
     let { watchAllFieldsExternal, startDateSugestion, endDateSugestion, guaranteeEndDateSugestion } = additionalProps;
@@ -97305,6 +97083,7 @@ function ContractModalBodyDates({ initialData, isEditing, additionalProps = {}, 
                 } }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))));
 }
+exports.ContractModalBodyDates = ContractModalBodyDates;
 
 
 /***/ }),
@@ -97333,29 +97112,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractModalBody = ContractModalBody;
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+exports.ProjectSelectorModalBody = exports.ContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -97445,6 +97213,7 @@ function ContractModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "guaranteeEndDate" }))),
         react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, null)));
 }
+exports.ContractModalBody = ContractModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
  * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Other lub OurContractModalBody
@@ -97460,6 +97229,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
         throw new Error("SpecificContractModalBody is not defined");
     return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificContractModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, null))));
 }
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 
 
 /***/ }),
@@ -97476,12 +97246,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
-exports.ContractEditModalButton = ContractEditModalButton;
-exports.OurContractAddNewModalButtonGeneric = OurContractAddNewModalButtonGeneric;
-exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-exports.OtherContractAddNewModalButtonGeneric = OtherContractAddNewModalButtonGeneric;
-exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
+exports.OtherContractAddNewModalButton = exports.OtherContractAddNewModalButtonGeneric = exports.OurContractAddNewModalButton = exports.OurContractAddNewModalButtonGeneric = exports.ContractEditModalButton = exports.ContractEditModalButtonGeneric = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
@@ -97516,6 +97281,7 @@ function ContractEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             specialRetrieveActionRoute,
         }, buttonProps: { ...buttonProps } }));
 }
+exports.ContractEditModalButtonGeneric = ContractEditModalButtonGeneric;
 function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieveDataBeforeEdit }, buttonProps, }) {
     return (react_1.default.createElement(ContractEditModalButtonGeneric, { modalProps: {
             onEdit,
@@ -97524,6 +97290,7 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetr
             shouldRetrieveDataBeforeEdit,
         }, buttonProps: buttonProps }));
 }
+exports.ContractEditModalButton = ContractEditModalButton;
 function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps, }) {
     if (!repository)
         throw new Error("repository is required");
@@ -97540,19 +97307,21 @@ function OurContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repositor
             ...buttonProps,
         } }));
 }
+exports.OurContractAddNewModalButtonGeneric = OurContractAddNewModalButtonGeneric;
 function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(OurContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
 function OtherContractAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
     if (!repository)
         throw new Error("repository is required");
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: ContractModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody }, // additional props for ProjectSelectorModalBody
+            additionalModalBodyProps: { SpecificContractModalBody: OtherContractModalBody_1.OtherContractModalBody },
             modalTitle: "Nowa umowa zewnętrzna",
             repository: repository,
             makeValidationSchema: ContractValidationSchema_1.otherContractValidationSchema,
@@ -97560,12 +97329,14 @@ function OtherContractAddNewModalButtonGeneric({ modalProps: { onAddNew, reposit
             buttonCaption: "Rejestruj umowę zewnętrzną",
         } }));
 }
+exports.OtherContractAddNewModalButtonGeneric = OtherContractAddNewModalButtonGeneric;
 function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(OtherContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
 
 
 /***/ }),
@@ -97594,29 +97365,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ourContractValidationSchema = ourContractValidationSchema;
-exports.otherContractValidationSchema = otherContractValidationSchema;
-exports.contractNameValidationSchema = contractNameValidationSchema;
-exports.contractStatusValidationSchema = contractStatusValidationSchema;
-exports.contractDatesValidationSchema = contractDatesValidationSchema;
+exports.contractDatesValidationSchema = exports.contractStatusValidationSchema = exports.contractNameValidationSchema = exports.otherContractValidationSchema = exports.ourContractValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const name = Yup.string()
@@ -97650,7 +97407,7 @@ const commonFields = {
     status,
     value,
     ...dateFields,
-    _type: Yup.object().required("Typ kontraktu jest wymagany"), //przy walidacji jest wpsólny, ale w formularzu jest osobno dla każdego typu
+    _type: Yup.object().required("Typ kontraktu jest wymagany"),
     number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
     alias: Yup.string().max(30, "Alias może mieć maksymalnie 30 znaków"),
     comment: Yup.string().max(1000, "Komentarz może mieć maksymalnie 1000 znaków"),
@@ -97664,6 +97421,7 @@ function ourContractValidationSchema(isEditing) {
         _employers: Yup.array().required("Wybierz Zamawiającego"),
     });
 }
+exports.ourContractValidationSchema = ourContractValidationSchema;
 function otherContractValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
@@ -97671,21 +97429,25 @@ function otherContractValidationSchema(isEditing) {
         _ourContract: Yup.object().required("Powiązana umowa Envi jest wymagana"),
     });
 }
+exports.otherContractValidationSchema = otherContractValidationSchema;
 function contractNameValidationSchema(isEditing) {
     return Yup.object().shape({
         name,
     });
 }
+exports.contractNameValidationSchema = contractNameValidationSchema;
 function contractStatusValidationSchema(isEditing) {
     return Yup.object().shape({
         status,
     });
 }
+exports.contractStatusValidationSchema = contractStatusValidationSchema;
 function contractDatesValidationSchema(isEditing) {
     return Yup.object().shape({
         ...dateFields,
     });
 }
+exports.contractDatesValidationSchema = contractDatesValidationSchema;
 
 
 /***/ }),
@@ -97714,28 +97476,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OtherContractModalBody = OtherContractModalBody;
+exports.OtherContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
@@ -97775,6 +97527,7 @@ function OtherContractModalBody(props) {
                     " ",
                     option.name)) }))));
 }
+exports.OtherContractModalBody = OtherContractModalBody;
 
 
 /***/ }),
@@ -97803,28 +97556,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OurContractModalBody = OurContractModalBody;
+exports.OurContractModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -97860,6 +97603,7 @@ function OurContractModalBody(props) {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Zamawiaj\u0105cy"),
                 react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_employers", multiple: true })))));
 }
+exports.OurContractModalBody = OurContractModalBody;
 
 
 /***/ }),
@@ -97888,25 +97632,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecurityCashModalBody = SecurityCashModalBody;
+exports.SecurityCashModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const SecurityModalBody_1 = __webpack_require__(/*! ./SecurityModalBody */ "./src/Contracts/ContractsList/SecuritiesList/Modals/SecurityModalBody.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -97920,6 +97654,7 @@ function SecurityCashModalBody(props) {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(SecurityModalBody_1.SecurityModalBody, { ...props })));
 }
+exports.SecurityCashModalBody = SecurityCashModalBody;
 
 
 /***/ }),
@@ -97948,25 +97683,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecurityGuaranteeModalBody = SecurityGuaranteeModalBody;
+exports.SecurityGuaranteeModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const SecurityModalBody_1 = __webpack_require__(/*! ./SecurityModalBody */ "./src/Contracts/ContractsList/SecuritiesList/Modals/SecurityModalBody.tsx");
@@ -97995,6 +97720,7 @@ function SecurityGuaranteeModalBody(props) {
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register("secondPartExpiryDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" })))));
 }
+exports.SecurityGuaranteeModalBody = SecurityGuaranteeModalBody;
 
 
 /***/ }),
@@ -98023,28 +97749,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecurityModalBodyStatus = SecurityModalBodyStatus;
-exports.SecurityModalBodyDescritpion = SecurityModalBodyDescritpion;
-exports.SecurityModalBodyValue = SecurityModalBodyValue;
-exports.SecurityModalBodyDates = SecurityModalBodyDates;
+exports.SecurityModalBodyDates = exports.SecurityModalBodyValue = exports.SecurityModalBodyDescritpion = exports.SecurityModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -98057,6 +97770,7 @@ function SecurityModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, null);
 }
+exports.SecurityModalBodyStatus = SecurityModalBodyStatus;
 function SecurityModalBodyDescritpion({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -98067,6 +97781,7 @@ function SecurityModalBodyDescritpion({ initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "description" })));
 }
+exports.SecurityModalBodyDescritpion = SecurityModalBodyDescritpion;
 function SecurityModalBodyValue({ initialData }) {
     const { setValue, register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -98076,6 +97791,7 @@ function SecurityModalBodyValue({ initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Warto\u015B\u0107"),
         react_1.default.createElement(GenericComponents_1.ValueInPLNInput, null)));
 }
+exports.SecurityModalBodyValue = SecurityModalBodyValue;
 function SecurityModalBodyDates({ initialData }) {
     const { setValue, register, formState: { errors }, trigger, watch, } = (0, FormContext_1.useFormContext)();
     (0, react_1.useEffect)(() => {
@@ -98092,6 +97808,7 @@ function SecurityModalBodyDates({ initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.secondPartExpiryDate, isInvalid: !!errors.secondPartExpiryDate, ...register("secondPartExpiryDate") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "secondPartExpiryDate" }))));
 }
+exports.SecurityModalBodyDates = SecurityModalBodyDates;
 
 
 /***/ }),
@@ -98120,26 +97837,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecurityModalBody = SecurityModalBody;
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+exports.ProjectSelectorModalBody = exports.SecurityModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -98178,6 +97884,7 @@ function SecurityModalBody({ isEditing, initialData }) {
             react_1.default.createElement(GenericComponents_1.ValueInPLNInput, { name: "returnedValue" })),
         react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, { name: "status", showValidationInfo: true })));
 }
+exports.SecurityModalBody = SecurityModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem kontraktu
  * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
@@ -98197,6 +97904,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
     }, [reset]);
     return (react_1.default.createElement(react_1.default.Fragment, null, project ? (react_1.default.createElement(SpecificModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { name: "_project" }))));
 }
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 
 
 /***/ }),
@@ -98213,12 +97921,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecurityEditModalButtonGeneric = SecurityEditModalButtonGeneric;
-exports.SecurityEditModalButton = SecurityEditModalButton;
-exports.SecurityCashAddNewModalButtonGeneric = SecurityCashAddNewModalButtonGeneric;
-exports.SecurityCashAddNewModalButton = SecurityCashAddNewModalButton;
-exports.SecurityGuaranteeAddNewModalButtonGeneric = SecurityGuaranteeAddNewModalButtonGeneric;
-exports.SecurityGuaranteeAddNewModalButton = SecurityGuaranteeAddNewModalButton;
+exports.SecurityGuaranteeAddNewModalButton = exports.SecurityGuaranteeAddNewModalButtonGeneric = exports.SecurityCashAddNewModalButton = exports.SecurityCashAddNewModalButtonGeneric = exports.SecurityEditModalButton = exports.SecurityEditModalButtonGeneric = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ContractsController_1 = __webpack_require__(/*! ../../ContractsController */ "./src/Contracts/ContractsList/ContractsController.ts");
@@ -98249,6 +97952,7 @@ function SecurityEditModalButtonGeneric({ modalProps: { onEdit, initialData, rep
             makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema,
         }, buttonProps: { ...buttonProps } }));
 }
+exports.SecurityEditModalButtonGeneric = SecurityEditModalButtonGeneric;
 function SecurityEditModalButton({ modalProps: { onEdit, initialData }, buttonProps, }) {
     return (react_1.default.createElement(SecurityEditModalButtonGeneric, { modalProps: {
             onEdit,
@@ -98256,6 +97960,7 @@ function SecurityEditModalButton({ modalProps: { onEdit, initialData }, buttonPr
             repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
+exports.SecurityEditModalButton = SecurityEditModalButton;
 function SecurityCashAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, buttonProps, }) {
     if (!repository)
         throw new Error("repository is required");
@@ -98272,19 +97977,21 @@ function SecurityCashAddNewModalButtonGeneric({ modalProps: { onAddNew, reposito
             ...buttonProps,
         } }));
 }
+exports.SecurityCashAddNewModalButtonGeneric = SecurityCashAddNewModalButtonGeneric;
 function SecurityCashAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(SecurityCashAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
+exports.SecurityCashAddNewModalButton = SecurityCashAddNewModalButton;
 function SecurityGuaranteeAddNewModalButtonGeneric({ modalProps: { onAddNew, repository }, }) {
     if (!repository)
         throw new Error("repository is required");
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: SecurityModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody }, // additional props for ProjectSelectorModalBody
+            additionalModalBodyProps: { SpecificContractModalBody: SecurityGuaranteeModalBody_1.SecurityGuaranteeModalBody },
             modalTitle: "Nowa gwarancja ZNWU",
             repository: repository,
             makeValidationSchema: SecurityValidationSchema_1.securityGuaranteeValidationSchema,
@@ -98292,12 +97999,14 @@ function SecurityGuaranteeAddNewModalButtonGeneric({ modalProps: { onAddNew, rep
             buttonCaption: "Dodaj ZNWU",
         } }));
 }
+exports.SecurityGuaranteeAddNewModalButtonGeneric = SecurityGuaranteeAddNewModalButtonGeneric;
 function SecurityGuaranteeAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(SecurityGuaranteeAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: ContractsController_1.securitiesRepository,
         }, buttonProps: buttonProps }));
 }
+exports.SecurityGuaranteeAddNewModalButton = SecurityGuaranteeAddNewModalButton;
 
 
 /***/ }),
@@ -98326,31 +98035,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.securityCashValidationSchema = securityCashValidationSchema;
-exports.securityGuaranteeValidationSchema = securityGuaranteeValidationSchema;
-exports.securityStatusValidationSchema = securityStatusValidationSchema;
-exports.securityDescriptionValidationSchema = securityDescriptionValidationSchema;
-exports.securityValueValidationSchema = securityValueValidationSchema;
-exports.securityReturnedValueValidationSchema = securityReturnedValueValidationSchema;
-exports.suecurityDatesValidationSchema = suecurityDatesValidationSchema;
+exports.suecurityDatesValidationSchema = exports.securityReturnedValueValidationSchema = exports.securityValueValidationSchema = exports.securityDescriptionValidationSchema = exports.securityStatusValidationSchema = exports.securityGuaranteeValidationSchema = exports.securityCashValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const GenericComponents_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const status = Yup.string().required("Status jest wymagany");
@@ -98373,37 +98066,44 @@ const dateFields = {
 function securityCashValidationSchema(isEditing) {
     return Yup.object().shape(getCommonFields(isEditing));
 }
+exports.securityCashValidationSchema = securityCashValidationSchema;
 function securityGuaranteeValidationSchema(isEditing) {
     return Yup.object().shape({
         ...getCommonFields(isEditing),
         ...dateFields,
     });
 }
+exports.securityGuaranteeValidationSchema = securityGuaranteeValidationSchema;
 function securityStatusValidationSchema(isEditing) {
     return Yup.object().shape({
         status,
     });
 }
+exports.securityStatusValidationSchema = securityStatusValidationSchema;
 function securityDescriptionValidationSchema(isEditing) {
     return Yup.object().shape({
         description,
     });
 }
+exports.securityDescriptionValidationSchema = securityDescriptionValidationSchema;
 function securityValueValidationSchema(isEditing) {
     return Yup.object().shape({
         value,
     });
 }
+exports.securityValueValidationSchema = securityValueValidationSchema;
 function securityReturnedValueValidationSchema(isEditing) {
     return Yup.object().shape({
         returnedValue,
     });
 }
+exports.securityReturnedValueValidationSchema = securityReturnedValueValidationSchema;
 function suecurityDatesValidationSchema(isEditing) {
     return Yup.object().shape({
         ...dateFields,
     });
 }
+exports.suecurityDatesValidationSchema = suecurityDatesValidationSchema;
 
 
 /***/ }),
@@ -98420,7 +98120,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SecuritiesFilterBody = SecuritiesFilterBody;
+exports.SecuritiesFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -98443,6 +98143,7 @@ function SecuritiesFilterBody() {
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "30% wygasa", fromName: "secondPartExpiryDateFrom", toName: "secondPartExpiryDateTo", showValidationInfo: false, defaultFromValue: MainSetupReact_1.default.SecuritiesFilterInitState.SECOND_PART_EXPIRY_DATE_FROM }),
         react_1.default.createElement(StatusSelectors_1.SecurityStatusSelector, { name: "status", showValidationInfo: false })));
 }
+exports.SecuritiesFilterBody = SecuritiesFilterBody;
 
 
 /***/ }),
@@ -98471,28 +98172,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = SecuritiesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const Tools_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/Tools */ "./src/React/Tools/Tools.ts"));
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -98631,6 +98321,7 @@ function SecuritiesSearch({ title }) {
             { header: "Uwagi", renderTdBody: (security) => renderDescription(security), colMd: 2 },
         ], AddNewButtonComponents: [SecurityModalButtons_1.SecurityCashAddNewModalButton, SecurityModalButtons_1.SecurityGuaranteeAddNewModalButton], EditButtonComponent: SecurityModalButtons_1.SecurityEditModalButton, isDeletable: true, repository: ContractsController_1.securitiesRepository, selectedObjectRoute: "/contract/", initialObjects: securities, externalUpdate: externalUpdate }));
 }
+exports["default"] = SecuritiesSearch;
 
 
 /***/ }),
@@ -98713,28 +98404,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MilestoneDatesFilterBody = MilestoneDatesFilterBody;
+exports.MilestoneDatesFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -98782,6 +98463,7 @@ function MilestoneDatesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xl: 4 },
                 react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { showValidationInfo: false, name: "milestoneStatuses", label: "Statusy kamieni milowych", multiple: true })))));
 }
+exports.MilestoneDatesFilterBody = MilestoneDatesFilterBody;
 
 
 /***/ }),
@@ -98810,28 +98492,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MilestoneDatesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -98940,6 +98611,7 @@ function MilestoneDatesSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "milestone-dates", title: title, showTableHeader: false, FilterBodyComponent: MilestoneDatesFilterBody_1.MilestoneDatesFilterBody, tableStructure: [{ renderTdBody: renderRow }], AddNewButtonComponents: [], EditButtonComponent: MilestoneDateButtons_1.MilestoneDateEditModalButton, isDeletable: true, repository: MilestoneDatesController_1.milestoneDatesRepository, selectedObjectRoute: "/milestonedate/" }));
 }
+exports["default"] = MilestoneDatesSearch;
 
 
 /***/ }),
@@ -98968,26 +98640,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractModalBodyStatus = ContractModalBodyStatus;
-exports.MilestoneModalBodyStatus = MilestoneModalBodyStatus;
+exports.MilestoneModalBodyStatus = exports.ContractModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -99001,6 +98662,7 @@ function ContractModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { name: "_milestone._contract.status", label: "Status kontraktu" });
 }
+exports.ContractModalBodyStatus = ContractModalBodyStatus;
 function MilestoneModalBodyStatus({ initialData }) {
     const { setValue } = (0, FormContext_1.useFormContext)();
     console.log("initialData", initialData);
@@ -99009,6 +98671,7 @@ function MilestoneModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.MilestoneStatusSelector, { name: "_milestone.status" });
 }
+exports.MilestoneModalBodyStatus = MilestoneModalBodyStatus;
 
 
 /***/ }),
@@ -99025,7 +98688,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MilestoneDateEditModalButton = MilestoneDateEditModalButton;
+exports.MilestoneDateEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const MilestoneDateModalBody_1 = __webpack_require__(/*! ./MilestoneDateModalBody */ "./src/Contracts/Dates/Modals/MilestoneDateModalBody.tsx");
@@ -99045,6 +98708,7 @@ function MilestoneDateEditModalButton({ modalProps: { onEdit, initialData, repos
             buttonVariant: "outline-primary",
         } }));
 }
+exports.MilestoneDateEditModalButton = MilestoneDateEditModalButton;
 
 
 /***/ }),
@@ -99073,25 +98737,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MilestoneDateModalBody = MilestoneDateModalBody;
+exports.MilestoneDateModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -99131,6 +98785,7 @@ function MilestoneDateModalBody(props) {
                     react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isInvalid: hasAnyDateError(errors), isValid: !hasAnyDateError(errors), ...register(`endDate`) }),
                     react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: `endDate`, errors: errors }))))));
 }
+exports.MilestoneDateModalBody = MilestoneDateModalBody;
 
 
 /***/ }),
@@ -99159,25 +98814,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeMilestoneDateValidationSchema = makeMilestoneDateValidationSchema;
+exports.makeMilestoneDateValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 function makeMilestoneDateValidationSchema(isEditing) {
     return Yup.object().shape({
@@ -99194,6 +98839,7 @@ function makeMilestoneDateValidationSchema(isEditing) {
             .min(Yup.ref("startDate"), "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia"),
     });
 }
+exports.makeMilestoneDateValidationSchema = makeMilestoneDateValidationSchema;
 
 
 /***/ }),
@@ -99222,25 +98868,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CommonRoleFieldsModalBody = CommonRoleFieldsModalBody;
+exports.CommonRoleFieldsModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -99273,6 +98909,7 @@ function CommonRoleFieldsModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Osoba"),
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelector, { name: "_person" }))));
 }
+exports.CommonRoleFieldsModalBody = CommonRoleFieldsModalBody;
 
 
 /***/ }),
@@ -99301,25 +98938,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractRoleModalBody = ContractRoleModalBody;
+exports.ContractRoleModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -99335,6 +98962,7 @@ function ContractRoleModalBody(props) {
         react_1.default.createElement(BussinesObjectSelectors_1.ContractSelector, { name: "_contract" }),
         react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
+exports.ContractRoleModalBody = ContractRoleModalBody;
 
 
 /***/ }),
@@ -99363,25 +98991,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectRoleModalBody = ProjectRoleModalBody;
+exports.ProjectRoleModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -99396,6 +99014,7 @@ function ProjectRoleModalBody(props) {
         react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { name: "_project" }),
         react_1.default.createElement(CommonRoleFieldsModalBody_1.CommonRoleFieldsModalBody, { ...props })));
 }
+exports.ProjectRoleModalBody = ProjectRoleModalBody;
 
 
 /***/ }),
@@ -99424,29 +99043,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoleEditModalButton = RoleEditModalButton;
-exports.ProjectRoleEditModalButton = ProjectRoleEditModalButton;
-exports.ContractRoleEditModalButton = ContractRoleEditModalButton;
-exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;
-exports.ProjectRoleAddNewModalButton = ProjectRoleAddNewModalButton;
+exports.ProjectRoleAddNewModalButton = exports.ContractRoleAddNewModalButton = exports.ContractRoleEditModalButton = exports.ProjectRoleEditModalButton = exports.RoleEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const RolesController_1 = __webpack_require__(/*! ../RolesController */ "./src/Contracts/Roles/RolesController.ts");
@@ -99457,6 +99062,7 @@ function RoleEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
     (0, react_1.useEffect)(() => { }, [initialData]);
     return (0, RolesController_1.isProjectRole)(initialData) ? (react_1.default.createElement(ProjectRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(ContractRoleEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
+exports.RoleEditModalButton = RoleEditModalButton;
 function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -99469,6 +99075,7 @@ function ProjectRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ProjectRoleEditModalButton = ProjectRoleEditModalButton;
 function ContractRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -99481,6 +99088,7 @@ function ContractRoleEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ContractRoleEditModalButton = ContractRoleEditModalButton;
 function ContractRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -99494,6 +99102,7 @@ function ContractRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonCaption: "Dodaj rolę kontraktową",
         } }));
 }
+exports.ContractRoleAddNewModalButton = ContractRoleAddNewModalButton;
 function ProjectRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -99508,6 +99117,7 @@ function ProjectRoleAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ProjectRoleAddNewModalButton = ProjectRoleAddNewModalButton;
 
 
 /***/ }),
@@ -99536,26 +99146,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeContractRoleValidationSchema = makeContractRoleValidationSchema;
-exports.makeProjectRoleValidationSchema = makeProjectRoleValidationSchema;
+exports.makeProjectRoleValidationSchema = exports.makeContractRoleValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -99572,12 +99171,14 @@ function makeContractRoleValidationSchema(isEditing) {
         _contract: Yup.object().required("Wybierz kontrakt"),
     });
 }
+exports.makeContractRoleValidationSchema = makeContractRoleValidationSchema;
 function makeProjectRoleValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
         _project: Yup.object().required("Wybierz projekt"),
     });
 }
+exports.makeProjectRoleValidationSchema = makeProjectRoleValidationSchema;
 
 
 /***/ }),
@@ -99606,28 +99207,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RolesFilterBody = RolesFilterBody;
+exports.RolesFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -99668,6 +99259,7 @@ function RolesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, xs: 12, md: 12, lg: 4 },
                 react_1.default.createElement(OtherAttributesSelectors_1.RoleGroupSelector, { showValidationInfo: false })))));
 }
+exports.RolesFilterBody = RolesFilterBody;
 
 
 /***/ }),
@@ -99684,8 +99276,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
-exports.isProjectRole = isProjectRole;
+exports.isProjectRole = exports.contractsRepository = exports.projectsRepository = exports.personsRepository = exports.rolesRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 exports.rolesRepository = new RepositoryReact_1.default({
     actionRoutes: {
@@ -99728,6 +99319,7 @@ function isProjectRole(role) {
         console.error("RoleData is not a ProjectRoleData nor ContractRoleData");
     return role._project !== undefined;
 }
+exports.isProjectRole = isProjectRole;
 
 
 /***/ }),
@@ -99756,28 +99348,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = RolesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const RoleFilterBody_1 = __webpack_require__(/*! ./RoleFilterBody */ "./src/Contracts/Roles/RoleFilterBody.tsx");
@@ -99840,6 +99421,7 @@ function RolesSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "roles", title: title, FilterBodyComponent: RoleFilterBody_1.RolesFilterBody, tableStructure: [{ header: "Nazwa", renderTdBody: renderRow }], AddNewButtonComponents: [RoleModalButtons_1.ProjectRoleAddNewModalButton, RoleModalButtons_1.ContractRoleAddNewModalButton], EditButtonComponent: RoleModalButtons_1.RoleEditModalButton, isDeletable: true, repository: RolesController_1.rolesRepository, selectedObjectRoute: "/role/" }));
 }
+exports["default"] = RolesSearch;
 
 
 /***/ }),
@@ -99950,28 +99532,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = EntitiesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const EntityModalButtons_1 = __webpack_require__(/*! ./Modals/EntityModalButtons */ "./src/Entities/Modals/EntityModalButtons.tsx");
@@ -99988,6 +99559,7 @@ function EntitiesSearch({ title }) {
             { header: "Telefon", objectAttributeToShow: "phone", colMd: 2 },
         ], AddNewButtonComponents: [EntityModalButtons_1.EntityAddNewModalButton], EditButtonComponent: EntityModalButtons_1.EntityEditModalButton, isDeletable: true, repository: EntitiesController_1.entitiesRepository, selectedObjectRoute: "/entity/" }));
 }
+exports["default"] = EntitiesSearch;
 
 
 /***/ }),
@@ -100004,7 +99576,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EntitiesFilterBody = EntitiesFilterBody;
+exports.EntitiesFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -100015,6 +99587,7 @@ function EntitiesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register('searchText') }))));
 }
+exports.EntitiesFilterBody = EntitiesFilterBody;
 
 
 /***/ }),
@@ -100043,25 +99616,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EntityModalBody = EntityModalBody;
+exports.EntityModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -100106,6 +99669,7 @@ function EntityModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj numer telefonu", isInvalid: !!errors?.phone, isValid: !errors?.phone, ...register("phone") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "phone", errors: errors }))));
 }
+exports.EntityModalBody = EntityModalBody;
 
 
 /***/ }),
@@ -100122,8 +99686,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EntityEditModalButton = EntityEditModalButton;
-exports.EntityAddNewModalButton = EntityAddNewModalButton;
+exports.EntityAddNewModalButton = exports.EntityEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const EntitiesController_1 = __webpack_require__(/*! ../EntitiesController */ "./src/Entities/EntitiesController.ts");
@@ -100141,6 +99704,7 @@ function EntityEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.EntityEditModalButton = EntityEditModalButton;
 function EntityAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -100153,6 +99717,7 @@ function EntityAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.EntityAddNewModalButton = EntityAddNewModalButton;
 
 
 /***/ }),
@@ -100181,25 +99746,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeEntityValidationSchema = makeEntityValidationSchema;
+exports.makeEntityValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -100225,6 +99780,7 @@ function makeEntityValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeEntityValidationSchema = makeEntityValidationSchema;
 
 
 /***/ }),
@@ -100253,28 +99809,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = CostInvoiceDetails;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -100291,6 +99836,7 @@ function CostInvoiceDetails() {
     const [loading, setLoading] = (0, react_1.useState)(true);
     const [saving, setSaving] = (0, react_1.useState)(false);
     const [error, setError] = (0, react_1.useState)(null);
+    const [validationDetails, setValidationDetails] = (0, react_1.useState)([]);
     const [success, setSuccess] = (0, react_1.useState)(null);
     // Edytowalne pola faktury
     const [categoryId, setCategoryId] = (0, react_1.useState)(null);
@@ -100357,46 +99903,62 @@ function CostInvoiceDetails() {
             return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
         setSuccess(null);
         try {
-            // Zapisz zmiany faktury
-            await (0, CostInvoicesController_1.updateCostInvoice)(invoice.id, {
-                categoryId,
-                bookingPercentage,
-                vatDeductionPercentage,
-                notes: notes || null,
-                status,
-            });
-            // Zapisz zmiany pozycji
-            for (const [itemId, changes] of editedItems) {
-                if (Object.keys(changes).length > 0) {
-                    await (0, CostInvoicesController_1.updateCostInvoiceItem)(invoice.id, itemId, changes);
-                }
-            }
+            await persistChanges(invoice.id);
             setSuccess("Zmiany zostały zapisane");
-            setEditedItems(new Map());
             // Odśwież dane
             await loadData();
         }
         catch (err) {
+            if (err instanceof CostInvoicesController_1.CostInvoiceApiError) {
+                setValidationDetails(err.details);
+            }
             setError(err instanceof Error ? err.message : "Błąd zapisywania");
         }
         finally {
             setSaving(false);
         }
     };
+    const persistChanges = async (invoiceId) => {
+        await (0, CostInvoicesController_1.updateCostInvoice)(invoiceId, {
+            categoryId,
+            bookingPercentage,
+            vatDeductionPercentage,
+            notes: notes || null,
+            status,
+        });
+        for (const [itemId, changes] of editedItems) {
+            if (Object.keys(changes).length > 0) {
+                await (0, CostInvoicesController_1.updateCostInvoiceItem)(invoiceId, itemId, changes);
+            }
+        }
+        setEditedItems(new Map());
+    };
     const handleBook = async () => {
         if (!invoice)
             return;
         setSaving(true);
         setError(null);
+        setValidationDetails([]);
         try {
+            await persistChanges(invoice.id);
             const updated = await (0, CostInvoicesController_1.bookCostInvoice)(invoice.id);
             setInvoice((prev) => (prev ? { ...updated, items: prev.items || updated.items } : updated));
             setStatus(updated.status);
             setSuccess("Faktura została zaksięgowana");
         }
         catch (err) {
+            if (err instanceof CostInvoicesController_1.CostInvoiceApiError) {
+                setValidationDetails(err.details);
+                console.error("[CostInvoiceDetails] Błąd walidacji księgowania", {
+                    invoiceId: invoice.id,
+                    status: err.status,
+                    details: err.details,
+                    payload: err.payload,
+                });
+            }
             setError(err instanceof Error ? err.message : "Błąd księgowania");
         }
         finally {
@@ -100469,7 +100031,12 @@ function CostInvoiceDetails() {
                         react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", size: "sm", min: 0, max: 100, value: vatDeductionPercentage, disabled: isBooked || !isSelected, onChange: (e) => handleItemChange(item.id, "vatDeductionPercentage", Number(e.target.value)) }))));
             }))))));
     return (react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "py-3" },
-        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => setError(null), dismissible: true }, error)),
+        error && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", onClose: () => {
+                setError(null);
+                setValidationDetails([]);
+            }, dismissible: true },
+            react_1.default.createElement("div", null, error),
+            validationDetails.length > 0 && (react_1.default.createElement("ul", { className: "mb-0 mt-2" }, validationDetails.map((detail, index) => (react_1.default.createElement("li", { key: `${index}_${detail}` }, detail))))))),
         success && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", onClose: () => setSuccess(null), dismissible: true }, success)),
         react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-3" },
             react_1.default.createElement(react_bootstrap_1.Card.Header, null,
@@ -100595,6 +100162,7 @@ function CostInvoiceDetails() {
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-1" }),
                 "Ksi\u0119gowanie...")) : ("✅ Zaksięguj fakturę"))))));
 }
+exports["default"] = CostInvoiceDetails;
 
 
 /***/ }),
@@ -100611,10 +100179,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
-exports.CategoryBadge = CategoryBadge;
-exports.VatDeductionBadge = VatDeductionBadge;
-exports.BookingPercentageBadge = BookingPercentageBadge;
+exports.BookingPercentageBadge = exports.VatDeductionBadge = exports.CategoryBadge = exports.CostInvoiceStatusBadge = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
@@ -100644,6 +100209,7 @@ function CostInvoiceStatusBadge({ status }) {
     const textColor = variant === "warning" ? "dark" : "light";
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textColor }, label));
 }
+exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
 /**
  * Badge kategorii kosztu z kolorem
  */
@@ -100656,6 +100222,7 @@ function CategoryBadge({ category }) {
             color: getContrastColor(category.color),
         } }, category.name));
 }
+exports.CategoryBadge = CategoryBadge;
 /**
  * Badge procentu odliczenia VAT
  */
@@ -100679,6 +100246,7 @@ function VatDeductionBadge({ percentage }) {
             percentage,
             "%")));
 }
+exports.VatDeductionBadge = VatDeductionBadge;
 /**
  * Badge procentu księgowania
  */
@@ -100694,6 +100262,7 @@ function BookingPercentageBadge({ percentage }) {
             percentage,
             "%")));
 }
+exports.BookingPercentageBadge = BookingPercentageBadge;
 /**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */
@@ -100724,17 +100293,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.costInvoicesRepository = exports.CostInvoiceStatuses = void 0;
-exports.fetchCategories = fetchCategories;
-exports.syncFromKsef = syncFromKsef;
-exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
-exports.updateCostInvoice = updateCostInvoice;
-exports.updateCostInvoiceItem = updateCostInvoiceItem;
-exports.bookCostInvoice = bookCostInvoice;
-exports.fetchMonthlyReport = fetchMonthlyReport;
-exports.downloadMonthlyReport = downloadMonthlyReport;
+exports.downloadMonthlyReport = exports.fetchMonthlyReport = exports.bookCostInvoice = exports.updateCostInvoiceItem = exports.updateCostInvoice = exports.fetchCostInvoiceDetails = exports.syncFromKsef = exports.fetchCategories = exports.costInvoicesRepository = exports.CostInvoiceStatuses = exports.CostInvoiceApiError = void 0;
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
+class CostInvoiceApiError extends Error {
+    constructor(message, options) {
+        super(message);
+        this.name = "CostInvoiceApiError";
+        this.status = options?.status;
+        this.details = options?.details || [];
+        this.payload = options?.payload;
+    }
+}
+exports.CostInvoiceApiError = CostInvoiceApiError;
+const toDetailList = (value) => {
+    if (!value)
+        return [];
+    if (Array.isArray(value)) {
+        return value
+            .map((entry) => (typeof entry === "string" ? entry : JSON.stringify(entry)))
+            .filter((entry) => typeof entry === "string" && entry.trim().length > 0);
+    }
+    if (typeof value === "object") {
+        return Object.entries(value).flatMap(([key, detailsValue]) => {
+            if (Array.isArray(detailsValue)) {
+                return detailsValue.map((entry) => `${key}: ${String(entry)}`);
+            }
+            if (detailsValue) {
+                return `${key}: ${String(detailsValue)}`;
+            }
+            return [];
+        });
+    }
+    if (typeof value === "string") {
+        return [value];
+    }
+    return [];
+};
+async function throwCostInvoiceApiError(response, fallbackMessage) {
+    let payload;
+    try {
+        payload = (await response.json());
+    }
+    catch {
+        payload = undefined;
+    }
+    const message = payload?.error ||
+        payload?.message ||
+        payload?.errorMessage ||
+        `${fallbackMessage} (${response.status})`;
+    const details = [
+        ...toDetailList(payload?.details),
+        ...toDetailList(payload?.validationErrors),
+        ...toDetailList(payload?.errors),
+    ];
+    throw new CostInvoiceApiError(message, {
+        status: response.status,
+        details,
+        payload,
+    });
+}
 /**
  * Statusy faktur kosztowych
  */
@@ -100760,6 +100378,36 @@ exports.costInvoicesRepository = new RepositoryReact_1.default({
  * Cache kategorii kosztów
  */
 let categoriesCache = null;
+function normalizeCategoryName(name) {
+    return name.trim().toLocaleLowerCase("pl-PL");
+}
+function getCategoryDedupKey(category) {
+    return `${normalizeCategoryName(category.name)}|${category.vatDeductionDefault}`;
+}
+function deduplicateCategories(categories) {
+    const seen = new Map();
+    const duplicates = new Map();
+    for (const category of categories) {
+        const key = getCategoryDedupKey(category);
+        const existing = seen.get(key);
+        if (!existing) {
+            seen.set(key, category);
+            continue;
+        }
+        const existingIds = duplicates.get(key) || [existing.id];
+        existingIds.push(category.id);
+        duplicates.set(key, existingIds);
+    }
+    if (duplicates.size > 0) {
+        console.warn("[CostInvoices] API zwróciło zduplikowane kategorie kosztów", {
+            duplicates: Array.from(duplicates.entries()).map(([key, ids]) => ({
+                key,
+                ids,
+            })),
+        });
+    }
+    return Array.from(seen.values());
+}
 /**
  * Pobiera listę kategorii kosztów
  */
@@ -100771,12 +100419,13 @@ async function fetchCategories() {
         credentials: "include",
     });
     if (!response.ok) {
-        throw new Error("Błąd pobierania kategorii");
+        await throwCostInvoiceApiError(response, "Błąd pobierania kategorii");
     }
     const result = await response.json();
-    categoriesCache = result.data;
+    categoriesCache = deduplicateCategories(result.data || []);
     return categoriesCache;
 }
+exports.fetchCategories = fetchCategories;
 /**
  * Synchronizacja faktur z KSeF
  */
@@ -100790,11 +100439,11 @@ async function syncFromKsef(params) {
         body: JSON.stringify(params),
     });
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || `Błąd synchronizacji (${response.status})`);
+        await throwCostInvoiceApiError(response, "Błąd synchronizacji");
     }
     return response.json();
 }
+exports.syncFromKsef = syncFromKsef;
 /**
  * Pobiera szczegóły pojedynczej faktury
  */
@@ -100804,11 +100453,12 @@ async function fetchCostInvoiceDetails(id) {
         credentials: "include",
     });
     if (!response.ok) {
-        throw new Error("Błąd pobierania szczegółów faktury");
+        await throwCostInvoiceApiError(response, "Błąd pobierania szczegółów faktury");
     }
     const result = await response.json();
     return result.data || result;
 }
+exports.fetchCostInvoiceDetails = fetchCostInvoiceDetails;
 /**
  * Aktualizuje ustawienia księgowania faktury
  */
@@ -100822,12 +100472,12 @@ async function updateCostInvoice(id, data) {
         body: JSON.stringify(data),
     });
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji faktury");
+        await throwCostInvoiceApiError(response, "Błąd aktualizacji faktury");
     }
     const result = await response.json();
     return result.data || result;
 }
+exports.updateCostInvoice = updateCostInvoice;
 /**
  * Aktualizuje pozycję faktury
  */
@@ -100841,10 +100491,10 @@ async function updateCostInvoiceItem(invoiceId, itemId, data) {
         body: JSON.stringify(data),
     });
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd aktualizacji pozycji");
+        await throwCostInvoiceApiError(response, "Błąd aktualizacji pozycji");
     }
 }
+exports.updateCostInvoiceItem = updateCostInvoiceItem;
 /**
  * Księguje fakturę
  */
@@ -100854,12 +100504,12 @@ async function bookCostInvoice(id) {
         credentials: "include",
     });
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd księgowania faktury");
+        await throwCostInvoiceApiError(response, "Błąd księgowania faktury");
     }
     const result = await response.json();
     return result.data || result;
 }
+exports.bookCostInvoice = bookCostInvoice;
 /**
  * Pobiera raport miesięczny
  */
@@ -100869,8 +100519,7 @@ async function fetchMonthlyReport(year, month, format = "json") {
         credentials: "include",
     });
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || errorData.message || "Błąd pobierania raportu");
+        await throwCostInvoiceApiError(response, "Błąd pobierania raportu");
     }
     if (format === "json") {
         const result = await response.json();
@@ -100880,6 +100529,7 @@ async function fetchMonthlyReport(year, month, format = "json") {
         return response.blob();
     }
 }
+exports.fetchMonthlyReport = fetchMonthlyReport;
 /**
  * Eksportuje raport miesięczny jako plik
  */
@@ -100894,6 +100544,7 @@ async function downloadMonthlyReport(year, month, format) {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
 }
+exports.downloadMonthlyReport = downloadMonthlyReport;
 
 
 /***/ }),
@@ -100922,25 +100573,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CostInvoicesFilterBody = CostInvoicesFilterBody;
+exports.CostInvoicesFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -100977,6 +100618,7 @@ function CostInvoicesFilterBody() {
                 react_1.default.createElement("option", { value: "" }, "Wszystkie kategorie"),
                 categories.map((cat) => (react_1.default.createElement("option", { key: cat.id, value: cat.id }, cat.name)))))));
 }
+exports.CostInvoicesFilterBody = CostInvoicesFilterBody;
 
 
 /***/ }),
@@ -101005,28 +100647,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = CostInvoicesReport;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CostInvoicesController_1 = __webpack_require__(/*! ./CostInvoicesController */ "./src/Erp/CostInvoicesList/CostInvoicesController.ts");
@@ -101236,6 +100867,7 @@ function CostInvoicesReport() {
                             react_1.default.createElement("td", null,
                                 react_1.default.createElement(CostInvoicesBadges_1.CostInvoiceStatusBadge, { status: invoice.status }))))))))))) : (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info" }, "Wybierz okres i kliknij \"Wygeneruj raport\" aby zobaczy\u0107 dane."))));
 }
+exports["default"] = CostInvoicesReport;
 
 
 /***/ }),
@@ -101264,28 +100896,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = CostInvoicesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -101461,6 +101082,7 @@ function CostInvoicesSearch({ title }) {
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: () => setShowSyncModal(false) }, "Anuluj"),
                 react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSync, disabled: syncType === "VERIFICATION" && (!dateFrom || !dateTo) }, "Synchronizuj")))));
 }
+exports["default"] = CostInvoicesSearch;
 
 
 /***/ }),
@@ -101489,30 +101111,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = InvoiceDetails;
-exports.InvoiceProvider = InvoiceProvider;
-exports.useInvoice = useInvoice;
+exports.useInvoice = exports.InvoiceProvider = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -101709,6 +101319,7 @@ function InvoiceDetails() {
                     ToolsDate_1.default.dateToDDmmmYYYYHHMM(invoice._lastUpdated)))),
         react_1.default.createElement(CorrectionModal_1.default, { show: showCorrectionModal, onHide: () => setShowCorrectionModal(false), invoice: invoice, onCorrectionCreated: handleCorrectionCreated })));
 }
+exports["default"] = InvoiceDetails;
 // Utwórz kontekst
 const InvoiceContext = (0, react_1.createContext)({
     invoice: {},
@@ -101720,10 +101331,12 @@ function InvoiceProvider({ invoice, setInvoice, children }) {
         throw new Error("Invoice not found");
     return react_1.default.createElement(InvoiceContext.Provider, { value: { invoice, setInvoice } }, children);
 }
+exports.InvoiceProvider = InvoiceProvider;
 // Tworzy własny hook, który będzie używany przez komponenty podrzędne do uzyskania dostępu do faktury
 function useInvoice() {
     return (0, react_1.useContext)(InvoiceContext);
 }
+exports.useInvoice = useInvoice;
 
 
 /***/ }),
@@ -101752,28 +101365,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = KsefSection;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -102108,6 +101710,7 @@ function KsefSection({ invoice, onInvoiceUpdate, correctedInvoiceNumber }) {
                     (invoice.ksefStatus || invoice.ksefSessionId) && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: refreshStatus, disabled: loading }, "Od\u015Bwie\u017C status")),
                     canDownloadUpo && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-success", onClick: downloadUpo, disabled: loading }, "\uD83D\uDCC4 Pobierz UPO")))))));
 }
+exports["default"] = KsefSection;
 
 
 /***/ }),
@@ -102124,7 +101727,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoicesFilterBody = InvoicesFilterBody;
+exports.InvoicesFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -102145,6 +101748,7 @@ function InvoicesFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, sm: 12, md: 4 },
             react_1.default.createElement(StatusSelectors_1.InvoiceStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
+exports.InvoicesFilterBody = InvoicesFilterBody;
 
 
 /***/ }),
@@ -102229,28 +101833,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = InvoicesSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -102302,6 +101895,7 @@ function InvoicesSearch({ title }) {
             },
         ], AddNewButtonComponents: [InvoiceModalButtons_1.InvoiceAddNewModalButton], EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, isDeletable: (invoice) => !invoice.ksefNumber, isCopyable: true, repository: InvoicesController_1.invoicesRepository, selectedObjectRoute: "/invoice/" }));
 }
+exports["default"] = InvoicesSearch;
 
 
 /***/ }),
@@ -102330,28 +101924,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = CorrectionModal;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -102402,7 +101985,7 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
             if (items && items.length > 0) {
                 setCustomItems(items.map((item) => ({
                     description: item.description,
-                    quantity: -item.quantity, // Ujemna ilość = anulowanie pozycji
+                    quantity: -item.quantity,
                     unitPrice: item.unitPrice,
                     vatTax: item.vatTax,
                 })));
@@ -102687,6 +102270,7 @@ function CorrectionModal({ show, onHide, invoice, onCorrectionCreated, }) {
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                 "Wysy\u0142anie...")) : ("Wyślij do KSeF"))))));
 }
+exports["default"] = CorrectionModal;
 
 
 /***/ }),
@@ -102715,25 +102299,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceIssueModalBody = InvoiceIssueModalBody;
+exports.InvoiceIssueModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -102757,6 +102331,7 @@ function InvoiceIssueModalBody({ initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
             react_1.default.createElement(GenericComponents_1.FileInput, { acceptedFileTypes: "application/msword, application/vnd.ms-excel, application/pdf", ...register("file"), multiple: false }))));
 }
+exports.InvoiceIssueModalBody = InvoiceIssueModalBody;
 
 
 /***/ }),
@@ -102785,28 +102360,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceItemModalBody = InvoiceItemModalBody;
+exports.InvoiceItemModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -102847,6 +102412,7 @@ function InvoiceItemModalBody({ initialData }) {
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: "1", isValid: !errors?.vatTax, isInvalid: !!errors?.vatTax, ...register("vatTax") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "vatTax", errors: errors })))));
 }
+exports.InvoiceItemModalBody = InvoiceItemModalBody;
 
 
 /***/ }),
@@ -102863,8 +102429,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceItemEditModalButton = InvoiceItemEditModalButton;
-exports.InvoiceItemAddNewModalButton = InvoiceItemAddNewModalButton;
+exports.InvoiceItemAddNewModalButton = exports.InvoiceItemEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const InvoiceItemModalBody_1 = __webpack_require__(/*! ./InvoiceItemModalBody */ "./src/Erp/InvoicesList/Modals/InvoiceItemModalBody.tsx");
@@ -102883,6 +102448,7 @@ function InvoiceItemEditModalButton({ modalProps: { onEdit, initialData, }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceItemEditModalButton = InvoiceItemEditModalButton;
 function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -102895,6 +102461,7 @@ function InvoiceItemAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceItemAddNewModalButton = InvoiceItemAddNewModalButton;
 
 
 /***/ }),
@@ -102923,25 +102490,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;
+exports.InvoiceItemValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     description: Yup.string()
@@ -102964,6 +102521,7 @@ function InvoiceItemValidationSchema(isEditing) {
         ...commonFields,
     }));
 }
+exports.InvoiceItemValidationSchema = InvoiceItemValidationSchema;
 
 
 /***/ }),
@@ -102992,28 +102550,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceModalBody = InvoiceModalBody;
+exports.InvoiceModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -103078,6 +102626,7 @@ function InvoiceModalBody({ isEditing, initialData, contextData: contextData }) 
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
+exports.InvoiceModalBody = InvoiceModalBody;
 
 
 /***/ }),
@@ -103094,13 +102643,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceEditModalButton = InvoiceEditModalButton;
-exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
-exports.CopyButton = CopyButton;
-exports.ChangeStatusButton = ChangeStatusButton;
-exports.InvoiceIssueModalButton = InvoiceIssueModalButton;
-exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
-exports.ActionButton = ActionButton;
+exports.ActionButton = exports.InvoiceSetAsSentModalButton = exports.InvoiceIssueModalButton = exports.ChangeStatusButton = exports.CopyButton = exports.InvoiceAddNewModalButton = exports.InvoiceEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const InvoiceModalBody_1 = __webpack_require__(/*! ./InvoiceModalBody */ "./src/Erp/InvoicesList/Modals/InvoiceModalBody.tsx");
@@ -103126,6 +102669,7 @@ function InvoiceEditModalButton({ modalProps: { onEdit, initialData, shouldRetri
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceEditModalButton = InvoiceEditModalButton;
 function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -103139,6 +102683,7 @@ function InvoiceAddNewModalButton({ modalProps: { onAddNew, contextData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.InvoiceAddNewModalButton = InvoiceAddNewModalButton;
 function CopyButton({ onError, invoice: passedInvoice, }) {
     const [requestPending, setRequestPending] = react_1.default.useState(false);
     // Spróbuj uzyskać fakturę z kontekstu, ale nie rzucaj błędem jeśli nie jest dostępna
@@ -103183,6 +102728,7 @@ function CopyButton({ onError, invoice: passedInvoice, }) {
             "Kopiuj",
             requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))));
 }
+exports.CopyButton = CopyButton;
 function ChangeStatusButton({ specialActionRoute, newStatus, }) {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     async function handleChangeStatus() {
@@ -103191,6 +102737,7 @@ function ChangeStatusButton({ specialActionRoute, newStatus, }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Button, { key: `Ustaw jako ${newStatus}`, variant: "primary", size: "sm", onClick: handleChangeStatus }, `Ustaw jako ${newStatus}`));
 }
+exports.ChangeStatusButton = ChangeStatusButton;
 function InvoiceIssueModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -103206,6 +102753,7 @@ function InvoiceIssueModalButton() {
             buttonVariant: "primary",
         } }));
 }
+exports.InvoiceIssueModalButton = InvoiceIssueModalButton;
 function InvoiceSetAsSentModalButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -103221,6 +102769,7 @@ function InvoiceSetAsSentModalButton() {
             buttonVariant: "primary",
         } }));
 }
+exports.InvoiceSetAsSentModalButton = InvoiceSetAsSentModalButton;
 function ActionButton() {
     const { invoice, setInvoice } = (0, InvoiceDetails_1.useInvoice)();
     switch (invoice.status) {
@@ -103239,6 +102788,7 @@ function ActionButton() {
             return react_1.default.createElement(react_1.default.Fragment, null);
     }
 }
+exports.ActionButton = ActionButton;
 
 
 /***/ }),
@@ -103267,25 +102817,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InvoiceSetAsSentModalBody = InvoiceSetAsSentModalBody;
+exports.InvoiceSetAsSentModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -103306,6 +102846,7 @@ function InvoiceSetAsSentModalBody({ initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.sentDate, isInvalid: !!errors.sentDate, ...register("sentDate") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "sentDate", errors: errors }))));
 }
+exports.InvoiceSetAsSentModalBody = InvoiceSetAsSentModalBody;
 
 
 /***/ }),
@@ -103334,27 +102875,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeInvoiceValidationSchema = makeInvoiceValidationSchema;
-exports.makeInvoiceIssueValidationSchema = makeInvoiceIssueValidationSchema;
-exports.makeInvoiceSetAsSentValidationSchema = makeInvoiceSetAsSentValidationSchema;
+exports.makeInvoiceSetAsSentValidationSchema = exports.makeInvoiceIssueValidationSchema = exports.makeInvoiceValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     _contract: Yup.object()
@@ -103379,6 +102908,7 @@ function makeInvoiceValidationSchema(isEditing) {
         ...commonFields,
     }));
 }
+exports.makeInvoiceValidationSchema = makeInvoiceValidationSchema;
 function makeInvoiceIssueValidationSchema() {
     return (Yup.object().shape({
         number: Yup.string()
@@ -103391,12 +102921,14 @@ function makeInvoiceIssueValidationSchema() {
         })
     }));
 }
+exports.makeInvoiceIssueValidationSchema = makeInvoiceIssueValidationSchema;
 function makeInvoiceSetAsSentValidationSchema() {
     return (Yup.object().shape({
         sentDate: Yup.date()
             .required('Data nadania jest wymagana'),
     }));
 }
+exports.makeInvoiceSetAsSentValidationSchema = makeInvoiceSetAsSentValidationSchema;
 
 
 /***/ }),
@@ -103425,28 +102957,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LettersFilterBody = LettersFilterBody;
+exports.LettersFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -103490,6 +103012,7 @@ function LettersFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
                 react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _contract: _contract, multiple: false }))))));
 }
+exports.LettersFilterBody = LettersFilterBody;
 
 
 /***/ }),
@@ -103590,28 +103113,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = LettersSearch;
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
 const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -103730,6 +103242,7 @@ function LettersSearch({ title }) {
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colLg: 3 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
+exports["default"] = LettersSearch;
 
 
 /***/ }),
@@ -103758,28 +103271,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IncomingLetterModalBody = IncomingLetterModalBody;
+exports.IncomingLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
@@ -103965,6 +103468,7 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", multiple: true })),
         react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "false" })));
 }
+exports.IncomingLetterModalBody = IncomingLetterModalBody;
 
 
 /***/ }),
@@ -103993,25 +103497,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterModalBodyStatus = LetterModalBodyStatus;
+exports.LetterModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -104025,6 +103519,7 @@ function LetterModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return isOurLetter ? react_1.default.createElement(StatusSelectors_1.OurLetterStatusSelector, null) : react_1.default.createElement(StatusSelectors_1.IncomingLetterStatusSelector, null);
 }
+exports.LetterModalBodyStatus = LetterModalBodyStatus;
 
 
 /***/ }),
@@ -104053,29 +103548,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterModalBody = LetterModalBody;
-exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
+exports.ProjectSelectorModalBody = exports.LetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -104166,6 +103650,7 @@ function LetterModalBody({ isEditing, initialData, getConfidenceClass = () => ''
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", isValid: !errors.responseDueDate, isInvalid: !!errors.responseDueDate, ...register("responseDueDate"), className: getConfidenceClass("responseDueDate") }),
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "responseDueDate", errors: errors })))));
 }
+exports.LetterModalBody = LetterModalBody;
 /** przełęcza widok pomiędzy wyborem projektu a formularzem pisma
  * SpecificContractModalBody - komponent formularza kontraktu (OurContractModalBody lub OtherContractModalBody)
  * @param additionalProps - dodatkowe propsy przekazywane do SpecificContractModalBody - ustawiane w Otjer lub OurContractModalBody
@@ -104181,6 +103666,7 @@ function ProjectSelectorModalBody({ isEditing, additionalProps }) {
         throw new Error("SpecificContractModalBody is not defined");
     return (react_1.default.createElement(react_1.default.Fragment, null, _project ? (react_1.default.createElement(SpecificLetterModalBody, { isEditing: isEditing, additionalProps: additionalProps })) : (react_1.default.createElement(BussinesObjectSelectors_1.ProjectSelector, { name: "_project" }))));
 }
+exports.ProjectSelectorModalBody = ProjectSelectorModalBody;
 
 
 /***/ }),
@@ -104209,30 +103695,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterEditModalButton = LetterEditModalButton;
-exports.OurLetterEditModalButton = OurLetterEditModalButton;
-exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
-exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
-exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
-exports.ExportOurLetterContractToPDFButton = ExportOurLetterContractToPDFButton;
+exports.ExportOurLetterContractToPDFButton = exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
@@ -104247,6 +103718,7 @@ function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProp
     (0, react_1.useEffect)(() => { }, [initialData]);
     return initialData.isOur ? (react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
+exports.LetterEditModalButton = LetterEditModalButton;
 function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -104259,6 +103731,7 @@ function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterEditModalButton = OurLetterEditModalButton;
 function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -104272,6 +103745,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
 function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -104282,11 +103756,12 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
         }, buttonProps: {} }));
 }
+exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
 function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
             ModalBodyComponent: LetterModalBody_1.ProjectSelectorModalBody,
-            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody }, // additional props for ProjectSelectorModalBody
+            additionalModalBodyProps: { SpecificLetterModalBody: IncomingLetterModalBody_1.IncomingLetterModalBody },
             modalTitle: "Nowe pismo przychodzące",
             repository: LettersController_1.lettersRepository,
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
@@ -104294,6 +103769,7 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonCaption: "Rejestruj przychodzące",
         } }));
 }
+exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
 function ExportOurLetterContractToPDFButton({ onError, ourLetterContract, }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
@@ -104318,6 +103794,7 @@ function ExportOurLetterContractToPDFButton({ onError, ourLetterContract, }) {
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
+exports.ExportOurLetterContractToPDFButton = ExportOurLetterContractToPDFButton;
 
 
 /***/ }),
@@ -104346,26 +103823,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ourLetterValidationSchema = ourLetterValidationSchema;
-exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
+exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const todayUTC = new Date();
 todayUTC.setUTCHours(0, 0, 0, 0); // Ustawia godziny na 00:00:00 UTC
@@ -104411,6 +103877,7 @@ function ourLetterValidationSchema(isEditing) {
         _template: isEditing ? Yup.object() : Yup.object().required("Wybierz szablon"),
     });
 }
+exports.ourLetterValidationSchema = ourLetterValidationSchema;
 function makeOtherLetterValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
@@ -104418,6 +103885,7 @@ function makeOtherLetterValidationSchema(isEditing) {
         resopnseIKNumber: Yup.string().max(40, "Numer odpowiedzi IK może mieć maksymalnie 40 znaków"),
     });
 }
+exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
 
 
 /***/ }),
@@ -104446,28 +103914,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OurLetterModalBody = OurLetterModalBody;
+exports.OurLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
@@ -104497,6 +103955,7 @@ function OurLetterModalBody(props) {
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesCc", multiple: true })),
         react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "true" })));
 }
+exports.OurLetterModalBody = OurLetterModalBody;
 
 
 /***/ }),
@@ -104525,28 +103984,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LettersFilterBody = LettersFilterBody;
+exports.LettersFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -104576,6 +104025,7 @@ function LettersFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Sprawa"),
                 react_1.default.createElement(BussinesObjectSelectors_1.CaseSelectMenuElement, { name: "_case", repository: LettersController_1.casesRepository, showValidationInfo: false, _offer: _offer, multiple: false }))))));
 }
+exports.LettersFilterBody = LettersFilterBody;
 
 
 /***/ }),
@@ -104667,28 +104117,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = OffersLettersSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const LettersController_1 = __webpack_require__(/*! ./LettersController */ "./src/Offers/OffersLettersList/LettersController.ts");
@@ -104746,6 +104185,7 @@ function OffersLettersSearch({ title }) {
             { header: "Odbiorcy", renderTdBody: makeEntitiesLabel, colMd: 2 },
         ], AddNewButtonComponents: [LetterModalButtons_1.OurLetterAddNewModalButton, LetterModalButtons_1.IncomingLetterAddNewModalButton], EditButtonComponent: LetterModalButtons_1.LetterEditModalButton, isDeletable: true, repository: LettersController_1.lettersRepository, selectedObjectRoute: "/letter/" }));
 }
+exports["default"] = OffersLettersSearch;
 
 
 /***/ }),
@@ -104774,25 +104214,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.IncomingLetterModalBody = IncomingLetterModalBody;
+exports.IncomingLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Offers/OffersLettersList/Modals/LetterModalBody.tsx");
@@ -104818,6 +104248,7 @@ function IncomingLetterModalBody(props) {
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesMain", multiple: true })),
         react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "false" })));
 }
+exports.IncomingLetterModalBody = IncomingLetterModalBody;
 
 
 /***/ }),
@@ -104846,28 +104277,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterModalBody = LetterModalBody;
+exports.LetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -104929,6 +104350,7 @@ function LetterModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Plik"),
             react_1.default.createElement(GenericComponents_1.FileInput, { ...register("file") }))));
 }
+exports.LetterModalBody = LetterModalBody;
 
 
 /***/ }),
@@ -104957,29 +104379,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LetterEditModalButton = LetterEditModalButton;
-exports.OurLetterEditModalButton = OurLetterEditModalButton;
-exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
-exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
-exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
+exports.IncomingLetterAddNewModalButton = exports.IncomingLetterEditModalButton = exports.OurLetterAddNewModalButton = exports.OurLetterEditModalButton = exports.LetterEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const LetterValidationSchema_1 = __webpack_require__(/*! ./LetterValidationSchema */ "./src/Offers/OffersLettersList/Modals/LetterValidationSchema.ts");
@@ -104993,6 +104401,7 @@ function LetterEditModalButton({ modalProps: { onEdit, initialData }, buttonProp
     }, [initialData]);
     return initialData.isOur ? (react_1.default.createElement(OurLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps })) : (react_1.default.createElement(IncomingLetterEditModalButton, { modalProps: { onEdit, initialData }, buttonProps: buttonProps }));
 }
+exports.LetterEditModalButton = LetterEditModalButton;
 function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -105005,6 +104414,7 @@ function OurLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterEditModalButton = OurLetterEditModalButton;
 function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -105017,6 +104427,7 @@ function OurLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.OurLetterAddNewModalButton = OurLetterAddNewModalButton;
 function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -105027,6 +104438,7 @@ function IncomingLetterEditModalButton({ modalProps: { onEdit, initialData }, })
             makeValidationSchema: LetterValidationSchema_1.makeOtherLetterValidationSchema,
         }, buttonProps: {} }));
 }
+exports.IncomingLetterEditModalButton = IncomingLetterEditModalButton;
 function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -105038,6 +104450,7 @@ function IncomingLetterAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonCaption: "Rejestruj przychodzące",
         } }));
 }
+exports.IncomingLetterAddNewModalButton = IncomingLetterAddNewModalButton;
 
 
 /***/ }),
@@ -105066,26 +104479,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ourLetterValidationSchema = ourLetterValidationSchema;
-exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
+exports.makeOtherLetterValidationSchema = exports.ourLetterValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     _offer: Yup.object().required("Wybierz ofertę"),
@@ -105114,12 +104516,14 @@ function ourLetterValidationSchema(isEditing) {
         _template: isEditing ? Yup.object() : Yup.object().required("Wybierz szablon"),
     });
 }
+exports.ourLetterValidationSchema = ourLetterValidationSchema;
 function makeOtherLetterValidationSchema(isEditing) {
     return Yup.object().shape({
         ...commonFields,
         number: Yup.string().required("Numer jest wymagany").max(50, "Numer może mieć maksymalnie 50 znaków"),
     });
 }
+exports.makeOtherLetterValidationSchema = makeOtherLetterValidationSchema;
 
 
 /***/ }),
@@ -105148,25 +104552,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OurLetterModalBody = OurLetterModalBody;
+exports.OurLetterModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Offers/OffersLettersList/Modals/LetterModalBody.tsx");
@@ -105191,6 +104585,7 @@ function OurLetterModalBody(props) {
             react_1.default.createElement(BussinesObjectSelectors_1.EntitySelector, { name: "_entitiesCc", multiple: true })),
         react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "true" })));
 }
+exports.OurLetterModalBody = OurLetterModalBody;
 
 
 /***/ }),
@@ -105219,28 +104614,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MailInvitationsFilterBody = MailInvitationsFilterBody;
+exports.MailInvitationsFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -105262,6 +104647,7 @@ function MailInvitationsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(StatusSelectors_1.OfferInvitationMailStatusSelector, { as: react_bootstrap_1.Col, label: "Status", showValidationInfo: false, multiple: true })));
 }
+exports.MailInvitationsFilterBody = MailInvitationsFilterBody;
 
 
 /***/ }),
@@ -105278,7 +104664,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MailInvitationsList;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const OffersController_1 = __webpack_require__(/*! ../OffersController */ "./src/Offers/OffersList/OffersController.ts");
@@ -105313,7 +104698,7 @@ function MailInvitationsList() {
                         padding: "10px",
                         borderLeft: "solid 2pt rgb(241 146 146)",
                         backgroundColor: "#ebf5f0",
-                        wordWrap: "break-word", // Łamanie długich słów
+                        wordWrap: "break-word",
                         whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
                     } },
                     react_1.default.createElement("p", null, "Pierwsze 500 znak\u00F3w maila:"),
@@ -105341,6 +104726,7 @@ function MailInvitationsList() {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(FilterableTable_1.default, { id: "mailInvitations", tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [], isDeletable: true, repository: OffersController_1.mailInvitationsRepository, FilterBodyComponent: MailInvitationsFilterBody_1.MailInvitationsFilterBody })));
 }
+exports["default"] = MailInvitationsList;
 
 
 /***/ }),
@@ -105369,28 +104755,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MailsToCheckFilterBody = MailsToCheckFilterBody;
+exports.MailsToCheckFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
@@ -105413,6 +104789,7 @@ function MailsToCheckFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })),
         react_1.default.createElement(GenericComponents_1.DateRangeInput, { as: react_bootstrap_1.Col, sm: 12, md: 6, lg: 4, label: "Data wp\u0142ywu", fromName: "incomingDateFrom", toName: "incomingDateTo", showValidationInfo: false })));
 }
+exports.MailsToCheckFilterBody = MailsToCheckFilterBody;
 
 
 /***/ }),
@@ -105441,28 +104818,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MailsToCheckList;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const OffersController_1 = __webpack_require__(/*! ../OffersController */ "./src/Offers/OffersList/OffersController.ts");
@@ -105509,7 +104875,7 @@ function MailsToCheckList({ show, handleClose }) {
                         padding: "10px",
                         borderLeft: "solid 2pt rgb(241 146 146)",
                         backgroundColor: "#ebf5f0",
-                        wordWrap: "break-word", // Łamanie długich słów
+                        wordWrap: "break-word",
                         whiteSpace: "pre-wrap", // Obsługa nowych linii w tekście
                     } },
                     react_1.default.createElement("p", null, "Pierwsze 500 znak\u00F3w maila:"),
@@ -105526,6 +104892,7 @@ function MailsToCheckList({ show, handleClose }) {
         react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: handleClose }, "Zamknij"))));
 }
+exports["default"] = MailsToCheckList;
 
 
 /***/ }),
@@ -105554,25 +104921,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MailModalBodyStatus = MailModalBodyStatus;
+exports.MailModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -105583,6 +104940,7 @@ function MailModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.OfferInvitationMailStatusSelector, null);
 }
+exports.MailModalBodyStatus = MailModalBodyStatus;
 
 
 /***/ }),
@@ -105611,25 +104969,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeMailStatusValidationSchema = makeMailStatusValidationSchema;
+exports.makeMailStatusValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const status = Yup.string().required("Wybierz status");
 function makeMailStatusValidationSchema(isEditing) {
@@ -105637,6 +104985,7 @@ function makeMailStatusValidationSchema(isEditing) {
         status,
     });
 }
+exports.makeMailStatusValidationSchema = makeMailStatusValidationSchema;
 
 
 /***/ }),
@@ -105665,30 +105014,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
-exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;
-exports.ShowMailsToCheckButton = ShowMailsToCheckButton;
+exports.ShowMailsToCheckButton = exports.AddOurOfferFromMailButton = exports.SetAsGoodToOfferButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const OffersController_1 = __webpack_require__(/*! ../../OffersController */ "./src/Offers/OffersList/OffersController.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -105721,6 +105058,7 @@ function SetAsGoodToOfferButton({ onError }) {
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Mail przypisany do ofertowania", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
+exports.SetAsGoodToOfferButton = SetAsGoodToOfferButton;
 function AddOurOfferFromMailButton({ onError }) {
     const mailData = OffersController_1.mailInvitationsRepository.currentItems[0];
     if (!mailData) {
@@ -105746,6 +105084,7 @@ function AddOurOfferFromMailButton({ onError }) {
             repository: OffersController_1.offersRepository,
         }, buttonProps: { buttonCaption: "Rejestruj ofertę" } }));
 }
+exports.AddOurOfferFromMailButton = AddOurOfferFromMailButton;
 function ShowMailsToCheckButton() {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -105758,6 +105097,7 @@ function ShowMailsToCheckButton() {
         react_1.default.createElement(react_bootstrap_1.Button, { key: "Sprawd\u017A poczt\u0119", variant: "outline-secondary", size: "sm", onClick: handleOpen }, "Sprawd\u017A poczt\u0119"),
         react_1.default.createElement(MailsToCheckList_1.default, { show: showForm, handleClose: handleClose })));
 }
+exports.ShowMailsToCheckButton = ShowMailsToCheckButton;
 
 
 /***/ }),
@@ -105786,25 +105126,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ExternalOfferModalBody = ExternalOfferModalBody;
+exports.ExternalOfferModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const OfferModalBody_1 = __webpack_require__(/*! ./OfferModalBody */ "./src/Offers/OffersList/Modals/OfferModalBody.tsx");
@@ -105825,6 +105155,7 @@ function ExternalOfferModalBody(props) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wklej link", isInvalid: !!errors?.tenderUrl, isValid: !errors?.tenderUrl, ...register("tenderUrl") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "tenderUrl" }))));
 }
+exports.ExternalOfferModalBody = ExternalOfferModalBody;
 
 
 /***/ }),
@@ -105853,25 +105184,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferModalBodyStatus = OfferModalBodyStatus;
+exports.OfferModalBodyStatus = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -105882,6 +105203,7 @@ function OfferModalBodyStatus({ initialData }) {
     }, [initialData, setValue]);
     return react_1.default.createElement(StatusSelectors_1.OfferStatusSelector, null);
 }
+exports.OfferModalBodyStatus = OfferModalBodyStatus;
 
 
 /***/ }),
@@ -105910,25 +105232,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferModalBody = OfferModalBody;
+exports.OfferModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -105998,6 +105310,7 @@ function OfferModalBody({ isEditing, initialData }) {
             react_1.default.createElement(OtherAttributesSelectors_1.OfferFormSelectFormElement, { as: react_bootstrap_1.Col })),
         react_1.default.createElement(StatusSelectors_1.OfferStatusSelector, { multiple: false })));
 }
+exports.OfferModalBody = OfferModalBody;
 
 
 /***/ }),
@@ -106026,30 +105339,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferEditModalButton = OfferEditModalButton;
-exports.OurOfferEditModalButton = OurOfferEditModalButton;
-exports.OurOfferAddNewModalButton = OurOfferAddNewModalButton;
-exports.ExternalOfferEditModalButton = ExternalOfferEditModalButton;
-exports.ExternalOfferAddNewModalButton = ExternalOfferAddNewModalButton;
-exports.ExportOurOfferToPDFButton = ExportOurOfferToPDFButton;
+exports.ExportOurOfferToPDFButton = exports.ExternalOfferAddNewModalButton = exports.ExternalOfferEditModalButton = exports.OurOfferAddNewModalButton = exports.OurOfferEditModalButton = exports.OfferEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const OfferValidationSchema_1 = __webpack_require__(/*! ./OfferValidationSchema */ "./src/Offers/OffersList/Modals/OfferValidationSchema.ts");
@@ -106065,6 +105363,7 @@ function OfferEditModalButton({ modalProps: { onEdit, initialData, repository },
     }, [initialData]);
     return initialData.isOur ? (react_1.default.createElement(OurOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps })) : (react_1.default.createElement(ExternalOfferEditModalButton, { modalProps: { onEdit, initialData, repository }, buttonProps: buttonProps }));
 }
+exports.OfferEditModalButton = OfferEditModalButton;
 function OurOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -106078,6 +105377,7 @@ function OurOfferEditModalButton({ modalProps: { onEdit, initialData, repository
             ...buttonProps,
         } }));
 }
+exports.OurOfferEditModalButton = OurOfferEditModalButton;
 function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalSubtitle, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -106093,6 +105393,7 @@ function OurOfferAddNewModalButton({ modalProps: { onAddNew, contextData, modalS
             ...buttonProps,
         } }));
 }
+exports.OurOfferAddNewModalButton = OurOfferAddNewModalButton;
 function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
             onEdit: onEdit,
@@ -106105,6 +105406,7 @@ function ExternalOfferEditModalButton({ modalProps: { onEdit, initialData, repos
             ...buttonProps,
         } }));
 }
+exports.ExternalOfferEditModalButton = ExternalOfferEditModalButton;
 function ExternalOfferAddNewModalButton({ modalProps: { onAddNew, repository }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew,
@@ -106117,6 +105419,7 @@ function ExternalOfferAddNewModalButton({ modalProps: { onAddNew, repository }, 
             ...buttonProps,
         } }));
 }
+exports.ExternalOfferAddNewModalButton = ExternalOfferAddNewModalButton;
 function ExportOurOfferToPDFButton({ onError, ourOffer, }) {
     const [requestPending, setRequestPending] = (0, react_1.useState)(false);
     const [showSuccessToast, setShowSuccessToast] = (0, react_1.useState)(false);
@@ -106142,6 +105445,7 @@ function ExportOurOfferToPDFButton({ onError, ourOffer, }) {
             requestPending && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" })),
         react_1.default.createElement(CommonComponents_1.SuccessToast, { message: "Eksport do PDF zako\u0144czy\u0142 si\u0119 powodzeniem!", show: showSuccessToast, onClose: () => setShowSuccessToast(false) })));
 }
+exports.ExportOurOfferToPDFButton = ExportOurOfferToPDFButton;
 
 
 /***/ }),
@@ -106170,27 +105474,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeOurOfferValidationSchema = makeOurOfferValidationSchema;
-exports.makeOtherOfferValidationSchema = makeOtherOfferValidationSchema;
-exports.makeOfferStatusValidationSchema = makeOfferStatusValidationSchema;
+exports.makeOfferStatusValidationSchema = exports.makeOtherOfferValidationSchema = exports.makeOurOfferValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const status = Yup.string().required("Wybierz status oferty");
 function makeCommonFields(isEditing) {
@@ -106231,6 +105523,7 @@ function makeOurOfferValidationSchema(isEditing) {
         ...makeCommonFields(isEditing),
     });
 }
+exports.makeOurOfferValidationSchema = makeOurOfferValidationSchema;
 function makeOtherOfferValidationSchema(isEditing) {
     return Yup.object().shape({
         ...makeCommonFields(isEditing),
@@ -106247,11 +105540,13 @@ function makeOtherOfferValidationSchema(isEditing) {
         }),
     });
 }
+exports.makeOtherOfferValidationSchema = makeOtherOfferValidationSchema;
 function makeOfferStatusValidationSchema(isEditing) {
     return Yup.object().shape({
         status,
     });
 }
+exports.makeOfferStatusValidationSchema = makeOfferStatusValidationSchema;
 
 
 /***/ }),
@@ -106280,25 +105575,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OurOfferModalBody = OurOfferModalBody;
+exports.OurOfferModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const OfferModalBody_1 = __webpack_require__(/*! ./OfferModalBody */ "./src/Offers/OffersList/Modals/OfferModalBody.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -106312,6 +105597,7 @@ function OurOfferModalBody(props) {
         react_1.default.createElement(OfferModalBody_1.OfferModalBody, { ...props }),
         react_1.default.createElement("input", { type: "hidden", ...register("isOur"), value: "true" })));
 }
+exports.OurOfferModalBody = OurOfferModalBody;
 
 
 /***/ }),
@@ -106340,28 +105626,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SendOfferModalBody = SendOfferModalBody;
+exports.SendOfferModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -106419,6 +105695,7 @@ function SendOfferModalBody({ initialData }) {
         react_1.default.createElement(OtherAttributesSelectors_1.GdFilesSelector, { showValidationInfo: true, name: "_newEvent._gdFilesBasicData", contextData: initialData, attentionRequiredFileNames: initialData?._lastEvent?._gdFilesBasicData?.map((file) => file.name), multiple: true }),
         react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-muted" }, isAnotherOffer ? (renderAnotherOfferFileInstrutions()) : (react_1.default.createElement("div", null, "Wybierz z folderu oferty na Dysku Google pliki, kt\u00F3re chcesz przes\u0142a\u0107 wraz z ofert\u0105. Mo\u017Cesz wybra\u0107 wi\u0119cej ni\u017C jeden.")))));
 }
+exports.SendOfferModalBody = SendOfferModalBody;
 
 
 /***/ }),
@@ -106435,8 +105712,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SendOfferModalButton = SendOfferModalButton;
-exports.SendAnotherOfferModalButton = SendAnotherOfferModalButton;
+exports.SendAnotherOfferModalButton = exports.SendOfferModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTableContext_1 = __webpack_require__(/*! ../../../../View/Resultsets/FilterableTable/FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -106458,6 +105734,7 @@ function SendOfferModalButton({ modalProps: { initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SendOfferModalButton = SendOfferModalButton;
 function SendAnotherOfferModalButton({ modalProps: { initialData } }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -106473,6 +105750,7 @@ function SendAnotherOfferModalButton({ modalProps: { initialData } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.SendAnotherOfferModalButton = SendAnotherOfferModalButton;
 
 
 /***/ }),
@@ -106501,26 +105779,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeSendOfferValidationSchema = makeSendOfferValidationSchema;
-exports.makeSendAnotherOfferValidationSchema = makeSendAnotherOfferValidationSchema;
+exports.makeSendAnotherOfferValidationSchema = exports.makeSendOfferValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const _recipients = Yup.array().default([]).min(1, "Wybierz co przynajmniej jednego odbiorcę");
 const _gdFilesBasicData = Yup.array().default([]).min(1, "Wybierz co najmniej jeden plik oferty i ew. załączniki");
@@ -106534,6 +105801,7 @@ function makeSendOfferValidationSchema(isEditing) {
         }),
     });
 }
+exports.makeSendOfferValidationSchema = makeSendOfferValidationSchema;
 function makeSendAnotherOfferValidationSchema(isEditing) {
     return Yup.object().shape({
         _newEvent: Yup.object().shape({
@@ -106548,6 +105816,7 @@ function makeSendAnotherOfferValidationSchema(isEditing) {
         }),
     });
 }
+exports.makeSendAnotherOfferValidationSchema = makeSendAnotherOfferValidationSchema;
 
 
 /***/ }),
@@ -106576,25 +105845,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferBondModalBody = OfferBondModalBody;
+exports.OfferBondModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FormContext_1 = __webpack_require__(/*! ../../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -106643,6 +105902,7 @@ function OfferBondModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, controlId: "_offerBond.status" },
             react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { name: "_offerBond.status", label: "Status", multiple: false }))));
 }
+exports.OfferBondModalBody = OfferBondModalBody;
 
 
 /***/ }),
@@ -106659,9 +105919,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferBondEditModalButton = OfferBondEditModalButton;
-exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
-exports.OfferBondDeleteModalButton = OfferBondDeleteModalButton;
+exports.OfferBondDeleteModalButton = exports.OfferBondAddNewModalButton = exports.OfferBondEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const OfferBondModalBody_1 = __webpack_require__(/*! ./OfferBondModalBody */ "./src/Offers/OffersList/OfferBonds/Modals/OfferBondModalBody.tsx");
@@ -106682,6 +105940,7 @@ function OfferBondEditModalButton({ modalProps: { initialData, repository }, }) 
             buttonVariant: "outline-success",
         } }));
 }
+exports.OfferBondEditModalButton = OfferBondEditModalButton;
 function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -106697,6 +105956,7 @@ function OfferBondAddNewModalButton({ modalProps: { initialData, repository }, }
             buttonCaption: "Dodaj wadium",
         } }));
 }
+exports.OfferBondAddNewModalButton = OfferBondAddNewModalButton;
 function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }) {
     const { handleEditObject } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralEditModalButton, { modalProps: {
@@ -106712,6 +105972,7 @@ function OfferBondDeleteModalButton({ modalProps: { initialData, repository }, }
             buttonCaption: "Usuń wadium",
         } }));
 }
+exports.OfferBondDeleteModalButton = OfferBondDeleteModalButton;
 
 
 /***/ }),
@@ -106740,23 +106001,13 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const GenericComponents_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
@@ -106791,13 +106042,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferTenderLink = OfferTenderLink;
+exports.OfferTenderLink = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 function OfferTenderLink({ offer }) {
     if (!("tenderUrl" in offer) || !offer.tenderUrl)
         return react_1.default.createElement(react_1.default.Fragment, null, offer.alias);
     return (react_1.default.createElement("a", { href: offer.tenderUrl, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, offer.alias));
 }
+exports.OfferTenderLink = OfferTenderLink;
 
 
 /***/ }),
@@ -106826,28 +106078,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OffersFilterBody = OffersFilterBody;
+exports.OffersFilterBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -106876,6 +106118,7 @@ function OffersFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2 },
             react_1.default.createElement(StatusSelectors_1.OfferBondStatusSelector, { name: "offerBondStatuses", label: "Status wadium", showValidationInfo: false, multiple: true }))));
 }
+exports.OffersFilterBody = OffersFilterBody;
 
 
 /***/ }),
@@ -106976,28 +106219,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = OffersMainView;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const OffersSearch_1 = __importDefault(__webpack_require__(/*! ./OffersSearch */ "./src/Offers/OffersList/OffersSearch.tsx"));
@@ -107031,6 +106263,7 @@ function OffersMainView({ title }) {
                         react_1.default.createElement(MailInvitationsList_1.default, null))))),
         react_1.default.createElement(OffersSearch_1.default, { title: "Oferty" })));
 }
+exports["default"] = OffersMainView;
 
 
 /***/ }),
@@ -107059,28 +106292,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = OffersSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const OffersController_1 = __webpack_require__(/*! ./OffersController */ "./src/Offers/OffersList/OffersController.ts");
@@ -107267,6 +106489,7 @@ function OffersSearch({ title }) {
     }
     return (react_1.default.createElement(FilterableTable_1.default, { id: "Offers", title: title, FilterBodyComponent: OfferFilterBody_1.OffersFilterBody, tableStructure: [{ header: undefined, renderTdBody: renderRowContent }], AddNewButtonComponents: [OfferModalButtons_1.OurOfferAddNewModalButton, OfferModalButtons_1.ExternalOfferAddNewModalButton], EditButtonComponent: OfferModalButtons_1.OfferEditModalButton, isDeletable: true, repository: OffersController_1.offersRepository, selectedObjectRoute: "/offer/" }));
 }
+exports["default"] = OffersSearch;
 
 
 /***/ }),
@@ -107295,25 +106518,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PersonModalBody = PersonModalBody;
+exports.PersonModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -107401,6 +106614,7 @@ function PersonModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { placeholder: "Podaj numer telefonu", isInvalid: !!errors?.phone, isValid: !errors?.phone, ...register("phone") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "phone", errors: errors }))));
 }
+exports.PersonModalBody = PersonModalBody;
 
 
 /***/ }),
@@ -107417,8 +106631,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PersonEditModalButton = PersonEditModalButton;
-exports.PersonAddNewModalButton = PersonAddNewModalButton;
+exports.PersonAddNewModalButton = exports.PersonEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const PersonsController_1 = __webpack_require__(/*! ../PersonsController */ "./src/Persons/PersonsController.ts");
@@ -107446,6 +106659,7 @@ function PersonEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.PersonEditModalButton = PersonEditModalButton;
 function PersonAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -107458,6 +106672,7 @@ function PersonAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.PersonAddNewModalButton = PersonAddNewModalButton;
 
 
 /***/ }),
@@ -107486,25 +106701,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makePersonValidationSchema = makePersonValidationSchema;
+exports.makePersonValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     _entity: Yup.object().required("Wybierz podmiot"),
@@ -107524,6 +106729,7 @@ function makePersonValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makePersonValidationSchema = makePersonValidationSchema;
 
 
 /***/ }),
@@ -107540,7 +106746,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PersonsFilterBody = PersonsFilterBody;
+exports.PersonsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -107560,6 +106766,7 @@ function PersonsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Do\u015Bwiadczenie"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Stanowisko, firma...", ...register("experienceText") }))));
 }
+exports.PersonsFilterBody = PersonsFilterBody;
 
 
 /***/ }),
@@ -107576,7 +106783,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createEducationsRepository = createEducationsRepository;
+exports.createEducationsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 function createEducationsRepository(personId) {
     return new RepositoryReact_1.default({
@@ -107589,6 +106796,7 @@ function createEducationsRepository(personId) {
         },
     });
 }
+exports.createEducationsRepository = createEducationsRepository;
 
 
 /***/ }),
@@ -107617,25 +106825,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.EducationModalBody = EducationModalBody;
+exports.EducationModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -107673,6 +106871,7 @@ function EducationModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Data do"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "date", ...register("dateTo") }))));
 }
+exports.EducationModalBody = EducationModalBody;
 
 
 /***/ }),
@@ -107689,8 +106888,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createEducationEditModalButton = createEducationEditModalButton;
-exports.createEducationAddNewModalButton = createEducationAddNewModalButton;
+exports.createEducationAddNewModalButton = exports.createEducationEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const EducationModalBody_1 = __webpack_require__(/*! ./EducationModalBody */ "./src/Persons/PersonProfile/Education/EducationModalBody.tsx");
@@ -107709,6 +106907,7 @@ function createEducationEditModalButton(repository) {
             } }));
     };
 }
+exports.createEducationEditModalButton = createEducationEditModalButton;
 function createEducationAddNewModalButton(repository) {
     return function EducationAddNewModalButton({ modalProps: { onAddNew } }) {
         return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
@@ -107723,6 +106922,7 @@ function createEducationAddNewModalButton(repository) {
             } }));
     };
 }
+exports.createEducationAddNewModalButton = createEducationAddNewModalButton;
 
 
 /***/ }),
@@ -107751,25 +106951,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeEducationValidationSchema = makeEducationValidationSchema;
+exports.makeEducationValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     schoolName: Yup.string()
@@ -107786,6 +106976,7 @@ function makeEducationValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeEducationValidationSchema = makeEducationValidationSchema;
 
 
 /***/ }),
@@ -107802,7 +106993,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createExperienceRepository = createExperienceRepository;
+exports.createExperienceRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 function createExperienceRepository(personId) {
     return new RepositoryReact_1.default({
@@ -107815,6 +107006,7 @@ function createExperienceRepository(personId) {
         },
     });
 }
+exports.createExperienceRepository = createExperienceRepository;
 
 
 /***/ }),
@@ -107843,25 +107035,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ExperienceModalBody = ExperienceModalBody;
+exports.ExperienceModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -107902,6 +107084,7 @@ function ExperienceModalBody({ isEditing, initialData }) {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "isCurrent", className: "mb-3" },
             react_1.default.createElement(react_bootstrap_1.Form.Check, { type: "checkbox", label: "Obecne miejsce pracy", ...register("isCurrent") }))));
 }
+exports.ExperienceModalBody = ExperienceModalBody;
 
 
 /***/ }),
@@ -107918,8 +107101,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createExperienceEditModalButton = createExperienceEditModalButton;
-exports.createExperienceAddNewModalButton = createExperienceAddNewModalButton;
+exports.createExperienceAddNewModalButton = exports.createExperienceEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ExperienceModalBody_1 = __webpack_require__(/*! ./ExperienceModalBody */ "./src/Persons/PersonProfile/Experience/ExperienceModalBody.tsx");
@@ -107938,6 +107120,7 @@ function createExperienceEditModalButton(repository) {
             } }));
     };
 }
+exports.createExperienceEditModalButton = createExperienceEditModalButton;
 function createExperienceAddNewModalButton(repository) {
     return function ExperienceAddNewModalButton({ modalProps: { onAddNew } }) {
         return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
@@ -107952,6 +107135,7 @@ function createExperienceAddNewModalButton(repository) {
             } }));
     };
 }
+exports.createExperienceAddNewModalButton = createExperienceAddNewModalButton;
 
 
 /***/ }),
@@ -107980,25 +107164,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeExperienceValidationSchema = makeExperienceValidationSchema;
+exports.makeExperienceValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     organizationName: Yup.string()
@@ -108016,6 +107190,7 @@ function makeExperienceValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeExperienceValidationSchema = makeExperienceValidationSchema;
 
 
 /***/ }),
@@ -108044,28 +107219,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = PersonProfilePage;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -108182,6 +107346,7 @@ function PersonProfilePage() {
             ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }
+exports["default"] = PersonProfilePage;
 
 
 /***/ }),
@@ -108210,25 +107375,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProfileSkillModalBody = ProfileSkillModalBody;
+exports.ProfileSkillModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
@@ -108293,6 +107448,7 @@ function ProfileSkillModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: 0, max: 50, placeholder: "np. 5", isInvalid: !!errors?.yearsOfExperience, isValid: !errors?.yearsOfExperience, ...register("yearsOfExperience", { valueAsNumber: true }) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "yearsOfExperience", errors: errors }))));
 }
+exports.ProfileSkillModalBody = ProfileSkillModalBody;
 
 
 /***/ }),
@@ -108309,8 +107465,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createProfileSkillEditModalButton = createProfileSkillEditModalButton;
-exports.createProfileSkillAddNewModalButton = createProfileSkillAddNewModalButton;
+exports.createProfileSkillAddNewModalButton = exports.createProfileSkillEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ProfileSkillModalBody_1 = __webpack_require__(/*! ./ProfileSkillModalBody */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillModalBody.tsx");
@@ -108329,6 +107484,7 @@ function createProfileSkillEditModalButton(repository) {
             } }));
     };
 }
+exports.createProfileSkillEditModalButton = createProfileSkillEditModalButton;
 function createProfileSkillAddNewModalButton(repository) {
     return function ProfileSkillAddNewModalButton({ modalProps: { onAddNew } }) {
         return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
@@ -108343,6 +107499,7 @@ function createProfileSkillAddNewModalButton(repository) {
             } }));
     };
 }
+exports.createProfileSkillAddNewModalButton = createProfileSkillAddNewModalButton;
 
 
 /***/ }),
@@ -108371,25 +107528,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeProfileSkillValidationSchema = makeProfileSkillValidationSchema;
+exports.makeProfileSkillValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     skillId: Yup.number()
@@ -108403,6 +107550,7 @@ function makeProfileSkillValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeProfileSkillValidationSchema = makeProfileSkillValidationSchema;
 
 
 /***/ }),
@@ -108419,7 +107567,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createProfileSkillsRepository = createProfileSkillsRepository;
+exports.createProfileSkillsRepository = void 0;
 const RepositoryReact_1 = __importDefault(__webpack_require__(/*! ../../../React/RepositoryReact */ "./src/React/RepositoryReact.ts"));
 function createProfileSkillsRepository(personId) {
     return new RepositoryReact_1.default({
@@ -108432,6 +107580,7 @@ function createProfileSkillsRepository(personId) {
         },
     });
 }
+exports.createProfileSkillsRepository = createProfileSkillsRepository;
 
 
 /***/ }),
@@ -108460,25 +107609,14 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = PersonProfilePanel;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -108603,6 +107741,7 @@ function PersonProfilePanel({ person, onClose }) {
                 react_1.default.createElement("div", { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pe\u0142ny profil \u2192")))))));
 }
+exports["default"] = PersonProfilePanel;
 
 
 /***/ }),
@@ -108668,28 +107807,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = PersonsSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
@@ -108752,6 +107880,7 @@ function PersonsSearch({ title }) {
         selectedPerson && (react_1.default.createElement(react_bootstrap_1.Col, { md: 4 },
             react_1.default.createElement(PersonProfilePanel_1.default, { person: selectedPerson, onClose: handleClosePanel })))));
 }
+exports["default"] = PersonsSearch;
 
 
 /***/ }),
@@ -108768,16 +107897,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.validatePersonId = validatePersonId;
-exports.fetchPersonAccountV2 = fetchPersonAccountV2;
-exports.fetchPersonProfileV2 = fetchPersonProfileV2;
-exports.putPersonAccountV2 = putPersonAccountV2;
-exports.putPersonProfileV2 = putPersonProfileV2;
-exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
-exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
-exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
-exports.fetchSkillsDictionary = fetchSkillsDictionary;
-exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
+exports.savePersonV2AccountAndProfile = exports.fetchSkillsDictionary = exports.fetchPersonProfileSkills = exports.fetchPersonProfileEducations = exports.fetchPersonProfileExperiences = exports.putPersonProfileV2 = exports.putPersonAccountV2 = exports.fetchPersonProfileV2 = exports.fetchPersonAccountV2 = exports.validatePersonId = void 0;
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
 /**
@@ -108801,6 +107921,7 @@ function validatePersonId(personId, context) {
     }
     return personId;
 }
+exports.validatePersonId = validatePersonId;
 /**
  * Pobiera dane account v2 dla osoby.
  * @returns PersonAccountV2Payload lub null jesli brak account (404)
@@ -108822,6 +107943,7 @@ async function fetchPersonAccountV2(personId) {
         return null;
     }
 }
+exports.fetchPersonAccountV2 = fetchPersonAccountV2;
 /**
  * Pobiera dane profile v2 dla osoby.
  * @returns PersonProfileV2Record lub null jesli brak profile (404)
@@ -108843,6 +107965,7 @@ async function fetchPersonProfileV2(personId) {
         return null;
     }
 }
+exports.fetchPersonProfileV2 = fetchPersonProfileV2;
 /**
  * Zapisuje dane account v2 dla osoby (PUT).
  * @returns zaktualizowany PersonAccountV2Payload
@@ -108859,6 +107982,7 @@ async function putPersonAccountV2(personId, payload) {
     });
     return result;
 }
+exports.putPersonAccountV2 = putPersonAccountV2;
 /**
  * Zapisuje dane profile v2 dla osoby (PUT).
  * @returns zaktualizowany PersonProfileV2Payload
@@ -108875,6 +107999,7 @@ async function putPersonProfileV2(personId, payload) {
     });
     return result;
 }
+exports.putPersonProfileV2 = putPersonProfileV2;
 async function searchProfileModule(personId, modulePath, orConditions, context) {
     const validId = validatePersonId(personId, context);
     const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile/${modulePath}/search`;
@@ -108895,12 +108020,15 @@ async function searchProfileModule(personId, modulePath, orConditions, context) 
 async function fetchPersonProfileExperiences(personId, orConditions = []) {
     return searchProfileModule(personId, "experiences", orConditions, "POST experiences/search");
 }
+exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
 async function fetchPersonProfileEducations(personId, orConditions = []) {
     return searchProfileModule(personId, "educations", orConditions, "POST educations/search");
 }
+exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
 async function fetchPersonProfileSkills(personId, orConditions = []) {
     return searchProfileModule(personId, "skills", orConditions, "POST skills/search");
 }
+exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
 /**
  * Pobiera slownik skilli z wyszukiwaniem.
  * @param searchText - opcjonalny tekst do wyszukiwania
@@ -108924,6 +108052,7 @@ async function fetchSkillsDictionary(searchText) {
         return [];
     }
 }
+exports.fetchSkillsDictionary = fetchSkillsDictionary;
 /**
  * Wspolna funkcja zapisu account + profile v2 z ujednolicona obsluga bledow.
  * Kolejnosc: account -> profile (sekwencyjnie).
@@ -108960,6 +108089,7 @@ async function savePersonV2AccountAndProfile(personId, accountPayload, profilePa
     }
     return result;
 }
+exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
 
 
 /***/ }),
@@ -108988,28 +108118,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectModalBody = ProjectModalBody;
+exports.ProjectModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -109080,6 +108200,7 @@ function ProjectModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: "endDate" }))),
         react_1.default.createElement(StatusSelectors_1.ProjectStatusSelector, null)));
 }
+exports.ProjectModalBody = ProjectModalBody;
 
 
 /***/ }),
@@ -109108,25 +108229,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeProjectValidationSchema = makeProjectValidationSchema;
+exports.makeProjectValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -109166,6 +108277,7 @@ function makeProjectValidationSchema(isEditing) {
         ...commonFields,
     });
 }
+exports.makeProjectValidationSchema = makeProjectValidationSchema;
 
 
 /***/ }),
@@ -109182,7 +108294,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = GoogleButton;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ./MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -109229,6 +108340,7 @@ function GoogleButton({ onServerResponse }) {
     }
     return react_1.default.createElement(google_1.GoogleLogin, { onSuccess: handleSuccess, onError: () => console.log("Login Failed") });
 }
+exports["default"] = GoogleButton;
 
 
 /***/ }),
@@ -109365,6 +108477,7 @@ class MainSetup {
         return roles.includes(this.currentUser.systemRoleName);
     }
 }
+exports["default"] = MainSetup;
 MainSetup.CLIENT_ID = "386403657277-9mh2cnqb9dneoh8lc6o2m339eemj24he.apps.googleusercontent.com"; //ENVI - nowy test
 MainSetup.serverUrl = window.location.href.includes("localhost")
     ? "http://localhost:3000/"
@@ -109488,8 +108601,8 @@ MainSetup.OurLetterStatus = {
 };
 MainSetup.IncomingLetterStatus = {
     REGISTERED: "Zarejestrowany",
-    RESPONSE_SENT: "Odpowiedź wysłana", // bardziej naturalna forma
-    RESPONSE_REQUIRED: "Wymaga odpowiedzi", // krócej i konkretniej
+    RESPONSE_SENT: "Odpowiedź wysłana",
+    RESPONSE_REQUIRED: "Wymaga odpowiedzi",
     NO_RESPONSE_REQUIRED: "Nie wymaga odpowiedzi", // bardziej jednoznaczne
 };
 MainSetup.LetterEventType = {
@@ -109565,7 +108678,6 @@ MainSetup.RoleGroups = {
     CONTRACTOR: "Wykonawca/Podwykonawcy",
     OTHERS: "Pozostali",
 };
-exports["default"] = MainSetup;
 
 
 /***/ }),
@@ -109594,28 +108706,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ApplicationCallsCard;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
@@ -109668,6 +108769,7 @@ function ApplicationCallsCard({ className }) {
     }
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.applicationCallsRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, shouldRetrieveDataBeforeEdit: false, headerRoute: "/financialAidProgrammes/applicationCalls" }));
 }
+exports["default"] = ApplicationCallsCard;
 
 
 /***/ }),
@@ -109684,7 +108786,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = Dashboard;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MyData_1 = __importDefault(__webpack_require__(/*! ./MyData */ "./src/React/MainWindow/Content/Dashboard/MyData.tsx"));
@@ -109705,6 +108806,7 @@ function Dashboard() {
         react_1.default.createElement(react_bootstrap_1.Col, { md: 3, className: "mb-3" },
             react_1.default.createElement(MyData_1.default, { className: "mb-3 bg-white" }))));
 }
+exports["default"] = Dashboard;
 
 
 /***/ }),
@@ -109788,27 +108890,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GoodTipToast = GoodTipToast;
+exports.GoodTipToast = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_dom_1 = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 __webpack_require__(/*! ./GoodTipToast.css */ "./src/React/MainWindow/Content/Dashboard/GoodTipToast.css");
 const tips = [
     "Używaj krótkich nazw folderów i plików - zamieniaj niektóre słowa na skróty, wyrzucaj zbędne słowa.",
@@ -109873,13 +108966,16 @@ function GoodTipToast({ delay = 5000 }) {
                 clearInterval(progressIntervalRef.current);
         };
     }, [isPaused, isVisible, delay]);
-    return (react_1.default.createElement(react_bootstrap_1.ToastContainer, { position: "bottom-end", className: "p-3", style: { zIndex: 1050, overflowX: 'hidden' } },
+    if (typeof document === 'undefined')
+        return null;
+    return (0, react_dom_1.createPortal)(react_1.default.createElement(react_bootstrap_1.ToastContainer, { position: "bottom-end", className: "p-3", style: { zIndex: 1050, overflowX: 'hidden', position: 'fixed', right: 0, bottom: 0 } },
         react_1.default.createElement("div", { ref: toastWrapperRef, className: `good-tip-toast-wrapper ${isVisible ? 'show' : 'hide'}` },
             react_1.default.createElement(react_bootstrap_1.Toast, { onClose: () => setIsVisible(false), show: true, autohide: false, onMouseEnter: () => setIsPaused(true), onMouseLeave: () => setIsPaused(false) },
                 react_1.default.createElement(react_bootstrap_1.Toast.Header, { closeButton: true },
                     react_1.default.createElement("strong", { className: "me-auto" }, "Dobra rada")),
-                react_1.default.createElement(react_bootstrap_1.Toast.Body, { className: "good-tip-toast-body" }, tip)))));
+                react_1.default.createElement(react_bootstrap_1.Toast.Body, { className: "good-tip-toast-body" }, tip)))), document.body);
 }
+exports.GoodTipToast = GoodTipToast;
 
 
 /***/ }),
@@ -109908,28 +109004,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = InvoicesCard;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
@@ -110001,6 +109086,7 @@ function InvoicesCard({ className }) {
     }
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.invoicesRepository, ListItem: renderListItem, SectionSubtittle: renderSectionSubtitle, className: className, isDeletable: false, EditButtonComponent: InvoiceModalButtons_1.InvoiceEditModalButton, shouldRetrieveDataBeforeEdit: false, detailsRoute: "/invoice/", headerRoute: "/invoices" }));
 }
+exports["default"] = InvoicesCard;
 
 
 /***/ }),
@@ -110017,7 +109103,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MilestoneDateItem;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const CommonComponents_1 = __webpack_require__(/*! ../../../../View/Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
@@ -110094,6 +109179,7 @@ function MilestoneDateItem({ object: item, onClick }) {
                 react_1.default.createElement("span", { className: "badge bg-light text-dark" }, ToolsDate_1.default.dateISOToDMY(item.endDate))),
             renderDaysLeft())));
 }
+exports["default"] = MilestoneDateItem;
 
 
 /***/ }),
@@ -110122,28 +109208,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MilestonesCard;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const DashboardCard_1 = __importDefault(__webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/DashboardCard */ "./src/View/Resultsets/DashboardCard/DashboardCard.tsx"));
 const useDashboardCardData_1 = __webpack_require__(/*! ../../../../View/Resultsets/DashboardCard/useDashboardCardData */ "./src/View/Resultsets/DashboardCard/useDashboardCardData.ts");
@@ -110188,6 +109263,7 @@ function MilestonesCard() {
             return (0, typeGuards_1.isOurContract)(contract) ? contract.ourId : contract.projectOurId || "";
         }, initialObjects: processedMilestones, shouldRetrieveDataBeforeEdit: true, processEditedObject: processEditedObject }));
 }
+exports["default"] = MilestonesCard;
 
 
 /***/ }),
@@ -110204,7 +109280,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MyData;
 // MyDataCard.tsx
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -110227,6 +109302,7 @@ function MyData({ title = "Moje Dane", className, style, renderExtraContent }) {
                     react_1.default.createElement("span", { className: "text-secondary small" }, systemRoleName))),
             renderExtraContent && react_1.default.createElement("div", { className: "mt-2" }, renderExtraContent()))));
 }
+exports["default"] = MyData;
 
 
 /***/ }),
@@ -110255,28 +109331,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = OffersCard;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const MainWindowController_1 = __webpack_require__(/*! ../../MainWindowController */ "./src/React/MainWindow/MainWindowController.ts");
@@ -110313,7 +109378,7 @@ function OffersCard({ className }) {
             .slice(0, 10);
         const orConditions = [
             {
-                statuses: Object.values(MainSetupReact_1.default.OfferStatus), // <- popraw, jeśli np. OfferStatuses!
+                statuses: Object.values(MainSetupReact_1.default.OfferStatus),
                 submissionDeadlineFrom,
                 submissionDeadlineTo,
             },
@@ -110339,6 +109404,7 @@ function OffersCard({ className }) {
     }
     return (react_1.default.createElement(DashboardCard_1.default, { cardData: cardData, dataLoaded: dataLoaded, initialObjects: data, repository: MainWindowController_1.offersRepository, ListItem: renderOfferListItem, className: className, isDeletable: false, headerRoute: "/offers", EditButtonComponent: OfferModalButtons_1.OfferEditModalButton }));
 }
+exports["default"] = OffersCard;
 
 
 /***/ }),
@@ -110387,7 +109453,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = MainMenu;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -110467,6 +109532,7 @@ function MainMenu() {
                             ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"].includes(MainSetupReact_1.default.currentUser.systemRoleName) && (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(react_bootstrap_1.NavDropdown.Item, { as: react_router_dom_1.Link, to: "/admin/systemUsers" }, "Dodaj u\u017Cytkownika"))))))))));
 }
+exports["default"] = MainMenu;
 
 
 /***/ }),
@@ -110610,28 +109676,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderApp = renderApp;
+exports.renderApp = void 0;
 const google_1 = __webpack_require__(/*! @react-oauth/google */ "./node_modules/@react-oauth/google/dist/index.esm.js");
 __webpack_require__(/*! bootstrap/dist/css/bootstrap.min.css */ "./node_modules/bootstrap/dist/css/bootstrap.min.css");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -110786,6 +109842,7 @@ async function renderApp() {
         client_1.default.createRoot(root).render(react_1.default.createElement(google_1.GoogleOAuthProvider, { clientId: MainSetupReact_1.default.CLIENT_ID },
             react_1.default.createElement(App, null)));
 }
+exports.renderApp = renderApp;
 renderApp();
 
 
@@ -111419,10 +110476,10 @@ class Tools {
         return typeof value === "number" && !isNaN(value);
     }
 }
+exports["default"] = Tools;
 Tools.getLabelFromKey = (key, options, defaultLabel = "Nieznana wartość") => {
     return options[key] || defaultLabel;
 };
-exports["default"] = Tools;
 
 
 /***/ }),
@@ -111697,13 +110754,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ensureLabelKey = ensureLabelKey;
-exports.safeGetFirstField = safeGetFirstField;
-exports.logSelector = logSelector;
+exports.logSelector = exports.safeGetFirstField = exports.ensureLabelKey = void 0;
 const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ./ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
 // ===== LOGGING CONFIGURATION =====
 const LOG_CONFIG = {
-    enabled: true, // Ustaw false w production lub kontroluj przez ENV
+    enabled: true,
     minLevel: "warn", // Minimalny poziom logowania
 };
 const LOG_LEVELS = {
@@ -111733,6 +110788,7 @@ function logSelector(level, selectorName, message, data) {
         console.log(prefix, message, data);
     }
 }
+exports.logSelector = logSelector;
 // ===== VALIDATION FUNCTIONS =====
 /**
  * Zapewnia że obiekt ma wymagane pole labelKey.
@@ -111772,6 +110828,7 @@ function ensureLabelKey(item, labelKey, selectorName) {
     }
     return item;
 }
+exports.ensureLabelKey = ensureLabelKey;
 /**
  * Uniwersalna funkcja do bezpiecznego odczytywania wartości z obiektu.
  * Obsługuje zarówno ścieżki zagnieżdżone jak i alternatywne pola.
@@ -111837,17 +110894,18 @@ function safeGetFirstField(obj, fieldPaths, fallback, selectorName) {
     }
     return fallback;
 }
+exports.safeGetFirstField = safeGetFirstField;
 // ===== LEGACY CLASS (zachowane dla kompatybilności) =====
 class ToolsForms {
     static getSuggestedClass(field, watchAllFields, initValue) {
         return watchAllFields[field] === initValue ? "text-primary" : "";
     }
 }
+exports["default"] = ToolsForms;
 // Statyczne metody dla łatwego dostępu
 ToolsForms.ensureLabelKey = ensureLabelKey;
 ToolsForms.safeGetFirstField = safeGetFirstField;
 ToolsForms.logSelector = logSelector;
-exports["default"] = ToolsForms;
 
 
 /***/ }),
@@ -111861,7 +110919,7 @@ exports["default"] = ToolsForms;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.buildDetailsPath = buildDetailsPath;
+exports.buildDetailsPath = void 0;
 function buildDetailsPath(routeBase, id) {
     let normalized = routeBase.trim();
     if (!normalized)
@@ -111872,6 +110930,7 @@ function buildDetailsPath(routeBase, id) {
         normalized = normalized + "/";
     return `${normalized}${id}`;
 }
+exports.buildDetailsPath = buildDetailsPath;
 
 
 /***/ }),
@@ -111930,25 +110989,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseModalBody = CaseModalBody;
+exports.CaseModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -111987,6 +111036,7 @@ function CaseModalBody({ isEditing, initialData, contextData: contextData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
+exports.CaseModalBody = CaseModalBody;
 
 
 /***/ }),
@@ -112003,8 +111053,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CaseEditModalButton = CaseEditModalButton;
-exports.CaseAddNewModalButton = CaseAddNewModalButton;
+exports.CaseAddNewModalButton = exports.CaseEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ../../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
@@ -112023,6 +111072,7 @@ function CaseEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
+exports.CaseEditModalButton = CaseEditModalButton;
 function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -112038,6 +111088,7 @@ function CaseAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonPr
             ...buttonProps,
         } }));
 }
+exports.CaseAddNewModalButton = CaseAddNewModalButton;
 
 
 /***/ }),
@@ -112066,25 +111117,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeCaseValidationSchema = makeCaseValidationSchema;
+exports.makeCaseValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 function makeCaseValidationSchema(isEditing) {
     return Yup.object().shape({
@@ -112099,6 +111140,7 @@ function makeCaseValidationSchema(isEditing) {
         description: Yup.string().max(300, "Opis może mieć maksymalnie 300 znaków"),
     });
 }
+exports.makeCaseValidationSchema = makeCaseValidationSchema;
 
 
 /***/ }),
@@ -112115,9 +111157,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractEditModalButton = ContractEditModalButton;
-exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
-exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
+exports.OtherContractAddNewModalButton = exports.OurContractAddNewModalButton = exports.ContractEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const ContractModalButtons_1 = __webpack_require__(/*! ../../Contracts/ContractsList/Modals/ContractModalButtons */ "./src/Contracts/ContractsList/Modals/ContractModalButtons.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
@@ -112130,18 +111170,21 @@ function ContractEditModalButton({ modalProps: { onEdit, initialData, shouldRetr
             repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.ContractEditModalButton = ContractEditModalButton;
 function OurContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OurContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OurContractAddNewModalButton = OurContractAddNewModalButton;
 function OtherContractAddNewModalButton({ modalProps: { onAddNew }, buttonProps, }) {
     return (react_1.default.createElement(ContractModalButtons_1.OtherContractAddNewModalButtonGeneric, { modalProps: {
             onAddNew,
             repository: TasksGlobalController_1.contractsRepository,
         }, buttonProps: buttonProps }));
 }
+exports.OtherContractAddNewModalButton = OtherContractAddNewModalButton;
 
 
 /***/ }),
@@ -112170,25 +111213,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContractMilestoneModalBody = ContractMilestoneModalBody;
+exports.ContractMilestoneModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
@@ -112279,6 +111312,7 @@ function ContractMilestoneModalBody({ isEditing, initialData, contextData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Dodaj komentarz", isInvalid: !!errors?.description, isValid: !errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
+exports.ContractMilestoneModalBody = ContractMilestoneModalBody;
 
 
 /***/ }),
@@ -112295,8 +111329,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MilestoneEditModalButton = MilestoneEditModalButton;
-exports.MilestoneAddNewModalButton = MilestoneAddNewModalButton;
+exports.MilestoneAddNewModalButton = exports.MilestoneEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ../../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
@@ -112316,6 +111349,7 @@ function MilestoneEditModalButton({ modalProps: { onEdit, initialData }, buttonP
             buttonVariant: "outline-success",
         } }));
 }
+exports.MilestoneEditModalButton = MilestoneEditModalButton;
 function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, buttonProps, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -112332,6 +111366,7 @@ function MilestoneAddNewModalButton({ modalProps: { onAddNew, contextData }, but
             ...buttonProps,
         } }));
 }
+exports.MilestoneAddNewModalButton = MilestoneAddNewModalButton;
 
 
 /***/ }),
@@ -112360,25 +111395,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeMilestoneValidationSchema = makeMilestoneValidationSchema;
+exports.makeMilestoneValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 function makeMilestoneValidationSchema(isEditing) {
     return Yup.object().shape({
@@ -112410,6 +111435,7 @@ function makeMilestoneValidationSchema(isEditing) {
             .min(1, "Przynajmniej jeden przedział daty musi być podany"),
     });
 }
+exports.makeMilestoneValidationSchema = makeMilestoneValidationSchema;
 
 
 /***/ }),
@@ -112426,8 +111452,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectEditModalButton = ProjectEditModalButton;
-exports.ProjectAddNewModalButton = ProjectAddNewModalButton;
+exports.ProjectAddNewModalButton = exports.ProjectEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const TasksGlobalController_1 = __webpack_require__(/*! ../TasksGlobalController */ "./src/TasksGlobal/TasksGlobalController.ts");
@@ -112447,6 +111472,7 @@ function ProjectEditModalButton({ modalProps: { onEdit, initialData }, buttonPro
             buttonVariant: "outline-success",
         } }));
 }
+exports.ProjectEditModalButton = ProjectEditModalButton;
 function ProjectAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -112459,6 +111485,7 @@ function ProjectAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ProjectAddNewModalButton = ProjectAddNewModalButton;
 
 
 /***/ }),
@@ -112487,28 +111514,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskGlobalModalBody = TaskGlobalModalBody;
+exports.TaskGlobalModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -112549,6 +111566,7 @@ function TaskGlobalModalBody({ isEditing, initialData, contextData: contextData 
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_owner" },
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { label: "W\u0142a\u015Bciciel", name: "_owner", repository: MainSetupReact_1.default.personsEnviRepository }))));
 }
+exports.TaskGlobalModalBody = TaskGlobalModalBody;
 
 
 /***/ }),
@@ -112577,25 +111595,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeTaskGlobalValidationSchema = makeTaskGlobalValidationSchema;
+exports.makeTaskGlobalValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const TaskValidationSchema_1 = __webpack_require__(/*! ../../Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskValidationSchema */ "./src/Contracts/ContractsList/ContractDetails/Tasks/Modals/TaskValidationSchema.ts");
 function makeTaskGlobalValidationSchema(isEditing) {
@@ -112603,6 +111611,7 @@ function makeTaskGlobalValidationSchema(isEditing) {
         ...TaskValidationSchema_1.commonFields,
     }));
 }
+exports.makeTaskGlobalValidationSchema = makeTaskGlobalValidationSchema;
 
 
 /***/ }),
@@ -112619,8 +111628,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TaskEditModalButton = TaskEditModalButton;
-exports.TaskAddNewModalButton = TaskAddNewModalButton;
+exports.TaskAddNewModalButton = exports.TaskEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const TaskGlobalModalBody_1 = __webpack_require__(/*! ./TaskGlobalModalBody */ "./src/TasksGlobal/Modals/TaskGlobalModalBody.tsx");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -112640,6 +111648,7 @@ function TaskEditModalButton({ modalProps: { onEdit, initialData }, buttonProps,
             buttonVariant: "outline-success",
         } }));
 }
+exports.TaskEditModalButton = TaskEditModalButton;
 function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -112653,6 +111662,7 @@ function TaskAddNewModalButton({ modalProps: { onAddNew, contextData } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.TaskAddNewModalButton = TaskAddNewModalButton;
 
 
 /***/ }),
@@ -112669,7 +111679,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectsFilterBody = ProjectsFilterBody;
+exports.ProjectsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
@@ -112689,6 +111699,7 @@ function ProjectsFilterBody() {
                 react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
                 react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") })))));
 }
+exports.ProjectsFilterBody = ProjectsFilterBody;
 
 
 /***/ }),
@@ -112772,28 +111783,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = TasksGlobal;
 const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.js");
 const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
@@ -112897,6 +111897,7 @@ function TasksGlobal() {
                         { header: "Zadania", renderTdBody: renderTaskRowInCaseSection, colLg: 11 },
                     ], externalUpdate: externalUpdate })))))));
 }
+exports["default"] = TasksGlobal;
 function NoProjectSelectedMessage() {
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("h3", null, "Wybierz projekt"),
@@ -113049,9 +112050,9 @@ function buildTree(contractsWithChildrenInput) {
                 level: 2,
                 type: "milestone",
                 childrenNodesType: "case",
-                repository: TasksGlobalController_1.milestonesRepository, // Dostosuj do Twojego repozytorium kamieni milowych
+                repository: TasksGlobalController_1.milestonesRepository,
                 dataItem: milestone,
-                title: react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone)), // Dostosuj do Twojej metody
+                title: react_1.default.createElement(react_1.default.Fragment, null, makeMilestoneTitleLabel(milestone)),
                 children: [],
                 AddNewButtonComponent: CaseModalButtons_1.CaseAddNewModalButton,
                 EditButtonComponent: MilestoneModalButtons_1.MilestoneEditModalButton,
@@ -113070,8 +112071,8 @@ function buildTree(contractsWithChildrenInput) {
                     children: [],
                     leaves: [],
                     isDeletable: true,
-                    AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton, // Dostosuj do Twojego komponentu
-                    EditButtonComponent: CaseModalButtons_1.CaseEditModalButton, // Dostosuj do Twojego komponentu
+                    AddNewButtonComponent: TasksGlobalModalButtons_1.TaskAddNewModalButton,
+                    EditButtonComponent: CaseModalButtons_1.CaseEditModalButton,
                     editHandler: (node) => {
                         node.title = react_1.default.createElement(react_1.default.Fragment, null, makeCaseTitleLabel(node.dataItem));
                     }, // Dostosuj do Twojej metody
@@ -113200,7 +112201,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
+exports.TasksGlobalFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ContractContext_1 = __webpack_require__(/*! ../Contracts/ContractsList/ContractContext */ "./src/Contracts/ContractsList/ContractContext.tsx");
@@ -113218,6 +112219,7 @@ function TasksGlobalFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
             react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
 }
+exports.TasksGlobalFilterBody = TasksGlobalFilterBody;
 
 
 /***/ }),
@@ -113246,48 +112248,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectSelector = ProjectSelector;
-exports.CitySelector = CitySelector;
-exports.EntitySelector = EntitySelector;
-exports.OfferSelector = OfferSelector;
-exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
-exports.FocusAreaSelector = FocusAreaSelector;
-exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
-exports.ApplicationCallSelector = ApplicationCallSelector;
-exports.ClientNeedSelector = ClientNeedSelector;
-exports.ContractSelector = ContractSelector;
-exports.ContractRangeSelector = ContractRangeSelector;
-exports.ContractTypeSelector = ContractTypeSelector;
-exports.CaseTypeSelector = CaseTypeSelector;
-exports.MilestoneTypeSelector = MilestoneTypeSelector;
-exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
-exports.PersonSelector = PersonSelector;
-exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
-exports.CaseSelectMenuElement = CaseSelectMenuElement;
-exports.SystemRoleSelector = SystemRoleSelector;
-exports.LetterSelector = LetterSelector;
-exports.SkillSelector = SkillSelector;
+exports.SkillSelector = exports.LetterSelector = exports.SystemRoleSelector = exports.CaseSelectMenuElement = exports.PersonSelectorPreloaded = exports.PersonSelector = exports.OurLetterTemplateSelector = exports.MilestoneTypeSelector = exports.CaseTypeSelector = exports.ContractTypeSelector = exports.ContractRangeSelector = exports.ContractSelector = exports.ClientNeedSelector = exports.ApplicationCallSelector = exports.FocusAreaSelectorPreloaded = exports.FocusAreaSelector = exports.FinancialAidProgrammeSelector = exports.OfferSelector = exports.EntitySelector = exports.CitySelector = exports.ProjectSelector = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -113332,6 +112304,7 @@ function ProjectSelector({ name = "_project", showValidationInfo = true, disable
             //specialSerwerSearchActionRoute={'projects/' + MainSetup.currentUser.systemEmail}
             showValidationInfo: showValidationInfo, renderMenuItemChildren: renderOption, multiple: false })));
 }
+exports.ProjectSelector = ProjectSelector;
 function CitySelector({ name = "_city", showValidationInfo = true, multiple = false, allowNew = false, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
@@ -113356,6 +112329,7 @@ function CitySelector({ name = "_city", showValidationInfo = true, multiple = fa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.CitySelector = CitySelector;
 function EntitySelector({ name, showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
@@ -113383,6 +112357,7 @@ function EntitySelector({ name, showValidationInfo = true, multiple = false, all
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.EntitySelector = EntitySelector;
 function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = false, readOnly = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -113419,6 +112394,7 @@ function OfferSelector({ name = "_offer", showValidationInfo = true, multiple = 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "alias", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
+exports.OfferSelector = OfferSelector;
 function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora (lub użyj przekazanego)
@@ -113443,6 +112419,7 @@ function FinancialAidProgrammeSelector({ name = "_financialAidProgramme", showVa
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.FinancialAidProgrammeSelector = FinancialAidProgrammeSelector;
 function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -113465,6 +112442,7 @@ function FocusAreaSelector({ name = "_focusArea", showValidationInfo = true, mul
                 _financialAidProgramme,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.FocusAreaSelector = FocusAreaSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -113502,6 +112480,7 @@ function FocusAreaSelectorPreloaded({ repository, _financialAidProgramme, requir
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.FocusAreaSelectorPreloaded = FocusAreaSelectorPreloaded;
 function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo = true, multiple = false, allowNew = false, _financialAidProgramme, _focusArea, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -113532,6 +112511,7 @@ function ApplicationCallSelector({ name = "_applicationCall", showValidationInfo
                 _focusArea,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.ApplicationCallSelector = ApplicationCallSelector;
 function ClientNeedSelector({ name = "_need", showValidationInfo = true, multiple = false, allowNew = false, }) {
     const { formState: { errors }, } = (0, FormContext_1.useFormContext)();
     // ✅ Lokalna instancja repository tylko dla tego selectora
@@ -113559,6 +112539,7 @@ function ClientNeedSelector({ name = "_need", showValidationInfo = true, multipl
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "name", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.ClientNeedSelector = ClientNeedSelector;
 /**
  * Komponent formularza wyboru kontraktu z wyszukiwaniem asynchronicznym
  * Używa lokalnego repository aby nie kolidować z innymi komponentami
@@ -113590,6 +112571,7 @@ function ContractSelector({ name = "_contract", showValidationInfo = true, multi
                 _project: _project,
             }, repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, showValidationInfo: showValidationInfo, readOnly: readOnly })));
 }
+exports.ContractSelector = ContractSelector;
 function ContractRangeSelector({ repository, showValidationInfo = true, multiple = true, name = "_contractRanges", }) {
     const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]);
@@ -113626,6 +112608,7 @@ function ContractRangeSelector({ repository, showValidationInfo = true, multiple
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
+exports.ContractRangeSelector = ContractRangeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -113671,6 +112654,7 @@ function ContractTypeSelector({ typesToInclude = "all", required = false, showVa
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.ContractTypeSelector = ContractTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -113708,6 +112692,7 @@ function CaseTypeSelector({ milestoneType, required = false, showValidationInfo 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.CaseTypeSelector = CaseTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -113745,6 +112730,7 @@ function MilestoneTypeSelector({ contractType, required = false, showValidationI
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.MilestoneTypeSelector = MilestoneTypeSelector;
 /**
  * Komponent formularza wyboru typu kontraktu
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData (domyślnie '_type')
@@ -113780,6 +112766,7 @@ function OurLetterTemplateSelector({ showValidationInfo = true, _cases = [], }) 
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.OurLetterTemplateSelector = OurLetterTemplateSelector;
 function PersonSelector({ name = "_person", showValidationInfo = true, multiple = false, allowNew = false, repository, }) {
     // ✅ Lokalna instancja repository tylko dla tego selectora
     const localRepository = (0, react_1.useMemo)(() => repository
@@ -113806,6 +112793,7 @@ function PersonSelector({ name = "_person", showValidationInfo = true, multiple 
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(GenericComponents_1.MyAsyncTypeahead, { name: name, labelKey: "_nameSurnameEmail", searchKey: "searchText", repository: localRepository, renderMenuItemChildren: renderOption, multiple: multiple, allowNew: allowNew, showValidationInfo: showValidationInfo })));
 }
+exports.PersonSelector = PersonSelector;
 /**
  * Komponent formularza wyboru osoby
  * @param label oznaczenie pola formularza
@@ -113831,6 +112819,7 @@ function PersonSelectorPreloaded({ label, name, repository, multiple = false, sh
         react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${label}-controlled`, labelKey: "_nameSurname", options: makeoptions(repository.items), onChange: (items) => handleOnChange(items, field), selected: handleSelected(field), placeholder: "-- Wybierz osob\u0119 --", multiple: multiple, isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined })) }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
+exports.PersonSelectorPreloaded = PersonSelectorPreloaded;
 function groupByMilestone(cases) {
     return cases.reduce((groups, item) => {
         const key = item._parent?._FolderNumber_TypeName_Name ?? "Brak danych";
@@ -113907,6 +112896,7 @@ function CaseSelectMenuElement({ name = "_case", readonly = false, _contract, _o
                     react_1.default.createElement("div", { className: "text-muted small text-wrap" }, myOption.description)));
             } })) }));
 }
+exports.CaseSelectMenuElement = CaseSelectMenuElement;
 function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }) {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const systemRolesOptions = Object.values(MainSetupReact_1.default.SystemRoles);
@@ -113917,6 +112907,7 @@ function SystemRoleSelector({ name = "systemRoleId", showValidationInfo = true }
             systemRolesOptions.map((role) => (react_1.default.createElement("option", { key: role.id, value: role.id }, role.systemName)))),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: name, errors: errors })));
 }
+exports.SystemRoleSelector = SystemRoleSelector;
 /**
  * Komponent formularza do wyboru istniejącego pisma w ramach danego kontraktu.
  * Po wybraniu pisma, w formularzu ustawiana jest wartość jego numeru.
@@ -113967,6 +112958,7 @@ function LetterSelector({ name, label, _contract, showValidationInfo = true }) {
             } }),
         react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name })));
 }
+exports.LetterSelector = LetterSelector;
 function SkillSelector({ name = "_skills", multiple = true, showValidationInfo = false, }) {
     const { setValue, control } = (0, FormContext_1.useFormContext)();
     const [isLoading, setIsLoading] = (0, react_1.useState)(false);
@@ -113992,6 +112984,7 @@ function SkillSelector({ name = "_skills", multiple = true, showValidationInfo =
                     return react_1.default.createElement("span", null, skill.name);
                 } })) })));
 }
+exports.SkillSelector = SkillSelector;
 
 
 /***/ }),
@@ -114020,32 +113013,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DateRangeInput = exports.valueValidation = void 0;
-exports.ErrorMessage = ErrorMessage;
-exports.MyAsyncTypeahead = MyAsyncTypeahead;
-exports.TextOptionSelector = TextOptionSelector;
-exports.TypeaheadStringSelector = TypeaheadStringSelector;
-exports.ValueInPLNInput = ValueInPLNInput;
-exports.FileInput = FileInput;
-exports.RadioButtonGroup = RadioButtonGroup;
+exports.RadioButtonGroup = exports.FileInput = exports.DateRangeInput = exports.valueValidation = exports.ValueInPLNInput = exports.TypeaheadStringSelector = exports.TextOptionSelector = exports.MyAsyncTypeahead = exports.ErrorMessage = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_bootstrap_typeahead_1 = __webpack_require__(/*! react-bootstrap-typeahead */ "./node_modules/react-bootstrap-typeahead/es/index.js");
@@ -114075,6 +113051,7 @@ function ErrorMessage({ errors, name }) {
     const error = getNestedError(errors, name);
     return react_1.default.createElement(react_1.default.Fragment, null, error && react_1.default.createElement(react_bootstrap_1.Form.Text, { className: "text-danger" }, error.message));
 }
+exports.ErrorMessage = ErrorMessage;
 /** Jeśli multiple jest true to wartość pola jest tablicą obiektów, jeśli false to pojedynczym obiektem
  * @param name nazwa pola w formularzu - zostanie wysłane na serwer jako składowa obiektu FormData
  * @param repository repozytorium z którego pobierane są dane
@@ -114166,6 +113143,7 @@ function MyAsyncTypeahead({ name, repository, labelKey, searchKey = labelKey, co
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name }),
         readOnly && react_1.default.createElement("input", { type: "hidden", ...register(name) })));
 }
+exports.MyAsyncTypeahead = MyAsyncTypeahead;
 function TextOptionSelector({ options, showValidationInfo = true, name, as, label = name, multiple = false, }) {
     const { register, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     function makeLabel() {
@@ -114178,6 +113156,7 @@ function TextOptionSelector({ options, showValidationInfo = true, name, as, labe
             options.map((option, index) => (react_1.default.createElement("option", { key: index, value: option }, option)))),
         react_1.default.createElement(ErrorMessage, { errors: errors, name: name })));
 }
+exports.TextOptionSelector = TextOptionSelector;
 /**
  * Komponent do wyboru opcji z listy stringów służy jako multiselect
  */
@@ -114209,6 +113188,7 @@ function TypeaheadStringSelector({ options, showValidationInfo = true, name = "s
             react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, defaultValue: multiple ? [] : "", render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.Typeahead, { id: `${name}-controlled`, labelKey: (option) => option, multiple: multiple, options: options, onChange: (items) => handleOnChange(items, field), selected: setSelectedValue(field), placeholder: "-- Wybierz status --", isValid: showValidationInfo ? !errors?.[name] : undefined, isInvalid: showValidationInfo ? !!errors?.[name] : undefined, renderMenuItemChildren: (option) => react_1.default.createElement(react_1.default.Fragment, null, option) })) }),
             react_1.default.createElement(ErrorMessage, { name: name, errors: errors }))));
 }
+exports.TypeaheadStringSelector = TypeaheadStringSelector;
 /**
  * Wyświetla pole do wprowadzania wartości w PLN
  * @param showValidationInfo czy wyświetlać informacje o błędzie walidacji (domyślnie true)
@@ -114233,6 +113213,7 @@ function ValueInPLNInput({ showValidationInfo = true, name = "value" }) {
             react_1.default.createElement(react_bootstrap_1.InputGroup.Text, { id: "basic-addon1" }, "PLN")),
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
+exports.ValueInPLNInput = ValueInPLNInput;
 exports.valueValidation = Yup.string()
     .typeError("Wartość jest wymagana")
     .required("Wartość jest wymagana")
@@ -114283,10 +113264,12 @@ function FileInput({ name, required = false, acceptedFileTypes = ".doc,.docx,.xl
                 } })) }),
         react_1.default.createElement(ErrorMessage, { name: name, errors: errors })));
 }
+exports.FileInput = FileInput;
 function RadioButtonGroup({ name, options }) {
     const { control } = (0, FormContext_1.useFormContext)();
     return (react_1.default.createElement(react_hook_form_1.Controller, { name: name, control: control, defaultValue: options[0].value, rules: { required: true }, render: ({ field }) => (react_1.default.createElement(react_bootstrap_1.ButtonGroup, null, options.map((radio, idx) => (react_1.default.createElement(react_bootstrap_1.ToggleButton, { key: idx, id: `radio-${idx}`, type: "radio", variant: "outline-secondary", name: "radio", value: radio.value, checked: field.value === radio.value, onChange: () => field.onChange(radio.value) }, radio.name))))) }));
 }
+exports.RadioButtonGroup = RadioButtonGroup;
 
 
 /***/ }),
@@ -114315,31 +113298,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OfferBidProcedureSelectFormElement = OfferBidProcedureSelectFormElement;
-exports.OfferFormSelectFormElement = OfferFormSelectFormElement;
-exports.GdFilesSelector = GdFilesSelector;
-exports.RoleGroupSelector = RoleGroupSelector;
+exports.RoleGroupSelector = exports.GdFilesSelector = exports.OfferFormSelectFormElement = exports.OfferBidProcedureSelectFormElement = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
@@ -114357,10 +113327,12 @@ function OfferBidProcedureSelectFormElement({ showValidationInfo = true, name = 
     const options = Object.entries(MainSetupReact_1.default.OfferBidProcedure).map(([key, value]) => value);
     return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Procedura" }));
 }
+exports.OfferBidProcedureSelectFormElement = OfferBidProcedureSelectFormElement;
 function OfferFormSelectFormElement({ showValidationInfo = true, name = "form", as }) {
     const options = Object.entries(MainSetupReact_1.default.OfferForm).map(([key, value]) => value);
     return (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: options, showValidationInfo: showValidationInfo, name: name, as: as, label: "Forma wysy\u0142ki" }));
 }
+exports.OfferFormSelectFormElement = OfferFormSelectFormElement;
 function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showValidationInfo = true, multiple = true, name = "_gdFilesBasicData", }) {
     const { control, setValue, getValues, formState: { errors }, } = (0, FormContext_1.useFormContext)();
     const [options, setOptions] = (0, react_1.useState)([]); // Inicjalizujemy z pustą tablicą
@@ -114430,10 +113402,12 @@ function GdFilesSelector({ contextData, attentionRequiredFileNames = [], showVal
                     } })) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { errors: errors, name: name }))));
 }
+exports.GdFilesSelector = GdFilesSelector;
 function RoleGroupSelector({ showValidationInfo = true, name = "groupName", label = "Grupa Ról", multiple = false, as, }) {
     const roleGroups = Object.values(MainSetupReact_1.default.RoleGroups);
     return multiple ? (react_1.default.createElement(GenericComponents_1.TypeaheadStringSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as })) : (react_1.default.createElement(GenericComponents_1.TextOptionSelector, { options: roleGroups, showValidationInfo: showValidationInfo, name: name, label: label, as: as }));
 }
+exports.RoleGroupSelector = RoleGroupSelector;
 
 
 /***/ }),
@@ -114450,22 +113424,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ProjectStatusSelector = ProjectStatusSelector;
-exports.ContractStatusSelector = ContractStatusSelector;
-exports.SecurityStatusSelector = SecurityStatusSelector;
-exports.OfferStatusSelector = OfferStatusSelector;
-exports.OfferBondStatusSelector = OfferBondStatusSelector;
-exports.OfferBondFormSelector = OfferBondFormSelector;
-exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
-exports.MilestoneStatusSelector = MilestoneStatusSelector;
-exports.TaksStatusSelector = TaksStatusSelector;
-exports.InvoiceStatusSelector = InvoiceStatusSelector;
-exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
-exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
-exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
-exports.LetterStatusSelector = LetterStatusSelector;
-exports.OurLetterStatusSelector = OurLetterStatusSelector;
-exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
+exports.IncomingLetterStatusSelector = exports.OurLetterStatusSelector = exports.LetterStatusSelector = exports.ClientNeedStatusSelector = exports.ApplicationCallStatusSelector = exports.LetterStatusMultipleSelector = exports.InvoiceStatusSelector = exports.TaksStatusSelector = exports.MilestoneStatusSelector = exports.OfferInvitationMailStatusSelector = exports.OfferBondFormSelector = exports.OfferBondStatusSelector = exports.OfferStatusSelector = exports.SecurityStatusSelector = exports.ContractStatusSelector = exports.ProjectStatusSelector = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
 __webpack_require__(/*! ../../../Css/styles.css */ "./src/Css/styles.css");
@@ -114481,6 +113440,7 @@ function ProjectStatusSelector({ showValidationInfo = true, name, label = name, 
         as,
     });
 }
+exports.ProjectStatusSelector = ProjectStatusSelector;
 function ContractStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ContractStatuses),
@@ -114491,6 +113451,7 @@ function ContractStatusSelector({ showValidationInfo = true, multiple = false, n
         as,
     });
 }
+exports.ContractStatusSelector = ContractStatusSelector;
 function SecurityStatusSelector({ showValidationInfo = true, name = "status", label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.SecurityStatus),
@@ -114501,6 +113462,7 @@ function SecurityStatusSelector({ showValidationInfo = true, name = "status", la
         as,
     });
 }
+exports.SecurityStatusSelector = SecurityStatusSelector;
 function OfferStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferStatus),
@@ -114511,6 +113473,7 @@ function OfferStatusSelector({ showValidationInfo = true, name, label, multiple 
         as,
     });
 }
+exports.OfferStatusSelector = OfferStatusSelector;
 function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferBondStatus),
@@ -114521,6 +113484,7 @@ function OfferBondStatusSelector({ showValidationInfo = true, multiple = false, 
         as,
     });
 }
+exports.OfferBondStatusSelector = OfferBondStatusSelector;
 function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, label = name, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferBondForm),
@@ -114531,6 +113495,7 @@ function OfferBondFormSelector({ showValidationInfo = true, name = "form", as, l
         as,
     });
 }
+exports.OfferBondFormSelector = OfferBondFormSelector;
 function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OfferInvitationMailStatus),
@@ -114541,6 +113506,7 @@ function OfferInvitationMailStatusSelector({ showValidationInfo = true, name, la
         as,
     });
 }
+exports.OfferInvitationMailStatusSelector = OfferInvitationMailStatusSelector;
 function MilestoneStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.MilestoneStatus),
@@ -114551,6 +113517,7 @@ function MilestoneStatusSelector({ showValidationInfo = true, name, label, multi
         as,
     });
 }
+exports.MilestoneStatusSelector = MilestoneStatusSelector;
 function TaksStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.TaskStatus),
@@ -114561,6 +113528,7 @@ function TaksStatusSelector({ showValidationInfo = true, name, label, multiple =
         as,
     });
 }
+exports.TaksStatusSelector = TaksStatusSelector;
 function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, name, label, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.InvoiceStatuses),
@@ -114571,6 +113539,7 @@ function InvoiceStatusSelector({ showValidationInfo = true, multiple = false, na
         as,
     });
 }
+exports.InvoiceStatusSelector = InvoiceStatusSelector;
 function LetterStatusMultipleSelector({ showValidationInfo = false, multiple = true, name, label, as, }) {
     return statusSelector({
         statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
@@ -114581,6 +113550,7 @@ function LetterStatusMultipleSelector({ showValidationInfo = false, multiple = t
         as,
     });
 }
+exports.LetterStatusMultipleSelector = LetterStatusMultipleSelector;
 function ApplicationCallStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ApplicationCallStatus),
@@ -114591,6 +113561,7 @@ function ApplicationCallStatusSelector({ showValidationInfo = true, name, label,
         as,
     });
 }
+exports.ApplicationCallStatusSelector = ApplicationCallStatusSelector;
 function ClientNeedStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.ClientNeedStatus),
@@ -114601,6 +113572,7 @@ function ClientNeedStatusSelector({ showValidationInfo = true, name, label, mult
         as,
     });
 }
+exports.ClientNeedStatusSelector = ClientNeedStatusSelector;
 function LetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: [...Object.values(MainSetupReact_1.default.OurLetterStatus), ...Object.values(MainSetupReact_1.default.IncomingLetterStatus)],
@@ -114611,6 +113583,7 @@ function LetterStatusSelector({ showValidationInfo = true, name, label, multiple
         as,
     });
 }
+exports.LetterStatusSelector = LetterStatusSelector;
 function OurLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.OurLetterStatus),
@@ -114621,6 +113594,7 @@ function OurLetterStatusSelector({ showValidationInfo = true, name, label, multi
         as,
     });
 }
+exports.OurLetterStatusSelector = OurLetterStatusSelector;
 function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, multiple = false, as, }) {
     return statusSelector({
         statuses: Object.values(MainSetupReact_1.default.IncomingLetterStatus),
@@ -114631,6 +113605,7 @@ function IncomingLetterStatusSelector({ showValidationInfo = true, name, label, 
         as,
     });
 }
+exports.IncomingLetterStatusSelector = IncomingLetterStatusSelector;
 function statusSelector({ statuses, showValidationInfo = true, name, label, multiple = false, as, }) {
     const resolvedName = name ?? (multiple ? "statuses" : "status");
     const resolvedLabel = label ?? resolvedName;
@@ -114664,25 +113639,14 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ConfirmModal;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const CommonComponents_1 = __webpack_require__(/*! ../Resultsets/CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
@@ -114718,6 +113682,7 @@ function ConfirmModal({ show, onClose, title, subtitle, prompt, onConfirm }) {
                 isWaiting && react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "grow", size: "sm", role: "status", "aria-hidden": "true" })),
             isError && react_1.default.createElement(CommonComponents_1.AlertComponent, { message: errorMessage, type: "danger" }))));
 }
+exports["default"] = ConfirmModal;
 
 
 /***/ }),
@@ -114746,25 +113711,14 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ErrorBoundary;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const defaultFallback = react_1.default.createElement("h1", null, "Wyst\u0105pi\u0142 b\u0142\u0105d.");
 function reducer(state, action) {
@@ -114797,6 +113751,7 @@ function ErrorBoundary({ children, fallback = defaultFallback }) {
     }
     return react_1.default.createElement(react_1.default.Fragment, null, children);
 }
+exports["default"] = ErrorBoundary;
 
 
 /***/ }),
@@ -114850,28 +113805,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GeneralModal = GeneralModal;
+exports.GeneralModal = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
@@ -115073,7 +114018,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
         }
         return (react_1.default.createElement(react_bootstrap_1.Container, null,
             react_1.default.createElement(FormContext_1.FormProvider, { value: formMethods },
-                react_1.default.createElement(ModalBodyComponent, { ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData }),
+                react_1.default.createElement(ModalBodyComponent, { ...{ ...modalBodyProps, initialData: dataObjectFromServer || modalBodyProps.initialData } }),
                 errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { style: { whiteSpace: "pre-wrap" }, className: "mt-3", variant: "danger", onClose: () => setErrorMessage(""), dismissible: true }, errorMessage)))));
     }
     function renderHeader() {
@@ -115121,6 +114066,7 @@ function GeneralModal({ show, title, subtitle, isEditing, specialActionRoute, sp
                                     "Zatwierd\u017A",
                                     requestPending && (react_1.default.createElement(react_bootstrap_1.Spinner, { as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true", className: "ms-2" })))))))))));
 }
+exports.GeneralModal = GeneralModal;
 
 
 /***/ }),
@@ -115149,32 +114095,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GeneralEditModalButton = GeneralEditModalButton;
-exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
-exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
-exports.GeneralCopyModalButton = GeneralCopyModalButton;
-exports.PartialEditTrigger = PartialEditTrigger;
+exports.PartialEditTrigger = exports.GeneralCopyModalButton = exports.GeneralDeleteModalButton = exports.GeneralAddNewModalButton = exports.GeneralEditModalButton = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const ConfirmModal_1 = __importDefault(__webpack_require__(/*! ./ConfirmModal */ "./src/View/Modals/ConfirmModal.tsx"));
@@ -115212,6 +114144,7 @@ function GeneralEditModalButton({ buttonProps, modalProps: { onEdit, specialActi
                 contextData: contextData,
             }, fieldsToUpdate: fieldsToUpdate, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, size: size })));
 }
+exports.GeneralEditModalButton = GeneralEditModalButton;
 /**wyświelta ikonę albo przycisk */
 function GeneraEditButton(buttonProps) {
     const { buttonCaption, buttonIsActive, buttonIsDisabled, buttonSize = "sm", buttonVariant = "outline-success", onClick, layout = "vertical", } = {
@@ -115248,6 +114181,7 @@ contextData, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubt
                 additionalProps: additionalModalBodyProps,
             }, size: size })));
 }
+exports.GeneralAddNewModalButton = GeneralAddNewModalButton;
 /** Wyświetla ikonę kosza podłaczoną do Modala - nie przyjmuje ButtonProps */
 function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSubtitle, initialData, repository }, buttonProps, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
@@ -115267,6 +114201,7 @@ function GeneralDeleteModalButton({ modalProps: { onDelete, modalTitle, modalSub
         react_1.default.createElement(CommonComponents_1.DeleteIconButton, { layout: layout, onClick: handleOpen }),
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: modalTitle, subtitle: modalSubtitle, onConfirm: handleDelete, prompt: `Czy na pewno chcesz usunąć ${"name" in initialData ? initialData?.name : "obiekt"}?` })));
 }
+exports.GeneralDeleteModalButton = GeneralDeleteModalButton;
 /** Wyświetla ikonę kopiowania podłączoną do Modala - nie przyjmuje ButtonProps */
 function GeneralCopyModalButton({ modalProps: { onCopy, modalTitle, modalSubtitle, initialData, repository }, buttonProps, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
@@ -115289,6 +114224,7 @@ function GeneralCopyModalButton({ modalProps: { onCopy, modalTitle, modalSubtitl
         react_1.default.createElement(CommonComponents_1.CopyIconButton, { layout: layout, onClick: handleOpen }),
         react_1.default.createElement(ConfirmModal_1.default, { onClose: handleClose, show: showForm, title: defaultTitle, subtitle: modalSubtitle, onConfirm: handleCopy, prompt: defaultPrompt })));
 }
+exports.GeneralCopyModalButton = GeneralCopyModalButton;
 function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBodyComponent, additionalModalBodyProps, modalTitle, modalSubtitle, initialData, repository, makeValidationSchema, fieldsToUpdate, contextData, size, }, children, }) {
     const [showForm, setShowForm] = (0, react_1.useState)(false);
     function handleOpen() {
@@ -115306,6 +114242,7 @@ function PartialEditTrigger({ modalProps: { onEdit, specialActionRoute, ModalBod
                 contextData: contextData,
             }, fieldsToUpdate: fieldsToUpdate, size: size })));
 }
+exports.PartialEditTrigger = PartialEditTrigger;
 
 
 /***/ }),
@@ -115334,53 +114271,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AlertComponent = void 0;
-exports.ProgressBar = ProgressBar;
-exports.SpinnerBootstrap = SpinnerBootstrap;
-exports.SuccessToast = SuccessToast;
-exports.GDFolderIconLink = GDFolderIconLink;
-exports.CopyIconLink = CopyIconLink;
-exports.MenuIconLink = MenuIconLink;
-exports.GDDocFileIconLink = GDDocFileIconLink;
-exports.EditIconButton = EditIconButton;
-exports.DeleteIconButton = DeleteIconButton;
-exports.CopyIconButton = CopyIconButton;
-exports.MenuExpandIconButton = MenuExpandIconButton;
-exports.InvoiceStatusBadge = InvoiceStatusBadge;
-exports.KsefStatusBadge = KsefStatusBadge;
-exports.ContractStatusBadge = ContractStatusBadge;
-exports.MilestoneStatusBadge = MilestoneStatusBadge;
-exports.SecurityStatusBadge = SecurityStatusBadge;
-exports.OfferStatusBadge = OfferStatusBadge;
-exports.OfferBondStatusBadge = OfferBondStatusBadge;
-exports.OfferInvitationMailStatusBadge = OfferInvitationMailStatusBadge;
-exports.TaskStatusBadge = TaskStatusBadge;
-exports.ApplicationCallStatusBadge = ApplicationCallStatusBadge;
-exports.ClientNeedStatusBadge = ClientNeedStatusBadge;
-exports.MyTooltip = MyTooltip;
-exports.DaysLeftBadge = DaysLeftBadge;
-exports.LetterStatusBadge = LetterStatusBadge;
+exports.LetterStatusBadge = exports.DaysLeftBadge = exports.MyTooltip = exports.ClientNeedStatusBadge = exports.ApplicationCallStatusBadge = exports.TaskStatusBadge = exports.OfferInvitationMailStatusBadge = exports.OfferBondStatusBadge = exports.OfferStatusBadge = exports.SecurityStatusBadge = exports.MilestoneStatusBadge = exports.ContractStatusBadge = exports.KsefStatusBadge = exports.InvoiceStatusBadge = exports.MenuExpandIconButton = exports.CopyIconButton = exports.DeleteIconButton = exports.EditIconButton = exports.GDDocFileIconLink = exports.MenuIconLink = exports.CopyIconLink = exports.GDFolderIconLink = exports.SuccessToast = exports.AlertComponent = exports.SpinnerBootstrap = exports.ProgressBar = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 __webpack_require__(/*! react-bootstrap-typeahead/css/Typeahead.css */ "./node_modules/react-bootstrap-typeahead/css/Typeahead.css");
@@ -115393,9 +114295,11 @@ const free_solid_svg_icons_1 = __webpack_require__(/*! @fortawesome/free-solid-s
 function ProgressBar() {
     return react_1.default.createElement("progress", { style: { height: "5px" } });
 }
+exports.ProgressBar = ProgressBar;
 function SpinnerBootstrap() {
     return react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", variant: "success" });
 }
+exports.SpinnerBootstrap = SpinnerBootstrap;
 const AlertComponent = ({ message, type, timeout = 3000 }) => {
     const [show, setShow] = (0, react_1.useState)(true);
     (0, react_1.useEffect)(() => {
@@ -115423,26 +114327,31 @@ function SuccessToast({ header = "Sukces", message, show, onClose }) {
             react_1.default.createElement("strong", { className: "me-auto" }, header)),
         react_1.default.createElement(react_bootstrap_1.Toast.Body, null, message)));
 }
+exports.SuccessToast = SuccessToast;
 function GDFolderIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
         react_1.default.createElement("img", { src: Google_Drive_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
+exports.GDFolderIconLink = GDFolderIconLink;
 function CopyIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faCopy, className: className })));
 }
+exports.CopyIconLink = CopyIconLink;
 function MenuIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank", rel: "noopener noreferrer" },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: free_solid_svg_icons_1.faBars, className: className })));
 }
+exports.MenuIconLink = MenuIconLink;
 function GDDocFileIconLink({ folderUrl, layout = "vertical" }) {
     const className = layout === "vertical" ? "icon icon-vertical" : "icon icon-horizontal";
     return (react_1.default.createElement("a", { href: folderUrl, target: "_blank" },
         react_1.default.createElement("img", { src: Google_Docs_icon_png_1.default, alt: "Dysk Google", className: className })));
 }
+exports.GDDocFileIconLink = GDDocFileIconLink;
 function IconButton({ icon, layout, onClick, className }) {
     className += layout === "vertical" ? " icon icon-vertical" : " icon icon-horizontal";
     return (react_1.default.createElement("span", { onClick: (e) => {
@@ -115454,16 +114363,20 @@ function IconButton({ icon, layout, onClick, className }) {
 function EditIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faPencil, layout: layout, onClick: onClick, className: "text-primary" });
 }
+exports.EditIconButton = EditIconButton;
 function DeleteIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faTrash, layout: layout, onClick: onClick, className: "text-danger" });
 }
+exports.DeleteIconButton = DeleteIconButton;
 function CopyIconButton({ layout, onClick }) {
     return react_1.default.createElement(IconButton, { icon: free_solid_svg_icons_1.faCopy, layout: layout, onClick: onClick, className: "text-info" });
 }
+exports.CopyIconButton = CopyIconButton;
 function MenuExpandIconButton({ layout, onClick }) {
     const icon = layout === "vertical" ? free_solid_svg_icons_1.faEllipsisV : free_solid_svg_icons_1.faEllipsisH;
     return react_1.default.createElement(IconButton, { icon: icon, layout: layout, onClick: onClick, className: "text-secondary" });
 }
+exports.MenuExpandIconButton = MenuExpandIconButton;
 function InvoiceStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115496,6 +114409,7 @@ function InvoiceStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.InvoiceStatusBadge = InvoiceStatusBadge;
 function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
     if (ksefNumber) {
         return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: "top", overlay: react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "ksef-tooltip" }, ksefNumber) },
@@ -115506,6 +114420,7 @@ function KsefStatusBadge({ ksefNumber, ksefStatus, }) {
     }
     return null;
 }
+exports.KsefStatusBadge = KsefStatusBadge;
 function ContractStatusBadge({ status, className, style, }) {
     let variant;
     let textMode = "light";
@@ -115528,6 +114443,7 @@ function ContractStatusBadge({ status, className, style, }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode, className: className, style: style }, status));
 }
+exports.ContractStatusBadge = ContractStatusBadge;
 function MilestoneStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115550,6 +114466,7 @@ function MilestoneStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.MilestoneStatusBadge = MilestoneStatusBadge;
 function SecurityStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115578,6 +114495,7 @@ function SecurityStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.SecurityStatusBadge = SecurityStatusBadge;
 function OfferStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115615,6 +114533,7 @@ function OfferStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.OfferStatusBadge = OfferStatusBadge;
 function OfferBondStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115644,6 +114563,7 @@ function OfferBondStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.OfferBondStatusBadge = OfferBondStatusBadge;
 function OfferInvitationMailStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115667,6 +114587,7 @@ function OfferInvitationMailStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.OfferInvitationMailStatusBadge = OfferInvitationMailStatusBadge;
 function TaskStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115696,6 +114617,7 @@ function TaskStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.TaskStatusBadge = TaskStatusBadge;
 function ApplicationCallStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115719,6 +114641,7 @@ function ApplicationCallStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.ApplicationCallStatusBadge = ApplicationCallStatusBadge;
 function ClientNeedStatusBadge({ status }) {
     let variant;
     let textMode = "light"; // Default text mode to light for better contrast on darker badges
@@ -115749,9 +114672,11 @@ function ClientNeedStatusBadge({ status }) {
     // Return the Badge component with the appropriate styling
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.ClientNeedStatusBadge = ClientNeedStatusBadge;
 function MyTooltip({ children, content: tooltipContent, placement = "right", ...rest }) {
     return (react_1.default.createElement(react_bootstrap_1.OverlayTrigger, { placement: placement, delay: { show: 250, hide: 400 }, overlay: (props) => (react_1.default.createElement(react_bootstrap_1.Tooltip, { id: "button-tooltip", ...props }, tooltipContent)), ...rest }, children));
 }
+exports.MyTooltip = MyTooltip;
 function DaysLeftBadge({ daysLeft }) {
     let variant;
     let textMode = "light";
@@ -115769,6 +114694,7 @@ function DaysLeftBadge({ daysLeft }) {
         daysLeft,
         " dni"));
 }
+exports.DaysLeftBadge = DaysLeftBadge;
 function LetterStatusBadge({ status }) {
     let variant;
     let textMode = "light";
@@ -115808,6 +114734,7 @@ function LetterStatusBadge({ status }) {
     }
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textMode }, status));
 }
+exports.LetterStatusBadge = LetterStatusBadge;
 
 
 /***/ }),
@@ -115824,10 +114751,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseFieldValuesToParams = parseFieldValuesToParams;
-exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
-exports.updateObject = updateObject;
-exports.hasError = hasError;
+exports.hasError = exports.updateObject = exports.parseFieldValuestoFormData = exports.parseFieldValuesToParams = void 0;
 const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
 /** Przerabia obiekty na pary kluczy i wartości do przesłąnia parametrów filtra - GET */
 function parseFieldValuesToParams(data) {
@@ -115840,6 +114764,7 @@ function parseFieldValuesToParams(data) {
     }
     return params;
 }
+exports.parseFieldValuesToParams = parseFieldValuesToParams;
 function parseFieldValuestoFormData(data) {
     const formData = new FormData();
     for (const key in data) {
@@ -115860,6 +114785,7 @@ function parseFieldValuestoFormData(data) {
     }
     return formData;
 }
+exports.parseFieldValuestoFormData = parseFieldValuestoFormData;
 function processElement(element) {
     let parsedValue = "";
     switch (typeof element) {
@@ -115900,6 +114826,7 @@ function updateObject(formData, obj) {
     });
     return updatedObj;
 }
+exports.updateObject = updateObject;
 /**
  * Zwraca true jeśli w obiekcie errors jest błąd dla podanej ścieżki
  * @param errors obiekt błędów
@@ -115920,6 +114847,7 @@ function hasError(errors, path) {
     }
     return current && current.type ? true : false;
 }
+exports.hasError = hasError;
 
 
 /***/ }),
@@ -115948,28 +114876,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = DashboardCard;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -116093,6 +115010,7 @@ function DashboardCard({ cardData, dataLoaded, repository, SectionSubtittle, Lis
                     });
                 }))))));
 }
+exports["default"] = DashboardCard;
 
 
 /***/ }),
@@ -116121,27 +115039,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DashboardCardContext = void 0;
-exports.DashboardCardProvider = DashboardCardProvider;
-exports.useDashboardCardContext = useDashboardCardContext;
+exports.useDashboardCardContext = exports.DashboardCardProvider = exports.DashboardCardContext = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 exports.DashboardCardContext = (0, react_1.createContext)({
     objects: [],
@@ -116174,6 +115080,7 @@ function DashboardCardProvider({ objects, setObjects, repository, handleEditObje
             specialRetrieveActionRoute,
         } }, children));
 }
+exports.DashboardCardProvider = DashboardCardProvider;
 function useDashboardCardContext() {
     const context = react_1.default.useContext(exports.DashboardCardContext);
     if (!context) {
@@ -116181,6 +115088,7 @@ function useDashboardCardContext() {
     }
     return context;
 }
+exports.useDashboardCardContext = useDashboardCardContext;
 
 
 /***/ }),
@@ -116209,25 +115117,14 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = RowActionMenu;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const CommonComponents_1 = __webpack_require__(/*! ../CommonComponents */ "./src/View/Resultsets/CommonComponents.tsx");
 const FilterableTableRow_1 = __webpack_require__(/*! ../FilterableTable/FilterableTableRow */ "./src/View/Resultsets/FilterableTable/FilterableTableRow.tsx");
@@ -116258,6 +115155,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
                         repository: repository,
                     }, buttonProps: { layout, buttonCaption: "Edytuj" } })))))))));
 }
+exports["default"] = RowActionMenu;
 
 
 /***/ }),
@@ -116271,7 +115169,7 @@ function RowActionMenu({ dataObject, handleEditObject, EditButtonComponent, hand
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useDashboardCardData = useDashboardCardData;
+exports.useDashboardCardData = void 0;
 const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
     const [dataLoaded, setDataLoaded] = (0, react_1.useState)(false);
@@ -116307,6 +115205,7 @@ function useDashboardCardData(config, icons, fetchDataFn, buildCustomSections) {
     }, [data, buildCustomSections, icons]);
     return { dataLoaded, data, cardData };
 }
+exports.useDashboardCardData = useDashboardCardData;
 
 
 /***/ }),
@@ -116335,25 +115234,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FilterPanel = FilterPanel;
+exports.FilterPanel = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_hook_form_1 = __webpack_require__(/*! react-hook-form */ "./node_modules/react-hook-form/dist/index.cjs.js");
@@ -116454,6 +115343,7 @@ function FilterPanel({ FilterBodyComponent, repository, validationSchema = undef
                         !isReady && (react_1.default.createElement(react_bootstrap_1.Spinner, { className: "ml-1", as: "span", animation: "border", size: "sm", role: "status", "aria-hidden": "true" }))),
                     react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: handleReset }, "Wyczy\u015B\u0107"))))));
 }
+exports.FilterPanel = FilterPanel;
 
 
 /***/ }),
@@ -116537,26 +115427,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = FilterableTable;
-exports.TableTitle = TableTitle;
+exports.TableTitle = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
@@ -116752,6 +115631,7 @@ function FilterableTable({ id, title, showTableHeader = true, repository, initia
                     react_1.default.createElement("p", { className: "tekst-muted small" }, objects && `Znaleziono: ${objects.length} pozycji`),
                     react_1.default.createElement(ResultSetTable_1.ResultSetTable, { showTableHeader: showTableHeader, onRowClick: handleRowClick }))))))));
 }
+exports["default"] = FilterableTable;
 function Sections({ resulsetTableProps, onClick, }) {
     const { sections } = (0, FilterableTableContext_1.useFilterableTableContext)();
     return (react_1.default.createElement(react_1.default.Fragment, null, sections.map((section, index) => {
@@ -116770,6 +115650,7 @@ function Sections({ resulsetTableProps, onClick, }) {
 function TableTitle({ title }) {
     return react_1.default.createElement("h1", null, title);
 }
+exports.TableTitle = TableTitle;
 /** Funkcja do aktualizacji węzłów
  * jeśli edytujemy sekcję to zaczynamy od najwyższego poziomu drzewa i schodzimy do spodu szukając sekcji
  * jeśli edytujemy liść to zaczynamy od sekcji z najwyższego poziomu drzewa i schodzimy do spodu szukając liścia i go edytujemy
@@ -116905,27 +115786,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FilterableTableContext = void 0;
-exports.FilterableTableProvider = FilterableTableProvider;
-exports.useFilterableTableContext = useFilterableTableContext;
+exports.useFilterableTableContext = exports.FilterableTableProvider = exports.FilterableTableContext = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 exports.FilterableTableContext = (0, react_1.createContext)({
     id: "",
@@ -116990,6 +115859,7 @@ function FilterableTableProvider({ id, objects, setObjects, repository, handleAd
             sectionsFilterHandlers,
         } }, children));
 }
+exports.FilterableTableProvider = FilterableTableProvider;
 function useFilterableTableContext() {
     const context = react_1.default.useContext(exports.FilterableTableContext);
     if (!context) {
@@ -116997,6 +115867,7 @@ function useFilterableTableContext() {
     }
     return context;
 }
+exports.useFilterableTableContext = useFilterableTableContext;
 
 
 /***/ }),
@@ -117025,29 +115896,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FilterableTableRow = FilterableTableRow;
-exports.RowActionMenu = RowActionMenu;
-exports.DeleteModalButton = DeleteModalButton;
-exports.CopyModalButton = CopyModalButton;
-exports.getRowClass = getRowClass;
+exports.getRowClass = exports.CopyModalButton = exports.DeleteModalButton = exports.RowActionMenu = exports.FilterableTableRow = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
@@ -117086,6 +115943,7 @@ function FilterableTableRow({ dataObject, isActive, isStriped, onRowClick, }) {
                 " ",
                 react_1.default.createElement(RowActionMenu, { dataObject: dataObject, handleEditObject: handleEditObject, handleCopyObject: handleCopyObject, EditButtonComponent: EditButtonComponent, handleDeleteObject: handleDeleteObject, isDeletable: isDeletable, isCopyable: isCopyable, shouldRetrieveDataBeforeEdit: shouldRetrieveDataBeforeEdit, specialRetrieveActionRoute: specialRetrieveActionRoute }))))));
 }
+exports.FilterableTableRow = FilterableTableRow;
 function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditButtonComponent, handleDeleteObject, isDeletable, isCopyable = false, layout = "vertical", sectionRepository, shouldRetrieveDataBeforeEdit = false, specialRetrieveActionRoute, submenuItems = [], }) {
     const repository = sectionRepository || (0, FilterableTableContext_1.useFilterableTableContext)().repository;
     const [isMenuExpanded, setIsMenuExpanded] = (0, react_1.useState)(false);
@@ -117121,6 +115979,7 @@ function RowActionMenu({ dataObject, handleEditObject, handleCopyObject, EditBut
                         repository: repository,
                     }, buttonProps: { layout, buttonCaption: "Edytuj" } })))))))));
 }
+exports.RowActionMenu = RowActionMenu;
 function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, buttonProps, }) {
     const name = "name" in initialData ? initialData.name : undefined;
     const modalTitle = "Usuwanie " + (name || "wybranego elementu");
@@ -117131,6 +115990,7 @@ function DeleteModalButton({ modalProps: { onDelete, initialData, repository }, 
             initialData,
         }, buttonProps: buttonProps }));
 }
+exports.DeleteModalButton = DeleteModalButton;
 function CopyModalButton({ modalProps: { onCopy, initialData, repository }, buttonProps, }) {
     const name = "name" in initialData ? initialData.name : undefined;
     const modalTitle = "Kopiowanie " + (name || "wybranego elementu");
@@ -117141,6 +116001,7 @@ function CopyModalButton({ modalProps: { onCopy, initialData, repository }, butt
             initialData,
         }, buttonProps: buttonProps }));
 }
+exports.CopyModalButton = CopyModalButton;
 /**
  * Returns a string with the class names for the row based on the active state and striped row state.
  */
@@ -117154,6 +116015,7 @@ function getRowClass({ isActive, isStriped }) {
         .filter(Boolean)
         .join(" ");
 }
+exports.getRowClass = getRowClass;
 
 
 /***/ }),
@@ -117182,30 +116044,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ResultSetTable = ResultSetTable;
-exports.renderHeaderBody = renderHeaderBody;
-exports.getColSize = getColSize;
+exports.getColSize = exports.renderHeaderBody = exports.ResultSetTable = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FilterableTableContext_1 = __webpack_require__(/*! ./FilterableTableContext */ "./src/View/Resultsets/FilterableTable/FilterableTableContext.tsx");
@@ -117232,6 +116082,7 @@ function ResultSetTable({ showTableHeader, onRowClick, filteredObjects, isStripe
                             dataObject: dataObject, isActive: isActive, isStriped: isStripedRow, onRowClick: (id) => onRowClick(id, parentSectionId) }))));
             })))));
 }
+exports.ResultSetTable = ResultSetTable;
 function renderHeaderBody(column) {
     if (column.header)
         return column.header;
@@ -117239,6 +116090,7 @@ function renderHeaderBody(column) {
         return "";
     return column.renderThBody();
 }
+exports.renderHeaderBody = renderHeaderBody;
 function getColSize(column) {
     return {
         xs: 12,
@@ -117247,6 +116099,7 @@ function getColSize(column) {
         lg: column.colLg,
     };
 }
+exports.getColSize = getColSize;
 
 
 /***/ }),
@@ -117275,25 +116128,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Section = Section;
+exports.Section = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
@@ -117339,6 +116182,7 @@ function Section({ sectionNode, resulsetTableProps, onClick, childrenExpandTrigg
         react_1.default.createElement(SectionHeader, { sectionNode: sectionNode, isOnActivePath: isOnActivePath, isEditing: isEditing, onClick: onClick, localExpandTrigger: localExpandTrigger, setLocalExpandTrigger: setLocalExpandTrigger }),
         react_1.default.createElement(SectionBody, { resulsetTableProps: resulsetTableProps, sectionNode: sectionNode, onClick: onClick, localExpandTrigger: localExpandTrigger })));
 }
+exports.Section = Section;
 function SectionHeader({ sectionNode, onClick, isOnActivePath, isEditing, localExpandTrigger, setLocalExpandTrigger, }) {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { handleDeleteSection, handleEditSection, handleAddSection } = (0, FilterableTableContext_1.useFilterableTableContext)();
@@ -117430,7 +116274,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ToggleExpandButton = ToggleExpandButton;
+exports.ToggleExpandButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const react_fontawesome_1 = __webpack_require__(/*! @fortawesome/react-fontawesome */ "./node_modules/@fortawesome/react-fontawesome/index.es.js");
@@ -117447,6 +116291,7 @@ function ToggleExpandButton({ expandTrigger, setExpandTrigger, collapseTitle = "
         }, title: isCollapsed ? expandTitle : collapseTitle },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: isCollapsed ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
 }
+exports.ToggleExpandButton = ToggleExpandButton;
 
 
 /***/ }),
@@ -117460,10 +116305,11 @@ function ToggleExpandButton({ expandTrigger, setExpandTrigger, collapseTitle = "
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getSymbolByUniqueness = getSymbolByUniqueness;
+exports.getSymbolByUniqueness = void 0;
 function getSymbolByUniqueness(isUnique) {
     return isUnique ? "🔐" : "♾";
 }
+exports.getSymbolByUniqueness = getSymbolByUniqueness;
 
 
 /***/ }),
@@ -117525,7 +116371,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ApplicationCallsFilterBody = ApplicationCallsFilterBody;
+exports.ApplicationCallsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -117547,6 +116393,7 @@ function ApplicationCallsFilterBody() {
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 2, controlId: "status" },
             react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { multiple: true, showValidationInfo: false }))));
 }
+exports.ApplicationCallsFilterBody = ApplicationCallsFilterBody;
 
 
 /***/ }),
@@ -117575,25 +116422,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeApplicationCallValidationSchema = makeApplicationCallValidationSchema;
+exports.makeApplicationCallValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 function getCommponFields(isEditing) {
     return {
@@ -117617,6 +116454,7 @@ function makeApplicationCallValidationSchema(isEditing) {
         ...getCommponFields(isEditing),
     });
 }
+exports.makeApplicationCallValidationSchema = makeApplicationCallValidationSchema;
 
 
 /***/ }),
@@ -117672,30 +116510,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = ApplicationCallsSearch;
-exports.renderApplicationCall = renderApplicationCall;
-exports.renderApplicationCallLink = renderApplicationCallLink;
+exports.renderApplicationCallLink = exports.renderApplicationCall = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const ApplicationCallsController_1 = __webpack_require__(/*! ./ApplicationCallsController */ "./src/financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsController.ts");
@@ -117722,6 +116548,7 @@ function ApplicationCallsSearch({ title }) {
             { header: "Nabór", renderTdBody: renderApplicationCall, colMd: 3 },
         ], AddNewButtonComponents: [ApplicationCallModalButtons_1.ApplicationCallAddNewModalButton], EditButtonComponent: ApplicationCallModalButtons_1.ApplicationCallEditModalButton, isDeletable: true, repository: ApplicationCallsController_1.applicationCallsRepository, selectedObjectRoute: "/applicationCall/" }));
 }
+exports["default"] = ApplicationCallsSearch;
 function renderApplicationCall(applicationCall) {
     if (!applicationCall)
         return react_1.default.createElement(react_1.default.Fragment, null);
@@ -117736,11 +116563,13 @@ function renderApplicationCall(applicationCall) {
             " do: ",
             applicationCall.endDate)));
 }
+exports.renderApplicationCall = renderApplicationCall;
 function renderApplicationCallLink(applicationCall) {
     if (!applicationCall.url)
         return null;
     return (react_1.default.createElement("a", { href: applicationCall.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, applicationCall.description));
 }
+exports.renderApplicationCallLink = renderApplicationCallLink;
 
 
 /***/ }),
@@ -117769,25 +116598,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ApplicationCallModalBody = ApplicationCallModalBody;
+exports.ApplicationCallModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -117835,6 +116654,7 @@ function ApplicationCallModalBody({ isEditing, initialData }) {
                 react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "endDate", errors: errors }))),
         react_1.default.createElement(StatusSelectors_1.ApplicationCallStatusSelector, { showValidationInfo: true })));
 }
+exports.ApplicationCallModalBody = ApplicationCallModalBody;
 
 
 /***/ }),
@@ -117851,8 +116671,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ApplicationCallEditModalButton = ApplicationCallEditModalButton;
-exports.ApplicationCallAddNewModalButton = ApplicationCallAddNewModalButton;
+exports.ApplicationCallAddNewModalButton = exports.ApplicationCallEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const ApplicationCallModalBody_1 = __webpack_require__(/*! ./ApplicationCallModalBody */ "./src/financialAidProgrammes/FocusAreas/ApplicationCalls/Modals/ApplicationCallModalBody.tsx");
@@ -117870,6 +116689,7 @@ function ApplicationCallEditModalButton({ modalProps: { onEdit, initialData }, }
             buttonVariant: "outline-success",
         } }));
 }
+exports.ApplicationCallEditModalButton = ApplicationCallEditModalButton;
 function ApplicationCallAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -117882,6 +116702,7 @@ function ApplicationCallAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.ApplicationCallAddNewModalButton = ApplicationCallAddNewModalButton;
 
 
 /***/ }),
@@ -117910,25 +116731,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeFocusAreaValidationSchema = makeFocusAreaValidationSchema;
+exports.makeFocusAreaValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -117950,6 +116761,7 @@ function makeFocusAreaValidationSchema() {
         ...commonFields,
     });
 }
+exports.makeFocusAreaValidationSchema = makeFocusAreaValidationSchema;
 
 
 /***/ }),
@@ -117993,7 +116805,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FocusAreasFilterBody = FocusAreasFilterBody;
+exports.FocusAreasFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -118008,6 +116820,7 @@ function FocusAreasFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Program wsparcia"),
             react_1.default.createElement(BussinesObjectSelectors_1.FinancialAidProgrammeSelector, { showValidationInfo: false }))));
 }
+exports.FocusAreasFilterBody = FocusAreasFilterBody;
 
 
 /***/ }),
@@ -118036,29 +116849,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = FocusAreasSearch;
-exports.renderFocusArea = renderFocusArea;
+exports.renderFocusArea = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const FocusAreasController_1 = __webpack_require__(/*! ./FocusAreasController */ "./src/financialAidProgrammes/FocusAreas/FocusAreasController.ts");
@@ -118078,6 +116880,7 @@ function FocusAreasSearch({ title }) {
             { header: "Działanie", renderTdBody: renderFocusArea, colMd: 7 },
         ], AddNewButtonComponents: [FocusAreaModalButtons_1.FocusAreaAddNewModalButton], EditButtonComponent: FocusAreaModalButtons_1.FocusAreaEditModalButton, isDeletable: true, repository: FocusAreasController_1.focusAreasRepository, selectedObjectRoute: "/focusArea/" }));
 }
+exports["default"] = FocusAreasSearch;
 function renderFocusArea(focusArea) {
     if (!focusArea)
         return react_1.default.createElement(react_1.default.Fragment, null);
@@ -118085,6 +116888,7 @@ function renderFocusArea(focusArea) {
         react_1.default.createElement("div", null, focusArea.name),
         react_1.default.createElement("div", { className: "text-muted" }, focusArea.description)));
 }
+exports.renderFocusArea = renderFocusArea;
 
 
 /***/ }),
@@ -118113,25 +116917,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FocusAreaModalBody = FocusAreaModalBody;
+exports.FocusAreaModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -118166,6 +116960,7 @@ function FocusAreaModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { as: "textarea", rows: 3, placeholder: "Podaj opis", isValid: !errors?.description, isInvalid: !!errors?.description, ...register("description") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "description", errors: errors }))));
 }
+exports.FocusAreaModalBody = FocusAreaModalBody;
 
 
 /***/ }),
@@ -118182,8 +116977,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FocusAreaEditModalButton = FocusAreaEditModalButton;
-exports.FocusAreaAddNewModalButton = FocusAreaAddNewModalButton;
+exports.FocusAreaAddNewModalButton = exports.FocusAreaEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const FocusAreaModalBody_1 = __webpack_require__(/*! ./FocusAreaModalBody */ "./src/financialAidProgrammes/FocusAreas/Modals/FocusAreaModalBody.tsx");
@@ -118201,6 +116995,7 @@ function FocusAreaEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.FocusAreaEditModalButton = FocusAreaEditModalButton;
 function FocusAreaAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -118213,6 +117008,7 @@ function FocusAreaAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.FocusAreaAddNewModalButton = FocusAreaAddNewModalButton;
 
 
 /***/ }),
@@ -118229,7 +117025,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FinancialAidProgrammesFilterBody = FinancialAidProgrammesFilterBody;
+exports.FinancialAidProgrammesFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -118240,6 +117036,7 @@ function FinancialAidProgrammesFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Szukana fraza"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Wpisz tekst", ...register("searchText") }))));
 }
+exports.FinancialAidProgrammesFilterBody = FinancialAidProgrammesFilterBody;
 
 
 /***/ }),
@@ -118268,25 +117065,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeFinancialAidProgrammeValidationSchema = makeFinancialAidProgrammeValidationSchema;
+exports.makeFinancialAidProgrammeValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const commonFields = {
     name: Yup.string()
@@ -118311,6 +117098,7 @@ function makeFinancialAidProgrammeValidationSchema() {
         ...commonFields,
     });
 }
+exports.makeFinancialAidProgrammeValidationSchema = makeFinancialAidProgrammeValidationSchema;
 
 
 /***/ }),
@@ -118339,30 +117127,18 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = FinancialAidProgrammesSearch;
-exports.renderFinancialAidProgramme = renderFinancialAidProgramme;
-exports.renderfinancialAidProgrammeLink = renderfinancialAidProgrammeLink;
+exports.renderfinancialAidProgrammeLink = exports.renderFinancialAidProgramme = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const FinancialAidProgrammesController_1 = __webpack_require__(/*! ../FinancialAidProgrammesController */ "./src/financialAidProgrammes/FinancialAidProgrammesController.ts");
@@ -118374,6 +117150,7 @@ function FinancialAidProgrammesSearch({ title }) {
     }, [title]);
     return (react_1.default.createElement(FilterableTable_1.default, { id: "financialAidProgrammes", title: title, FilterBodyComponent: FinancialAidProgrammeFilterBody_1.FinancialAidProgrammesFilterBody, tableStructure: [{ renderTdBody: renderFinancialAidProgramme }], AddNewButtonComponents: [FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeAddNewModalButton], EditButtonComponent: FinancialAidProgrammeModalButtons_1.FinancialAidProgrammeEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.financialAidProgrammesRepository, selectedObjectRoute: "/FinancialAidProgramme/" }));
 }
+exports["default"] = FinancialAidProgrammesSearch;
 function renderFinancialAidProgramme(financialAidProgramme) {
     if (!financialAidProgramme)
         return react_1.default.createElement(react_1.default.Fragment, null);
@@ -118382,11 +117159,13 @@ function renderFinancialAidProgramme(financialAidProgramme) {
         react_1.default.createElement("div", null, financialAidProgramme.name),
         react_1.default.createElement("div", { className: "text-muted" }, financialAidProgramme.description)));
 }
+exports.renderFinancialAidProgramme = renderFinancialAidProgramme;
 function renderfinancialAidProgrammeLink(financialAidProgramme) {
     if (!financialAidProgramme.url)
         return react_1.default.createElement(react_1.default.Fragment, null, financialAidProgramme.alias);
     return (react_1.default.createElement("a", { href: financialAidProgramme.url, target: "_blank", rel: "noreferrer", className: "text-primary text-decoration-none" }, financialAidProgramme.alias));
 }
+exports.renderfinancialAidProgrammeLink = renderfinancialAidProgrammeLink;
 
 
 /***/ }),
@@ -118415,25 +117194,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FinancialAidProgrammeModalBody = FinancialAidProgrammeModalBody;
+exports.FinancialAidProgrammeModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -118468,6 +117237,7 @@ function FinancialAidProgrammeModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", placeholder: "Podaj adres URL", isValid: !errors?.url, isInvalid: !!errors?.url, ...register("url") }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "url", errors: errors }))));
 }
+exports.FinancialAidProgrammeModalBody = FinancialAidProgrammeModalBody;
 
 
 /***/ }),
@@ -118484,8 +117254,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FinancialAidProgrammeEditModalButton = FinancialAidProgrammeEditModalButton;
-exports.FinancialAidProgrammeAddNewModalButton = FinancialAidProgrammeAddNewModalButton;
+exports.FinancialAidProgrammeAddNewModalButton = exports.FinancialAidProgrammeEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const FinancialAidProgrammeModalBody_1 = __webpack_require__(/*! ./FinancialAidProgrammeModalBody */ "./src/financialAidProgrammes/Programmes/Modals/FinancialAidProgrammeModalBody.tsx");
@@ -118503,6 +117272,7 @@ function FinancialAidProgrammeEditModalButton({ modalProps: { onEdit, initialDat
             buttonVariant: "outline-success",
         } }));
 }
+exports.FinancialAidProgrammeEditModalButton = FinancialAidProgrammeEditModalButton;
 function FinancialAidProgrammeAddNewModalButton({ modalProps: { onAddNew }, }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -118515,6 +117285,7 @@ function FinancialAidProgrammeAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.FinancialAidProgrammeAddNewModalButton = FinancialAidProgrammeAddNewModalButton;
 
 
 /***/ }),
@@ -118543,25 +117314,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.NeedModalBody = NeedModalBody;
+exports.NeedModalBody = void 0;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
@@ -118608,6 +117369,7 @@ function NeedModalBody({ isEditing, initialData }) {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Wybierz nabor"),
             react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { name: "_applicationCall", multiple: false, _focusArea: _focusAreas })))));
 }
+exports.NeedModalBody = NeedModalBody;
 
 
 /***/ }),
@@ -118624,8 +117386,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.NeedEditModalButton = NeedEditModalButton;
-exports.NeedAddNewModalButton = NeedAddNewModalButton;
+exports.NeedAddNewModalButton = exports.NeedEditModalButton = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const GeneralModalButtons_1 = __webpack_require__(/*! ../../../View/Modals/GeneralModalButtons */ "./src/View/Modals/GeneralModalButtons.tsx");
 const NeedModalBody_1 = __webpack_require__(/*! ./NeedModalBody */ "./src/financialAidProgrammes/needs/Modals/NeedModalBody.tsx");
@@ -118644,6 +117405,7 @@ function NeedEditModalButton({ modalProps: { onEdit, initialData, shouldRetrieve
             buttonVariant: "outline-success",
         } }));
 }
+exports.NeedEditModalButton = NeedEditModalButton;
 function NeedAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -118656,6 +117418,7 @@ function NeedAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
+exports.NeedAddNewModalButton = NeedAddNewModalButton;
 
 
 /***/ }),
@@ -118684,25 +117447,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeNeedValidationSchema = makeNeedValidationSchema;
+exports.makeNeedValidationSchema = void 0;
 const Yup = __importStar(__webpack_require__(/*! yup */ "./node_modules/yup/index.esm.js"));
 const needFields = {
     _client: Yup.object().required("Wybierz klienta"),
@@ -118722,6 +117475,7 @@ function makeNeedValidationSchema() {
         ...needFields,
     });
 }
+exports.makeNeedValidationSchema = makeNeedValidationSchema;
 
 
 /***/ }),
@@ -118738,7 +117492,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.NeedsFilterBody = NeedsFilterBody;
+exports.NeedsFilterBody = void 0;
 const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const FormContext_1 = __webpack_require__(/*! ../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
@@ -118766,6 +117520,7 @@ function NeedsFilterBody() {
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Nab\u00F3r"),
             react_1.default.createElement(BussinesObjectSelectors_1.ApplicationCallSelector, { showValidationInfo: false, _focusArea: _focusAreas }))));
 }
+exports.NeedsFilterBody = NeedsFilterBody;
 
 
 /***/ }),
@@ -118794,28 +117549,17 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports["default"] = NeedsSearch;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const FilterableTable_1 = __importDefault(__webpack_require__(/*! ../../View/Resultsets/FilterableTable/FilterableTable */ "./src/View/Resultsets/FilterableTable/FilterableTable.tsx"));
 const NeedsFilterBody_1 = __webpack_require__(/*! ./NeedsFilterBody */ "./src/financialAidProgrammes/needs/NeedsFilterBody.tsx");
@@ -118868,6 +117612,7 @@ function NeedsSearch({ title }) {
             },
         ], AddNewButtonComponents: [NeedModalButtons_1.NeedAddNewModalButton], EditButtonComponent: NeedModalButtons_1.NeedEditModalButton, isDeletable: true, repository: FinancialAidProgrammesController_1.needsRepository, selectedObjectRoute: "/need/", shouldRetrieveDataBeforeEdit: true }));
 }
+exports["default"] = NeedsSearch;
 
 
 /***/ }),
