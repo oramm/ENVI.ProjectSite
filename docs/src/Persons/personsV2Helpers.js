@@ -8,7 +8,9 @@ exports.fetchPersonAccountV2 = fetchPersonAccountV2;
 exports.fetchPersonProfileV2 = fetchPersonProfileV2;
 exports.putPersonAccountV2 = putPersonAccountV2;
 exports.putPersonProfileV2 = putPersonProfileV2;
-exports.fetchPersonProfileV2Full = fetchPersonProfileV2Full;
+exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
+exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
+exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
 exports.fetchSkillsDictionary = fetchSkillsDictionary;
 exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
 const MainSetupReact_1 = __importDefault(require("../React/MainSetupReact"));
@@ -57,7 +59,7 @@ async function fetchPersonAccountV2(personId) {
 }
 /**
  * Pobiera dane profile v2 dla osoby.
- * @returns PersonProfileV2Payload lub null jesli brak profile (404)
+ * @returns PersonProfileV2Record lub null jesli brak profile (404)
  */
 async function fetchPersonProfileV2(personId) {
     const validId = validatePersonId(personId, "GET profile");
@@ -108,25 +110,31 @@ async function putPersonProfileV2(personId, payload) {
     });
     return result;
 }
-/**
- * Pobiera pelny profil v2 osoby (z doswiadczeniami, edukacja, skillami).
- * @returns PersonProfileV2Full lub null jesli brak profilu (404)
- */
-async function fetchPersonProfileV2Full(personId) {
-    const validId = validatePersonId(personId, "GET profile full");
-    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile`;
+async function searchProfileModule(personId, modulePath, orConditions, context) {
+    const validId = validatePersonId(personId, context);
+    const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile/${modulePath}/search`;
     try {
         const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
         return result;
     }
     catch (error) {
-        console.warn("fetchPersonProfileV2Full: brak profilu dla personId=%d: %o", validId, error);
-        return null;
+        console.warn("searchProfileModule: blad %s dla personId=%d: %o", modulePath, validId, error);
+        return [];
     }
+}
+async function fetchPersonProfileExperiences(personId, orConditions = []) {
+    return searchProfileModule(personId, "experiences", orConditions, "POST experiences/search");
+}
+async function fetchPersonProfileEducations(personId, orConditions = []) {
+    return searchProfileModule(personId, "educations", orConditions, "POST educations/search");
+}
+async function fetchPersonProfileSkills(personId, orConditions = []) {
+    return searchProfileModule(personId, "skills", orConditions, "POST skills/search");
 }
 /**
  * Pobiera slownik skilli z wyszukiwaniem.
@@ -134,13 +142,15 @@ async function fetchPersonProfileV2Full(personId) {
  * @returns tablica SkillDictionaryRecord
  */
 async function fetchSkillsDictionary(searchText) {
-    const params = searchText ? `?searchText=${encodeURIComponent(searchText)}` : "";
-    const url = `${MainSetupReact_1.default.serverUrl}v2/skills${params}`;
+    const url = `${MainSetupReact_1.default.serverUrl}v2/skills/search`;
+    const trimmedSearchText = searchText?.trim();
+    const orConditions = trimmedSearchText ? [{ searchText: trimmedSearchText }] : [];
     try {
         const result = await ToolsFetch_1.default.fetchJsonWithSafeError(url, {
-            method: "GET",
+            method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orConditions }),
         });
         return result;
     }

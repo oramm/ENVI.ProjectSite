@@ -1,69 +1,91 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Container, Spinner } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import {
     PersonProfileEducationV2Record,
     PersonProfileExperienceV2Record,
     PersonProfileSkillV2Record,
-    PersonProfileV2Full,
+    PersonProfileV2Record,
 } from "../../../Typings/bussinesTypes";
-import { fetchPersonProfileV2Full } from "../personsV2Helpers";
+import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
+import { fetchPersonProfileV2 } from "../personsV2Helpers";
 import { createEducationsRepository } from "./Education/EducationController";
 import { createEducationAddNewModalButton, createEducationEditModalButton } from "./Education/EducationModalButtons";
 import { createExperienceRepository } from "./Experience/ExperienceController";
-import { createExperienceAddNewModalButton, createExperienceEditModalButton } from "./Experience/ExperienceModalButtons";
+import {
+    createExperienceAddNewModalButton,
+    createExperienceEditModalButton,
+} from "./Experience/ExperienceModalButtons";
 import { createProfileSkillsRepository } from "./ProfileSkills/ProfileSkillsController";
-import { createProfileSkillAddNewModalButton, createProfileSkillEditModalButton } from "./ProfileSkills/ProfileSkillModalButtons";
-
-function PersonProfileHeader({ personId }: { personId: number }) {
-    const [profile, setProfile] = useState<PersonProfileV2Full | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        let cancelled = false;
-        setIsLoading(true);
-        fetchPersonProfileV2Full(personId)
-            .then((result) => {
-                if (!cancelled) setProfile(result);
-            })
-            .finally(() => {
-                if (!cancelled) setIsLoading(false);
-            });
-        return () => { cancelled = true; };
-    }, [personId]);
-
-    if (isLoading) {
-        return (
-            <div className="text-center py-3">
-                <Spinner animation="border" size="sm" />
-            </div>
-        );
-    }
-
-    if (!profile) {
-        return <p className="text-muted">Brak profilu dla osoby #{personId}</p>;
-    }
-
-    return (
-        <div className="mb-4">
-            {profile.headline && <h4 className="mb-1">{profile.headline}</h4>}
-            {profile.summary && <p className="text-muted">{profile.summary}</p>}
-        </div>
-    );
-}
+import {
+    createProfileSkillAddNewModalButton,
+    createProfileSkillEditModalButton,
+} from "./ProfileSkills/ProfileSkillModalButtons";
 
 export default function PersonProfilePage() {
     const { id } = useParams();
     const personId = parseInt(id!);
 
-    useEffect(() => {
-        document.title = `Profil osoby #${personId}`;
-    }, [personId]);
+    // Profile header data
+    const [profile, setProfile] = useState<PersonProfileV2Record | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+
+    // Table data states (undefined = loading, array = loaded)
+    const [skills, setSkills] = useState<PersonProfileSkillV2Record[] | undefined>(undefined);
+    const [educations, setEducations] = useState<PersonProfileEducationV2Record[] | undefined>(undefined);
+    const [experiences, setExperiences] = useState<PersonProfileExperienceV2Record[] | undefined>(undefined);
 
     const educationsRepo = useMemo(() => createEducationsRepository(personId), [personId]);
     const experienceRepo = useMemo(() => createExperienceRepository(personId), [personId]);
     const skillsRepo = useMemo(() => createProfileSkillsRepository(personId), [personId]);
+
+    // Load profile header
+    useEffect(() => {
+        let cancelled = false;
+        setProfileLoading(true);
+        fetchPersonProfileV2(personId)
+            .then((result) => {
+                if (!cancelled) setProfile(result);
+            })
+            .finally(() => {
+                if (!cancelled) setProfileLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [personId]);
+
+    // Auto-load skills
+    useEffect(() => {
+        async function fetchSkills() {
+            await skillsRepo.loadItemsFromServerPOST([]);
+            setSkills([...skillsRepo.items]);
+        }
+        fetchSkills();
+    }, [skillsRepo]);
+
+    // Auto-load educations
+    useEffect(() => {
+        async function fetchEducations() {
+            await educationsRepo.loadItemsFromServerPOST([]);
+            setEducations([...educationsRepo.items]);
+        }
+        fetchEducations();
+    }, [educationsRepo]);
+
+    // Auto-load experiences
+    useEffect(() => {
+        async function fetchExperiences() {
+            await experienceRepo.loadItemsFromServerPOST([]);
+            setExperiences([...experienceRepo.items]);
+        }
+        fetchExperiences();
+    }, [experienceRepo]);
+
+    useEffect(() => {
+        document.title = `Profil osoby #${personId}`;
+    }, [personId]);
 
     const EducationAddButton = useMemo(() => createEducationAddNewModalButton(educationsRepo), [educationsRepo]);
     const EducationEditButton = useMemo(() => createEducationEditModalButton(educationsRepo), [educationsRepo]);
@@ -86,52 +108,84 @@ export default function PersonProfilePage() {
 
     return (
         <Container>
-            <PersonProfileHeader personId={personId} />
+            {profileLoading ? (
+                <div className="text-center py-3">
+                    <SpinnerBootstrap />
+                </div>
+            ) : profile ? (
+                <div className="mb-4">
+                    {profile.headline && <h4 className="mb-1">{profile.headline}</h4>}
+                    {profile.summary && <p className="text-muted">{profile.summary}</p>}
+                </div>
+            ) : (
+                <p className="text-muted">Brak profilu dla osoby #{personId}</p>
+            )}
 
             <h5>Specjalizacje</h5>
-            <FilterableTable<PersonProfileSkillV2Record>
-                id={`person_${personId}_skills`}
-                repository={skillsRepo}
-                tableStructure={[
-                    { header: "Specjalizacja", renderTdBody: renderSkillName },
-                    { header: "Poziom", renderTdBody: renderSkillLevel },
-                    { header: "Lata doświadczenia", renderTdBody: renderSkillYears },
-                ]}
-                AddNewButtonComponents={[SkillAddButton]}
-                EditButtonComponent={SkillEditButton}
-                isDeletable={true}
-            />
+            {skills ? (
+                <FilterableTable<PersonProfileSkillV2Record>
+                    id={`person_${personId}_skills`}
+                    repository={skillsRepo}
+                    initialObjects={skills}
+                    tableStructure={[
+                        { header: "Specjalizacja", renderTdBody: renderSkillName, colMd: 6 },
+                        { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
+                        { header: "Lata doświadczenia", renderTdBody: renderSkillYears, colMd: 3 },
+                    ]}
+                    AddNewButtonComponents={[SkillAddButton]}
+                    EditButtonComponent={SkillEditButton}
+                    isDeletable={true}
+                />
+            ) : (
+                <div className="text-center py-3">
+                    <SpinnerBootstrap />
+                </div>
+            )}
 
             <h5 className="mt-4">Wykształcenie</h5>
-            <FilterableTable<PersonProfileEducationV2Record>
-                id={`person_${personId}_educations`}
-                repository={educationsRepo}
-                tableStructure={[
-                    { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName" },
-                    { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName" },
-                    { header: "Kierunek", objectAttributeToShow: "fieldOfStudy" },
-                    { header: "Od", objectAttributeToShow: "dateFrom" },
-                    { header: "Do", objectAttributeToShow: "dateTo" },
-                ]}
-                AddNewButtonComponents={[EducationAddButton]}
-                EditButtonComponent={EducationEditButton}
-                isDeletable={true}
-            />
+            {educations ? (
+                <FilterableTable<PersonProfileEducationV2Record>
+                    id={`person_${personId}_educations`}
+                    repository={educationsRepo}
+                    initialObjects={educations}
+                    tableStructure={[
+                        { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
+                        { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName", colMd: 3 },
+                        { header: "Kierunek", objectAttributeToShow: "fieldOfStudy", colMd: 3 },
+                        { header: "Od", objectAttributeToShow: "dateFrom", colMd: 1 },
+                        { header: "Do", objectAttributeToShow: "dateTo", colMd: 1 },
+                    ]}
+                    AddNewButtonComponents={[EducationAddButton]}
+                    EditButtonComponent={EducationEditButton}
+                    isDeletable={true}
+                />
+            ) : (
+                <div className="text-center py-3">
+                    <SpinnerBootstrap />
+                </div>
+            )}
 
             <h5 className="mt-4">Doświadczenie</h5>
-            <FilterableTable<PersonProfileExperienceV2Record>
-                id={`person_${personId}_experiences`}
-                repository={experienceRepo}
-                tableStructure={[
-                    { header: "Organizacja", objectAttributeToShow: "organizationName" },
-                    { header: "Stanowisko", objectAttributeToShow: "positionName" },
-                    { header: "Od", objectAttributeToShow: "dateFrom" },
-                    { header: "Do", objectAttributeToShow: "dateTo" },
-                ]}
-                AddNewButtonComponents={[ExperienceAddButton]}
-                EditButtonComponent={ExperienceEditButton}
-                isDeletable={true}
-            />
+            {experiences ? (
+                <FilterableTable<PersonProfileExperienceV2Record>
+                    id={`person_${personId}_experiences`}
+                    repository={experienceRepo}
+                    initialObjects={experiences}
+                    tableStructure={[
+                        { header: "Organizacja", objectAttributeToShow: "organizationName", colMd: 4 },
+                        { header: "Stanowisko", objectAttributeToShow: "positionName", colMd: 4 },
+                        { header: "Od", objectAttributeToShow: "dateFrom", colMd: 2 },
+                        { header: "Do", objectAttributeToShow: "dateTo", colMd: 2 },
+                    ]}
+                    AddNewButtonComponents={[ExperienceAddButton]}
+                    EditButtonComponent={ExperienceEditButton}
+                    isDeletable={true}
+                />
+            ) : (
+                <div className="text-center py-3">
+                    <SpinnerBootstrap />
+                </div>
+            )}
         </Container>
     );
 }

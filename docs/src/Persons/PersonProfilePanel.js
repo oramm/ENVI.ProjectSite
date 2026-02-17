@@ -106,14 +106,25 @@ function PersonProfilePanel({ person, onClose }) {
     const [isLoading, setIsLoading] = (0, react_1.useState)(true);
     const [error, setError] = (0, react_1.useState)(null);
     const [profile, setProfile] = (0, react_1.useState)(null);
+    const [skills, setSkills] = (0, react_1.useState)([]);
+    const [experiences, setExperiences] = (0, react_1.useState)([]);
+    const [educations, setEducations] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
         let cancelled = false;
         setIsLoading(true);
         setError(null);
-        (0, personsV2Helpers_1.fetchPersonProfileV2Full)(person.id)
-            .then((result) => {
+        Promise.all([
+            (0, personsV2Helpers_1.fetchPersonProfileV2)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileSkills)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileExperiences)(person.id),
+            (0, personsV2Helpers_1.fetchPersonProfileEducations)(person.id),
+        ])
+            .then(([profileResult, skillsResult, experiencesResult, educationsResult]) => {
             if (!cancelled) {
-                setProfile(result);
+                setProfile(profileResult);
+                setSkills(skillsResult);
+                setExperiences(experiencesResult);
+                setEducations(educationsResult);
                 setIsLoading(false);
             }
         })
@@ -138,12 +149,12 @@ function PersonProfilePanel({ person, onClose }) {
             isLoading && (react_1.default.createElement("div", { className: "text-center py-3" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }))),
             error && react_1.default.createElement("div", { className: "text-danger small" }, error),
-            !isLoading && !error && !profile && (react_1.default.createElement("p", { className: "text-muted small" }, "Brak profilu")),
+            !isLoading && !error && !profile && react_1.default.createElement("p", { className: "text-muted small" }, "Brak profilu"),
             !isLoading && !error && profile && (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(ProfileHeader, { profile: profile }),
-                react_1.default.createElement(SkillsList, { skills: profile.profileSkills }),
-                react_1.default.createElement(ExperienceList, { experiences: profile.profileExperiences }),
-                react_1.default.createElement(EducationList, { educations: profile.profileEducations }),
+                react_1.default.createElement(SkillsList, { skills: skills }),
+                react_1.default.createElement(ExperienceList, { experiences: experiences }),
+                react_1.default.createElement(EducationList, { educations: educations }),
                 react_1.default.createElement("div", { className: "mt-3 text-end" },
                     react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pe\u0142ny profil \u2192")))))));
 }

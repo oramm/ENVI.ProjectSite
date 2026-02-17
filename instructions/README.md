@@ -74,6 +74,7 @@ instructions/
 ├── business-object-selectors.md (quick start, wzorce użycia)
 ├── selectors-architecture.md (pełna dokumentacja architektury)
 ├── backend-computed-fields.md (jak naprawiać backend Node.js/Express)
+├── crud-module-guide.md (⭐ receptura tworzenia nowych modułów CRUD)
 ├── filterable-table-data-flow.md
 └── TasksGlobalView.md
 ```
@@ -99,6 +100,9 @@ instructions/
 
 **Debugujesz istniejący selektor?**
 → [business-object-selectors.md - Debugging](./business-object-selectors.md#debugging) - typowe problemy
+
+**Tworzysz nowy moduł CRUD?**
+→ [crud-module-guide.md](./crud-module-guide.md) - receptura + szablony kodu (lub użyj `/new-crud-module`)
 
 **AI implementuje funkcjonalność?**
 → [selectors-architecture.md - Sekcja 7](./selectors-architecture.md#7-tworzenie-nowego-selektora) - 🤖 Checklist dla AI
