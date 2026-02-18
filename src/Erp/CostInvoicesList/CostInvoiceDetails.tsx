@@ -65,9 +65,7 @@ export default function CostInvoiceDetails() {
                 fetchCategories(),
             ]);
 
-            const items = invoiceData.items || (invoiceData as CostInvoice & { _items?: CostInvoiceItem[] })._items || [];
-
-            const invoiceWithItems = { ...invoiceData, items };
+            const invoiceWithItems = { ...invoiceData };
 
             setInvoice(invoiceWithItems);
             setCategories(categoriesData);
@@ -163,7 +161,7 @@ export default function CostInvoiceDetails() {
         try {
             await persistChanges(invoice.id);
             const updated = await bookCostInvoice(invoice.id);
-            setInvoice((prev) => (prev ? { ...updated, items: prev.items || updated.items } : updated));
+            setInvoice((prev) => (prev ? { ...updated, _items: prev._items || updated._items } : updated));
             setStatus(updated.status);
             setSuccess("Faktura została zaksięgowana");
         } catch (err) {
@@ -211,8 +209,8 @@ export default function CostInvoiceDetails() {
         };
     };
 
-    const costItems = (invoice.items || []).filter((item) => getItemSelection(item).isSelected);
-    const nonCostItems = (invoice.items || []).filter((item) => !getItemSelection(item).isSelected);
+    const costItems = (invoice._items || []).filter((item) => getItemSelection(item).isSelected);
+    const nonCostItems = (invoice._items || []).filter((item) => !getItemSelection(item).isSelected);
 
     const renderItemsTable = (items: CostInvoiceItem[], title: string) => (
         <div className="mb-3">

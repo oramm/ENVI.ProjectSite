@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MeetingNoteAddNewModalButton = void 0;
+exports.MeetingNoteAddNewModalButton = MeetingNoteAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../../../../View/Modals/GeneralModalButtons");
 const MeetingNoteModalBody_1 = require("./MeetingNoteModalBody");
@@ -24,4 +24,3 @@ function MeetingNoteAddNewModalButton({ modalProps: { onAddNew }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.MeetingNoteAddNewModalButton = MeetingNoteAddNewModalButton;

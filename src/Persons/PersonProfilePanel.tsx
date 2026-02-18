@@ -3,10 +3,10 @@ import { Badge, Button, Card, CloseButton, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
     PersonData,
-    PersonProfileV2Record,
-    PersonProfileExperienceV2Record,
     PersonProfileEducationV2Record,
+    PersonProfileExperienceV2Record,
     PersonProfileSkillV2Record,
+    PersonProfileV2Record,
 } from "../../Typings/bussinesTypes";
 import {
     fetchPersonProfileEducations,
@@ -25,7 +25,7 @@ function formatDateRange(dateFrom?: string, dateTo?: string, isCurrent?: boolean
     };
     const from = dateFrom ? fmt(dateFrom) : "";
     const to = isCurrent ? "obecnie" : dateTo ? fmt(dateTo) : "";
-    if (from && to) return `${from} – ${to}`;
+    if (from && to) return `${from} - ${to}`;
     if (from) return `od ${from}`;
     if (to) return `do ${to}`;
     return "";
@@ -40,19 +40,24 @@ function ProfileHeader({ profile }: { profile: PersonProfileV2Record }) {
     );
 }
 
+export function renderPersonProfilePanelSkillItem(skill: PersonProfileSkillV2Record) {
+    return (
+        <div key={skill.id} className="me-2 mb-2">
+            <Badge bg="secondary" className="me-1">
+                {skill._skill?.name || `Skill #${skill.skillId}`}
+                {skill.levelCode && <span className="ms-1 opacity-75">({skill.levelCode})</span>}
+            </Badge>
+            {skill._skill?.description && <div className="text-muted small mt-1">{skill._skill.description}</div>}
+        </div>
+    );
+}
+
 function SkillsList({ skills }: { skills: PersonProfileSkillV2Record[] }) {
     if (!skills || skills.length === 0) return null;
     return (
         <div className="mb-3">
             <strong className="small">Specjalizacje</strong>
-            <div className="mt-1">
-                {skills.map((s) => (
-                    <Badge key={s.id} bg="secondary" className="me-1 mb-1">
-                        {s._skill?.name || `Skill #${s.skillId}`}
-                        {s.levelCode && <span className="ms-1 opacity-75">({s.levelCode})</span>}
-                    </Badge>
-                ))}
-            </div>
+            <div className="mt-1 d-flex flex-wrap">{skills.map(renderPersonProfilePanelSkillItem)}</div>
         </div>
     );
 }
@@ -61,12 +66,12 @@ function ExperienceList({ experiences }: { experiences: PersonProfileExperienceV
     if (!experiences || experiences.length === 0) return null;
     return (
         <div className="mb-3">
-            <strong className="small">Doświadczenie</strong>
+            <strong className="small">Doswiadczenie</strong>
             {experiences.map((exp) => (
                 <div key={exp.id} className="mt-1 small">
                     <div>
                         <strong>{exp.positionName}</strong>
-                        {exp.organizationName && <span className="text-muted"> — {exp.organizationName}</span>}
+                        {exp.organizationName && <span className="text-muted"> - {exp.organizationName}</span>}
                     </div>
                     <div className="text-muted">{formatDateRange(exp.dateFrom, exp.dateTo, exp.isCurrent)}</div>
                     {exp.description && <div className="mt-1">{exp.description}</div>}
@@ -80,12 +85,12 @@ function EducationList({ educations }: { educations: PersonProfileEducationV2Rec
     if (!educations || educations.length === 0) return null;
     return (
         <div className="mb-3">
-            <strong className="small">Wykształcenie</strong>
+            <strong className="small">Wyksztalcenie</strong>
             {educations.map((edu) => (
                 <div key={edu.id} className="mt-1 small">
                     <div>
                         <strong>{edu.schoolName}</strong>
-                        {edu.degreeName && <span className="text-muted"> — {edu.degreeName}</span>}
+                        {edu.degreeName && <span className="text-muted"> - {edu.degreeName}</span>}
                     </div>
                     {edu.fieldOfStudy && <div>{edu.fieldOfStudy}</div>}
                     <div className="text-muted">{formatDateRange(edu.dateFrom, edu.dateTo)}</div>
@@ -164,7 +169,7 @@ export default function PersonProfilePanel({ person, onClose }: PersonProfilePan
                         <EducationList educations={educations} />
                         <div className="mt-3 text-end">
                             <Button as={Link as any} to={`/person/${person.id}`} variant="outline-primary" size="sm">
-                                Pełny profil &rarr;
+                                Pelny profil -&gt;
                             </Button>
                         </div>
                     </>

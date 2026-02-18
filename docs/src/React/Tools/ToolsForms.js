@@ -7,11 +7,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logSelector = exports.safeGetFirstField = exports.ensureLabelKey = void 0;
+exports.ensureLabelKey = ensureLabelKey;
+exports.safeGetFirstField = safeGetFirstField;
+exports.logSelector = logSelector;
 const ToolsFetch_1 = __importDefault(require("./ToolsFetch"));
 // ===== LOGGING CONFIGURATION =====
 const LOG_CONFIG = {
-    enabled: true,
+    enabled: true, // Ustaw false w production lub kontroluj przez ENV
     minLevel: "warn", // Minimalny poziom logowania
 };
 const LOG_LEVELS = {
@@ -41,7 +43,6 @@ function logSelector(level, selectorName, message, data) {
         console.log(prefix, message, data);
     }
 }
-exports.logSelector = logSelector;
 // ===== VALIDATION FUNCTIONS =====
 /**
  * Zapewnia że obiekt ma wymagane pole labelKey.
@@ -81,7 +82,6 @@ function ensureLabelKey(item, labelKey, selectorName) {
     }
     return item;
 }
-exports.ensureLabelKey = ensureLabelKey;
 /**
  * Uniwersalna funkcja do bezpiecznego odczytywania wartości z obiektu.
  * Obsługuje zarówno ścieżki zagnieżdżone jak i alternatywne pola.
@@ -147,15 +147,14 @@ function safeGetFirstField(obj, fieldPaths, fallback, selectorName) {
     }
     return fallback;
 }
-exports.safeGetFirstField = safeGetFirstField;
 // ===== LEGACY CLASS (zachowane dla kompatybilności) =====
 class ToolsForms {
     static getSuggestedClass(field, watchAllFields, initValue) {
         return watchAllFields[field] === initValue ? "text-primary" : "";
     }
 }
-exports.default = ToolsForms;
 // Statyczne metody dla łatwego dostępu
 ToolsForms.ensureLabelKey = ensureLabelKey;
 ToolsForms.safeGetFirstField = safeGetFirstField;
 ToolsForms.logSelector = logSelector;
+exports.default = ToolsForms;

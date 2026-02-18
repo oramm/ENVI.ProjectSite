@@ -11,8 +11,10 @@ import {
     updateCostInvoice,
 } from "./CostInvoicesController";
 import Tools from "../../React/Tools/Tools";
+import ToolsDate from "../../React/Tools/ToolsDate";
 import { CostInvoiceStatusBadge, CategoryBadge, VatDeductionBadge } from "./CostInvoicesBadges";
 import { useFilterableTableContext } from "../../View/Resultsets/FilterableTable/FilterableTableContext";
+import "./CostInvoicesSearch.css";
 
 export default function CostInvoicesSearch({ title }: { title: string }) {
     const [isSyncing, setIsSyncing] = useState(false);
@@ -36,6 +38,14 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         }
         return 0;
     };
+
+    const formatDate = (value?: string | null): string => {
+        if (!value) return "-";
+        return ToolsDate.dateYMDtoDMY(value);
+    };
+
+    const formatAmount = (value: unknown, currency?: string | null): string =>
+        `${Tools.formatNumber(toNumber(value))} ${currency || "PLN"}`;
 
     /**
      * Synchronizacja faktur z KSeF
@@ -70,58 +80,6 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
             setIsSyncing(false);
         }
     }, [syncType, dateFrom, dateTo]);
-
-    function renderSupplierInfo(invoice: CostInvoice) {
-        return (
-            <>
-                <div className="fw-bold">{invoice.supplierName}</div>
-                <div className="text-muted small">NIP: {invoice.supplierNip}</div>
-            </>
-        );
-    }
-
-    function renderValues(invoice: CostInvoice) {
-        const grossAmount = toNumber(invoice.grossAmount);
-        const netAmount = toNumber(invoice.netAmount);
-        const bookableNetAmount = invoice.bookableNetAmount !== undefined
-            ? toNumber(invoice.bookableNetAmount)
-            : undefined;
-
-        return (
-            <>
-                <div className="text-end fw-bold">{Tools.formatNumber(grossAmount)} zł</div>
-                <div className="text-end text-muted small">netto: {Tools.formatNumber(netAmount)} zł</div>
-                {bookableNetAmount !== undefined && bookableNetAmount !== netAmount && (
-                    <div className="text-end text-info small">
-                        do księg.: {Tools.formatNumber(bookableNetAmount)} zł
-                    </div>
-                )}
-            </>
-        );
-    }
-
-    function renderBookingInfo(invoice: CostInvoice) {
-        const invoiceWithCategory = invoice as CostInvoice & { _category?: CostInvoice["category"] };
-        const category = invoice.category || invoiceWithCategory._category || null;
-        const vatDeductionPercentage = toNumber(invoice.vatDeductionPercentage);
-
-        return (
-            <div className="d-flex flex-column gap-1">
-                <CategoryBadge category={category} />
-                <VatDeductionBadge percentage={vatDeductionPercentage} />
-            </div>
-        );
-    }
-
-    function renderKsefNumber(invoice: CostInvoice) {
-        return (
-            <div className="small">
-                <code className="text-break" style={{ fontSize: "0.75em" }}>
-                    {invoice.ksefNumber}
-                </code>
-            </div>
-        );
-    }
 
     function CostInvoiceStatusCell({ invoice }: { invoice: CostInvoice }) {
         const { repository, setObjects } = useFilterableTableContext<CostInvoice>();
@@ -165,6 +123,92 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
         );
     }
 
+    function renderInvoiceCard(invoice: CostInvoice, isActive?: boolean) {
+        void isActive;
+        const category = invoice._category || null;
+        const vatDeductionPercentage = toNumber(invoice.vatDeductionPercentage);
+        const bookingPercentage = toNumber(invoice.bookingPercentage);
+        const netAmount = toNumber(invoice.netAmount);
+        const bookableNetAmount = invoice.bookableNetAmount !== undefined ? toNumber(invoice.bookableNetAmount) : null;
+        const notes = invoice.notes?.trim();
+
+        return (
+            <>
+                <div className="cost-invoice-card__header">
+                    <div>
+                        <div className="cost-invoice-card__number">{invoice.invoiceNumber || "-"}</div>
+                        <div className="cost-invoice-card__supplier">{invoice.supplierName || "Brak dostawcy"}</div>
+                        <div className="cost-invoice-card__meta">
+                            NIP: {invoice.supplierNip || "-"}
+                            {invoice.supplierAddress ? ` | ${invoice.supplierAddress}` : ""}
+                        </div>
+                    </div>
+                    <div className="cost-invoice-card__status-wrap">
+                        <CostInvoiceStatusCell invoice={invoice} />
+                    </div>
+                </div>
+
+                <div className="cost-invoice-card__body">
+                    <div className="cost-invoice-card__dates">
+                        <div className="cost-invoice-card__date-item">
+                            <div className="cost-invoice-card__label">Data wyst.</div>
+                            <div className="cost-invoice-card__value">{formatDate(invoice.issueDate)}</div>
+                        </div>
+                        <div className="cost-invoice-card__date-item">
+                            <div className="cost-invoice-card__label">Data sprzed.</div>
+                            <div className="cost-invoice-card__value">{formatDate(invoice.saleDate)}</div>
+                        </div>
+                        <div className="cost-invoice-card__date-item">
+                            <div className="cost-invoice-card__label">Termin plat.</div>
+                            <div className="cost-invoice-card__value">{formatDate(invoice.dueDate)}</div>
+                        </div>
+                    </div>
+
+                    <div className="cost-invoice-card__amounts">
+                        <div className="cost-invoice-card__gross">{formatAmount(invoice.grossAmount, invoice.currency)}</div>
+                        <div className="cost-invoice-card__amount-detail">
+                            Netto: {formatAmount(invoice.netAmount, invoice.currency)}
+                        </div>
+                        <div className="cost-invoice-card__amount-detail">
+                            VAT: {formatAmount(invoice.vatAmount, invoice.currency)}
+                        </div>
+                        {bookableNetAmount !== null && bookableNetAmount !== netAmount && (
+                            <div className="cost-invoice-card__amount-detail cost-invoice-card__amount-detail--info">
+                                Do ksieg.: {formatAmount(bookableNetAmount, invoice.currency)}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="cost-invoice-card__bottom">
+                    <div className="cost-invoice-card__tags">
+                        <CategoryBadge category={category} />
+                        <VatDeductionBadge percentage={vatDeductionPercentage} />
+                        <span className="badge bg-info-subtle text-info-emphasis border border-info-subtle">
+                            Ksiegowanie {bookingPercentage}%
+                        </span>
+                        {invoice.status === CostInvoiceStatuses.BOOKED && invoice.bookedAt && (
+                            <span className="badge bg-success-subtle text-success-emphasis border border-success-subtle">
+                                Zaksiegowano {ToolsDate.dateToDDmmmYYYYHHMM(invoice.bookedAt)}
+                                {invoice._bookedByPerson
+                                    ? ` (${invoice._bookedByPerson.name} ${invoice._bookedByPerson.surname})`
+                                    : ""}
+                            </span>
+                        )}
+                        {notes && (
+                            <span className="badge bg-secondary-subtle text-secondary-emphasis">Notatka: {notes}</span>
+                        )}
+                    </div>
+
+                    <div className="cost-invoice-card__footer">
+                        <span className="cost-invoice-card__label">KSeF:</span>
+                        <code className="cost-invoice-card__ksef">{invoice.ksefNumber || "-"}</code>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
     // Przycisk synchronizacji KSeF jako dodatkowy przycisk w nagłówku
     const SyncKsefButton = () => (
         <Button
@@ -180,7 +224,7 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                     Synchronizacja...
                 </>
             ) : (
-                "🔄 Pobierz z KSeF"
+                "Pobierz z KSeF"
             )}
         </Button>
     );
@@ -203,23 +247,13 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                 </Alert>
             )}
 
+            <div className="cost-invoices-search">
             <FilterableTable<CostInvoice>
                 id="costInvoices"
                 title={title}
                 FilterBodyComponent={CostInvoicesFilterBody}
                 tableStructure={[
-                    { header: "Nr faktury", objectAttributeToShow: "invoiceNumber", colMd: 1 },
-                    { header: "Dostawca", renderTdBody: renderSupplierInfo, colMd: 3 },
-                    { header: "Data wyst.", objectAttributeToShow: "issueDate", colMd: 1 },
-                    { header: "Termin płat.", objectAttributeToShow: "dueDate", colMd: 1 },
-                    { header: "Wartość", renderTdBody: renderValues, colMd: 1 },
-                    { header: "Księgowanie", renderTdBody: renderBookingInfo, colMd: 2 },
-                    {
-                        header: "Status",
-                        renderTdBody: (invoice: CostInvoice) => <CostInvoiceStatusCell invoice={invoice} />,
-                        colMd: 1,
-                    },
-                    { header: "Nr KSeF", renderTdBody: renderKsefNumber, colMd: 1 },
+                    { header: undefined, renderTdBody: renderInvoiceCard },
                 ]}
                 AddNewButtonComponents={[SyncKsefButton]}
                 isDeletable={false}
@@ -227,6 +261,7 @@ export default function CostInvoicesSearch({ title }: { title: string }) {
                 repository={costInvoicesRepository}
                 selectedObjectRoute="/cost-invoice/"
             />
+            </div>
 
             {/* Modal synchronizacji */}
             <Modal show={showSyncModal} onHide={() => setShowSyncModal(false)}>

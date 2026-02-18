@@ -15,22 +15,35 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.renderPersonProfileSkillNameCell = renderPersonProfileSkillNameCell;
+exports.default = PersonProfilePage;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
-const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const CommonComponents_1 = require("../../View/Resultsets/CommonComponents");
+const ToolsDate_1 = __importDefault(require("../../React/Tools/ToolsDate"));
+const FilterableTable_1 = __importDefault(require("../../View/Resultsets/FilterableTable/FilterableTable"));
 const personsV2Helpers_1 = require("../personsV2Helpers");
 const EducationController_1 = require("./Education/EducationController");
 const EducationModalButtons_1 = require("./Education/EducationModalButtons");
@@ -38,20 +51,22 @@ const ExperienceController_1 = require("./Experience/ExperienceController");
 const ExperienceModalButtons_1 = require("./Experience/ExperienceModalButtons");
 const ProfileSkillsController_1 = require("./ProfileSkills/ProfileSkillsController");
 const ProfileSkillModalButtons_1 = require("./ProfileSkills/ProfileSkillModalButtons");
+function renderPersonProfileSkillNameCell(skill) {
+    return (react_1.default.createElement("div", null,
+        react_1.default.createElement("div", null, skill._skill?.name || `Skill #${skill.skillId}`),
+        skill._skill?.description && react_1.default.createElement("div", { className: "text-muted small" }, skill._skill.description)));
+}
 function PersonProfilePage() {
     const { id } = (0, react_router_dom_1.useParams)();
-    const personId = parseInt(id);
-    // Profile header data
+    const personId = parseInt(id || "0");
     const [profile, setProfile] = (0, react_1.useState)(null);
     const [profileLoading, setProfileLoading] = (0, react_1.useState)(true);
-    // Table data states (undefined = loading, array = loaded)
     const [skills, setSkills] = (0, react_1.useState)(undefined);
     const [educations, setEducations] = (0, react_1.useState)(undefined);
     const [experiences, setExperiences] = (0, react_1.useState)(undefined);
     const educationsRepo = (0, react_1.useMemo)(() => (0, EducationController_1.createEducationsRepository)(personId), [personId]);
     const experienceRepo = (0, react_1.useMemo)(() => (0, ExperienceController_1.createExperienceRepository)(personId), [personId]);
     const skillsRepo = (0, react_1.useMemo)(() => (0, ProfileSkillsController_1.createProfileSkillsRepository)(personId), [personId]);
-    // Load profile header
     (0, react_1.useEffect)(() => {
         let cancelled = false;
         setProfileLoading(true);
@@ -68,7 +83,6 @@ function PersonProfilePage() {
             cancelled = true;
         };
     }, [personId]);
-    // Auto-load skills
     (0, react_1.useEffect)(() => {
         async function fetchSkills() {
             await skillsRepo.loadItemsFromServerPOST([]);
@@ -76,7 +90,6 @@ function PersonProfilePage() {
         }
         fetchSkills();
     }, [skillsRepo]);
-    // Auto-load educations
     (0, react_1.useEffect)(() => {
         async function fetchEducations() {
             await educationsRepo.loadItemsFromServerPOST([]);
@@ -84,7 +97,6 @@ function PersonProfilePage() {
         }
         fetchEducations();
     }, [educationsRepo]);
-    // Auto-load experiences
     (0, react_1.useEffect)(() => {
         async function fetchExperiences() {
             await experienceRepo.loadItemsFromServerPOST([]);
@@ -101,9 +113,6 @@ function PersonProfilePage() {
     const ExperienceEditButton = (0, react_1.useMemo)(() => (0, ExperienceModalButtons_1.createExperienceEditModalButton)(experienceRepo), [experienceRepo]);
     const SkillAddButton = (0, react_1.useMemo)(() => (0, ProfileSkillModalButtons_1.createProfileSkillAddNewModalButton)(skillsRepo), [skillsRepo]);
     const SkillEditButton = (0, react_1.useMemo)(() => (0, ProfileSkillModalButtons_1.createProfileSkillEditModalButton)(skillsRepo), [skillsRepo]);
-    function renderSkillName(skill) {
-        return react_1.default.createElement(react_1.default.Fragment, null, skill._skill?.name || `Skill #${skill.skillId}`);
-    }
     function renderSkillLevel(skill) {
         return react_1.default.createElement(react_1.default.Fragment, null, skill.levelCode || "-");
     }
@@ -119,27 +128,42 @@ function PersonProfilePage() {
             personId)),
         react_1.default.createElement("h5", null, "Specjalizacje"),
         skills ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_skills`, repository: skillsRepo, initialObjects: skills, tableStructure: [
-                { header: "Specjalizacja", renderTdBody: renderSkillName, colMd: 6 },
+                { header: "Specjalizacja", renderTdBody: renderPersonProfileSkillNameCell, colMd: 6 },
                 { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
-                { header: "Lata doświadczenia", renderTdBody: renderSkillYears, colMd: 3 },
+                { header: "Lata doswiadczenia", renderTdBody: renderSkillYears, colMd: 3 },
             ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
-        react_1.default.createElement("h5", { className: "mt-4" }, "Wykszta\u0142cenie"),
+        react_1.default.createElement("h5", { className: "mt-4" }, "Wyksztalcenie"),
         educations ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, initialObjects: educations, tableStructure: [
-                { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
-                { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName", colMd: 3 },
+                { header: "Szkola/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
+                { header: "Tytul/Stopien", objectAttributeToShow: "degreeName", colMd: 3 },
                 { header: "Kierunek", objectAttributeToShow: "fieldOfStudy", colMd: 3 },
-                { header: "Od", objectAttributeToShow: "dateFrom", colMd: 1 },
-                { header: "Do", objectAttributeToShow: "dateTo", colMd: 1 },
+                {
+                    header: "Od",
+                    renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateFrom ? ToolsDate_1.default.dateISOToDMY(e.dateFrom) : "-")),
+                    colMd: 1,
+                },
+                {
+                    header: "Do",
+                    renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
+                    colMd: 1,
+                },
             ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
-        react_1.default.createElement("h5", { className: "mt-4" }, "Do\u015Bwiadczenie"),
+        react_1.default.createElement("h5", { className: "mt-4" }, "Doswiadczenie"),
         experiences ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, initialObjects: experiences, tableStructure: [
                 { header: "Organizacja", objectAttributeToShow: "organizationName", colMd: 4 },
                 { header: "Stanowisko", objectAttributeToShow: "positionName", colMd: 4 },
-                { header: "Od", objectAttributeToShow: "dateFrom", colMd: 2 },
-                { header: "Do", objectAttributeToShow: "dateTo", colMd: 2 },
+                {
+                    header: "Od",
+                    renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateFrom ? ToolsDate_1.default.dateISOToDMY(e.dateFrom) : "-")),
+                    colMd: 2,
+                },
+                {
+                    header: "Do",
+                    renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
+                    colMd: 2,
+                },
             ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }
-exports.default = PersonProfilePage;

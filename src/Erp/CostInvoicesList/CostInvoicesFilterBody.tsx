@@ -14,24 +14,35 @@ export function CostInvoicesFilterBody() {
     }, []);
 
     return (
-        <Row>
-            <Form.Group as={Col} sm={12} md={3}>
+        <Row className="g-3 cost-invoices-filter-grid">
+            <Form.Group as={Col} sm={12} md={4}>
                 <Form.Label>Szukana fraza</Form.Label>
                 <Form.Control type="text" placeholder="Nr faktury, dostawca" {...register("searchText")} />
             </Form.Group>
-            <Form.Group as={Col} sm={12} md={3}>
+            <Form.Group as={Col} sm={12} md={2}>
                 <Form.Label>NIP dostawcy</Form.Label>
                 <Form.Control type="text" placeholder="NIP" {...register("supplierNip")} />
             </Form.Group>
             <DateRangeInput
                 as={Col}
                 sm={12}
-                md={3}
+                md={6}
                 label="Data faktury"
                 fromName="dateFrom"
                 toName="dateTo"
                 showValidationInfo={false}
             />
+            <Form.Group as={Col} sm={12} md={4}>
+                <Form.Label>Kategoria</Form.Label>
+                <Form.Select {...register("categoryId")}>
+                    <option value="">Wszystkie kategorie</option>
+                    {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
+                    ))}
+                </Form.Select>
+            </Form.Group>
             <Form.Group as={Col} sm={12} md={2}>
                 <Form.Label>Status</Form.Label>
                 <Form.Select {...register("status")}>
@@ -45,17 +56,6 @@ export function CostInvoicesFilterBody() {
                                 : value === "BOOKED"
                                 ? "Zaksięgowana"
                                 : value}
-                        </option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
-            <Form.Group as={Col} sm={12} md={3} className="mt-2">
-                <Form.Label>Kategoria</Form.Label>
-                <Form.Select {...register("categoryId")}>
-                    <option value="">Wszystkie kategorie</option>
-                    {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                            {cat.name}
                         </option>
                     ))}
                 </Form.Select>

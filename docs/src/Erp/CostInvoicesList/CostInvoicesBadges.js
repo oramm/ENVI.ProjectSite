@@ -3,7 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BookingPercentageBadge = exports.VatDeductionBadge = exports.CategoryBadge = exports.CostInvoiceStatusBadge = void 0;
+exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
+exports.CategoryBadge = CategoryBadge;
+exports.VatDeductionBadge = VatDeductionBadge;
+exports.BookingPercentageBadge = BookingPercentageBadge;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const CostInvoicesController_1 = require("./CostInvoicesController");
@@ -33,7 +36,6 @@ function CostInvoiceStatusBadge({ status }) {
     const textColor = variant === "warning" ? "dark" : "light";
     return (react_1.default.createElement(react_bootstrap_1.Badge, { bg: variant, text: textColor }, label));
 }
-exports.CostInvoiceStatusBadge = CostInvoiceStatusBadge;
 /**
  * Badge kategorii kosztu z kolorem
  */
@@ -46,7 +48,6 @@ function CategoryBadge({ category }) {
             color: getContrastColor(category.color),
         } }, category.name));
 }
-exports.CategoryBadge = CategoryBadge;
 /**
  * Badge procentu odliczenia VAT
  */
@@ -70,7 +71,6 @@ function VatDeductionBadge({ percentage }) {
             percentage,
             "%")));
 }
-exports.VatDeductionBadge = VatDeductionBadge;
 /**
  * Badge procentu księgowania
  */
@@ -86,7 +86,6 @@ function BookingPercentageBadge({ percentage }) {
             percentage,
             "%")));
 }
-exports.BookingPercentageBadge = BookingPercentageBadge;
 /**
  * Oblicza kontrastowy kolor tekstu dla danego tła
  */

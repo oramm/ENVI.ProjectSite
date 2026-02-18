@@ -1,6 +1,6 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { ButtonGroup, Form, InputGroup, ToggleButton } from "react-bootstrap";
-import { AsyncTypeahead, Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
+import { Menu, MenuItem, Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { ControllerRenderProps, FieldErrors, FieldValues, UseFormRegister } from "react-hook-form/dist/types";
 import "../../../Css/styles.css";
@@ -38,7 +38,6 @@ import {
 import { caseTypesRepository, milestoneTypesRepository } from "../../../Contracts/ContractsList/ContractsController";
 import { ErrorMessage, MyAsyncTypeahead } from "./GenericComponents";
 import { safeGetFirstField, ensureLabelKey } from "../../../React/Tools/ToolsForms";
-import { fetchSkillsDictionary } from "../../../Persons/personsV2Helpers";
 
 type ProjectSelectorProps = {
     showValidationInfo?: boolean;
@@ -1531,53 +1530,93 @@ export type SkillSelectorProps = {
     name?: string;
     multiple?: boolean;
     showValidationInfo?: boolean;
+    label?: string;
+    repository?: RepositoryReact<SkillDictionaryRecord>;
 };
 
 export function SkillSelector({
     name = "_skills",
     multiple = true,
     showValidationInfo = false,
+    label = "Specjalizacje",
+    repository,
 }: SkillSelectorProps) {
-    const { setValue, control } = useFormContext();
-    const [isLoading, setIsLoading] = useState(false);
+    const {
+        setValue,
+        control,
+        formState: { errors },
+    } = useFormContext();
     const [options, setOptions] = useState<SkillDictionaryRecord[]>([]);
 
-    const handleSearch = useCallback(async (query: string) => {
-        setIsLoading(true);
-        try {
-            const results = await fetchSkillsDictionary(query);
-            setOptions(results);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+    const localRepository = useMemo(
+        () =>
+            repository
+                ? repository
+                : new RepositoryReact<SkillDictionaryRecord>({
+                      actionRoutes: {
+                          getRoute: "v2/skills/search",
+                          addNewRoute: "",
+                          editRoute: "",
+                          deleteRoute: "",
+                      },
+                      name: "skillSelector_temp",
+                  }),
+        [repository]
+    );
 
-    function handleOnChange(selected: SkillDictionaryRecord[]) {
-        setValue(name, selected);
+    useEffect(() => {
+        const fetchData = async () => {
+            await localRepository.loadItemsFromServerPOST([]);
+            setOptions(localRepository.items);
+        };
+
+        fetchData();
+    }, [localRepository]);
+
+    function handleOnChange(selected: SkillDictionaryRecord[], field: ControllerRenderProps<any, string>) {
+        const valueToBeSent = multiple ? selected : selected[0];
+        setValue(name, valueToBeSent);
         setValue("skillIds", selected.map((s) => s.id));
+        field.onChange(valueToBeSent);
+    }
+
+    function getSelectedValue(fieldValue: unknown) {
+        if (multiple) {
+            return (fieldValue as SkillDictionaryRecord[]) || [];
+        }
+
+        if (fieldValue && typeof fieldValue === "object") {
+            return [fieldValue as SkillDictionaryRecord];
+        }
+
+        return [];
     }
 
     return (
         <>
-            <Form.Label>Specjalizacje</Form.Label>
+            <Form.Label>{label}</Form.Label>
             <Controller
                 name={name}
                 control={control}
                 render={({ field }) => (
-                    <AsyncTypeahead
-                        id={`${name}-asyncTypeahead`}
+                    <Typeahead
+                        id={`${name}-typeahead`}
                         labelKey="name"
                         multiple={multiple}
-                        isLoading={isLoading}
-                        onSearch={handleSearch}
                         options={options}
-                        onChange={(selected) => handleOnChange(selected as SkillDictionaryRecord[])}
-                        selected={field.value || []}
-                        placeholder="Wpisz nazwę specjalizacji..."
-                        minLength={1}
+                        onChange={(selected) => handleOnChange(selected as SkillDictionaryRecord[], field)}
+                        selected={getSelectedValue(field.value)}
+                        placeholder={multiple ? "-- Wybierz specjalizacje --" : "-- Wybierz specjalizacje --"}
+                        isValid={showValidationInfo ? !errors?.[name] : undefined}
+                        isInvalid={showValidationInfo ? !!errors?.[name] : undefined}
                         renderMenuItemChildren={(option) => {
                             const skill = option as SkillDictionaryRecord;
-                            return <span>{skill.name}</span>;
+                            return (
+                                <div>
+                                    <span>{skill.name}</span>
+                                    <div className="text-muted small text-wrap">{skill.description || "Brak opisu"}</div>
+                                </div>
+                            );
                         }}
                     />
                 )}

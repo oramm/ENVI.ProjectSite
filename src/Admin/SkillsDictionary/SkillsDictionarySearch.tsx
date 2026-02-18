@@ -5,6 +5,15 @@ import { SkillDictionaryAddNewModalButton, SkillDictionaryEditModalButton } from
 import { skillsDictionaryRepository } from "./SkillsDictionaryController";
 import { SkillsDictionaryFilterBody } from "./SkillsDictionaryFilterBody";
 
+export function renderSkillDictionaryNameCell(skill: SkillDictionaryRecord) {
+    return (
+        <div>
+            <div>{skill.name}</div>
+            <div className="text-muted small">{skill.description || "Brak opisu"}</div>
+        </div>
+    );
+}
+
 export default function SkillsDictionarySearch({ title }: { title: string }) {
     useEffect(() => {
         document.title = title;
@@ -15,13 +24,12 @@ export default function SkillsDictionarySearch({ title }: { title: string }) {
             id="skillsDictionary"
             title={title}
             FilterBodyComponent={SkillsDictionaryFilterBody}
-            tableStructure={[
-                { header: "Nazwa", objectAttributeToShow: "name" },
-            ]}
+            tableStructure={[{ header: undefined, renderTdBody: renderSkillDictionaryNameCell }]}
             AddNewButtonComponents={[SkillDictionaryAddNewModalButton]}
             EditButtonComponent={SkillDictionaryEditModalButton}
             isDeletable={true}
             repository={skillsDictionaryRepository}
+            showTableHeader={false}
         />
     );
 }

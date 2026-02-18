@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Form } from "react-bootstrap";
-import { Controller } from "react-hook-form";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
 import { PersonProfileSkillV2Record, SkillDictionaryRecord } from "../../../../Typings/bussinesTypes";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
-import { fetchSkillsDictionary } from "../../personsV2Helpers";
+import { SkillSelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
+import RepositoryReact from "../../../React/RepositoryReact";
 
 const LEVEL_OPTIONS = [
     { value: "", label: "-- wybierz --" },
-    { value: "BEGINNER", label: "Początkujący" },
-    { value: "INTERMEDIATE", label: "Średniozaawansowany" },
+    { value: "BEGINNER", label: "Poczatkujacy" },
+    { value: "INTERMEDIATE", label: "Sredniozaawansowany" },
     { value: "ADVANCED", label: "Zaawansowany" },
     { value: "EXPERT", label: "Ekspert" },
 ];
@@ -19,73 +18,53 @@ const LEVEL_OPTIONS = [
 export function ProfileSkillModalBody({ isEditing, initialData }: ModalBodyProps<PersonProfileSkillV2Record>) {
     const {
         register,
-        reset,
+        watch,
         setValue,
-        control,
+        reset,
         formState: { errors },
         trigger,
     } = useFormContext();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [options, setOptions] = useState<SkillDictionaryRecord[]>([]);
+    const skillRepository = useMemo(
+        () =>
+            new RepositoryReact<SkillDictionaryRecord>({
+                actionRoutes: {
+                    getRoute: "v2/skills/search",
+                    addNewRoute: "",
+                    editRoute: "",
+                    deleteRoute: "",
+                },
+                name: "profileSkillSelector_temp",
+            }),
+        []
+    );
+
+    const selectedSkill = watch("_skill") as SkillDictionaryRecord | undefined;
 
     useEffect(() => {
-        const resetData: any = {
+        reset({
+            _skill: initialData?._skill,
             skillId: initialData?.skillId,
             levelCode: initialData?.levelCode || "",
             yearsOfExperience: initialData?.yearsOfExperience,
-            _selectedSkill: initialData?._skill ? [initialData._skill] : [],
-        };
-        reset(resetData);
+        });
         trigger();
-    }, [initialData, reset]);
+    }, [initialData, reset, trigger]);
 
-    const handleSearch = useCallback(async (query: string) => {
-        setIsLoading(true);
-        try {
-            const results = await fetchSkillsDictionary(query);
-            setOptions(results);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    function handleSkillChange(selected: SkillDictionaryRecord[]) {
-        setValue("_selectedSkill", selected);
-        if (selected.length > 0) {
-            setValue("skillId", selected[0].id);
-        } else {
-            setValue("skillId", undefined);
-        }
+    useEffect(() => {
+        const mappedSkillId = selectedSkill?.id;
+        setValue("skillId", mappedSkillId);
         trigger("skillId");
-    }
+    }, [selectedSkill, setValue, trigger]);
 
     return (
         <>
-            <Form.Group controlId="skillId" className="mb-3">
-                <Form.Label>Specjalizacja</Form.Label>
-                <Controller
-                    name="_selectedSkill"
-                    control={control}
-                    render={({ field }) => (
-                        <AsyncTypeahead
-                            id="profileSkill-asyncTypeahead"
-                            labelKey="name"
-                            multiple={false}
-                            isLoading={isLoading}
-                            onSearch={handleSearch}
-                            options={options}
-                            onChange={(selected) => handleSkillChange(selected as SkillDictionaryRecord[])}
-                            selected={field.value || []}
-                            placeholder="Wpisz nazwę specjalizacji..."
-                            minLength={1}
-                            isInvalid={!!errors?.skillId}
-                            renderMenuItemChildren={(option) => {
-                                const skill = option as SkillDictionaryRecord;
-                                return <span>{skill.name}</span>;
-                            }}
-                        />
-                    )}
+            <Form.Group controlId="_skill" className="mb-3">
+                <SkillSelector
+                    name="_skill"
+                    label="Specjalizacja"
+                    multiple={false}
+                    repository={skillRepository}
                 />
                 <ErrorMessage name="skillId" errors={errors} />
             </Form.Group>
@@ -102,7 +81,7 @@ export function ProfileSkillModalBody({ isEditing, initialData }: ModalBodyProps
             </Form.Group>
 
             <Form.Group controlId="yearsOfExperience" className="mb-3">
-                <Form.Label>Lata doświadczenia</Form.Label>
+                <Form.Label>Lata doswiadczenia</Form.Label>
                 <Form.Control
                     type="number"
                     min={0}

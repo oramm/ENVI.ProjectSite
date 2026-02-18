@@ -10,6 +10,7 @@ import {
     ProfileSkillSearchParams,
     SkillDictionaryRecord,
 } from "../../Typings/bussinesTypes";
+import { mapSkillDictionaryDtoToModel, SkillDictionaryDto } from "../Admin/SkillsDictionary/skillsDictionaryApi";
 import MainSetup from "../React/MainSetupReact";
 import ToolsFetch from "../React/Tools/ToolsFetch";
 
@@ -199,7 +200,7 @@ export async function fetchSkillsDictionary(searchText?: string): Promise<SkillD
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orConditions }),
         });
-        return result as SkillDictionaryRecord[];
+        return (result as SkillDictionaryDto[]).map(mapSkillDictionaryDtoToModel);
     } catch (error) {
         console.warn("fetchSkillsDictionary: blad pobierania skilli: %o", error);
         return [];

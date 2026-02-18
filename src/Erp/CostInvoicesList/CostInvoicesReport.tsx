@@ -52,10 +52,7 @@ export default function CostInvoicesReport() {
     const getInvoiceCategory = (
         invoice: CostInvoiceMonthlyReport["invoices"][number]
     ) => {
-        const invoiceWithCategory = invoice as typeof invoice & {
-            _category?: CostInvoiceMonthlyReport["invoices"][number]["category"];
-        };
-        return invoice.category || invoiceWithCategory._category || null;
+        return invoice._category || null;
     };
 
     useEffect(() => {

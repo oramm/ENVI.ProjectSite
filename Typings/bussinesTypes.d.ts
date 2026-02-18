@@ -382,6 +382,7 @@ export interface SkillDictionaryRecord {
     id: number;
     name: string;
     nameNormalized: string;
+    description?: string | null;
 }
 
 export interface PersonProfileSkillV2Record {
@@ -681,10 +682,10 @@ export interface CostInvoice extends RepositoryDataItem {
 
     // Kategoria kosztu
     categoryId?: number | null;
-    category?: CostInvoiceCategory | null;
+    _category?: CostInvoiceCategory | null;
 
     // Pozycje faktury
-    items?: CostInvoiceItem[];
+    _items?: CostInvoiceItem[];
 
     // Notatki
     notes?: string | null;
@@ -733,7 +734,7 @@ export interface CostInvoiceItem {
     vatDeductionPercentage: number;
     /** Kategoria pozycji (opcjonalna, nadpisuje kategorię faktury) */
     categoryId?: number | null;
-    category?: CostInvoiceCategory | null;
+    _category?: CostInvoiceCategory | null;
 }
 
 /**

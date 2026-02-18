@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityAddNewModalButton = exports.EntityEditModalButton = void 0;
+exports.EntityEditModalButton = EntityEditModalButton;
+exports.EntityAddNewModalButton = EntityAddNewModalButton;
 const react_1 = __importDefault(require("react"));
 const GeneralModalButtons_1 = require("../../View/Modals/GeneralModalButtons");
 const EntitiesController_1 = require("../EntitiesController");
@@ -21,7 +22,6 @@ function EntityEditModalButton({ modalProps: { onEdit, initialData }, }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.EntityEditModalButton = EntityEditModalButton;
 function EntityAddNewModalButton({ modalProps: { onAddNew } }) {
     return (react_1.default.createElement(GeneralModalButtons_1.GeneralAddNewModalButton, { modalProps: {
             onAddNew: onAddNew,
@@ -34,4 +34,3 @@ function EntityAddNewModalButton({ modalProps: { onAddNew } }) {
             buttonVariant: "outline-success",
         } }));
 }
-exports.EntityAddNewModalButton = EntityAddNewModalButton;

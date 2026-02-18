@@ -15,14 +15,26 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.renderPersonProfilePanelSkillItem = renderPersonProfilePanelSkillItem;
+exports.default = PersonProfilePanel;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_router_dom_1 = require("react-router-dom");
@@ -39,7 +51,7 @@ function formatDateRange(dateFrom, dateTo, isCurrent) {
     const from = dateFrom ? fmt(dateFrom) : "";
     const to = isCurrent ? "obecnie" : dateTo ? fmt(dateTo) : "";
     if (from && to)
-        return `${from} – ${to}`;
+        return `${from} - ${to}`;
     if (from)
         return `od ${from}`;
     if (to)
@@ -51,28 +63,33 @@ function ProfileHeader({ profile }) {
         profile.headline && react_1.default.createElement("h6", { className: "mb-1" }, profile.headline),
         profile.summary && react_1.default.createElement("p", { className: "text-muted small mb-2" }, profile.summary)));
 }
+function renderPersonProfilePanelSkillItem(skill) {
+    return (react_1.default.createElement("div", { key: skill.id, className: "me-2 mb-2" },
+        react_1.default.createElement(react_bootstrap_1.Badge, { bg: "secondary", className: "me-1" },
+            skill._skill?.name || `Skill #${skill.skillId}`,
+            skill.levelCode && react_1.default.createElement("span", { className: "ms-1 opacity-75" },
+                "(",
+                skill.levelCode,
+                ")")),
+        skill._skill?.description && react_1.default.createElement("div", { className: "text-muted small mt-1" }, skill._skill.description)));
+}
 function SkillsList({ skills }) {
     if (!skills || skills.length === 0)
         return null;
     return (react_1.default.createElement("div", { className: "mb-3" },
         react_1.default.createElement("strong", { className: "small" }, "Specjalizacje"),
-        react_1.default.createElement("div", { className: "mt-1" }, skills.map((s) => (react_1.default.createElement(react_bootstrap_1.Badge, { key: s.id, bg: "secondary", className: "me-1 mb-1" },
-            s._skill?.name || `Skill #${s.skillId}`,
-            s.levelCode && react_1.default.createElement("span", { className: "ms-1 opacity-75" },
-                "(",
-                s.levelCode,
-                ")")))))));
+        react_1.default.createElement("div", { className: "mt-1 d-flex flex-wrap" }, skills.map(renderPersonProfilePanelSkillItem))));
 }
 function ExperienceList({ experiences }) {
     if (!experiences || experiences.length === 0)
         return null;
     return (react_1.default.createElement("div", { className: "mb-3" },
-        react_1.default.createElement("strong", { className: "small" }, "Do\u015Bwiadczenie"),
+        react_1.default.createElement("strong", { className: "small" }, "Doswiadczenie"),
         experiences.map((exp) => (react_1.default.createElement("div", { key: exp.id, className: "mt-1 small" },
             react_1.default.createElement("div", null,
                 react_1.default.createElement("strong", null, exp.positionName),
                 exp.organizationName && react_1.default.createElement("span", { className: "text-muted" },
-                    " \u2014 ",
+                    " - ",
                     exp.organizationName)),
             react_1.default.createElement("div", { className: "text-muted" }, formatDateRange(exp.dateFrom, exp.dateTo, exp.isCurrent)),
             exp.description && react_1.default.createElement("div", { className: "mt-1" }, exp.description))))));
@@ -81,12 +98,12 @@ function EducationList({ educations }) {
     if (!educations || educations.length === 0)
         return null;
     return (react_1.default.createElement("div", { className: "mb-3" },
-        react_1.default.createElement("strong", { className: "small" }, "Wykszta\u0142cenie"),
+        react_1.default.createElement("strong", { className: "small" }, "Wyksztalcenie"),
         educations.map((edu) => (react_1.default.createElement("div", { key: edu.id, className: "mt-1 small" },
             react_1.default.createElement("div", null,
                 react_1.default.createElement("strong", null, edu.schoolName),
                 edu.degreeName && react_1.default.createElement("span", { className: "text-muted" },
-                    " \u2014 ",
+                    " - ",
                     edu.degreeName)),
             edu.fieldOfStudy && react_1.default.createElement("div", null, edu.fieldOfStudy),
             react_1.default.createElement("div", { className: "text-muted" }, formatDateRange(edu.dateFrom, edu.dateTo)))))));
@@ -145,6 +162,5 @@ function PersonProfilePanel({ person, onClose }) {
                 react_1.default.createElement(ExperienceList, { experiences: experiences }),
                 react_1.default.createElement(EducationList, { educations: educations }),
                 react_1.default.createElement("div", { className: "mt-3 text-end" },
-                    react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pe\u0142ny profil \u2192")))))));
+                    react_1.default.createElement(react_bootstrap_1.Button, { as: react_router_dom_1.Link, to: `/person/${person.id}`, variant: "outline-primary", size: "sm" }, "Pelny profil ->")))))));
 }
-exports.default = PersonProfilePanel;

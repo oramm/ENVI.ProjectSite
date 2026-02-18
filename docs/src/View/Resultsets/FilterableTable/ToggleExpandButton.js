@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ToggleExpandButton = void 0;
+exports.ToggleExpandButton = ToggleExpandButton;
 const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const react_fontawesome_1 = require("@fortawesome/react-fontawesome");
@@ -20,4 +20,3 @@ function ToggleExpandButton({ expandTrigger, setExpandTrigger, collapseTitle = "
         }, title: isCollapsed ? expandTitle : collapseTitle },
         react_1.default.createElement(react_fontawesome_1.FontAwesomeIcon, { icon: isCollapsed ? free_solid_svg_icons_1.faAngleDoubleDown : free_solid_svg_icons_1.faAngleDoubleUp })));
 }
-exports.ToggleExpandButton = ToggleExpandButton;

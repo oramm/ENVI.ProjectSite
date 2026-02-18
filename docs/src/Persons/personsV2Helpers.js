@@ -3,7 +3,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.savePersonV2AccountAndProfile = exports.fetchSkillsDictionary = exports.fetchPersonProfileSkills = exports.fetchPersonProfileEducations = exports.fetchPersonProfileExperiences = exports.putPersonProfileV2 = exports.putPersonAccountV2 = exports.fetchPersonProfileV2 = exports.fetchPersonAccountV2 = exports.validatePersonId = void 0;
+exports.validatePersonId = validatePersonId;
+exports.fetchPersonAccountV2 = fetchPersonAccountV2;
+exports.fetchPersonProfileV2 = fetchPersonProfileV2;
+exports.putPersonAccountV2 = putPersonAccountV2;
+exports.putPersonProfileV2 = putPersonProfileV2;
+exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
+exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
+exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
+exports.fetchSkillsDictionary = fetchSkillsDictionary;
+exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;
+const skillsDictionaryApi_1 = require("../Admin/SkillsDictionary/skillsDictionaryApi");
 const MainSetupReact_1 = __importDefault(require("../React/MainSetupReact"));
 const ToolsFetch_1 = __importDefault(require("../React/Tools/ToolsFetch"));
 /**
@@ -27,7 +37,6 @@ function validatePersonId(personId, context) {
     }
     return personId;
 }
-exports.validatePersonId = validatePersonId;
 /**
  * Pobiera dane account v2 dla osoby.
  * @returns PersonAccountV2Payload lub null jesli brak account (404)
@@ -49,7 +58,6 @@ async function fetchPersonAccountV2(personId) {
         return null;
     }
 }
-exports.fetchPersonAccountV2 = fetchPersonAccountV2;
 /**
  * Pobiera dane profile v2 dla osoby.
  * @returns PersonProfileV2Record lub null jesli brak profile (404)
@@ -71,7 +79,6 @@ async function fetchPersonProfileV2(personId) {
         return null;
     }
 }
-exports.fetchPersonProfileV2 = fetchPersonProfileV2;
 /**
  * Zapisuje dane account v2 dla osoby (PUT).
  * @returns zaktualizowany PersonAccountV2Payload
@@ -88,7 +95,6 @@ async function putPersonAccountV2(personId, payload) {
     });
     return result;
 }
-exports.putPersonAccountV2 = putPersonAccountV2;
 /**
  * Zapisuje dane profile v2 dla osoby (PUT).
  * @returns zaktualizowany PersonProfileV2Payload
@@ -105,7 +111,6 @@ async function putPersonProfileV2(personId, payload) {
     });
     return result;
 }
-exports.putPersonProfileV2 = putPersonProfileV2;
 async function searchProfileModule(personId, modulePath, orConditions, context) {
     const validId = validatePersonId(personId, context);
     const url = `${MainSetupReact_1.default.serverUrl}v2/persons/${validId}/profile/${modulePath}/search`;
@@ -126,15 +131,12 @@ async function searchProfileModule(personId, modulePath, orConditions, context) 
 async function fetchPersonProfileExperiences(personId, orConditions = []) {
     return searchProfileModule(personId, "experiences", orConditions, "POST experiences/search");
 }
-exports.fetchPersonProfileExperiences = fetchPersonProfileExperiences;
 async function fetchPersonProfileEducations(personId, orConditions = []) {
     return searchProfileModule(personId, "educations", orConditions, "POST educations/search");
 }
-exports.fetchPersonProfileEducations = fetchPersonProfileEducations;
 async function fetchPersonProfileSkills(personId, orConditions = []) {
     return searchProfileModule(personId, "skills", orConditions, "POST skills/search");
 }
-exports.fetchPersonProfileSkills = fetchPersonProfileSkills;
 /**
  * Pobiera slownik skilli z wyszukiwaniem.
  * @param searchText - opcjonalny tekst do wyszukiwania
@@ -151,14 +153,13 @@ async function fetchSkillsDictionary(searchText) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orConditions }),
         });
-        return result;
+        return result.map(skillsDictionaryApi_1.mapSkillDictionaryDtoToModel);
     }
     catch (error) {
         console.warn("fetchSkillsDictionary: blad pobierania skilli: %o", error);
         return [];
     }
 }
-exports.fetchSkillsDictionary = fetchSkillsDictionary;
 /**
  * Wspolna funkcja zapisu account + profile v2 z ujednolicona obsluga bledow.
  * Kolejnosc: account -> profile (sekwencyjnie).
@@ -195,4 +196,3 @@ async function savePersonV2AccountAndProfile(personId, accountPayload, profilePa
     }
     return result;
 }
-exports.savePersonV2AccountAndProfile = savePersonV2AccountAndProfile;

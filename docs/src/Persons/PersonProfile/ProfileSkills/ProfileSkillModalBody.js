@@ -15,77 +15,76 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProfileSkillModalBody = void 0;
+exports.ProfileSkillModalBody = ProfileSkillModalBody;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const react_hook_form_1 = require("react-hook-form");
-const react_bootstrap_typeahead_1 = require("react-bootstrap-typeahead");
 const FormContext_1 = require("../../../View/Modals/FormContext");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
-const personsV2Helpers_1 = require("../../personsV2Helpers");
+const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
+const RepositoryReact_1 = __importDefault(require("../../../React/RepositoryReact"));
 const LEVEL_OPTIONS = [
     { value: "", label: "-- wybierz --" },
-    { value: "BEGINNER", label: "Początkujący" },
-    { value: "INTERMEDIATE", label: "Średniozaawansowany" },
+    { value: "BEGINNER", label: "Poczatkujacy" },
+    { value: "INTERMEDIATE", label: "Sredniozaawansowany" },
     { value: "ADVANCED", label: "Zaawansowany" },
     { value: "EXPERT", label: "Ekspert" },
 ];
 function ProfileSkillModalBody({ isEditing, initialData }) {
-    const { register, reset, setValue, control, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
-    const [isLoading, setIsLoading] = (0, react_1.useState)(false);
-    const [options, setOptions] = (0, react_1.useState)([]);
+    const { register, watch, setValue, reset, formState: { errors }, trigger, } = (0, FormContext_1.useFormContext)();
+    const skillRepository = (0, react_1.useMemo)(() => new RepositoryReact_1.default({
+        actionRoutes: {
+            getRoute: "v2/skills/search",
+            addNewRoute: "",
+            editRoute: "",
+            deleteRoute: "",
+        },
+        name: "profileSkillSelector_temp",
+    }), []);
+    const selectedSkill = watch("_skill");
     (0, react_1.useEffect)(() => {
-        const resetData = {
+        reset({
+            _skill: initialData?._skill,
             skillId: initialData?.skillId,
             levelCode: initialData?.levelCode || "",
             yearsOfExperience: initialData?.yearsOfExperience,
-            _selectedSkill: initialData?._skill ? [initialData._skill] : [],
-        };
-        reset(resetData);
+        });
         trigger();
-    }, [initialData, reset]);
-    const handleSearch = (0, react_1.useCallback)(async (query) => {
-        setIsLoading(true);
-        try {
-            const results = await (0, personsV2Helpers_1.fetchSkillsDictionary)(query);
-            setOptions(results);
-        }
-        finally {
-            setIsLoading(false);
-        }
-    }, []);
-    function handleSkillChange(selected) {
-        setValue("_selectedSkill", selected);
-        if (selected.length > 0) {
-            setValue("skillId", selected[0].id);
-        }
-        else {
-            setValue("skillId", undefined);
-        }
+    }, [initialData, reset, trigger]);
+    (0, react_1.useEffect)(() => {
+        const mappedSkillId = selectedSkill?.id;
+        setValue("skillId", mappedSkillId);
         trigger("skillId");
-    }
+    }, [selectedSkill, setValue, trigger]);
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "skillId", className: "mb-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Specjalizacja"),
-            react_1.default.createElement(react_hook_form_1.Controller, { name: "_selectedSkill", control: control, render: ({ field }) => (react_1.default.createElement(react_bootstrap_typeahead_1.AsyncTypeahead, { id: "profileSkill-asyncTypeahead", labelKey: "name", multiple: false, isLoading: isLoading, onSearch: handleSearch, options: options, onChange: (selected) => handleSkillChange(selected), selected: field.value || [], placeholder: "Wpisz nazw\u0119 specjalizacji...", minLength: 1, isInvalid: !!errors?.skillId, renderMenuItemChildren: (option) => {
-                        const skill = option;
-                        return react_1.default.createElement("span", null, skill.name);
-                    } })) }),
+        react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "_skill", className: "mb-3" },
+            react_1.default.createElement(BussinesObjectSelectors_1.SkillSelector, { name: "_skill", label: "Specjalizacja", multiple: false, repository: skillRepository }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "skillId", errors: errors })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "levelCode", className: "mb-3" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Poziom"),
             react_1.default.createElement(react_bootstrap_1.Form.Select, { ...register("levelCode") }, LEVEL_OPTIONS.map((opt) => (react_1.default.createElement("option", { key: opt.value, value: opt.value }, opt.label))))),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "yearsOfExperience", className: "mb-3" },
-            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Lata do\u015Bwiadczenia"),
+            react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Lata doswiadczenia"),
             react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "number", min: 0, max: 50, placeholder: "np. 5", isInvalid: !!errors?.yearsOfExperience, isValid: !errors?.yearsOfExperience, ...register("yearsOfExperience", { valueAsNumber: true }) }),
             react_1.default.createElement(GenericComponents_1.ErrorMessage, { name: "yearsOfExperience", errors: errors }))));
 }
-exports.ProfileSkillModalBody = ProfileSkillModalBody;

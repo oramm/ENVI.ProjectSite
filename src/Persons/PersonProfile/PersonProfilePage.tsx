@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import {
     PersonProfileEducationV2Record,
     PersonProfileExperienceV2Record,
@@ -9,6 +8,8 @@ import {
     PersonProfileV2Record,
 } from "../../../Typings/bussinesTypes";
 import { SpinnerBootstrap } from "../../View/Resultsets/CommonComponents";
+import ToolsDate from "../../React/Tools/ToolsDate";
+import FilterableTable from "../../View/Resultsets/FilterableTable/FilterableTable";
 import { fetchPersonProfileV2 } from "../personsV2Helpers";
 import { createEducationsRepository } from "./Education/EducationController";
 import { createEducationAddNewModalButton, createEducationEditModalButton } from "./Education/EducationModalButtons";
@@ -23,15 +24,22 @@ import {
     createProfileSkillEditModalButton,
 } from "./ProfileSkills/ProfileSkillModalButtons";
 
+export function renderPersonProfileSkillNameCell(skill: PersonProfileSkillV2Record) {
+    return (
+        <div>
+            <div>{skill._skill?.name || `Skill #${skill.skillId}`}</div>
+            {skill._skill?.description && <div className="text-muted small">{skill._skill.description}</div>}
+        </div>
+    );
+}
+
 export default function PersonProfilePage() {
     const { id } = useParams();
-    const personId = parseInt(id!);
+    const personId = parseInt(id || "0");
 
-    // Profile header data
     const [profile, setProfile] = useState<PersonProfileV2Record | null>(null);
     const [profileLoading, setProfileLoading] = useState(true);
 
-    // Table data states (undefined = loading, array = loaded)
     const [skills, setSkills] = useState<PersonProfileSkillV2Record[] | undefined>(undefined);
     const [educations, setEducations] = useState<PersonProfileEducationV2Record[] | undefined>(undefined);
     const [experiences, setExperiences] = useState<PersonProfileExperienceV2Record[] | undefined>(undefined);
@@ -40,7 +48,6 @@ export default function PersonProfilePage() {
     const experienceRepo = useMemo(() => createExperienceRepository(personId), [personId]);
     const skillsRepo = useMemo(() => createProfileSkillsRepository(personId), [personId]);
 
-    // Load profile header
     useEffect(() => {
         let cancelled = false;
         setProfileLoading(true);
@@ -56,7 +63,6 @@ export default function PersonProfilePage() {
         };
     }, [personId]);
 
-    // Auto-load skills
     useEffect(() => {
         async function fetchSkills() {
             await skillsRepo.loadItemsFromServerPOST([]);
@@ -65,7 +71,6 @@ export default function PersonProfilePage() {
         fetchSkills();
     }, [skillsRepo]);
 
-    // Auto-load educations
     useEffect(() => {
         async function fetchEducations() {
             await educationsRepo.loadItemsFromServerPOST([]);
@@ -74,7 +79,6 @@ export default function PersonProfilePage() {
         fetchEducations();
     }, [educationsRepo]);
 
-    // Auto-load experiences
     useEffect(() => {
         async function fetchExperiences() {
             await experienceRepo.loadItemsFromServerPOST([]);
@@ -93,10 +97,6 @@ export default function PersonProfilePage() {
     const ExperienceEditButton = useMemo(() => createExperienceEditModalButton(experienceRepo), [experienceRepo]);
     const SkillAddButton = useMemo(() => createProfileSkillAddNewModalButton(skillsRepo), [skillsRepo]);
     const SkillEditButton = useMemo(() => createProfileSkillEditModalButton(skillsRepo), [skillsRepo]);
-
-    function renderSkillName(skill: PersonProfileSkillV2Record) {
-        return <>{skill._skill?.name || `Skill #${skill.skillId}`}</>;
-    }
 
     function renderSkillLevel(skill: PersonProfileSkillV2Record) {
         return <>{skill.levelCode || "-"}</>;
@@ -128,9 +128,9 @@ export default function PersonProfilePage() {
                     repository={skillsRepo}
                     initialObjects={skills}
                     tableStructure={[
-                        { header: "Specjalizacja", renderTdBody: renderSkillName, colMd: 6 },
+                        { header: "Specjalizacja", renderTdBody: renderPersonProfileSkillNameCell, colMd: 6 },
                         { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
-                        { header: "Lata doświadczenia", renderTdBody: renderSkillYears, colMd: 3 },
+                        { header: "Lata doswiadczenia", renderTdBody: renderSkillYears, colMd: 3 },
                     ]}
                     AddNewButtonComponents={[SkillAddButton]}
                     EditButtonComponent={SkillEditButton}
@@ -142,18 +142,30 @@ export default function PersonProfilePage() {
                 </div>
             )}
 
-            <h5 className="mt-4">Wykształcenie</h5>
+            <h5 className="mt-4">Wyksztalcenie</h5>
             {educations ? (
                 <FilterableTable<PersonProfileEducationV2Record>
                     id={`person_${personId}_educations`}
                     repository={educationsRepo}
                     initialObjects={educations}
                     tableStructure={[
-                        { header: "Szkoła/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
-                        { header: "Tytuł/Stopień", objectAttributeToShow: "degreeName", colMd: 3 },
+                        { header: "Szkola/Uczelnia", objectAttributeToShow: "schoolName", colMd: 3 },
+                        { header: "Tytul/Stopien", objectAttributeToShow: "degreeName", colMd: 3 },
                         { header: "Kierunek", objectAttributeToShow: "fieldOfStudy", colMd: 3 },
-                        { header: "Od", objectAttributeToShow: "dateFrom", colMd: 1 },
-                        { header: "Do", objectAttributeToShow: "dateTo", colMd: 1 },
+                        {
+                            header: "Od",
+                            renderTdBody: (e: PersonProfileEducationV2Record) => (
+                                <>{e.dateFrom ? ToolsDate.dateISOToDMY(e.dateFrom) : "-"}</>
+                            ),
+                            colMd: 1,
+                        },
+                        {
+                            header: "Do",
+                            renderTdBody: (e: PersonProfileEducationV2Record) => (
+                                <>{e.dateTo ? ToolsDate.dateISOToDMY(e.dateTo) : "-"}</>
+                            ),
+                            colMd: 1,
+                        },
                     ]}
                     AddNewButtonComponents={[EducationAddButton]}
                     EditButtonComponent={EducationEditButton}
@@ -165,7 +177,7 @@ export default function PersonProfilePage() {
                 </div>
             )}
 
-            <h5 className="mt-4">Doświadczenie</h5>
+            <h5 className="mt-4">Doswiadczenie</h5>
             {experiences ? (
                 <FilterableTable<PersonProfileExperienceV2Record>
                     id={`person_${personId}_experiences`}
@@ -174,8 +186,20 @@ export default function PersonProfilePage() {
                     tableStructure={[
                         { header: "Organizacja", objectAttributeToShow: "organizationName", colMd: 4 },
                         { header: "Stanowisko", objectAttributeToShow: "positionName", colMd: 4 },
-                        { header: "Od", objectAttributeToShow: "dateFrom", colMd: 2 },
-                        { header: "Do", objectAttributeToShow: "dateTo", colMd: 2 },
+                        {
+                            header: "Od",
+                            renderTdBody: (e: PersonProfileExperienceV2Record) => (
+                                <>{e.dateFrom ? ToolsDate.dateISOToDMY(e.dateFrom) : "-"}</>
+                            ),
+                            colMd: 2,
+                        },
+                        {
+                            header: "Do",
+                            renderTdBody: (e: PersonProfileExperienceV2Record) => (
+                                <>{e.dateTo ? ToolsDate.dateISOToDMY(e.dateTo) : "-"}</>
+                            ),
+                            colMd: 2,
+                        },
                     ]}
                     AddNewButtonComponents={[ExperienceAddButton]}
                     EditButtonComponent={ExperienceEditButton}
