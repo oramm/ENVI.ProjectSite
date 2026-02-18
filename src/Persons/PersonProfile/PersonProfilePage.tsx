@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Container } from "react-bootstrap";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import {
     PersonProfileEducationV2Record,
@@ -23,6 +23,7 @@ import {
     createProfileSkillAddNewModalButton,
     createProfileSkillEditModalButton,
 } from "./ProfileSkills/ProfileSkillModalButtons";
+import ProfileImportModal from "./Import/ProfileImportModal";
 
 export function renderPersonProfileSkillNameCell(skill: PersonProfileSkillV2Record) {
     return (
@@ -91,6 +92,19 @@ export default function PersonProfilePage() {
         document.title = `Profil osoby #${personId}`;
     }, [personId]);
 
+    const [showImportModal, setShowImportModal] = useState(false);
+
+    const handleImportDone = useCallback(async () => {
+        await Promise.all([
+            skillsRepo.loadItemsFromServerPOST([]),
+            educationsRepo.loadItemsFromServerPOST([]),
+            experienceRepo.loadItemsFromServerPOST([]),
+        ]);
+        setSkills([...skillsRepo.items]);
+        setEducations([...educationsRepo.items]);
+        setExperiences([...experienceRepo.items]);
+    }, [skillsRepo, educationsRepo, experienceRepo]);
+
     const EducationAddButton = useMemo(() => createEducationAddNewModalButton(educationsRepo), [educationsRepo]);
     const EducationEditButton = useMemo(() => createEducationEditModalButton(educationsRepo), [educationsRepo]);
     const ExperienceAddButton = useMemo(() => createExperienceAddNewModalButton(experienceRepo), [experienceRepo]);
@@ -108,6 +122,19 @@ export default function PersonProfilePage() {
 
     return (
         <Container>
+            <div className="d-flex justify-content-end mb-3">
+                <Button variant="outline-secondary" onClick={() => setShowImportModal(true)}>
+                    Importuj z CV
+                </Button>
+            </div>
+
+            <ProfileImportModal
+                personId={personId}
+                show={showImportModal}
+                onHide={() => setShowImportModal(false)}
+                onImportDone={handleImportDone}
+            />
+
             {profileLoading ? (
                 <div className="text-center py-3">
                     <SpinnerBootstrap />
@@ -135,6 +162,7 @@ export default function PersonProfilePage() {
                     AddNewButtonComponents={[SkillAddButton]}
                     EditButtonComponent={SkillEditButton}
                     isDeletable={true}
+                    showTableHeader={false}
                 />
             ) : (
                 <div className="text-center py-3">
@@ -170,6 +198,7 @@ export default function PersonProfilePage() {
                     AddNewButtonComponents={[EducationAddButton]}
                     EditButtonComponent={EducationEditButton}
                     isDeletable={true}
+                    showTableHeader={false}
                 />
             ) : (
                 <div className="text-center py-3">
@@ -204,6 +233,7 @@ export default function PersonProfilePage() {
                     AddNewButtonComponents={[ExperienceAddButton]}
                     EditButtonComponent={ExperienceEditButton}
                     isDeletable={true}
+                    showTableHeader={false}
                 />
             ) : (
                 <div className="text-center py-3">

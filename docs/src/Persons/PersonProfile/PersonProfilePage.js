@@ -51,6 +51,7 @@ const ExperienceController_1 = require("./Experience/ExperienceController");
 const ExperienceModalButtons_1 = require("./Experience/ExperienceModalButtons");
 const ProfileSkillsController_1 = require("./ProfileSkills/ProfileSkillsController");
 const ProfileSkillModalButtons_1 = require("./ProfileSkills/ProfileSkillModalButtons");
+const ProfileImportModal_1 = __importDefault(require("./Import/ProfileImportModal"));
 function renderPersonProfileSkillNameCell(skill) {
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", null, skill._skill?.name || `Skill #${skill.skillId}`),
@@ -107,6 +108,17 @@ function PersonProfilePage() {
     (0, react_1.useEffect)(() => {
         document.title = `Profil osoby #${personId}`;
     }, [personId]);
+    const [showImportModal, setShowImportModal] = (0, react_1.useState)(false);
+    const handleImportDone = (0, react_1.useCallback)(async () => {
+        await Promise.all([
+            skillsRepo.loadItemsFromServerPOST([]),
+            educationsRepo.loadItemsFromServerPOST([]),
+            experienceRepo.loadItemsFromServerPOST([]),
+        ]);
+        setSkills([...skillsRepo.items]);
+        setEducations([...educationsRepo.items]);
+        setExperiences([...experienceRepo.items]);
+    }, [skillsRepo, educationsRepo, experienceRepo]);
     const EducationAddButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationAddNewModalButton)(educationsRepo), [educationsRepo]);
     const EducationEditButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationEditModalButton)(educationsRepo), [educationsRepo]);
     const ExperienceAddButton = (0, react_1.useMemo)(() => (0, ExperienceModalButtons_1.createExperienceAddNewModalButton)(experienceRepo), [experienceRepo]);
@@ -120,6 +132,9 @@ function PersonProfilePage() {
         return react_1.default.createElement(react_1.default.Fragment, null, skill.yearsOfExperience != null ? `${skill.yearsOfExperience}` : "-");
     }
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
+        react_1.default.createElement("div", { className: "d-flex justify-content-end mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => setShowImportModal(true) }, "Importuj z CV")),
+        react_1.default.createElement(ProfileImportModal_1.default, { personId: personId, show: showImportModal, onHide: () => setShowImportModal(false), onImportDone: handleImportDone }),
         profileLoading ? (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : profile ? (react_1.default.createElement("div", { className: "mb-4" },
             profile.headline && react_1.default.createElement("h4", { className: "mb-1" }, profile.headline),
@@ -131,7 +146,7 @@ function PersonProfilePage() {
                 { header: "Specjalizacja", renderTdBody: renderPersonProfileSkillNameCell, colMd: 6 },
                 { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
                 { header: "Lata doswiadczenia", renderTdBody: renderSkillYears, colMd: 3 },
-            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Wyksztalcenie"),
         educations ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, initialObjects: educations, tableStructure: [
@@ -148,7 +163,7 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 1,
                 },
-            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Doswiadczenie"),
         experiences ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, initialObjects: experiences, tableStructure: [
@@ -164,6 +179,6 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 2,
                 },
-            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }

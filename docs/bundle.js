@@ -108534,6 +108534,442 @@ function makeExperienceValidationSchema(isEditing) {
 
 /***/ },
 
+/***/ "./src/Persons/PersonProfile/Import/ImportPreviewEducations.tsx"
+/*!**********************************************************************!*\
+  !*** ./src/Persons/PersonProfile/Import/ImportPreviewEducations.tsx ***!
+  \**********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = ImportPreviewEducations;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+function ImportPreviewEducations({ items, selectedIds, onToggle }) {
+    if (items.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("h6", null,
+            "Wyksztalcenie (",
+            items.length,
+            ")"),
+        react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", { style: { width: 30 } }),
+                    react_1.default.createElement("th", null, "Szkola"),
+                    react_1.default.createElement("th", null, "Tytul"),
+                    react_1.default.createElement("th", null, "Kierunek"),
+                    react_1.default.createElement("th", null, "Od"),
+                    react_1.default.createElement("th", null, "Do"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item._tempId },
+                react_1.default.createElement("td", { className: "text-center" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Check, { checked: selectedIds.has(item._tempId), onChange: () => onToggle(item._tempId) })),
+                react_1.default.createElement("td", null, item.schoolName || "-"),
+                react_1.default.createElement("td", null, item.degreeName || "-"),
+                react_1.default.createElement("td", null, item.fieldOfStudy || "-"),
+                react_1.default.createElement("td", null, item.dateFrom
+                    ? ToolsDate_1.default.dateISOToDMY(item.dateFrom)
+                    : react_1.default.createElement("span", { className: "text-warning small", title: "Brak daty \u2013 wpis zostanie zaimportowany bez daty" }, "\u26A0 brak")),
+                react_1.default.createElement("td", null, item.dateTo ? ToolsDate_1.default.dateISOToDMY(item.dateTo) : "-"))))))));
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/Import/ImportPreviewExperiences.tsx"
+/*!***********************************************************************!*\
+  !*** ./src/Persons/PersonProfile/Import/ImportPreviewExperiences.tsx ***!
+  \***********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = ImportPreviewExperiences;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const ToolsDate_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsDate */ "./src/React/Tools/ToolsDate.ts"));
+function ImportPreviewExperiences({ items, selectedIds, onToggle }) {
+    if (items.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("h6", null,
+            "Doswiadczenie (",
+            items.length,
+            ")"),
+        react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", { style: { width: 30 } }),
+                    react_1.default.createElement("th", null, "Organizacja"),
+                    react_1.default.createElement("th", null, "Stanowisko"),
+                    react_1.default.createElement("th", null, "Od"),
+                    react_1.default.createElement("th", null, "Do"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item._tempId },
+                react_1.default.createElement("td", { className: "text-center" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Check, { checked: selectedIds.has(item._tempId), onChange: () => onToggle(item._tempId) })),
+                react_1.default.createElement("td", null, item.organizationName || "-"),
+                react_1.default.createElement("td", null, item.positionName || "-"),
+                react_1.default.createElement("td", null, item.dateFrom
+                    ? ToolsDate_1.default.dateISOToDMY(item.dateFrom)
+                    : react_1.default.createElement("span", { className: "text-warning small", title: "Brak daty \u2013 wpis zostanie zaimportowany bez daty" }, "\u26A0 brak")),
+                react_1.default.createElement("td", null, item.isCurrent
+                    ? "aktualnie"
+                    : item.dateTo
+                        ? ToolsDate_1.default.dateISOToDMY(item.dateTo)
+                        : "-"))))))));
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/Import/ImportPreviewSkills.tsx"
+/*!******************************************************************!*\
+  !*** ./src/Persons/PersonProfile/Import/ImportPreviewSkills.tsx ***!
+  \******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = ImportPreviewSkills;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+function ImportPreviewSkills({ items, selectedIds, onToggle }) {
+    if (items.length === 0)
+        return null;
+    return (react_1.default.createElement("div", { className: "mb-3" },
+        react_1.default.createElement("h6", null,
+            "Umiejetnosci (",
+            items.length,
+            ")"),
+        react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", { style: { width: 30 } }),
+                    react_1.default.createElement("th", null, "Nazwa"),
+                    react_1.default.createElement("th", null, "Poziom"),
+                    react_1.default.createElement("th", null, "Lata"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item._tempId },
+                react_1.default.createElement("td", { className: "text-center" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Check, { checked: selectedIds.has(item._tempId), onChange: () => onToggle(item._tempId) })),
+                react_1.default.createElement("td", null, item.name),
+                react_1.default.createElement("td", null, item.levelCode || "-"),
+                react_1.default.createElement("td", null, item.yearsOfExperience != null ? `${item.yearsOfExperience}` : "-"))))))));
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/Import/ProfileImportModal.tsx"
+/*!*****************************************************************!*\
+  !*** ./src/Persons/PersonProfile/Import/ProfileImportModal.tsx ***!
+  \*****************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = ProfileImportModal;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const profileImportApi_1 = __webpack_require__(/*! ./profileImportApi */ "./src/Persons/PersonProfile/Import/profileImportApi.ts");
+const ImportPreviewExperiences_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewExperiences */ "./src/Persons/PersonProfile/Import/ImportPreviewExperiences.tsx"));
+const ImportPreviewEducations_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewEducations */ "./src/Persons/PersonProfile/Import/ImportPreviewEducations.tsx"));
+const ImportPreviewSkills_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewSkills */ "./src/Persons/PersonProfile/Import/ImportPreviewSkills.tsx"));
+function ProfileImportModal({ personId, show, onHide, onImportDone }) {
+    const [step, setStep] = (0, react_1.useState)("upload");
+    const [file, setFile] = (0, react_1.useState)(null);
+    const [hint, setHint] = (0, react_1.useState)("");
+    const [analyzing, setAnalyzing] = (0, react_1.useState)(false);
+    const [error, setError] = (0, react_1.useState)(null);
+    const [aiResult, setAiResult] = (0, react_1.useState)(null);
+    const [selectedExp, setSelectedExp] = (0, react_1.useState)(new Set());
+    const [selectedEdu, setSelectedEdu] = (0, react_1.useState)(new Set());
+    const [selectedSkill, setSelectedSkill] = (0, react_1.useState)(new Set());
+    const [importResult, setImportResult] = (0, react_1.useState)(null);
+    function resetState() {
+        setStep("upload");
+        setFile(null);
+        setHint("");
+        setAnalyzing(false);
+        setError(null);
+        setAiResult(null);
+        setSelectedExp(new Set());
+        setSelectedEdu(new Set());
+        setSelectedSkill(new Set());
+        setImportResult(null);
+    }
+    function handleClose() {
+        if (step === "done")
+            onImportDone();
+        resetState();
+        onHide();
+    }
+    function toggleId(set, setter, id) {
+        const next = new Set(set);
+        if (next.has(id))
+            next.delete(id);
+        else
+            next.add(id);
+        setter(next);
+    }
+    async function handleAnalyze() {
+        if (!file)
+            return;
+        setAnalyzing(true);
+        setError(null);
+        try {
+            const result = await (0, profileImportApi_1.analyzePersonProfileFile)(personId, file, hint.trim() || undefined);
+            // Assign _tempId if missing
+            result.experiences.forEach((e, i) => (e._tempId = e._tempId ?? i));
+            result.educations.forEach((e, i) => (e._tempId = e._tempId ?? i));
+            result.skills.forEach((e, i) => (e._tempId = e._tempId ?? i));
+            setAiResult(result);
+            setSelectedExp(new Set(result.experiences.map((e) => e._tempId)));
+            setSelectedEdu(new Set(result.educations.map((e) => e._tempId)));
+            setSelectedSkill(new Set(result.skills.map((e) => e._tempId)));
+            setStep("preview");
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : String(err));
+        }
+        finally {
+            setAnalyzing(false);
+        }
+    }
+    async function handleImport() {
+        if (!aiResult)
+            return;
+        setStep("importing");
+        const errors = [];
+        const selectedExperiences = aiResult.experiences.filter((e) => selectedExp.has(e._tempId));
+        const selectedEducations = aiResult.educations.filter((e) => selectedEdu.has(e._tempId));
+        const selectedSkills = aiResult.skills.filter((e) => selectedSkill.has(e._tempId));
+        const results = await Promise.allSettled([
+            selectedExperiences.length > 0
+                ? (0, profileImportApi_1.confirmExperiencesImport)(personId, selectedExperiences)
+                : Promise.resolve(null),
+            selectedEducations.length > 0
+                ? (0, profileImportApi_1.confirmEducationsImport)(personId, selectedEducations)
+                : Promise.resolve(null),
+            selectedSkills.length > 0
+                ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills)
+                : Promise.resolve(null),
+        ]);
+        const expRes = results[0].status === "fulfilled" ? results[0].value : null;
+        const eduRes = results[1].status === "fulfilled" ? results[1].value : null;
+        const skillRes = results[2].status === "fulfilled" ? results[2].value : null;
+        if (results[0].status === "rejected")
+            errors.push(`Doswiadczenie: ${results[0].reason}`);
+        if (results[1].status === "rejected")
+            errors.push(`Wyksztalcenie: ${results[1].reason}`);
+        if (results[2].status === "rejected")
+            errors.push(`Umiejetnosci: ${results[2].reason}`);
+        setImportResult({
+            experiences: expRes ?? undefined,
+            educations: eduRes ?? undefined,
+            skills: skillRes ?? undefined,
+            errors,
+        });
+        setStep("done");
+    }
+    const totalSelected = selectedExp.size + selectedEdu.size + selectedSkill.size;
+    return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: handleClose, size: "lg", backdrop: "static" },
+        react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, "Import profilu z CV")),
+        react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
+            error && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, error),
+            step === "upload" && (react_1.default.createElement("div", null,
+                react_1.default.createElement("p", null, "Wybierz plik CV (PDF/DOCX):"),
+                react_1.default.createElement("input", { type: "file", accept: ".pdf,.docx", className: "form-control mb-3", onChange: (e) => setFile(e.target.files?.[0] ?? null) }),
+                react_1.default.createElement("div", { className: "mb-3" },
+                    react_1.default.createElement("label", { className: "form-label small text-muted" }, "Wskaz\u00F3wka dla AI (opcjonalnie) \u2014 np. \"to jest CV szkole\u0144\", \"skupi si\u0119 na umiej\u0119tno\u015Bciach technicznych\""),
+                    react_1.default.createElement("input", { type: "text", className: "form-control form-control-sm", placeholder: "np. CV zawiera g\u0142\u00F3wnie szkolenia z lat 2010\u20132020", value: hint, onChange: (e) => setHint(e.target.value) })),
+                analyzing && (react_1.default.createElement("div", { className: "text-center py-3" },
+                    react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                    "Analizowanie pliku...")))),
+            step === "preview" && aiResult && (react_1.default.createElement("div", null,
+                (aiResult._model || aiResult._usage) && (react_1.default.createElement("div", { className: "text-muted small mb-2" },
+                    aiResult._model && react_1.default.createElement("span", { className: "me-3" },
+                        "Model: ",
+                        react_1.default.createElement("strong", null, aiResult._model)),
+                    aiResult._usage && (react_1.default.createElement("span", null,
+                        "Tokeny: ",
+                        aiResult._usage.promptTokens,
+                        " prompt + ",
+                        aiResult._usage.completionTokens,
+                        " odpowied\u017A = ",
+                        react_1.default.createElement("strong", null, aiResult._usage.totalTokens))))),
+                react_1.default.createElement(ImportPreviewExperiences_1.default, { items: aiResult.experiences, selectedIds: selectedExp, onToggle: (id) => toggleId(selectedExp, setSelectedExp, id) }),
+                react_1.default.createElement(ImportPreviewEducations_1.default, { items: aiResult.educations, selectedIds: selectedEdu, onToggle: (id) => toggleId(selectedEdu, setSelectedEdu, id) }),
+                react_1.default.createElement(ImportPreviewSkills_1.default, { items: aiResult.skills, selectedIds: selectedSkill, onToggle: (id) => toggleId(selectedSkill, setSelectedSkill, id) }),
+                aiResult.experiences.length === 0 &&
+                    aiResult.educations.length === 0 &&
+                    aiResult.skills.length === 0 && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning" }, "Nie znaleziono danych w pliku CV.")))),
+            step === "importing" && (react_1.default.createElement("div", { className: "text-center py-4" },
+                react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", className: "me-2" }),
+                react_1.default.createElement("span", null, "Importowanie..."))),
+            step === "done" && importResult && (react_1.default.createElement("div", null,
+                react_1.default.createElement(react_bootstrap_1.Alert, { variant: importResult.errors.length > 0 ? "warning" : "success" }, "Import zako\u0144czony!"),
+                importResult.experiences && (react_1.default.createElement("p", null,
+                    "Doswiadczenie: ",
+                    importResult.experiences.added.length,
+                    " dodane,",
+                    " ",
+                    importResult.experiences.skipped.length,
+                    " pominiete")),
+                importResult.educations && (react_1.default.createElement("p", null,
+                    "Wyksztalcenie: ",
+                    importResult.educations.added.length,
+                    " dodane,",
+                    " ",
+                    importResult.educations.skipped.length,
+                    " pominiete")),
+                importResult.skills && (react_1.default.createElement("p", null,
+                    "Umiejetnosci: ",
+                    importResult.skills.added.length,
+                    " dodane,",
+                    " ",
+                    importResult.skills.skipped.length,
+                    " pominiete")),
+                [
+                    ...(importResult.experiences?.warnings ?? []),
+                    ...(importResult.educations?.warnings ?? []),
+                    ...(importResult.skills?.warnings ?? []),
+                ].map((w, i) => (react_1.default.createElement(react_bootstrap_1.Alert, { key: `w${i}`, variant: "warning", className: "py-1 mb-1 small" },
+                    "\u26A0 ",
+                    w))),
+                importResult.errors.map((e, i) => (react_1.default.createElement(react_bootstrap_1.Alert, { key: i, variant: "danger" }, e)))))),
+        react_1.default.createElement(react_bootstrap_1.Modal.Footer, null,
+            step === "upload" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", disabled: !file || analyzing, onClick: handleAnalyze }, "Analizuj")),
+            step === "preview" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", disabled: totalSelected === 0, onClick: handleImport },
+                "Importuj zaznaczone (",
+                totalSelected,
+                ")")),
+            step === "done" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleClose }, "Zamknij")))));
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/Import/profileImportApi.ts"
+/*!**************************************************************!*\
+  !*** ./src/Persons/PersonProfile/Import/profileImportApi.ts ***!
+  \**************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.analyzePersonProfileFile = analyzePersonProfileFile;
+exports.confirmExperiencesImport = confirmExperiencesImport;
+exports.confirmEducationsImport = confirmEducationsImport;
+exports.confirmSkillsImport = confirmSkillsImport;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
+const personsV2Helpers_1 = __webpack_require__(/*! ../../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
+function profileUrl(personId) {
+    return `${MainSetupReact_1.default.serverUrl}v2/persons/${personId}/profile`;
+}
+async function analyzePersonProfileFile(personId, file, hint) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "analyze-file");
+    const formData = new FormData();
+    formData.append("file", file);
+    if (hint)
+        formData.append("hint", hint);
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(`${profileUrl(validId)}/analyze-file`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+    });
+    return result;
+}
+async function confirmExperiencesImport(personId, items) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "import experiences");
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(`${profileUrl(validId)}/experiences/import-confirm`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+    });
+    return result;
+}
+async function confirmEducationsImport(personId, items) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "import educations");
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(`${profileUrl(validId)}/educations/import-confirm`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+    });
+    return result;
+}
+async function confirmSkillsImport(personId, items) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "import skills");
+    const result = await ToolsFetch_1.default.fetchJsonWithSafeError(`${profileUrl(validId)}/skills/import-confirm`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+    });
+    return result;
+}
+
+
+/***/ },
+
 /***/ "./src/Persons/PersonProfile/PersonProfilePage.tsx"
 /*!*********************************************************!*\
   !*** ./src/Persons/PersonProfile/PersonProfilePage.tsx ***!
@@ -108594,6 +109030,7 @@ const ExperienceController_1 = __webpack_require__(/*! ./Experience/ExperienceCo
 const ExperienceModalButtons_1 = __webpack_require__(/*! ./Experience/ExperienceModalButtons */ "./src/Persons/PersonProfile/Experience/ExperienceModalButtons.tsx");
 const ProfileSkillsController_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillsController */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillsController.ts");
 const ProfileSkillModalButtons_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillModalButtons */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillModalButtons.tsx");
+const ProfileImportModal_1 = __importDefault(__webpack_require__(/*! ./Import/ProfileImportModal */ "./src/Persons/PersonProfile/Import/ProfileImportModal.tsx"));
 function renderPersonProfileSkillNameCell(skill) {
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", null, skill._skill?.name || `Skill #${skill.skillId}`),
@@ -108650,6 +109087,17 @@ function PersonProfilePage() {
     (0, react_1.useEffect)(() => {
         document.title = `Profil osoby #${personId}`;
     }, [personId]);
+    const [showImportModal, setShowImportModal] = (0, react_1.useState)(false);
+    const handleImportDone = (0, react_1.useCallback)(async () => {
+        await Promise.all([
+            skillsRepo.loadItemsFromServerPOST([]),
+            educationsRepo.loadItemsFromServerPOST([]),
+            experienceRepo.loadItemsFromServerPOST([]),
+        ]);
+        setSkills([...skillsRepo.items]);
+        setEducations([...educationsRepo.items]);
+        setExperiences([...experienceRepo.items]);
+    }, [skillsRepo, educationsRepo, experienceRepo]);
     const EducationAddButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationAddNewModalButton)(educationsRepo), [educationsRepo]);
     const EducationEditButton = (0, react_1.useMemo)(() => (0, EducationModalButtons_1.createEducationEditModalButton)(educationsRepo), [educationsRepo]);
     const ExperienceAddButton = (0, react_1.useMemo)(() => (0, ExperienceModalButtons_1.createExperienceAddNewModalButton)(experienceRepo), [experienceRepo]);
@@ -108663,6 +109111,9 @@ function PersonProfilePage() {
         return react_1.default.createElement(react_1.default.Fragment, null, skill.yearsOfExperience != null ? `${skill.yearsOfExperience}` : "-");
     }
     return (react_1.default.createElement(react_bootstrap_1.Container, null,
+        react_1.default.createElement("div", { className: "d-flex justify-content-end mb-3" },
+            react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => setShowImportModal(true) }, "Importuj z CV")),
+        react_1.default.createElement(ProfileImportModal_1.default, { personId: personId, show: showImportModal, onHide: () => setShowImportModal(false), onImportDone: handleImportDone }),
         profileLoading ? (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : profile ? (react_1.default.createElement("div", { className: "mb-4" },
             profile.headline && react_1.default.createElement("h4", { className: "mb-1" }, profile.headline),
@@ -108674,7 +109125,7 @@ function PersonProfilePage() {
                 { header: "Specjalizacja", renderTdBody: renderPersonProfileSkillNameCell, colMd: 6 },
                 { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
                 { header: "Lata doswiadczenia", renderTdBody: renderSkillYears, colMd: 3 },
-            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Wyksztalcenie"),
         educations ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, initialObjects: educations, tableStructure: [
@@ -108691,7 +109142,7 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 1,
                 },
-            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Doswiadczenie"),
         experiences ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, initialObjects: experiences, tableStructure: [
@@ -108707,7 +109158,7 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 2,
                 },
-            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }
 

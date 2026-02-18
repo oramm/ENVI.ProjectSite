@@ -403,6 +403,52 @@ export interface ProfileSkillSearchParams {
     minYearsOfExperience?: number;
 }
 
+// --- AI Profile Import types ---
+
+export interface AiProfileExperience {
+    _tempId: number;
+    organizationName?: string;
+    positionName?: string;
+    description?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    isCurrent?: boolean;
+}
+
+export interface AiProfileEducation {
+    _tempId: number;
+    schoolName?: string;
+    degreeName?: string;
+    fieldOfStudy?: string;
+    dateFrom?: string;
+    dateTo?: string;
+}
+
+export interface AiProfileSkill {
+    _tempId: number;
+    name: string;
+    levelCode?: string;
+    yearsOfExperience?: number;
+}
+
+export interface AiPersonProfileResult {
+    experiences: AiProfileExperience[];
+    educations: AiProfileEducation[];
+    skills: AiProfileSkill[];
+    _extractedText?: string;
+    _model?: string;
+    _usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+}
+
+export interface ImportConfirmResponse {
+    added: unknown[];
+    skipped: unknown[];
+    warnings?: string[];
+    newDictionaryEntries?: unknown[];
+}
+
+// --- End AI Profile Import types ---
+
 export interface DocumentTemplate extends RepositoryDataItem {
     name: string;
     description: string;

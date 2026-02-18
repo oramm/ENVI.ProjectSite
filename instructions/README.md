@@ -76,6 +76,7 @@ instructions/
 ├── backend-computed-fields.md (jak naprawiać backend Node.js/Express)
 ├── crud-module-guide.md (⭐ receptura tworzenia nowych modułów CRUD)
 ├── filterable-table-data-flow.md
+├── cv-profile-import.md (import profilu z CV — AI analiza pliku)
 └── TasksGlobalView.md
 ```
 
@@ -106,6 +107,9 @@ instructions/
 
 **AI implementuje funkcjonalność?**
 → [selectors-architecture.md - Sekcja 7](./selectors-architecture.md#7-tworzenie-nowego-selektora) - 🤖 Checklist dla AI
+
+**Import profilu z CV (AI)?**
+→ [cv-profile-import.md](./cv-profile-import.md) - przeplyw, endpointy, typy danych
 
 **Dopracowanie UI z AI (iteracyjnie, ze screenshotami)?**
 → [ui-browser-loop.md](./ui-browser-loop.md) - ustalony schemat pracy (UI Browser Loop)
