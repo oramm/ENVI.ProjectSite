@@ -104298,6 +104298,7 @@ const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/re
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
 const LetterModalBody_1 = __webpack_require__(/*! ./LetterModalBody */ "./src/Letters/LettersList/Modals/LetterModalBody.tsx");
 const FormContext_1 = __webpack_require__(/*! ../../../View/Modals/FormContext */ "./src/View/Modals/FormContext.ts");
+const AiMetaInfo_1 = __webpack_require__(/*! ../../../View/CommonComponents/AiMetaInfo */ "./src/View/CommonComponents/AiMetaInfo.tsx");
 const GenericComponents_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/GenericComponents */ "./src/View/Modals/CommonFormComponents/GenericComponents.tsx");
 const BussinesObjectSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/BussinesObjectSelectors */ "./src/View/Modals/CommonFormComponents/BussinesObjectSelectors.tsx");
 const StatusSelectors_1 = __webpack_require__(/*! ../../../View/Modals/CommonFormComponents/StatusSelectors */ "./src/View/Modals/CommonFormComponents/StatusSelectors.tsx");
@@ -104310,6 +104311,7 @@ function IncomingLetterModalBody(props) {
     const [isAnalyzing, setIsAnalyzing] = (0, react_1.useState)(false);
     const [analysisError, setAnalysisError] = (0, react_1.useState)(null);
     const [confidenceScores, setConfidenceScores] = (0, react_1.useState)({});
+    const [aiMeta, setAiMeta] = (0, react_1.useState)(null);
     const currentStatus = watch("status");
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -104368,6 +104370,7 @@ function IncomingLetterModalBody(props) {
         setIsAnalyzing(true);
         setAnalysisError(null);
         setConfidenceScores({});
+        setAiMeta(null);
         const formData = new FormData();
         formData.append('file', file);
         const uploadWithXhr = (url, data) => new Promise((resolve, reject) => {
@@ -104426,6 +104429,9 @@ function IncomingLetterModalBody(props) {
                 }
             }
             setConfidenceScores(newScores);
+            if (result._model || result._usage) {
+                setAiMeta({ _model: result._model, _usage: result._usage });
+            }
             // Re-run validation so errors like responseDueDate are cleared when AI provided valid/empty values
             try {
                 await trigger();
@@ -104462,7 +104468,8 @@ function IncomingLetterModalBody(props) {
             isAnalyzing && react_1.default.createElement("div", { className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }),
                 " Analizowanie dokumentu..."),
-            analysisError && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mt-2" }, analysisError)),
+            analysisError && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mt-2" }, analysisError),
+            aiMeta && react_1.default.createElement(AiMetaInfo_1.AiMetaInfo, { _model: aiMeta._model, _usage: aiMeta._usage })),
         react_1.default.createElement("hr", null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer pisma"),
@@ -108721,10 +108728,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports["default"] = ProfileImportModal;
 const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
-const profileImportApi_1 = __webpack_require__(/*! ./profileImportApi */ "./src/Persons/PersonProfile/Import/profileImportApi.ts");
-const ImportPreviewExperiences_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewExperiences */ "./src/Persons/PersonProfile/Import/ImportPreviewExperiences.tsx"));
 const ImportPreviewEducations_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewEducations */ "./src/Persons/PersonProfile/Import/ImportPreviewEducations.tsx"));
+const ImportPreviewExperiences_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewExperiences */ "./src/Persons/PersonProfile/Import/ImportPreviewExperiences.tsx"));
 const ImportPreviewSkills_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewSkills */ "./src/Persons/PersonProfile/Import/ImportPreviewSkills.tsx"));
+const AiMetaInfo_1 = __webpack_require__(/*! ../../../View/CommonComponents/AiMetaInfo */ "./src/View/CommonComponents/AiMetaInfo.tsx");
+const profileImportApi_1 = __webpack_require__(/*! ./profileImportApi */ "./src/Persons/PersonProfile/Import/profileImportApi.ts");
 function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const [step, setStep] = (0, react_1.useState)("upload");
     const [file, setFile] = (0, react_1.useState)(null);
@@ -108801,9 +108809,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
             selectedEducations.length > 0
                 ? (0, profileImportApi_1.confirmEducationsImport)(personId, selectedEducations)
                 : Promise.resolve(null),
-            selectedSkills.length > 0
-                ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills)
-                : Promise.resolve(null),
+            selectedSkills.length > 0 ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills) : Promise.resolve(null),
         ]);
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
         const eduRes = results[1].status === "fulfilled" ? results[1].value : null;
@@ -108838,17 +108844,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
                     react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                     "Analizowanie pliku...")))),
             step === "preview" && aiResult && (react_1.default.createElement("div", null,
-                (aiResult._model || aiResult._usage) && (react_1.default.createElement("div", { className: "text-muted small mb-2" },
-                    aiResult._model && react_1.default.createElement("span", { className: "me-3" },
-                        "Model: ",
-                        react_1.default.createElement("strong", null, aiResult._model)),
-                    aiResult._usage && (react_1.default.createElement("span", null,
-                        "Tokeny: ",
-                        aiResult._usage.promptTokens,
-                        " prompt + ",
-                        aiResult._usage.completionTokens,
-                        " odpowied\u017A = ",
-                        react_1.default.createElement("strong", null, aiResult._usage.totalTokens))))),
+                react_1.default.createElement(AiMetaInfo_1.AiMetaInfo, { _model: aiResult._model, _usage: aiResult._usage }),
                 react_1.default.createElement(ImportPreviewExperiences_1.default, { items: aiResult.experiences, selectedIds: selectedExp, onToggle: (id) => toggleId(selectedExp, setSelectedExp, id) }),
                 react_1.default.createElement(ImportPreviewEducations_1.default, { items: aiResult.educations, selectedIds: selectedEdu, onToggle: (id) => toggleId(selectedEdu, setSelectedEdu, id) }),
                 react_1.default.createElement(ImportPreviewSkills_1.default, { items: aiResult.skills, selectedIds: selectedSkill, onToggle: (id) => toggleId(selectedSkill, setSelectedSkill, id) }),
@@ -114196,6 +114192,41 @@ function TasksGlobalFilterBody() {
             react_1.default.createElement(BussinesObjectSelectors_1.PersonSelectorPreloaded, { showValidationInfo: false, repository: MainSetupReact_1.default.personsEnviRepository, name: "_owner", label: "W\u0142a\u015Bciciel" })),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { as: react_bootstrap_1.Col, md: 3 },
             react_1.default.createElement(StatusSelectors_1.ContractStatusSelector, { showValidationInfo: false, multiple: true, label: "Statusy kontratu" }))));
+}
+
+
+/***/ },
+
+/***/ "./src/View/CommonComponents/AiMetaInfo.tsx"
+/*!**************************************************!*\
+  !*** ./src/View/CommonComponents/AiMetaInfo.tsx ***!
+  \**************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AiMetaInfo = AiMetaInfo;
+const react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+function AiMetaInfo({ _model, _usage }) {
+    if (!_model && !_usage)
+        return null;
+    return (react_1.default.createElement("div", { className: "text-muted small mt-2" },
+        _model && (react_1.default.createElement("span", { className: "me-3" },
+            "Model: ",
+            react_1.default.createElement("strong", null, _model))),
+        _usage && (react_1.default.createElement("span", null,
+            "Tokeny: ",
+            _usage.promptTokens,
+            " prompt +",
+            " ",
+            _usage.completionTokens,
+            " odpowied\u017A =",
+            " ",
+            react_1.default.createElement("strong", null, _usage.totalTokens)))));
 }
 
 

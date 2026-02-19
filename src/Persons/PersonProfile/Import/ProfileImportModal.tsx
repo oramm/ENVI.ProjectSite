@@ -1,21 +1,16 @@
 import React, { useState } from "react";
 import { Alert, Button, Modal, Spinner } from "react-bootstrap";
-import {
-    AiPersonProfileResult,
-    AiProfileEducation,
-    AiProfileExperience,
-    AiProfileSkill,
-    ImportConfirmResponse,
-} from "../../../../Typings/bussinesTypes";
+import { AiPersonProfileResult, ImportConfirmResponse } from "../../../../Typings/bussinesTypes";
+import ImportPreviewEducations from "./ImportPreviewEducations";
+import ImportPreviewExperiences from "./ImportPreviewExperiences";
+import ImportPreviewSkills from "./ImportPreviewSkills";
+import { AiMetaInfo } from "../../../View/CommonComponents/AiMetaInfo";
 import {
     analyzePersonProfileFile,
     confirmEducationsImport,
     confirmExperiencesImport,
     confirmSkillsImport,
 } from "./profileImportApi";
-import ImportPreviewExperiences from "./ImportPreviewExperiences";
-import ImportPreviewEducations from "./ImportPreviewEducations";
-import ImportPreviewSkills from "./ImportPreviewSkills";
 
 type Step = "upload" | "preview" | "importing" | "done";
 
@@ -112,9 +107,7 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
             selectedEducations.length > 0
                 ? confirmEducationsImport(personId, selectedEducations)
                 : Promise.resolve(null),
-            selectedSkills.length > 0
-                ? confirmSkillsImport(personId, selectedSkills)
-                : Promise.resolve(null),
+            selectedSkills.length > 0 ? confirmSkillsImport(personId, selectedSkills) : Promise.resolve(null),
         ]);
 
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
@@ -155,7 +148,8 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
                         />
                         <div className="mb-3">
                             <label className="form-label small text-muted">
-                                Wskazówka dla AI (opcjonalnie) — np. "to jest CV szkoleń", "skupi się na umiejętnościach technicznych"
+                                Wskazówka dla AI (opcjonalnie) — np. "to jest CV szkoleń", "skupi się na umiejętnościach
+                                technicznych"
                             </label>
                             <input
                                 type="text"
@@ -176,16 +170,7 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
 
                 {step === "preview" && aiResult && (
                     <div>
-                        {(aiResult._model || aiResult._usage) && (
-                            <div className="text-muted small mb-2">
-                                {aiResult._model && <span className="me-3">Model: <strong>{aiResult._model}</strong></span>}
-                                {aiResult._usage && (
-                                    <span>
-                                        Tokeny: {aiResult._usage.promptTokens} prompt + {aiResult._usage.completionTokens} odpowiedź = <strong>{aiResult._usage.totalTokens}</strong>
-                                    </span>
-                                )}
-                            </div>
-                        )}
+                        <AiMetaInfo _model={aiResult._model} _usage={aiResult._usage} />
                         <ImportPreviewExperiences
                             items={aiResult.experiences}
                             selectedIds={selectedExp}

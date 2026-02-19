@@ -431,13 +431,15 @@ export interface AiProfileSkill {
     yearsOfExperience?: number;
 }
 
+type AiUsageInfo = { promptTokens: number; completionTokens: number; totalTokens: number };
+
 export interface AiPersonProfileResult {
     experiences: AiProfileExperience[];
     educations: AiProfileEducation[];
     skills: AiProfileSkill[];
     _extractedText?: string;
     _model?: string;
-    _usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
+    _usage?: AiUsageInfo;
 }
 
 export interface ImportConfirmResponse {

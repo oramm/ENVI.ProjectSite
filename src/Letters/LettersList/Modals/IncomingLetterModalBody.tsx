@@ -3,7 +3,8 @@ import { Form, Spinner, Alert } from "react-bootstrap";
 import { LetterModalBody } from "./LetterModalBody";
 import { useFormContext } from "../../../View/Modals/FormContext";
 import { ModalBodyProps } from "../../../View/Modals/ModalsTypes";
-import { IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { AiUsageInfo, IncomingLetterContract, OurLetterContract } from "../../../../Typings/bussinesTypes";
+import { AiMetaInfo } from "../../../View/CommonComponents/AiMetaInfo";
 import { entitiesRepository } from "../LettersController";
 import { ErrorMessage } from "../../../View/Modals/CommonFormComponents/GenericComponents";
 import { EntitySelector } from "../../../View/Modals/CommonFormComponents/BussinesObjectSelectors";
@@ -27,6 +28,10 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisError, setAnalysisError] = useState<string | null>(null);
     const [confidenceScores, setConfidenceScores] = useState<Record<string, number>>({});
+    const [aiMeta, setAiMeta] = useState<{
+        _model?: string;
+        _usage?: AiUsageInfo;
+    } | null>(null);
 
     const currentStatus = watch("status");
 
@@ -80,6 +85,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
         setIsAnalyzing(true);
         setAnalysisError(null);
         setConfidenceScores({});
+        setAiMeta(null);
 
         const formData = new FormData();
         formData.append('file', file);
@@ -138,6 +144,9 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
                 }
             }
             setConfidenceScores(newScores);
+            if (result._model || result._usage) {
+                setAiMeta({ _model: result._model, _usage: result._usage });
+            }
             // Re-run validation so errors like responseDueDate are cleared when AI provided valid/empty values
             try {
                 await trigger();
@@ -171,6 +180,7 @@ export function IncomingLetterModalBody(props: ModalBodyProps<OurLetterContract 
                 <Form.Text>Załącz pismo (PDF lub DOCX), a my spróbujemy uzupełnić formularz za Ciebie.</Form.Text>
                 {isAnalyzing && <div className="mt-2"><Spinner animation="border" size="sm" /> Analizowanie dokumentu...</div>}
                 {analysisError && <Alert variant="danger" className="mt-2">{analysisError}</Alert>}
+                {aiMeta && <AiMetaInfo _model={aiMeta._model} _usage={aiMeta._usage} />}
             </Form.Group>
 
             <hr />

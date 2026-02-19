@@ -41,6 +41,7 @@ const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 const LetterModalBody_1 = require("./LetterModalBody");
 const FormContext_1 = require("../../../View/Modals/FormContext");
+const AiMetaInfo_1 = require("../../../View/CommonComponents/AiMetaInfo");
 const GenericComponents_1 = require("../../../View/Modals/CommonFormComponents/GenericComponents");
 const BussinesObjectSelectors_1 = require("../../../View/Modals/CommonFormComponents/BussinesObjectSelectors");
 const StatusSelectors_1 = require("../../../View/Modals/CommonFormComponents/StatusSelectors");
@@ -53,6 +54,7 @@ function IncomingLetterModalBody(props) {
     const [isAnalyzing, setIsAnalyzing] = (0, react_1.useState)(false);
     const [analysisError, setAnalysisError] = (0, react_1.useState)(null);
     const [confidenceScores, setConfidenceScores] = (0, react_1.useState)({});
+    const [aiMeta, setAiMeta] = (0, react_1.useState)(null);
     const currentStatus = watch("status");
     (0, react_1.useEffect)(() => {
         setValue("_entitiesMain", initialData?._entitiesMain, { shouldDirty: false, shouldValidate: true });
@@ -111,6 +113,7 @@ function IncomingLetterModalBody(props) {
         setIsAnalyzing(true);
         setAnalysisError(null);
         setConfidenceScores({});
+        setAiMeta(null);
         const formData = new FormData();
         formData.append('file', file);
         const uploadWithXhr = (url, data) => new Promise((resolve, reject) => {
@@ -169,6 +172,9 @@ function IncomingLetterModalBody(props) {
                 }
             }
             setConfidenceScores(newScores);
+            if (result._model || result._usage) {
+                setAiMeta({ _model: result._model, _usage: result._usage });
+            }
             // Re-run validation so errors like responseDueDate are cleared when AI provided valid/empty values
             try {
                 await trigger();
@@ -205,7 +211,8 @@ function IncomingLetterModalBody(props) {
             isAnalyzing && react_1.default.createElement("div", { className: "mt-2" },
                 react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm" }),
                 " Analizowanie dokumentu..."),
-            analysisError && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mt-2" }, analysisError)),
+            analysisError && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mt-2" }, analysisError),
+            aiMeta && react_1.default.createElement(AiMetaInfo_1.AiMetaInfo, { _model: aiMeta._model, _usage: aiMeta._usage })),
         react_1.default.createElement("hr", null),
         react_1.default.createElement(react_bootstrap_1.Form.Group, { controlId: "number" },
             react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Numer pisma"),

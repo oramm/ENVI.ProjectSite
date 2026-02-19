@@ -39,10 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfileImportModal;
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
-const profileImportApi_1 = require("./profileImportApi");
-const ImportPreviewExperiences_1 = __importDefault(require("./ImportPreviewExperiences"));
 const ImportPreviewEducations_1 = __importDefault(require("./ImportPreviewEducations"));
+const ImportPreviewExperiences_1 = __importDefault(require("./ImportPreviewExperiences"));
 const ImportPreviewSkills_1 = __importDefault(require("./ImportPreviewSkills"));
+const AiMetaInfo_1 = require("../../../View/CommonComponents/AiMetaInfo");
+const profileImportApi_1 = require("./profileImportApi");
 function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const [step, setStep] = (0, react_1.useState)("upload");
     const [file, setFile] = (0, react_1.useState)(null);
@@ -119,9 +120,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
             selectedEducations.length > 0
                 ? (0, profileImportApi_1.confirmEducationsImport)(personId, selectedEducations)
                 : Promise.resolve(null),
-            selectedSkills.length > 0
-                ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills)
-                : Promise.resolve(null),
+            selectedSkills.length > 0 ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills) : Promise.resolve(null),
         ]);
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
         const eduRes = results[1].status === "fulfilled" ? results[1].value : null;
@@ -156,17 +155,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
                     react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
                     "Analizowanie pliku...")))),
             step === "preview" && aiResult && (react_1.default.createElement("div", null,
-                (aiResult._model || aiResult._usage) && (react_1.default.createElement("div", { className: "text-muted small mb-2" },
-                    aiResult._model && react_1.default.createElement("span", { className: "me-3" },
-                        "Model: ",
-                        react_1.default.createElement("strong", null, aiResult._model)),
-                    aiResult._usage && (react_1.default.createElement("span", null,
-                        "Tokeny: ",
-                        aiResult._usage.promptTokens,
-                        " prompt + ",
-                        aiResult._usage.completionTokens,
-                        " odpowied\u017A = ",
-                        react_1.default.createElement("strong", null, aiResult._usage.totalTokens))))),
+                react_1.default.createElement(AiMetaInfo_1.AiMetaInfo, { _model: aiResult._model, _usage: aiResult._usage }),
                 react_1.default.createElement(ImportPreviewExperiences_1.default, { items: aiResult.experiences, selectedIds: selectedExp, onToggle: (id) => toggleId(selectedExp, setSelectedExp, id) }),
                 react_1.default.createElement(ImportPreviewEducations_1.default, { items: aiResult.educations, selectedIds: selectedEdu, onToggle: (id) => toggleId(selectedEdu, setSelectedEdu, id) }),
                 react_1.default.createElement(ImportPreviewSkills_1.default, { items: aiResult.skills, selectedIds: selectedSkill, onToggle: (id) => toggleId(selectedSkill, setSelectedSkill, id) }),
