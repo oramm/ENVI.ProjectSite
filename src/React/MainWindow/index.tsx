@@ -32,6 +32,7 @@ import OffersLettersSearch from "../../Offers/OffersLettersList/LettersSearch";
 import OffersMainView from "../../Offers/OffersList/OffersMainView";
 import PersonsSearch from "../../Persons/PersonsSearch";
 import PersonProfilePage from "../../Persons/PersonProfile/PersonProfilePage";
+import PublicProfileSubmissionPage from "../../Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage";
 import TasksGlobal from "../../TasksGlobal/TasksGlobal";
 import ApplicationCallsSearch from "../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch";
 import FocusAreasSearch from "../../financialAidProgrammes/FocusAreas/FocusAreasSearch";
@@ -48,10 +49,17 @@ console.log("rootPath", rootPath);
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = useState(false);
     const [errorMessage, setErrorMessage] = useState("" as string | null);
 
     useEffect(() => {
         async function fetchData() {
+            if (matchesPublicProfileSubmissionRoute(window.location.hash)) {
+                setIsPublicProfileSubmissionRoute(true);
+                setIsReady(true);
+                return;
+            }
+
             try {
                 const isLoggedIn = await MainController.isSessionSet();
                 setIsLoggedIn(isLoggedIn);
@@ -97,6 +105,10 @@ function App() {
         );
     }
 
+    if (isPublicProfileSubmissionRoute) {
+        return <PublicAppRoutes />;
+    }
+
     if (!isLoggedIn) {
         return (
             <Container className="d-flex justify-content-center align-items-center min-vh-100 flex-column">
@@ -127,6 +139,10 @@ function AppRoutes() {
             <div className="mt-3 mb-3">
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
+                    <Route
+                        path="/public/profile-submission/:token"
+                        element={<PublicProfileSubmissionPage />}
+                    />
                     <Route path="/letters" element={<LettersSearch title={"Rejestr pism"} />} />
                     <Route element={<ProtectedRoute allowedRoles={["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"]} />}>
                         <Route path="/contracts" element={<ContractsSearch title={"Rejestr kontraktów"} />} />
@@ -181,6 +197,27 @@ function AppRoutes() {
             </div>
         </HashRouter>
     );
+}
+
+function PublicAppRoutes() {
+    return (
+        <HashRouter basename={rootPath}>
+            <Container fluid className="d-flex flex-column min-vh-100 p-0 bg-white">
+                <div className="mt-3 mb-3">
+                    <Routes>
+                        <Route
+                            path="/public/profile-submission/:token"
+                            element={<PublicProfileSubmissionPage />}
+                        />
+                    </Routes>
+                </div>
+            </Container>
+        </HashRouter>
+    );
+}
+
+function matchesPublicProfileSubmissionRoute(hash: string): boolean {
+    return /^#\/public\/profile-submission\/[^/?#]+\/?$/.test(hash);
 }
 
 export async function renderApp() {

@@ -8,6 +8,7 @@ import {
 import MainSetup from "../../../React/MainSetupReact";
 import ToolsFetch from "../../../React/Tools/ToolsFetch";
 import { validatePersonId } from "../../personsV2Helpers";
+import { ProfileImportApiAdapter } from "./profileImportApi.types";
 
 function profileUrl(personId: number) {
     return `${MainSetup.serverUrl}v2/persons/${personId}/profile`;
@@ -83,4 +84,21 @@ export async function confirmSkillsImport(
         },
     );
     return result as ImportConfirmResponse;
+}
+
+export function createPersonProfileImportApi(personId: number): ProfileImportApiAdapter {
+    return {
+        analyzeFile(file, hint) {
+            return analyzePersonProfileFile(personId, file, hint);
+        },
+        confirmExperiences(items) {
+            return confirmExperiencesImport(personId, items);
+        },
+        confirmEducations(items) {
+            return confirmEducationsImport(personId, items);
+        },
+        confirmSkills(items) {
+            return confirmSkillsImport(personId, items);
+        },
+    };
 }

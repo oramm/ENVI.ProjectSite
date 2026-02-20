@@ -44,7 +44,7 @@ const ImportPreviewExperiences_1 = __importDefault(require("./ImportPreviewExper
 const ImportPreviewSkills_1 = __importDefault(require("./ImportPreviewSkills"));
 const AiMetaInfo_1 = require("../../../View/CommonComponents/AiMetaInfo");
 const profileImportApi_1 = require("./profileImportApi");
-function ProfileImportModal({ personId, show, onHide, onImportDone }) {
+function ProfileImportModal({ personId, show, onHide, onImportDone, importApi, title }) {
     const [step, setStep] = (0, react_1.useState)("upload");
     const [file, setFile] = (0, react_1.useState)(null);
     const [hint, setHint] = (0, react_1.useState)("");
@@ -55,6 +55,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const [selectedEdu, setSelectedEdu] = (0, react_1.useState)(new Set());
     const [selectedSkill, setSelectedSkill] = (0, react_1.useState)(new Set());
     const [importResult, setImportResult] = (0, react_1.useState)(null);
+    const resolvedImportApi = importApi || (personId ? (0, profileImportApi_1.createPersonProfileImportApi)(personId) : null);
     function resetState() {
         setStep("upload");
         setFile(null);
@@ -86,8 +87,13 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
             return;
         setAnalyzing(true);
         setError(null);
+        if (!resolvedImportApi) {
+            setAnalyzing(false);
+            setError("Brak konfiguracji API importu");
+            return;
+        }
         try {
-            const result = await (0, profileImportApi_1.analyzePersonProfileFile)(personId, file, hint.trim() || undefined);
+            const result = await resolvedImportApi.analyzeFile(file, hint.trim() || undefined);
             // Assign _tempId if missing
             result.experiences.forEach((e, i) => (e._tempId = e._tempId ?? i));
             result.educations.forEach((e, i) => (e._tempId = e._tempId ?? i));
@@ -108,19 +114,20 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     async function handleImport() {
         if (!aiResult)
             return;
+        if (!resolvedImportApi) {
+            setStep("done");
+            setImportResult({ errors: ["Brak konfiguracji API importu"] });
+            return;
+        }
         setStep("importing");
         const errors = [];
         const selectedExperiences = aiResult.experiences.filter((e) => selectedExp.has(e._tempId));
         const selectedEducations = aiResult.educations.filter((e) => selectedEdu.has(e._tempId));
         const selectedSkills = aiResult.skills.filter((e) => selectedSkill.has(e._tempId));
         const results = await Promise.allSettled([
-            selectedExperiences.length > 0
-                ? (0, profileImportApi_1.confirmExperiencesImport)(personId, selectedExperiences)
-                : Promise.resolve(null),
-            selectedEducations.length > 0
-                ? (0, profileImportApi_1.confirmEducationsImport)(personId, selectedEducations)
-                : Promise.resolve(null),
-            selectedSkills.length > 0 ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills) : Promise.resolve(null),
+            selectedExperiences.length > 0 ? resolvedImportApi.confirmExperiences(selectedExperiences) : Promise.resolve(null),
+            selectedEducations.length > 0 ? resolvedImportApi.confirmEducations(selectedEducations) : Promise.resolve(null),
+            selectedSkills.length > 0 ? resolvedImportApi.confirmSkills(selectedSkills) : Promise.resolve(null),
         ]);
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
         const eduRes = results[1].status === "fulfilled" ? results[1].value : null;
@@ -142,7 +149,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const totalSelected = selectedExp.size + selectedEdu.size + selectedSkill.size;
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: handleClose, size: "lg", backdrop: "static" },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, "Import profilu z CV")),
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title || "Import profilu z CV")),
         react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
             error && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, error),
             step === "upload" && (react_1.default.createElement("div", null,

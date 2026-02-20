@@ -5,12 +5,8 @@ import ImportPreviewEducations from "./ImportPreviewEducations";
 import ImportPreviewExperiences from "./ImportPreviewExperiences";
 import ImportPreviewSkills from "./ImportPreviewSkills";
 import { AiMetaInfo } from "../../../View/CommonComponents/AiMetaInfo";
-import {
-    analyzePersonProfileFile,
-    confirmEducationsImport,
-    confirmExperiencesImport,
-    confirmSkillsImport,
-} from "./profileImportApi";
+import { createPersonProfileImportApi } from "./profileImportApi";
+import { ProfileImportApiAdapter } from "./profileImportApi.types";
 
 type Step = "upload" | "preview" | "importing" | "done";
 
@@ -22,13 +18,15 @@ interface ImportResult {
 }
 
 interface Props {
-    personId: number;
     show: boolean;
     onHide: () => void;
     onImportDone: () => void;
+    personId?: number;
+    importApi?: ProfileImportApiAdapter;
+    title?: string;
 }
 
-export default function ProfileImportModal({ personId, show, onHide, onImportDone }: Props) {
+export default function ProfileImportModal({ personId, show, onHide, onImportDone, importApi, title }: Props) {
     const [step, setStep] = useState<Step>("upload");
     const [file, setFile] = useState<File | null>(null);
     const [hint, setHint] = useState("");
@@ -41,6 +39,7 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
     const [selectedSkill, setSelectedSkill] = useState<Set<number>>(new Set());
 
     const [importResult, setImportResult] = useState<ImportResult | null>(null);
+    const resolvedImportApi = importApi || (personId ? createPersonProfileImportApi(personId) : null);
 
     function resetState() {
         setStep("upload");
@@ -72,8 +71,13 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
         if (!file) return;
         setAnalyzing(true);
         setError(null);
+        if (!resolvedImportApi) {
+            setAnalyzing(false);
+            setError("Brak konfiguracji API importu");
+            return;
+        }
         try {
-            const result = await analyzePersonProfileFile(personId, file, hint.trim() || undefined);
+            const result = await resolvedImportApi.analyzeFile(file, hint.trim() || undefined);
             // Assign _tempId if missing
             result.experiences.forEach((e, i) => (e._tempId = e._tempId ?? i));
             result.educations.forEach((e, i) => (e._tempId = e._tempId ?? i));
@@ -93,6 +97,11 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
 
     async function handleImport() {
         if (!aiResult) return;
+        if (!resolvedImportApi) {
+            setStep("done");
+            setImportResult({ errors: ["Brak konfiguracji API importu"] });
+            return;
+        }
         setStep("importing");
         const errors: string[] = [];
 
@@ -101,13 +110,9 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
         const selectedSkills = aiResult.skills.filter((e) => selectedSkill.has(e._tempId));
 
         const results = await Promise.allSettled([
-            selectedExperiences.length > 0
-                ? confirmExperiencesImport(personId, selectedExperiences)
-                : Promise.resolve(null),
-            selectedEducations.length > 0
-                ? confirmEducationsImport(personId, selectedEducations)
-                : Promise.resolve(null),
-            selectedSkills.length > 0 ? confirmSkillsImport(personId, selectedSkills) : Promise.resolve(null),
+            selectedExperiences.length > 0 ? resolvedImportApi.confirmExperiences(selectedExperiences) : Promise.resolve(null),
+            selectedEducations.length > 0 ? resolvedImportApi.confirmEducations(selectedEducations) : Promise.resolve(null),
+            selectedSkills.length > 0 ? resolvedImportApi.confirmSkills(selectedSkills) : Promise.resolve(null),
         ]);
 
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
@@ -132,7 +137,7 @@ export default function ProfileImportModal({ personId, show, onHide, onImportDon
     return (
         <Modal show={show} onHide={handleClose} size="lg" backdrop="static">
             <Modal.Header closeButton>
-                <Modal.Title>Import profilu z CV</Modal.Title>
+                <Modal.Title>{title || "Import profilu z CV"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {error && <Alert variant="danger">{error}</Alert>}

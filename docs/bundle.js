@@ -108733,7 +108733,7 @@ const ImportPreviewExperiences_1 = __importDefault(__webpack_require__(/*! ./Imp
 const ImportPreviewSkills_1 = __importDefault(__webpack_require__(/*! ./ImportPreviewSkills */ "./src/Persons/PersonProfile/Import/ImportPreviewSkills.tsx"));
 const AiMetaInfo_1 = __webpack_require__(/*! ../../../View/CommonComponents/AiMetaInfo */ "./src/View/CommonComponents/AiMetaInfo.tsx");
 const profileImportApi_1 = __webpack_require__(/*! ./profileImportApi */ "./src/Persons/PersonProfile/Import/profileImportApi.ts");
-function ProfileImportModal({ personId, show, onHide, onImportDone }) {
+function ProfileImportModal({ personId, show, onHide, onImportDone, importApi, title }) {
     const [step, setStep] = (0, react_1.useState)("upload");
     const [file, setFile] = (0, react_1.useState)(null);
     const [hint, setHint] = (0, react_1.useState)("");
@@ -108744,6 +108744,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const [selectedEdu, setSelectedEdu] = (0, react_1.useState)(new Set());
     const [selectedSkill, setSelectedSkill] = (0, react_1.useState)(new Set());
     const [importResult, setImportResult] = (0, react_1.useState)(null);
+    const resolvedImportApi = importApi || (personId ? (0, profileImportApi_1.createPersonProfileImportApi)(personId) : null);
     function resetState() {
         setStep("upload");
         setFile(null);
@@ -108775,8 +108776,13 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
             return;
         setAnalyzing(true);
         setError(null);
+        if (!resolvedImportApi) {
+            setAnalyzing(false);
+            setError("Brak konfiguracji API importu");
+            return;
+        }
         try {
-            const result = await (0, profileImportApi_1.analyzePersonProfileFile)(personId, file, hint.trim() || undefined);
+            const result = await resolvedImportApi.analyzeFile(file, hint.trim() || undefined);
             // Assign _tempId if missing
             result.experiences.forEach((e, i) => (e._tempId = e._tempId ?? i));
             result.educations.forEach((e, i) => (e._tempId = e._tempId ?? i));
@@ -108797,19 +108803,20 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     async function handleImport() {
         if (!aiResult)
             return;
+        if (!resolvedImportApi) {
+            setStep("done");
+            setImportResult({ errors: ["Brak konfiguracji API importu"] });
+            return;
+        }
         setStep("importing");
         const errors = [];
         const selectedExperiences = aiResult.experiences.filter((e) => selectedExp.has(e._tempId));
         const selectedEducations = aiResult.educations.filter((e) => selectedEdu.has(e._tempId));
         const selectedSkills = aiResult.skills.filter((e) => selectedSkill.has(e._tempId));
         const results = await Promise.allSettled([
-            selectedExperiences.length > 0
-                ? (0, profileImportApi_1.confirmExperiencesImport)(personId, selectedExperiences)
-                : Promise.resolve(null),
-            selectedEducations.length > 0
-                ? (0, profileImportApi_1.confirmEducationsImport)(personId, selectedEducations)
-                : Promise.resolve(null),
-            selectedSkills.length > 0 ? (0, profileImportApi_1.confirmSkillsImport)(personId, selectedSkills) : Promise.resolve(null),
+            selectedExperiences.length > 0 ? resolvedImportApi.confirmExperiences(selectedExperiences) : Promise.resolve(null),
+            selectedEducations.length > 0 ? resolvedImportApi.confirmEducations(selectedEducations) : Promise.resolve(null),
+            selectedSkills.length > 0 ? resolvedImportApi.confirmSkills(selectedSkills) : Promise.resolve(null),
         ]);
         const expRes = results[0].status === "fulfilled" ? results[0].value : null;
         const eduRes = results[1].status === "fulfilled" ? results[1].value : null;
@@ -108831,7 +108838,7 @@ function ProfileImportModal({ personId, show, onHide, onImportDone }) {
     const totalSelected = selectedExp.size + selectedEdu.size + selectedSkill.size;
     return (react_1.default.createElement(react_bootstrap_1.Modal, { show: show, onHide: handleClose, size: "lg", backdrop: "static" },
         react_1.default.createElement(react_bootstrap_1.Modal.Header, { closeButton: true },
-            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, "Import profilu z CV")),
+            react_1.default.createElement(react_bootstrap_1.Modal.Title, null, title || "Import profilu z CV")),
         react_1.default.createElement(react_bootstrap_1.Modal.Body, null,
             error && react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, error),
             step === "upload" && (react_1.default.createElement("div", null,
@@ -108913,6 +108920,7 @@ exports.analyzePersonProfileFile = analyzePersonProfileFile;
 exports.confirmExperiencesImport = confirmExperiencesImport;
 exports.confirmEducationsImport = confirmEducationsImport;
 exports.confirmSkillsImport = confirmSkillsImport;
+exports.createPersonProfileImportApi = createPersonProfileImportApi;
 const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
 const ToolsFetch_1 = __importDefault(__webpack_require__(/*! ../../../React/Tools/ToolsFetch */ "./src/React/Tools/ToolsFetch.ts"));
 const personsV2Helpers_1 = __webpack_require__(/*! ../../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
@@ -108961,6 +108969,22 @@ async function confirmSkillsImport(personId, items) {
         body: JSON.stringify({ items }),
     });
     return result;
+}
+function createPersonProfileImportApi(personId) {
+    return {
+        analyzeFile(file, hint) {
+            return analyzePersonProfileFile(personId, file, hint);
+        },
+        confirmExperiences(items) {
+            return confirmExperiencesImport(personId, items);
+        },
+        confirmEducations(items) {
+            return confirmEducationsImport(personId, items);
+        },
+        confirmSkills(items) {
+            return confirmSkillsImport(personId, items);
+        },
+    };
 }
 
 
@@ -109027,6 +109051,81 @@ const ExperienceModalButtons_1 = __webpack_require__(/*! ./Experience/Experience
 const ProfileSkillsController_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillsController */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillsController.ts");
 const ProfileSkillModalButtons_1 = __webpack_require__(/*! ./ProfileSkills/ProfileSkillModalButtons */ "./src/Persons/PersonProfile/ProfileSkills/ProfileSkillModalButtons.tsx");
 const ProfileImportModal_1 = __importDefault(__webpack_require__(/*! ./Import/ProfileImportModal */ "./src/Persons/PersonProfile/Import/ProfileImportModal.tsx"));
+const personPublicProfileSubmissionReviewApi_1 = __webpack_require__(/*! ./PublicProfileSubmission/personPublicProfileSubmissionReviewApi */ "./src/Persons/PersonProfile/PublicProfileSubmission/personPublicProfileSubmissionReviewApi.ts");
+function derivePublicSubmissionProcessUiState(submissions) {
+    if (submissions.length === 0)
+        return "PRE_START";
+    if (submissions.some(s => s.status === "SUBMITTED"))
+        return "SUBMITTED";
+    if (submissions.some(s => s.status === "DRAFT"))
+        return "ACTIVE";
+    if (submissions.every(s => s.status === "CLOSED"))
+        return "CLOSED";
+    return "PRE_START";
+}
+function mapPublicSubmissionStateToBadgeVariant(state) {
+    if (state === "SUBMITTED")
+        return "success";
+    if (state === "CLOSED")
+        return "secondary";
+    if (state === "ACTIVE")
+        return "primary";
+    return "secondary";
+}
+function mapPublicSubmissionStateToLabel(state) {
+    if (state === "SUBMITTED")
+        return "Wyslane";
+    if (state === "CLOSED")
+        return "Zamkniete";
+    if (state === "ACTIVE")
+        return "Aktywne";
+    return "Nie zainicjowano";
+}
+function itemTypeBadgeVariant(itemType) {
+    if (itemType === "EXPERIENCE")
+        return "primary";
+    if (itemType === "EDUCATION")
+        return "info";
+    return "secondary";
+}
+function itemStatusBadgeVariant(itemStatus) {
+    if (itemStatus === "PENDING")
+        return "warning";
+    if (itemStatus === "ACCEPTED")
+        return "success";
+    return "danger";
+}
+function itemStatusLabel(itemStatus) {
+    if (itemStatus === "PENDING")
+        return "Oczekuje";
+    if (itemStatus === "ACCEPTED")
+        return "Zaakceptowany";
+    return "Odrzucony";
+}
+function renderItemPayloadSummary(item) {
+    const p = item.payload || {};
+    if (item.itemType === "EXPERIENCE") {
+        return [p.organizationName, p.positionName].filter(Boolean).join(" — ") || "Doswiadczenie";
+    }
+    if (item.itemType === "EDUCATION") {
+        return [p.schoolName, p.degreeName, p.fieldOfStudy].filter(Boolean).join(" — ") || "Wyksztalcenie";
+    }
+    return [p.name, p.levelCode].filter(Boolean).join(" — ") || "Umiejetnosc";
+}
+function linkEventTypeLabel(eventType) {
+    if (eventType === "LINK_SENT")
+        return "Wyslano";
+    if (eventType === "LINK_SEND_FAILED")
+        return "Blad wysylki";
+    return "Wygenerowano";
+}
+function dispatchAlertVariant(status) {
+    if (status === "LINK_SENT")
+        return "success";
+    if (status === "LINK_SEND_FAILED")
+        return "warning";
+    return "info";
+}
 function renderPersonProfileSkillNameCell(skill) {
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("div", null, skill._skill?.name || `Skill #${skill.skillId}`),
@@ -109040,6 +109139,18 @@ function PersonProfilePage() {
     const [skills, setSkills] = (0, react_1.useState)(undefined);
     const [educations, setEducations] = (0, react_1.useState)(undefined);
     const [experiences, setExperiences] = (0, react_1.useState)(undefined);
+    const [submissions, setSubmissions] = (0, react_1.useState)([]);
+    const [activeSubmission, setActiveSubmission] = (0, react_1.useState)(null);
+    const [publicReviewLoading, setPublicReviewLoading] = (0, react_1.useState)(true);
+    const [publicReviewError, setPublicReviewError] = (0, react_1.useState)(null);
+    const [publicSubmissionInitLoading, setPublicSubmissionInitLoading] = (0, react_1.useState)(false);
+    const [publicSubmissionInitError, setPublicSubmissionInitError] = (0, react_1.useState)(null);
+    const [createdLinkUrl, setCreatedLinkUrl] = (0, react_1.useState)(null);
+    const [linkRecipientEmail, setLinkRecipientEmail] = (0, react_1.useState)("");
+    const [linkSendNow, setLinkSendNow] = (0, react_1.useState)(false);
+    const [linkDispatch, setLinkDispatch] = (0, react_1.useState)(null);
+    const [reviewingItemId, setReviewingItemId] = (0, react_1.useState)(null);
+    const [tableExternalUpdate, setTableExternalUpdate] = (0, react_1.useState)(0);
     const educationsRepo = (0, react_1.useMemo)(() => (0, EducationController_1.createEducationsRepository)(personId), [personId]);
     const experienceRepo = (0, react_1.useMemo)(() => (0, ExperienceController_1.createExperienceRepository)(personId), [personId]);
     const skillsRepo = (0, react_1.useMemo)(() => (0, ProfileSkillsController_1.createProfileSkillsRepository)(personId), [personId]);
@@ -109080,10 +109191,128 @@ function PersonProfilePage() {
         }
         fetchExperiences();
     }, [experienceRepo]);
+    const loadSubmissions = (0, react_1.useCallback)(async () => {
+        setPublicReviewLoading(true);
+        setPublicReviewError(null);
+        try {
+            const results = await (0, personPublicProfileSubmissionReviewApi_1.searchSubmissions)(personId);
+            setSubmissions(results);
+            // Auto-load details for the most recent SUBMITTED submission
+            const submitted = results.find(s => s.status === "SUBMITTED");
+            if (submitted) {
+                const details = await (0, personPublicProfileSubmissionReviewApi_1.getSubmissionDetails)(personId, submitted.id);
+                setActiveSubmission(details);
+            }
+            else {
+                setActiveSubmission(null);
+            }
+        }
+        catch (error) {
+            if ((0, personPublicProfileSubmissionReviewApi_1.isPersonPublicProfileSubmissionOfficeApiError)(error)) {
+                setPublicReviewError(`Nie udalo sie pobrac stanu procesu: ${error.message}`);
+            }
+            else {
+                setPublicReviewError("Nie udalo sie pobrac stanu procesu public submission.");
+            }
+            setSubmissions([]);
+            setActiveSubmission(null);
+        }
+        finally {
+            setPublicReviewLoading(false);
+        }
+    }, [personId]);
+    (0, react_1.useEffect)(() => {
+        loadSubmissions();
+    }, [loadSubmissions]);
     (0, react_1.useEffect)(() => {
         document.title = `Profil osoby #${personId}`;
     }, [personId]);
     const [showImportModal, setShowImportModal] = (0, react_1.useState)(false);
+    const processState = derivePublicSubmissionProcessUiState(submissions);
+    const latestSubmissionLinkMeta = (0, react_1.useMemo)(() => {
+        const metaCandidates = submissions.filter(sub => sub.lastLinkEventType || sub.lastLinkEventAt || sub.lastLinkRecipientEmail);
+        if (metaCandidates.length === 0)
+            return null;
+        return [...metaCandidates].sort((a, b) => {
+            const aTs = a.lastLinkEventAt ? Date.parse(a.lastLinkEventAt) : 0;
+            const bTs = b.lastLinkEventAt ? Date.parse(b.lastLinkEventAt) : 0;
+            return bTs - aTs;
+        })[0];
+    }, [submissions]);
+    const handleCreateLink = (0, react_1.useCallback)(async () => {
+        setPublicSubmissionInitError(null);
+        setPublicSubmissionInitLoading(true);
+        setCreatedLinkUrl(null);
+        setLinkDispatch(null);
+        try {
+            const normalizedRecipientEmail = linkRecipientEmail.trim();
+            const linkResponse = await (0, personPublicProfileSubmissionReviewApi_1.createSubmissionLink)(personId, {
+                recipientEmail: normalizedRecipientEmail ? normalizedRecipientEmail : undefined,
+                sendNow: linkSendNow,
+            });
+            setCreatedLinkUrl(linkResponse.url);
+            setLinkDispatch(linkResponse.dispatch || null);
+            await loadSubmissions();
+        }
+        catch (error) {
+            if ((0, personPublicProfileSubmissionReviewApi_1.isPersonPublicProfileSubmissionOfficeApiError)(error)) {
+                setPublicSubmissionInitError(`Nie udalo sie wygenerowac linku: ${error.message}`);
+            }
+            else {
+                setPublicSubmissionInitError("Nie udalo sie wygenerowac linku public submission.");
+            }
+        }
+        finally {
+            setPublicSubmissionInitLoading(false);
+        }
+    }, [linkRecipientEmail, linkSendNow, loadSubmissions, personId]);
+    const handleReviewItem = (0, react_1.useCallback)(async (itemId, decision) => {
+        if (!activeSubmission)
+            return;
+        setReviewingItemId(itemId);
+        try {
+            const result = await (0, personPublicProfileSubmissionReviewApi_1.reviewItem)(personId, activeSubmission.id, itemId, decision);
+            if (result.autoClosed) {
+                // Submission closed — reload full list, clear review panel
+                await loadSubmissions();
+            }
+            else {
+                // Reload only the details of the current submission
+                const details = await (0, personPublicProfileSubmissionReviewApi_1.getSubmissionDetails)(personId, activeSubmission.id);
+                setActiveSubmission(details);
+            }
+            // On ACCEPT the item was saved to the person's profile — refresh tables
+            if (decision === "ACCEPT") {
+                await Promise.all([
+                    skillsRepo.loadItemsFromServerPOST([]),
+                    educationsRepo.loadItemsFromServerPOST([]),
+                    experienceRepo.loadItemsFromServerPOST([]),
+                ]);
+                setSkills([...skillsRepo.items]);
+                setEducations([...educationsRepo.items]);
+                setExperiences([...experienceRepo.items]);
+                setTableExternalUpdate(prev => prev + 1);
+            }
+        }
+        catch (error) {
+            if ((0, personPublicProfileSubmissionReviewApi_1.isPersonPublicProfileSubmissionOfficeApiError)(error)) {
+                if (error.domainCode === "ITEM_ALREADY_RESOLVED") {
+                    // Another reviewer already decided — silently refresh
+                    const details = await (0, personPublicProfileSubmissionReviewApi_1.getSubmissionDetails)(personId, activeSubmission.id);
+                    setActiveSubmission(details);
+                }
+                else {
+                    setPublicReviewError(`Blad recenzji: ${error.domainCode}`);
+                }
+            }
+            else {
+                setPublicReviewError("Nie udalo sie wykonac recenzji.");
+            }
+        }
+        finally {
+            setReviewingItemId(null);
+        }
+    }, [activeSubmission, personId, loadSubmissions, skillsRepo, educationsRepo, experienceRepo]);
     const handleImportDone = (0, react_1.useCallback)(async () => {
         await Promise.all([
             skillsRepo.loadItemsFromServerPOST([]),
@@ -109110,6 +109339,98 @@ function PersonProfilePage() {
         react_1.default.createElement("div", { className: "d-flex justify-content-end mb-3" },
             react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => setShowImportModal(true) }, "Importuj z CV")),
         react_1.default.createElement(ProfileImportModal_1.default, { personId: personId, show: showImportModal, onHide: () => setShowImportModal(false), onImportDone: handleImportDone }),
+        react_1.default.createElement(react_bootstrap_1.Card, { className: "mb-4" },
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-2" },
+                    react_1.default.createElement("h5", { className: "mb-0" }, "Recenzja zgloszenia publicznego"),
+                    react_1.default.createElement("div", { className: "d-flex gap-2" },
+                        processState !== "SUBMITTED" && (react_1.default.createElement(react_bootstrap_1.Button, { variant: processState === "CLOSED" ? "outline-primary" : "primary", size: "sm", onClick: handleCreateLink, disabled: publicSubmissionInitLoading }, publicSubmissionInitLoading
+                            ? "Generowanie..."
+                            : processState === "CLOSED"
+                                ? "Wygeneruj nowy link"
+                                : processState === "PRE_START"
+                                    ? "Inicjuj proces"
+                                    : "Wygeneruj / wyslij ponownie")),
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", size: "sm", onClick: loadSubmissions, disabled: publicReviewLoading }, "Odswiez"))),
+                processState !== "SUBMITTED" && (react_1.default.createElement("div", { className: "mb-2" },
+                    react_1.default.createElement("div", { className: "row g-2 align-items-end" },
+                        react_1.default.createElement("div", { className: "col-md-7" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Label, { className: "small text-muted mb-1" }, "Email odbiorcy (opcjonalnie)"),
+                            react_1.default.createElement(react_bootstrap_1.Form.Control, { size: "sm", type: "email", placeholder: "user@example.com", value: linkRecipientEmail, onChange: (e) => setLinkRecipientEmail(e.target.value), disabled: publicSubmissionInitLoading })),
+                        react_1.default.createElement("div", { className: "col-md-5" },
+                            react_1.default.createElement(react_bootstrap_1.Form.Check, { id: "send-now-check", className: "mt-4", type: "checkbox", label: "Wyslij email od razu (sendNow)", checked: linkSendNow, onChange: (e) => setLinkSendNow(e.currentTarget.checked), disabled: publicSubmissionInitLoading }))))),
+                publicReviewError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "warning", className: "mb-2", dismissible: true, onClose: () => setPublicReviewError(null) }, publicReviewError)),
+                publicSubmissionInitError && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-2", dismissible: true, onClose: () => setPublicSubmissionInitError(null) }, publicSubmissionInitError)),
+                publicReviewLoading ? (react_1.default.createElement("div", { className: "text-muted small" }, "Ladowanie stanu procesu...")) : (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement("div", { className: "mb-2" },
+                        react_1.default.createElement(react_bootstrap_1.Badge, { bg: mapPublicSubmissionStateToBadgeVariant(processState) }, mapPublicSubmissionStateToLabel(processState)),
+                        submissions.length > 0 && (react_1.default.createElement("span", { className: "text-muted small ms-2" },
+                            "(",
+                            submissions.length,
+                            " ",
+                            submissions.length === 1 ? "zgloszenie" : "zgloszen",
+                            ")"))),
+                    processState === "PRE_START" && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "secondary", className: "mb-0" }, "Proces public submission nie zostal jeszcze zainicjowany. Uzyj przycisku \"Inicjuj proces\", aby wygenerowac link i token dla kandydata.")),
+                    createdLinkUrl && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mt-2", dismissible: true, onClose: () => setCreatedLinkUrl(null) },
+                        react_1.default.createElement("div", { className: "fw-bold mb-1" }, "Link wygenerowany:"),
+                        react_1.default.createElement("a", { href: createdLinkUrl, target: "_blank", rel: "noreferrer", className: "text-break" }, createdLinkUrl))),
+                    linkDispatch && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: dispatchAlertVariant(linkDispatch.status), className: "mt-2", dismissible: true, onClose: () => setLinkDispatch(null) },
+                        react_1.default.createElement("div", { className: "fw-bold mb-1" }, "Wynik akcji linkowej"),
+                        react_1.default.createElement("div", null,
+                            "Status dispatch: ",
+                            linkDispatch.status),
+                        linkDispatch.recipientEmail && react_1.default.createElement("div", null,
+                            "Odbiorca: ",
+                            linkDispatch.recipientEmail),
+                        linkDispatch.eventAt && react_1.default.createElement("div", null,
+                            "Czas zdarzenia: ",
+                            linkDispatch.eventAt))),
+                    processState === "ACTIVE" && (react_1.default.createElement("div", { className: "small text-muted mt-2" }, "Kolejny krok: kandydat wypelnia publiczny formularz i wysyla profil do recenzji.")),
+                    processState === "CLOSED" && submissions.length > 0 && (react_1.default.createElement("div", { className: "small text-muted mt-2" }, "Wszystkie zgloszenia zamkniete. Mozesz wygenerowac nowy link.")),
+                    latestSubmissionLinkMeta && (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-2" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "py-2" },
+                            react_1.default.createElement("div", { className: "small fw-bold mb-1" }, "Ostatnie metadata linku"),
+                            latestSubmissionLinkMeta.lastLinkRecipientEmail && (react_1.default.createElement("div", { className: "small" },
+                                "lastLinkRecipientEmail: ",
+                                latestSubmissionLinkMeta.lastLinkRecipientEmail)),
+                            latestSubmissionLinkMeta.lastLinkEventAt && (react_1.default.createElement("div", { className: "small" },
+                                "lastLinkEventAt: ",
+                                latestSubmissionLinkMeta.lastLinkEventAt)),
+                            latestSubmissionLinkMeta.lastLinkEventType && (react_1.default.createElement("div", { className: "small" },
+                                "lastLinkEventType: ",
+                                latestSubmissionLinkMeta.lastLinkEventType,
+                                " (",
+                                linkEventTypeLabel(latestSubmissionLinkMeta.lastLinkEventType),
+                                ")"))))),
+                    submissions.length > 0 && (react_1.default.createElement("div", { className: "small mt-2" }, submissions.map(sub => (react_1.default.createElement("div", { key: sub.id, className: "d-flex align-items-center gap-2 py-1 border-bottom" },
+                        react_1.default.createElement(react_bootstrap_1.Badge, { bg: sub.status === "SUBMITTED" ? "success"
+                                : sub.status === "DRAFT" ? "primary"
+                                    : "secondary" }, sub.status),
+                        react_1.default.createElement("span", null,
+                            "#",
+                            sub.id),
+                        sub.email && react_1.default.createElement("span", { className: "text-muted" }, sub.email),
+                        sub.submittedAt && react_1.default.createElement("span", null,
+                            "Wyslano: ",
+                            sub.submittedAt),
+                        sub.closedAt && react_1.default.createElement("span", null,
+                            "Zamknieto: ",
+                            sub.closedAt)))))),
+                    activeSubmission && activeSubmission.items.length > 0 && (react_1.default.createElement(react_bootstrap_1.Card, { className: "mt-3" },
+                        react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                            react_1.default.createElement("h6", null,
+                                "Rekordy do recenzji (zgloszenie #",
+                                activeSubmission.id,
+                                ")"),
+                            activeSubmission.items.every(i => i.itemStatus !== "PENDING") && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", className: "mb-2 py-1 small" }, "Wszystkie pozycje zostaly zarecenzowane \u2014 zgloszenie zamkniete.")),
+                            activeSubmission.items.map(item => (react_1.default.createElement("div", { key: item.id, className: "d-flex align-items-center justify-content-between border-bottom py-2" },
+                                react_1.default.createElement("div", null,
+                                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: itemTypeBadgeVariant(item.itemType), className: "me-2" }, item.itemType),
+                                    react_1.default.createElement("span", null, renderItemPayloadSummary(item)),
+                                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: itemStatusBadgeVariant(item.itemStatus), className: "ms-2" }, itemStatusLabel(item.itemStatus))),
+                                item.itemStatus === "PENDING" && (react_1.default.createElement("div", { className: "d-flex gap-1" },
+                                    react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "success", onClick: () => handleReviewItem(item.id, "ACCEPT"), disabled: reviewingItemId === item.id }, reviewingItemId === item.id ? "..." : "Akceptuj"),
+                                    react_1.default.createElement(react_bootstrap_1.Button, { size: "sm", variant: "outline-danger", onClick: () => handleReviewItem(item.id, "REJECT"), disabled: reviewingItemId === item.id }, reviewingItemId === item.id ? "..." : "Odrzuc"))))))))))))),
         profileLoading ? (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))) : profile ? (react_1.default.createElement("div", { className: "mb-4" },
             profile.headline && react_1.default.createElement("h4", { className: "mb-1" }, profile.headline),
@@ -109121,7 +109442,7 @@ function PersonProfilePage() {
                 { header: "Specjalizacja", renderTdBody: renderPersonProfileSkillNameCell, colMd: 6 },
                 { header: "Poziom", renderTdBody: renderSkillLevel, colMd: 3 },
                 { header: "Lata doswiadczenia", renderTdBody: renderSkillYears, colMd: 3 },
-            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [SkillAddButton], EditButtonComponent: SkillEditButton, isDeletable: true, showTableHeader: false, externalUpdate: tableExternalUpdate })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Wyksztalcenie"),
         educations ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_educations`, repository: educationsRepo, initialObjects: educations, tableStructure: [
@@ -109138,7 +109459,7 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 1,
                 },
-            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [EducationAddButton], EditButtonComponent: EducationEditButton, isDeletable: true, showTableHeader: false, externalUpdate: tableExternalUpdate })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null))),
         react_1.default.createElement("h5", { className: "mt-4" }, "Doswiadczenie"),
         experiences ? (react_1.default.createElement(FilterableTable_1.default, { id: `person_${personId}_experiences`, repository: experienceRepo, initialObjects: experiences, tableStructure: [
@@ -109154,7 +109475,7 @@ function PersonProfilePage() {
                     renderTdBody: (e) => (react_1.default.createElement(react_1.default.Fragment, null, e.dateTo ? ToolsDate_1.default.dateISOToDMY(e.dateTo) : "-")),
                     colMd: 2,
                 },
-            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true, showTableHeader: false })) : (react_1.default.createElement("div", { className: "text-center py-3" },
+            ], AddNewButtonComponents: [ExperienceAddButton], EditButtonComponent: ExperienceEditButton, isDeletable: true, showTableHeader: false, externalUpdate: tableExternalUpdate })) : (react_1.default.createElement("div", { className: "text-center py-3" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)))));
 }
 
@@ -109396,6 +109717,942 @@ function createProfileSkillsRepository(personId) {
             deleteRoute: `v2/persons/${personId}/profile/skills`,
         },
     });
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage.tsx"
+/*!*******************************************************************************************!*\
+  !*** ./src/Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage.tsx ***!
+  \*******************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = PublicProfileSubmissionPage;
+const react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_bootstrap_1 = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/esm/index.js");
+const react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+const ProfileImportModal_1 = __importDefault(__webpack_require__(/*! ../Import/ProfileImportModal */ "./src/Persons/PersonProfile/Import/ProfileImportModal.tsx"));
+const publicProfileSubmissionApi_1 = __webpack_require__(/*! ./publicProfileSubmissionApi */ "./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionApi.ts");
+const publicProfileSubmissionImportApi_1 = __webpack_require__(/*! ./publicProfileSubmissionImportApi */ "./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionImportApi.ts");
+// ---------------------------------------------------------------------------
+// Human-readable error messages for domain error codes
+// ---------------------------------------------------------------------------
+function domainErrorMessage(err) {
+    switch (err.domainCode) {
+        case "PUBLIC_TOKEN_INVALID":
+            return "Link jest nieprawidlowy lub zostal uniewazniony.";
+        case "PUBLIC_TOKEN_EXPIRED":
+            return "Link wygasl. Popros o wygenerowanie nowego.";
+        case "EMAIL_CODE_INVALID":
+            return "Kod weryfikacyjny jest nieprawidlowy. Sprawdz i sprobuj ponownie.";
+        case "EMAIL_CODE_EXPIRED":
+            return "Kod weryfikacyjny wygasl. Wyslij nowy kod.";
+        case "EMAIL_VERIFY_RATE_LIMITED":
+            return "Zbyt wiele prob. Sprobuj pozniej lub popros o nowy link.";
+        case "EMAIL_VERIFY_REQUIRED":
+            return "Sesja wygasla. Zweryfikuj email ponownie.";
+        case "SUBMISSION_ALREADY_CLOSED":
+            return "Zgloszenie zostalo juz zamkniete.";
+        case "SUBMISSION_NOT_FOUND":
+            return "Zgloszenie nie zostalo znalezione.";
+        case "DRAFT_VALIDATION_FAILED":
+            return "Dane draftu sa niepoprawne. Sprawdz formularz.";
+        case "FORBIDDEN":
+            return "Brak dostepu.";
+        default:
+            return "Wystapil nieoczekiwany blad.";
+    }
+}
+function formatError(error) {
+    if ((0, publicProfileSubmissionApi_1.isPublicProfileSubmissionApiError)(error)) {
+        return domainErrorMessage(error);
+    }
+    return error instanceof Error ? error.message : String(error);
+}
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
+function PublicProfileSubmissionPage() {
+    const { token } = (0, react_router_dom_1.useParams)();
+    // -- State machine step --
+    const [step, setStep] = (0, react_1.useState)("landing");
+    // -- Landing (W3) --
+    const [submissionInfo, setSubmissionInfo] = (0, react_1.useState)(null);
+    const [isLoadingInfo, setIsLoadingInfo] = (0, react_1.useState)(true);
+    // -- Verify (W4) --
+    const [email, setEmail] = (0, react_1.useState)("");
+    const [otpCode, setOtpCode] = (0, react_1.useState)("");
+    const [codeSent, setCodeSent] = (0, react_1.useState)(false);
+    const [codeExpiresAt, setCodeExpiresAt] = (0, react_1.useState)(null);
+    const [isSendingCode, setIsSendingCode] = (0, react_1.useState)(false);
+    const [isConfirmingCode, setIsConfirmingCode] = (0, react_1.useState)(false);
+    // -- Draft (W5) --
+    const [draftData, setDraftData] = (0, react_1.useState)(null);
+    const [isLoadingDraft, setIsLoadingDraft] = (0, react_1.useState)(false);
+    const [isSavingDraft, setIsSavingDraft] = (0, react_1.useState)(false);
+    // -- Import modal (W6) --
+    const [showImportModal, setShowImportModal] = (0, react_1.useState)(false);
+    // -- Submit (W7) --
+    const [isSubmitting, setIsSubmitting] = (0, react_1.useState)(false);
+    // -- Messages --
+    const [errorMessage, setErrorMessage] = (0, react_1.useState)(null);
+    const [successMessage, setSuccessMessage] = (0, react_1.useState)(null);
+    // -- API instance (stable across steps) --
+    const api = (0, react_1.useMemo)(() => (token ? (0, publicProfileSubmissionApi_1.createPublicProfileSubmissionApi)(token) : null), [token]);
+    // Import adapter — created from api object (requires session token to be set before use)
+    const importApi = (0, react_1.useMemo)(() => (api ? (0, publicProfileSubmissionImportApi_1.createPublicProfileSubmissionImportApi)(api) : undefined), [api]);
+    // -----------------------------------------------------------------------
+    // W3: Landing — load submission info
+    // -----------------------------------------------------------------------
+    const loadSubmissionInfo = (0, react_1.useCallback)(async () => {
+        if (!api) {
+            setIsLoadingInfo(false);
+            return;
+        }
+        setIsLoadingInfo(true);
+        setErrorMessage(null);
+        try {
+            const info = await api.getSubmissionInfo();
+            setSubmissionInfo(info);
+            // Pre-fill email if available
+            if (info.email) {
+                setEmail(info.email);
+            }
+        }
+        catch (error) {
+            setErrorMessage(formatError(error));
+        }
+        finally {
+            setIsLoadingInfo(false);
+        }
+    }, [api]);
+    (0, react_1.useEffect)(() => {
+        loadSubmissionInfo();
+    }, [loadSubmissionInfo]);
+    // -----------------------------------------------------------------------
+    // W4: Email verification
+    // -----------------------------------------------------------------------
+    async function handleRequestCode() {
+        if (!api || !email.trim())
+            return;
+        setIsSendingCode(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        try {
+            const resp = await api.requestVerifyCode(email.trim());
+            setCodeSent(true);
+            setCodeExpiresAt(resp.codeExpiresAt);
+            setSuccessMessage("Kod weryfikacyjny zostal wyslany na podany adres email.");
+        }
+        catch (error) {
+            setErrorMessage(formatError(error));
+        }
+        finally {
+            setIsSendingCode(false);
+        }
+    }
+    async function handleConfirmCode() {
+        if (!api || !email.trim() || !otpCode.trim())
+            return;
+        setIsConfirmingCode(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        try {
+            const resp = await api.confirmVerifyCode(email.trim(), otpCode.trim());
+            api.setSessionToken(resp.publicSessionToken);
+            setSuccessMessage(null);
+            // Proceed to draft step
+            setStep("draft");
+        }
+        catch (error) {
+            setErrorMessage(formatError(error));
+        }
+        finally {
+            setIsConfirmingCode(false);
+        }
+    }
+    // -----------------------------------------------------------------------
+    // W5: Draft — load and save
+    // -----------------------------------------------------------------------
+    const loadDraft = (0, react_1.useCallback)(async () => {
+        if (!api)
+            return;
+        setIsLoadingDraft(true);
+        setErrorMessage(null);
+        try {
+            const draft = await api.getDraft();
+            setDraftData(draft);
+        }
+        catch (error) {
+            // If session expired, redirect back to verify
+            if ((0, publicProfileSubmissionApi_1.isPublicProfileSubmissionApiError)(error) && error.domainCode === "EMAIL_VERIFY_REQUIRED") {
+                setStep("verify");
+                setErrorMessage("Sesja wygasla. Zweryfikuj email ponownie.");
+            }
+            else {
+                setErrorMessage(formatError(error));
+            }
+        }
+        finally {
+            setIsLoadingDraft(false);
+        }
+    }, [api]);
+    // Load draft on entering the draft step
+    (0, react_1.useEffect)(() => {
+        if (step === "draft") {
+            loadDraft();
+        }
+    }, [step, loadDraft]);
+    async function handleSaveDraft() {
+        if (!api || !draftData)
+            return;
+        setIsSavingDraft(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        try {
+            const updated = await api.updateDraft({
+                experiences: draftData.experiences.map(stripDraftItemMeta),
+                educations: draftData.educations.map(stripDraftItemMeta),
+                skills: draftData.skills.map(stripDraftItemMeta),
+            });
+            setDraftData(updated);
+            setSuccessMessage("Draft zapisany.");
+        }
+        catch (error) {
+            if ((0, publicProfileSubmissionApi_1.isPublicProfileSubmissionApiError)(error) && error.domainCode === "EMAIL_VERIFY_REQUIRED") {
+                setStep("verify");
+                setErrorMessage("Sesja wygasla. Zweryfikuj email ponownie.");
+            }
+            else {
+                setErrorMessage(formatError(error));
+            }
+        }
+        finally {
+            setIsSavingDraft(false);
+        }
+    }
+    // -----------------------------------------------------------------------
+    // W6: Import done callback
+    // -----------------------------------------------------------------------
+    function handleImportDone() {
+        setShowImportModal(false);
+        loadDraft();
+    }
+    // -----------------------------------------------------------------------
+    // W7: Submit
+    // -----------------------------------------------------------------------
+    async function handleSubmit() {
+        if (!api)
+            return;
+        setIsSubmitting(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        try {
+            await api.submit();
+            setStep("submitted");
+            setSuccessMessage("Profil zostal wyslany do recenzji. Dziekujemy!");
+        }
+        catch (error) {
+            if ((0, publicProfileSubmissionApi_1.isPublicProfileSubmissionApiError)(error) && error.domainCode === "EMAIL_VERIFY_REQUIRED") {
+                setStep("verify");
+                setErrorMessage("Sesja wygasla. Zweryfikuj email ponownie.");
+            }
+            else {
+                setErrorMessage(formatError(error));
+            }
+        }
+        finally {
+            setIsSubmitting(false);
+        }
+    }
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+    /** Check if submission is in a terminal state (no further actions) */
+    const isTerminal = submissionInfo
+        ? submissionInfo.status === "SUBMITTED" || submissionInfo.status === "CLOSED"
+        : false;
+    const statusBadgeVariant = {
+        DRAFT: "warning",
+        SUBMITTED: "info",
+        CLOSED: "secondary",
+    };
+    // -----------------------------------------------------------------------
+    // Render
+    // -----------------------------------------------------------------------
+    if (!token) {
+        return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4" },
+            react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger" }, "Brak tokenu w URL.")));
+    }
+    return (react_1.default.createElement(react_bootstrap_1.Container, { className: "py-4", style: { maxWidth: 800 } },
+        react_1.default.createElement("h1", { className: "h4 mb-3" }, "Zgloszenie profilu"),
+        errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", dismissible: true, onClose: () => setErrorMessage(null) }, errorMessage)),
+        successMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "success", dismissible: true, onClose: () => setSuccessMessage(null) }, successMessage)),
+        step === "landing" && (react_1.default.createElement(react_1.default.Fragment, null, isLoadingInfo ? (react_1.default.createElement("div", { className: "py-4 text-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border" }),
+            react_1.default.createElement("div", { className: "mt-2 text-muted" }, "Ladowanie informacji..."))) : submissionInfo ? (react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement("h5", { className: "mb-3" }, "Informacje o zgloszeniu"),
+                react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, className: "text-muted" }, "Status:"),
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 8 },
+                        react_1.default.createElement(react_bootstrap_1.Badge, { bg: statusBadgeVariant[submissionInfo.status] || "secondary" }, submissionInfo.status))),
+                submissionInfo.email && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, className: "text-muted" }, "Email:"),
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 8 }, submissionInfo.email))),
+                submissionInfo.submittedAt && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, className: "text-muted" }, "Wyslano:"),
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 8 }, submissionInfo.submittedAt))),
+                submissionInfo.closedAt && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, className: "text-muted" }, "Zamknieto:"),
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 8 }, submissionInfo.closedAt))),
+                submissionInfo.items.length > 0 && (react_1.default.createElement(react_bootstrap_1.Row, { className: "mb-2" },
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 4, className: "text-muted" }, "Pozycje:"),
+                    react_1.default.createElement(react_bootstrap_1.Col, { sm: 8 }, submissionInfo.items.length))),
+                react_1.default.createElement("hr", null),
+                isTerminal ? (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info", className: "mb-0" }, submissionInfo.status === "SUBMITTED"
+                    ? "Zgloszenie zostalo juz wyslane i oczekuje na recenzje."
+                    : "Zgloszenie zostalo zamkniete.")) : (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: () => setStep("verify") }, "Kontynuuj"))))) : null)),
+        step === "verify" && (react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement("h5", { className: "mb-3" }, "Weryfikacja adresu email"),
+                react_1.default.createElement("p", { className: "text-muted" }, "Aby kontynuowac, podaj adres email powiazany z tym zgloszeniem. Wyslemy na niego kod weryfikacyjny."),
+                react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                    react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Adres email"),
+                    react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "email", value: email, onChange: (e) => setEmail(e.target.value), placeholder: "jan@example.com", disabled: isSendingCode || isConfirmingCode })),
+                !codeSent ? (react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleRequestCode, disabled: !email.trim() || isSendingCode }, isSendingCode ? (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                    "Wysylanie...")) : ("Wyslij kod"))) : (react_1.default.createElement(react_1.default.Fragment, null,
+                    codeExpiresAt && (react_1.default.createElement("div", { className: "small text-muted mb-2" },
+                        "Kod wazny do: ",
+                        codeExpiresAt)),
+                    react_1.default.createElement(react_bootstrap_1.Form.Group, { className: "mb-3" },
+                        react_1.default.createElement(react_bootstrap_1.Form.Label, null, "Kod weryfikacyjny (6 cyfr)"),
+                        react_1.default.createElement(react_bootstrap_1.Form.Control, { type: "text", inputMode: "numeric", maxLength: 6, value: otpCode, onChange: (e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6)), placeholder: "000000", disabled: isConfirmingCode, style: { maxWidth: 200, letterSpacing: "0.3em", fontWeight: 600 } })),
+                    react_1.default.createElement("div", { className: "d-flex gap-2" },
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleConfirmCode, disabled: otpCode.length !== 6 || isConfirmingCode }, isConfirmingCode ? (react_1.default.createElement(react_1.default.Fragment, null,
+                            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                            "Weryfikacja...")) : ("Potwierdz")),
+                        react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => {
+                                setCodeSent(false);
+                                setOtpCode("");
+                                setCodeExpiresAt(null);
+                                setErrorMessage(null);
+                                setSuccessMessage(null);
+                            }, disabled: isConfirmingCode }, "Wyslij ponownie")))),
+                react_1.default.createElement("div", { className: "mt-3" },
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "link", size: "sm", className: "p-0 text-muted", onClick: () => {
+                            setStep("landing");
+                            setCodeSent(false);
+                            setOtpCode("");
+                            setErrorMessage(null);
+                            setSuccessMessage(null);
+                        } }, "Wroc do informacji o zgloszeniu"))))),
+        step === "draft" && (react_1.default.createElement(react_1.default.Fragment, null, isLoadingDraft ? (react_1.default.createElement("div", { className: "py-4 text-center" },
+            react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border" }),
+            react_1.default.createElement("div", { className: "mt-2 text-muted" }, "Ladowanie draftu..."))) : draftData ? (react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, null,
+                react_1.default.createElement("div", { className: "d-flex justify-content-between align-items-center mb-3" },
+                    react_1.default.createElement("h5", { className: "mb-0" }, "Edycja draftu"),
+                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: statusBadgeVariant[draftData.status] || "secondary" }, draftData.status)),
+                react_1.default.createElement(DraftExperiencesSection, { items: draftData.experiences }),
+                react_1.default.createElement(DraftEducationsSection, { items: draftData.educations }),
+                react_1.default.createElement(DraftSkillsSection, { items: draftData.skills }),
+                draftData.experiences.length === 0 &&
+                    draftData.educations.length === 0 &&
+                    draftData.skills.length === 0 && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "info" }, "Draft jest pusty. Uzyj przycisku \"Importuj z CV\" aby dodac dane.")),
+                react_1.default.createElement("hr", null),
+                react_1.default.createElement("div", { className: "d-flex gap-2 flex-wrap" },
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "outline-secondary", onClick: () => setShowImportModal(true), disabled: isSavingDraft || isSubmitting }, "Importuj z CV"),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "secondary", onClick: handleSaveDraft, disabled: isSavingDraft || isSubmitting }, isSavingDraft ? (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                        "Zapisywanie...")) : ("Zapisz draft")),
+                    react_1.default.createElement(react_bootstrap_1.Button, { variant: "primary", onClick: handleSubmit, disabled: isSavingDraft || isSubmitting }, isSubmitting ? (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(react_bootstrap_1.Spinner, { animation: "border", size: "sm", className: "me-2" }),
+                        "Wysylanie...")) : ("Wyslij do recenzji"))),
+                react_1.default.createElement("div", { className: "small text-muted mt-3" }, "Pozycje zaimportowane z CV pozostaja w drafcie i sa wysylane razem z profilem.")))) : null)),
+        step === "submitted" && (react_1.default.createElement(react_bootstrap_1.Card, null,
+            react_1.default.createElement(react_bootstrap_1.Card.Body, { className: "text-center py-5" },
+                react_1.default.createElement("h5", { className: "mb-3" }, "Zgloszenie wyslane"),
+                react_1.default.createElement("p", { className: "text-muted" }, "Twoj profil zostal wyslany do recenzji. Otrzymasz powiadomienie emailem o wynikach."),
+                react_1.default.createElement(react_bootstrap_1.Badge, { bg: "info", className: "fs-6" }, "SUBMITTED")))),
+        react_1.default.createElement(ProfileImportModal_1.default, { show: showImportModal, onHide: () => setShowImportModal(false), onImportDone: handleImportDone, importApi: importApi, title: "Import profilu z CV (publiczny)" })));
+}
+// ---------------------------------------------------------------------------
+// Draft display sub-components
+// ---------------------------------------------------------------------------
+function DraftExperiencesSection({ items }) {
+    return (react_1.default.createElement("div", { className: "mb-4" },
+        react_1.default.createElement("h6", null,
+            "Doswiadczenie (",
+            items.length,
+            ")"),
+        items.length === 0 ? (react_1.default.createElement("p", { className: "text-muted small" }, "Brak pozycji.")) : (react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true, responsive: true, className: "small mb-0" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", null, "Organizacja"),
+                    react_1.default.createElement("th", null, "Stanowisko"),
+                    react_1.default.createElement("th", null, "Okres"),
+                    react_1.default.createElement("th", null, "Status"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item.id },
+                react_1.default.createElement("td", null, item.organizationName || "-"),
+                react_1.default.createElement("td", null, item.positionName || "-"),
+                react_1.default.createElement("td", null,
+                    item.dateFrom || "?",
+                    " - ",
+                    item.isCurrent ? "obecnie" : item.dateTo || "?"),
+                react_1.default.createElement("td", null,
+                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: itemStatusBadge(item.status), className: "text-uppercase" }, item.status))))))))));
+}
+function DraftEducationsSection({ items }) {
+    return (react_1.default.createElement("div", { className: "mb-4" },
+        react_1.default.createElement("h6", null,
+            "Wyksztalcenie (",
+            items.length,
+            ")"),
+        items.length === 0 ? (react_1.default.createElement("p", { className: "text-muted small" }, "Brak pozycji.")) : (react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true, responsive: true, className: "small mb-0" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", null, "Uczelnia"),
+                    react_1.default.createElement("th", null, "Tytul"),
+                    react_1.default.createElement("th", null, "Kierunek"),
+                    react_1.default.createElement("th", null, "Okres"),
+                    react_1.default.createElement("th", null, "Status"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item.id },
+                react_1.default.createElement("td", null, item.schoolName || "-"),
+                react_1.default.createElement("td", null, item.degreeName || "-"),
+                react_1.default.createElement("td", null, item.fieldOfStudy || "-"),
+                react_1.default.createElement("td", null,
+                    item.dateFrom || "?",
+                    " - ",
+                    item.dateTo || "?"),
+                react_1.default.createElement("td", null,
+                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: itemStatusBadge(item.status), className: "text-uppercase" }, item.status))))))))));
+}
+function DraftSkillsSection({ items }) {
+    return (react_1.default.createElement("div", { className: "mb-4" },
+        react_1.default.createElement("h6", null,
+            "Umiejetnosci (",
+            items.length,
+            ")"),
+        items.length === 0 ? (react_1.default.createElement("p", { className: "text-muted small" }, "Brak pozycji.")) : (react_1.default.createElement(react_bootstrap_1.Table, { size: "sm", bordered: true, hover: true, responsive: true, className: "small mb-0" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null,
+                    react_1.default.createElement("th", null, "Nazwa"),
+                    react_1.default.createElement("th", null, "Poziom"),
+                    react_1.default.createElement("th", null, "Status"))),
+            react_1.default.createElement("tbody", null, items.map((item) => (react_1.default.createElement("tr", { key: item.id },
+                react_1.default.createElement("td", null, item.name || "-"),
+                react_1.default.createElement("td", null, item.levelCode || "-"),
+                react_1.default.createElement("td", null,
+                    react_1.default.createElement(react_bootstrap_1.Badge, { bg: itemStatusBadge(item.status), className: "text-uppercase" }, item.status))))))))));
+}
+function itemStatusBadge(status) {
+    switch (status) {
+        case "PENDING":
+            return "warning";
+        case "ACCEPTED":
+            return "success";
+        case "REJECTED":
+            return "danger";
+        default:
+            return "secondary";
+    }
+}
+// ---------------------------------------------------------------------------
+// Utility: strip id/status from draft items for PUT /draft payload
+// ---------------------------------------------------------------------------
+function stripDraftItemMeta(item) {
+    const { id, status, ...rest } = item;
+    return rest;
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/PublicProfileSubmission/personPublicProfileSubmissionReviewApi.ts"
+/*!*****************************************************************************************************!*\
+  !*** ./src/Persons/PersonProfile/PublicProfileSubmission/personPublicProfileSubmissionReviewApi.ts ***!
+  \*****************************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PersonPublicProfileSubmissionOfficeApiError = void 0;
+exports.isPersonPublicProfileSubmissionOfficeApiError = isPersonPublicProfileSubmissionOfficeApiError;
+exports.createSubmissionLink = createSubmissionLink;
+exports.searchSubmissions = searchSubmissions;
+exports.getSubmissionDetails = getSubmissionDetails;
+exports.reviewItem = reviewItem;
+exports.closeSubmission = closeSubmission;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+const personsV2Helpers_1 = __webpack_require__(/*! ../../personsV2Helpers */ "./src/Persons/personsV2Helpers.ts");
+class PersonPublicProfileSubmissionOfficeApiError extends Error {
+    constructor(params) {
+        super(params.message);
+        this.name = "PersonPublicProfileSubmissionOfficeApiError";
+        this.status = params.status;
+        this.rawCode = params.rawCode;
+        this.details = params.details;
+        this.domainCode = params.domainCode;
+    }
+}
+exports.PersonPublicProfileSubmissionOfficeApiError = PersonPublicProfileSubmissionOfficeApiError;
+function isPersonPublicProfileSubmissionOfficeApiError(error) {
+    return error instanceof PersonPublicProfileSubmissionOfficeApiError;
+}
+function mapDomainErrorCode(rawCode, status) {
+    const normalized = rawCode?.trim().toUpperCase();
+    const codeMap = {
+        SUBMISSION_NOT_FOUND: "SUBMISSION_NOT_FOUND",
+        ITEM_NOT_FOUND: "ITEM_NOT_FOUND",
+        ITEM_ALREADY_RESOLVED: "ITEM_ALREADY_RESOLVED",
+        SUBMISSION_ALREADY_CLOSED: "SUBMISSION_ALREADY_CLOSED",
+        SUBMISSION_HAS_PENDING_ITEMS: "SUBMISSION_HAS_PENDING_ITEMS",
+        INVALID_REVIEW_DECISION: "INVALID_REVIEW_DECISION",
+        PERSON_NOT_FOUND: "PERSON_NOT_FOUND",
+        PERSON_PROFILE_NOT_FOUND: "PERSON_NOT_FOUND",
+    };
+    if (normalized && codeMap[normalized])
+        return codeMap[normalized];
+    if (status === 401 || status === 403)
+        return "UNAUTHORIZED";
+    if (status === 404)
+        return "SUBMISSION_NOT_FOUND";
+    return "UNKNOWN";
+}
+function staffBaseUrl(personId) {
+    return `${MainSetupReact_1.default.serverUrl}v2/persons/${personId}/public-profile-submissions`;
+}
+async function requestJson(url, method, body) {
+    let response;
+    try {
+        const headers = { Accept: "application/json" };
+        if (body !== undefined) {
+            headers["Content-Type"] = "application/json";
+        }
+        const init = {
+            method,
+            credentials: "include",
+            headers,
+        };
+        if (body !== undefined) {
+            init.body = JSON.stringify(body);
+        }
+        response = await fetch(url, init);
+    }
+    catch (error) {
+        throw new PersonPublicProfileSubmissionOfficeApiError({
+            message: error instanceof Error ? error.message : "Network error during office public submission request",
+            domainCode: "UNKNOWN",
+        });
+    }
+    if (!response.ok) {
+        throw await mapOfficeApiError(response);
+    }
+    try {
+        const text = await response.text();
+        if (!text.trim())
+            return {};
+        return JSON.parse(text);
+    }
+    catch {
+        throw new PersonPublicProfileSubmissionOfficeApiError({
+            message: "Invalid server response format",
+            domainCode: "UNKNOWN",
+            status: response.status,
+        });
+    }
+}
+async function mapOfficeApiError(response) {
+    const errorDto = await readOfficeErrorPayload(response);
+    const rawCode = errorDto.errorCode || errorDto.code;
+    const domainCode = mapDomainErrorCode(rawCode, response.status);
+    const message = errorDto.errorMessage || `HTTP ${response.status}: office public submission request failed`;
+    return new PersonPublicProfileSubmissionOfficeApiError({
+        message,
+        domainCode,
+        status: response.status,
+        rawCode,
+        details: errorDto.details,
+    });
+}
+async function readOfficeErrorPayload(response) {
+    try {
+        const text = await response.text();
+        if (!text.trim())
+            return {};
+        return JSON.parse(text);
+    }
+    catch {
+        return {};
+    }
+}
+// ---------------------------------------------------------------------------
+// Public API functions
+// ---------------------------------------------------------------------------
+/**
+ * POST /link -- tworzy nowy link do publicznego formularza.
+ * Revokuje poprzedni aktywny link.
+ */
+async function createSubmissionLink(personId, request) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST public-profile-submissions/link");
+    const url = `${staffBaseUrl(validId)}/link`;
+    return requestJson(url, "POST", request);
+}
+/**
+ * POST /search -- szuka submissions dla danej osoby.
+ * Opcjonalny filtr po statusie (DRAFT | SUBMITTED | CLOSED).
+ */
+async function searchSubmissions(personId, status) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST public-profile-submissions/search");
+    const url = `${staffBaseUrl(validId)}/search`;
+    const body = {};
+    if (status)
+        body.status = status;
+    return requestJson(url, "POST", body);
+}
+/**
+ * GET /:submissionId -- pelne dane submission z items.
+ */
+async function getSubmissionDetails(personId, submissionId) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "GET public-profile-submissions/:submissionId");
+    const url = `${staffBaseUrl(validId)}/${submissionId}`;
+    return requestJson(url, "GET");
+}
+/**
+ * POST /:submissionId/items/:itemId/review -- akceptuje lub odrzuca pojedynczy item.
+ * Jesli po review nie ma juz PENDING items, submission zamykany automatycznie (autoClosed=true).
+ */
+async function reviewItem(personId, submissionId, itemId, decision) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST review item");
+    const url = `${staffBaseUrl(validId)}/${submissionId}/items/${itemId}/review`;
+    return requestJson(url, "POST", { decision });
+}
+/**
+ * POST /:submissionId/close -- reczne zamkniecie submission.
+ * Rzuca SUBMISSION_HAS_PENDING_ITEMS (409) jesli sa jeszcze PENDING items.
+ */
+async function closeSubmission(personId, submissionId) {
+    const validId = (0, personsV2Helpers_1.validatePersonId)(personId, "POST close submission");
+    const url = `${staffBaseUrl(validId)}/${submissionId}/close`;
+    return requestJson(url, "POST");
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionApi.ts"
+/*!*****************************************************************************************!*\
+  !*** ./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionApi.ts ***!
+  \*****************************************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PublicProfileSubmissionApiError = void 0;
+exports.isPublicProfileSubmissionApiError = isPublicProfileSubmissionApiError;
+exports.mapPublicProfileSubmissionDomainErrorCode = mapPublicProfileSubmissionDomainErrorCode;
+exports.createPublicProfileSubmissionApi = createPublicProfileSubmissionApi;
+const MainSetupReact_1 = __importDefault(__webpack_require__(/*! ../../../React/MainSetupReact */ "./src/React/MainSetupReact.ts"));
+// ---------------------------------------------------------------------------
+// Error class
+// ---------------------------------------------------------------------------
+class PublicProfileSubmissionApiError extends Error {
+    constructor(params) {
+        super(params.message);
+        this.name = "PublicProfileSubmissionApiError";
+        this.status = params.status;
+        this.rawCode = params.rawCode;
+        this.details = params.details;
+        this.domainCode = params.domainCode;
+    }
+}
+exports.PublicProfileSubmissionApiError = PublicProfileSubmissionApiError;
+function isPublicProfileSubmissionApiError(error) {
+    return error instanceof PublicProfileSubmissionApiError;
+}
+// ---------------------------------------------------------------------------
+// Error code mapping (BE codes → domain codes)
+// ---------------------------------------------------------------------------
+function mapPublicProfileSubmissionDomainErrorCode(rawCode, status) {
+    const normalizedRawCode = rawCode?.trim().toUpperCase();
+    const fromRawCode = {
+        PUBLIC_TOKEN_INVALID: "PUBLIC_TOKEN_INVALID",
+        PUBLIC_TOKEN_EXPIRED: "PUBLIC_TOKEN_EXPIRED",
+        EMAIL_VERIFY_REQUIRED: "EMAIL_VERIFY_REQUIRED",
+        EMAIL_CODE_INVALID: "EMAIL_CODE_INVALID",
+        EMAIL_CODE_EXPIRED: "EMAIL_CODE_EXPIRED",
+        EMAIL_VERIFY_RATE_LIMITED: "EMAIL_VERIFY_RATE_LIMITED",
+        SUBMISSION_ALREADY_CLOSED: "SUBMISSION_ALREADY_CLOSED",
+        SUBMISSION_NOT_FOUND: "SUBMISSION_NOT_FOUND",
+        FORBIDDEN: "FORBIDDEN",
+        VALIDATION_ERROR: "DRAFT_VALIDATION_FAILED",
+    };
+    if (normalizedRawCode && fromRawCode[normalizedRawCode])
+        return fromRawCode[normalizedRawCode];
+    if (status === 401)
+        return "EMAIL_VERIFY_REQUIRED";
+    if (status === 403)
+        return "FORBIDDEN";
+    if (status === 404)
+        return "SUBMISSION_NOT_FOUND";
+    if (status === 410)
+        return "PUBLIC_TOKEN_EXPIRED";
+    if (status === 429)
+        return "EMAIL_VERIFY_RATE_LIMITED";
+    if (status === 400 || status === 422)
+        return "DRAFT_VALIDATION_FAILED";
+    return "UNKNOWN";
+}
+// ---------------------------------------------------------------------------
+// API factory
+// ---------------------------------------------------------------------------
+function createPublicProfileSubmissionApi(linkToken) {
+    const token = linkToken.trim();
+    if (!token)
+        throw new Error("linkToken is required");
+    const baseUrl = `${MainSetupReact_1.default.serverUrl}v2/public/profile-submission/${encodeURIComponent(token)}`;
+    let sessionToken = null;
+    // -- internal helpers ---------------------------------------------------
+    async function fetchJson(endpoint, options = {}, requireSession = false) {
+        const headers = new Headers(options.headers || {});
+        if (requireSession) {
+            if (!sessionToken)
+                throw new Error("Session token required — complete email verification first");
+            headers.set("Authorization", `Bearer ${sessionToken}`);
+        }
+        headers.set("Accept", "application/json");
+        if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
+            headers.set("Content-Type", "application/json");
+        }
+        let response;
+        try {
+            response = await fetch(`${baseUrl}${endpoint}`, {
+                ...options,
+                headers,
+            });
+        }
+        catch (error) {
+            throw new PublicProfileSubmissionApiError({
+                message: error instanceof Error ? error.message : "Network error during public profile submission request",
+                domainCode: "UNKNOWN",
+            });
+        }
+        if (!response.ok) {
+            const apiError = await mapApiError(response);
+            throw apiError;
+        }
+        try {
+            return (await response.json());
+        }
+        catch {
+            throw new PublicProfileSubmissionApiError({
+                message: "Invalid server response format",
+                domainCode: "UNKNOWN",
+                status: response.status,
+            });
+        }
+    }
+    // -- public API ---------------------------------------------------------
+    return {
+        /** Store the session token received from confirmVerifyCode */
+        setSessionToken(newToken) {
+            sessionToken = newToken.trim();
+        },
+        /** Retrieve the current session token (or null if not yet verified) */
+        getSessionToken() {
+            return sessionToken;
+        },
+        // Phase 1: no Bearer required ---
+        /** GET /:token — basic submission info (status, items) */
+        getSubmissionInfo() {
+            return fetchJson("", { method: "GET" });
+        },
+        /** POST /:token/verify-email/request-code */
+        requestVerifyCode(email) {
+            return fetchJson("/verify-email/request-code", {
+                method: "POST",
+                body: JSON.stringify({ email }),
+            });
+        },
+        /** POST /:token/verify-email/confirm-code */
+        confirmVerifyCode(email, code) {
+            return fetchJson("/verify-email/confirm-code", {
+                method: "POST",
+                body: JSON.stringify({ email, code }),
+            });
+        },
+        // Phase 2: Bearer session-token required ---
+        /** GET /:token/draft */
+        getDraft() {
+            return fetchJson("/draft", { method: "GET" }, true);
+        },
+        /** PUT /:token/draft — flat payload { experiences?, educations?, skills? } */
+        updateDraft(payload) {
+            return fetchJson("/draft", {
+                method: "PUT",
+                body: JSON.stringify(payload),
+            }, true);
+        },
+        /** POST /:token/analyze-file — multipart/form-data */
+        analyzeFile(file, hint) {
+            const formData = new FormData();
+            formData.append("file", file);
+            if (hint)
+                formData.append("hint", hint);
+            return fetchJson("/analyze-file", {
+                method: "POST",
+                body: formData,
+            }, true);
+        },
+        /** POST /:token/submit */
+        submit() {
+            return fetchJson("/submit", {
+                method: "POST",
+            }, true);
+        },
+    };
+}
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+async function mapApiError(response) {
+    const errorDto = await readErrorPayload(response);
+    const rawCode = errorDto.errorCode || errorDto.code;
+    const message = errorDto.errorMessage || `HTTP ${response.status}: public profile submission request failed`;
+    const domainCode = mapPublicProfileSubmissionDomainErrorCode(rawCode, response.status);
+    return new PublicProfileSubmissionApiError({
+        message,
+        domainCode,
+        status: response.status,
+        rawCode,
+        details: errorDto.details,
+    });
+}
+async function readErrorPayload(response) {
+    try {
+        return (await response.json());
+    }
+    catch {
+        return {};
+    }
+}
+
+
+/***/ },
+
+/***/ "./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionImportApi.ts"
+/*!***********************************************************************************************!*\
+  !*** ./src/Persons/PersonProfile/PublicProfileSubmission/publicProfileSubmissionImportApi.ts ***!
+  \***********************************************************************************************/
+(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createPublicProfileSubmissionImportApi = createPublicProfileSubmissionImportApi;
+/**
+ * Adapts the PublicProfileSubmissionApi to the ProfileImportApiAdapter interface
+ * used by ProfileImportModal.
+ *
+ * BE has no confirm-import endpoints — the flow is:
+ *   1. analyzeFile → returns parsed data
+ *   2. User selects items in modal
+ *   3. confirm* → maps to PUT /draft (merge with existing draft), simulates ImportConfirmResponse
+ *
+ * NOTES:
+ * - _tempId is a frontend-only field; it is stripped before sending to BE.
+ * - PUT /draft replaces all PENDING items of a given type. To avoid data loss when
+ *   the user imports in multiple rounds, the current draft is fetched first and
+ *   the new items are merged with the existing PENDING ones.
+ * - The caller (PublicProfileSubmissionPage) creates the API object once,
+ *   calls setSessionToken() after email verification, and passes it here.
+ */
+function createPublicProfileSubmissionImportApi(api) {
+    return {
+        analyzeFile(file, hint) {
+            return api.analyzeFile(file, hint);
+        },
+        async confirmExperiences(items) {
+            const { _tempId: _1, ...strip } = items[0] ?? {}; // type-check that _tempId exists
+            void strip;
+            void _1;
+            const currentDraft = await api.getDraft();
+            const existingPending = currentDraft.experiences
+                .filter(e => e.status === "PENDING")
+                .map(({ id: _id, status: _s, ...rest }) => rest);
+            const newItems = items.map(({ _tempId, ...rest }) => rest);
+            await api.updateDraft({ experiences: [...existingPending, ...newItems] });
+            return { added: newItems, skipped: [] };
+        },
+        async confirmEducations(items) {
+            const currentDraft = await api.getDraft();
+            const existingPending = currentDraft.educations
+                .filter(e => e.status === "PENDING")
+                .map(({ id: _id, status: _s, ...rest }) => rest);
+            const newItems = items.map(({ _tempId, ...rest }) => rest);
+            await api.updateDraft({ educations: [...existingPending, ...newItems] });
+            return { added: newItems, skipped: [] };
+        },
+        async confirmSkills(items) {
+            const currentDraft = await api.getDraft();
+            const existingPending = currentDraft.skills
+                .filter(s => s.status === "PENDING")
+                .map(({ id: _id, status: _s, ...rest }) => rest);
+            const newItems = items.map(({ _tempId, ...rest }) => rest);
+            await api.updateDraft({ skills: [...existingPending, ...newItems] });
+            return { added: newItems, skipped: [] };
+        },
+    };
 }
 
 
@@ -111640,6 +112897,7 @@ const LettersSearch_2 = __importDefault(__webpack_require__(/*! ../../Offers/Off
 const OffersMainView_1 = __importDefault(__webpack_require__(/*! ../../Offers/OffersList/OffersMainView */ "./src/Offers/OffersList/OffersMainView.tsx"));
 const PersonsSearch_1 = __importDefault(__webpack_require__(/*! ../../Persons/PersonsSearch */ "./src/Persons/PersonsSearch.tsx"));
 const PersonProfilePage_1 = __importDefault(__webpack_require__(/*! ../../Persons/PersonProfile/PersonProfilePage */ "./src/Persons/PersonProfile/PersonProfilePage.tsx"));
+const PublicProfileSubmissionPage_1 = __importDefault(__webpack_require__(/*! ../../Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage */ "./src/Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage.tsx"));
 const TasksGlobal_1 = __importDefault(__webpack_require__(/*! ../../TasksGlobal/TasksGlobal */ "./src/TasksGlobal/TasksGlobal.tsx"));
 const ApplicationCallsSearch_1 = __importDefault(__webpack_require__(/*! ../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch */ "./src/financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch.tsx"));
 const FocusAreasSearch_1 = __importDefault(__webpack_require__(/*! ../../financialAidProgrammes/FocusAreas/FocusAreasSearch */ "./src/financialAidProgrammes/FocusAreas/FocusAreasSearch.tsx"));
@@ -111654,9 +112912,15 @@ console.log("rootPath", rootPath);
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
+    const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     (0, react_1.useEffect)(() => {
         async function fetchData() {
+            if (matchesPublicProfileSubmissionRoute(window.location.hash)) {
+                setIsPublicProfileSubmissionRoute(true);
+                setIsReady(true);
+                return;
+            }
             try {
                 const isLoggedIn = await MainControllerReact_1.default.isSessionSet();
                 setIsLoggedIn(isLoggedIn);
@@ -111703,6 +112967,9 @@ function App() {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
     }
+    if (isPublicProfileSubmissionRoute) {
+        return react_1.default.createElement(PublicAppRoutes, null);
+    }
     if (!isLoggedIn) {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-3" }, errorMessage)),
@@ -111720,6 +112987,7 @@ function AppRoutes() {
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }),
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
                 react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"] }) },
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
@@ -111748,6 +113016,16 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/cost-invoice/:id", element: react_1.default.createElement(CostInvoiceDetails_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices/report", element: react_1.default.createElement(CostInvoicesReport_1.default, null) }))))));
+}
+function PublicAppRoutes() {
+    return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
+        react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },
+            react_1.default.createElement("div", { className: "mt-3 mb-3" },
+                react_1.default.createElement(react_router_dom_1.Routes, null,
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }))))));
+}
+function matchesPublicProfileSubmissionRoute(hash) {
+    return /^#\/public\/profile-submission\/[^/?#]+\/?$/.test(hash);
 }
 async function renderApp() {
     const root = document.getElementById("root");

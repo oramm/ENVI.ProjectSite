@@ -7,6 +7,7 @@ exports.analyzePersonProfileFile = analyzePersonProfileFile;
 exports.confirmExperiencesImport = confirmExperiencesImport;
 exports.confirmEducationsImport = confirmEducationsImport;
 exports.confirmSkillsImport = confirmSkillsImport;
+exports.createPersonProfileImportApi = createPersonProfileImportApi;
 const MainSetupReact_1 = __importDefault(require("../../../React/MainSetupReact"));
 const ToolsFetch_1 = __importDefault(require("../../../React/Tools/ToolsFetch"));
 const personsV2Helpers_1 = require("../../personsV2Helpers");
@@ -55,4 +56,20 @@ async function confirmSkillsImport(personId, items) {
         body: JSON.stringify({ items }),
     });
     return result;
+}
+function createPersonProfileImportApi(personId) {
+    return {
+        analyzeFile(file, hint) {
+            return analyzePersonProfileFile(personId, file, hint);
+        },
+        confirmExperiences(items) {
+            return confirmExperiencesImport(personId, items);
+        },
+        confirmEducations(items) {
+            return confirmEducationsImport(personId, items);
+        },
+        confirmSkills(items) {
+            return confirmSkillsImport(personId, items);
+        },
+    };
 }

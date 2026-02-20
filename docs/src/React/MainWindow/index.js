@@ -70,6 +70,7 @@ const LettersSearch_2 = __importDefault(require("../../Offers/OffersLettersList/
 const OffersMainView_1 = __importDefault(require("../../Offers/OffersList/OffersMainView"));
 const PersonsSearch_1 = __importDefault(require("../../Persons/PersonsSearch"));
 const PersonProfilePage_1 = __importDefault(require("../../Persons/PersonProfile/PersonProfilePage"));
+const PublicProfileSubmissionPage_1 = __importDefault(require("../../Persons/PersonProfile/PublicProfileSubmission/PublicProfileSubmissionPage"));
 const TasksGlobal_1 = __importDefault(require("../../TasksGlobal/TasksGlobal"));
 const ApplicationCallsSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/ApplicationCalls/ApplicationCallsSearch"));
 const FocusAreasSearch_1 = __importDefault(require("../../financialAidProgrammes/FocusAreas/FocusAreasSearch"));
@@ -84,9 +85,15 @@ console.log("rootPath", rootPath);
 function App() {
     const [isLoggedIn, setIsLoggedIn] = (0, react_1.useState)(false);
     const [isReady, setIsReady] = (0, react_1.useState)(false);
+    const [isPublicProfileSubmissionRoute, setIsPublicProfileSubmissionRoute] = (0, react_1.useState)(false);
     const [errorMessage, setErrorMessage] = (0, react_1.useState)("");
     (0, react_1.useEffect)(() => {
         async function fetchData() {
+            if (matchesPublicProfileSubmissionRoute(window.location.hash)) {
+                setIsPublicProfileSubmissionRoute(true);
+                setIsReady(true);
+                return;
+            }
             try {
                 const isLoggedIn = await MainControllerReact_1.default.isSessionSet();
                 setIsLoggedIn(isLoggedIn);
@@ -133,6 +140,9 @@ function App() {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100" },
             react_1.default.createElement(CommonComponents_1.SpinnerBootstrap, null)));
     }
+    if (isPublicProfileSubmissionRoute) {
+        return react_1.default.createElement(PublicAppRoutes, null);
+    }
     if (!isLoggedIn) {
         return (react_1.default.createElement(react_bootstrap_1.Container, { className: "d-flex justify-content-center align-items-center min-vh-100 flex-column" },
             errorMessage && (react_1.default.createElement(react_bootstrap_1.Alert, { variant: "danger", className: "mb-3" }, errorMessage)),
@@ -150,6 +160,7 @@ function AppRoutes() {
         react_1.default.createElement("div", { className: "mt-3 mb-3" },
             react_1.default.createElement(react_router_dom_1.Routes, null,
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/", element: react_1.default.createElement(Dashboard_1.default, null) }),
+                react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }),
                 react_1.default.createElement(react_router_dom_1.Route, { path: "/letters", element: react_1.default.createElement(LettersSearch_1.default, { title: "Rejestr pism" }) }),
                 react_1.default.createElement(react_router_dom_1.Route, { element: react_1.default.createElement(ProtectedRoute_1.default, { allowedRoles: ["ADMIN", "ENVI_MANAGER", "ENVI_EMPLOYEE"] }) },
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/contracts", element: react_1.default.createElement(ContractsSearch_1.default, { title: "Rejestr kontraktów" }) }),
@@ -178,6 +189,16 @@ function AppRoutes() {
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices", element: react_1.default.createElement(CostInvoicesSearch_1.default, { title: "Faktury kosztowe" }) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/cost-invoice/:id", element: react_1.default.createElement(CostInvoiceDetails_1.default, null) }),
                     react_1.default.createElement(react_router_dom_1.Route, { path: "/costInvoices/report", element: react_1.default.createElement(CostInvoicesReport_1.default, null) }))))));
+}
+function PublicAppRoutes() {
+    return (react_1.default.createElement(react_router_dom_1.HashRouter, { basename: rootPath },
+        react_1.default.createElement(react_bootstrap_1.Container, { fluid: true, className: "d-flex flex-column min-vh-100 p-0 bg-white" },
+            react_1.default.createElement("div", { className: "mt-3 mb-3" },
+                react_1.default.createElement(react_router_dom_1.Routes, null,
+                    react_1.default.createElement(react_router_dom_1.Route, { path: "/public/profile-submission/:token", element: react_1.default.createElement(PublicProfileSubmissionPage_1.default, null) }))))));
+}
+function matchesPublicProfileSubmissionRoute(hash) {
+    return /^#\/public\/profile-submission\/[^/?#]+\/?$/.test(hash);
 }
 async function renderApp() {
     const root = document.getElementById("root");
